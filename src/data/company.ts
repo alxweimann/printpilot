@@ -1,0 +1,15 @@
+export const companyProfile = {
+  name: "Muster Druckerei GmbH",
+  claim: "Digitaldruck · Weiterverarbeitung · Druckproduktion",
+  street: "Musterstraße 1",
+  zip: "12345",
+  city: "Musterstadt",
+  phone: "+49 0000 000000",
+  email: "info@muster-druckerei.de",
+  website: "www.muster-druckerei.de",
+  taxNumber: "",
+  vatId: "",
+  bankName: "",
+  iban: "",
+  bic: "",
+}

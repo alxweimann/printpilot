@@ -162,9 +162,12 @@ type ProductTemplate = {
   bleedMm?: number
   gripperMarginMm?: number
   sheetMarginMm?: number
+  gutterHorizontalMm?: number
+  gutterVerticalMm?: number
   allowRotation?: boolean
   respectGrainDirection?: boolean
   rawSheetMaterialId?: string
+  removeSpineBleed?: boolean
 }
 
 type CalculationTemplateStatus = "Aktiv" | "Inaktiv"
@@ -177,8 +180,11 @@ type CalculationTemplate = ProductTemplate & {
   machineId: string
   status: CalculationTemplateStatus
   bleedMm: number
+  removeSpineBleed: boolean
   gripperMarginMm: number
   sheetMarginMm: number
+  gutterHorizontalMm: number
+  gutterVerticalMm: number
   allowRotation: boolean
   respectGrainDirection: boolean
   rawSheetMaterialId: string
@@ -1193,8 +1199,11 @@ function CalculatorPage({
   const [finalHeightMm, setFinalHeightMm] = useState(297)
   const [itemsPerSheet, setItemsPerSheet] = useState(1)
   const [bleedMm, setBleedMm] = useState(3)
-  const [gripperMarginMm, setGripperMarginMm] = useState(10)
+  const [removeSpineBleed, setRemoveSpineBleed] = useState(false)
+  const gripperMarginMm = 0
   const [sheetMarginMm, setSheetMarginMm] = useState(5)
+  const [gutterHorizontalMm, setGutterHorizontalMm] = useState(4)
+  const [gutterVerticalMm, setGutterVerticalMm] = useState(4)
   const [allowRotation, setAllowRotation] = useState(true)
   const [respectGrainDirection, setRespectGrainDirection] = useState(true)
   const [rawSheetMaterialId, setRawSheetMaterialId] = useState(materials[0]?.id ?? "")
@@ -1217,6 +1226,20 @@ function CalculatorPage({
 
   const safeQuantity = Math.max(quantity, 1)
   const safeItemsPerSheet = Math.max(itemsPerSheet, 1)
+  const selectedRawSheet = materials.find((material) => material.id === rawSheetMaterialId) ?? materials[0]
+  const impositionResult = calculateImpositionResult({
+    sheetWidthMm: selectedRawSheet?.widthMm ?? 0,
+    sheetHeightMm: selectedRawSheet?.heightMm ?? 0,
+    finalWidthMm,
+    finalHeightMm,
+    bleedMm,
+    removeSpineBleed,
+    gripperMarginMm,
+    sheetMarginMm,
+    gutterHorizontalMm,
+    gutterVerticalMm,
+    allowRotation,
+  })
 
   const productionSheets = Math.ceil(safeQuantity / safeItemsPerSheet)
   const sheetsBeforeWaste = productionSheets + Math.max(fixedOvers, 0)
@@ -1419,8 +1442,10 @@ function CalculatorPage({
     setFinalHeightMm(template.finalHeightMm)
     setItemsPerSheet(template.itemsPerSheet)
     setBleedMm(template.bleedMm)
-    setGripperMarginMm(template.gripperMarginMm)
+    setRemoveSpineBleed(template.removeSpineBleed)
     setSheetMarginMm(template.sheetMarginMm)
+    setGutterHorizontalMm(template.gutterHorizontalMm)
+    setGutterVerticalMm(template.gutterVerticalMm)
     setAllowRotation(template.allowRotation)
     setRespectGrainDirection(template.respectGrainDirection)
     setRawSheetMaterialId(
@@ -1549,7 +1574,9 @@ function CalculatorPage({
       machineCostModel === "roland"
         ? `Kostenmodell: ${getMachineCostModelLabel(machineCostModel)}`
         : `Farbmodus: ${colorMode}`,
-      `Beschnitt: ${bleedMm} mm · Greiferrand: ${gripperMarginMm} mm · Seitenrand: ${sheetMarginMm} mm`,
+      `Nutzen: ${safeItemsPerSheet} pro Druckbogen`,
+      `Beschnitt: ${bleedMm} mm · ${removeSpineBleed ? "ohne Beschnitt im Bund" : "Beschnitt rundum"} · Seitenrand: ${sheetMarginMm} mm`,
+      `Zwischenschnitt horizontal: ${gutterHorizontalMm} mm · vertikal: ${gutterVerticalMm} mm`,
       `Drehung: ${allowRotation ? "erlaubt" : "gesperrt"} · Laufrichtung: ${respectGrainDirection ? "beachten" : "ignorieren"}`,
       machineCostModel === "risoInk" ? `Riso-Verbrauch: ${getRisoCoverageLabel(risoInkCoverage)}` : "",
       machineCostModel === "roland" ? `Roland-Produktion: ${getRolandProductionModeLabel(rolandProductionMode)}` : "",
@@ -1566,6 +1593,12 @@ function CalculatorPage({
     })
   }
 
+  function handleApplyImposition() {
+    if (impositionResult.best.total <= 0) return
+
+    setItemsPerSheet(impositionResult.best.total)
+  }
+
   return (
     <div className="space-y-6">
       <section className="overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
@@ -1576,7 +1609,7 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V41
+                Kalkulation V52
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 Druckprodukt kalkulieren
@@ -1655,14 +1688,73 @@ function CalculatorPage({
 
             <div className="rounded-3xl bg-slate-50 p-5">
               <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Produktparameter / Nutzenbasis</p>
-              <p className="mt-1 text-sm font-bold text-slate-500">Diese Werte kommen aus der Kalkulationsvorlage und sind die Basis für den späteren Nutzenrechner.</p>
+              <p className="mt-1 text-sm font-bold text-slate-500">Diese Werte kommen aus der Kalkulationsvorlage und steuern den automatischen Nutzenrechner.</p>
               <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                 <NumberField label="Beschnitt" value={bleedMm} onChange={setBleedMm} step={0.5} suffix="mm" />
-                <NumberField label="Greiferrand" value={gripperMarginMm} onChange={setGripperMarginMm} step={0.5} suffix="mm" />
+                <SelectField label="Bundbeschnitt" value={removeSpineBleed ? "no" : "yes"} onChange={(value) => setRemoveSpineBleed(value === "no")} options={[{ value: "yes", label: "Beschnitt rundum" }, { value: "no", label: "ohne Beschnitt im Bund" }]} />
                 <NumberField label="Seitenrand" value={sheetMarginMm} onChange={setSheetMarginMm} step={0.5} suffix="mm" />
+                <NumberField label="Zwischenschnitt H" value={gutterHorizontalMm} onChange={setGutterHorizontalMm} step={0.5} suffix="mm" />
+                <NumberField label="Zwischenschnitt V" value={gutterVerticalMm} onChange={setGutterVerticalMm} step={0.5} suffix="mm" />
                 <SelectField label="Drehung" value={allowRotation ? "yes" : "no"} onChange={(value) => setAllowRotation(value === "yes")} options={[{ value: "yes", label: "Drehung erlaubt" }, { value: "no", label: "Keine Drehung" }]} />
                 <SelectField label="Laufrichtung" value={respectGrainDirection ? "yes" : "no"} onChange={(value) => setRespectGrainDirection(value === "yes")} options={[{ value: "yes", label: "beachten" }, { value: "no", label: "ignorieren" }]} />
                 <SelectField label="Standard-Rohbogen" value={rawSheetMaterialId} onChange={setRawSheetMaterialId} options={materials.map((material) => ({ value: material.id, label: `${material.name} · ${material.widthMm} × ${material.heightMm} mm` }))} />
+              </div>
+
+              <div className="mt-5 rounded-3xl border border-slate-200 bg-white p-5">
+                <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+                  <div>
+                    <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Automatischer Nutzen</p>
+                    <p className="mt-2 text-sm font-bold leading-6 text-slate-500">
+                      Rohbogen: {selectedRawSheet?.widthMm ?? 0} × {selectedRawSheet?.heightMm ?? 0} mm ·
+                      Produkt inkl. Beschnitt: {impositionResult.productWidthWithBleed} × {impositionResult.productHeightWithBleed} mm · {removeSpineBleed ? "ohne Bundbeschnitt" : "Beschnitt rundum"} ·
+                      Zwischenschnitt: H {gutterHorizontalMm} mm / V {gutterVerticalMm} mm ·
+                      nutzbare Fläche: {impositionResult.availableWidth} × {impositionResult.availableHeight} mm
+                    </p>
+                  </div>
+
+                  <button
+                    type="button"
+                    onClick={handleApplyImposition}
+                    disabled={impositionResult.best.total <= 0}
+                    className={`rounded-2xl px-5 py-3 text-sm font-black text-white shadow-sm transition ${
+                      impositionResult.best.total <= 0
+                        ? "cursor-not-allowed bg-slate-300"
+                        : "bg-emerald-500 shadow-emerald-500/20 hover:-translate-y-0.5 hover:bg-emerald-600"
+                    }`}
+                  >
+                    Nutzen übernehmen
+                  </button>
+                </div>
+
+                <div className="mt-5 grid gap-3 md:grid-cols-3">
+                  <InfoCard label="Normal" value={`${impositionResult.normal.columns} × ${impositionResult.normal.rows} = ${impositionResult.normal.total}`} />
+                  <InfoCard label="Gedreht" value={allowRotation ? `${impositionResult.rotated.columns} × ${impositionResult.rotated.rows} = ${impositionResult.rotated.total}` : "nicht erlaubt"} />
+                  <InfoCard label="Bester Nutzen" value={`${impositionResult.best.total} Nutzen / Bogen`} />
+                  <InfoCard label="Ausrichtung" value={impositionResult.best.orientation} />
+                  <InfoCard label="Belegte Fläche" value={`${impositionResult.best.usedWidth} × ${impositionResult.best.usedHeight} mm`} />
+                  <InfoCard label="Restfläche" value={`${formatNumber(impositionResult.best.wastePercent, 1)} %`} />
+                  <InfoCard label="Bogenbedarf" value={`${Math.ceil(safeQuantity / Math.max(impositionResult.best.total, 1)).toLocaleString("de-DE")} Bogen`} />
+                </div>
+
+                <ImpositionPreview
+                  sheetWidthMm={selectedRawSheet?.widthMm ?? 0}
+                  sheetHeightMm={selectedRawSheet?.heightMm ?? 0}
+                  finalWidthMm={finalWidthMm}
+                  finalHeightMm={finalHeightMm}
+                  bleedMm={bleedMm}
+                  removeSpineBleed={removeSpineBleed}
+                  gripperMarginMm={gripperMarginMm}
+                  sheetMarginMm={sheetMarginMm}
+                  gutterHorizontalMm={gutterHorizontalMm}
+                  gutterVerticalMm={gutterVerticalMm}
+                  result={impositionResult}
+                />
+
+                {impositionResult.best.total <= 0 && (
+                  <p className="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm font-black text-rose-700">
+                    Das Produkt passt mit den aktuellen Rändern/Beschnittwerten nicht auf den gewählten Rohbogen.
+                  </p>
+                )}
               </div>
             </div>
 
@@ -4076,7 +4168,7 @@ function CalculationTemplatesPage({
               <p className="text-sm font-black uppercase tracking-[0.35em] text-pink-300">Kalkulationsvorlagen V2</p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">Produktvorlagen verwalten</h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-                Lege wiederkehrende Druckprodukte inklusive Beschnitt, Greiferrand, Laufrichtung und Standard-Rohbogen als Vorlage an.
+                Lege wiederkehrende Druckprodukte inklusive Beschnitt, Seitenrand, Laufrichtung und Standard-Rohbogen als Vorlage an.
               </p>
             </div>
 
@@ -4263,11 +4355,13 @@ function CalculationTemplatesPage({
 
           <div className="mt-6 rounded-3xl bg-slate-50 p-5">
             <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Produktparameter / Nutzenbasis</p>
-            <p className="mt-1 text-sm font-bold text-slate-500">Diese Werte werden später vom Nutzenrechner verwendet: Beschnitt, Greiferrand, Seitenrand, Drehung und Laufrichtung.</p>
+            <p className="mt-1 text-sm font-bold text-slate-500">Diese Werte werden später vom Nutzenrechner verwendet: Beschnitt, Seitenrand, Drehung und Laufrichtung.</p>
             <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
               <NumberField label="Beschnitt" value={templateForm.bleedMm} onChange={(value) => updateTemplateForm("bleedMm", value)} step={0.5} suffix="mm" />
-              <NumberField label="Greiferrand" value={templateForm.gripperMarginMm} onChange={(value) => updateTemplateForm("gripperMarginMm", value)} step={0.5} suffix="mm" />
+              <SelectField label="Bundbeschnitt" value={templateForm.removeSpineBleed ? "no" : "yes"} onChange={(value) => updateTemplateForm("removeSpineBleed", value === "no")} options={[{ value: "yes", label: "Beschnitt rundum" }, { value: "no", label: "ohne Beschnitt im Bund" }]} />
               <NumberField label="Seitenrand" value={templateForm.sheetMarginMm} onChange={(value) => updateTemplateForm("sheetMarginMm", value)} step={0.5} suffix="mm" />
+              <NumberField label="Zwischenschnitt H" value={templateForm.gutterHorizontalMm} onChange={(value) => updateTemplateForm("gutterHorizontalMm", value)} step={0.5} suffix="mm" />
+              <NumberField label="Zwischenschnitt V" value={templateForm.gutterVerticalMm} onChange={(value) => updateTemplateForm("gutterVerticalMm", value)} step={0.5} suffix="mm" />
               <SelectField label="Drehung" value={templateForm.allowRotation ? "yes" : "no"} onChange={(value) => updateTemplateForm("allowRotation", value === "yes")} options={[{ value: "yes", label: "Drehung erlaubt" }, { value: "no", label: "Keine Drehung" }]} />
               <SelectField label="Laufrichtung" value={templateForm.respectGrainDirection ? "yes" : "no"} onChange={(value) => updateTemplateForm("respectGrainDirection", value === "yes")} options={[{ value: "yes", label: "beachten" }, { value: "no", label: "ignorieren" }]} />
               <SelectField label="Standard-Rohbogen" value={templateForm.rawSheetMaterialId} onChange={(value) => updateTemplateForm("rawSheetMaterialId", value)} options={materials.map((material) => ({ value: material.id, label: `${material.name} · ${material.widthMm} × ${material.heightMm} mm` }))} />
@@ -4413,8 +4507,8 @@ function CalculationTemplatesPage({
                   <InfoCard label="Weiterverarbeitung" value={template.finishingNames.length > 0 ? template.finishingNames.join(", ") : "—"} />
                   <InfoCard label="Endformat" value={`${template.finalWidthMm} × ${template.finalHeightMm} mm`} />
                   <InfoCard label="Standardauflage" value={`${template.defaultQuantity.toLocaleString("de-DE")} Stück`} />
-                  <InfoCard label="Beschnitt" value={`${template.bleedMm} mm`} />
-                  <InfoCard label="Greiferrand" value={`${template.gripperMarginMm} mm`} />
+                  <InfoCard label="Beschnitt" value={`${template.bleedMm} mm · ${template.removeSpineBleed ? "ohne Bund" : "rundum"}`} />
+                  <InfoCard label="Zwischenschnitt" value={`H ${template.gutterHorizontalMm} mm / V ${template.gutterVerticalMm} mm`} />
                   <InfoCard label="Laufrichtung" value={template.respectGrainDirection ? "beachten" : "ignorieren"} />
                 </div>
 
@@ -6659,8 +6753,11 @@ function normalizeCalculationTemplate(
     itemsPerSheet: Math.max(Number(template.itemsPerSheet) || fallbackTemplate.itemsPerSheet, 1),
     colorMode: String(template.colorMode || fallbackTemplate.colorMode),
     bleedMm: Math.max(Number(template.bleedMm ?? fallbackTemplate.bleedMm ?? 3) || 0, 0),
-    gripperMarginMm: Math.max(Number(template.gripperMarginMm ?? fallbackTemplate.gripperMarginMm ?? 10) || 0, 0),
+    removeSpineBleed: typeof template.removeSpineBleed === "boolean" ? template.removeSpineBleed : fallbackTemplate.removeSpineBleed ?? isBrochureProduct(productType),
+    gripperMarginMm: 0,
     sheetMarginMm: Math.max(Number(template.sheetMarginMm ?? fallbackTemplate.sheetMarginMm ?? 5) || 0, 0),
+    gutterHorizontalMm: Math.max(Number(template.gutterHorizontalMm ?? fallbackTemplate.gutterHorizontalMm ?? 4) || 0, 0),
+    gutterVerticalMm: Math.max(Number(template.gutterVerticalMm ?? fallbackTemplate.gutterVerticalMm ?? 4) || 0, 0),
     allowRotation: typeof template.allowRotation === "boolean" ? template.allowRotation : fallbackTemplate.allowRotation ?? true,
     respectGrainDirection: typeof template.respectGrainDirection === "boolean" ? template.respectGrainDirection : fallbackTemplate.respectGrainDirection ?? true,
     rawSheetMaterialId: materialCatalog.some((material) => material.id === template.rawSheetMaterialId)
@@ -6673,6 +6770,10 @@ function normalizeCalculationTemplate(
     materialSelections,
     finishingNames,
   }
+}
+
+function isBrochureProduct(productType: ProductType) {
+  return String(productType || "").toLowerCase().includes("brosch")
 }
 
 function pickDefaultMachineForTemplate(productType: ProductType, machineCatalog: Machine[]) {
@@ -6691,7 +6792,7 @@ function getProductTemplate(productType: ProductType, materialCatalog: Material[
   const strongMaterialId = findMaterialIdInCatalog(materialCatalog, "300") ?? findMaterialIdInCatalog(materialCatalog, "Karton") ?? materialCatalog[0].id
   const standardMaterialId = materialCatalog[0].id
   const rollMaterialId = findMaterialIdInCatalog(materialCatalog, "Vinyl") ?? findMaterialIdInCatalog(materialCatalog, "Folie") ?? materialCatalog[0].id
-  const defaultTemplateParameters = { bleedMm: 3, gripperMarginMm: 10, sheetMarginMm: 5, allowRotation: true, respectGrainDirection: true, rawSheetMaterialId: standardMaterialId }
+  const defaultTemplateParameters = { bleedMm: 3, removeSpineBleed: false, gripperMarginMm: 0, sheetMarginMm: 5, gutterHorizontalMm: 4, gutterVerticalMm: 4, allowRotation: true, respectGrainDirection: true, rawSheetMaterialId: standardMaterialId }
 
   const templates: Record<ProductType, ProductTemplate> = {
     Einzelblatt: {
@@ -6843,6 +6944,7 @@ function getProductTemplate(productType: ProductType, materialCatalog: Material[
         },
       ],
       finishingNames: ["Schneiden", "Rückendraht"],
+      removeSpineBleed: true,
     },
     "SD-Satz": {
       productName: "SD-Satz 3-fach",
@@ -7150,6 +7252,389 @@ function withLocalFinishingId(operationId: string): FinishingSelection {
 
 function roundMoney(value: number) {
   return Math.round(value * 100) / 100
+}
+
+function ImpositionPreview({
+  sheetWidthMm,
+  sheetHeightMm,
+  finalWidthMm,
+  finalHeightMm,
+  bleedMm,
+  removeSpineBleed,
+  gripperMarginMm,
+  sheetMarginMm,
+  gutterHorizontalMm,
+  gutterVerticalMm,
+  result,
+}: {
+  sheetWidthMm: number
+  sheetHeightMm: number
+  finalWidthMm: number
+  finalHeightMm: number
+  bleedMm: number
+  removeSpineBleed: boolean
+  gripperMarginMm: number
+  sheetMarginMm: number
+  gutterHorizontalMm: number
+  gutterVerticalMm: number
+  result: ReturnType<typeof calculateImpositionResult>
+}) {
+  const safeSheetWidth = Math.max(Number(sheetWidthMm) || 0, 1)
+  const safeSheetHeight = Math.max(Number(sheetHeightMm) || 0, 1)
+  const previewWidth = 420
+  const previewHeight = Math.max((previewWidth / safeSheetWidth) * safeSheetHeight, 180)
+  const scale = previewWidth / safeSheetWidth
+
+  const safeSheetMargin = Math.max(Number(sheetMarginMm) || 0, 0)
+  const safeGripperMargin = 0
+  const safeBleed = Math.max(Number(bleedMm) || 0, 0)
+  const noSpineBleed = Boolean(removeSpineBleed)
+  const safeGutterHorizontal = Math.max(Number(gutterHorizontalMm) || 0, 0)
+  const safeGutterVertical = Math.max(Number(gutterVerticalMm) || 0, 0)
+
+  const isRotated = result.best.orientation === "gedreht"
+  const productWidthWithBleed = isRotated ? result.productHeightWithBleed : result.productWidthWithBleed
+  const productHeightWithBleed = isRotated ? result.productWidthWithBleed : result.productHeightWithBleed
+  const finalWidth = isRotated ? Math.max(Number(finalHeightMm) || 0, 1) : Math.max(Number(finalWidthMm) || 0, 1)
+  const finalHeight = isRotated ? Math.max(Number(finalWidthMm) || 0, 1) : Math.max(Number(finalHeightMm) || 0, 1)
+
+  const availableX = safeSheetMargin
+  const availableY = safeSheetMargin
+  const availableWidth = Math.max(safeSheetWidth - safeSheetMargin * 2, 0)
+  const availableHeight = Math.max(safeSheetHeight - safeSheetMargin - safeGripperMargin, 0)
+
+  const startX = availableX + Math.max((availableWidth - result.best.usedWidth) / 2, 0)
+  const startY = availableY + Math.max((availableHeight - result.best.usedHeight) / 2, 0)
+
+  const positions: { key: string; x: number; y: number }[] = []
+
+  for (let row = 0; row < result.best.rows; row += 1) {
+    for (let column = 0; column < result.best.columns; column += 1) {
+      positions.push({
+        key: row + "-" + column,
+        x: startX + column * (productWidthWithBleed + safeGutterVertical),
+        y: startY + row * (productHeightWithBleed + safeGutterHorizontal),
+      })
+    }
+  }
+
+  const verticalGutters = Array.from({ length: Math.max(result.best.columns - 1, 0) }, (_, index) => {
+    const x = startX + (index + 1) * productWidthWithBleed + index * safeGutterVertical
+
+    return {
+      key: `v-${index}`,
+      x,
+      y: startY,
+      width: safeGutterVertical,
+      height: result.best.usedHeight,
+    }
+  })
+
+  const horizontalGutters = Array.from({ length: Math.max(result.best.rows - 1, 0) }, (_, index) => {
+    const y = startY + (index + 1) * productHeightWithBleed + index * safeGutterHorizontal
+
+    return {
+      key: `h-${index}`,
+      x: startX,
+      y,
+      width: result.best.usedWidth,
+      height: safeGutterHorizontal,
+    }
+  })
+
+  return (
+    <div className="mt-5 rounded-none border border-slate-200 bg-slate-50 p-5">
+      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
+        <div>
+          <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+            Grafische Bogenvorschau
+          </p>
+          <p className="mt-2 text-sm font-bold leading-6 text-slate-500">
+            Maßstäblich vereinfachte Vorschau: Seitenrand, Beschnitt und Zwischenschnitt werden sichtbar gemacht. Bei 0 mm wird eine Schnittlinie ohne Abstand angezeigt.
+          </p>
+        </div>
+
+        <div className="rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm">
+          {result.best.columns} × {result.best.rows} · {result.best.orientation}
+        </div>
+      </div>
+
+      <div className="mt-5 overflow-x-auto">
+        <svg
+          width={previewWidth}
+          height={previewHeight}
+          viewBox={"0 0 " + previewWidth + " " + previewHeight}
+          className="max-w-full rounded-none bg-white shadow-sm"
+          role="img"
+          aria-label="Bogenvorschau"
+        >
+          <rect x="0" y="0" width={previewWidth} height={previewHeight} className="fill-white stroke-slate-300" strokeWidth="2" />
+
+          <rect
+            x={safeSheetMargin * scale}
+            y={safeSheetMargin * scale}
+            width={availableWidth * scale}
+            height={availableHeight * scale}
+            className="fill-cyan-50 stroke-cyan-200"
+            strokeWidth="1.5"
+            strokeDasharray="6 5"
+          />
+          {verticalGutters.map((gutter) => {
+            const x = gutter.x * scale
+            const y = gutter.y * scale
+            const height = gutter.height * scale
+
+            if (safeGutterVertical <= 0) {
+              return (
+                <line
+                  key={gutter.key}
+                  x1={x}
+                  y1={y}
+                  x2={x}
+                  y2={y + height}
+                  className="stroke-fuchsia-500"
+                  strokeWidth="1.5"
+                  strokeDasharray="4 4"
+                />
+              )
+            }
+
+            return (
+              <rect
+                key={gutter.key}
+                x={x}
+                y={y}
+                width={Math.max(gutter.width * scale, 1)}
+                height={height}
+                className="fill-fuchsia-100 stroke-fuchsia-400"
+                strokeWidth="0.8"
+              />
+            )
+          })}
+
+          {horizontalGutters.map((gutter) => {
+            const x = gutter.x * scale
+            const y = gutter.y * scale
+            const width = gutter.width * scale
+
+            if (safeGutterHorizontal <= 0) {
+              return (
+                <line
+                  key={gutter.key}
+                  x1={x}
+                  y1={y}
+                  x2={x + width}
+                  y2={y}
+                  className="stroke-fuchsia-500"
+                  strokeWidth="1.5"
+                  strokeDasharray="4 4"
+                />
+              )
+            }
+
+            return (
+              <rect
+                key={gutter.key}
+                x={x}
+                y={y}
+                width={width}
+                height={Math.max(gutter.height * scale, 1)}
+                className="fill-fuchsia-100 stroke-fuchsia-400"
+                strokeWidth="0.8"
+              />
+            )
+          })}
+
+          {positions.map((position, index) => {
+            const outerX = position.x * scale
+            const outerY = position.y * scale
+            const outerWidth = productWidthWithBleed * scale
+            const outerHeight = productHeightWithBleed * scale
+            const bleedOffsetX = isRotated && noSpineBleed ? safeBleed * scale : noSpineBleed ? 0 : safeBleed * scale
+            const bleedOffsetY = isRotated && noSpineBleed ? 0 : safeBleed * scale
+            const innerWidth = Math.max(finalWidth * scale, 0)
+            const innerHeight = Math.max(finalHeight * scale, 0)
+
+            return (
+              <g key={position.key}>
+                <rect
+                  x={outerX}
+                  y={outerY}
+                  width={outerWidth}
+                  height={outerHeight}
+                  className="fill-yellow-100 stroke-yellow-500"
+                  strokeWidth="1"
+                />
+                <rect
+                  x={outerX + bleedOffsetX}
+                  y={outerY + bleedOffsetY}
+                  width={innerWidth}
+                  height={innerHeight}
+                  className="fill-white stroke-slate-800"
+                  strokeWidth="1.2"
+                />
+                <text x={outerX + outerWidth / 2} y={outerY + outerHeight / 2 + 3} textAnchor="middle" className="fill-slate-700 text-[9px] font-black">
+                  {index + 1}
+                </text>
+              </g>
+            )
+          })}
+
+          {safeGutterVertical <= 0 && verticalGutters.map((gutter) => {
+            const x = gutter.x * scale
+            const y = gutter.y * scale
+            const height = gutter.height * scale
+
+            return (
+              <g key={`cut-${gutter.key}`}>
+                <line
+                  x1={x}
+                  y1={y}
+                  x2={x}
+                  y2={y + height}
+                  className="stroke-fuchsia-600"
+                  strokeWidth="2.4"
+                  strokeDasharray="5 4"
+                />
+                <line
+                  x1={x - 1.5}
+                  y1={y}
+                  x2={x - 1.5}
+                  y2={y + height}
+                  className="stroke-white"
+                  strokeWidth="0.8"
+                  strokeDasharray="5 4"
+                />
+              </g>
+            )
+          })}
+
+          {safeGutterHorizontal <= 0 && horizontalGutters.map((gutter) => {
+            const x = gutter.x * scale
+            const y = gutter.y * scale
+            const width = gutter.width * scale
+
+            return (
+              <g key={`cut-${gutter.key}`}>
+                <line
+                  x1={x}
+                  y1={y}
+                  x2={x + width}
+                  y2={y}
+                  className="stroke-fuchsia-600"
+                  strokeWidth="2.4"
+                  strokeDasharray="5 4"
+                />
+                <line
+                  x1={x}
+                  y1={y - 1.5}
+                  x2={x + width}
+                  y2={y - 1.5}
+                  className="stroke-white"
+                  strokeWidth="0.8"
+                  strokeDasharray="5 4"
+                />
+              </g>
+            )
+          })}
+        </svg>
+      </div>
+
+      <div className="mt-4 grid gap-3 text-sm font-bold text-slate-600 md:grid-cols-2 xl:grid-cols-4">
+        <p>Gelb: Beschnitt</p>
+        <p>Weiß: Endformat</p>
+        <p>Pink: Zwischenschnitt / Schnittlinie</p>
+      </div>
+    </div>
+  )
+}
+
+function calculateImpositionResult({
+  sheetWidthMm,
+  sheetHeightMm,
+  finalWidthMm,
+  finalHeightMm,
+  bleedMm,
+  removeSpineBleed,
+  gripperMarginMm,
+  sheetMarginMm,
+  gutterHorizontalMm,
+  gutterVerticalMm,
+  allowRotation,
+}: {
+  sheetWidthMm: number
+  sheetHeightMm: number
+  finalWidthMm: number
+  finalHeightMm: number
+  bleedMm: number
+  removeSpineBleed: boolean
+  gripperMarginMm: number
+  sheetMarginMm: number
+  gutterHorizontalMm: number
+  gutterVerticalMm: number
+  allowRotation: boolean
+}) {
+  const safeSheetWidth = Math.max(Number(sheetWidthMm) || 0, 0)
+  const safeSheetHeight = Math.max(Number(sheetHeightMm) || 0, 0)
+  const safeBleed = Math.max(Number(bleedMm) || 0, 0)
+  const noSpineBleed = Boolean(removeSpineBleed)
+  // Bei Broschüren gibt es im Bund keinen Beschnitt. Deshalb wird in der Breite nur eine Außenseite mit Beschnitt gerechnet.
+  const productWidthWithBleed = Math.max((Number(finalWidthMm) || 0) + safeBleed * (noSpineBleed ? 1 : 2), 1)
+  const productHeightWithBleed = Math.max((Number(finalHeightMm) || 0) + safeBleed * 2, 1)
+  const safeSheetMargin = Math.max(Number(sheetMarginMm) || 0, 0)
+  const safeGripperMargin = 0
+  const availableWidth = Math.max(safeSheetWidth - safeSheetMargin * 2, 0)
+  const availableHeight = Math.max(safeSheetHeight - safeSheetMargin - safeGripperMargin, 0)
+
+  const safeGutterHorizontal = Math.max(Number(gutterHorizontalMm) || 0, 0)
+  const safeGutterVertical = Math.max(Number(gutterVerticalMm) || 0, 0)
+
+  function calculateCount(available: number, item: number, gutter: number) {
+    if (available <= 0 || item <= 0) return 0
+
+    // Zwischenschnitt liegt nur zwischen den Nutzen, nicht außen am Rand.
+    return Math.max(Math.floor((available + gutter) / (item + gutter)), 0)
+  }
+
+  function calculateOrientation(width: number, height: number, orientation: string) {
+    const columns = calculateCount(availableWidth, width, safeGutterVertical)
+    const rows = calculateCount(availableHeight, height, safeGutterHorizontal)
+    const total = columns * rows
+    const usedWidth = columns > 0 ? columns * width + Math.max(columns - 1, 0) * safeGutterVertical : 0
+    const usedHeight = rows > 0 ? rows * height + Math.max(rows - 1, 0) * safeGutterHorizontal : 0
+    const usedArea = usedWidth * usedHeight
+    const availableArea = Math.max(availableWidth * availableHeight, 1)
+    const wastePercent = total > 0 ? Math.max(100 - (usedArea / availableArea) * 100, 0) : 100
+
+    return {
+      columns,
+      rows,
+      total,
+      orientation,
+      usedWidth,
+      usedHeight,
+      wastePercent,
+    }
+  }
+
+  const normal = calculateOrientation(productWidthWithBleed, productHeightWithBleed, "normal")
+  const rotated = allowRotation
+    ? calculateOrientation(productHeightWithBleed, productWidthWithBleed, "gedreht")
+    : { columns: 0, rows: 0, total: 0, orientation: "nicht erlaubt", usedWidth: 0, usedHeight: 0, wastePercent: 100 }
+
+  const best = rotated.total > normal.total ? rotated : normal
+
+  return {
+    productWidthWithBleed,
+    productHeightWithBleed,
+    availableWidth,
+    availableHeight,
+    gutterHorizontalMm: safeGutterHorizontal,
+    gutterVerticalMm: safeGutterVertical,
+    normal,
+    rotated,
+    best,
+  }
 }
 
 function todayIso() {

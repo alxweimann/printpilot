@@ -1241,27 +1241,48 @@ function CalculatorPage({
     allowRotation,
   })
 
-  const selectedMaterialItems = materialSelections.map((selection) => {
+  const baseMaterialItems = materialSelections.map((selection) => {
     const material = materials.find((item) => item.id === selection.materialId) ?? materials[0]
     const calculatedSheets = calculateMaterialSheets(selection, safeQuantity)
     const pricePerSheet = calculateMaterialPricePerSheet(material)
-    const cost = calculatedSheets * pricePerSheet
 
     return {
       ...selection,
       material,
       calculatedSheets,
       pricePerSheet,
+    }
+  })
+
+  const baseMaterialSheetTotal = baseMaterialItems.reduce((sum, item) => sum + item.calculatedSheets, 0)
+  const productionSheets = Math.max(baseMaterialSheetTotal, Math.ceil(safeQuantity / safeItemsPerSheet))
+  const materialOvers = allocateProportionalInteger(
+    Math.max(fixedOvers, 0),
+    baseMaterialItems.map((item) => item.calculatedSheets),
+  )
+
+  const selectedMaterialItems = baseMaterialItems.map((item, index) => {
+    const oversSheets = materialOvers[index] ?? 0
+    const sheetsBeforeWasteForMaterial = item.calculatedSheets + oversSheets
+    const wasteSheetsForMaterial = Math.ceil(sheetsBeforeWasteForMaterial * (wastePercent / 100))
+    const totalMaterialSheets = sheetsBeforeWasteForMaterial + wasteSheetsForMaterial
+    const cost = totalMaterialSheets * item.pricePerSheet
+
+    return {
+      ...item,
+      oversSheets,
+      sheetsBeforeWasteForMaterial,
+      wasteSheetsForMaterial,
+      totalMaterialSheets,
       cost,
     }
   })
 
-  const productionSheets = Math.max(
-    selectedMaterialItems.reduce((sum, item) => sum + item.calculatedSheets, 0),
-    Math.ceil(safeQuantity / safeItemsPerSheet),
+  const sheetsBeforeWaste = selectedMaterialItems.reduce(
+    (sum, item) => sum + item.sheetsBeforeWasteForMaterial,
+    0,
   )
-  const sheetsBeforeWaste = productionSheets + Math.max(fixedOvers, 0)
-  const wasteSheets = Math.ceil(sheetsBeforeWaste * (wastePercent / 100))
+  const wasteSheets = selectedMaterialItems.reduce((sum, item) => sum + item.wasteSheetsForMaterial, 0)
   const totalSheets = sheetsBeforeWaste + wasteSheets
 
   const materialCost = selectedMaterialItems.reduce((sum, item) => sum + item.cost, 0)
@@ -1357,26 +1378,51 @@ function CalculatorPage({
   const tiers = [250, 500, 1000, 2500, 5000].map((tierQuantity) => {
     const tierScaleFactor = tierQuantity / safeQuantity
 
-    const tierMaterialSheets = materialSelections.map((selection) =>
-      selection.calculationMode === "manual"
-        ? Math.ceil(Math.max(selection.manualSheets, 0) * tierScaleFactor)
-        : calculateMaterialSheets(selection, tierQuantity),
-    )
-    const tierProductionSheets = Math.max(
-      tierMaterialSheets.reduce((sum, sheets) => sum + sheets, 0),
-      Math.ceil(tierQuantity / safeItemsPerSheet),
-    )
-    const tierSheetsBeforeWaste = tierProductionSheets + Math.max(fixedOvers, 0)
-    const tierWasteSheets = Math.ceil(tierSheetsBeforeWaste * (wastePercent / 100))
-    const tierTotalSheets = tierSheetsBeforeWaste + tierWasteSheets
-
-    const tierMaterial = materialSelections.reduce((sum, selection, index) => {
+    const tierBaseMaterialItems = materialSelections.map((selection) => {
       const material = materials.find((item) => item.id === selection.materialId) ?? materials[0]
       const pricePerSheet = calculateMaterialPricePerSheet(material)
-      const tierSheets = tierMaterialSheets[index] ?? 0
+      const calculatedSheets =
+        selection.calculationMode === "manual"
+          ? Math.ceil(Math.max(selection.manualSheets, 0) * tierScaleFactor)
+          : calculateMaterialSheets(selection, tierQuantity)
 
-      return sum + tierSheets * pricePerSheet
-    }, 0)
+      return {
+        calculatedSheets,
+        pricePerSheet,
+      }
+    })
+
+    const tierMaterialOvers = allocateProportionalInteger(
+      Math.max(fixedOvers, 0),
+      tierBaseMaterialItems.map((item) => item.calculatedSheets),
+    )
+    const tierMaterialBreakdowns = tierBaseMaterialItems.map((item, index) => {
+      const oversSheets = tierMaterialOvers[index] ?? 0
+      const sheetsBeforeWasteForMaterial = item.calculatedSheets + oversSheets
+      const wasteSheetsForMaterial = Math.ceil(sheetsBeforeWasteForMaterial * (wastePercent / 100))
+      const totalMaterialSheets = sheetsBeforeWasteForMaterial + wasteSheetsForMaterial
+
+      return {
+        ...item,
+        oversSheets,
+        sheetsBeforeWasteForMaterial,
+        wasteSheetsForMaterial,
+        totalMaterialSheets,
+      }
+    })
+    const tierSheetsBeforeWaste = tierMaterialBreakdowns.reduce(
+      (sum, item) => sum + item.sheetsBeforeWasteForMaterial,
+      0,
+    )
+    const tierWasteSheets = tierMaterialBreakdowns.reduce(
+      (sum, item) => sum + item.wasteSheetsForMaterial,
+      0,
+    )
+    const tierTotalSheets = tierSheetsBeforeWaste + tierWasteSheets
+    const tierMaterial = tierMaterialBreakdowns.reduce(
+      (sum, item) => sum + item.totalMaterialSheets * item.pricePerSheet,
+      0,
+    )
 
     const tierPrint = calculateMachineVariableCost({
       machineCostModel,
@@ -1566,8 +1612,16 @@ function CalculatorPage({
   }
 
   function handleAddToQuote() {
-    const materialNames = selectedMaterialItems
-      .map((item) => item.label)
+    const customerMaterialDetails = selectedMaterialItems
+      .map((item) => {
+        if (!item.label) return ""
+
+        if (item.calculationMode === "pages" && item.pages > 0) {
+          return `${item.label}: ${item.pages} Seiten`
+        }
+
+        return item.label
+      })
       .filter(Boolean)
       .join(", ")
 
@@ -1576,20 +1630,17 @@ function CalculatorPage({
       .filter(Boolean)
       .join(", ")
 
+    const productionDescription =
+      machineCostModel === "roland"
+        ? `Produktion: ${getRolandProductionModeLabel(rolandProductionMode)}`
+        : `Farbigkeit: ${colorMode}`
+
     const descriptionParts = [
       `${productName}`,
       `Auflage: ${safeQuantity.toLocaleString("de-DE")} Stück`,
-      `Format: ${finalWidthMm} × ${finalHeightMm} mm`,
-      machineCostModel === "roland"
-        ? `Kostenmodell: ${getMachineCostModelLabel(machineCostModel)}`
-        : `Farbmodus: ${colorMode}`,
-      `Nutzen: ${safeItemsPerSheet} pro Druckbogen`,
-      `Beschnitt: ${bleedMm} mm · ${removeSpineBleed ? "ohne Beschnitt im Bund" : "Beschnitt rundum"} · Seitenrand: ${sheetMarginMm} mm`,
-      `Zwischenschnitt horizontal: ${gutterHorizontalMm} mm · vertikal: ${gutterVerticalMm} mm`,
-      `Drehung: ${allowRotation ? "erlaubt" : "gesperrt"} · Laufrichtung: ${respectGrainDirection ? "beachten" : "ignorieren"}`,
-      machineCostModel === "risoInk" ? `Riso-Verbrauch: ${getRisoCoverageLabel(risoInkCoverage)}` : "",
-      machineCostModel === "roland" ? `Roland-Produktion: ${getRolandProductionModeLabel(rolandProductionMode)}` : "",
-      materialNames ? `Materialpositionen: ${materialNames}` : "",
+      `Endformat: ${finalWidthMm} × ${finalHeightMm} mm`,
+      productionDescription,
+      customerMaterialDetails ? `Material: ${customerMaterialDetails}` : "",
       finishingNames ? `Weiterverarbeitung: ${finishingNames}` : "",
     ].filter(Boolean)
 
@@ -1881,7 +1932,7 @@ function CalculatorPage({
                               suffix="Bg."
                             />
                             <ReadOnlyField
-                              label="Berechnet"
+                              label="Produktionsbogen"
                               value={`${item.calculatedSheets.toLocaleString("de-DE")} Bogen`}
                             />
                           </div>
@@ -1903,7 +1954,7 @@ function CalculatorPage({
                               suffix="Nutzen"
                             />
                             <ReadOnlyField
-                              label="Berechnet"
+                              label="Produktionsbogen"
                               value={`${item.calculatedSheets.toLocaleString("de-DE")} Bogen`}
                             />
                           </div>
@@ -1924,7 +1975,7 @@ function CalculatorPage({
                               suffix="S./Bg."
                             />
                             <ReadOnlyField
-                              label="Berechnet"
+                              label="Produktionsbogen"
                               value={`${item.calculatedSheets.toLocaleString("de-DE")} Bogen`}
                             />
                           </div>
@@ -1943,7 +1994,10 @@ function CalculatorPage({
                         </p>
                         <p>Preisart: {getPricingModeLabel(item.material.pricingMode)}</p>
                         <p>Preis/Bogen: {formatCurrency(item.pricePerSheet)}</p>
-                        <p>Bogen: {item.calculatedSheets.toLocaleString("de-DE")}</p>
+                        <p>Produktionsbogen: {item.calculatedSheets.toLocaleString("de-DE")}</p>
+                        <p>Zuschuss anteilig: {item.oversSheets.toLocaleString("de-DE")}</p>
+                        <p>Ausschuss: {item.wasteSheetsForMaterial.toLocaleString("de-DE")}</p>
+                        <p>Materialbogen gesamt: {item.totalMaterialSheets.toLocaleString("de-DE")}</p>
                         <p>Kosten: {formatCurrency(item.cost)}</p>
                       </div>
                     </div>
@@ -2218,7 +2272,7 @@ function CalculatorPage({
               <CostRow
                 key={item.id}
                 label={`Material ${index + 1}: ${item.label}`}
-                value={formatCurrency(item.cost)}
+                value={`${formatCurrency(item.cost)} · ${item.totalMaterialSheets.toLocaleString("de-DE")} Bg.`}
               />
             ))}
             <CostRow label="Material gesamt" value={formatCurrency(materialCost)} highlight />
@@ -7288,6 +7342,40 @@ function withLocalFinishingId(operationId: string): FinishingSelection {
     id: createLocalId(),
     operationId,
   }
+}
+
+function allocateProportionalInteger(total: number, weights: number[]) {
+  const safeTotal = Math.max(Math.round(total), 0)
+  const weightTotal = weights.reduce((sum, weight) => sum + Math.max(weight, 0), 0)
+
+  if (safeTotal <= 0 || weightTotal <= 0) {
+    return weights.map(() => 0)
+  }
+
+  const rawShares = weights.map((weight, index) => {
+    const safeWeight = Math.max(weight, 0)
+    const raw = (safeTotal * safeWeight) / weightTotal
+
+    return {
+      index,
+      floor: Math.floor(raw),
+      remainder: raw - Math.floor(raw),
+    }
+  })
+
+  let remaining = safeTotal - rawShares.reduce((sum, share) => sum + share.floor, 0)
+  const result = rawShares.map((share) => share.floor)
+
+  rawShares
+    .slice()
+    .sort((a, b) => b.remainder - a.remainder)
+    .forEach((share) => {
+      if (remaining <= 0) return
+      result[share.index] += 1
+      remaining -= 1
+    })
+
+  return result
 }
 
 function roundMoney(value: number) {

@@ -1032,7 +1032,7 @@ function MobileNav({
 function DashboardPage() {
   return (
     <div className="space-y-8">
-      <section className="overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
+      <section className="overflow-hidden rounded-3xl bg-slate-950 text-white shadow-xl shadow-slate-950/15">
         <div className="relative p-7 lg:p-10">
           <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-cyan-400/20 blur-3xl" />
           <div className="absolute bottom-0 right-24 h-56 w-56 rounded-full bg-fuchsia-500/20 blur-3xl" />
@@ -1241,11 +1241,6 @@ function CalculatorPage({
     allowRotation,
   })
 
-  const productionSheets = Math.ceil(safeQuantity / safeItemsPerSheet)
-  const sheetsBeforeWaste = productionSheets + Math.max(fixedOvers, 0)
-  const wasteSheets = Math.ceil(sheetsBeforeWaste * (wastePercent / 100))
-  const totalSheets = sheetsBeforeWaste + wasteSheets
-
   const selectedMaterialItems = materialSelections.map((selection) => {
     const material = materials.find((item) => item.id === selection.materialId) ?? materials[0]
     const calculatedSheets = calculateMaterialSheets(selection, safeQuantity)
@@ -1260,6 +1255,14 @@ function CalculatorPage({
       cost,
     }
   })
+
+  const productionSheets = Math.max(
+    selectedMaterialItems.reduce((sum, item) => sum + item.calculatedSheets, 0),
+    Math.ceil(safeQuantity / safeItemsPerSheet),
+  )
+  const sheetsBeforeWaste = productionSheets + Math.max(fixedOvers, 0)
+  const wasteSheets = Math.ceil(sheetsBeforeWaste * (wastePercent / 100))
+  const totalSheets = sheetsBeforeWaste + wasteSheets
 
   const materialCost = selectedMaterialItems.reduce((sum, item) => sum + item.cost, 0)
   const clickSetup = getClicksForColorMode(colorMode)
@@ -1352,19 +1355,25 @@ function CalculatorPage({
   const profit = sellingPrice - totalCost
 
   const tiers = [250, 500, 1000, 2500, 5000].map((tierQuantity) => {
-    const tierProductionSheets = Math.ceil(tierQuantity / safeItemsPerSheet)
+    const tierScaleFactor = tierQuantity / safeQuantity
+
+    const tierMaterialSheets = materialSelections.map((selection) =>
+      selection.calculationMode === "manual"
+        ? Math.ceil(Math.max(selection.manualSheets, 0) * tierScaleFactor)
+        : calculateMaterialSheets(selection, tierQuantity),
+    )
+    const tierProductionSheets = Math.max(
+      tierMaterialSheets.reduce((sum, sheets) => sum + sheets, 0),
+      Math.ceil(tierQuantity / safeItemsPerSheet),
+    )
     const tierSheetsBeforeWaste = tierProductionSheets + Math.max(fixedOvers, 0)
     const tierWasteSheets = Math.ceil(tierSheetsBeforeWaste * (wastePercent / 100))
     const tierTotalSheets = tierSheetsBeforeWaste + tierWasteSheets
-    const tierScaleFactor = tierQuantity / safeQuantity
 
-    const tierMaterial = materialSelections.reduce((sum, selection) => {
+    const tierMaterial = materialSelections.reduce((sum, selection, index) => {
       const material = materials.find((item) => item.id === selection.materialId) ?? materials[0]
       const pricePerSheet = calculateMaterialPricePerSheet(material)
-      const tierSheets =
-        selection.calculationMode === "manual"
-          ? Math.ceil(Math.max(selection.manualSheets, 0) * tierScaleFactor)
-          : calculateMaterialSheets(selection, tierQuantity)
+      const tierSheets = tierMaterialSheets[index] ?? 0
 
       return sum + tierSheets * pricePerSheet
     }, 0)
@@ -1609,13 +1618,13 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V52
+                Kalkulation V58
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
-                Druckprodukt kalkulieren
+                Kalkulations-Cockpit
               </h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-                Kalkuliere Druckprodukte mit passendem Maschinen-Kostenmodell: Klickkosten nur bei Klickmaschinen, Riso-Tinte oder Roland-Druck/Schnitt.
+                Produkt, Nutzen, Material, Maschine und Preis in einer ruhigeren Arbeitsansicht. Die Preisbox bleibt rechts sichtbar.
               </p>
             </div>
 
@@ -1630,13 +1639,42 @@ function CalculatorPage({
         </div>
       </section>
 
-      <section className="grid gap-6 2xl:grid-cols-[1.45fr_0.85fr_0.85fr]">
-        <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-          <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-yellow-300" />
-          <h3 className="mt-5 text-xl font-black">Eingaben</h3>
-          <p className="mt-1 text-sm font-medium text-slate-500">
-            Produkttyp, Materialpositionen, Maschine und Weiterverarbeitung.
-          </p>
+      <section className="grid gap-4 md:grid-cols-2 2xl:grid-cols-4">
+        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Produkt</p>
+          <p className="mt-2 truncate text-lg font-black" title={productName}>{productName}</p>
+          <p className="mt-1 text-sm font-bold text-slate-500">{safeQuantity.toLocaleString("de-DE")} Stück · {finalWidthMm} × {finalHeightMm} mm</p>
+        </div>
+
+        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Nutzen</p>
+          <p className="mt-2 text-lg font-black">{safeItemsPerSheet} pro Bogen</p>
+          <p className="mt-1 text-sm font-bold text-slate-500">Auto: {impositionResult.best.total} · {impositionResult.best.orientation}</p>
+        </div>
+
+        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+          <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Maschine</p>
+          <p className="mt-2 truncate text-lg font-black" title={selectedMachine.name}>{selectedMachine.name}</p>
+          <p className="mt-1 text-sm font-bold text-slate-500">{getMachineCostModelLabel(machineCostModel)}</p>
+        </div>
+
+        <div className="rounded-3xl border border-slate-200 bg-slate-950 p-5 text-white shadow-sm">
+          <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Verkauf netto</p>
+          <p className="mt-2 text-2xl font-black">{formatCurrency(sellingPrice)}</p>
+          <p className="mt-1 text-sm font-bold text-slate-400">{formatCurrency(unitPrice)} / Stück</p>
+        </div>
+      </section>
+
+      <section className="grid gap-6 xl:grid-cols-[minmax(0,1fr)_26rem] xl:items-start">
+        <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="flex flex-col gap-3 border-b border-slate-100 pb-5 md:flex-row md:items-end md:justify-between">
+            <div>
+              <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Arbeitsbereich</p>
+              <h3 className="mt-2 text-2xl font-black tracking-tight">Eingaben & Produktion</h3>
+              <p className="mt-1 text-sm font-medium text-slate-500">Vorlage, Nutzen, Material, Maschine und Weiterverarbeitung.</p>
+            </div>
+            <span className="rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-600">Live-Kalkulation</span>
+          </div>
 
           <div className="mt-6 space-y-5">
             <div className="rounded-3xl bg-slate-50 p-5">
@@ -2160,7 +2198,8 @@ function CalculatorPage({
           </div>
         </div>
 
-        <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="space-y-6 xl:sticky xl:top-28 xl:self-start">
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="h-2 w-24 rounded-full bg-gradient-to-r from-yellow-300 to-orange-400" />
           <h3 className="mt-5 text-xl font-black">Kostenübersicht</h3>
           <p className="mt-1 text-sm font-medium text-slate-500">Interne Kosten für {productName}.</p>
@@ -2213,7 +2252,7 @@ function CalculatorPage({
           </div>
         </div>
 
-        <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+          <div className="rounded-3xl border border-slate-200 bg-white p-6 shadow-sm">
           <div className="h-2 w-24 rounded-full bg-gradient-to-r from-emerald-400 to-green-600" />
           <h3 className="mt-5 text-xl font-black">Verkauf</h3>
           <p className="mt-1 text-sm font-medium text-slate-500">Netto-Angebotspreis und Ertrag.</p>
@@ -2281,6 +2320,7 @@ function CalculatorPage({
                 </div>
               ))}
             </div>
+          </div>
           </div>
         </div>
       </section>

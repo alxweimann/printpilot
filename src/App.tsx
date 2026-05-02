@@ -5606,7 +5606,7 @@ function CustomersPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-emerald-300">
-                Kundenverwaltung V2
+                Kundenverwaltung V3
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 Kundenstamm
@@ -5795,92 +5795,112 @@ function CustomersPage({
         </div>
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-2">
-        {filteredCustomers.map((customer) => {
-          const statusClass =
-            customer.status === "Aktiv"
-              ? "bg-emerald-100 text-emerald-700"
-              : customer.status === "Interessent"
-                ? "bg-yellow-100 text-yellow-700"
-                : "bg-slate-100 text-slate-500";
+      <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+        <div className="hidden grid-cols-[0.8fr_1.45fr_1fr_1fr_1.25fr_0.7fr] gap-3 border-b border-slate-200 bg-slate-50 px-5 py-3 text-xs font-extrabold uppercase tracking-wide text-slate-400 md:grid">
+          <span>Kd.-Nr.</span>
+          <span>Kunde</span>
+          <span>Ansprechpartner</span>
+          <span>Ort</span>
+          <span>E-Mail</span>
+          <span>Status</span>
+        </div>
 
-          return (
-            <article
-              key={customer.id}
-              className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm"
-            >
-              <div
-                className={`h-2 bg-gradient-to-r ${customer.status === "Aktiv" ? "from-emerald-400 via-cyan-400 to-sky-500" : customer.status === "Interessent" ? "from-yellow-300 via-orange-400 to-rose-500" : "from-slate-300 to-slate-500"}`}
-              />
-              <div className="p-6">
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                  <div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
-                        {customer.customerNumber}
-                      </span>
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-black ${statusClass}`}
-                      >
-                        {customer.status}
-                      </span>
-                    </div>
-                    <h3 className="mt-4 text-2xl font-black tracking-tight">
+        <div className="divide-y divide-slate-100">
+          {filteredCustomers.map((customer) => {
+            const statusClass =
+              customer.status === "Aktiv"
+                ? "bg-emerald-100 text-emerald-700"
+                : customer.status === "Interessent"
+                  ? "bg-yellow-100 text-yellow-700"
+                  : "bg-slate-100 text-slate-500";
+
+            const address =
+              [
+                customer.street,
+                [customer.zip, customer.city].filter(Boolean).join(" "),
+              ]
+                .filter(Boolean)
+                .join(", ") || "—";
+
+            return (
+              <details
+                key={customer.id}
+                className="group bg-white open:bg-slate-50/60 [&>summary::-webkit-details-marker]:hidden"
+              >
+                <summary className="grid cursor-pointer gap-3 px-5 py-4 text-sm transition hover:bg-slate-50 md:grid-cols-[0.8fr_1.45fr_1fr_1fr_1.25fr_0.7fr] md:items-center">
+                  <span className="font-black text-slate-950">
+                    {customer.customerNumber}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate font-black text-slate-950">
                       {customer.company}
-                    </h3>
-                    <p className="mt-2 text-sm font-bold text-slate-500">
-                      Ansprechpartner: {customer.contactPerson || "—"}
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-2 sm:flex-row">
-                    <button
-                      type="button"
-                      onClick={() => openEditCustomerForm(customer)}
-                      className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white transition hover:-translate-y-0.5"
+                    </span>
+                    <span className="mt-1 block text-xs font-bold text-slate-400 md:hidden">
+                      {address}
+                    </span>
+                  </span>
+                  <span className="truncate font-bold text-slate-600">
+                    {customer.contactPerson || "—"}
+                  </span>
+                  <span className="truncate font-bold text-slate-600">
+                    {customer.city || "—"}
+                  </span>
+                  <span className="truncate font-bold text-slate-600">
+                    {customer.email || "—"}
+                  </span>
+                  <span>
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-black ${statusClass}`}
                     >
-                      Bearbeiten
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => deleteCustomer(customer.id)}
-                      disabled={customers.length <= 1}
-                      className={`rounded-2xl px-4 py-3 text-sm font-black transition ${customers.length <= 1 ? "cursor-not-allowed bg-slate-100 text-slate-400" : "bg-rose-100 text-rose-700 hover:-translate-y-0.5"}`}
-                    >
-                      Löschen
-                    </button>
+                      {customer.status}
+                    </span>
+                  </span>
+                </summary>
+
+                <div className="border-t border-slate-100 px-5 py-5">
+                  <div className="grid gap-4 lg:grid-cols-[1fr_1fr_auto] lg:items-start">
+                    <div className="grid gap-3 sm:grid-cols-2">
+                      <InfoCard label="Adresse" value={address} />
+                      <InfoCard label="Telefon" value={customer.phone || "—"} />
+                      <InfoCard label="E-Mail" value={customer.email || "—"} />
+                      <InfoCard
+                        label="Kundennummer"
+                        value={customer.customerNumber}
+                      />
+                    </div>
+
+                    <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-200">
+                      <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                        Notiz
+                      </p>
+                      <p className="mt-3 text-sm font-medium leading-6 text-slate-600">
+                        {customer.notes || "Keine Notiz hinterlegt."}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-2 sm:flex-row lg:flex-col">
+                      <button
+                        type="button"
+                        onClick={() => openEditCustomerForm(customer)}
+                        className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white transition hover:-translate-y-0.5"
+                      >
+                        Bearbeiten
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => deleteCustomer(customer.id)}
+                        disabled={customers.length <= 1}
+                        className={`rounded-2xl px-4 py-3 text-sm font-black transition ${customers.length <= 1 ? "cursor-not-allowed bg-slate-100 text-slate-400" : "bg-rose-100 text-rose-700 hover:-translate-y-0.5"}`}
+                      >
+                        Löschen
+                      </button>
+                    </div>
                   </div>
                 </div>
-                <div className="mt-6 grid gap-3 sm:grid-cols-2">
-                  <InfoCard
-                    label="Adresse"
-                    value={
-                      [
-                        customer.street,
-                        [customer.zip, customer.city].filter(Boolean).join(" "),
-                      ]
-                        .filter(Boolean)
-                        .join(", ") || "—"
-                    }
-                  />
-                  <InfoCard label="E-Mail" value={customer.email || "—"} />
-                  <InfoCard label="Telefon" value={customer.phone || "—"} />
-                  <InfoCard
-                    label="Kundennummer"
-                    value={customer.customerNumber}
-                  />
-                </div>
-                <div className="mt-6 rounded-3xl bg-slate-50 p-5">
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                    Notiz
-                  </p>
-                  <p className="mt-3 text-sm font-medium leading-6 text-slate-600">
-                    {customer.notes || "Keine Notiz hinterlegt."}
-                  </p>
-                </div>
-              </div>
-            </article>
-          );
-        })}
+              </details>
+            );
+          })}
+        </div>
       </section>
 
       {filteredCustomers.length === 0 && (
@@ -7014,7 +7034,7 @@ function ServicesPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-indigo-300">
-                Leistungsstamm V1
+                Leistungsstamm V2
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 Artikel und Leistungen
@@ -7206,79 +7226,109 @@ function ServicesPage({
         </div>
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-2">
-        {filteredServiceItems.map((item) => {
-          const statusClass =
-            item.status === "Aktiv"
-              ? "bg-emerald-100 text-emerald-700"
-              : "bg-slate-100 text-slate-500";
+      <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+        <div className="hidden grid-cols-[0.85fr_1.55fr_1fr_0.7fr_0.8fr_0.6fr_0.7fr] gap-3 border-b border-slate-200 bg-slate-50 px-5 py-3 text-xs font-extrabold uppercase tracking-wide text-slate-400 md:grid">
+          <span>Art.-Nr.</span>
+          <span>Bezeichnung</span>
+          <span>Kategorie</span>
+          <span>Einheit</span>
+          <span>Preis</span>
+          <span>MwSt.</span>
+          <span>Status</span>
+        </div>
 
-          return (
-            <article
-              key={item.id}
-              className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm"
-            >
-              <div
-                className={`h-2 bg-gradient-to-r ${item.status === "Aktiv" ? "from-indigo-500 via-cyan-400 to-emerald-400" : "from-slate-300 to-slate-500"}`}
-              />
-              <div className="p-6">
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                  <div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
-                        {item.itemNumber}
-                      </span>
-                      <span className="rounded-full bg-indigo-100 px-3 py-1 text-xs font-black text-indigo-700">
-                        {item.category}
-                      </span>
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-black ${statusClass}`}
-                      >
-                        {item.status}
-                      </span>
-                    </div>
-                    <h3 className="mt-4 text-2xl font-black tracking-tight">
+        <div className="divide-y divide-slate-100">
+          {filteredServiceItems.map((item) => {
+            const statusClass =
+              item.status === "Aktiv"
+                ? "bg-emerald-100 text-emerald-700"
+                : "bg-slate-100 text-slate-500";
+
+            return (
+              <details
+                key={item.id}
+                className="group bg-white open:bg-slate-50/60 [&>summary::-webkit-details-marker]:hidden"
+              >
+                <summary className="grid cursor-pointer gap-3 px-5 py-4 text-sm transition hover:bg-slate-50 md:grid-cols-[0.85fr_1.55fr_1fr_0.7fr_0.8fr_0.6fr_0.7fr] md:items-center">
+                  <span className="font-black text-slate-950">
+                    {item.itemNumber}
+                  </span>
+                  <span className="min-w-0">
+                    <span className="block truncate font-black text-slate-950">
                       {item.title}
-                    </h3>
-                    <p className="mt-2 text-sm font-bold leading-6 text-slate-500">
-                      {item.description || "Keine Beschreibung hinterlegt."}
-                    </p>
-                  </div>
-                  <div className="flex flex-col gap-2 sm:flex-row">
-                    <button
-                      type="button"
-                      onClick={() => openEditServiceForm(item)}
-                      className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white transition hover:-translate-y-0.5"
+                    </span>
+                    <span className="mt-1 block truncate text-xs font-bold text-slate-400 md:hidden">
+                      {item.category} · {formatCurrency(item.unitPrice)}
+                    </span>
+                  </span>
+                  <span className="truncate font-bold text-slate-600">
+                    {item.category || "—"}
+                  </span>
+                  <span className="font-bold text-slate-600">
+                    {item.unit || "—"}
+                  </span>
+                  <span className="font-black text-slate-950">
+                    {formatCurrency(item.unitPrice)}
+                  </span>
+                  <span className="font-bold text-slate-600">
+                    {formatNumber(item.vatRate, 0)} %
+                  </span>
+                  <span>
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-black ${statusClass}`}
                     >
-                      Bearbeiten
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => deleteServiceItem(item.id)}
-                      disabled={serviceItems.length <= 1}
-                      className={`rounded-2xl px-4 py-3 text-sm font-black transition ${serviceItems.length <= 1 ? "cursor-not-allowed bg-slate-100 text-slate-400" : "bg-rose-100 text-rose-700 hover:-translate-y-0.5"}`}
-                    >
-                      Löschen
-                    </button>
-                  </div>
-                </div>
+                      {item.status}
+                    </span>
+                  </span>
+                </summary>
 
-                <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
-                  <InfoCard label="Einheit" value={item.unit || "—"} />
-                  <InfoCard
-                    label="Einzelpreis"
-                    value={formatCurrency(item.unitPrice)}
-                  />
-                  <InfoCard
-                    label="MwSt."
-                    value={`${formatNumber(item.vatRate, 0)} %`}
-                  />
-                  <InfoCard label="Kategorie" value={item.category || "—"} />
+                <div className="border-t border-slate-100 px-5 py-5">
+                  <div className="grid gap-4 lg:grid-cols-[1fr_1fr_auto] lg:items-start">
+                    <div className="grid gap-3 sm:grid-cols-2 xl:grid-cols-4">
+                      <InfoCard label="Einheit" value={item.unit || "—"} />
+                      <InfoCard
+                        label="Einzelpreis"
+                        value={formatCurrency(item.unitPrice)}
+                      />
+                      <InfoCard
+                        label="MwSt."
+                        value={`${formatNumber(item.vatRate, 0)} %`}
+                      />
+                      <InfoCard label="Kategorie" value={item.category || "—"} />
+                    </div>
+
+                    <div className="rounded-2xl bg-white p-4 ring-1 ring-slate-200">
+                      <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                        Beschreibung
+                      </p>
+                      <p className="mt-3 text-sm font-medium leading-6 text-slate-600">
+                        {item.description || "Keine Beschreibung hinterlegt."}
+                      </p>
+                    </div>
+
+                    <div className="flex flex-col gap-2 sm:flex-row lg:flex-col">
+                      <button
+                        type="button"
+                        onClick={() => openEditServiceForm(item)}
+                        className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white transition hover:-translate-y-0.5"
+                      >
+                        Bearbeiten
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => deleteServiceItem(item.id)}
+                        disabled={serviceItems.length <= 1}
+                        className={`rounded-2xl px-4 py-3 text-sm font-black transition ${serviceItems.length <= 1 ? "cursor-not-allowed bg-slate-100 text-slate-400" : "bg-rose-100 text-rose-700 hover:-translate-y-0.5"}`}
+                      >
+                        Löschen
+                      </button>
+                    </div>
+                  </div>
                 </div>
-              </div>
-            </article>
-          );
-        })}
+              </details>
+            );
+          })}
+        </div>
       </section>
 
       {filteredServiceItems.length === 0 && (

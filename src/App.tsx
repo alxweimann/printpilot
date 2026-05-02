@@ -2607,7 +2607,7 @@ function CalculatorPage({
                 Produkt- und Jobstruktur
               </h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-                Produktdaten, Druckteile, Nutzen, Maschine, Weiterverarbeitung und Zuschläge sind jetzt als klare Eingabemaske aufgebaut.
+                Produktdaten, Druckteile, Nutzen, Maschine, Weiterverarbeitung und Zuschläge sind jetzt als klare, kompaktere Eingabemaske aufgebaut.
                 Erst die Pflichtdaten, danach die Produktionsdetails, Details nur dort wo sie gebraucht werden.
               </p>
             </div>
@@ -2693,7 +2693,7 @@ function CalculatorPage({
                 Eingabemaske
               </h3>
               <p className="mt-1 text-xs font-semibold text-slate-500">
-                Klare Eingabeschritte: Auftrag, Produkt, Druckteile, Nutzen, Maschine, Weiterverarbeitung und Zuschläge.
+                Geführter Workflow: Alle Eingabeschritte 1–7 sind einklappbar. Schritt 1 startet geöffnet, danach gehst du die Kalkulation sauber Abschnitt für Abschnitt durch.
               </p>
             </div>
             <span className="rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-600">
@@ -2728,6 +2728,17 @@ function CalculatorPage({
               ))}
             </div>
 
+            <details open className="group rounded-3xl border border-cyan-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-cyan-400 bg-cyan-50 px-4 py-4 transition hover:bg-cyan-100/70">
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-cyan-700">1 · Auftrag / Vorlage</p>
+                  <p className="mt-1 text-sm font-black text-slate-950">{productName || "Neues Produkt"}</p>
+                  <p className="mt-1 text-xs font-bold text-cyan-900">Vorlage wählen, Produktname prüfen und danach mit Auflage weitermachen.</p>
+                </div>
+                <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-cyan-700 shadow-sm ring-1 ring-cyan-100 group-open:hidden">Aufklappen</span>
+                <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-black text-cyan-700 shadow-sm ring-1 ring-cyan-100 group-open:inline-flex">Einklappen</span>
+              </summary>
+              <div className="px-0 pb-0">
             <div className="rounded-3xl border border-cyan-200 bg-cyan-50 p-4">
               <p className="text-xs font-extrabold uppercase tracking-wide text-cyan-700">
                 1 · Auftrag / Vorlage
@@ -2762,7 +2773,20 @@ function CalculatorPage({
                 </button>
               </div>
             </div>
+              </div>
+            </details>
 
+            <details className="group rounded-3xl border border-fuchsia-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-fuchsia-500 bg-fuchsia-50 px-4 py-4 transition hover:bg-fuchsia-100/70">
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-fuchsia-700">2 · Auflage</p>
+                  <p className="mt-1 text-sm font-black text-slate-950">{safeQuantity.toLocaleString("de-DE")} Stück · {safeItemsPerSheet} Nutzen / Bogen</p>
+                  <p className="mt-1 text-xs font-bold text-fuchsia-900">Auflage, Format und automatische Nutzenbasis prüfen.</p>
+                </div>
+                <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-fuchsia-700 shadow-sm ring-1 ring-fuchsia-100 group-open:hidden">Aufklappen</span>
+                <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-black text-fuchsia-700 shadow-sm ring-1 ring-fuchsia-100 group-open:inline-flex">Einklappen</span>
+              </summary>
+              <div className="px-0 pb-0">
             <div className="rounded-3xl border border-fuchsia-200 bg-fuchsia-50 p-4 shadow-sm">
               <p className="text-xs font-extrabold uppercase tracking-wide text-fuchsia-700">
                 2 · Auflage
@@ -3054,8 +3078,21 @@ function CalculatorPage({
               </div>
             </div>
             </div>
+              </div>
+            </details>
 
             {productType === "Broschüre" && (
+              <details className="group rounded-3xl border border-yellow-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
+                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-yellow-400 bg-yellow-50 px-4 py-4 transition hover:bg-yellow-100/70">
+                  <div>
+                    <p className="text-xs font-extrabold uppercase tracking-wide text-yellow-700">3 · Produktdaten / Broschüre</p>
+                    <p className="mt-1 text-sm font-black text-slate-950">{finalWidthMm} × {finalHeightMm} mm · {materialSelections.find((selection) => selection.label.toLowerCase().includes("inhalt"))?.pages ?? 32} Inhaltsseiten</p>
+                    <p className="mt-1 text-xs font-bold text-yellow-900">Format, Inhaltsseiten, Umschlag und Papiere prüfen.</p>
+                  </div>
+                  <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-yellow-700 shadow-sm ring-1 ring-yellow-100 group-open:hidden">Aufklappen</span>
+                  <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-black text-yellow-700 shadow-sm ring-1 ring-yellow-100 group-open:inline-flex">Einklappen</span>
+                </summary>
+                <div className="px-0 pb-0">
               <div className="rounded-3xl border border-yellow-200 bg-yellow-50 p-4 shadow-sm">
                 <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                   <div>
@@ -3197,14 +3234,27 @@ function CalculatorPage({
                   Im Bund wird kein Beschnitt gerechnet, außen bleibt der Beschnitt aktiv.
                 </p>
               </div>
+                </div>
+              </details>
             )}
 
 
+            <details className="group rounded-3xl border border-emerald-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-emerald-400 bg-emerald-50 px-4 py-4 transition hover:bg-emerald-100/70">
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-emerald-700">4 · Druckteile / Produktstruktur V101</p>
+                  <p className="mt-1 text-sm font-black text-slate-950">{selectedMaterialItems.length} Druckteil(e) · {formatCurrency(materialCost)}</p>
+                  <p className="mt-1 text-xs font-bold text-emerald-900">Inhalt, Umschlag, Beileger und Zusatzbogen bei Bedarf bearbeiten.</p>
+                </div>
+                <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-emerald-700 shadow-sm ring-1 ring-emerald-100 group-open:hidden">Aufklappen</span>
+                <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-black text-emerald-700 shadow-sm ring-1 ring-emerald-100 group-open:inline-flex">Einklappen</span>
+              </summary>
+              <div className="px-0 pb-0">
             <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-emerald-700">
-                    4 · Druckteile / Produktstruktur V99
+                    4 · Druckteile / Produktstruktur V101
                   </p>
                   <h4 className="mt-2 text-lg font-black text-slate-950">
                     Inhalt, Umschlag und Zusatzteile bearbeiten
@@ -3536,7 +3586,20 @@ function CalculatorPage({
                 </p>
               </div>
             </div>
+              </div>
+            </details>
 
+            <details className="group rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-sky-500 bg-sky-50 px-4 py-4 transition hover:bg-sky-100/70">
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-sky-700">5 · Maschine / Druck</p>
+                  <p className="mt-1 text-sm font-black text-slate-950">{selectedMachine.name} · {getMachineCostModelLabel(machineCostModel)}</p>
+                  <p className="mt-1 text-xs font-bold text-sky-900">Aufklappen, wenn Maschine, Farbmodus oder Produktionsparameter geändert werden sollen.</p>
+                </div>
+                <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-sky-700 shadow-sm ring-1 ring-sky-100 group-open:hidden">Aufklappen</span>
+                <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-black text-sky-700 shadow-sm ring-1 ring-sky-100 group-open:inline-flex">Einklappen</span>
+              </summary>
+              <div className="px-0 pb-0">
             <div className="rounded-3xl border border-sky-200 bg-sky-50 p-4 shadow-sm">
               <p className="text-xs font-extrabold uppercase tracking-wide text-sky-700">
                 5 · Maschine / Druck
@@ -3688,7 +3751,20 @@ function CalculatorPage({
                 </div>
               )}
             </div>
+              </div>
+            </details>
 
+            <details className="group rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-lime-400 bg-lime-50 px-4 py-4 transition hover:bg-lime-100/70">
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-lime-700">6 · Weiterverarbeitung</p>
+                  <p className="mt-1 text-sm font-black text-slate-950">{finishingSelections.length} Schritt(e) · {formatCurrency(calculatedFinishingCost)}</p>
+                  <p className="mt-1 text-xs font-bold text-lime-900">Aufklappen, um Schneiden, Falzen, Rillen, Heften oder Handarbeit zu ändern.</p>
+                </div>
+                <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-lime-700 shadow-sm ring-1 ring-lime-100 group-open:hidden">Aufklappen</span>
+                <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-black text-lime-700 shadow-sm ring-1 ring-lime-100 group-open:inline-flex">Einklappen</span>
+              </summary>
+              <div className="px-0 pb-0">
             <div className="rounded-3xl border border-lime-200 bg-lime-50 p-4 shadow-sm">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
@@ -3810,7 +3886,20 @@ function CalculatorPage({
                 </p>
               </div>
             </div>
+              </div>
+            </details>
 
+            <details className="group rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
+              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-violet-500 bg-violet-50 px-4 py-4 transition hover:bg-violet-100/70">
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-violet-700">7 · Zuschläge / Preislogik</p>
+                  <p className="mt-1 text-sm font-black text-slate-950">Gemeinkosten {overheadPercent}% · Marge {marginPercent}%</p>
+                  <p className="mt-1 text-xs font-bold text-violet-900">Aufklappen, wenn Zuschuss, Ausschuss, Rüstzeit, Gemeinkosten oder Marge geändert werden sollen.</p>
+                </div>
+                <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-violet-700 shadow-sm ring-1 ring-violet-100 group-open:hidden">Aufklappen</span>
+                <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-black text-violet-700 shadow-sm ring-1 ring-violet-100 group-open:inline-flex">Einklappen</span>
+              </summary>
+              <div className="px-0 pb-0">
             <div className="rounded-3xl border border-violet-200 bg-violet-50 p-4 shadow-sm">
               <p className="text-xs font-extrabold uppercase tracking-wide text-violet-700">
                 7 · Zuschläge / Preislogik
@@ -3858,6 +3947,8 @@ function CalculatorPage({
                 />
               </div>
             </div>
+              </div>
+            </details>
           </div>
         </div>
 

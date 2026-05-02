@@ -2682,7 +2682,7 @@ function CalculatorPage({
         </div>
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-[minmax(0,1fr)_25rem] xl:items-start">
+      <section className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_23rem] 2xl:grid-cols-[minmax(0,1.55fr)_24rem] xl:items-start">
         <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
           <div className="flex flex-col gap-3 border-b border-slate-100 pb-5 md:flex-row md:items-end md:justify-between">
             <div>
@@ -3242,9 +3242,9 @@ function CalculatorPage({
             <details className="group rounded-3xl border border-emerald-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-emerald-400 bg-emerald-50 px-4 py-4 transition hover:bg-emerald-100/70">
                 <div>
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-emerald-700">4 · Druckteile / Produktstruktur V101</p>
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-emerald-700">4 · Druckteile / Produktstruktur V103</p>
                   <p className="mt-1 text-sm font-black text-slate-950">{selectedMaterialItems.length} Druckteil(e) · {formatCurrency(materialCost)}</p>
-                  <p className="mt-1 text-xs font-bold text-emerald-900">Inhalt, Umschlag, Beileger und Zusatzbogen bei Bedarf bearbeiten.</p>
+                  <p className="mt-1 text-xs font-bold text-emerald-900">Kompakte Übersicht, Details per Aufklappen.</p>
                 </div>
                 <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-emerald-700 shadow-sm ring-1 ring-emerald-100 group-open:hidden">Aufklappen</span>
                 <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-black text-emerald-700 shadow-sm ring-1 ring-emerald-100 group-open:inline-flex">Einklappen</span>
@@ -3254,13 +3254,13 @@ function CalculatorPage({
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-emerald-700">
-                    4 · Druckteile / Produktstruktur V101
+                    4 · Druckteile / Produktstruktur V103
                   </p>
                   <h4 className="mt-2 text-lg font-black text-slate-950">
-                    Inhalt, Umschlag und Zusatzteile bearbeiten
+                    Kompakte Druckteilkarten
                   </h4>
                   <p className="mt-1 text-sm font-bold text-emerald-900">
-                    Nach Format, Seiten und Papieren werden die einzelnen Druckteile geprüft, bearbeitet, dupliziert und gelöscht. Seiten je Bogen und Umschlagseiten werden automatisch abgesichert.
+                    Die Druckteile werden jetzt kompakt angezeigt. Details wie Material, Druckart, Nutzen, Zuschuss und Kostenlogik öffnest du nur bei Bedarf.
                   </p>
                 </div>
 
@@ -3278,23 +3278,8 @@ function CalculatorPage({
                 </div>
               </div>
 
-              <div className="mt-4 grid gap-3 md:grid-cols-4">
-                <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Druckteile</p>
-                  <p className="mt-2 text-2xl font-black text-slate-950">{selectedMaterialItems.length}</p>
-                </div>
-                <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Produktionsbogen</p>
-                  <p className="mt-2 text-2xl font-black text-slate-950">{totalSheets.toLocaleString("de-DE")}</p>
-                </div>
-                <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Materialkosten</p>
-                  <p className="mt-2 text-2xl font-black text-slate-950">{formatCurrency(materialCost)}</p>
-                </div>
-                <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Status</p>
-                  <p className="mt-2 text-sm font-black text-emerald-700">Bearbeitung aktiv</p>
-                </div>
+              <div className="mt-4 rounded-2xl bg-white px-4 py-3 text-sm font-bold text-emerald-900 shadow-sm ring-1 ring-emerald-100">
+                Übersicht: {selectedMaterialItems.length} Druckteil(e) · {totalSheets.toLocaleString("de-DE")} Produktionsbogen · {formatCurrency(materialCost)} Materialkosten
               </div>
 
               <div className="mt-4 space-y-3">
@@ -3308,14 +3293,15 @@ function CalculatorPage({
                     item.material.heightMm,
                     item.material.grammage,
                   );
+                  const colorSummary = getPrintPartColorSummary(item);
+                  const quantitySummary = getPrintPartQuantitySummary(item);
 
                   return (
                     <details
                       key={item.id}
-                      open={index === 0}
                       className="group overflow-hidden rounded-2xl border border-slate-200 bg-white"
                     >
-                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+                      <summary className="grid cursor-pointer list-none gap-3 px-4 py-3 transition hover:bg-slate-50 xl:grid-cols-[minmax(180px,1.1fr)_minmax(0,2.8fr)_auto] xl:items-center [&::-webkit-details-marker]:hidden">
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
@@ -3325,16 +3311,22 @@ function CalculatorPage({
                               {item.label || `Material ${index + 1}`}
                             </p>
                           </div>
-                          <p className="mt-1 truncate text-xs font-bold text-slate-500">
-                            {item.material.name} · {item.calculatedSheets.toLocaleString("de-DE")} Produktionsbogen · {item.totalMaterialSheets.toLocaleString("de-DE")} Gesamtbogen
-                          </p>
                         </div>
-                        <div className="flex shrink-0 items-center gap-3">
-                          <span className="hidden rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700 md:inline-flex">
-                            Bearbeiten
+
+                        <div className="flex flex-wrap gap-1.5 text-[11px] font-black leading-tight text-slate-600">
+                          <span className="whitespace-nowrap rounded-full bg-slate-50 px-2.5 py-1 ring-1 ring-slate-200">{quantitySummary}</span>
+                          <span className="whitespace-nowrap rounded-full bg-slate-50 px-2.5 py-1 ring-1 ring-slate-200">{colorSummary}</span>
+                          <span className="whitespace-nowrap rounded-full bg-slate-50 px-2.5 py-1 ring-1 ring-slate-200">{item.material.grammage} g</span>
+                          <span className="whitespace-nowrap rounded-full bg-slate-50 px-2.5 py-1 ring-1 ring-slate-200">{item.totalMaterialSheets.toLocaleString("de-DE")} Bg.</span>
+                          <span className="whitespace-nowrap rounded-full bg-emerald-50 px-2.5 py-1 text-emerald-800 ring-1 ring-emerald-100">{formatCurrency(item.cost)}</span>
+                        </div>
+
+                        <div className="flex shrink-0 items-center justify-end gap-3">
+                          <span className="hidden rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700 md:inline-flex group-open:hidden">
+                            Details
                           </span>
-                          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-700">
-                            {formatCurrency(item.cost)}
+                          <span className="hidden rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700 group-open:md:inline-flex">
+                            Schließen
                           </span>
                           <span className="text-xs font-black text-slate-400 transition group-open:rotate-180">
                             ▼
@@ -3577,13 +3569,9 @@ function CalculatorPage({
                 })}
               </div>
 
-              <div className="mt-5 rounded-3xl bg-slate-950 p-5 text-white">
-                <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Summe Material
-                </p>
-                <p className="mt-2 text-3xl font-black">
-                  {formatCurrency(materialCost)}
-                </p>
+              <div className="mt-4 flex items-center justify-between rounded-2xl bg-slate-950 px-4 py-3 text-white">
+                <p className="text-sm font-black">Summe Material</p>
+                <p className="text-xl font-black">{formatCurrency(materialCost)}</p>
               </div>
             </div>
               </div>
@@ -11381,6 +11369,33 @@ function CostRow({
       <span className="text-sm font-black">{value}</span>
     </div>
   );
+}
+
+function getPrintPartColorShort(mode?: string) {
+  if (!mode || mode === "unbedruckt") return "0";
+  if (mode === "4-farbig") return "4";
+  if (mode === "schwarz") return "1";
+  if (mode === "Sonderfarbe") return "SF";
+  return mode;
+}
+
+function getPrintPartColorSummary(item: { printSideMode?: PrintSideMode; frontColorMode?: string; backColorMode?: string }) {
+  if (item.printSideMode === "materialOnly") return "nur Material";
+  const front = getPrintPartColorShort(item.frontColorMode);
+  const back = item.printSideMode === "duplex" ? getPrintPartColorShort(item.backColorMode) : "0";
+  return `${front}/${back}`;
+}
+
+function getPrintPartQuantitySummary(item: { calculationMode: MaterialCalculationMode; pages: number; factorPerCopy: number; manualSheets: number; pagesPerSheet: number; calculatedSheets: number }) {
+  if (item.calculationMode === "pages") {
+    return `${item.pages.toLocaleString("de-DE")} S. · ${item.pagesPerSheet.toLocaleString("de-DE")} S./Bg.`;
+  }
+
+  if (item.calculationMode === "perCopy") {
+    return `${formatNumber(item.factorPerCopy, 2)}× je Ex.`;
+  }
+
+  return `${item.manualSheets.toLocaleString("de-DE")} Bg. manuell`;
 }
 
 function getMachineCostModel(machineName: string): MachineCostModel {

@@ -1130,9 +1130,9 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V48</p>
+              <p className="text-sm font-black">PrintPilot V87</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
-                Produkttypen und Kalkulationsvorlagen sind jetzt Stammdaten.
+                Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
             </div>
           </div>
@@ -1244,6 +1244,22 @@ function App() {
                 setDocumentTemplateSettings={setDocumentTemplateSettings}
                 numberCircleSettings={numberCircleSettings}
                 setNumberCircleSettings={setNumberCircleSettings}
+                customers={customers}
+                setCustomers={setCustomers}
+                serviceItems={serviceItems}
+                setServiceItems={setServiceItems}
+                savedDocuments={savedDocuments}
+                setSavedDocuments={setSavedDocuments}
+                machines={editableMachines}
+                setMachines={setEditableMachines}
+                materials={editableMaterials}
+                setMaterials={setEditableMaterials}
+                finishingOperations={editableFinishingOperations}
+                setFinishingOperations={setEditableFinishingOperations}
+                productTypes={productTypes}
+                setProductTypes={setProductTypes}
+                calculationTemplates={calculationTemplates}
+                setCalculationTemplates={setCalculationTemplates}
               />
             )}
           </div>
@@ -9649,6 +9665,22 @@ function SettingsPage({
   setDocumentTemplateSettings,
   numberCircleSettings,
   setNumberCircleSettings,
+  customers,
+  setCustomers,
+  serviceItems,
+  setServiceItems,
+  savedDocuments,
+  setSavedDocuments,
+  machines,
+  setMachines,
+  materials,
+  setMaterials,
+  finishingOperations,
+  setFinishingOperations,
+  productTypes,
+  setProductTypes,
+  calculationTemplates,
+  setCalculationTemplates,
 }: {
   company: CompanyProfile;
   setCompany: Dispatch<SetStateAction<CompanyProfile>>;
@@ -9658,6 +9690,22 @@ function SettingsPage({
   >;
   numberCircleSettings: NumberCircleSettings;
   setNumberCircleSettings: Dispatch<SetStateAction<NumberCircleSettings>>;
+  customers: Customer[];
+  setCustomers: Dispatch<SetStateAction<Customer[]>>;
+  serviceItems: ServiceItem[];
+  setServiceItems: Dispatch<SetStateAction<ServiceItem[]>>;
+  savedDocuments: SavedDocument[];
+  setSavedDocuments: Dispatch<SetStateAction<SavedDocument[]>>;
+  machines: Machine[];
+  setMachines: Dispatch<SetStateAction<Machine[]>>;
+  materials: Material[];
+  setMaterials: Dispatch<SetStateAction<Material[]>>;
+  finishingOperations: FinishingOperation[];
+  setFinishingOperations: Dispatch<SetStateAction<FinishingOperation[]>>;
+  productTypes: ProductType[];
+  setProductTypes: Dispatch<SetStateAction<ProductType[]>>;
+  calculationTemplates: CalculationTemplate[];
+  setCalculationTemplates: Dispatch<SetStateAction<CalculationTemplate[]>>;
 }) {
   const [activeDocumentType, setActiveDocumentType] =
     useState<DocumentType>("quote");
@@ -9747,6 +9795,141 @@ function SettingsPage({
     } catch {}
   }
 
+  function createBackupFileName() {
+    const today = new Date().toISOString().slice(0, 10);
+    return `printpilot-backup-${today}.json`;
+  }
+
+  function exportAppBackup() {
+    const payload = {
+      app: "PrintPilot",
+      version: "V87",
+      exportedAt: new Date().toISOString(),
+      data: {
+        company,
+        documentTemplateSettings,
+        numberCircleSettings,
+        customers,
+        serviceItems,
+        savedDocuments,
+        machines,
+        materials,
+        finishingOperations,
+        productTypes,
+        calculationTemplates,
+      },
+    };
+
+    const blob = new Blob([JSON.stringify(payload, null, 2)], {
+      type: "application/json",
+    });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+
+    link.href = url;
+    link.download = createBackupFileName();
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
+
+  function importAppBackup(file: File | null) {
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      try {
+        const raw = typeof reader.result === "string" ? reader.result : "";
+        const parsed = JSON.parse(raw);
+        const data = parsed.data ?? parsed;
+
+        if (data.company) {
+          setCompany({ ...companyProfile, ...data.company });
+        }
+
+        if (data.documentTemplateSettings) {
+          setDocumentTemplateSettings(
+            normalizeDocumentTemplateSettings(data.documentTemplateSettings),
+          );
+        }
+
+        if (data.numberCircleSettings) {
+          setNumberCircleSettings(
+            normalizeNumberCircleSettings(data.numberCircleSettings),
+          );
+        }
+
+        if (Array.isArray(data.customers)) {
+          setCustomers(data.customers);
+        }
+
+        if (Array.isArray(data.serviceItems)) {
+          setServiceItems(data.serviceItems);
+        }
+
+        if (Array.isArray(data.savedDocuments)) {
+          setSavedDocuments(data.savedDocuments);
+        }
+
+        if (Array.isArray(data.machines)) {
+          setMachines(data.machines.map(normalizeMachine));
+        }
+
+        if (Array.isArray(data.materials)) {
+          setMaterials(data.materials.map(normalizeMaterial));
+        }
+
+        if (Array.isArray(data.finishingOperations)) {
+          setFinishingOperations(
+            data.finishingOperations.map(normalizeFinishingOperation),
+          );
+        }
+
+        if (Array.isArray(data.productTypes)) {
+          const importedProductTypes = data.productTypes
+            .map((type: unknown) => String(type).trim())
+            .filter(Boolean);
+
+          if (importedProductTypes.length > 0) {
+            setProductTypes(importedProductTypes);
+          }
+        }
+
+        if (Array.isArray(data.calculationTemplates)) {
+          const templateMaterials = Array.isArray(data.materials)
+            ? data.materials.map(normalizeMaterial)
+            : materials;
+          const templateMachines = Array.isArray(data.machines)
+            ? data.machines.map(normalizeMachine)
+            : machines;
+          const templateFinishing = Array.isArray(data.finishingOperations)
+            ? data.finishingOperations.map(normalizeFinishingOperation)
+            : finishingOperations;
+          const templateProductTypes = Array.isArray(data.productTypes)
+            ? data.productTypes.map((type: unknown) => String(type).trim()).filter(Boolean)
+            : productTypes;
+
+          setCalculationTemplates(
+            data.calculationTemplates.map((template: CalculationTemplate) =>
+              normalizeCalculationTemplate(
+                template,
+                templateMaterials,
+                templateMachines,
+                templateFinishing,
+                templateProductTypes.length > 0 ? templateProductTypes : productTypes,
+              ),
+            ),
+          );
+        }
+      } catch {
+        window.alert("Die Sicherungsdatei konnte nicht gelesen werden.");
+      }
+    };
+
+    reader.readAsText(file);
+  }
+
   return (
     <div className="space-y-6">
       <section className="overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
@@ -9756,7 +9939,7 @@ function SettingsPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-violet-300">
-                Einstellungen V6
+                Einstellungen V7
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 Firmenprofil, Dokumenttypen & Nummernkreise
@@ -9793,6 +9976,42 @@ function SettingsPage({
                 Firmenprofil zurücksetzen
               </button>
             </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
+          <div>
+            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 via-violet-500 to-fuchsia-500" />
+            <h3 className="mt-5 text-xl font-black">Datensicherung</h3>
+            <p className="mt-1 max-w-3xl text-sm font-medium leading-6 text-slate-500">
+              Sichere alle lokalen PrintPilot-Daten als JSON-Datei oder spiele eine
+              Sicherung wieder ein. Enthalten sind Firmenprofil, Kunden,
+              Dokumente, Maschinen, Material, Weiterverarbeitung, Leistungen,
+              Produkttypen und Kalkulationsvorlagen.
+            </p>
+          </div>
+
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            <button
+              type="button"
+              onClick={exportAppBackup}
+              className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
+            >
+              Daten sichern
+            </button>
+            <label className="cursor-pointer rounded-2xl bg-slate-100 px-5 py-3 text-sm font-black text-slate-700 transition hover:-translate-y-0.5 hover:bg-slate-200">
+              Sicherung importieren
+              <input
+                type="file"
+                accept="application/json,.json"
+                onChange={(event) =>
+                  importAppBackup(event.target.files?.[0] ?? null)
+                }
+                className="hidden"
+              />
+            </label>
           </div>
         </div>
       </section>

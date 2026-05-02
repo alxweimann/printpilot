@@ -174,6 +174,7 @@ type ProductTemplate = {
   respectGrainDirection?: boolean;
   rawSheetMaterialId?: string;
   removeSpineBleed?: boolean;
+  calculateAsOpenSpread?: boolean;
 };
 
 type CalculationTemplateStatus = "Aktiv" | "Inaktiv";
@@ -187,6 +188,7 @@ type CalculationTemplate = ProductTemplate & {
   status: CalculationTemplateStatus;
   bleedMm: number;
   removeSpineBleed: boolean;
+  calculateAsOpenSpread: boolean;
   gripperMarginMm: number;
   sheetMarginMm: number;
   gutterHorizontalMm: number;
@@ -1480,7 +1482,8 @@ function CalculatorPage({
   const [finalHeightMm, setFinalHeightMm] = useState(297);
   const [itemsPerSheet, setItemsPerSheet] = useState(1);
   const [bleedMm, setBleedMm] = useState(3);
-  const [removeSpineBleed, setRemoveSpineBleed] = useState(false);
+  const [removeSpineBleed, setRemoveSpineBleed] = useState(true);
+  const [calculateAsOpenSpread, setCalculateAsOpenSpread] = useState(true);
   const gripperMarginMm = 0;
   const sheetMarginMm = 0;
   const [gutterHorizontalMm, setGutterHorizontalMm] = useState(4);
@@ -1514,7 +1517,6 @@ function CalculatorPage({
   }, [activeCalculationTemplates, selectedCalculationTemplateId]);
 
   const safeQuantity = Math.max(quantity, 1);
-  const safeItemsPerSheet = Math.max(itemsPerSheet, 1);
   const selectedRawSheet =
     materials.find((material) => material.id === rawSheetMaterialId) ??
     materials[0];
@@ -1525,6 +1527,7 @@ function CalculatorPage({
     finalHeightMm,
     bleedMm,
     removeSpineBleed,
+    calculateAsOpenSpread,
     gripperMarginMm,
     sheetMarginMm,
     gutterHorizontalMm,
@@ -1532,11 +1535,31 @@ function CalculatorPage({
     allowRotation,
   });
 
+  const safeItemsPerSheet = Math.max(impositionResult.best.total, 1);
+
+  const brochurePagesPerRawSheet =
+    productType === "Broschüre" && calculateAsOpenSpread
+      ? Math.max(impositionResult.best.total * 4, 1)
+      : 0;
+
   const baseMaterialItems = materialSelections.map((selection) => {
     const material =
       materials.find((item) => item.id === selection.materialId) ??
       materials[0];
-    const calculatedSheets = calculateMaterialSheets(selection, safeQuantity);
+    const isBrochurePageMaterial =
+      productType === "Broschüre" &&
+      calculateAsOpenSpread &&
+      selection.calculationMode === "pages" &&
+      ["inhalt", "umschlag"].some((label) =>
+        selection.label.toLowerCase().includes(label),
+      );
+
+    const calculatedSheets = isBrochurePageMaterial
+      ? Math.ceil(
+          (safeQuantity * Math.max(selection.pages, 0)) /
+            Math.max(brochurePagesPerRawSheet, 1),
+        )
+      : calculateMaterialSheets(selection, safeQuantity);
     const pricePerSheet = calculateMaterialPricePerSheet(material);
 
     return {
@@ -1723,8 +1746,20 @@ function CalculatorPage({
         materials.find((item) => item.id === selection.materialId) ??
         materials[0];
       const pricePerSheet = calculateMaterialPricePerSheet(material);
-      const calculatedSheets =
-        selection.calculationMode === "manual"
+      const isBrochurePageMaterial =
+        productType === "Broschüre" &&
+        calculateAsOpenSpread &&
+        selection.calculationMode === "pages" &&
+        ["inhalt", "umschlag"].some((label) =>
+          selection.label.toLowerCase().includes(label),
+        );
+
+      const calculatedSheets = isBrochurePageMaterial
+        ? Math.ceil(
+            (tierQuantity * Math.max(selection.pages, 0)) /
+              Math.max(brochurePagesPerRawSheet, 1),
+          )
+        : selection.calculationMode === "manual"
           ? Math.ceil(Math.max(selection.manualSheets, 0) * tierScaleFactor)
           : calculateMaterialSheets(selection, tierQuantity);
 
@@ -1851,6 +1886,7 @@ function CalculatorPage({
     setItemsPerSheet(template.itemsPerSheet);
     setBleedMm(template.bleedMm);
     setRemoveSpineBleed(template.removeSpineBleed);
+    setCalculateAsOpenSpread(template.calculateAsOpenSpread);
     setGutterHorizontalMm(template.gutterHorizontalMm);
     setGutterVerticalMm(template.gutterVerticalMm);
     setAllowRotation(template.allowRotation);
@@ -1945,6 +1981,119 @@ function CalculatorPage({
     );
   }
 
+  function setBrochureFormat(format: "A5" | "A4") {
+    setRemoveSpineBleed(true);
+    setCalculateAsOpenSpread(true);
+
+    if (format === "A5") {
+      setProductName("Broschüre A5");
+      setFinalWidthMm(148);
+      setFinalHeightMm(210);
+      return;
+    }
+
+    setProductName("Broschüre A4");
+    setFinalWidthMm(210);
+    setFinalHeightMm(297);
+  }
+
+  function updateBrochurePart(
+    labelSearch: "inhalt" | "umschlag",
+    updates: Partial<Omit<MaterialSelection, "id">>,
+  ) {
+    setRemoveSpineBleed(true);
+    setCalculateAsOpenSpread(true);
+    setMaterialSelections((current) =>
+      current.map((selection) => {
+        const matches = selection.label.toLowerCase().includes(labelSearch);
+
+        if (!matches) return selection;
+
+        return {
+          ...selection,
+          calculationMode: "pages",
+          factorPerCopy: 1,
+          itemsPerSheet: 1,
+          pagesPerSheet: Math.max(brochurePagesPerRawSheet, 1),
+          ...updates,
+        };
+      }),
+    );
+  }
+
+  function ensureBrochureDefaults() {
+    setRemoveSpineBleed(true);
+    setCalculateAsOpenSpread(true);
+    setMaterialSelections((current) => {
+      const hasContent = current.some((selection) =>
+        selection.label.toLowerCase().includes("inhalt"),
+      );
+      const hasCover = current.some((selection) =>
+        selection.label.toLowerCase().includes("umschlag"),
+      );
+
+      const next = current.map((selection) => {
+        const normalizedLabel = selection.label.toLowerCase();
+
+        if (normalizedLabel.includes("inhalt")) {
+          return {
+            ...selection,
+            calculationMode: "pages" as MaterialCalculationMode,
+            pages: selection.pages > 0 ? selection.pages : 32,
+            factorPerCopy: 1,
+            itemsPerSheet: 1,
+          };
+        }
+
+        if (normalizedLabel.includes("umschlag")) {
+          return {
+            ...selection,
+            calculationMode: "pages" as MaterialCalculationMode,
+            pages: selection.pages > 0 ? selection.pages : 4,
+            factorPerCopy: 1,
+            itemsPerSheet: 1,
+          };
+        }
+
+        return selection;
+      });
+
+      if (!hasContent) {
+        next.push(
+          withLocalMaterialId({
+            label: "Inhalt",
+            materialId:
+              findMaterialIdInCatalog(materials, "Offset") ?? materials[0].id,
+            calculationMode: "pages",
+            manualSheets: 0,
+            factorPerCopy: 1,
+            pages: 32,
+            pagesPerSheet: 4,
+            itemsPerSheet: 1,
+          }),
+        );
+      }
+
+      if (!hasCover) {
+        next.push(
+          withLocalMaterialId({
+            label: "Umschlag",
+            materialId:
+              findMaterialIdInCatalog(materials, "300") ?? materials[0].id,
+            calculationMode: "pages",
+            manualSheets: 0,
+            factorPerCopy: 1,
+            pages: 4,
+            pagesPerSheet: 4,
+            itemsPerSheet: 1,
+          }),
+        );
+      }
+
+      return next;
+    });
+  }
+
   function addFinishingSelection() {
     setFinishingSelections((current) => [
       ...current,
@@ -2022,11 +2171,6 @@ function CalculatorPage({
     });
   }
 
-  function handleApplyImposition() {
-    if (impositionResult.best.total <= 0) return;
-
-    setItemsPerSheet(impositionResult.best.total);
-  }
 
   return (
     <div className="space-y-6">
@@ -2038,7 +2182,7 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V58
+                Kalkulation V76
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 Kalkulations-Cockpit
@@ -2183,11 +2327,9 @@ function CalculatorPage({
                 onChange={setQuantity}
                 suffix="Stück"
               />
-              <NumberField
-                label="Nutzen pro Druckbogen"
-                value={itemsPerSheet}
-                onChange={setItemsPerSheet}
-                suffix="Nutzen"
+              <ReadOnlyField
+                label="Berechneter Nutzen"
+                value={`${safeItemsPerSheet} Nutzen`}
               />
             </div>
 
@@ -2205,6 +2347,105 @@ function CalculatorPage({
                 suffix="mm"
               />
             </div>
+
+            {productType === "Broschüre" && (
+              <div className="rounded-3xl border border-amber-200 bg-amber-50 p-5">
+                <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                  <div>
+                    <p className="text-xs font-extrabold uppercase tracking-wide text-amber-700">
+                      Broschüre
+                    </p>
+                    <h4 className="mt-2 text-lg font-black text-slate-950">
+                      Nur Format, Seiten und Papiere eingeben
+                    </h4>
+                    <p className="mt-2 text-sm font-bold leading-6 text-amber-800">
+                      Die App berechnet daraus offene Doppelseite, Bund ohne Beschnitt,
+                      Nutzen, Materialbogen und Druckbogen automatisch.
+                    </p>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={ensureBrochureDefaults}
+                    className="rounded-2xl bg-amber-600 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
+                  >
+                    Broschürenlogik anwenden
+                  </button>
+                </div>
+
+                <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                  <SelectField
+                    label="Broschürenformat"
+                    value={finalWidthMm === 148 && finalHeightMm === 210 ? "A5" : "A4"}
+                    onChange={(value) => setBrochureFormat(value as "A5" | "A4")}
+                    options={[
+                      { value: "A5", label: "DIN A5 geschlossen" },
+                      { value: "A4", label: "DIN A4 geschlossen" },
+                    ]}
+                  />
+                  <ReadOnlyField
+                    label="Geschlossen"
+                    value={`${finalWidthMm} × ${finalHeightMm} mm`}
+                  />
+                  <ReadOnlyField
+                    label="Offene Doppelseite"
+                    value={`${finalWidthMm * 2} × ${finalHeightMm} mm`}
+                  />
+                </div>
+
+                <div className="mt-5 grid gap-4 xl:grid-cols-2">
+                  <div className="rounded-3xl border border-amber-200 bg-white p-4">
+                    <p className="text-xs font-extrabold uppercase tracking-wide text-amber-700">
+                      Inhalt
+                    </p>
+                    <div className="mt-4 grid gap-4 md:grid-cols-2">
+                      <NumberField
+                        label="Inhaltsseiten"
+                        value={materialSelections.find((selection) => selection.label.toLowerCase().includes("inhalt"))?.pages ?? 32}
+                        onChange={(value) => updateBrochurePart("inhalt", { pages: value })}
+                        suffix="S."
+                      />
+                      <SelectField
+                        label="Inhaltspapier"
+                        value={materialSelections.find((selection) => selection.label.toLowerCase().includes("inhalt"))?.materialId ?? materials[0].id}
+                        onChange={(value) => updateBrochurePart("inhalt", { materialId: value })}
+                        options={materials.map((material) => ({
+                          value: material.id,
+                          label: `${material.name} · ${material.widthMm} × ${material.heightMm} mm · ${material.grammage} g/m²`,
+                        }))}
+                      />
+                    </div>
+                  </div>
+
+                  <div className="rounded-3xl border border-amber-200 bg-white p-4">
+                    <p className="text-xs font-extrabold uppercase tracking-wide text-amber-700">
+                      Umschlag
+                    </p>
+                    <div className="mt-4 grid gap-4 md:grid-cols-2">
+                      <NumberField
+                        label="Umschlagseiten"
+                        value={materialSelections.find((selection) => selection.label.toLowerCase().includes("umschlag"))?.pages ?? 4}
+                        onChange={(value) => updateBrochurePart("umschlag", { pages: value })}
+                        suffix="S."
+                      />
+                      <SelectField
+                        label="Umschlagpapier"
+                        value={materialSelections.find((selection) => selection.label.toLowerCase().includes("umschlag"))?.materialId ?? materials[0].id}
+                        onChange={(value) => updateBrochurePart("umschlag", { materialId: value })}
+                        options={materials.map((material) => ({
+                          value: material.id,
+                          label: `${material.name} · ${material.widthMm} × ${material.heightMm} mm · ${material.grammage} g/m²`,
+                        }))}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <p className="mt-5 rounded-2xl bg-amber-100 px-4 py-3 text-sm font-black text-amber-900">
+                  Berechnung: Seiten je Rohbogen = Nutzen offener Doppelseiten × 4.
+                  Im Bund wird kein Beschnitt gerechnet, außen bleibt der Beschnitt aktiv.
+                </p>
+              </div>
+            )}
 
             <div className="rounded-3xl bg-slate-50 p-5">
               <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
@@ -2229,6 +2470,15 @@ function CalculatorPage({
                   options={[
                     { value: "yes", label: "Beschnitt rundum" },
                     { value: "no", label: "ohne Beschnitt im Bund" },
+                  ]}
+                />
+                <SelectField
+                  label="Broschürenmodus"
+                  value={calculateAsOpenSpread ? "spread" : "closed"}
+                  onChange={(value) => setCalculateAsOpenSpread(value === "spread")}
+                  options={[
+                    { value: "spread", label: "offene Doppelseite" },
+                    { value: "closed", label: "geschlossenes Format" },
                   ]}
                 />
                 <NumberField
@@ -2284,7 +2534,7 @@ function CalculatorPage({
                     </p>
                     <p className="mt-2 text-sm font-bold leading-6 text-slate-500">
                       Rohbogen: {selectedRawSheet?.widthMm ?? 0} ×{" "}
-                      {selectedRawSheet?.heightMm ?? 0} mm · Produkt inkl.
+                      {selectedRawSheet?.heightMm ?? 0} mm · Nutzmaß inkl.
                       Beschnitt: {impositionResult.productWidthWithBleed} ×{" "}
                       {impositionResult.productHeightWithBleed} mm ·{" "}
                       {removeSpineBleed
@@ -2297,18 +2547,9 @@ function CalculatorPage({
                     </p>
                   </div>
 
-                  <button
-                    type="button"
-                    onClick={handleApplyImposition}
-                    disabled={impositionResult.best.total <= 0}
-                    className={`rounded-2xl px-5 py-3 text-sm font-black text-white shadow-sm transition ${
-                      impositionResult.best.total <= 0
-                        ? "cursor-not-allowed bg-slate-300"
-                        : "bg-emerald-500 shadow-emerald-500/20 hover:-translate-y-0.5 hover:bg-emerald-600"
-                    }`}
-                  >
-                    Nutzen übernehmen
-                  </button>
+                  <div className="rounded-2xl bg-emerald-50 px-5 py-3 text-sm font-black text-emerald-700">
+                    Wird automatisch verwendet
+                  </div>
                 </div>
 
                 <div className="mt-5 grid gap-3 md:grid-cols-3">
@@ -2344,6 +2585,101 @@ function CalculatorPage({
                     label="Bogenbedarf"
                     value={`${Math.ceil(safeQuantity / Math.max(impositionResult.best.total, 1)).toLocaleString("de-DE")} Bogen`}
                   />
+                  <InfoCard
+                    label="Bundlogik"
+                    value={removeSpineBleed ? "aktiv" : "nicht aktiv"}
+                  />
+                  <InfoCard
+                    label="Bundrichtung"
+                    value={getSpineAxisLabel(impositionResult.best.spineAxis)}
+                  />
+                </div>
+
+                <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                  <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                    <div>
+                      <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                        Nutzenanalyse
+                      </p>
+                      <h4 className="mt-2 text-lg font-black text-slate-950">
+                        Prüfdaten für die Bogenaufteilung
+                      </h4>
+                      <p className="mt-2 text-sm font-bold leading-6 text-slate-500">
+                        Diese Werte zeigen, warum der aktuelle Nutzen gewählt wurde.
+                      </p>
+                    </div>
+
+                    {removeSpineBleed && (
+                      <div className="rounded-2xl bg-amber-100 px-4 py-3 text-sm font-black text-amber-800">
+                        Broschürenlogik aktiv: außen Beschnitt, im Bund kein Beschnitt.
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                    <InfoCard
+                      label="Geschlossenes Endformat"
+                      value={`${finalWidthMm} × ${finalHeightMm} mm`}
+                    />
+                    <InfoCard
+                      label="Offenes Nutzmaß"
+                      value={calculateAsOpenSpread ? `${impositionResult.openFinalWidthMm} × ${impositionResult.openFinalHeightMm} mm` : "nicht aktiv"}
+                    />
+                    <InfoCard
+                      label="Nutzmaß inkl. Beschnitt"
+                      value={`${impositionResult.productWidthWithBleed} × ${impositionResult.productHeightWithBleed} mm`}
+                    />
+                    <InfoCard
+                      label="Zwischenschnitt"
+                      value={`H ${gutterHorizontalMm} mm / V ${gutterVerticalMm} mm`}
+                    />
+                    <InfoCard
+                      label="Genutzte Fläche"
+                      value={`${impositionResult.best.usedWidth} × ${impositionResult.best.usedHeight} mm`}
+                    />
+                    <InfoCard
+                      label="Nutzbare Fläche"
+                      value={`${impositionResult.availableWidth} × ${impositionResult.availableHeight} mm`}
+                    />
+                    <InfoCard
+                      label="Bundrichtung"
+                      value={getSpineAxisLabel(impositionResult.best.spineAxis)}
+                    />
+                    <InfoCard
+                      label="Gewählte Ausrichtung"
+                      value={impositionResult.best.orientation}
+                    />
+                    <InfoCard
+                      label="Restfläche"
+                      value={`${formatNumber(impositionResult.best.wastePercent, 1)} %`}
+                    />
+                    <InfoCard
+                      label="Drehung"
+                      value={allowRotation ? "erlaubt" : "gesperrt"}
+                    />
+                  </div>
+
+                  <div className="mt-5 space-y-3">
+                    {removeSpineBleed && (
+                      <p className="rounded-2xl bg-amber-50 px-4 py-3 text-sm font-bold leading-6 text-amber-800">
+                        Hinweis: Außenbeschnitt wird gerechnet und angezeigt. Im Bund wird kein Beschnitt gerechnet.
+                        Bundrichtung: {getSpineAxisLabel(impositionResult.best.spineAxis)}.
+                      </p>
+                    )}
+
+                    {productType === "Broschüre" && !calculateAsOpenSpread && impositionResult.best.spineAxis === "none" && (
+                      <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-bold leading-6 text-rose-700">
+                        Warnung: Für diese Broschürenaufteilung wurde kein eindeutiger Bund erkannt.
+                        Prüfe Nutzen, Format und Drehung.
+                      </p>
+                    )}
+
+                    {allowRotation && impositionResult.best.orientation === "gedreht" && (
+                      <p className="rounded-2xl bg-sky-50 px-4 py-3 text-sm font-bold leading-6 text-sky-700">
+                        Hinweis: Der beste Nutzen wird nur gedreht erreicht.
+                      </p>
+                    )}
+                  </div>
                 </div>
 
                 <ImpositionPreview
@@ -2353,6 +2689,7 @@ function CalculatorPage({
                   finalHeightMm={finalHeightMm}
                   bleedMm={bleedMm}
                   removeSpineBleed={removeSpineBleed}
+                  calculateAsOpenSpread={calculateAsOpenSpread}
                   gripperMarginMm={gripperMarginMm}
                   sheetMarginMm={sheetMarginMm}
                   gutterHorizontalMm={gutterHorizontalMm}
@@ -2369,6 +2706,7 @@ function CalculatorPage({
               </div>
             </div>
 
+            {productType !== "Broschüre" && (
             <div className="rounded-3xl bg-slate-50 p-5">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
@@ -2598,6 +2936,8 @@ function CalculatorPage({
                 </p>
               </div>
             </div>
+
+            )}
 
             <div className="rounded-3xl bg-slate-50 p-5">
               <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
@@ -2914,7 +3254,7 @@ function CalculatorPage({
                 value={`${finalWidthMm} × ${finalHeightMm} mm`}
               />
               <CostRow
-                label="Nutzen pro Druckbogen"
+                label="Berechneter Nutzen"
                 value={`${safeItemsPerSheet}`}
               />
               <CostRow
@@ -5868,6 +6208,17 @@ function CalculationTemplatesPage({
                   { value: "no", label: "ohne Beschnitt im Bund" },
                 ]}
               />
+              <SelectField
+                label="Broschürenmodus"
+                value={templateForm.calculateAsOpenSpread ? "spread" : "closed"}
+                onChange={(value) =>
+                  updateTemplateForm("calculateAsOpenSpread", value === "spread")
+                }
+                options={[
+                  { value: "spread", label: "offene Doppelseite" },
+                  { value: "closed", label: "geschlossenes Format" },
+                ]}
+              />
               <NumberField
                 label="Zwischenschnitt H"
                 value={templateForm.gutterHorizontalMm}
@@ -6194,7 +6545,7 @@ function CalculationTemplatesPage({
                   />
                   <InfoCard
                     label="Beschnitt"
-                    value={`${template.bleedMm} mm · ${template.removeSpineBleed ? "ohne Bund" : "rundum"}`}
+                    value={`${template.bleedMm} mm · ${template.removeSpineBleed ? "ohne Bund" : "rundum"} · ${template.calculateAsOpenSpread ? "offen" : "geschlossen"}`}
                   />
                   <InfoCard
                     label="Zwischenschnitt"
@@ -9883,6 +10234,10 @@ function normalizeCalculationTemplate(
       typeof template.removeSpineBleed === "boolean"
         ? template.removeSpineBleed
         : (fallbackTemplate.removeSpineBleed ?? isBrochureProduct(productType)),
+    calculateAsOpenSpread:
+      typeof template.calculateAsOpenSpread === "boolean"
+        ? template.calculateAsOpenSpread
+        : (fallbackTemplate.calculateAsOpenSpread ?? isBrochureProduct(productType)),
     gripperMarginMm: 0,
     sheetMarginMm: 0,
     gutterHorizontalMm: Math.max(
@@ -9974,6 +10329,7 @@ function getProductTemplate(
   const defaultTemplateParameters = {
     bleedMm: 3,
     removeSpineBleed: false,
+    calculateAsOpenSpread: false,
     gripperMarginMm: 0,
     sheetMarginMm: 0,
     gutterHorizontalMm: 4,
@@ -10134,6 +10490,7 @@ function getProductTemplate(
       ],
       finishingNames: ["Schneiden", "Rückendraht"],
       removeSpineBleed: true,
+      calculateAsOpenSpread: true,
     },
     "SD-Satz": {
       productName: "SD-Satz 3-fach",
@@ -10517,6 +10874,7 @@ function ImpositionPreview({
   finalHeightMm,
   bleedMm,
   removeSpineBleed,
+  calculateAsOpenSpread,
   gripperMarginMm,
   sheetMarginMm,
   gutterHorizontalMm,
@@ -10529,6 +10887,7 @@ function ImpositionPreview({
   finalHeightMm: number;
   bleedMm: number;
   removeSpineBleed: boolean;
+  calculateAsOpenSpread: boolean;
   gripperMarginMm: number;
   sheetMarginMm: number;
   gutterHorizontalMm: number;
@@ -10547,19 +10906,20 @@ function ImpositionPreview({
   const safeSheetMargin = 0;
   const safeGripperMargin = 0;
   const safeBleed = Math.max(Number(bleedMm) || 0, 0);
-  const noSpineBleed = Boolean(removeSpineBleed);
+  const spreadMode = Boolean(calculateAsOpenSpread);
+  const noSpineBleed = Boolean(removeSpineBleed) && !spreadMode;
   const safeGutterHorizontal = Math.max(Number(gutterHorizontalMm) || 0, 0);
   const safeGutterVertical = Math.max(Number(gutterVerticalMm) || 0, 0);
 
   const isRotated = result.best.orientation === "gedreht";
   const productWidthWithBleed = Math.max(result.best.itemWidth, 1);
   const productHeightWithBleed = Math.max(result.best.itemHeight, 1);
-  const finalWidth = isRotated
-    ? Math.max(Number(finalHeightMm) || 0, 1)
-    : Math.max(Number(finalWidthMm) || 0, 1);
-  const finalHeight = isRotated
-    ? Math.max(Number(finalWidthMm) || 0, 1)
-    : Math.max(Number(finalHeightMm) || 0, 1);
+  const closedFinalWidth = Math.max(Number(finalWidthMm) || 0, 1);
+  const closedFinalHeight = Math.max(Number(finalHeightMm) || 0, 1);
+  const openFinalWidth = spreadMode ? closedFinalWidth * 2 : closedFinalWidth;
+  const openFinalHeight = closedFinalHeight;
+  const finalWidth = isRotated ? openFinalHeight : openFinalWidth;
+  const finalHeight = isRotated ? openFinalWidth : openFinalHeight;
 
   const spineAxis = noSpineBleed ? result.best.spineAxis : "none";
 
@@ -10849,8 +11209,8 @@ function ImpositionPreview({
           </p>
           <p className="mt-2 text-sm font-bold leading-6 text-slate-500">
             Maßstäblich vereinfachte Vorschau: Gelb ist Beschnitt, Weiß ist
-            Endformat. Bei „ohne Beschnitt im Bund“ liegt am Bund kein gelber
-            Beschnittbereich mehr zwischen den beiden Nutzen.
+            Endformat. Im Broschürenmodus wird die offene Doppelseite mit Bundlinie
+            dargestellt; Beschnitt liegt nur außen.
           </p>
         </div>
 
@@ -10987,6 +11347,16 @@ function ImpositionPreview({
                   stroke="#111827"
                   strokeWidth="1.7"
                 />
+                {spreadMode && (
+                  <line
+                    x1={(innerBox.x + innerBox.width / 2) * scale}
+                    y1={innerBox.y * scale}
+                    x2={(innerBox.x + innerBox.width / 2) * scale}
+                    y2={(innerBox.y + innerBox.height) * scale}
+                    stroke="#111827"
+                    strokeWidth="2"
+                  />
+                )}
                 <text
                   x={outerX + outerWidth / 2}
                   y={outerY + outerHeight / 2 + 3}
@@ -11076,7 +11446,7 @@ function ImpositionPreview({
         <p>Gelb: Beschnittbereich</p>
         <p>Weiß: Endformat</p>
         <p>Rot/Pink: Zwischenschnitt</p>
-        <p>Schwarz: Bund ohne Beschnitt</p>
+        <p>Schwarz: Bund / Doppelseitenfalz</p>
       </div>
     </div>
   );
@@ -11089,6 +11459,7 @@ function calculateImpositionResult({
   finalHeightMm,
   bleedMm,
   removeSpineBleed,
+  calculateAsOpenSpread,
   gripperMarginMm,
   sheetMarginMm,
   gutterHorizontalMm,
@@ -11101,6 +11472,7 @@ function calculateImpositionResult({
   finalHeightMm: number;
   bleedMm: number;
   removeSpineBleed: boolean;
+  calculateAsOpenSpread: boolean;
   gripperMarginMm: number;
   sheetMarginMm: number;
   gutterHorizontalMm: number;
@@ -11112,7 +11484,10 @@ function calculateImpositionResult({
   const safeFinalWidth = Math.max(Number(finalWidthMm) || 0, 1);
   const safeFinalHeight = Math.max(Number(finalHeightMm) || 0, 1);
   const safeBleed = Math.max(Number(bleedMm) || 0, 0);
-  const noSpineBleed = Boolean(removeSpineBleed);
+  const spreadMode = Boolean(calculateAsOpenSpread);
+  const noSpineBleed = Boolean(removeSpineBleed) && !spreadMode;
+  const calculationFinalWidth = spreadMode ? safeFinalWidth * 2 : safeFinalWidth;
+  const calculationFinalHeight = safeFinalHeight;
   const safeSheetMargin = 0;
   const safeGripperMargin = 0;
   const availableWidth = Math.max(safeSheetWidth - safeSheetMargin * 2, 0);
@@ -11156,7 +11531,7 @@ function calculateImpositionResult({
     baseWidth: number;
     baseHeight: number;
     orientation: string;
-    spineAxis: "vertical" | "horizontal" | "none";
+    spineAxis: "vertical" | "horizontal" | "none" | "spread";
   }) {
     const itemWidth =
       noSpineBleed && spineAxis === "vertical"
@@ -11217,6 +11592,15 @@ function calculateImpositionResult({
     baseHeight: number,
     orientation: string,
   ) {
+    if (spreadMode) {
+      return buildResult({
+        baseWidth,
+        baseHeight,
+        orientation,
+        spineAxis: "spread",
+      });
+    }
+
     if (!noSpineBleed) {
       return buildResult({
         baseWidth,
@@ -11257,14 +11641,14 @@ function calculateImpositionResult({
   }
 
   const normal = calculateOrientation(
-    safeFinalWidth,
-    safeFinalHeight,
+    calculationFinalWidth,
+    calculationFinalHeight,
     "normal",
   );
   const rotated = allowRotation
     ? calculateOrientation(
-        safeFinalHeight,
-        safeFinalWidth,
+        calculationFinalHeight,
+        calculationFinalWidth,
         "gedreht",
       )
     : {
@@ -11273,8 +11657,8 @@ function calculateImpositionResult({
         total: 0,
         orientation: "nicht erlaubt",
         spineAxis: "none" as const,
-        itemWidth: safeFinalHeight + safeBleed * 2,
-        itemHeight: safeFinalWidth + safeBleed * 2,
+        itemWidth: calculationFinalHeight + safeBleed * 2,
+        itemHeight: calculationFinalWidth + safeBleed * 2,
         usedWidth: 0,
         usedHeight: 0,
         wastePercent: 100,
@@ -11285,6 +11669,9 @@ function calculateImpositionResult({
   return {
     productWidthWithBleed: best.itemWidth,
     productHeightWithBleed: best.itemHeight,
+    openFinalWidthMm: calculationFinalWidth,
+    openFinalHeightMm: calculationFinalHeight,
+    calculateAsOpenSpread: spreadMode,
     availableWidth,
     availableHeight,
     gutterHorizontalMm: safeGutterHorizontal,
@@ -11293,6 +11680,13 @@ function calculateImpositionResult({
     rotated,
     best,
   };
+}
+
+function getSpineAxisLabel(axis: string) {
+  if (axis === "spread") return "offene Doppelseite";
+  if (axis === "horizontal") return "horizontal";
+  if (axis === "vertical") return "vertikal";
+  return "keine Bundlogik";
 }
 
 function todayIso() {

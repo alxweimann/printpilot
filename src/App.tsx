@@ -1821,6 +1821,150 @@ function CalculatorPage({
     { label: "Ertrag", value: profit, className: "bg-emerald-500" },
   ].filter((item) => item.value > 0);
 
+  const costBlockItems = [
+    {
+      title: "Material",
+      subtitle: `${selectedMaterialItems.length} Druckteil${selectedMaterialItems.length === 1 ? "" : "e"}`,
+      value: materialCost,
+      detail: `${totalSheets.toLocaleString("de-DE")} Bg. gesamt · ${wasteSheets.toLocaleString("de-DE")} Bg. Ausschuss`,
+      badge: "Papier / Substrat",
+    },
+    {
+      title: "Druck / Maschine",
+      subtitle: getMachineCostModelLabel(machineCostModel),
+      value: printCost + setupCost,
+      detail: `${formatCurrency(printCost)} variabel · ${formatCurrency(setupCost)} Rüstzeit`,
+      badge: selectedMachine.name,
+    },
+    {
+      title: "Weiterverarbeitung",
+      subtitle: `${selectedFinishingItems.length} Vorgang${selectedFinishingItems.length === 1 ? "" : "e"}`,
+      value: finishingCost,
+      detail: `${formatCurrency(calculatedFinishingCost)} berechnet · ${formatCurrency(finishingExtraCost)} Zusatz`,
+      badge: "Finishing",
+    },
+    {
+      title: "Gemeinkosten",
+      subtitle: `${formatNumber(overheadPercent, 1)} % auf direkte Kosten`,
+      value: overheadCost,
+      detail: `Direkte Kosten: ${formatCurrency(directCost)}`,
+      badge: "Overhead",
+    },
+    {
+      title: "Deckungsbeitrag",
+      subtitle: `${formatNumber(marginPercent, 1)} % Marge`,
+      value: profit,
+      detail: `Selbstkosten: ${formatCurrency(totalCost)} · Verkauf: ${formatCurrency(sellingPrice)}`,
+      badge: "Ertrag",
+    },
+  ];
+
+  const productionCostTotal = Math.max(directCost, 0.01);
+  const productionCostSections = [
+    {
+      title: "Material",
+      shortTitle: "Papier",
+      value: materialCost,
+      percentBase: productionCostTotal,
+      accentClass: "bg-orange-400",
+      summary: `${selectedMaterialItems.length} Druckteil${selectedMaterialItems.length === 1 ? "" : "e"} · ${totalSheets.toLocaleString("de-DE")} Bg. inkl. Zuschuss/Ausschuss`,
+      rows: [
+        ...selectedMaterialItems.map((item) => ({
+          label: item.label,
+          value: formatCurrency(item.cost),
+          note: `${item.totalMaterialSheets.toLocaleString("de-DE")} Bg. · ${formatCurrency(item.pricePerSheet)} / Bg.`,
+        })),
+        {
+          label: "Zuschuss / Ausschuss",
+          value: `${(fixedOvers + wasteSheets).toLocaleString("de-DE")} Bg.`,
+          note: `${fixedOvers.toLocaleString("de-DE")} Bg. fest · ${wasteSheets.toLocaleString("de-DE")} Bg. prozentual`,
+        },
+      ],
+    },
+    {
+      title: "Druck & Maschine",
+      shortTitle: "Druck",
+      value: printCost + setupCost,
+      percentBase: productionCostTotal,
+      accentClass: "bg-sky-500",
+      summary: `${selectedMachine.name} · ${getMachineCostModelLabel(machineCostModel)}`,
+      rows: [
+        ...machineCost.rows.map((row) => ({
+          label: row.label,
+          value: row.value,
+          note: "Maschinenmodell",
+        })),
+        {
+          label: "Variable Maschinenkosten",
+          value: formatCurrency(printCost),
+          note: "Klicks / Tinte / Produktion",
+        },
+        {
+          label: "Rüstzeit Maschine",
+          value: formatCurrency(setupCost),
+          note: `${formatNumber(setupMinutes, 0)} Min. · ${formatCurrency(selectedMachine.hourlyRate)} / h`,
+        },
+      ],
+    },
+    {
+      title: "Weiterverarbeitung",
+      shortTitle: "WV",
+      value: finishingCost,
+      percentBase: productionCostTotal,
+      accentClass: "bg-lime-500",
+      summary: `${selectedFinishingItems.length} Vorgang${selectedFinishingItems.length === 1 ? "" : "e"} · ${formatCurrency(finishingExtraCost)} Zusatzkosten`,
+      rows:
+        selectedFinishingItems.length > 0
+          ? [
+              ...selectedFinishingItems.map((item) => ({
+                label: item.operation.name,
+                value: formatCurrency(item.price),
+                note: getPricingModeLabel(item.operation.pricingMode),
+              })),
+              {
+                label: "Zusatzkosten",
+                value: formatCurrency(finishingExtraCost),
+                note: "manuell in der Kalkulation",
+              },
+            ]
+          : [
+              {
+                label: "Keine Weiterverarbeitung gewählt",
+                value: formatCurrency(finishingCost),
+                note: "Schneiden, Falzen, Heften usw. hinzufügen",
+              },
+            ],
+    },
+  ];
+
+  const priceBridgeItems = [
+    {
+      label: "Produktionskosten",
+      value: directCost,
+      note: "Material + Druck + Rüstzeit + Weiterverarbeitung",
+    },
+    {
+      label: "Gemeinkosten",
+      value: overheadCost,
+      note: `${formatNumber(overheadPercent, 1)} % Zuschlag`,
+    },
+    {
+      label: "Selbstkosten",
+      value: totalCost,
+      note: "interner Mindestpreis vor Marge",
+    },
+    {
+      label: "Deckungsbeitrag",
+      value: profit,
+      note: `${formatNumber(marginPercent, 1)} % Marge`,
+    },
+    {
+      label: "Verkaufspreis netto",
+      value: sellingPrice,
+      note: `${formatCurrency(unitPrice)} pro Stück`,
+    },
+  ];
+
   const contentPages =
     materialSelections.find((selection) =>
       selection.label.toLowerCase().includes("inhalt"),
@@ -2457,14 +2601,14 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V92
+                Kalkulation V99
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
                 Produkt- und Jobstruktur
               </h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-                Produkt, bearbeitbare Druckteile, Material, Maschine, Nutzen und Preis fachlich getrennt.
-                Inhalt, Umschlag, Beileger und Zusatzmaterial bleiben sauber nachvollziehbar.
+                Produktdaten, Druckteile, Nutzen, Maschine, Weiterverarbeitung und Zuschläge sind jetzt als klare Eingabemaske aufgebaut.
+                Erst die Pflichtdaten, danach die Produktionsdetails, Details nur dort wo sie gebraucht werden.
               </p>
             </div>
 
@@ -2546,10 +2690,10 @@ function CalculatorPage({
                 Kalkulation
               </p>
               <h3 className="mt-2 text-2xl font-black tracking-tight">
-                Produktionsdaten
+                Eingabemaske
               </h3>
               <p className="mt-1 text-xs font-semibold text-slate-500">
-                Kompakte Eingaben für Vorlage, Material, Maschine und Weiterverarbeitung.
+                Klare Eingabeschritte: Auftrag, Produkt, Druckteile, Nutzen, Maschine, Weiterverarbeitung und Zuschläge.
               </p>
             </div>
             <span className="rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-600">
@@ -2557,13 +2701,42 @@ function CalculatorPage({
             </span>
           </div>
 
-          <div className="mt-4 space-y-3">
-            <div className="rounded-3xl bg-slate-50 p-4">
-              <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                Produkttyp / Vorlage
+          <div className="mt-4 space-y-4">
+            <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-7">
+              {[
+                ["1", "Auftrag", "Name & Vorlage", "bg-cyan-400", "border-cyan-200 bg-cyan-50", "text-cyan-700"],
+                ["2", "Auflage", "Menge & Nutzen", "bg-fuchsia-500", "border-fuchsia-200 bg-fuchsia-50", "text-fuchsia-700"],
+                ["3", "Produkt", "Format & Seiten", "bg-yellow-400", "border-yellow-200 bg-yellow-50", "text-yellow-700"],
+                ["4", "Druckteile", "Inhalt, Umschlag", "bg-emerald-400", "border-emerald-200 bg-emerald-50", "text-emerald-700"],
+                ["5", "Produktion", "Maschine & Druck", "bg-sky-500", "border-sky-200 bg-sky-50", "text-sky-700"],
+                ["6", "Weiterverarbeitung", "Finishing", "bg-lime-400", "border-lime-200 bg-lime-50", "text-lime-700"],
+                ["7", "Preis", "Zuschläge & Marge", "bg-violet-500", "border-violet-200 bg-violet-50", "text-violet-700"],
+              ].map(([step, title, subtitle, accent, cardClass, textClass]) => (
+                <div
+                  key={step}
+                  className={`relative overflow-hidden rounded-2xl border p-3 shadow-sm transition hover:-translate-y-0.5 ${cardClass}`}
+                >
+                  <span className={`absolute left-0 top-0 h-full w-2 ${accent}`} />
+                  <div className="pl-3">
+                    <span className={`inline-flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black text-white ${accent}`}>
+                      {step}
+                    </span>
+                    <p className="mt-2 text-sm font-black text-slate-950">{title}</p>
+                    <p className={`mt-1 text-xs font-bold ${textClass}`}>{subtitle}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            <div className="rounded-3xl border border-cyan-200 bg-cyan-50 p-4">
+              <p className="text-xs font-extrabold uppercase tracking-wide text-cyan-700">
+                1 · Auftrag / Vorlage
+              </p>
+              <p className="mt-1 text-sm font-bold text-cyan-900">
+                Zuerst Vorlage wählen und den Produktnamen sauber vergeben. Danach steuert die Vorlage die Grundlogik.
               </p>
 
-              <div className="mt-4 grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
+              <div className="mt-4 grid gap-4 xl:grid-cols-[1fr_1fr_auto] xl:items-end">
                 <SelectField
                   label="Kalkulationsvorlage"
                   value={selectedCalculationTemplateId}
@@ -2574,6 +2747,12 @@ function CalculatorPage({
                   }))}
                 />
 
+                <InputField
+                  label="Produktname"
+                  value={productName}
+                  onChange={setProductName}
+                />
+
                 <button
                   type="button"
                   onClick={applySelectedTemplate}
@@ -2582,25 +2761,311 @@ function CalculatorPage({
                   Vorlage anwenden
                 </button>
               </div>
-
             </div>
 
-            <InputField
-              label="Produktname"
-              value={productName}
-              onChange={setProductName}
-            />
+            <div className="rounded-3xl border border-fuchsia-200 bg-fuchsia-50 p-4 shadow-sm">
+              <p className="text-xs font-extrabold uppercase tracking-wide text-fuchsia-700">
+                2 · Auflage
+              </p>
+              <p className="mt-1 text-sm font-bold text-fuchsia-900">
+                Hier werden nur die produktionsrelevanten Eckdaten gesetzt. Nutzen und Seiten je Bogen bleiben automatische Kontrollwerte.
+              </p>
+
+              <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <NumberField
+                  label="Auflage"
+                  value={quantity}
+                  onChange={setQuantity}
+                  suffix="Stück"
+                />
+                <NumberField
+                  label="Endformat Breite"
+                  value={finalWidthMm}
+                  onChange={setFinalWidthMm}
+                  suffix="mm"
+                />
+                <NumberField
+                  label="Endformat Höhe"
+                  value={finalHeightMm}
+                  onChange={setFinalHeightMm}
+                  suffix="mm"
+                />
+                <ReadOnlyField
+                  label="Berechneter Nutzen"
+                  value={`${safeItemsPerSheet} Nutzen`}
+                />
+              </div>
+
+              <div className="mt-5 rounded-3xl bg-white p-4 shadow-sm ring-1 ring-fuchsia-100">
+                <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                  Nutzenbasis / Druckbogen
+                </p>
+                <p className="mt-1 text-sm font-bold text-slate-500">
+                  Beschnitt, Bund, Zwischenschnitt und Rohbogen steuern den automatischen Nutzenrechner.
+                </p>
+              <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                <NumberField
+                  label="Beschnitt"
+                  value={bleedMm}
+                  onChange={setBleedMm}
+                  step={1}
+                  suffix="mm"
+                />
+                <SelectField
+                  label="Bundbeschnitt"
+                  value={removeSpineBleed ? "no" : "yes"}
+                  onChange={(value) => setRemoveSpineBleed(value === "no")}
+                  options={[
+                    { value: "yes", label: "Beschnitt rundum" },
+                    { value: "no", label: "ohne Beschnitt im Bund" },
+                  ]}
+                />
+                <SelectField
+                  label="Broschürenmodus"
+                  value={calculateAsOpenSpread ? "spread" : "closed"}
+                  onChange={(value) => setCalculateAsOpenSpread(value === "spread")}
+                  options={[
+                    { value: "spread", label: "offene Doppelseite" },
+                    { value: "closed", label: "geschlossenes Format" },
+                  ]}
+                />
+                <NumberField
+                  label="Zwischenschnitt H"
+                  value={gutterHorizontalMm}
+                  onChange={setGutterHorizontalMm}
+                  step={1}
+                  suffix="mm"
+                />
+                <NumberField
+                  label="Zwischenschnitt V"
+                  value={gutterVerticalMm}
+                  onChange={setGutterVerticalMm}
+                  step={1}
+                  suffix="mm"
+                />
+                <SelectField
+                  label="Drehung"
+                  value={allowRotation ? "yes" : "no"}
+                  onChange={(value) => setAllowRotation(value === "yes")}
+                  options={[
+                    { value: "yes", label: "Drehung erlaubt" },
+                    { value: "no", label: "Keine Drehung" },
+                  ]}
+                />
+                <SelectField
+                  label="Laufrichtung"
+                  value={respectGrainDirection ? "yes" : "no"}
+                  onChange={(value) =>
+                    setRespectGrainDirection(value === "yes")
+                  }
+                  options={[
+                    { value: "yes", label: "beachten" },
+                    { value: "no", label: "ignorieren" },
+                  ]}
+                />
+                <SelectField
+                  label="Standard-Rohbogen"
+                  value={rawSheetMaterialId}
+                  onChange={setRawSheetMaterialId}
+                  options={materials.map((material) => ({
+                    value: material.id,
+                    label: `${material.name} · ${material.widthMm} × ${material.heightMm} mm`,
+                  }))}
+                />
+              </div>
+
+              <div className="mt-5 rounded-3xl border border-slate-200 bg-white p-5">
+                <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
+                  <div>
+                    <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                      Automatischer Nutzen
+                    </p>
+                    <p className="mt-2 text-sm font-bold leading-6 text-slate-500">
+                      Rohbogen: {selectedRawSheet?.widthMm ?? 0} ×{" "}
+                      {selectedRawSheet?.heightMm ?? 0} mm · Nutzmaß inkl.
+                      Beschnitt: {impositionResult.productWidthWithBleed} ×{" "}
+                      {impositionResult.productHeightWithBleed} mm ·{" "}
+                      {removeSpineBleed
+                        ? "ohne Bundbeschnitt"
+                        : "Beschnitt rundum"}{" "}
+                      · Zwischenschnitt: H {gutterHorizontalMm} mm / V{" "}
+                      {gutterVerticalMm} mm · nutzbare Fläche:{" "}
+                      {impositionResult.availableWidth} ×{" "}
+                      {impositionResult.availableHeight} mm
+                    </p>
+                  </div>
+
+                  <div className="rounded-2xl bg-emerald-50 px-5 py-3 text-sm font-black text-emerald-700">
+                    Wird automatisch verwendet
+                  </div>
+                </div>
+
+                <div className="mt-5 grid gap-3 md:grid-cols-3">
+                  <InfoCard
+                    label="Normal"
+                    value={`${impositionResult.normal.columns} × ${impositionResult.normal.rows} = ${impositionResult.normal.total}`}
+                  />
+                  <InfoCard
+                    label="Gedreht"
+                    value={
+                      allowRotation
+                        ? `${impositionResult.rotated.columns} × ${impositionResult.rotated.rows} = ${impositionResult.rotated.total}`
+                        : "nicht erlaubt"
+                    }
+                  />
+                  <InfoCard
+                    label="Bester Nutzen"
+                    value={`${impositionResult.best.total} Nutzen / Bogen`}
+                  />
+                  <InfoCard
+                    label="Ausrichtung"
+                    value={impositionResult.best.orientation}
+                  />
+                  <InfoCard
+                    label="Belegte Fläche"
+                    value={`${impositionResult.best.usedWidth} × ${impositionResult.best.usedHeight} mm`}
+                  />
+                  <InfoCard
+                    label="Restfläche"
+                    value={`${formatNumber(impositionResult.best.wastePercent, 1)} %`}
+                  />
+                  <InfoCard
+                    label="Bogenbedarf"
+                    value={`${Math.ceil(safeQuantity / Math.max(impositionResult.best.total, 1)).toLocaleString("de-DE")} Bogen`}
+                  />
+                  <InfoCard
+                    label="Bundlogik"
+                    value={removeSpineBleed ? "aktiv" : "nicht aktiv"}
+                  />
+                  <InfoCard
+                    label="Bundrichtung"
+                    value={getSpineAxisLabel(impositionResult.best.spineAxis)}
+                  />
+                </div>
+
+                <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-5">
+                  <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                    <div>
+                      <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                        Nutzenanalyse
+                      </p>
+                      <h4 className="mt-2 text-lg font-black text-slate-950">
+                        Prüfdaten für die Bogenaufteilung
+                      </h4>
+                      <p className="mt-2 text-sm font-bold leading-6 text-slate-500">
+                        Diese Werte zeigen, warum der aktuelle Nutzen gewählt wurde.
+                      </p>
+                    </div>
+
+                    {removeSpineBleed && (
+                      <div className="rounded-2xl bg-yellow-100 px-4 py-3 text-sm font-black text-yellow-800">
+                        Broschürenlogik aktiv: außen Beschnitt, im Bund kein Beschnitt.
+                      </div>
+                    )}
+                  </div>
+
+                  <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                    <InfoCard
+                      label="Geschlossenes Endformat"
+                      value={`${finalWidthMm} × ${finalHeightMm} mm`}
+                    />
+                    <InfoCard
+                      label="Offenes Nutzmaß"
+                      value={calculateAsOpenSpread ? `${impositionResult.openFinalWidthMm} × ${impositionResult.openFinalHeightMm} mm` : "nicht aktiv"}
+                    />
+                    <InfoCard
+                      label="Nutzmaß inkl. Beschnitt"
+                      value={`${impositionResult.productWidthWithBleed} × ${impositionResult.productHeightWithBleed} mm`}
+                    />
+                    <InfoCard
+                      label="Zwischenschnitt"
+                      value={`H ${gutterHorizontalMm} mm / V ${gutterVerticalMm} mm`}
+                    />
+                    <InfoCard
+                      label="Genutzte Fläche"
+                      value={`${impositionResult.best.usedWidth} × ${impositionResult.best.usedHeight} mm`}
+                    />
+                    <InfoCard
+                      label="Nutzbare Fläche"
+                      value={`${impositionResult.availableWidth} × ${impositionResult.availableHeight} mm`}
+                    />
+                    <InfoCard
+                      label="Bundrichtung"
+                      value={getSpineAxisLabel(impositionResult.best.spineAxis)}
+                    />
+                    <InfoCard
+                      label="Gewählte Ausrichtung"
+                      value={impositionResult.best.orientation}
+                    />
+                    <InfoCard
+                      label="Restfläche"
+                      value={`${formatNumber(impositionResult.best.wastePercent, 1)} %`}
+                    />
+                    <InfoCard
+                      label="Drehung"
+                      value={allowRotation ? "erlaubt" : "gesperrt"}
+                    />
+                  </div>
+
+                  <div className="mt-5 space-y-3">
+                    {removeSpineBleed && (
+                      <p className="rounded-2xl bg-amber-50 px-4 py-3 text-sm font-bold leading-6 text-yellow-800">
+                        Hinweis: Außenbeschnitt wird gerechnet und angezeigt. Im Bund wird kein Beschnitt gerechnet.
+                        Bundrichtung: {getSpineAxisLabel(impositionResult.best.spineAxis)}.
+                      </p>
+                    )}
+
+                    {productType === "Broschüre" && !calculateAsOpenSpread && impositionResult.best.spineAxis === "none" && (
+                      <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-bold leading-6 text-rose-700">
+                        Warnung: Für diese Broschürenaufteilung wurde kein eindeutiger Bund erkannt.
+                        Prüfe Nutzen, Format und Drehung.
+                      </p>
+                    )}
+
+                    {allowRotation && impositionResult.best.orientation === "gedreht" && (
+                      <p className="rounded-2xl bg-sky-50 px-4 py-3 text-sm font-bold leading-6 text-sky-700">
+                        Hinweis: Der beste Nutzen wird nur gedreht erreicht.
+                      </p>
+                    )}
+                  </div>
+                </div>
+
+                <ImpositionPreview
+                  sheetWidthMm={selectedRawSheet?.widthMm ?? 0}
+                  sheetHeightMm={selectedRawSheet?.heightMm ?? 0}
+                  finalWidthMm={finalWidthMm}
+                  finalHeightMm={finalHeightMm}
+                  bleedMm={bleedMm}
+                  removeSpineBleed={removeSpineBleed}
+                  calculateAsOpenSpread={calculateAsOpenSpread}
+                  gripperMarginMm={gripperMarginMm}
+                  sheetMarginMm={sheetMarginMm}
+                  gutterHorizontalMm={gutterHorizontalMm}
+                  gutterVerticalMm={gutterVerticalMm}
+                  result={impositionResult}
+                />
+
+                {impositionResult.best.total <= 0 && (
+                  <p className="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm font-black text-rose-700">
+                    Das Produkt passt mit den aktuellen Rändern/Beschnittwerten
+                    nicht auf den gewählten Rohbogen.
+                  </p>
+                )}
+              </div>
+            </div>
+            </div>
+
             {productType === "Broschüre" && (
-              <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4">
+              <div className="rounded-3xl border border-yellow-200 bg-yellow-50 p-4 shadow-sm">
                 <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                   <div>
-                    <p className="text-xs font-extrabold uppercase tracking-wide text-amber-700">
-                      Broschüre
+                    <p className="text-xs font-extrabold uppercase tracking-wide text-yellow-700">
+                      3 · Produktdaten / Broschüre
                     </p>
                     <h4 className="mt-2 text-lg font-black text-slate-950">
-                      Nur Format, Seiten und Papiere eingeben
+                      Format, Seiten und Papiere
                     </h4>
-                    <p className="mt-2 text-sm font-bold leading-6 text-amber-800">
+                    <p className="mt-2 text-sm font-bold leading-6 text-yellow-800">
                       Die App berechnet daraus offene Doppelseite, Bund ohne Beschnitt,
                       Nutzen, Materialbogen und Druckbogen automatisch.
                     </p>
@@ -2608,7 +3073,7 @@ function CalculatorPage({
                   <button
                     type="button"
                     onClick={ensureBrochureDefaults}
-                    className="rounded-2xl bg-amber-600 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
+                    className="rounded-2xl bg-yellow-500 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
                   >
                     Broschürenlogik anwenden
                   </button>
@@ -2710,7 +3175,7 @@ function CalculatorPage({
                           label="Umschlagseiten"
                           value="4 S. automatisch"
                         />
-                        <p className="mt-2 text-xs font-bold leading-5 text-amber-800">
+                        <p className="mt-2 text-xs font-bold leading-5 text-yellow-800">
                           Der Umschlag ist für die Broschürenlogik fest auf 4 Seiten gesperrt.
                         </p>
                       </div>
@@ -2727,7 +3192,7 @@ function CalculatorPage({
                   </div>
                 </div>
 
-                <p className="mt-5 rounded-2xl bg-amber-100 px-4 py-3 text-sm font-black text-amber-900">
+                <p className="mt-5 rounded-2xl bg-yellow-100 px-4 py-3 text-sm font-black text-yellow-900">
                   Berechnung: Seiten je Rohbogen = Nutzen offener Doppelseiten × 4.
                   Im Bund wird kein Beschnitt gerechnet, außen bleibt der Beschnitt aktiv.
                 </p>
@@ -2735,16 +3200,16 @@ function CalculatorPage({
             )}
 
 
-            <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                    Produktstruktur V94
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-emerald-700">
+                    4 · Druckteile / Produktstruktur V99
                   </p>
                   <h4 className="mt-2 text-lg font-black text-slate-950">
-                    Druckteile nach Grunddaten bearbeiten
+                    Inhalt, Umschlag und Zusatzteile bearbeiten
                   </h4>
-                  <p className="mt-1 text-sm font-bold text-slate-500">
+                  <p className="mt-1 text-sm font-bold text-emerald-900">
                     Nach Format, Seiten und Papieren werden die einzelnen Druckteile geprüft, bearbeitet, dupliziert und gelöscht. Seiten je Bogen und Umschlagseiten werden automatisch abgesichert.
                   </p>
                 </div>
@@ -3072,302 +3537,12 @@ function CalculatorPage({
               </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <NumberField
-                label="Auflage"
-                value={quantity}
-                onChange={setQuantity}
-                suffix="Stück"
-              />
-              <ReadOnlyField
-                label="Berechneter Nutzen"
-                value={`${safeItemsPerSheet} Nutzen`}
-              />
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <NumberField
-                label="Endformat Breite"
-                value={finalWidthMm}
-                onChange={setFinalWidthMm}
-                suffix="mm"
-              />
-              <NumberField
-                label="Endformat Höhe"
-                value={finalHeightMm}
-                onChange={setFinalHeightMm}
-                suffix="mm"
-              />
-            </div>
-
-
-            <div className="rounded-3xl bg-slate-50 p-4">
-              <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                Produktparameter / Nutzenbasis
+            <div className="rounded-3xl border border-sky-200 bg-sky-50 p-4 shadow-sm">
+              <p className="text-xs font-extrabold uppercase tracking-wide text-sky-700">
+                5 · Maschine / Druck
               </p>
-              <p className="mt-1 text-sm font-bold text-slate-500">
-                Diese Werte kommen aus der Kalkulationsvorlage und steuern den
-                automatischen Nutzenrechner.
-              </p>
-              <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
-                <NumberField
-                  label="Beschnitt"
-                  value={bleedMm}
-                  onChange={setBleedMm}
-                  step={1}
-                  suffix="mm"
-                />
-                <SelectField
-                  label="Bundbeschnitt"
-                  value={removeSpineBleed ? "no" : "yes"}
-                  onChange={(value) => setRemoveSpineBleed(value === "no")}
-                  options={[
-                    { value: "yes", label: "Beschnitt rundum" },
-                    { value: "no", label: "ohne Beschnitt im Bund" },
-                  ]}
-                />
-                <SelectField
-                  label="Broschürenmodus"
-                  value={calculateAsOpenSpread ? "spread" : "closed"}
-                  onChange={(value) => setCalculateAsOpenSpread(value === "spread")}
-                  options={[
-                    { value: "spread", label: "offene Doppelseite" },
-                    { value: "closed", label: "geschlossenes Format" },
-                  ]}
-                />
-                <NumberField
-                  label="Zwischenschnitt H"
-                  value={gutterHorizontalMm}
-                  onChange={setGutterHorizontalMm}
-                  step={1}
-                  suffix="mm"
-                />
-                <NumberField
-                  label="Zwischenschnitt V"
-                  value={gutterVerticalMm}
-                  onChange={setGutterVerticalMm}
-                  step={1}
-                  suffix="mm"
-                />
-                <SelectField
-                  label="Drehung"
-                  value={allowRotation ? "yes" : "no"}
-                  onChange={(value) => setAllowRotation(value === "yes")}
-                  options={[
-                    { value: "yes", label: "Drehung erlaubt" },
-                    { value: "no", label: "Keine Drehung" },
-                  ]}
-                />
-                <SelectField
-                  label="Laufrichtung"
-                  value={respectGrainDirection ? "yes" : "no"}
-                  onChange={(value) =>
-                    setRespectGrainDirection(value === "yes")
-                  }
-                  options={[
-                    { value: "yes", label: "beachten" },
-                    { value: "no", label: "ignorieren" },
-                  ]}
-                />
-                <SelectField
-                  label="Standard-Rohbogen"
-                  value={rawSheetMaterialId}
-                  onChange={setRawSheetMaterialId}
-                  options={materials.map((material) => ({
-                    value: material.id,
-                    label: `${material.name} · ${material.widthMm} × ${material.heightMm} mm`,
-                  }))}
-                />
-              </div>
-
-              <div className="mt-5 rounded-3xl border border-slate-200 bg-white p-5">
-                <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-                  <div>
-                    <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                      Automatischer Nutzen
-                    </p>
-                    <p className="mt-2 text-sm font-bold leading-6 text-slate-500">
-                      Rohbogen: {selectedRawSheet?.widthMm ?? 0} ×{" "}
-                      {selectedRawSheet?.heightMm ?? 0} mm · Nutzmaß inkl.
-                      Beschnitt: {impositionResult.productWidthWithBleed} ×{" "}
-                      {impositionResult.productHeightWithBleed} mm ·{" "}
-                      {removeSpineBleed
-                        ? "ohne Bundbeschnitt"
-                        : "Beschnitt rundum"}{" "}
-                      · Zwischenschnitt: H {gutterHorizontalMm} mm / V{" "}
-                      {gutterVerticalMm} mm · nutzbare Fläche:{" "}
-                      {impositionResult.availableWidth} ×{" "}
-                      {impositionResult.availableHeight} mm
-                    </p>
-                  </div>
-
-                  <div className="rounded-2xl bg-emerald-50 px-5 py-3 text-sm font-black text-emerald-700">
-                    Wird automatisch verwendet
-                  </div>
-                </div>
-
-                <div className="mt-5 grid gap-3 md:grid-cols-3">
-                  <InfoCard
-                    label="Normal"
-                    value={`${impositionResult.normal.columns} × ${impositionResult.normal.rows} = ${impositionResult.normal.total}`}
-                  />
-                  <InfoCard
-                    label="Gedreht"
-                    value={
-                      allowRotation
-                        ? `${impositionResult.rotated.columns} × ${impositionResult.rotated.rows} = ${impositionResult.rotated.total}`
-                        : "nicht erlaubt"
-                    }
-                  />
-                  <InfoCard
-                    label="Bester Nutzen"
-                    value={`${impositionResult.best.total} Nutzen / Bogen`}
-                  />
-                  <InfoCard
-                    label="Ausrichtung"
-                    value={impositionResult.best.orientation}
-                  />
-                  <InfoCard
-                    label="Belegte Fläche"
-                    value={`${impositionResult.best.usedWidth} × ${impositionResult.best.usedHeight} mm`}
-                  />
-                  <InfoCard
-                    label="Restfläche"
-                    value={`${formatNumber(impositionResult.best.wastePercent, 1)} %`}
-                  />
-                  <InfoCard
-                    label="Bogenbedarf"
-                    value={`${Math.ceil(safeQuantity / Math.max(impositionResult.best.total, 1)).toLocaleString("de-DE")} Bogen`}
-                  />
-                  <InfoCard
-                    label="Bundlogik"
-                    value={removeSpineBleed ? "aktiv" : "nicht aktiv"}
-                  />
-                  <InfoCard
-                    label="Bundrichtung"
-                    value={getSpineAxisLabel(impositionResult.best.spineAxis)}
-                  />
-                </div>
-
-                <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                  <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
-                    <div>
-                      <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                        Nutzenanalyse
-                      </p>
-                      <h4 className="mt-2 text-lg font-black text-slate-950">
-                        Prüfdaten für die Bogenaufteilung
-                      </h4>
-                      <p className="mt-2 text-sm font-bold leading-6 text-slate-500">
-                        Diese Werte zeigen, warum der aktuelle Nutzen gewählt wurde.
-                      </p>
-                    </div>
-
-                    {removeSpineBleed && (
-                      <div className="rounded-2xl bg-amber-100 px-4 py-3 text-sm font-black text-amber-800">
-                        Broschürenlogik aktiv: außen Beschnitt, im Bund kein Beschnitt.
-                      </div>
-                    )}
-                  </div>
-
-                  <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
-                    <InfoCard
-                      label="Geschlossenes Endformat"
-                      value={`${finalWidthMm} × ${finalHeightMm} mm`}
-                    />
-                    <InfoCard
-                      label="Offenes Nutzmaß"
-                      value={calculateAsOpenSpread ? `${impositionResult.openFinalWidthMm} × ${impositionResult.openFinalHeightMm} mm` : "nicht aktiv"}
-                    />
-                    <InfoCard
-                      label="Nutzmaß inkl. Beschnitt"
-                      value={`${impositionResult.productWidthWithBleed} × ${impositionResult.productHeightWithBleed} mm`}
-                    />
-                    <InfoCard
-                      label="Zwischenschnitt"
-                      value={`H ${gutterHorizontalMm} mm / V ${gutterVerticalMm} mm`}
-                    />
-                    <InfoCard
-                      label="Genutzte Fläche"
-                      value={`${impositionResult.best.usedWidth} × ${impositionResult.best.usedHeight} mm`}
-                    />
-                    <InfoCard
-                      label="Nutzbare Fläche"
-                      value={`${impositionResult.availableWidth} × ${impositionResult.availableHeight} mm`}
-                    />
-                    <InfoCard
-                      label="Bundrichtung"
-                      value={getSpineAxisLabel(impositionResult.best.spineAxis)}
-                    />
-                    <InfoCard
-                      label="Gewählte Ausrichtung"
-                      value={impositionResult.best.orientation}
-                    />
-                    <InfoCard
-                      label="Restfläche"
-                      value={`${formatNumber(impositionResult.best.wastePercent, 1)} %`}
-                    />
-                    <InfoCard
-                      label="Drehung"
-                      value={allowRotation ? "erlaubt" : "gesperrt"}
-                    />
-                  </div>
-
-                  <div className="mt-5 space-y-3">
-                    {removeSpineBleed && (
-                      <p className="rounded-2xl bg-amber-50 px-4 py-3 text-sm font-bold leading-6 text-amber-800">
-                        Hinweis: Außenbeschnitt wird gerechnet und angezeigt. Im Bund wird kein Beschnitt gerechnet.
-                        Bundrichtung: {getSpineAxisLabel(impositionResult.best.spineAxis)}.
-                      </p>
-                    )}
-
-                    {productType === "Broschüre" && !calculateAsOpenSpread && impositionResult.best.spineAxis === "none" && (
-                      <p className="rounded-2xl bg-rose-50 px-4 py-3 text-sm font-bold leading-6 text-rose-700">
-                        Warnung: Für diese Broschürenaufteilung wurde kein eindeutiger Bund erkannt.
-                        Prüfe Nutzen, Format und Drehung.
-                      </p>
-                    )}
-
-                    {allowRotation && impositionResult.best.orientation === "gedreht" && (
-                      <p className="rounded-2xl bg-sky-50 px-4 py-3 text-sm font-bold leading-6 text-sky-700">
-                        Hinweis: Der beste Nutzen wird nur gedreht erreicht.
-                      </p>
-                    )}
-                  </div>
-                </div>
-
-                <ImpositionPreview
-                  sheetWidthMm={selectedRawSheet?.widthMm ?? 0}
-                  sheetHeightMm={selectedRawSheet?.heightMm ?? 0}
-                  finalWidthMm={finalWidthMm}
-                  finalHeightMm={finalHeightMm}
-                  bleedMm={bleedMm}
-                  removeSpineBleed={removeSpineBleed}
-                  calculateAsOpenSpread={calculateAsOpenSpread}
-                  gripperMarginMm={gripperMarginMm}
-                  sheetMarginMm={sheetMarginMm}
-                  gutterHorizontalMm={gutterHorizontalMm}
-                  gutterVerticalMm={gutterVerticalMm}
-                  result={impositionResult}
-                />
-
-                {impositionResult.best.total <= 0 && (
-                  <p className="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm font-black text-rose-700">
-                    Das Produkt passt mit den aktuellen Rändern/Beschnittwerten
-                    nicht auf den gewählten Rohbogen.
-                  </p>
-                )}
-              </div>
-            </div>
-
-            <div className="rounded-3xl bg-slate-50 p-4">
-              <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                Maschine / Kostenmodell
-              </p>
-              <p className="mt-1 text-sm font-bold text-slate-500">
-                Die Kalkulation zeigt je nach Maschine passende Kostenfelder:
-                Klickkosten nur bei Klickmaschinen, Tintenverbrauch oder
-                Roland-Schneiden.
+              <p className="mt-1 text-sm font-bold text-sky-900">
+                Maschine wählen, Farb-/Kostenmodell prüfen und nur die passenden Produktionsfelder bearbeiten.
               </p>
 
               <div className="mt-4 grid gap-4 md:grid-cols-2 md:items-end">
@@ -3514,14 +3689,14 @@ function CalculatorPage({
               )}
             </div>
 
-            <div className="rounded-3xl bg-slate-50 p-4">
+            <div className="rounded-3xl border border-lime-200 bg-lime-50 p-4 shadow-sm">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                    Weiterverarbeitung
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-lime-700">
+                    6 · Weiterverarbeitung
                   </p>
-                  <p className="mt-1 text-sm font-bold text-slate-500">
-                    Mehrere Verarbeitungsschritte pro Kalkulation.
+                  <p className="mt-1 text-sm font-bold text-lime-900">
+                    Schneiden, Falzen, Rillen, Heften und Handarbeit werden hier als einzelne Schritte geführt.
                   </p>
                 </div>
 
@@ -3636,49 +3811,52 @@ function CalculatorPage({
               </div>
             </div>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <NumberField
-                label="Zuschuss"
-                value={fixedOvers}
-                onChange={setFixedOvers}
-                suffix="Bogen"
-              />
-              <NumberField
-                label="Ausschuss"
-                value={wastePercent}
-                onChange={setWastePercent}
-                suffix="%"
-              />
-            </div>
+            <div className="rounded-3xl border border-violet-200 bg-violet-50 p-4 shadow-sm">
+              <p className="text-xs font-extrabold uppercase tracking-wide text-violet-700">
+                7 · Zuschläge / Preislogik
+              </p>
+              <p className="mt-1 text-sm font-bold text-violet-900">
+                Diese Werte beeinflussen die Produktionssicherheit und den Verkaufspreis. Die eigentliche Preisbrücke steht rechts im Ergebnisbereich.
+              </p>
 
-            <div className="grid gap-4 md:grid-cols-2">
-              <NumberField
-                label="Rüstzeit Druck"
-                value={setupMinutes}
-                onChange={setSetupMinutes}
-                suffix="Min."
-              />
-              <NumberField
-                label="Zusatzkosten WV"
-                value={finishingExtraCost}
-                onChange={setFinishingExtraCost}
-                suffix="€"
-              />
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <NumberField
-                label="Gemeinkosten"
-                value={overheadPercent}
-                onChange={setOverheadPercent}
-                suffix="%"
-              />
-              <NumberField
-                label="Deckungsbeitrag / Marge"
-                value={marginPercent}
-                onChange={setMarginPercent}
-                suffix="%"
-              />
+              <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                <NumberField
+                  label="Zuschuss"
+                  value={fixedOvers}
+                  onChange={setFixedOvers}
+                  suffix="Bogen"
+                />
+                <NumberField
+                  label="Ausschuss"
+                  value={wastePercent}
+                  onChange={setWastePercent}
+                  suffix="%"
+                />
+                <NumberField
+                  label="Rüstzeit Druck"
+                  value={setupMinutes}
+                  onChange={setSetupMinutes}
+                  suffix="Min."
+                />
+                <NumberField
+                  label="Zusatzkosten WV"
+                  value={finishingExtraCost}
+                  onChange={setFinishingExtraCost}
+                  suffix="€"
+                />
+                <NumberField
+                  label="Gemeinkosten"
+                  value={overheadPercent}
+                  onChange={setOverheadPercent}
+                  suffix="%"
+                />
+                <NumberField
+                  label="Deckungsbeitrag / Marge"
+                  value={marginPercent}
+                  onChange={setMarginPercent}
+                  suffix="%"
+                />
+              </div>
             </div>
           </div>
         </div>
@@ -3753,6 +3931,140 @@ function CalculatorPage({
             </div>
           </div>
 
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+              <div>
+                <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                  Produktionskosten V99
+                </p>
+                <h3 className="mt-1 text-lg font-black text-slate-950">
+                  Preisaufbau auf einen Blick
+                </h3>
+                <p className="mt-1 text-sm font-bold leading-6 text-slate-500">
+                  Erst Produktionskosten, dann Gemeinkosten, Selbstkosten, Deckungsbeitrag und Verkaufspreis.
+                </p>
+              </div>
+              <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
+                netto
+              </span>
+            </div>
+
+            <div className="mt-5 grid grid-cols-3 gap-2">
+              {productionCostSections.map((section) => {
+                const percent = (section.value / section.percentBase) * 100;
+
+                return (
+                  <div
+                    key={`${section.title}-compact`}
+                    className="rounded-2xl border border-slate-100 bg-slate-50 p-3"
+                  >
+                    <p className="text-[0.68rem] font-black uppercase tracking-wide text-slate-400">
+                      {section.shortTitle}
+                    </p>
+                    <p className="mt-1 truncate text-sm font-black text-slate-950">
+                      {formatCurrency(section.value)}
+                    </p>
+                    <p className="mt-1 text-[0.68rem] font-black text-slate-400">
+                      {formatNumber(percent, 0)} % Produktion
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-4 space-y-3">
+              {productionCostSections.map((section) => {
+                const percent = (section.value / section.percentBase) * 100;
+                const safePercent = Math.max(0, Math.min(percent, 100));
+
+                return (
+                  <details
+                    key={section.title}
+                    className="group rounded-3xl border border-slate-100 bg-slate-50 p-4 open:bg-white open:shadow-sm"
+                  >
+                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className={`h-3 w-3 shrink-0 rounded-full ${section.accentClass}`} />
+                          <p className="text-sm font-black text-slate-950">
+                            {section.title}
+                          </p>
+                        </div>
+                        <p className="mt-1 text-xs font-bold leading-5 text-slate-500">
+                          {section.summary}
+                        </p>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <p className="text-base font-black text-slate-950">
+                          {formatCurrency(section.value)}
+                        </p>
+                        <p className="mt-1 text-[0.68rem] font-black uppercase tracking-wide text-slate-400">
+                          Details
+                        </p>
+                      </div>
+                    </summary>
+
+                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className={`h-full rounded-full ${section.accentClass}`}
+                        style={{ width: `${safePercent}%` }}
+                      />
+                    </div>
+
+                    <div className="mt-4 space-y-2">
+                      {section.rows.map((row) => (
+                        <div
+                          key={`${section.title}-${row.label}`}
+                          className="rounded-2xl border border-slate-100 bg-white px-3 py-3"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="text-xs font-black text-slate-700">
+                                {row.label}
+                              </p>
+                              <p className="mt-1 text-[0.68rem] font-bold leading-4 text-slate-400">
+                                {row.note}
+                              </p>
+                            </div>
+                            <p className="shrink-0 text-xs font-black text-slate-950">
+                              {row.value}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                );
+              })}
+            </div>
+
+            <div className="mt-5 rounded-3xl bg-slate-950 p-4 text-white">
+              <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                Preisbrücke
+              </p>
+              <div className="mt-4 space-y-2">
+                {priceBridgeItems.map((item, index) => (
+                  <div
+                    key={item.label}
+                    className={`rounded-2xl px-3 py-3 ${index === priceBridgeItems.length - 1 ? "bg-emerald-400 text-slate-950" : "bg-white/10"}`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-black">{item.label}</p>
+                        <p className={`mt-1 text-[0.68rem] font-bold ${index === priceBridgeItems.length - 1 ? "text-slate-700" : "text-slate-400"}`}>
+                          {item.note}
+                        </p>
+                      </div>
+                      <p className="shrink-0 text-sm font-black">
+                        {formatCurrency(item.value)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+
           <div
             className={`rounded-[2rem] border p-5 shadow-sm ${
               hasCalculationErrors
@@ -3815,7 +4127,7 @@ function CalculatorPage({
                       calculationWarnings[0].level === "error"
                         ? "text-rose-800"
                         : calculationWarnings[0].level === "warning"
-                          ? "text-amber-900"
+                          ? "text-yellow-900"
                           : "text-sky-800"
                     }`}
                   >
@@ -12857,8 +13169,8 @@ function getPaymentStatusClasses(status?: PaymentStatus) {
   return {
     panel: "bg-amber-50",
     label: "text-amber-700",
-    text: "text-amber-900",
-    badge: "bg-amber-100 text-amber-700",
+    text: "text-yellow-900",
+    badge: "bg-yellow-100 text-amber-700",
   };
 }
 

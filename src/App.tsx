@@ -7976,6 +7976,7 @@ function MachinesPage({
   const [statusFilter, setStatusFilter] = useState("all");
   const [editingMachine, setEditingMachine] = useState<Machine | null>(null);
   const [featureText, setFeatureText] = useState("");
+  const [expandedMachineId, setExpandedMachineId] = useState<string | null>(null);
 
   const machineTypes = Array.from(
     new Set(machines.map((machine) => machine.type)),
@@ -8161,15 +8162,14 @@ function MachinesPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-sky-300">
-                Maschinenverwaltung V4
+                Maschinenverwaltung V5
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 Maschinen-Stammdaten
               </h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-                Maschinen anlegen, bearbeiten und inklusive
-                Tinten-/Kartuschenkosten dauerhaft speichern. Die Kalkulation
-                nutzt diese Maschinen direkt.
+                Maschinen kompakt verwalten, bei Bedarf Details ausklappen und
+                inklusive Tinten-/Kartuschenkosten dauerhaft speichern.
               </p>
             </div>
 
@@ -8630,190 +8630,230 @@ function MachinesPage({
         </div>
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-2">
-        {filteredMachines.map((machine) => {
-          const statusClass =
-            machine.status === "Bereit"
-              ? "bg-emerald-100 text-emerald-700"
-              : machine.status === "Wartung"
-                ? "bg-rose-100 text-rose-700"
-                : "bg-orange-100 text-orange-700";
+      <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+        <div className="hidden grid-cols-[1.15fr_0.8fr_0.8fr_0.75fr_0.75fr_0.85fr_auto] gap-4 border-b border-slate-200 bg-slate-50 px-5 py-3 text-xs font-extrabold uppercase tracking-wide text-slate-400 xl:grid">
+          <span>Maschine</span>
+          <span>Typ</span>
+          <span>Kostenmodell</span>
+          <span>Status</span>
+          <span>Stundensatz</span>
+          <span>Format</span>
+          <span className="text-right">Aktionen</span>
+        </div>
 
-          const machineCostModel = getMachineCostModel(machine.name);
+        <div className="divide-y divide-slate-100">
+          {filteredMachines.map((machine) => {
+            const machineCostModel = getMachineCostModel(machine.name);
+            const statusClass =
+              machine.status === "Bereit"
+                ? "bg-emerald-100 text-emerald-700"
+                : machine.status === "Wartung"
+                  ? "bg-rose-100 text-rose-700"
+                  : "bg-orange-100 text-orange-700";
+            const isExpanded = expandedMachineId === machine.id;
 
-          return (
-            <article
-              key={machine.id}
-              className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm"
-            >
-              <div
-                className={`h-2 bg-gradient-to-r ${
-                  machine.status === "Bereit"
-                    ? "from-sky-500 via-cyan-400 to-emerald-400"
-                    : "from-orange-400 via-rose-500 to-fuchsia-500"
-                }`}
-              />
-
-              <div className="p-6">
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                  <div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
-                        {machine.type}
-                      </span>
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-black ${statusClass}`}
-                      >
-                        {machine.status}
-                      </span>
-                      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
-                        {machine.duplex ? "Duplex" : "Simplex"}
-                      </span>
-                      <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-black text-sky-700">
-                        {getMachineCostModelLabel(machineCostModel)}
-                      </span>
-                    </div>
-
-                    <h3 className="mt-4 text-2xl font-black tracking-tight">
+            return (
+              <article key={machine.id} className="bg-white">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setExpandedMachineId(isExpanded ? null : machine.id)
+                  }
+                  className="grid w-full gap-4 px-5 py-4 text-left transition hover:bg-slate-50 xl:grid-cols-[1.15fr_0.8fr_0.8fr_0.75fr_0.75fr_0.85fr_auto] xl:items-center"
+                >
+                  <div className="min-w-0">
+                    <p className="truncate text-sm font-black text-slate-950">
                       {machine.name}
-                    </h3>
-                    <p className="mt-2 text-sm font-bold text-slate-500">
-                      Max. Format: {machine.maxWidthMm} × {machine.maxHeightMm}{" "}
-                      mm · Rüstzeit Standard: {machine.setupMinutesDefault} Min.
+                    </p>
+                    <p className="mt-1 text-xs font-bold text-slate-400 xl:hidden">
+                      {machine.type} · {getMachineCostModelLabel(machineCostModel)} · {machine.maxWidthMm} × {machine.maxHeightMm} mm
                     </p>
                   </div>
 
-                  <div className="flex flex-col gap-2 sm:flex-row">
-                    <button
-                      type="button"
-                      onClick={() => openEditMachine(machine)}
-                      className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
-                    >
-                      Bearbeiten
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => deleteMachine(machine.id)}
-                      disabled={machines.length <= 1}
-                      className={`rounded-2xl px-4 py-3 text-sm font-black transition ${machines.length <= 1 ? "cursor-not-allowed bg-slate-100 text-slate-400" : "bg-rose-100 text-rose-700 hover:-translate-y-0.5"}`}
-                    >
-                      Löschen
-                    </button>
-                  </div>
-                </div>
-
-                <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                  <InfoCard
-                    label="Kostenmodell"
-                    value={getMachineCostModelLabel(machineCostModel)}
-                  />
-                  {machineCostModel === "click" && (
-                    <>
-                      <InfoCard
-                        label="Farbklick"
-                        value={
-                          machine.colorClickCost > 0
-                            ? `${formatCurrency(machine.colorClickCost)} / Klick`
-                            : "—"
-                        }
-                      />
-                      <InfoCard
-                        label="S/W-Klick"
-                        value={
-                          machine.blackClickCost > 0
-                            ? `${formatCurrency(machine.blackClickCost)} / Klick`
-                            : "—"
-                        }
-                      />
-                    </>
-                  )}
-                  {machineCostModel === "risoInk" && (
-                    <>
-                      <InfoCard
-                        label="Tinte normal"
-                        value={`${formatCurrency(getRisoInkCostPerPage(machine, "normal"))} / Seite`}
-                      />
-                      <InfoCard
-                        label="Tinte vollflächig"
-                        value={`${formatCurrency(getRisoInkCostPerPage(machine, "full"))} / Seite`}
-                      />
-                    </>
-                  )}
-                  {machineCostModel === "roland" && (
-                    <>
-                      <InfoCard
-                        label="Ø Tinte"
-                        value={`${formatCurrency(getAverageInkPricePerMl(machine))} / ml`}
-                      />
-                      <InfoCard
-                        label="Standardverbrauch"
-                        value={`${formatNumber(machine.rolandDefaultInkMlPerSqm ?? 12, 1)} ml/m²`}
-                      />
-                    </>
-                  )}
-                  <InfoCard
-                    label="Stundensatz"
-                    value={`${formatCurrency(machine.hourlyRate)} / h`}
-                  />
-                  <InfoCard
-                    label="Duplex"
-                    value={machine.duplex ? "Ja" : "Nein"}
-                  />
-                  <InfoCard
-                    label="Max. Format"
-                    value={`${machine.maxWidthMm} × ${machine.maxHeightMm} mm`}
-                  />
-                  <InfoCard
-                    label="Leistung"
-                    value={
-                      machine.speedSheetsPerHour > 0
-                        ? `${machine.speedSheetsPerHour.toLocaleString("de-DE")} Bg./h`
-                        : "Rollenabhängig"
-                    }
-                  />
-                  <InfoCard
-                    label={
-                      machineCostModel === "roland"
-                        ? "Produktionsarten"
-                        : "Farbmodi"
-                    }
-                    value={
-                      getAllowedColorModes(machine.name, machineCostModel)
-                        .map((mode) => mode.label)
-                        .join(", ") ||
-                      "Drucken, Drucken + Schneiden, Nur Schneiden"
-                    }
-                  />
-                </div>
-
-                <div className="mt-6 rounded-3xl bg-slate-50 p-5">
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                    Besonderheiten
+                  <p className="hidden truncate text-sm font-bold text-slate-600 xl:block">
+                    {machine.type}
                   </p>
-                  <div className="mt-4 flex flex-wrap gap-2">
-                    {machine.specialFeatures.length > 0 ? (
-                      machine.specialFeatures.map((feature) => (
-                        <span
-                          key={feature}
-                          className="rounded-full bg-white px-3 py-2 text-xs font-black text-slate-600 shadow-sm"
-                        >
-                          {feature}
-                        </span>
-                      ))
-                    ) : (
-                      <span className="text-sm font-bold text-slate-400">
-                        Keine Besonderheiten hinterlegt
-                      </span>
-                    )}
-                  </div>
-                  <p className="mt-5 text-sm font-medium leading-6 text-slate-500">
-                    {machine.notes || "Keine Notiz hinterlegt."}
+
+                  <span className="hidden w-fit rounded-full bg-sky-100 px-3 py-1 text-xs font-black text-sky-700 xl:inline-flex">
+                    {getMachineCostModelLabel(machineCostModel)}
+                  </span>
+
+                  <span className={`w-fit rounded-full px-3 py-1 text-xs font-black ${statusClass}`}>
+                    {machine.status}
+                  </span>
+
+                  <p className="hidden text-sm font-black text-slate-700 xl:block">
+                    {formatCurrency(machine.hourlyRate)} / h
                   </p>
-                </div>
-              </div>
-            </article>
-          );
-        })}
+
+                  <p className="hidden text-sm font-bold text-slate-600 xl:block">
+                    {machine.maxWidthMm} × {machine.maxHeightMm} mm
+                  </p>
+
+                  <div className="flex items-center justify-between gap-2 xl:justify-end">
+                    <span className="text-xs font-black text-slate-400 xl:hidden">
+                      {formatCurrency(machine.hourlyRate)} / h
+                    </span>
+                    <span className="rounded-xl bg-slate-100 px-3 py-2 text-xs font-black text-slate-600">
+                      {isExpanded ? "Schließen" : "Details"}
+                    </span>
+                  </div>
+                </button>
+
+                {isExpanded && (
+                  <div className="border-t border-slate-100 bg-slate-50 px-5 py-5">
+                    <div className="grid gap-4 xl:grid-cols-[1.15fr_0.85fr]">
+                      <div className="rounded-3xl bg-white p-5 shadow-sm">
+                        <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
+                          <div>
+                            <div className="flex flex-wrap gap-2">
+                              <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
+                                {machine.type}
+                              </span>
+                              <span className={`rounded-full px-3 py-1 text-xs font-black ${statusClass}`}>
+                                {machine.status}
+                              </span>
+                              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
+                                {machine.duplex ? "Duplex" : "Simplex"}
+                              </span>
+                              <span className="rounded-full bg-sky-100 px-3 py-1 text-xs font-black text-sky-700">
+                                {getMachineCostModelLabel(machineCostModel)}
+                              </span>
+                            </div>
+                            <h3 className="mt-4 text-2xl font-black tracking-tight">
+                              {machine.name}
+                            </h3>
+                            <p className="mt-2 text-sm font-bold text-slate-500">
+                              Max. Format: {machine.maxWidthMm} × {machine.maxHeightMm} mm · Rüstzeit Standard: {machine.setupMinutesDefault} Min.
+                            </p>
+                          </div>
+
+                          <div className="flex flex-col gap-2 sm:flex-row">
+                            <button
+                              type="button"
+                              onClick={() => openEditMachine(machine)}
+                              className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
+                            >
+                              Bearbeiten
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => deleteMachine(machine.id)}
+                              disabled={machines.length <= 1}
+                              className={`rounded-2xl px-4 py-3 text-sm font-black transition ${machines.length <= 1 ? "cursor-not-allowed bg-slate-100 text-slate-400" : "bg-rose-100 text-rose-700 hover:-translate-y-0.5"}`}
+                            >
+                              Löschen
+                            </button>
+                          </div>
+                        </div>
+
+                        <div className="mt-5 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
+                          <InfoCard label="Kostenmodell" value={getMachineCostModelLabel(machineCostModel)} />
+                          {machineCostModel === "click" && (
+                            <>
+                              <InfoCard
+                                label="Farbklick"
+                                value={machine.colorClickCost > 0 ? `${formatCurrency(machine.colorClickCost)} / Klick` : "—"}
+                              />
+                              <InfoCard
+                                label="S/W-Klick"
+                                value={machine.blackClickCost > 0 ? `${formatCurrency(machine.blackClickCost)} / Klick` : "—"}
+                              />
+                            </>
+                          )}
+                          {machineCostModel === "risoInk" && (
+                            <>
+                              <InfoCard
+                                label="Tinte normal"
+                                value={`${formatCurrency(getRisoInkCostPerPage(machine, "normal"))} / Seite`}
+                              />
+                              <InfoCard
+                                label="Tinte vollflächig"
+                                value={`${formatCurrency(getRisoInkCostPerPage(machine, "full"))} / Seite`}
+                              />
+                            </>
+                          )}
+                          {machineCostModel === "roland" && (
+                            <>
+                              <InfoCard
+                                label="Ø Tinte"
+                                value={`${formatCurrency(getAverageInkPricePerMl(machine))} / ml`}
+                              />
+                              <InfoCard
+                                label="Standardverbrauch"
+                                value={`${formatNumber(machine.rolandDefaultInkMlPerSqm ?? 12, 1)} ml/m²`}
+                              />
+                            </>
+                          )}
+                          <InfoCard label="Stundensatz" value={`${formatCurrency(machine.hourlyRate)} / h`} />
+                          <InfoCard label="Duplex" value={machine.duplex ? "Ja" : "Nein"} />
+                          <InfoCard label="Max. Format" value={`${machine.maxWidthMm} × ${machine.maxHeightMm} mm`} />
+                          <InfoCard
+                            label="Leistung"
+                            value={machine.speedSheetsPerHour > 0 ? `${machine.speedSheetsPerHour.toLocaleString("de-DE")} Bg./h` : "Rollenabhängig"}
+                          />
+                          <InfoCard
+                            label={machineCostModel === "roland" ? "Produktionsarten" : "Farbmodi"}
+                            value={
+                              getAllowedColorModes(machine.name, machineCostModel)
+                                .map((mode) => mode.label)
+                                .join(", ") || "Drucken, Drucken + Schneiden, Nur Schneiden"
+                            }
+                          />
+                        </div>
+                      </div>
+
+                      <div className="rounded-3xl bg-white p-5 shadow-sm">
+                        <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                          Besonderheiten & Notizen
+                        </p>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          {machine.specialFeatures.length > 0 ? (
+                            machine.specialFeatures.map((feature) => (
+                              <span
+                                key={feature}
+                                className="rounded-full bg-slate-100 px-3 py-2 text-xs font-black text-slate-600"
+                              >
+                                {feature}
+                              </span>
+                            ))
+                          ) : (
+                            <span className="text-sm font-bold text-slate-400">
+                              Keine Besonderheiten hinterlegt
+                            </span>
+                          )}
+                        </div>
+                        <p className="mt-5 text-sm font-medium leading-6 text-slate-500">
+                          {machine.notes || "Keine Notiz hinterlegt."}
+                        </p>
+
+                        {machineCostModel !== "click" && (
+                          <div className="mt-5 rounded-2xl bg-slate-50 p-4">
+                            <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                              Tintenkanäle
+                            </p>
+                            <div className="mt-3 flex flex-wrap gap-2">
+                              {(machine.inkChannels ?? [])
+                                .filter((channel) => channel.active)
+                                .map((channel) => (
+                                  <span
+                                    key={channel.id}
+                                    className="rounded-full bg-white px-3 py-2 text-xs font-black text-slate-600 shadow-sm"
+                                  >
+                                    {channel.name}
+                                  </span>
+                                ))}
+                            </div>
+                          </div>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
       </section>
 
       {filteredMachines.length === 0 && (

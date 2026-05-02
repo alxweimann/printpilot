@@ -7352,6 +7352,9 @@ function MaterialsPage({
   const [editingMaterialId, setEditingMaterialId] = useState<string | null>(
     null,
   );
+  const [expandedMaterialId, setExpandedMaterialId] = useState<string | null>(
+    null,
+  );
 
   const materialTypes = Array.from(
     new Set(materials.map((material) => material.type)),
@@ -7718,181 +7721,241 @@ function MaterialsPage({
         </section>
       )}
 
-      <section className="grid gap-5 xl:grid-cols-2">
-        {filteredMaterials.map((material) => {
-          const areaSqm = calculateSheetAreaSqm(
-            material.widthMm,
-            material.heightMm,
-          );
-          const weightKg = calculateSheetWeightKg(
-            material.widthMm,
-            material.heightMm,
-            material.grammage,
-          );
-          const pricePerSheet = calculateMaterialPricePerSheet(material);
-          const isLowStock =
-            material.stockSheets <= material.minimumStockSheets;
-          const stockPercentage =
-            material.minimumStockSheets > 0
-              ? Math.min(
-                  (material.stockSheets / material.minimumStockSheets) * 100,
-                  160,
-                )
-              : 100;
-          return (
-            <article
-              key={material.id}
-              className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm"
-            >
-              <div
-                className={
-                  isLowStock
-                    ? "h-2 bg-gradient-to-r from-rose-500 via-orange-400 to-yellow-300"
-                    : "h-2 bg-gradient-to-r from-orange-400 via-yellow-300 to-cyan-400"
-                }
-              />
-              <div className="p-6">
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                  <div>
-                    <div className="flex flex-wrap gap-2">
+      <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+        <div className="hidden grid-cols-[1.6fr_0.9fr_0.8fr_0.9fr_0.9fr_0.8fr_auto] gap-4 border-b border-slate-200 bg-slate-50 px-5 py-3 text-xs font-extrabold uppercase tracking-wide text-slate-400 lg:grid">
+          <span>Material</span>
+          <span>Format</span>
+          <span>Grammatur</span>
+          <span>Preis/Bogen</span>
+          <span>Bestand</span>
+          <span>Status</span>
+          <span className="text-right">Aktionen</span>
+        </div>
+
+        <div className="divide-y divide-slate-100">
+          {filteredMaterials.map((material) => {
+            const areaSqm = calculateSheetAreaSqm(
+              material.widthMm,
+              material.heightMm,
+            );
+            const weightKg = calculateSheetWeightKg(
+              material.widthMm,
+              material.heightMm,
+              material.grammage,
+            );
+            const pricePerSheet = calculateMaterialPricePerSheet(material);
+            const isLowStock =
+              material.stockSheets <= material.minimumStockSheets;
+            const isExpanded = expandedMaterialId === material.id;
+            const stockPercentage =
+              material.minimumStockSheets > 0
+                ? Math.min(
+                    (material.stockSheets / material.minimumStockSheets) * 100,
+                    160,
+                  )
+                : 100;
+
+            return (
+              <article key={material.id} className="bg-white">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setExpandedMaterialId((current) =>
+                      current === material.id ? null : material.id,
+                    )
+                  }
+                  className="grid w-full gap-3 px-5 py-4 text-left transition hover:bg-slate-50 lg:grid-cols-[1.6fr_0.9fr_0.8fr_0.9fr_0.9fr_0.8fr_auto] lg:items-center lg:gap-4"
+                >
+                  <div className="min-w-0">
+                    <div className="flex flex-wrap items-center gap-2">
                       <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
-                        {material.type}
+                        {material.type || "Material"}
                       </span>
                       <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
                         {getPricingModeLabel(material.pricingMode)}
                       </span>
-                      <span
-                        className={
-                          isLowStock
-                            ? "rounded-full bg-rose-100 px-3 py-1 text-xs font-black text-rose-700"
-                            : "rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700"
-                        }
-                      >
-                        {isLowStock ? "Bestand niedrig" : "Bestand okay"}
-                      </span>
                     </div>
-                    <h3 className="mt-4 text-2xl font-black tracking-tight">
+                    <p className="mt-2 truncate text-base font-black text-slate-950">
                       {material.name}
-                    </h3>
-                    <p className="mt-2 text-sm font-bold text-slate-500">
-                      {material.widthMm} × {material.heightMm} mm ·{" "}
-                      {material.grammage > 0
-                        ? String(material.grammage) + " g/m²"
-                        : "Rollenmaterial"}{" "}
-                      · {material.supplier || "kein Lieferant"}
+                    </p>
+                    <p className="mt-1 truncate text-xs font-bold text-slate-500">
+                      {material.supplier || "kein Lieferant"}
                     </p>
                   </div>
-                  <div className="flex flex-col gap-3 sm:flex-row">
+
+                  <div>
+                    <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400 lg:hidden">
+                      Format
+                    </p>
+                    <p className="text-sm font-black text-slate-700">
+                      {material.widthMm} × {material.heightMm} mm
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400 lg:hidden">
+                      Grammatur
+                    </p>
+                    <p className="text-sm font-black text-slate-700">
+                      {material.grammage > 0
+                        ? `${material.grammage} g/m²`
+                        : "—"}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400 lg:hidden">
+                      Preis/Bogen
+                    </p>
+                    <p className="text-sm font-black text-slate-950">
+                      {formatCurrency(pricePerSheet)}
+                    </p>
+                  </div>
+
+                  <div>
+                    <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400 lg:hidden">
+                      Bestand
+                    </p>
+                    <p className="text-sm font-black text-slate-700">
+                      {material.stockSheets.toLocaleString("de-DE")} Bg.
+                    </p>
+                    <p className="mt-1 text-xs font-bold text-slate-400">
+                      Min. {material.minimumStockSheets.toLocaleString("de-DE")}
+                    </p>
+                  </div>
+
+                  <div>
+                    <span
+                      className={
+                        isLowStock
+                          ? "inline-flex rounded-full bg-rose-100 px-3 py-1 text-xs font-black text-rose-700"
+                          : "inline-flex rounded-full bg-emerald-100 px-3 py-1 text-xs font-black text-emerald-700"
+                      }
+                    >
+                      {isLowStock ? "Nachbestellen" : "Okay"}
+                    </span>
+                  </div>
+
+                  <div className="flex gap-2 lg:justify-end">
                     <button
                       type="button"
-                      onClick={() => setEditingMaterialId(material.id)}
-                      className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white transition hover:-translate-y-0.5"
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        setEditingMaterialId(material.id);
+                        setExpandedMaterialId(material.id);
+                      }}
+                      className="rounded-xl bg-slate-950 px-3 py-2 text-xs font-black text-white transition hover:-translate-y-0.5"
                     >
                       Bearbeiten
                     </button>
                     <button
                       type="button"
-                      onClick={() => deleteMaterial(material.id)}
+                      onClick={(event) => {
+                        event.stopPropagation();
+                        deleteMaterial(material.id);
+                      }}
                       disabled={materials.length <= 1}
                       className={
                         materials.length <= 1
-                          ? "cursor-not-allowed rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-400"
-                          : "rounded-2xl bg-rose-100 px-4 py-3 text-sm font-black text-rose-700 transition hover:-translate-y-0.5"
+                          ? "cursor-not-allowed rounded-xl bg-slate-100 px-3 py-2 text-xs font-black text-slate-400"
+                          : "rounded-xl bg-rose-100 px-3 py-2 text-xs font-black text-rose-700 transition hover:-translate-y-0.5"
                       }
                     >
                       Löschen
                     </button>
                   </div>
-                </div>
-                <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                  <InfoCard
-                    label="Format"
-                    value={
-                      String(material.widthMm) +
-                      " × " +
-                      String(material.heightMm) +
-                      " mm"
-                    }
-                  />
-                  <InfoCard
-                    label="Grammatur"
-                    value={
-                      material.grammage > 0
-                        ? String(material.grammage) + " g/m²"
-                        : "—"
-                    }
-                  />
-                  <InfoCard
-                    label="Laufrichtung"
-                    value={material.grainDirection}
-                  />
-                  <InfoCard
-                    label="Fläche/Bogen"
-                    value={formatNumber(areaSqm, 4) + " m²"}
-                  />
-                  <InfoCard
-                    label="Gewicht/Bogen"
-                    value={
-                      material.grammage > 0
-                        ? formatNumber(weightKg * 1000, 1) + " g"
-                        : "—"
-                    }
-                  />
-                  <InfoCard
-                    label="Preis/Bogen"
-                    value={formatCurrency(pricePerSheet)}
-                  />
-                </div>
-                <div className="mt-6 rounded-3xl bg-slate-50 p-5">
-                  <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                    <div>
-                      <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                        Lagerbestand
-                      </p>
-                      <p className="mt-2 text-2xl font-black">
-                        {material.stockSheets.toLocaleString("de-DE")} Bogen
-                      </p>
-                      <p className="mt-1 text-sm font-bold text-slate-500">
-                        Mindestbestand:{" "}
-                        {material.minimumStockSheets.toLocaleString("de-DE")}{" "}
-                        Bogen · Lagerwert{" "}
-                        {formatCurrency(material.stockSheets * pricePerSheet)}
-                      </p>
+                </button>
+
+                {isExpanded && (
+                  <div className="border-t border-slate-100 bg-slate-50 px-5 py-5">
+                    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                      <InfoCard
+                        label="Laufrichtung"
+                        value={material.grainDirection}
+                      />
+                      <InfoCard
+                        label="Preisart"
+                        value={getPricingModeLabel(material.pricingMode)}
+                      />
+                      <InfoCard
+                        label="Fläche/Bogen"
+                        value={`${formatNumber(areaSqm, 4)} m²`}
+                      />
+                      <InfoCard
+                        label="Gewicht/Bogen"
+                        value={
+                          material.grammage > 0
+                            ? `${formatNumber(weightKg * 1000, 1)} g`
+                            : "—"
+                        }
+                      />
+                      <InfoCard
+                        label="Preis/Ries"
+                        value={formatCurrency(material.pricePerReam)}
+                      />
+                      <InfoCard
+                        label="Preis/kg"
+                        value={formatCurrency(material.pricePerKg)}
+                      />
+                      <InfoCard
+                        label="Bogen/Ries"
+                        value={String(material.sheetsPerReam)}
+                      />
+                      <InfoCard
+                        label="Lagerwert"
+                        value={formatCurrency(
+                          material.stockSheets * pricePerSheet,
+                        )}
+                      />
                     </div>
-                    <div
-                      className={
-                        isLowStock
-                          ? "rounded-3xl bg-rose-100 px-5 py-4 text-rose-700"
-                          : "rounded-3xl bg-emerald-100 px-5 py-4 text-emerald-700"
-                      }
-                    >
-                      <p className="text-xs font-extrabold uppercase tracking-wide">
-                        Status
-                      </p>
-                      <p className="mt-1 text-lg font-black">
-                        {isLowStock ? "Nachbestellen" : "Okay"}
-                      </p>
+
+                    <div className="mt-5 rounded-2xl bg-white p-4">
+                      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                        <div>
+                          <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                            Lagerbestand
+                          </p>
+                          <p className="mt-1 text-xl font-black text-slate-950">
+                            {material.stockSheets.toLocaleString("de-DE")} Bogen
+                          </p>
+                          <p className="mt-1 text-sm font-bold text-slate-500">
+                            Mindestbestand: {material.minimumStockSheets.toLocaleString("de-DE")} Bogen
+                          </p>
+                        </div>
+                        <div
+                          className={
+                            isLowStock
+                              ? "rounded-2xl bg-rose-100 px-4 py-3 text-rose-700"
+                              : "rounded-2xl bg-emerald-100 px-4 py-3 text-emerald-700"
+                          }
+                        >
+                          <p className="text-xs font-extrabold uppercase tracking-wide">
+                            Status
+                          </p>
+                          <p className="mt-1 text-sm font-black">
+                            {isLowStock ? "Nachbestellen" : "Bestand okay"}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="mt-4 h-3 overflow-hidden rounded-full bg-slate-100">
+                        <div
+                          className={
+                            isLowStock
+                              ? "h-full rounded-full bg-rose-500"
+                              : "h-full rounded-full bg-emerald-500"
+                          }
+                          style={{
+                            width: `${Math.max(Math.min(stockPercentage, 100), 4)}%`,
+                          }}
+                        />
+                      </div>
                     </div>
                   </div>
-                  <div className="mt-5 h-3 overflow-hidden rounded-full bg-white">
-                    <div
-                      className={
-                        isLowStock
-                          ? "h-full rounded-full bg-rose-500"
-                          : "h-full rounded-full bg-emerald-500"
-                      }
-                      style={{
-                        width:
-                          String(Math.max(Math.min(stockPercentage, 100), 4)) +
-                          "%",
-                      }}
-                    />
-                  </div>
-                </div>
-              </div>
-            </article>
-          );
-        })}
+                )}
+              </article>
+            );
+          })}
+        </div>
       </section>
       {filteredMaterials.length === 0 && (
         <EmptyState title="Keine Materialien gefunden" />

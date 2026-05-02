@@ -2219,7 +2219,7 @@ function CalculatorPage({
                   label="Beschnitt"
                   value={bleedMm}
                   onChange={setBleedMm}
-                  step={0.5}
+                  step={1}
                   suffix="mm"
                 />
                 <SelectField
@@ -2235,14 +2235,14 @@ function CalculatorPage({
                   label="Zwischenschnitt H"
                   value={gutterHorizontalMm}
                   onChange={setGutterHorizontalMm}
-                  step={0.5}
+                  step={1}
                   suffix="mm"
                 />
                 <NumberField
                   label="Zwischenschnitt V"
                   value={gutterVerticalMm}
                   onChange={setGutterVerticalMm}
-                  step={0.5}
+                  step={1}
                   suffix="mm"
                 />
                 <SelectField
@@ -5854,7 +5854,7 @@ function CalculationTemplatesPage({
                 label="Beschnitt"
                 value={templateForm.bleedMm}
                 onChange={(value) => updateTemplateForm("bleedMm", value)}
-                step={0.5}
+                step={1}
                 suffix="mm"
               />
               <SelectField
@@ -5874,7 +5874,7 @@ function CalculationTemplatesPage({
                 onChange={(value) =>
                   updateTemplateForm("gutterHorizontalMm", value)
                 }
-                step={0.5}
+                step={1}
                 suffix="mm"
               />
               <NumberField
@@ -5883,7 +5883,7 @@ function CalculationTemplatesPage({
                 onChange={(value) =>
                   updateTemplateForm("gutterVerticalMm", value)
                 }
-                step={0.5}
+                step={1}
                 suffix="mm"
               />
               <SelectField
@@ -7593,7 +7593,7 @@ function MachinesPage({
                     updateEditingMachine("hourlyRate", value)
                   }
                   suffix="€/h"
-                  step={0.5}
+                  step={1}
                 />
                 <SelectField
                   label="Duplex"
@@ -7615,7 +7615,7 @@ function MachinesPage({
                 value={editingMachine.hourlyRate}
                 onChange={(value) => updateEditingMachine("hourlyRate", value)}
                 suffix="€/h"
-                step={0.5}
+                step={1}
               />
               <SelectField
                 label="Duplex"
@@ -9425,13 +9425,26 @@ function NumberField({
   onChange,
   suffix,
   step = 1,
+  min = 0,
 }: {
   label: string;
   value: number;
   onChange: (value: number) => void;
   suffix?: string;
   step?: number;
+  min?: number;
 }) {
+  function handleChange(rawValue: string) {
+    const nextValue = Number(rawValue);
+
+    if (Number.isNaN(nextValue)) {
+      onChange(min);
+      return;
+    }
+
+    onChange(Math.max(nextValue, min));
+  }
+
   return (
     <label className="block">
       <span className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
@@ -9441,8 +9454,9 @@ function NumberField({
         <input
           type="number"
           value={value}
+          min={min}
           step={step}
-          onChange={(event) => onChange(Number(event.target.value))}
+          onChange={(event) => handleChange(event.target.value)}
           className="w-full border-0 bg-transparent px-4 py-3 text-sm font-bold text-slate-950 outline-none"
         />
         {suffix && (

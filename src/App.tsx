@@ -60,9 +60,20 @@ type FinishingOperation = (typeof finishingOperations)[number];
 
 type MaterialCalculationMode = "manual" | "perCopy" | "pages";
 
+type PrintPartType =
+  | "Inhalt"
+  | "Umschlag"
+  | "Beileger"
+  | "Zusatzbogen"
+  | "Zusatzmaterial"
+  | "Sonstiges";
+
+type PrintSideMode = "simplex" | "duplex" | "materialOnly";
+
 type MaterialSelection = {
   id: string;
   label: string;
+  partType?: PrintPartType;
   materialId: string;
   calculationMode: MaterialCalculationMode;
   manualSheets: number;
@@ -70,6 +81,9 @@ type MaterialSelection = {
   pages: number;
   pagesPerSheet: number;
   itemsPerSheet: number;
+  frontColorMode?: string;
+  backColorMode?: string;
+  printSideMode?: PrintSideMode;
 };
 
 type FinishingSelection = {
@@ -394,6 +408,29 @@ const navItems: NavItem[] = [
     description: "Firmenprofil",
     accent: "bg-violet-500",
   },
+];
+
+
+const PRINT_PART_TYPE_OPTIONS: { value: PrintPartType; label: string }[] = [
+  { value: "Inhalt", label: "Inhalt" },
+  { value: "Umschlag", label: "Umschlag" },
+  { value: "Beileger", label: "Beileger" },
+  { value: "Zusatzbogen", label: "Zusatzbogen" },
+  { value: "Zusatzmaterial", label: "Zusatzmaterial" },
+  { value: "Sonstiges", label: "Sonstiges" },
+];
+
+const PRINT_SIDE_MODE_OPTIONS: { value: PrintSideMode; label: string }[] = [
+  { value: "duplex", label: "beidseitig" },
+  { value: "simplex", label: "einseitig" },
+  { value: "materialOnly", label: "nur Material" },
+];
+
+const PRINT_PART_COLOR_MODE_OPTIONS = [
+  { value: "4-farbig", label: "4-farbig" },
+  { value: "schwarz", label: "schwarz" },
+  { value: "Sonderfarbe", label: "Sonderfarbe" },
+  { value: "unbedruckt", label: "unbedruckt" },
 ];
 
 const DEFAULT_PRODUCT_TYPES: ProductType[] = [
@@ -1130,7 +1167,7 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V87</p>
+              <p className="text-sm font-black">PrintPilot V94</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
                 Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
@@ -1448,6 +1485,10 @@ function CalculatorPage({
   >([
     withLocalMaterialId({
       label: "Inhalt",
+      partType: "Inhalt",
+      frontColorMode: "4-farbig",
+      backColorMode: "4-farbig",
+      printSideMode: "duplex",
       materialId:
         findMaterialIdInCatalog(materials, "Offset") ?? materials[0].id,
       calculationMode: "pages",
@@ -1459,6 +1500,10 @@ function CalculatorPage({
     }),
     withLocalMaterialId({
       label: "Umschlag",
+      partType: "Umschlag",
+      frontColorMode: "4-farbig",
+      backColorMode: "4-farbig",
+      printSideMode: "duplex",
       materialId: findMaterialIdInCatalog(materials, "300") ?? materials[0].id,
       calculationMode: "perCopy",
       manualSheets: 50,
@@ -1558,28 +1603,50 @@ function CalculatorPage({
       ? Math.max(impositionResult.best.total * 4, 1)
       : 0;
 
-  const baseMaterialItems = materialSelections.map((selection) => {
-    const material =
-      materials.find((item) => item.id === selection.materialId) ??
-      materials[0];
+  const getAutomaticPagesPerSheet = (selection: MaterialSelection) => {
+    if (selection.calculationMode !== "pages") {
+      return Math.max(selection.pagesPerSheet, 1);
+    }
+
     const isBrochurePageMaterial =
       productType === "Broschüre" &&
       calculateAsOpenSpread &&
-      selection.calculationMode === "pages" &&
       ["inhalt", "umschlag"].some((label) =>
         selection.label.toLowerCase().includes(label),
       );
 
-    const calculatedSheets = isBrochurePageMaterial
-      ? Math.ceil(
-          (safeQuantity * Math.max(selection.pages, 0)) /
-            Math.max(brochurePagesPerRawSheet, 1),
-        )
-      : calculateMaterialSheets(selection, safeQuantity);
+    if (isBrochurePageMaterial) {
+      return Math.max(brochurePagesPerRawSheet, 1);
+    }
+
+    const printedSides =
+      selection.printSideMode === "simplex"
+        ? 1
+        : selection.printSideMode === "materialOnly"
+          ? 1
+          : 2;
+
+    return Math.max(safeItemsPerSheet * printedSides, 1);
+  };
+
+  const baseMaterialItems = materialSelections.map((selection) => {
+    const material =
+      materials.find((item) => item.id === selection.materialId) ??
+      materials[0];
+    const automaticPagesPerSheet = getAutomaticPagesPerSheet(selection);
+    const normalizedSelection = {
+      ...selection,
+      pagesPerSheet: automaticPagesPerSheet,
+    };
+
+    const calculatedSheets = calculateMaterialSheets(
+      normalizedSelection,
+      safeQuantity,
+    );
     const pricePerSheet = calculateMaterialPricePerSheet(material);
 
     return {
-      ...selection,
+      ...normalizedSelection,
       material,
       calculatedSheets,
       pricePerSheet,
@@ -1794,7 +1861,7 @@ function CalculatorPage({
         level: "error",
         title: "Inhaltsseiten nicht durch 4 teilbar",
         description:
-          "Bei rückendrahtgehefteten Broschüren sollte die Inhaltsseitenzahl durch 4 teilbar sein.",
+          "Bei rückendrahtgehefteten Broschüren muss die Inhaltsseitenzahl fachlich durch 4 teilbar sein. Bitte Seitenzahl korrigieren oder Leerseiten einplanen.",
       });
     }
 
@@ -1803,7 +1870,7 @@ function CalculatorPage({
         level: "warning",
         title: "Umschlagseiten prüfen",
         description:
-          "Ein Broschürenumschlag hat normalerweise 4 Seiten. Prüfe, ob die Eingabe korrekt ist.",
+          "Ein Broschürenumschlag wird in dieser Kalkulation fest mit 4 Seiten gerechnet. Klicke auf „Broschürenlogik anwenden“, um die Struktur zu reparieren.",
       });
     }
 
@@ -1876,6 +1943,18 @@ function CalculatorPage({
     (warning) => warning.level === "info",
   ).length;
   const hasCalculationErrors = calculationErrorCount > 0;
+  const brochureWarnings =
+    productType === "Broschüre"
+      ? calculationWarnings.filter((warning) =>
+          [
+            "Broschürenmodus prüfen",
+            "Inhaltsseiten nicht durch 4 teilbar",
+            "Umschlagseiten prüfen",
+            "Bundbeschnitt aktiv",
+            "Kein Nutzen möglich",
+          ].includes(warning.title),
+        )
+      : [];
 
   const tiers = [250, 500, 1000, 2500, 5000].map((tierQuantity) => {
     const tierScaleFactor = tierQuantity / safeQuantity;
@@ -1885,22 +1964,16 @@ function CalculatorPage({
         materials.find((item) => item.id === selection.materialId) ??
         materials[0];
       const pricePerSheet = calculateMaterialPricePerSheet(material);
-      const isBrochurePageMaterial =
-        productType === "Broschüre" &&
-        calculateAsOpenSpread &&
-        selection.calculationMode === "pages" &&
-        ["inhalt", "umschlag"].some((label) =>
-          selection.label.toLowerCase().includes(label),
-        );
+      const automaticPagesPerSheet = getAutomaticPagesPerSheet(selection);
+      const normalizedSelection = {
+        ...selection,
+        pagesPerSheet: automaticPagesPerSheet,
+      };
 
-      const calculatedSheets = isBrochurePageMaterial
-        ? Math.ceil(
-            (tierQuantity * Math.max(selection.pages, 0)) /
-              Math.max(brochurePagesPerRawSheet, 1),
-          )
-        : selection.calculationMode === "manual"
-          ? Math.ceil(Math.max(selection.manualSheets, 0) * tierScaleFactor)
-          : calculateMaterialSheets(selection, tierQuantity);
+      const calculatedSheets =
+        normalizedSelection.calculationMode === "manual"
+          ? Math.ceil(Math.max(normalizedSelection.manualSheets, 0) * tierScaleFactor)
+          : calculateMaterialSheets(normalizedSelection, tierQuantity);
 
       return {
         calculatedSheets,
@@ -2059,6 +2132,10 @@ function CalculatorPage({
         : [
             withLocalMaterialId({
               label: "Material",
+              partType: "Sonstiges",
+              frontColorMode: "4-farbig",
+              backColorMode: "4-farbig",
+              printSideMode: "duplex",
               materialId: materials[0].id,
               calculationMode: "perCopy",
               manualSheets: 1000,
@@ -2083,17 +2160,25 @@ function CalculatorPage({
   }
 
   function addMaterialSelection() {
+    addPrintPart("Sonstiges");
+  }
+
+  function addPrintPart(partType: PrintPartType) {
     setMaterialSelections((current) => [
       ...current,
       withLocalMaterialId({
-        label: `Material ${current.length + 1}`,
+        label: partType === "Sonstiges" ? `Druckteil ${current.length + 1}` : partType,
+        partType,
         materialId: materials[0].id,
-        calculationMode: "perCopy",
+        calculationMode: partType === "Inhalt" || partType === "Umschlag" ? "pages" : "perCopy",
         manualSheets: totalSheets,
         factorPerCopy: 1,
-        pages: 4,
-        pagesPerSheet: 4,
+        pages: partType === "Inhalt" ? 16 : partType === "Umschlag" ? 4 : 1,
+        pagesPerSheet: partType === "Inhalt" || partType === "Umschlag" ? 4 : 1,
         itemsPerSheet: 1,
+        frontColorMode: "4-farbig",
+        backColorMode: partType === "Zusatzmaterial" ? "unbedruckt" : "4-farbig",
+        printSideMode: partType === "Zusatzmaterial" ? "materialOnly" : "duplex",
       }),
     ]);
   }
@@ -2120,6 +2205,38 @@ function CalculatorPage({
     );
   }
 
+  function duplicateMaterialSelection(selectionId: string) {
+    setMaterialSelections((current) => {
+      const sourceIndex = current.findIndex(
+        (selection) => selection.id === selectionId,
+      );
+
+      if (sourceIndex < 0) return current;
+
+      const source = current[sourceIndex];
+      const copy = withLocalMaterialId({
+        label: `${source.label || `Druckteil ${sourceIndex + 1}`} Kopie`,
+        partType: source.partType ?? "Sonstiges",
+        materialId: source.materialId,
+        calculationMode: source.calculationMode,
+        manualSheets: source.manualSheets,
+        factorPerCopy: source.factorPerCopy,
+        pages: source.pages,
+        pagesPerSheet: source.pagesPerSheet,
+        itemsPerSheet: source.itemsPerSheet,
+        frontColorMode: source.frontColorMode ?? "4-farbig",
+        backColorMode: source.backColorMode ?? "4-farbig",
+        printSideMode: source.printSideMode ?? "duplex",
+      });
+
+      return [
+        ...current.slice(0, sourceIndex + 1),
+        copy,
+        ...current.slice(sourceIndex + 1),
+      ];
+    });
+  }
+
   function setBrochureFormat(format: "A5" | "A4") {
     setRemoveSpineBleed(true);
     setCalculateAsOpenSpread(true);
@@ -2142,6 +2259,9 @@ function CalculatorPage({
   ) {
     setRemoveSpineBleed(true);
     setCalculateAsOpenSpread(true);
+    const safeUpdates =
+      labelSearch === "umschlag" ? { ...updates, pages: 4 } : updates;
+
     setMaterialSelections((current) =>
       current.map((selection) => {
         const matches = selection.label.toLowerCase().includes(labelSearch);
@@ -2154,7 +2274,7 @@ function CalculatorPage({
           factorPerCopy: 1,
           itemsPerSheet: 1,
           pagesPerSheet: Math.max(brochurePagesPerRawSheet, 1),
-          ...updates,
+          ...safeUpdates,
         };
       }),
     );
@@ -2177,7 +2297,11 @@ function CalculatorPage({
         if (normalizedLabel.includes("inhalt")) {
           return {
             ...selection,
+            partType: "Inhalt" as PrintPartType,
             calculationMode: "pages" as MaterialCalculationMode,
+            frontColorMode: selection.frontColorMode ?? "4-farbig",
+            backColorMode: selection.backColorMode ?? "4-farbig",
+            printSideMode: selection.printSideMode ?? "duplex",
             pages: selection.pages > 0 ? selection.pages : 32,
             factorPerCopy: 1,
             itemsPerSheet: 1,
@@ -2187,8 +2311,12 @@ function CalculatorPage({
         if (normalizedLabel.includes("umschlag")) {
           return {
             ...selection,
+            partType: "Umschlag" as PrintPartType,
             calculationMode: "pages" as MaterialCalculationMode,
-            pages: selection.pages > 0 ? selection.pages : 4,
+            frontColorMode: selection.frontColorMode ?? "4-farbig",
+            backColorMode: selection.backColorMode ?? "4-farbig",
+            printSideMode: selection.printSideMode ?? "duplex",
+            pages: 4,
             factorPerCopy: 1,
             itemsPerSheet: 1,
           };
@@ -2201,6 +2329,10 @@ function CalculatorPage({
         next.push(
           withLocalMaterialId({
             label: "Inhalt",
+            partType: "Inhalt",
+            frontColorMode: "4-farbig",
+            backColorMode: "4-farbig",
+            printSideMode: "duplex",
             materialId:
               findMaterialIdInCatalog(materials, "Offset") ?? materials[0].id,
             calculationMode: "pages",
@@ -2217,6 +2349,10 @@ function CalculatorPage({
         next.push(
           withLocalMaterialId({
             label: "Umschlag",
+            partType: "Umschlag",
+            frontColorMode: "4-farbig",
+            backColorMode: "4-farbig",
+            printSideMode: "duplex",
             materialId:
               findMaterialIdInCatalog(materials, "300") ?? materials[0].id,
             calculationMode: "pages",
@@ -2321,14 +2457,14 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V80
+                Kalkulation V92
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
-                Kompaktes Kalkulations-Cockpit
+                Produkt- und Jobstruktur
               </h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-                Produkt, Material, Maschine, Nutzen und Preis kompakt gegliedert.
-                Details bleiben erreichbar, ohne die Oberfläche zu überladen.
+                Produkt, bearbeitbare Druckteile, Material, Maschine, Nutzen und Preis fachlich getrennt.
+                Inhalt, Umschlag, Beileger und Zusatzmaterial bleiben sauber nachvollziehbar.
               </p>
             </div>
 
@@ -2454,35 +2590,6 @@ function CalculatorPage({
               value={productName}
               onChange={setProductName}
             />
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <NumberField
-                label="Auflage"
-                value={quantity}
-                onChange={setQuantity}
-                suffix="Stück"
-              />
-              <ReadOnlyField
-                label="Berechneter Nutzen"
-                value={`${safeItemsPerSheet} Nutzen`}
-              />
-            </div>
-
-            <div className="grid gap-4 md:grid-cols-2">
-              <NumberField
-                label="Endformat Breite"
-                value={finalWidthMm}
-                onChange={setFinalWidthMm}
-                suffix="mm"
-              />
-              <NumberField
-                label="Endformat Höhe"
-                value={finalHeightMm}
-                onChange={setFinalHeightMm}
-                suffix="mm"
-              />
-            </div>
-
             {productType === "Broschüre" && (
               <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4">
                 <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
@@ -2506,6 +2613,48 @@ function CalculatorPage({
                     Broschürenlogik anwenden
                   </button>
                 </div>
+
+                {brochureWarnings.length > 0 ? (
+                  <div className="mt-5 rounded-3xl border border-rose-200 bg-white p-4 shadow-sm">
+                    <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                      <div>
+                        <p className="text-xs font-extrabold uppercase tracking-wide text-rose-700">
+                          Broschürenprüfung
+                        </p>
+                        <h5 className="mt-1 text-base font-black text-slate-950">
+                          Bitte vor dem Angebot prüfen
+                        </h5>
+                      </div>
+                      <span className="rounded-full bg-rose-600 px-3 py-1 text-xs font-black text-white">
+                        {brochureWarnings.length} Meldung{brochureWarnings.length === 1 ? "" : "en"}
+                      </span>
+                    </div>
+                    <div className="mt-3 grid gap-2">
+                      {brochureWarnings.map((warning, index) => (
+                        <div
+                          key={`${warning.title}-${index}`}
+                          className="rounded-2xl bg-rose-50 px-4 py-3"
+                        >
+                          <p className="text-sm font-black text-rose-800">
+                            {warning.title}
+                          </p>
+                          <p className="mt-1 text-sm font-bold leading-6 text-slate-600">
+                            {warning.description}
+                          </p>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                ) : (
+                  <div className="mt-5 rounded-3xl border border-emerald-200 bg-white p-4 shadow-sm">
+                    <p className="text-xs font-extrabold uppercase tracking-wide text-emerald-700">
+                      Broschürenprüfung
+                    </p>
+                    <p className="mt-1 text-sm font-black text-emerald-800">
+                      Format, Bundlogik und Seitenaufbau sind plausibel.
+                    </p>
+                  </div>
+                )}
 
                 <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
                   <SelectField
@@ -2556,12 +2705,15 @@ function CalculatorPage({
                       Umschlag
                     </p>
                     <div className="mt-4 grid gap-4 md:grid-cols-2">
-                      <NumberField
-                        label="Umschlagseiten"
-                        value={materialSelections.find((selection) => selection.label.toLowerCase().includes("umschlag"))?.pages ?? 4}
-                        onChange={(value) => updateBrochurePart("umschlag", { pages: value })}
-                        suffix="S."
-                      />
+                      <div>
+                        <ReadOnlyField
+                          label="Umschlagseiten"
+                          value="4 S. automatisch"
+                        />
+                        <p className="mt-2 text-xs font-bold leading-5 text-amber-800">
+                          Der Umschlag ist für die Broschürenlogik fest auf 4 Seiten gesperrt.
+                        </p>
+                      </div>
                       <SelectField
                         label="Umschlagpapier"
                         value={materialSelections.find((selection) => selection.label.toLowerCase().includes("umschlag"))?.materialId ?? materials[0].id}
@@ -2581,6 +2733,373 @@ function CalculatorPage({
                 </p>
               </div>
             )}
+
+
+            <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                    Produktstruktur V94
+                  </p>
+                  <h4 className="mt-2 text-lg font-black text-slate-950">
+                    Druckteile nach Grunddaten bearbeiten
+                  </h4>
+                  <p className="mt-1 text-sm font-bold text-slate-500">
+                    Nach Format, Seiten und Papieren werden die einzelnen Druckteile geprüft, bearbeitet, dupliziert und gelöscht. Seiten je Bogen und Umschlagseiten werden automatisch abgesichert.
+                  </p>
+                </div>
+
+                <div className="flex flex-wrap gap-2">
+                  {(["Inhalt", "Umschlag", "Beileger", "Zusatzbogen"] as PrintPartType[]).map((partType) => (
+                    <button
+                      key={partType}
+                      type="button"
+                      onClick={() => addPrintPart(partType)}
+                      className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
+                    >
+                      + {partType}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              <div className="mt-4 grid gap-3 md:grid-cols-4">
+                <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Druckteile</p>
+                  <p className="mt-2 text-2xl font-black text-slate-950">{selectedMaterialItems.length}</p>
+                </div>
+                <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Produktionsbogen</p>
+                  <p className="mt-2 text-2xl font-black text-slate-950">{totalSheets.toLocaleString("de-DE")}</p>
+                </div>
+                <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Materialkosten</p>
+                  <p className="mt-2 text-2xl font-black text-slate-950">{formatCurrency(materialCost)}</p>
+                </div>
+                <div className="rounded-2xl bg-white p-4 shadow-sm ring-1 ring-slate-200">
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">Status</p>
+                  <p className="mt-2 text-sm font-black text-emerald-700">Bearbeitung aktiv</p>
+                </div>
+              </div>
+
+              <div className="mt-4 space-y-3">
+                {selectedMaterialItems.map((item, index) => {
+                  const areaSqm = calculateSheetAreaSqm(
+                    item.material.widthMm,
+                    item.material.heightMm,
+                  );
+                  const weightKg = calculateSheetWeightKg(
+                    item.material.widthMm,
+                    item.material.heightMm,
+                    item.material.grammage,
+                  );
+
+                  return (
+                    <details
+                      key={item.id}
+                      open={index === 0}
+                      className="group overflow-hidden rounded-2xl border border-slate-200 bg-white"
+                    >
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
+                              {item.partType ?? "Sonstiges"}
+                            </span>
+                            <p className="truncate text-sm font-black text-slate-950">
+                              {item.label || `Material ${index + 1}`}
+                            </p>
+                          </div>
+                          <p className="mt-1 truncate text-xs font-bold text-slate-500">
+                            {item.material.name} · {item.calculatedSheets.toLocaleString("de-DE")} Produktionsbogen · {item.totalMaterialSheets.toLocaleString("de-DE")} Gesamtbogen
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-3">
+                          <span className="hidden rounded-full bg-emerald-50 px-3 py-1 text-xs font-black text-emerald-700 md:inline-flex">
+                            Bearbeiten
+                          </span>
+                          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-700">
+                            {formatCurrency(item.cost)}
+                          </span>
+                          <span className="text-xs font-black text-slate-400 transition group-open:rotate-180">
+                            ▼
+                          </span>
+                        </div>
+                      </summary>
+
+                      <div className="space-y-4 border-t border-slate-100 p-4">
+                        <div className="grid gap-3 md:grid-cols-4 md:items-end">
+                          <SelectField
+                            label="Druckteil"
+                            value={item.partType ?? "Sonstiges"}
+                            onChange={(value) =>
+                              updateMaterialSelection(
+                                item.id,
+                                "partType",
+                                value as PrintPartType,
+                              )
+                            }
+                            options={PRINT_PART_TYPE_OPTIONS}
+                          />
+                          <SelectField
+                            label="Druckart"
+                            value={item.printSideMode ?? "duplex"}
+                            onChange={(value) =>
+                              updateMaterialSelection(
+                                item.id,
+                                "printSideMode",
+                                value as PrintSideMode,
+                              )
+                            }
+                            options={PRINT_SIDE_MODE_OPTIONS}
+                          />
+                          <SelectField
+                            label="Vorderseite"
+                            value={item.frontColorMode ?? "4-farbig"}
+                            onChange={(value) =>
+                              updateMaterialSelection(
+                                item.id,
+                                "frontColorMode",
+                                value,
+                              )
+                            }
+                            options={PRINT_PART_COLOR_MODE_OPTIONS}
+                          />
+                          <SelectField
+                            label="Rückseite"
+                            value={item.backColorMode ?? "4-farbig"}
+                            onChange={(value) =>
+                              updateMaterialSelection(
+                                item.id,
+                                "backColorMode",
+                                value,
+                              )
+                            }
+                            options={PRINT_PART_COLOR_MODE_OPTIONS}
+                          />
+                        </div>
+
+                        <SelectField
+                          label={`Material für ${item.label || `Position ${index + 1}`}`}
+                          value={item.materialId}
+                          onChange={(value) =>
+                            updateMaterialSelection(
+                              item.id,
+                              "materialId",
+                              value,
+                            )
+                          }
+                          options={materials.map((material) => ({
+                            value: material.id,
+                            label: `${material.name} · ${material.widthMm} × ${material.heightMm} mm · ${material.grammage} g/m²`,
+                          }))}
+                        />
+
+                        <div className="grid gap-3 md:grid-cols-[1fr_0.8fr_auto] md:items-end">
+                          <InputField
+                            label={`Position ${index + 1}`}
+                            value={item.label}
+                            onChange={(value) =>
+                              updateMaterialSelection(item.id, "label", value)
+                            }
+                          />
+
+                          <SelectField
+                            label="Berechnung"
+                            value={item.calculationMode}
+                            onChange={(value) =>
+                              updateMaterialSelection(
+                                item.id,
+                                "calculationMode",
+                                value as MaterialCalculationMode,
+                              )
+                            }
+                            options={[
+                              { value: "manual", label: "Manuell" },
+                              { value: "perCopy", label: "Pro Exemplar" },
+                              { value: "pages", label: "Seiten" },
+                            ]}
+                          />
+
+                          <div className="grid gap-2 md:grid-cols-2">
+                            <button
+                              type="button"
+                              onClick={() => duplicateMaterialSelection(item.id)}
+                              className="rounded-2xl bg-cyan-100 px-4 py-3 text-sm font-black text-cyan-800 transition hover:-translate-y-0.5"
+                            >
+                              Duplizieren
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => removeMaterialSelection(item.id)}
+                              disabled={materialSelections.length <= 1}
+                              className={`rounded-2xl px-4 py-3 text-sm font-black transition ${
+                                materialSelections.length <= 1
+                                  ? "cursor-not-allowed bg-slate-100 text-slate-400"
+                                  : "bg-rose-100 text-rose-700 hover:-translate-y-0.5"
+                              }`}
+                            >
+                              Löschen
+                            </button>
+                          </div>
+                        </div>
+
+                        {item.calculationMode === "manual" && (
+                          <div className="grid gap-3 md:grid-cols-2 md:items-end">
+                            <NumberField
+                              label="Bogen manuell"
+                              value={item.manualSheets}
+                              onChange={(value) =>
+                                updateMaterialSelection(
+                                  item.id,
+                                  "manualSheets",
+                                  value,
+                                )
+                              }
+                              suffix="Bg."
+                            />
+                            <ReadOnlyField
+                              label="Produktionsbogen"
+                              value={`${item.calculatedSheets.toLocaleString("de-DE")} Bogen`}
+                            />
+                          </div>
+                        )}
+
+                        {item.calculationMode === "perCopy" && (
+                          <div className="grid gap-3 md:grid-cols-3 md:items-end">
+                            <NumberField
+                              label="Faktor pro Exemplar"
+                              value={item.factorPerCopy}
+                              onChange={(value) =>
+                                updateMaterialSelection(
+                                  item.id,
+                                  "factorPerCopy",
+                                  value,
+                                )
+                              }
+                              step={0.1}
+                              suffix="x"
+                            />
+                            <NumberField
+                              label="Nutzen"
+                              value={item.itemsPerSheet}
+                              onChange={(value) =>
+                                updateMaterialSelection(
+                                  item.id,
+                                  "itemsPerSheet",
+                                  value,
+                                )
+                              }
+                              suffix="Nutzen"
+                            />
+                            <ReadOnlyField
+                              label="Produktionsbogen"
+                              value={`${item.calculatedSheets.toLocaleString("de-DE")} Bogen`}
+                            />
+                          </div>
+                        )}
+
+                        {item.calculationMode === "pages" && (
+                          <div className="grid gap-3 md:grid-cols-3 md:items-end">
+                            <NumberField
+                              label="Seiten"
+                              value={item.pages}
+                              onChange={(value) =>
+                                updateMaterialSelection(item.id, "pages", value)
+                              }
+                              suffix="S."
+                            />
+                            <ReadOnlyField
+                              label="Seiten je Bogen"
+                              value={`${item.pagesPerSheet.toLocaleString("de-DE")} S./Bg. automatisch`}
+                            />
+                            <ReadOnlyField
+                              label="Produktionsbogen"
+                              value={`${item.calculatedSheets.toLocaleString("de-DE")} Bogen`}
+                            />
+                          </div>
+                        )}
+                      </div>
+
+                      <div className="mx-4 mb-4 mt-0 grid gap-3 rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-600 md:grid-cols-2">
+                        <p>
+                          Format: {item.material.widthMm} ×{" "}
+                          {item.material.heightMm} mm
+                        </p>
+                        <p>Grammatur: {item.material.grammage} g/m²</p>
+                        <p>Fläche: {formatNumber(areaSqm, 4)} m²</p>
+                        <p>
+                          Gewicht:{" "}
+                          {item.material.grammage > 0
+                            ? `${formatNumber(weightKg * 1000, 1)} g/Bogen`
+                            : "—"}
+                        </p>
+                        <p>
+                          Preisart:{" "}
+                          {getPricingModeLabel(item.material.pricingMode)}
+                        </p>
+                        <p>Preis/Bogen: {formatCurrency(item.pricePerSheet)}</p>
+                        <p>
+                          Produktionsbogen:{" "}
+                          {item.calculatedSheets.toLocaleString("de-DE")}
+                        </p>
+                        <p>
+                          Zuschuss anteilig:{" "}
+                          {item.oversSheets.toLocaleString("de-DE")}
+                        </p>
+                        <p>
+                          Ausschuss:{" "}
+                          {item.wasteSheetsForMaterial.toLocaleString("de-DE")}
+                        </p>
+                        <p>
+                          Materialbogen gesamt:{" "}
+                          {item.totalMaterialSheets.toLocaleString("de-DE")}
+                        </p>
+                        <p>Kosten: {formatCurrency(item.cost)}</p>
+                      </div>
+                    </details>
+                  );
+                })}
+              </div>
+
+              <div className="mt-5 rounded-3xl bg-slate-950 p-5 text-white">
+                <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                  Summe Material
+                </p>
+                <p className="mt-2 text-3xl font-black">
+                  {formatCurrency(materialCost)}
+                </p>
+              </div>
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <NumberField
+                label="Auflage"
+                value={quantity}
+                onChange={setQuantity}
+                suffix="Stück"
+              />
+              <ReadOnlyField
+                label="Berechneter Nutzen"
+                value={`${safeItemsPerSheet} Nutzen`}
+              />
+            </div>
+
+            <div className="grid gap-4 md:grid-cols-2">
+              <NumberField
+                label="Endformat Breite"
+                value={finalWidthMm}
+                onChange={setFinalWidthMm}
+                suffix="mm"
+              />
+              <NumberField
+                label="Endformat Höhe"
+                value={finalHeightMm}
+                onChange={setFinalHeightMm}
+                suffix="mm"
+              />
+            </div>
+
 
             <div className="rounded-3xl bg-slate-50 p-4">
               <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
@@ -2840,259 +3359,6 @@ function CalculatorPage({
                 )}
               </div>
             </div>
-
-            {productType !== "Broschüre" && (
-            <div className="rounded-3xl bg-slate-50 p-4">
-              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                    Materialpositionen
-                  </p>
-                  <p className="mt-1 text-sm font-bold text-slate-500">
-                    Manuell, pro Exemplar oder nach Seitenzahl berechnen.
-                  </p>
-                </div>
-
-                <button
-                  type="button"
-                  onClick={addMaterialSelection}
-                  className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
-                >
-                  + Material hinzufügen
-                </button>
-              </div>
-
-              <div className="mt-4 space-y-3">
-                {selectedMaterialItems.map((item, index) => {
-                  const areaSqm = calculateSheetAreaSqm(
-                    item.material.widthMm,
-                    item.material.heightMm,
-                  );
-                  const weightKg = calculateSheetWeightKg(
-                    item.material.widthMm,
-                    item.material.heightMm,
-                    item.material.grammage,
-                  );
-
-                  return (
-                    <details
-                      key={item.id}
-                      open={index === 0}
-                      className="group overflow-hidden rounded-2xl border border-slate-200 bg-white"
-                    >
-                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
-                        <div className="min-w-0">
-                          <p className="truncate text-sm font-black text-slate-950">
-                            {item.label || `Material ${index + 1}`}
-                          </p>
-                          <p className="mt-1 truncate text-xs font-bold text-slate-500">
-                            {item.material.name} · {item.calculatedSheets.toLocaleString("de-DE")} Produktionsbogen · {item.totalMaterialSheets.toLocaleString("de-DE")} Gesamtbogen
-                          </p>
-                        </div>
-                        <div className="flex shrink-0 items-center gap-3">
-                          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-700">
-                            {formatCurrency(item.cost)}
-                          </span>
-                          <span className="text-xs font-black text-slate-400 transition group-open:rotate-180">
-                            ▼
-                          </span>
-                        </div>
-                      </summary>
-
-                      <div className="space-y-4 border-t border-slate-100 p-4">
-                        <SelectField
-                          label={`Material für ${item.label || `Position ${index + 1}`}`}
-                          value={item.materialId}
-                          onChange={(value) =>
-                            updateMaterialSelection(
-                              item.id,
-                              "materialId",
-                              value,
-                            )
-                          }
-                          options={materials.map((material) => ({
-                            value: material.id,
-                            label: `${material.name} · ${material.widthMm} × ${material.heightMm} mm · ${material.grammage} g/m²`,
-                          }))}
-                        />
-
-                        <div className="grid gap-3 md:grid-cols-[1fr_0.8fr_auto] md:items-end">
-                          <InputField
-                            label={`Position ${index + 1}`}
-                            value={item.label}
-                            onChange={(value) =>
-                              updateMaterialSelection(item.id, "label", value)
-                            }
-                          />
-
-                          <SelectField
-                            label="Berechnung"
-                            value={item.calculationMode}
-                            onChange={(value) =>
-                              updateMaterialSelection(
-                                item.id,
-                                "calculationMode",
-                                value as MaterialCalculationMode,
-                              )
-                            }
-                            options={[
-                              { value: "manual", label: "Manuell" },
-                              { value: "perCopy", label: "Pro Exemplar" },
-                              { value: "pages", label: "Seiten" },
-                            ]}
-                          />
-
-                          <button
-                            type="button"
-                            onClick={() => removeMaterialSelection(item.id)}
-                            disabled={materialSelections.length <= 1}
-                            className={`rounded-2xl px-4 py-3 text-sm font-black transition ${
-                              materialSelections.length <= 1
-                                ? "cursor-not-allowed bg-slate-100 text-slate-400"
-                                : "bg-rose-100 text-rose-700 hover:-translate-y-0.5"
-                            }`}
-                          >
-                            Entfernen
-                          </button>
-                        </div>
-
-                        {item.calculationMode === "manual" && (
-                          <div className="grid gap-3 md:grid-cols-2 md:items-end">
-                            <NumberField
-                              label="Bogen manuell"
-                              value={item.manualSheets}
-                              onChange={(value) =>
-                                updateMaterialSelection(
-                                  item.id,
-                                  "manualSheets",
-                                  value,
-                                )
-                              }
-                              suffix="Bg."
-                            />
-                            <ReadOnlyField
-                              label="Produktionsbogen"
-                              value={`${item.calculatedSheets.toLocaleString("de-DE")} Bogen`}
-                            />
-                          </div>
-                        )}
-
-                        {item.calculationMode === "perCopy" && (
-                          <div className="grid gap-3 md:grid-cols-3 md:items-end">
-                            <NumberField
-                              label="Faktor pro Exemplar"
-                              value={item.factorPerCopy}
-                              onChange={(value) =>
-                                updateMaterialSelection(
-                                  item.id,
-                                  "factorPerCopy",
-                                  value,
-                                )
-                              }
-                              step={0.1}
-                              suffix="x"
-                            />
-                            <NumberField
-                              label="Nutzen"
-                              value={item.itemsPerSheet}
-                              onChange={(value) =>
-                                updateMaterialSelection(
-                                  item.id,
-                                  "itemsPerSheet",
-                                  value,
-                                )
-                              }
-                              suffix="Nutzen"
-                            />
-                            <ReadOnlyField
-                              label="Produktionsbogen"
-                              value={`${item.calculatedSheets.toLocaleString("de-DE")} Bogen`}
-                            />
-                          </div>
-                        )}
-
-                        {item.calculationMode === "pages" && (
-                          <div className="grid gap-3 md:grid-cols-3 md:items-end">
-                            <NumberField
-                              label="Seiten"
-                              value={item.pages}
-                              onChange={(value) =>
-                                updateMaterialSelection(item.id, "pages", value)
-                              }
-                              suffix="S."
-                            />
-                            <NumberField
-                              label="Seiten je Bogen"
-                              value={item.pagesPerSheet}
-                              onChange={(value) =>
-                                updateMaterialSelection(
-                                  item.id,
-                                  "pagesPerSheet",
-                                  value,
-                                )
-                              }
-                              suffix="S./Bg."
-                            />
-                            <ReadOnlyField
-                              label="Produktionsbogen"
-                              value={`${item.calculatedSheets.toLocaleString("de-DE")} Bogen`}
-                            />
-                          </div>
-                        )}
-                      </div>
-
-                      <div className="mx-4 mb-4 mt-0 grid gap-3 rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-600 md:grid-cols-2">
-                        <p>
-                          Format: {item.material.widthMm} ×{" "}
-                          {item.material.heightMm} mm
-                        </p>
-                        <p>Grammatur: {item.material.grammage} g/m²</p>
-                        <p>Fläche: {formatNumber(areaSqm, 4)} m²</p>
-                        <p>
-                          Gewicht:{" "}
-                          {item.material.grammage > 0
-                            ? `${formatNumber(weightKg * 1000, 1)} g/Bogen`
-                            : "—"}
-                        </p>
-                        <p>
-                          Preisart:{" "}
-                          {getPricingModeLabel(item.material.pricingMode)}
-                        </p>
-                        <p>Preis/Bogen: {formatCurrency(item.pricePerSheet)}</p>
-                        <p>
-                          Produktionsbogen:{" "}
-                          {item.calculatedSheets.toLocaleString("de-DE")}
-                        </p>
-                        <p>
-                          Zuschuss anteilig:{" "}
-                          {item.oversSheets.toLocaleString("de-DE")}
-                        </p>
-                        <p>
-                          Ausschuss:{" "}
-                          {item.wasteSheetsForMaterial.toLocaleString("de-DE")}
-                        </p>
-                        <p>
-                          Materialbogen gesamt:{" "}
-                          {item.totalMaterialSheets.toLocaleString("de-DE")}
-                        </p>
-                        <p>Kosten: {formatCurrency(item.cost)}</p>
-                      </div>
-                    </details>
-                  );
-                })}
-              </div>
-
-              <div className="mt-5 rounded-3xl bg-slate-950 p-5 text-white">
-                <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Summe Material
-                </p>
-                <p className="mt-2 text-3xl font-black">
-                  {formatCurrency(materialCost)}
-                </p>
-              </div>
-            </div>
-
-            )}
 
             <div className="rounded-3xl bg-slate-50 p-4">
               <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
@@ -9803,7 +10069,7 @@ function SettingsPage({
   function exportAppBackup() {
     const payload = {
       app: "PrintPilot",
-      version: "V87",
+      version: "V92",
       exportedAt: new Date().toISOString(),
       data: {
         company,

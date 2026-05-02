@@ -5943,6 +5943,9 @@ function CalculationTemplatesPage({
       productTypes,
     ),
   );
+  const [expandedTemplateId, setExpandedTemplateId] = useState<string | null>(
+    null,
+  );
 
   const filteredTemplates = useMemo(() => {
     const normalizedSearch = search.trim().toLowerCase();
@@ -6777,117 +6780,243 @@ function CalculationTemplatesPage({
         </section>
       )}
 
-      <section className="grid gap-5 xl:grid-cols-2">
-        {filteredTemplates.map((template) => {
-          const machine = machines.find(
-            (item) => item.id === template.machineId,
-          );
+      <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+        <div className="grid grid-cols-[1.1fr_0.7fr_0.8fr_0.7fr_0.55fr_0.75fr] gap-4 bg-slate-950 px-5 py-4 text-xs font-black uppercase tracking-wide text-white">
+          <span>Vorlage</span>
+          <span>Produkttyp</span>
+          <span>Format</span>
+          <span>Maschine</span>
+          <span>Status</span>
+          <span className="text-right">Aktionen</span>
+        </div>
 
-          return (
-            <article
-              key={template.id}
-              className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm"
-            >
-              <div
-                className={`h-2 bg-gradient-to-r ${template.status === "Aktiv" ? "from-pink-500 via-fuchsia-500 to-cyan-400" : "from-slate-300 to-slate-400"}`}
-              />
-              <div className="p-6">
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                  <div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
-                        {template.productType}
-                      </span>
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-black ${template.status === "Aktiv" ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}
-                      >
-                        {template.status}
-                      </span>
-                    </div>
-                    <h3 className="mt-4 text-2xl font-black tracking-tight">
+        <div className="divide-y divide-slate-100">
+          {filteredTemplates.map((template) => {
+            const machine = machines.find(
+              (item) => item.id === template.machineId,
+            );
+            const rawMaterial = materials.find(
+              (item) => item.id === template.rawSheetMaterialId,
+            );
+            const isExpanded = expandedTemplateId === template.id;
+            const statusClass =
+              template.status === "Aktiv"
+                ? "bg-emerald-100 text-emerald-700"
+                : "bg-slate-100 text-slate-500";
+
+            return (
+              <article key={template.id} className="bg-white">
+                <div className="grid grid-cols-[1.1fr_0.7fr_0.8fr_0.7fr_0.55fr_0.75fr] gap-4 px-5 py-4 text-sm md:items-center">
+                  <button
+                    type="button"
+                    onClick={() =>
+                      setExpandedTemplateId(isExpanded ? null : template.id)
+                    }
+                    className="min-w-0 text-left"
+                  >
+                    <p className="truncate font-black text-slate-950">
                       {template.name}
-                    </h3>
-                    <p className="mt-2 text-sm font-bold text-slate-500">
-                      {template.productName} · {template.finalWidthMm} ×{" "}
-                      {template.finalHeightMm} mm ·{" "}
-                      {template.defaultQuantity.toLocaleString("de-DE")} Stück
+                    </p>
+                    <p className="mt-1 truncate text-xs font-bold text-slate-500">
+                      {template.productName} · {template.defaultQuantity.toLocaleString("de-DE")} Stück
+                    </p>
+                  </button>
+
+                  <div className="min-w-0">
+                    <span className="inline-flex max-w-full rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
+                      <span className="truncate">{template.productType}</span>
+                    </span>
+                  </div>
+
+                  <div className="min-w-0">
+                    <p className="font-black text-slate-800">
+                      {template.finalWidthMm} × {template.finalHeightMm} mm
+                    </p>
+                    <p className="mt-1 text-xs font-bold text-slate-400">
+                      Beschnitt {template.bleedMm} mm
                     </p>
                   </div>
-                  <div className="rounded-3xl bg-slate-950 px-5 py-4 text-white">
-                    <p className="text-xs font-bold text-slate-400">Nutzen</p>
-                    <p className="mt-1 text-xl font-black">
-                      {template.itemsPerSheet}
-                    </p>
+
+                  <p className="min-w-0 truncate font-bold text-slate-600">
+                    {machine?.name ?? "—"}
+                  </p>
+
+                  <div>
+                    <span className={`rounded-full px-3 py-1 text-xs font-black ${statusClass}`}>
+                      {template.status}
+                    </span>
+                  </div>
+
+                  <div className="flex justify-end gap-2">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        setExpandedTemplateId(isExpanded ? null : template.id)
+                      }
+                      className="rounded-xl bg-slate-100 px-3 py-2 text-xs font-black text-slate-700 transition hover:bg-slate-200"
+                    >
+                      {isExpanded ? "Zuklappen" : "Details"}
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => openEditTemplateForm(template)}
+                      className="rounded-xl bg-slate-950 px-3 py-2 text-xs font-black text-white"
+                    >
+                      Bearbeiten
+                    </button>
                   </div>
                 </div>
 
-                <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                  <InfoCard label="Maschine" value={machine?.name ?? "—"} />
-                  <InfoCard label="Farbmodus" value={template.colorMode} />
-                  <InfoCard
-                    label="Materialien"
-                    value={`${template.materialSelections.length}`}
-                  />
-                  <InfoCard
-                    label="Weiterverarbeitung"
-                    value={
-                      template.finishingNames.length > 0
-                        ? template.finishingNames.join(", ")
-                        : "—"
-                    }
-                  />
-                  <InfoCard
-                    label="Endformat"
-                    value={`${template.finalWidthMm} × ${template.finalHeightMm} mm`}
-                  />
-                  <InfoCard
-                    label="Standardauflage"
-                    value={`${template.defaultQuantity.toLocaleString("de-DE")} Stück`}
-                  />
-                  <InfoCard
-                    label="Beschnitt"
-                    value={`${template.bleedMm} mm · ${template.removeSpineBleed ? "ohne Bund" : "rundum"} · ${template.calculateAsOpenSpread ? "offen" : "geschlossen"}`}
-                  />
-                  <InfoCard
-                    label="Zwischenschnitt"
-                    value={`H ${template.gutterHorizontalMm} mm / V ${template.gutterVerticalMm} mm`}
-                  />
-                  <InfoCard
-                    label="Laufrichtung"
-                    value={
-                      template.respectGrainDirection ? "beachten" : "ignorieren"
-                    }
-                  />
-                </div>
+                {isExpanded && (
+                  <div className="border-t border-slate-100 bg-slate-50 px-5 py-5">
+                    <div className="grid gap-4 lg:grid-cols-[1fr_1fr_1fr]">
+                      <div className="rounded-3xl bg-white p-5 shadow-sm">
+                        <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                          Produktion
+                        </p>
+                        <div className="mt-4 space-y-3">
+                          <CostRow label="Farbmodus" value={template.colorMode} />
+                          <CostRow
+                            label="Standard-Rohbogen"
+                            value={
+                              rawMaterial
+                                ? `${rawMaterial.name} · ${rawMaterial.widthMm} × ${rawMaterial.heightMm} mm`
+                                : "—"
+                            }
+                          />
+                          <CostRow
+                            label="Drehung"
+                            value={template.allowRotation ? "erlaubt" : "gesperrt"}
+                          />
+                          <CostRow
+                            label="Laufrichtung"
+                            value={
+                              template.respectGrainDirection ? "beachten" : "ignorieren"
+                            }
+                          />
+                        </div>
+                      </div>
 
-                <div className="mt-6 flex flex-wrap gap-3">
-                  <button
-                    type="button"
-                    onClick={() => openEditTemplateForm(template)}
-                    className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white"
-                  >
-                    Bearbeiten
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => duplicateTemplate(template)}
-                    className="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-700"
-                  >
-                    Duplizieren
-                  </button>
-                  <button
-                    type="button"
-                    onClick={() => deleteTemplate(template.id)}
-                    disabled={calculationTemplates.length <= 1}
-                    className={`rounded-2xl px-4 py-3 text-sm font-black ${calculationTemplates.length <= 1 ? "cursor-not-allowed bg-slate-100 text-slate-400" : "bg-rose-100 text-rose-700"}`}
-                  >
-                    Löschen
-                  </button>
-                </div>
-              </div>
-            </article>
-          );
-        })}
+                      <div className="rounded-3xl bg-white p-5 shadow-sm">
+                        <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                          Nutzenbasis
+                        </p>
+                        <div className="mt-4 space-y-3">
+                          <CostRow
+                            label="Broschürenmodus"
+                            value={
+                              template.calculateAsOpenSpread
+                                ? "offene Doppelseite"
+                                : "geschlossenes Format"
+                            }
+                          />
+                          <CostRow
+                            label="Bundbeschnitt"
+                            value={
+                              template.removeSpineBleed
+                                ? "ohne Beschnitt im Bund"
+                                : "Beschnitt rundum"
+                            }
+                          />
+                          <CostRow
+                            label="Zwischenschnitt"
+                            value={`H ${template.gutterHorizontalMm} mm / V ${template.gutterVerticalMm} mm`}
+                          />
+                        </div>
+                      </div>
+
+                      <div className="rounded-3xl bg-white p-5 shadow-sm">
+                        <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                          Aktionen
+                        </p>
+                        <div className="mt-4 flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => openEditTemplateForm(template)}
+                            className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white"
+                          >
+                            Bearbeiten
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => duplicateTemplate(template)}
+                            className="rounded-2xl bg-slate-100 px-4 py-3 text-sm font-black text-slate-700"
+                          >
+                            Duplizieren
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => deleteTemplate(template.id)}
+                            disabled={calculationTemplates.length <= 1}
+                            className={`rounded-2xl px-4 py-3 text-sm font-black ${calculationTemplates.length <= 1 ? "cursor-not-allowed bg-slate-100 text-slate-400" : "bg-rose-100 text-rose-700"}`}
+                          >
+                            Löschen
+                          </button>
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="mt-4 grid gap-4 lg:grid-cols-2">
+                      <div className="rounded-3xl bg-white p-5 shadow-sm">
+                        <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                          Materialien
+                        </p>
+                        <div className="mt-4 space-y-3">
+                          {template.materialSelections.map((selection, index) => {
+                            const material = materials.find(
+                              (item) => item.id === selection.materialId,
+                            );
+
+                            return (
+                              <div
+                                key={`${template.id}-material-${index}`}
+                                className="rounded-2xl border border-slate-100 bg-slate-50 p-4"
+                              >
+                                <p className="font-black text-slate-950">
+                                  {selection.label || `Material ${index + 1}`}
+                                </p>
+                                <p className="mt-1 text-sm font-bold text-slate-500">
+                                  {material
+                                    ? `${material.name} · ${material.widthMm} × ${material.heightMm} mm · ${material.grammage} g/m²`
+                                    : "Material nicht gefunden"}
+                                </p>
+                                <p className="mt-2 text-xs font-bold text-slate-400">
+                                  Berechnung: {selection.calculationMode} · Seiten {selection.pages} · Seiten/Bg. {selection.pagesPerSheet}
+                                </p>
+                              </div>
+                            );
+                          })}
+                        </div>
+                      </div>
+
+                      <div className="rounded-3xl bg-white p-5 shadow-sm">
+                        <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                          Weiterverarbeitung
+                        </p>
+                        {template.finishingNames.length > 0 ? (
+                          <div className="mt-4 flex flex-wrap gap-2">
+                            {template.finishingNames.map((name, index) => (
+                              <span
+                                key={`${template.id}-finishing-${index}`}
+                                className="rounded-full bg-slate-100 px-3 py-2 text-xs font-black text-slate-600"
+                              >
+                                {name}
+                              </span>
+                            ))}
+                          </div>
+                        ) : (
+                          <p className="mt-4 text-sm font-bold text-slate-500">
+                            Keine Weiterverarbeitung hinterlegt.
+                          </p>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </article>
+            );
+          })}
+        </div>
       </section>
 
       {filteredTemplates.length === 0 && (

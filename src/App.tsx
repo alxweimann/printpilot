@@ -8999,10 +8999,14 @@ function FinishingPage({
   const [editingOperationId, setEditingOperationId] = useState<string | null>(
     null,
   );
+  const [expandedOperationId, setExpandedOperationId] = useState<string | null>(
+    null,
+  );
 
   const categories = Array.from(
     new Set(finishingOperations.map((operation) => operation.category)),
   );
+
   const editingOperation = editingOperationId
     ? (finishingOperations.find(
         (operation) => operation.id === editingOperationId,
@@ -9017,7 +9021,10 @@ function FinishingPage({
         normalizedSearch.length === 0 ||
         operation.name.toLowerCase().includes(normalizedSearch) ||
         operation.category.toLowerCase().includes(normalizedSearch) ||
-        operation.notes.toLowerCase().includes(normalizedSearch);
+        operation.notes.toLowerCase().includes(normalizedSearch) ||
+        getFinishingPricingModeLabel(operation.pricingMode)
+          .toLowerCase()
+          .includes(normalizedSearch);
 
       const matchesCategory =
         categoryFilter === "all" || operation.category === categoryFilter;
@@ -9066,6 +9073,7 @@ function FinishingPage({
 
     setFinishingOperations((current) => [nextOperation, ...current]);
     setEditingOperationId(nextOperation.id);
+    setExpandedOperationId(nextOperation.id);
   }
 
   function updateOperation(
@@ -9097,9 +9105,8 @@ function FinishingPage({
         : current.filter((item) => item.id !== operationId),
     );
 
-    if (editingOperationId === operationId) {
-      setEditingOperationId(null);
-    }
+    if (editingOperationId === operationId) setEditingOperationId(null);
+    if (expandedOperationId === operationId) setExpandedOperationId(null);
   }
 
   function resetOperations() {
@@ -9114,6 +9121,7 @@ function FinishingPage({
     } catch {}
     setFinishingOperations(finishingDefaultClone());
     setEditingOperationId(null);
+    setExpandedOperationId(null);
   }
 
   return (
@@ -9126,14 +9134,14 @@ function FinishingPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-lime-300">
-                Weiterverarbeitung V2
+                Weiterverarbeitung V3
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
-                Weiterverarbeitungs-Stamm
+                Weiterverarbeitung
               </h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
-                Schneiden, Falzen, Rillen, Heften, Leimen, Stanzen, Kuvertieren
-                und Handarbeit mit editierbaren Preismodellen.
+                Kompakte Listenansicht für Schneiden, Falzen, Rillen, Heften,
+                Leimen, Stanzen, Kuvertieren und Handarbeit.
               </p>
             </div>
 
@@ -9349,135 +9357,153 @@ function FinishingPage({
         </div>
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-2">
-        {filteredOperations.map((operation) => {
-          const setupCost =
-            (operation.setupMinutes / 60) * operation.hourlyRate;
-          const technicalBasePrice = operation.basePrice + setupCost;
-          const exampleQuantity = 1000;
-          const examplePrice = calculateFinishingExamplePrice(
-            operation.pricingMode,
-            operation.basePrice,
-            operation.unitPrice,
-            operation.minimumPrice,
-            operation.setupMinutes,
-            operation.hourlyRate,
-            exampleQuantity,
-          );
+      <section className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm">
+        <div className="grid grid-cols-[1.2fr_0.75fr_0.8fr_0.55fr_0.55fr_auto] gap-4 bg-slate-950 px-5 py-4 text-xs font-black uppercase tracking-wide text-white">
+          <span>Vorgang</span>
+          <span>Kategorie</span>
+          <span>Preismodell</span>
+          <span className="text-right">Mindestpreis</span>
+          <span className="text-right">Status</span>
+          <span className="text-right">Aktionen</span>
+        </div>
 
-          return (
-            <article
-              key={operation.id}
-              className="overflow-hidden rounded-[2rem] border border-slate-200 bg-white shadow-sm"
-            >
-              <div className="h-2 bg-gradient-to-r from-lime-400 via-emerald-400 to-cyan-400" />
+        <div className="divide-y divide-slate-100">
+          {filteredOperations.map((operation) => {
+            const isExpanded = expandedOperationId === operation.id;
+            const setupCost =
+              (operation.setupMinutes / 60) * operation.hourlyRate;
+            const technicalBasePrice = operation.basePrice + setupCost;
+            const exampleQuantity = 1000;
+            const examplePrice = calculateFinishingExamplePrice(
+              operation.pricingMode,
+              operation.basePrice,
+              operation.unitPrice,
+              operation.minimumPrice,
+              operation.setupMinutes,
+              operation.hourlyRate,
+              exampleQuantity,
+            );
 
-              <div className="p-6">
-                <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
-                  <div>
-                    <div className="flex flex-wrap gap-2">
-                      <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
-                        {operation.category}
-                      </span>
-                      <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-600">
-                        {getFinishingPricingModeLabel(operation.pricingMode)}
-                      </span>
-                      <span
-                        className={`rounded-full px-3 py-1 text-xs font-black ${operation.active ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}
-                      >
-                        {operation.active ? "Aktiv" : "Inaktiv"}
-                      </span>
-                    </div>
-
-                    <h3 className="mt-4 text-2xl font-black tracking-tight">
+            return (
+              <div key={operation.id} className="bg-white">
+                <button
+                  type="button"
+                  onClick={() =>
+                    setExpandedOperationId(isExpanded ? null : operation.id)
+                  }
+                  className="grid w-full grid-cols-[1.2fr_0.75fr_0.8fr_0.55fr_0.55fr_auto] items-center gap-4 px-5 py-4 text-left transition hover:bg-slate-50"
+                >
+                  <span className="min-w-0">
+                    <span className="block truncate text-sm font-black text-slate-950">
                       {operation.name}
-                    </h3>
-                    <p className="mt-2 text-sm font-bold text-slate-500">
-                      {operation.notes || "Keine Notizen hinterlegt."}
-                    </p>
-                  </div>
-
-                  <div className="flex flex-col gap-2 sm:flex-row">
-                    <button
-                      type="button"
-                      onClick={() => setEditingOperationId(operation.id)}
-                      className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white"
+                    </span>
+                    <span className="mt-1 block truncate text-xs font-bold text-slate-400">
+                      {operation.notes || "Keine Notizen"}
+                    </span>
+                  </span>
+                  <span className="truncate text-sm font-bold text-slate-600">
+                    {operation.category}
+                  </span>
+                  <span className="truncate text-sm font-bold text-slate-600">
+                    {getFinishingPricingModeLabel(operation.pricingMode)}
+                  </span>
+                  <span className="text-right text-sm font-black text-slate-950">
+                    {formatCurrency(operation.minimumPrice)}
+                  </span>
+                  <span className="text-right">
+                    <span
+                      className={`inline-flex rounded-full px-3 py-1 text-xs font-black ${operation.active ? "bg-emerald-100 text-emerald-700" : "bg-slate-100 text-slate-500"}`}
                     >
-                      Bearbeiten
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => deleteOperation(operation.id)}
-                      disabled={finishingOperations.length <= 1}
-                      className={`rounded-2xl px-4 py-3 text-sm font-black ${finishingOperations.length <= 1 ? "cursor-not-allowed bg-slate-100 text-slate-400" : "bg-rose-100 text-rose-700"}`}
-                    >
-                      Löschen
-                    </button>
-                  </div>
-                </div>
+                      {operation.active ? "Aktiv" : "Inaktiv"}
+                    </span>
+                  </span>
+                  <span className="flex justify-end gap-2">
+                    <span className="rounded-xl bg-slate-100 px-3 py-2 text-xs font-black text-slate-700">
+                      {isExpanded ? "Schließen" : "Details"}
+                    </span>
+                  </span>
+                </button>
 
-                <div className="mt-6 grid gap-3 sm:grid-cols-2 xl:grid-cols-3">
-                  <InfoCard
-                    label="Preismodell"
-                    value={getFinishingPricingModeLabel(operation.pricingMode)}
-                  />
-                  <InfoCard
-                    label="Grundpreis"
-                    value={formatCurrency(operation.basePrice)}
-                  />
-                  <InfoCard
-                    label="Einheitspreis"
-                    value={formatFinishingUnitPrice(
-                      operation.pricingMode,
-                      operation.unitPrice,
-                    )}
-                  />
-                  <InfoCard
-                    label="Rüstzeit"
-                    value={`${operation.setupMinutes} Min.`}
-                  />
-                  <InfoCard
-                    label="Rüstkosten"
-                    value={formatCurrency(setupCost)}
-                  />
-                  <InfoCard
-                    label="Stundensatz"
-                    value={`${formatCurrency(operation.hourlyRate)} / h`}
-                  />
-                </div>
+                {isExpanded && (
+                  <div className="border-t border-slate-100 bg-slate-50 px-5 py-5">
+                    <div className="grid gap-4 xl:grid-cols-[1fr_0.8fr_0.8fr]">
+                      <div className="rounded-3xl bg-white p-5 shadow-sm">
+                        <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                          Preislogik
+                        </p>
+                        <div className="mt-4 grid gap-3 sm:grid-cols-2">
+                          <InfoCard
+                            label="Grundpreis"
+                            value={formatCurrency(operation.basePrice)}
+                          />
+                          <InfoCard
+                            label="Einheitspreis"
+                            value={formatFinishingUnitPrice(
+                              operation.pricingMode,
+                              operation.unitPrice,
+                            )}
+                          />
+                          <InfoCard
+                            label="Rüstzeit"
+                            value={`${operation.setupMinutes} Min.`}
+                          />
+                          <InfoCard
+                            label="Stundensatz"
+                            value={`${formatCurrency(operation.hourlyRate)} / h`}
+                          />
+                        </div>
+                      </div>
 
-                <div className="mt-6 rounded-3xl bg-slate-50 p-5">
-                  <div className="grid gap-4 md:grid-cols-3">
-                    <div>
-                      <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                        Technischer Startpreis
-                      </p>
-                      <p className="mt-2 text-xl font-black">
-                        {formatCurrency(technicalBasePrice)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                        Beispiel 1.000 Stück
-                      </p>
-                      <p className="mt-2 text-xl font-black">
-                        {formatCurrency(examplePrice)}
-                      </p>
-                    </div>
-                    <div>
-                      <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                        Mindestpreis greift
-                      </p>
-                      <p className="mt-2 text-xl font-black">
-                        {examplePrice <= operation.minimumPrice ? "Ja" : "Nein"}
-                      </p>
+                      <div className="rounded-3xl bg-white p-5 shadow-sm">
+                        <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                          Beispiel
+                        </p>
+                        <div className="mt-4 space-y-3">
+                          <CostRow
+                            label="Rüstkosten"
+                            value={formatCurrency(setupCost)}
+                          />
+                          <CostRow
+                            label="Technischer Startpreis"
+                            value={formatCurrency(technicalBasePrice)}
+                          />
+                          <CostRow
+                            label="Beispiel 1.000 Stück"
+                            value={formatCurrency(examplePrice)}
+                            highlight
+                          />
+                        </div>
+                      </div>
+
+                      <div className="rounded-3xl bg-white p-5 shadow-sm">
+                        <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                          Aktionen
+                        </p>
+                        <div className="mt-4 flex flex-col gap-2">
+                          <button
+                            type="button"
+                            onClick={() => setEditingOperationId(operation.id)}
+                            className="rounded-2xl bg-slate-950 px-4 py-3 text-sm font-black text-white"
+                          >
+                            Bearbeiten
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => deleteOperation(operation.id)}
+                            disabled={finishingOperations.length <= 1}
+                            className={`rounded-2xl px-4 py-3 text-sm font-black ${finishingOperations.length <= 1 ? "cursor-not-allowed bg-slate-100 text-slate-400" : "bg-rose-100 text-rose-700"}`}
+                          >
+                            Löschen
+                          </button>
+                        </div>
+                      </div>
                     </div>
                   </div>
-                </div>
+                )}
               </div>
-            </article>
-          );
-        })}
+            );
+          })}
+        </div>
       </section>
 
       {filteredOperations.length === 0 && (

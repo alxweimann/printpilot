@@ -2859,11 +2859,31 @@ function CalculatorPage({
                   );
 
                   return (
-                    <div
+                    <details
                       key={item.id}
-                      className="rounded-2xl border border-slate-200 bg-white p-3"
+                      open={index === 0}
+                      className="group overflow-hidden rounded-2xl border border-slate-200 bg-white"
                     >
-                      <div className="space-y-4">
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-black text-slate-950">
+                            {item.label || `Material ${index + 1}`}
+                          </p>
+                          <p className="mt-1 truncate text-xs font-bold text-slate-500">
+                            {item.material.name} · {item.calculatedSheets.toLocaleString("de-DE")} Produktionsbogen · {item.totalMaterialSheets.toLocaleString("de-DE")} Gesamtbogen
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-3">
+                          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-700">
+                            {formatCurrency(item.cost)}
+                          </span>
+                          <span className="text-xs font-black text-slate-400 transition group-open:rotate-180">
+                            ▼
+                          </span>
+                        </div>
+                      </summary>
+
+                      <div className="space-y-4 border-t border-slate-100 p-4">
                         <SelectField
                           label={`Material für ${item.label || `Position ${index + 1}`}`}
                           value={item.materialId}
@@ -3005,7 +3025,7 @@ function CalculatorPage({
                         )}
                       </div>
 
-                      <div className="mt-4 grid gap-3 text-sm font-bold text-slate-600 md:grid-cols-2">
+                      <div className="mx-4 mb-4 mt-0 grid gap-3 rounded-2xl bg-slate-50 p-4 text-sm font-bold text-slate-600 md:grid-cols-2">
                         <p>
                           Format: {item.material.widthMm} ×{" "}
                           {item.material.heightMm} mm
@@ -3041,7 +3061,7 @@ function CalculatorPage({
                         </p>
                         <p>Kosten: {formatCurrency(item.cost)}</p>
                       </div>
-                    </div>
+                    </details>
                   );
                 })}
               </div>
@@ -3251,11 +3271,32 @@ function CalculatorPage({
                   });
 
                   return (
-                    <div
+                    <details
                       key={selection.id}
-                      className="rounded-2xl border border-slate-200 bg-white p-3"
+                      open={index === 0}
+                      className="group overflow-hidden rounded-2xl border border-slate-200 bg-white"
                     >
-                      <div className="flex flex-col gap-3 md:flex-row md:items-end">
+                      <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+                        <div className="min-w-0">
+                          <p className="truncate text-sm font-black text-slate-950">
+                            {operation.name}
+                          </p>
+                          <p className="mt-1 truncate text-xs font-bold text-slate-500">
+                            {operation.category} · {getFinishingPricingModeLabel(operation.pricingMode)} · Rüstzeit {operation.setupMinutes} Min.
+                          </p>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-3">
+                          <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-black text-slate-700">
+                            {formatCurrency(itemPrice)}
+                          </span>
+                          <span className="text-xs font-black text-slate-400 transition group-open:rotate-180">
+                            ▼
+                          </span>
+                        </div>
+                      </summary>
+
+                      <div className="border-t border-slate-100 p-4">
+                        <div className="flex flex-col gap-3 md:flex-row md:items-end">
                         <div className="flex-1">
                           <SelectField
                             label={`Schritt ${index + 1}`}
@@ -3297,7 +3338,8 @@ function CalculatorPage({
                         <p>Rüstzeit: {operation.setupMinutes} Min.</p>
                         <p>Berechnet: {formatCurrency(itemPrice)}</p>
                       </div>
-                    </div>
+                      </div>
+                    </details>
                   );
                 })}
               </div>

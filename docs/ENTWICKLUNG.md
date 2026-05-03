@@ -1,7 +1,7 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V152 – Dokumentbereiche im Hauptmenü getrennt**
+Aktuelle Arbeitsversion: **V153 – Dokumentbereiche im Hauptmenü getrennt**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
@@ -1621,7 +1621,7 @@ Ziel:
 
 Geplante nächste Schritte:
 
-### V152 – Rechnung fachlich ausbauen
+### V153 – Rechnung fachlich ausbauen
 
 Geplant:
 
@@ -1634,7 +1634,7 @@ Geplant:
 
 ---
 
-### V152 – Dokumentbereiche im Hauptmenü getrennt
+### V153 – Dokumentbereiche im Hauptmenü getrennt
 
 Eingebaut:
 
@@ -1670,7 +1670,7 @@ Ziel:
 
 Geplante nächste Schritte:
 
-### V152 – Dokumentbereiche weiter spezialisieren
+### V153 – Dokumentbereiche weiter spezialisieren
 
 Geplant:
 
@@ -1680,7 +1680,7 @@ Geplant:
 - Lieferscheine: Lieferadresse, Versandart und Unterschriftsbereich vorbereiten
 - Mahnungen: Rechnungsbezug, Mahnstufe und Zahlungsfrist vorbereiten
 
-### V152 – Duplizieren mit App-Hinweis
+### V153 – Duplizieren mit App-Hinweis
 
 Eingebaut:
 
@@ -1691,3 +1691,72 @@ Eingebaut:
 - Keine Browser-Popups.
 - Löschdialog aus V145 bleibt stabil.
 
+
+
+---
+
+### V153 – Dokumentbereiche optisch aufgeräumt
+
+Eingebaut:
+
+- Dokumentbereiche im linken Menü bleiben getrennt:
+  - Angebote
+  - Aufträge
+  - Rechnungen
+  - Lieferscheine
+  - Mahnungen
+- jeder Bereich erhält eine eigene Modulübersicht
+- Kennzahlen je Dokumentbereich:
+  - Dokumente gesamt
+  - Entwürfe
+  - Versendet
+  - Angenommen
+  - Abgelehnt bzw. bei Rechnungen offener Betrag
+- aktueller Entwurf wird oben klarer angezeigt
+- Netto-Volumen je Bereich wird sichtbar
+- nächster sinnvoller Arbeitsschritt wird als Hinweis angezeigt
+- Dokumentliste wurde neutraler benannt und passt besser zu allen Dokumenttypen
+- App-Hinweise beim Duplizieren aus V152 bleiben erhalten
+- Löschdialog bleibt stabil
+
+Ziel:
+
+- die getrennten Menübereiche sollen nicht nur technisch getrennt sein, sondern wie eigenständige Module wirken
+- weniger Überladung in einem einzigen Angebotsbereich
+- klarere Orientierung je Dokumenttyp
+
+---
+
+### V154 – Dokumentbereich-Farben korrigiert
+
+Eingebaut:
+
+- die Hero-/Modulkopf-Farben der Dokumentbereiche passen jetzt zum jeweiligen Menüpunkt
+- Rechnungen verwenden im oberen Kopfbereich jetzt Cyan/Sky statt Gelb
+- Angebote bleiben Gelb
+- Aufträge verwenden Grün/Emerald
+- Lieferscheine verwenden Lime/Emerald
+- Mahnungen verwenden Rose/Rot
+- die farbliche Zuordnung ist dadurch konsistenter mit der linken Navigation
+
+Ziel:
+
+- jeder Dokumentbereich soll sofort optisch wiedererkennbar sein
+- keine falsche gelbe Zuordnung bei Rechnungen oder anderen Dokumenttypen
+- professionelleres Modulgefühl für Angebote, Aufträge, Rechnungen, Lieferscheine und Mahnungen
+
+---
+
+## Nächste geplante Schritte
+
+### V155 – Dokumentlisten je Bereich weiter verfeinern
+
+Geplant:
+
+- Tabellen/Karten je Bereich noch stärker an Dokumenttyp anpassen
+- Angebote: Gültigkeit, Status und Folgeprozess
+- Aufträge: Produktionsstatus und Liefertermin
+- Rechnungen: Fälligkeit, Zahlungsstatus und offener Betrag
+- Lieferscheine: Versandart und Lieferadresse
+- Mahnungen: Mahnstufe, offener Betrag und neue Zahlungsfrist
+- bessere Schnellaktionen je Bereich

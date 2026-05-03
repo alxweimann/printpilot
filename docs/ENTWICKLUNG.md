@@ -587,6 +587,41 @@ Hinweis:
 
 Die Anzeige erfolgt nur, wenn der Haupt-Haken **Stammdaten im Dokumentfuß anzeigen** aktiv ist und zusätzlich die gewünschten Datenbereiche aktiviert wurden.
 
+
+### V139 – Höhenbasierter Seitenumbruch
+
+Eingebaut:
+
+- Angebotspositionen werden nicht mehr nur nach fester Anzahl verteilt
+- jede Position bekommt eine geschätzte Layout-Höhe
+- lange Beschreibungen verbrauchen mehr Platz
+- kurze Positionen erlauben mehr Positionen pro Seite
+- Summenblock wird nur auf eine Seite gesetzt, wenn noch ausreichend Platz vorhanden ist
+- Hinweise & Bedingungen bleiben geschützt
+- Footer im magentafarbenen Briefbogen bleibt frei
+
+Geänderte Logik:
+
+```text
+Seite 1
+├ feste Bereiche: Empfänger, Kundendaten, Betreff, Einleitung
+├ variabler Leistungsbereich
+└ Reserve für Summe + Hinweise, falls es die letzte Seite ist
+
+Folgeseiten
+├ Briefbogen erneut automatisch
+├ Leistungsfortsetzung
+├ mehr Platz für Positionen
+└ Summe + Hinweise nur auf letzter Seite
+```
+
+Prüfung:
+
+- kurze Positionen sollen dichter auf Seite 1 bleiben
+- lange Positionsbeschreibungen sollen früher auf eine Folgeseite laufen
+- Summe darf nicht mit Hinweisen oder Footer kollidieren
+- Dokumentfuß bleibt im magentafarbenen Balken
+
 ## Aktueller Stand
 
 Aktuelle Version: **V130**
@@ -1126,7 +1161,7 @@ Ziel:
 - Bereits vorgedruckte oder im Briefbogen gestaltete Bereiche dürfen nicht doppelt oder unkontrolliert belegt werden.
 - Die Stammdaten sollen später für Angebot, Rechnung, Lieferschein und Auftragsbestätigung gleich funktionieren.
 
-Aktuelle Version: **V137**
+Aktuelle Version: **V139**
 
 ---
 
@@ -1221,3 +1256,22 @@ Eingebaut:
 - Hinweise und Bedingungen bleiben vom Summenblock getrennt
 - Ziel: Kein Überlappen von Brutto-Summe, Hinweisen und Footer bei 3–4 Positionen
 - Vorbereitung für späteren echten höhenbasierten Seitenumbruch
+
+
+---
+
+### V139 – Seitenumbruch weniger früh
+
+Eingebaut:
+
+- Höhenbasierter Seitenumbruch wurde weniger konservativ eingestellt.
+- Lange Positionen dürfen mehr Restfläche auf Seite 1 nutzen.
+- Eine kurze Folgeposition rutscht nicht mehr unnötig früh auf Seite 2.
+- Summenblock und Hinweise bleiben weiterhin als geschützter Bereich reserviert.
+- Footer im magentafarbenen Briefbogen bleibt geschützt.
+
+Prüfung:
+
+- Test mit einer langen ersten Position und einer kurzen zweiten Position.
+- Erwartung: Wenn noch genug Platz ist, bleibt die zweite Position auf Seite 1.
+- Erst bei echter Überfüllung wird eine Folgeseite erzeugt.

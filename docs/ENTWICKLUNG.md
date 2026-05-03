@@ -1126,7 +1126,7 @@ Ziel:
 - Bereits vorgedruckte oder im Briefbogen gestaltete Bereiche dürfen nicht doppelt oder unkontrolliert belegt werden.
 - Die Stammdaten sollen später für Angebot, Rechnung, Lieferschein und Auftragsbestätigung gleich funktionieren.
 
-Aktuelle Version: **V134**
+Aktuelle Version: **V137**
 
 ---
 
@@ -1174,3 +1174,50 @@ Ziel:
 - professioneller Dokumentfuß im Briefbogen
 - keine abgeschnittenen Bankdaten
 - besser lesbare Stammdaten im Magenta-Balken
+
+
+## Update V136
+
+Der Angebotsbereich kann jetzt Positionen deutlich besser bearbeiten. Der nächste sinnvolle Schritt ist V136: Positionen professioneller für mehrseitige Angebote paginieren und Positionen optional als Zwischensumme/Gruppierung vorbereiten.
+
+
+---
+
+### V136 – Angebotspositionen: Platz auf Seite 1 besser nutzen
+
+Geändert:
+
+- Erste Angebotsseite nutzt den variablen Leistungsbereich besser aus.
+- Auf Seite 1 werden jetzt bis zu 4 Positionen platziert, bevor eine Folgeseite erzeugt wird.
+- Folgeseiten nehmen bis zu 6 Positionen auf.
+- Positionszeilen in der PDF-/Druckvorschau wurden etwas kompakter gesetzt.
+- Feste Bereiche bleiben erhalten:
+  - Empfänger
+  - Kundendaten
+  - Betreff
+  - Hinweise / Bedingungen auf der letzten Seite
+  - Footer im magentafarbenen Briefbogenbereich
+- Ziel: Keine unnötige zweite Seite, wenn auf Seite 1 noch Platz für weitere Positionen ist.
+
+Nächster sinnvoller Schritt:
+
+### V137 – Intelligenter Seitenumbruch für Angebote
+
+Geplant:
+
+- Seitenumbruch nicht nur nach Positionsanzahl, sondern nach geschätzter Zeilenhöhe.
+- Lange Positionsbeschreibungen sollen mehr Platz zählen als kurze Positionen.
+- Summe und Hinweise sollen nur dann auf Seite 1 bleiben, wenn genug Platz vorhanden ist.
+- Andernfalls wandern Summe und Hinweise sauber auf die nächste Seite.
+
+
+### V137 – Summenblock und Seitenumbruch korrigiert
+
+Eingebaut:
+
+- Summenblock im Angebot kompakter gesetzt
+- Positionszeilen in der PDF-/Briefbogenansicht etwas platzsparender gestaltet
+- Leistungsbereich auf Seite 1 beginnt etwas früher
+- Hinweise und Bedingungen bleiben vom Summenblock getrennt
+- Ziel: Kein Überlappen von Brutto-Summe, Hinweisen und Footer bei 3–4 Positionen
+- Vorbereitung für späteren echten höhenbasierten Seitenumbruch

@@ -1198,7 +1198,7 @@ function App() {
         }
       `}</style>
       <div className="fixed right-4 top-4 z-[9999] rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-500/30">
-        V134 aktiv
+        V137 aktiv
       </div>
       <div className="flex min-h-screen">
         <aside className="fixed inset-y-0 left-0 z-20 hidden w-80 flex-col bg-slate-950 text-white shadow-2xl shadow-slate-950/30 lg:flex">
@@ -1250,7 +1250,7 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V134</p>
+              <p className="text-sm font-black">PrintPilot V137</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
                 Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
@@ -3000,7 +3000,7 @@ function CalculatorPage({
       unitPrice: roundMoney(unitPrice),
       vatRate: 19,
       internalNote: [
-        `Quelle: Kalkulation V134`,
+        `Quelle: Kalkulation V137`,
         `Interne Kalkulation`,
         `Maschine: ${selectedMachine.name}`,
         `Druckbogen: ${totalSheets.toLocaleString("de-DE")}`,
@@ -3024,7 +3024,7 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V134
+                Kalkulation V137
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
                 Produkt- und Jobstruktur
@@ -3153,7 +3153,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                    Arbeitsmodus V134
+                    Arbeitsmodus V137
                   </p>
                   <p className="mt-1 text-sm font-black text-slate-950">
                     Schritte anklicken, Abschnitt öffnen, Werte prüfen, weiter zum nächsten Block.
@@ -4534,7 +4534,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V134</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V137</p>
                 <p className="mt-1 text-sm font-medium text-slate-300">wichtigster Preisblock bleibt offen</p>
               </div>
               <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200 group-open:hidden">Aufklappen</span>
@@ -4629,7 +4629,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] border border-emerald-200 bg-emerald-50 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V134</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V137</p>
                 <p className="mt-1 text-sm font-medium text-emerald-950">Kalkulation ist bereit für eine Angebotsposition</p>
               </div>
               <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm group-open:hidden">Aufklappen</span>
@@ -4678,7 +4678,7 @@ function CalculatorPage({
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V134</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V137</p>
                 <p className="mt-1 text-sm font-medium text-slate-600">{calculationStatusTone.headline}</p>
               </div>
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${calculationStatusTone.badgeClass}`}>
@@ -4691,7 +4691,7 @@ function CalculatorPage({
                 <p
                   className={`text-xs font-extrabold uppercase tracking-wide ${calculationStatusTone.textClass}`}
                 >
-                  Kalkulationsstatus V134
+                  Kalkulationsstatus V137
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   {calculationStatusTone.headline}
@@ -4863,7 +4863,7 @@ function CalculatorPage({
           <details className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V134</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V137</p>
                 <p className="mt-1 text-sm font-medium text-slate-500">Produktionskosten und Preisaufbau</p>
               </div>
               <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:hidden">Aufklappen</span>
@@ -4873,7 +4873,7 @@ function CalculatorPage({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Auswertung V134
+                  Auswertung V137
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   Produktionskosten & Preisaufbau
@@ -4989,7 +4989,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Produktionskosten V134
+                    Produktionskosten V137
                   </p>
                   <h4 className="mt-1 text-base font-semibold text-slate-950">
                     Detaillierte Kostenaufschlüsselung
@@ -5487,8 +5487,8 @@ function QuotesPage({
   const netTotal = documentTotals.netTotal;
   const vatTotals = documentTotals.vatTotals;
   const grossTotal = documentTotals.grossTotal;
-  const firstLetterheadPagePositionLimit = 2;
-  const followingLetterheadPagePositionLimit = 5;
+  const firstLetterheadPagePositionLimit = 4;
+  const followingLetterheadPagePositionLimit = 6;
   const letterheadPositionPages = useMemo(() => {
     if (quotePositions.length === 0) {
       return [[] as QuotePosition[]];
@@ -6115,7 +6115,7 @@ function QuotesPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-yellow-300">
-                Angebote V134
+                Angebote V137
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 Angebotsvorschau erstellen
@@ -6148,7 +6148,7 @@ function QuotesPage({
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-              Angebotsbereich V134
+              Angebotsbereich V137
             </div>
             <h3 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950">
               Angebotsentwurf & Kundenvorschau
@@ -6235,7 +6235,7 @@ function QuotesPage({
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-yellow-300 via-fuchsia-500 to-cyan-400" />
             <h3 className="mt-5 text-xl font-black">Dokumentkopf</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
-              Kundenauswahl und Stammdaten für die Kundenvorschau V134.
+              Kundenauswahl und Stammdaten für die Kundenvorschau V137.
             </p>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -6546,18 +6546,42 @@ function QuotesPage({
           </div>
 
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+            <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
               <div>
                 <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 to-sky-500" />
-                <h3 className="mt-5 text-xl font-black">Positionen</h3>
-                <p className="mt-1 text-sm font-medium text-slate-500">
-                  Dokumentpositionen mit Menge und Einzelpreis netto.
+                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen V137</h3>
+                <p className="mt-1 text-sm font-medium leading-6 text-slate-500">
+                  Positionen sind jetzt als klare Bearbeitungskarten aufgebaut. Titel, Beschreibung, Menge,
+                  Einzelpreis und MwSt. ändern die Angebotsvorschau sofort.
                 </p>
               </div>
 
-              <div className="grid gap-3 md:grid-cols-[1fr_auto_auto] md:items-end">
+              <div className="grid gap-2 sm:grid-cols-2 xl:min-w-[360px]">
+                <div className="rounded-2xl bg-slate-50 px-4 py-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Positionen</p>
+                  <p className="mt-1 text-lg font-semibold text-slate-950">{quotePositions.length}</p>
+                </div>
+                <div className="rounded-2xl bg-slate-950 px-4 py-3 text-white">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-white/60">Netto</p>
+                  <p className="mt-1 text-lg font-semibold">{formatCurrency(netTotal)}</p>
+                </div>
+                <div className="rounded-2xl bg-slate-50 px-4 py-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">MwSt.</p>
+                  <p className="mt-1 text-lg font-semibold text-slate-950">
+                    {formatCurrency(Math.max(grossTotal - netTotal, 0))}
+                  </p>
+                </div>
+                <div className="rounded-2xl bg-emerald-50 px-4 py-3">
+                  <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Brutto</p>
+                  <p className="mt-1 text-lg font-semibold text-emerald-950">{formatCurrency(grossTotal)}</p>
+                </div>
+              </div>
+            </div>
+
+            <div className="mt-6 rounded-3xl bg-slate-50 p-4">
+              <div className="grid gap-3 xl:grid-cols-[1fr_auto_auto] xl:items-end">
                 <SelectField
-                  label="Leistung auswählen"
+                  label="Leistung aus Stammdaten übernehmen"
                   value={selectedServiceItemId}
                   onChange={setSelectedServiceItemId}
                   options={
@@ -6579,7 +6603,7 @@ function QuotesPage({
                   type="button"
                   onClick={addServiceItemToQuote}
                   disabled={!selectedServiceItem}
-                  className={`rounded-2xl px-5 py-3 text-sm font-black text-white shadow-sm transition ${
+                  className={`rounded-2xl px-5 py-3 text-sm font-semibold text-white shadow-sm transition ${
                     selectedServiceItem
                       ? "bg-indigo-500 hover:-translate-y-0.5 hover:bg-indigo-600"
                       : "cursor-not-allowed bg-slate-300"
@@ -6591,7 +6615,7 @@ function QuotesPage({
                 <button
                   type="button"
                   onClick={addQuotePosition}
-                  className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5"
+                  className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-sm transition hover:-translate-y-0.5"
                 >
                   + freie Position
                 </button>
@@ -6600,43 +6624,82 @@ function QuotesPage({
 
             <div className="mt-6 space-y-4">
               {quotePositions.map((position, index) => {
-                const positionTotal = position.quantity * position.unitPrice;
+                const positionVatRate = getPositionVatRate(position);
+                const positionNetTotal = position.quantity * position.unitPrice;
+                const positionVatAmount = positionNetTotal * (positionVatRate / 100);
+                const positionGrossTotal = positionNetTotal + positionVatAmount;
+                const positionIsComplete =
+                  position.title.trim().length > 0 &&
+                  position.quantity > 0 &&
+                  position.unitPrice >= 0;
 
                 return (
                   <div
                     key={position.id}
-                    className="rounded-3xl border border-slate-200 bg-slate-50 p-4"
+                    className="overflow-hidden rounded-3xl border border-slate-200 bg-white shadow-sm"
                   >
-                    <div className="grid gap-4">
-                      <InputField
-                        label={`Position ${index + 1}`}
-                        value={position.title}
-                        onChange={(value) =>
-                          updateQuotePosition(position.id, "title", value)
-                        }
-                      />
+                    <div className="flex flex-col gap-4 border-b border-slate-100 bg-slate-50 px-5 py-4 xl:flex-row xl:items-center xl:justify-between">
+                      <div className="flex min-w-0 items-start gap-3">
+                        <div className="grid h-9 w-9 shrink-0 place-items-center rounded-2xl bg-slate-950 text-sm font-semibold text-white">
+                          {index + 1}
+                        </div>
+                        <div className="min-w-0">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h4 className="text-base font-semibold tracking-tight text-slate-950">
+                              {position.title || `Position ${index + 1}`}
+                            </h4>
+                            <span
+                              className={`rounded-full px-2.5 py-1 text-[11px] font-semibold ${
+                                positionIsComplete
+                                  ? "bg-emerald-100 text-emerald-700"
+                                  : "bg-amber-100 text-amber-700"
+                              }`}
+                            >
+                              {positionIsComplete ? "Position OK" : "Prüfen"}
+                            </span>
+                          </div>
+                          <p className="mt-1 line-clamp-2 text-sm font-medium leading-5 text-slate-500">
+                            {position.description || "Keine Beschreibung hinterlegt."}
+                          </p>
+                        </div>
+                      </div>
 
-                      <TextAreaField
-                        label="Kundenbeschreibung"
-                        value={position.description}
-                        onChange={(value) =>
-                          updateQuotePosition(position.id, "description", value)
-                        }
-                      />
+                      <div className="grid gap-2 sm:grid-cols-3 xl:w-[360px]">
+                        <div className="rounded-2xl bg-white px-3 py-2 text-right shadow-sm">
+                          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Menge</p>
+                          <p className="text-sm font-semibold text-slate-950">{formatNumber(position.quantity, 0)}</p>
+                        </div>
+                        <div className="rounded-2xl bg-white px-3 py-2 text-right shadow-sm">
+                          <p className="text-[10px] font-semibold uppercase tracking-wide text-slate-400">Netto</p>
+                          <p className="text-sm font-semibold text-slate-950">{formatCurrency(positionNetTotal)}</p>
+                        </div>
+                        <div className="rounded-2xl bg-slate-950 px-3 py-2 text-right text-white shadow-sm">
+                          <p className="text-[10px] font-semibold uppercase tracking-wide text-white/60">Brutto</p>
+                          <p className="text-sm font-semibold">{formatCurrency(positionGrossTotal)}</p>
+                        </div>
+                      </div>
+                    </div>
 
-                      <TextAreaField
-                        label="Interne Notiz"
-                        value={position.internalNote ?? ""}
-                        onChange={(value) =>
-                          updateQuotePosition(
-                            position.id,
-                            "internalNote",
-                            value,
-                          )
-                        }
-                      />
+                    <div className="grid gap-4 p-5">
+                      <div className="grid gap-4 xl:grid-cols-[1fr_1.2fr]">
+                        <InputField
+                          label="Positionstitel"
+                          value={position.title}
+                          onChange={(value) =>
+                            updateQuotePosition(position.id, "title", value)
+                          }
+                        />
 
-                      <div className="grid gap-3 md:grid-cols-[0.65fr_0.8fr_0.55fr_0.85fr_auto] md:items-end">
+                        <TextAreaField
+                          label="Kundenbeschreibung"
+                          value={position.description}
+                          onChange={(value) =>
+                            updateQuotePosition(position.id, "description", value)
+                          }
+                        />
+                      </div>
+
+                      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[0.7fr_0.85fr_0.55fr_0.85fr_0.85fr] xl:items-end">
                         <NumberField
                           label="Menge"
                           value={position.quantity}
@@ -6658,7 +6721,7 @@ function QuotesPage({
 
                         <NumberField
                           label="MwSt."
-                          value={getPositionVatRate(position)}
+                          value={positionVatRate}
                           onChange={(value) =>
                             updateQuotePosition(position.id, "vatRate", value)
                           }
@@ -6667,57 +6730,72 @@ function QuotesPage({
 
                         <ReadOnlyField
                           label="Gesamt netto"
-                          value={formatCurrency(positionTotal)}
+                          value={formatCurrency(positionNetTotal)}
                         />
 
-                        <div className="grid gap-2">
-                          <div className="grid grid-cols-2 gap-2">
-                            <button
-                              type="button"
-                              onClick={() =>
-                                moveQuotePosition(position.id, "up")
-                              }
-                              disabled={index === 0}
-                              className={`rounded-2xl px-3 py-2 text-xs font-black transition ${
-                                index === 0
-                                  ? "cursor-not-allowed bg-slate-100 text-slate-400"
-                                  : "bg-white text-slate-700 shadow-sm hover:-translate-y-0.5"
-                              }`}
-                            >
-                              ↑
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() =>
-                                moveQuotePosition(position.id, "down")
-                              }
-                              disabled={index === quotePositions.length - 1}
-                              className={`rounded-2xl px-3 py-2 text-xs font-black transition ${
-                                index === quotePositions.length - 1
-                                  ? "cursor-not-allowed bg-slate-100 text-slate-400"
-                                  : "bg-white text-slate-700 shadow-sm hover:-translate-y-0.5"
-                              }`}
-                            >
-                              ↓
-                            </button>
-                          </div>
+                        <ReadOnlyField
+                          label="Gesamt brutto"
+                          value={formatCurrency(positionGrossTotal)}
+                        />
+                      </div>
 
+                      <TextAreaField
+                        label="Interne Notiz"
+                        value={position.internalNote ?? ""}
+                        onChange={(value) =>
+                          updateQuotePosition(
+                            position.id,
+                            "internalNote",
+                            value,
+                          )
+                        }
+                      />
+
+                      <div className="flex flex-col gap-3 border-t border-slate-100 pt-4 md:flex-row md:items-center md:justify-between">
+                        <p className="text-xs font-medium leading-5 text-slate-500">
+                          Reihenfolge und Positionstexte werden direkt in die Kundenvorschau übernommen.
+                        </p>
+
+                        <div className="flex flex-wrap gap-2">
+                          <button
+                            type="button"
+                            onClick={() => moveQuotePosition(position.id, "up")}
+                            disabled={index === 0}
+                            className={`rounded-2xl px-3 py-2 text-xs font-semibold transition ${
+                              index === 0
+                                ? "cursor-not-allowed bg-slate-100 text-slate-400"
+                                : "bg-slate-100 text-slate-700 hover:-translate-y-0.5 hover:bg-slate-200"
+                            }`}
+                          >
+                            ↑ Hoch
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => moveQuotePosition(position.id, "down")}
+                            disabled={index === quotePositions.length - 1}
+                            className={`rounded-2xl px-3 py-2 text-xs font-semibold transition ${
+                              index === quotePositions.length - 1
+                                ? "cursor-not-allowed bg-slate-100 text-slate-400"
+                                : "bg-slate-100 text-slate-700 hover:-translate-y-0.5 hover:bg-slate-200"
+                            }`}
+                          >
+                            ↓ Runter
+                          </button>
                           <button
                             type="button"
                             onClick={() => duplicateQuotePosition(position.id)}
-                            className="rounded-2xl bg-indigo-100 px-4 py-2 text-xs font-black text-indigo-700 transition hover:-translate-y-0.5"
+                            className="rounded-2xl bg-indigo-100 px-4 py-2 text-xs font-semibold text-indigo-700 transition hover:-translate-y-0.5 hover:bg-indigo-200"
                           >
                             Duplizieren
                           </button>
-
                           <button
                             type="button"
                             onClick={() => removeQuotePosition(position.id)}
                             disabled={quotePositions.length <= 1}
-                            className={`rounded-2xl px-4 py-2 text-xs font-black transition ${
+                            className={`rounded-2xl px-4 py-2 text-xs font-semibold transition ${
                               quotePositions.length <= 1
                                 ? "cursor-not-allowed bg-slate-100 text-slate-400"
-                                : "bg-rose-100 text-rose-700 hover:-translate-y-0.5"
+                                : "bg-rose-100 text-rose-700 hover:-translate-y-0.5 hover:bg-rose-200"
                             }`}
                           >
                             Entfernen
@@ -6992,7 +7070,7 @@ function QuotesPage({
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Kundenvorschau V134
+                  Kundenvorschau V137
                 </p>
                 <h3 className="mt-2 text-2xl font-black tracking-tight">
                   {quoteNumber}
@@ -7111,7 +7189,7 @@ function QuotesPage({
                           )}
 
                           <div
-                            className={`${isFirstPage ? "absolute left-[20mm] right-[20mm] top-[158mm] bottom-[49mm]" : "absolute left-[20mm] right-[20mm] top-[44mm] bottom-[49mm]"} overflow-hidden`}
+                            className={`${isFirstPage ? "absolute left-[20mm] right-[20mm] top-[154mm] bottom-[49mm]" : "absolute left-[20mm] right-[20mm] top-[44mm] bottom-[49mm]"} overflow-hidden`}
                           >
                             {!isFirstPage && (
                               <div className="mb-[4mm] flex items-center justify-between border-b border-slate-200 pb-[2mm]">
@@ -7126,7 +7204,7 @@ function QuotesPage({
 
                             <div className="overflow-hidden rounded-[3.5mm] border border-slate-200 bg-white/90">
                               <div
-                                className={`grid gap-[2mm] bg-slate-100 px-[4mm] py-[2.5mm] text-[8px] font-semibold uppercase tracking-wide text-slate-500 ${
+                                className={`grid gap-[2mm] bg-slate-100 px-[4mm] py-[1.7mm] text-[7.7px] font-semibold uppercase tracking-wide text-slate-500 ${
                                   isDeliveryNote
                                     ? "grid-cols-[1fr_0.3fr]"
                                     : "grid-cols-[1fr_0.22fr_0.28fr_0.2fr_0.32fr]"
@@ -7146,7 +7224,7 @@ function QuotesPage({
                                 return (
                                   <div
                                     key={position.id}
-                                    className={`grid gap-[2mm] border-t border-slate-100 px-[4mm] py-[3mm] text-[9.5px] ${
+                                    className={`grid gap-[2mm] border-t border-slate-100 px-[4mm] py-[1.75mm] text-[8.4px] ${
                                       isDeliveryNote
                                         ? "grid-cols-[1fr_0.3fr]"
                                         : "grid-cols-[1fr_0.22fr_0.28fr_0.2fr_0.32fr]"
@@ -7156,7 +7234,7 @@ function QuotesPage({
                                       <p className="font-semibold text-slate-950">
                                         {absolutePositionIndex + 1}. {position.title}
                                       </p>
-                                      <p className="mt-[1.5mm] whitespace-pre-line text-[8.5px] font-medium leading-[1.35] text-slate-500">
+                                      <p className="mt-[0.7mm] whitespace-pre-line text-[7.4px] font-medium leading-[1.18] text-slate-500">
                                         {position.description}
                                       </p>
                                     </div>
@@ -7184,9 +7262,9 @@ function QuotesPage({
                             </div>
 
                             {isLastPage && !isDeliveryNote && (
-                              <div className="mt-[7mm] flex justify-end">
+                              <div className="mt-[4mm] flex justify-end">
                                 <div className="w-[78mm] overflow-hidden rounded-[3.5mm] border border-slate-200 bg-white/92">
-                                  <div className="flex items-center justify-between border-b border-slate-100 px-[4mm] py-[2.5mm] text-[10px] font-medium text-slate-600">
+                                  <div className="flex items-center justify-between border-b border-slate-100 px-[4mm] py-[1.85mm] text-[9px] font-medium text-slate-600">
                                     <span>Netto</span>
                                     <span>{formatCurrency(netTotal)}</span>
                                   </div>
@@ -7194,19 +7272,19 @@ function QuotesPage({
                                     vatTotals.map((taxLine) => (
                                       <div
                                         key={taxLine.rate}
-                                        className="flex items-center justify-between border-b border-slate-100 px-[4mm] py-[2.5mm] text-[10px] font-medium text-slate-600"
+                                        className="flex items-center justify-between border-b border-slate-100 px-[4mm] py-[1.85mm] text-[9px] font-medium text-slate-600"
                                       >
                                         <span>MwSt. {formatNumber(taxLine.rate, 0)} %</span>
                                         <span>{formatCurrency(taxLine.amount)}</span>
                                       </div>
                                     ))
                                   ) : (
-                                    <div className="flex items-center justify-between border-b border-slate-100 px-[4mm] py-[2.5mm] text-[10px] font-medium text-slate-600">
+                                    <div className="flex items-center justify-between border-b border-slate-100 px-[4mm] py-[1.85mm] text-[9px] font-medium text-slate-600">
                                       <span>MwSt.</span>
                                       <span>{formatCurrency(0)}</span>
                                     </div>
                                   )}
-                                  <div className="flex items-center justify-between bg-slate-950 px-[4mm] py-[3mm] text-[10px] font-semibold text-white">
+                                  <div className="flex items-center justify-between bg-slate-950 px-[4mm] py-[2.2mm] text-[9px] font-semibold text-white">
                                     <span>Brutto</span>
                                     <span>{formatCurrency(grossTotal)}</span>
                                   </div>
@@ -7216,12 +7294,12 @@ function QuotesPage({
                           </div>
 
                           {isLastPage && (
-                            <div className="absolute left-[20mm] right-[20mm] bottom-[33mm] border-t border-slate-200 pt-[3mm] text-[9px] font-medium leading-[1.45] text-slate-600">
-                              <p className="mb-[2mm] text-[8px] font-semibold uppercase tracking-wide text-slate-400">
+                            <div className="absolute left-[20mm] right-[20mm] bottom-[33mm] border-t border-slate-200 pt-[2.4mm] text-[8.2px] font-medium leading-[1.34] text-slate-600">
+                              <p className="mb-[1.5mm] text-[7.5px] font-semibold uppercase tracking-wide text-slate-400">
                                 Hinweise & Bedingungen
                               </p>
                               <p>{deliveryTerms}</p>
-                              {!isDeliveryNote && <p className="mt-[2mm]">{paymentTerms}</p>}
+                              {!isDeliveryNote && <p className="mt-[1.4mm]">{paymentTerms}</p>}
                               {showCompanyFooterData && documentFooterLines.length > 0 && !showFooterInLetterheadBar && (
                                 <div className="mt-[2mm] grid gap-[1mm] text-[7.5px] leading-[1.35] text-slate-500">
                                   {documentFooterLines.map((line) => (
@@ -7310,7 +7388,7 @@ function QuotesPage({
               <div className="-mx-6 -mt-6 mb-6 border-b border-slate-200 bg-slate-50 px-6 py-4 print:hidden">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V134</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V137</p>
                     <p className="mt-1 text-sm font-medium text-slate-600">So wirkt das Dokument später im Druck oder als PDF.</p>
                   </div>
                   <div className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Layout prüfbar</div>
@@ -11966,7 +12044,7 @@ function SettingsPage({
   function exportAppBackup() {
     const payload = {
       app: "PrintPilot",
-      version: "V134",
+      version: "V137",
       exportedAt: new Date().toISOString(),
       data: {
         company,
@@ -12449,7 +12527,7 @@ function SettingsPage({
             <h3 className="mt-5 text-xl font-black">Dokumenttypen</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Jeder Dokumenttyp hat eigene Abstände und Standardtexte. Die
-              Kundenvorschau V134 nutzt den aktiven Dokumenttyp: Angebot,
+              Kundenvorschau V137 nutzt den aktiven Dokumenttyp: Angebot,
               Auftragsbestätigung, Rechnung oder Lieferschein.
             </p>
             <div className="mt-6 grid gap-4 md:grid-cols-[0.8fr_1.2fr]">
@@ -12793,7 +12871,7 @@ function SettingsPage({
 
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-black">Kundenvorschau V134</h3>
+            <h3 className="mt-5 text-xl font-black">Kundenvorschau V137</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Aktive Vorlage: {activeDocumentTemplate.label}
             </p>
@@ -14465,7 +14543,7 @@ function ImpositionPreview({
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-            Bogenvorschau rechts V134
+            Bogenvorschau rechts V137
           </p>
           <p className="mt-1 truncate text-sm font-black text-slate-800">
             {result.best.columns} × {result.best.rows} Nutzen · {result.best.orientation}

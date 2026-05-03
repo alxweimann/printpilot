@@ -1198,8 +1198,9 @@ function App() {
         }
       `}</style>
       <div className="fixed right-4 top-4 z-[9999] rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-500/30">
-        V141 aktiv
+        V143 aktiv
       </div>
+      <DeleteConfirmationModal />
       <div className="flex min-h-screen">
         <aside className="fixed inset-y-0 left-0 z-20 hidden w-80 flex-col bg-slate-950 text-white shadow-2xl shadow-slate-950/30 lg:flex">
           <div className="border-b border-white/10 px-7 py-7">
@@ -1250,7 +1251,7 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V141</p>
+              <p className="text-sm font-black">PrintPilot V143</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
                 Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
@@ -2763,11 +2764,14 @@ function CalculatorPage({
     );
   }
 
-  function removeMaterialSelection(selectionId: string) {
+  async function removeMaterialSelection(selectionId: string) {
+    const selection = materialSelections.find((item) => item.id === selectionId);
+
+    if (materialSelections.length <= 1) return;
+    if (!(await confirmDeleteAction(`Druckteil „${selection?.label ?? "Druckteil"}”`))) return;
+
     setMaterialSelections((current) =>
-      current.length <= 1
-        ? current
-        : current.filter((selection) => selection.id !== selectionId),
+      current.filter((selection) => selection.id !== selectionId),
     );
   }
 
@@ -2952,11 +2956,15 @@ function CalculatorPage({
     );
   }
 
-  function removeFinishingSelection(selectionId: string) {
+  async function removeFinishingSelection(selectionId: string) {
+    const selection = finishingSelections.find((item) => item.id === selectionId);
+    const operation = finishingOperations.find((item) => item.id === selection?.operationId);
+
+    if (finishingSelections.length <= 1) return;
+    if (!(await confirmDeleteAction(`Weiterverarbeitung „${operation?.name ?? "Schritt"}” aus dieser Kalkulation`))) return;
+
     setFinishingSelections((current) =>
-      current.length <= 1
-        ? current
-        : current.filter((selection) => selection.id !== selectionId),
+      current.filter((selection) => selection.id !== selectionId),
     );
   }
 
@@ -3000,7 +3008,7 @@ function CalculatorPage({
       unitPrice: roundMoney(unitPrice),
       vatRate: 19,
       internalNote: [
-        `Quelle: Kalkulation V141`,
+        `Quelle: Kalkulation V143`,
         `Interne Kalkulation`,
         `Maschine: ${selectedMachine.name}`,
         `Druckbogen: ${totalSheets.toLocaleString("de-DE")}`,
@@ -3024,7 +3032,7 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V141
+                Kalkulation V143
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
                 Produkt- und Jobstruktur
@@ -4534,7 +4542,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V141</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V143</p>
                 <p className="mt-1 text-sm font-medium text-slate-300">wichtigster Preisblock bleibt offen</p>
               </div>
               <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200 group-open:hidden">Aufklappen</span>
@@ -4629,7 +4637,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] border border-emerald-200 bg-emerald-50 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V141</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V143</p>
                 <p className="mt-1 text-sm font-medium text-emerald-950">Kalkulation ist bereit für eine Angebotsposition</p>
               </div>
               <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm group-open:hidden">Aufklappen</span>
@@ -4678,7 +4686,7 @@ function CalculatorPage({
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V141</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V143</p>
                 <p className="mt-1 text-sm font-medium text-slate-600">{calculationStatusTone.headline}</p>
               </div>
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${calculationStatusTone.badgeClass}`}>
@@ -4691,7 +4699,7 @@ function CalculatorPage({
                 <p
                   className={`text-xs font-extrabold uppercase tracking-wide ${calculationStatusTone.textClass}`}
                 >
-                  Kalkulationsstatus V141
+                  Kalkulationsstatus V143
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   {calculationStatusTone.headline}
@@ -4863,7 +4871,7 @@ function CalculatorPage({
           <details className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V141</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V143</p>
                 <p className="mt-1 text-sm font-medium text-slate-500">Produktionskosten und Preisaufbau</p>
               </div>
               <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:hidden">Aufklappen</span>
@@ -4873,7 +4881,7 @@ function CalculatorPage({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Auswertung V141
+                  Auswertung V143
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   Produktionskosten & Preisaufbau
@@ -4989,7 +4997,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Produktionskosten V141
+                    Produktionskosten V143
                   </p>
                   <h4 className="mt-1 text-base font-semibold text-slate-950">
                     Detaillierte Kostenaufschlüsselung
@@ -5628,11 +5636,14 @@ function QuotesPage({
     );
   }
 
-  function removeQuotePosition(positionId: string) {
+  async function removeQuotePosition(positionId: string) {
+    const position = quotePositions.find((item) => item.id === positionId);
+
+    if (quotePositions.length <= 1) return;
+    if (!(await confirmDeleteAction(`Position „${position?.title ?? "Position"}”`))) return;
+
     setQuotePositions((current) =>
-      current.length <= 1
-        ? current
-        : current.filter((position) => position.id !== positionId),
+      current.filter((position) => position.id !== positionId),
     );
   }
 
@@ -5932,7 +5943,14 @@ function QuotesPage({
     handleOpenSavedDocument(duplicatedDocument);
   }
 
-  function handleDeleteSavedDocument(documentId: string) {
+  async function handleDeleteSavedDocument(documentId: string) {
+    const documentItem = savedDocuments.find((item) => item.id === documentId);
+    const label = documentItem
+      ? `${documentTemplateSettings[documentItem.documentType]?.label ?? "Dokument"} ${documentItem.documentNumber}`
+      : "Dokument";
+
+    if (!(await confirmDeleteAction(label, documentItem?.customerName))) return;
+
     setSavedDocuments((current) =>
       current.filter((documentItem) => documentItem.id !== documentId),
     );
@@ -6134,7 +6152,7 @@ function QuotesPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-yellow-300">
-                Angebote V141
+                Angebote V143
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 Angebotsvorschau erstellen
@@ -6167,7 +6185,7 @@ function QuotesPage({
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-              Angebotsbereich V141
+              Angebotsbereich V143
             </div>
             <h3 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950">
               Angebotsentwurf & Kundenvorschau
@@ -6249,7 +6267,7 @@ function QuotesPage({
 
         <div className="mt-6 grid gap-3 md:grid-cols-3">
           <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Nummernkreis V141</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Nummernkreis V143</p>
             <p className="mt-2 text-base font-semibold text-amber-950">{numberCircleSettings[activeBusinessDocumentType].prefix}-{new Date().getFullYear()}-{String(numberCircleSettings[activeBusinessDocumentType].nextNumber).padStart(numberCircleSettings[activeBusinessDocumentType].padding, "0")}</p>
             <p className="mt-1 text-sm font-medium text-amber-800">nächste freie Nummer</p>
           </div>
@@ -6272,7 +6290,7 @@ function QuotesPage({
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-yellow-300 via-fuchsia-500 to-cyan-400" />
             <h3 className="mt-5 text-xl font-black">Dokumentkopf</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
-              Kundenauswahl und Stammdaten für die Kundenvorschau V141.
+              Kundenauswahl und Stammdaten für die Kundenvorschau V143.
             </p>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -6586,7 +6604,7 @@ function QuotesPage({
             <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
               <div>
                 <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 to-sky-500" />
-                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen V141</h3>
+                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen V143</h3>
                 <p className="mt-1 text-sm font-medium leading-6 text-slate-500">
                   Positionen sind jetzt als klare Bearbeitungskarten aufgebaut. Titel, Beschreibung, Menge,
                   Einzelpreis und MwSt. ändern die Angebotsvorschau sofort.
@@ -6850,7 +6868,7 @@ function QuotesPage({
         <div className="space-y-6">
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-semibold tracking-tight">Angebotsliste / Dokumentverwaltung V141</h3>
+            <h3 className="mt-5 text-xl font-semibold tracking-tight">Angebotsliste / Dokumentverwaltung V143</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Gespeicherte Angebote und Dokumente suchen, filtern, öffnen, duplizieren oder löschen. Status, Kunde, Nummer und Betrag sind direkt sichtbar.
             </p>
@@ -7144,7 +7162,7 @@ function QuotesPage({
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Kundenvorschau V141
+                  Kundenvorschau V143
                 </p>
                 <h3 className="mt-2 text-2xl font-black tracking-tight">
                   {quoteNumber}
@@ -7462,7 +7480,7 @@ function QuotesPage({
               <div className="-mx-6 -mt-6 mb-6 border-b border-slate-200 bg-slate-50 px-6 py-4 print:hidden">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V141</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V143</p>
                     <p className="mt-1 text-sm font-medium text-slate-600">So wirkt das Dokument später im Druck oder als PDF.</p>
                   </div>
                   <div className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Layout prüfbar</div>
@@ -7880,11 +7898,14 @@ function CustomersPage({
     setEditingCustomerId(null);
   }
 
-  function deleteCustomer(customerId: string) {
+  async function deleteCustomer(customerId: string) {
+    const customer = customers.find((item) => item.id === customerId);
+
+    if (customers.length <= 1) return;
+    if (!(await confirmDeleteAction(`Kunde „${customer?.company ?? "Kunde"}”`))) return;
+
     setCustomers((current) =>
-      current.length <= 1
-        ? current
-        : current.filter((customer) => customer.id !== customerId),
+      current.filter((customer) => customer.id !== customerId),
     );
   }
 
@@ -8313,10 +8334,12 @@ function CalculationTemplatesPage({
     );
   }
 
-  function deleteProductType(index: number) {
+  async function deleteProductType(index: number) {
     if (productTypes.length <= 1) return;
 
     const typeToDelete = productTypes[index];
+
+    if (!(await confirmDeleteAction(`Produkttyp „${typeToDelete ?? "Produkttyp"}”`, "Vorlagen mit diesem Produkttyp werden auf einen Ersatztyp umgestellt."))) return;
     const fallbackType =
       productTypes.find((_, typeIndex) => typeIndex !== index) ?? "Flyer";
 
@@ -8407,7 +8430,12 @@ function CalculationTemplatesPage({
     }));
   }
 
-  function removeTemplateMaterial(index: number) {
+  async function removeTemplateMaterial(index: number) {
+    const material = templateForm.materialSelections[index];
+
+    if (templateForm.materialSelections.length <= 1) return;
+    if (!(await confirmDeleteAction(`Materialzeile „${material?.label ?? "Material"}” aus dieser Vorlage`))) return;
+
     setTemplateForm((current) => ({
       ...current,
       materialSelections:
@@ -8438,7 +8466,11 @@ function CalculationTemplatesPage({
     }));
   }
 
-  function removeTemplateFinishing(index: number) {
+  async function removeTemplateFinishing(index: number) {
+    const finishingName = templateForm.finishingNames[index];
+
+    if (!(await confirmDeleteAction(`Weiterverarbeitung „${finishingName ?? "Schritt"}” aus dieser Vorlage`))) return;
+
     setTemplateForm((current) => ({
       ...current,
       finishingNames: current.finishingNames.filter(
@@ -8485,11 +8517,14 @@ function CalculationTemplatesPage({
     setEditingTemplateId(null);
   }
 
-  function deleteTemplate(templateId: string) {
+  async function deleteTemplate(templateId: string) {
+    const template = calculationTemplates.find((item) => item.id === templateId);
+
+    if (calculationTemplates.length <= 1) return;
+    if (!(await confirmDeleteAction(`Kalkulationsvorlage „${template?.name ?? "Vorlage"}”`))) return;
+
     setCalculationTemplates((current) =>
-      current.length <= 1
-        ? current
-        : current.filter((template) => template.id !== templateId),
+      current.filter((template) => template.id !== templateId),
     );
   }
 
@@ -9439,11 +9474,14 @@ function ServicesPage({
     setEditingServiceId(null);
   }
 
-  function deleteServiceItem(serviceId: string) {
+  async function deleteServiceItem(serviceId: string) {
+    const service = serviceItems.find((item) => item.id === serviceId);
+
+    if (serviceItems.length <= 1) return;
+    if (!(await confirmDeleteAction(`Leistung „${service?.title ?? "Leistung"}”`))) return;
+
     setServiceItems((current) =>
-      current.length <= 1
-        ? current
-        : current.filter((item) => item.id !== serviceId),
+      current.filter((item) => item.id !== serviceId),
     );
   }
 
@@ -9860,11 +9898,14 @@ function MaterialsPage({
     );
   }
 
-  function deleteMaterial(materialId: string) {
+  async function deleteMaterial(materialId: string) {
+    const material = materials.find((item) => item.id === materialId);
+
+    if (materials.length <= 1) return;
+    if (!(await confirmDeleteAction(`Material „${material?.name ?? "Material"}”`))) return;
+
     setMaterials((current) =>
-      current.length <= 1
-        ? current
-        : current.filter((material) => material.id !== materialId),
+      current.filter((material) => material.id !== materialId),
     );
     if (editingMaterialId === materialId) setEditingMaterialId(null);
   }
@@ -10522,7 +10563,11 @@ function MachinesPage({
     });
   }
 
-  function removeEditingInkChannel(channelId: string) {
+  async function removeEditingInkChannel(channelId: string) {
+    const channel = editingMachine?.inkChannels?.find((item) => item.id === channelId);
+
+    if (!(await confirmDeleteAction(`Farbkanal „${channel?.name ?? "Farbkanal"}”`))) return;
+
     setEditingMachine((current) => {
       if (!current) return current;
 
@@ -10564,11 +10609,14 @@ function MachinesPage({
     setFeatureText("");
   }
 
-  function deleteMachine(machineId: string) {
+  async function deleteMachine(machineId: string) {
+    const machine = machines.find((item) => item.id === machineId);
+
+    if (machines.length <= 1) return;
+    if (!(await confirmDeleteAction(`Maschine „${machine?.name ?? "Maschine"}”`))) return;
+
     setMachines((current) =>
-      current.length <= 1
-        ? current
-        : current.filter((machine) => machine.id !== machineId),
+      current.filter((machine) => machine.id !== machineId),
     );
   }
 
@@ -11518,15 +11566,12 @@ function FinishingPage({
     );
   }
 
-  function deleteOperation(operationId: string) {
+  async function deleteOperation(operationId: string) {
     const operation = finishingOperations.find(
       (item) => item.id === operationId,
     );
-    const confirmed = window.confirm(
-      `Weiterverarbeitung „${operation?.name ?? "Vorgang"}“ wirklich löschen?`,
-    );
 
-    if (!confirmed) return;
+    if (!(await confirmDeleteAction(`Weiterverarbeitung „${operation?.name ?? "Vorgang"}”`))) return;
 
     setFinishingOperations((current) =>
       current.length <= 1
@@ -11538,9 +11583,10 @@ function FinishingPage({
     if (expandedOperationId === operationId) setExpandedOperationId(null);
   }
 
-  function resetOperations() {
-    const confirmed = window.confirm(
-      "Alle gespeicherten Weiterverarbeitungs-Vorgänge zurücksetzen und Standards neu laden?",
+  async function resetOperations() {
+    const confirmed = await confirmDeleteAction(
+      "gespeicherte Weiterverarbeitungs-Vorgänge zurücksetzen",
+      "Die Standard-Vorgänge werden neu geladen.",
     );
 
     if (!confirmed) return;
@@ -12012,7 +12058,9 @@ function SettingsPage({
     reader.readAsDataURL(file);
   }
 
-  function removeLogo() {
+  async function removeLogo() {
+    if (!(await confirmDeleteAction("Firmenlogo"))) return;
+
     setCompany((current) => ({ ...current, logoDataUrl: "" }));
   }
 
@@ -12049,7 +12097,9 @@ function SettingsPage({
     reader.readAsDataURL(file);
   }
 
-  function removeLetterheadUpload() {
+  async function removeLetterheadUpload() {
+    if (!(await confirmDeleteAction("hochgeladenen Briefbogen", "Der Dokumenttyp wird danach auf „ohne Briefbogen” gestellt."))) return;
+
     setDocumentTemplateSettings((current) => ({
       ...current,
       [activeDocumentType]: {
@@ -12118,7 +12168,7 @@ function SettingsPage({
   function exportAppBackup() {
     const payload = {
       app: "PrintPilot",
-      version: "V140",
+      version: "V143",
       exportedAt: new Date().toISOString(),
       data: {
         company,
@@ -12601,7 +12651,7 @@ function SettingsPage({
             <h3 className="mt-5 text-xl font-black">Dokumenttypen</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Jeder Dokumenttyp hat eigene Abstände und Standardtexte. Die
-              Kundenvorschau V141 nutzt den aktiven Dokumenttyp: Angebot,
+              Kundenvorschau V143 nutzt den aktiven Dokumenttyp: Angebot,
               Auftragsbestätigung, Rechnung oder Lieferschein.
             </p>
             <div className="mt-6 grid gap-4 md:grid-cols-[0.8fr_1.2fr]">
@@ -12966,7 +13016,7 @@ function SettingsPage({
 
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-black">Kundenvorschau V141</h3>
+            <h3 className="mt-5 text-xl font-black">Kundenvorschau V143</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Aktive Vorlage: {activeDocumentTemplate.label}
             </p>
@@ -15460,6 +15510,92 @@ function createNextCustomerNumber(customers: Customer[]) {
 
 function createLocalId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+}
+
+type DeleteConfirmationRequest = {
+  title: string;
+  detail?: string;
+  resolve: (value: boolean) => void;
+};
+
+let openDeleteConfirmationDialog: ((request: DeleteConfirmationRequest) => void) | null = null;
+
+function confirmDeleteAction(title: string, detail?: string) {
+  return new Promise<boolean>((resolve) => {
+    if (openDeleteConfirmationDialog) {
+      openDeleteConfirmationDialog({ title, detail, resolve });
+      return;
+    }
+
+    resolve(false);
+  });
+}
+
+function DeleteConfirmationModal() {
+  const [request, setRequest] = useState<DeleteConfirmationRequest | null>(null);
+
+  useEffect(() => {
+    openDeleteConfirmationDialog = setRequest;
+
+    return () => {
+      openDeleteConfirmationDialog = null;
+    };
+  }, []);
+
+  if (!request) return null;
+
+  function close(confirmed: boolean) {
+    request.resolve(confirmed);
+    setRequest(null);
+  }
+
+  return (
+    <div className="fixed inset-0 z-[10000] grid place-items-center bg-slate-950/55 px-4 backdrop-blur-sm">
+      <div className="w-full max-w-lg overflow-hidden rounded-[2rem] border border-white/20 bg-white shadow-2xl shadow-slate-950/30">
+        <div className="bg-gradient-to-r from-rose-500 via-fuchsia-500 to-cyan-400 px-6 py-3" />
+        <div className="p-6">
+          <div className="flex items-start gap-4">
+            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-rose-50 text-2xl font-semibold text-rose-600">
+              !
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-rose-500">
+                Löschen bestätigen
+              </p>
+              <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+                {request.title} wirklich löschen?
+              </h3>
+              {request.detail && (
+                <p className="mt-3 whitespace-pre-line text-sm font-medium leading-6 text-slate-600">
+                  {request.detail}
+                </p>
+              )}
+              <p className="mt-4 rounded-2xl bg-slate-50 px-4 py-3 text-sm font-medium leading-6 text-slate-600">
+                Diese Aktion kann nicht rückgängig gemacht werden.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={() => close(false)}
+              className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+            >
+              Abbrechen
+            </button>
+            <button
+              type="button"
+              onClick={() => close(true)}
+              className="rounded-2xl bg-rose-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-600/25 transition hover:bg-rose-700"
+            >
+              Ja, löschen
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export default App;

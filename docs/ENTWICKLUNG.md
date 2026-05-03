@@ -1,7 +1,7 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V130 – DIN-Briefbogen und Satzspiegel korrigiert**
+Aktuelle Arbeitsversion: **V143 – App-Löschdialog statt Browser-Bestätigung**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
@@ -1362,3 +1362,75 @@ Prüfung:
 - Test mit einer langen ersten Position und einer kurzen zweiten Position.
 - Erwartung: Wenn noch genug Platz ist, bleibt die zweite Position auf Seite 1.
 - Erst bei echter Überfüllung wird eine Folgeseite erzeugt.
+
+---
+
+### V142 – Löschbestätigungen in allen kritischen Bereichen
+
+Eingebaut:
+
+- Zentrale Sicherheitsabfrage vor Löschaktionen.
+- Betroffene Bereiche:
+  - Druckteile in der Kalkulation
+  - Weiterverarbeitung in der Kalkulation
+  - Angebotspositionen
+  - gespeicherte Angebote/Dokumente
+  - Kunden
+  - Produkttypen
+  - Materialzeilen in Kalkulationsvorlagen
+  - Weiterverarbeitungsschritte in Kalkulationsvorlagen
+  - Kalkulationsvorlagen
+  - Leistungen/Artikel
+  - Materialien
+  - Maschinen
+  - Farbkanäle bei Maschinen
+  - Weiterverarbeitungs-Stammdaten
+  - Firmenlogo
+  - hochgeladener Briefbogen
+- Löschdialog zeigt nach Möglichkeit den konkreten Namen des Objekts.
+- Hinweis ergänzt: „Diese Aktion kann nicht rückgängig gemacht werden.“
+- Schutz bleibt erhalten, wenn nur noch ein Pflichtdatensatz vorhanden ist.
+
+Ziel:
+
+- Versehentliches Löschen verhindern.
+- Kritische Stammdaten und Dokumente besser schützen.
+- Bedienung bleibt schnell, aber sicherer.
+---
+
+### V143 – App-Löschdialog statt Browser-Bestätigung
+
+Geändert:
+
+- Die Löschbestätigung nutzt jetzt keinen Browser-Dialog mehr.
+- Stattdessen erscheint ein app-eigener Dialog im PrintPilot-Stil.
+- Der Dialog liegt als Overlay über der App.
+- Gestaltung:
+  - Barlow-Schrift
+  - weiche Rundungen
+  - farbiger Akzent oben
+  - klare Buttons „Abbrechen“ und „Ja, löschen“
+- Alle bisherigen Löschschutz-Bereiche aus V142 bleiben erhalten.
+- Abbrechen löscht nichts.
+- Bestätigen führt die jeweilige Löschaktion aus.
+- Auch das Zurücksetzen der Weiterverarbeitungs-Stammdaten nutzt jetzt den App-Dialog.
+
+Ziel:
+
+- Löschvorgänge wirken nicht mehr wie eine Browser-Funktion, sondern wie ein nativer Teil der App.
+- Die Bedienung ist professioneller und konsistenter.
+
+Nächster sinnvoller Schritt:
+
+### V144 – Dokumentstatus und Folgeprozess
+
+Geplant:
+
+- Angebotsstatus sauberer führen:
+  - Entwurf
+  - Versendet
+  - Angenommen
+  - Abgelehnt
+- Statusänderung mit Datum.
+- Aus angenommenem Angebot später Auftrag/Rechnung/Lieferschein erzeugen.
+- Dokumentliste weiter in Richtung echter Dokumentverwaltung ausbauen.

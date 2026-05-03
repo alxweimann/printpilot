@@ -1760,3 +1760,41 @@ Geplant:
 - Lieferscheine: Versandart und Lieferadresse
 - Mahnungen: Mahnstufe, offener Betrag und neue Zahlungsfrist
 - bessere Schnellaktionen je Bereich
+
+
+---
+
+### V155 – Dokumentbereich-Aktionen je Modul aufgeräumt
+
+Eingebaut:
+
+- neue Modulaktionen je Dokumentbereich
+- Angebote zeigen passende Aktionen:
+  - in Auftrag übernehmen
+  - Rechnung vorbereiten
+  - Lieferschein vorbereiten
+- Aufträge zeigen passende Aktionen:
+  - Produktion markieren
+  - Rechnung erstellen
+  - Lieferschein erstellen
+- Rechnungen zeigen passende Aktionen:
+  - Zahlung erfassen
+  - Mahnung vorbereiten
+  - Zahlungsstatus prüfen
+- Lieferscheine zeigen passende Aktionen:
+  - Lieferung erledigt
+  - Rechnung erzeugen
+  - Versandhinweis vorbereiten
+- Mahnungen zeigen passende Aktionen:
+  - Zahlung erfassen
+  - Mahnstufe / Frist vorbereiten
+  - Rechnungsbezug weiterführen
+- App-Dialoge bleiben aktiv
+- stabiler Löschdialog bleibt erhalten
+
+Ziel:
+
+- nicht mehr überall dieselben Buttons anzeigen
+- jeder Dokumentbereich wirkt fachlich eigenständiger
+- weniger Überladung im Dokumentbereich
+- Folgeprozesse sind besser nach Modul sortiert

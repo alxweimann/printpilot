@@ -1,7 +1,7 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V117 – rechte Auswertung einklappbar & Status grün**
+Aktuelle Arbeitsversion: **V120 – Angebotsmodus vorbereitet**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
@@ -712,3 +712,45 @@ Prüfen:
 - Bei Broschüre mit Schneiden + Rückendrahtheftung sollte der Status grün/OK sein.
 - Entfernt man die Heftung, sollte der Status auf Prüfen wechseln.
 - Die rechte Auswertung aus V118 bleibt priorisiert und einklappbar.
+
+
+---
+
+### V120 – Angebotsmodus vorbereitet
+
+Eingebaut:
+
+- rechter Bereich **Angebotsmodus V120** ergänzt
+- Positionsvorschau direkt aus der Kalkulation:
+  - Produktname
+  - Auflage
+  - Endformat
+  - Maschine
+  - Netto
+  - MwSt. 19 %
+  - Brutto
+- Status zeigt, ob die Kalkulation als Angebotsposition bereit ist
+- vorhandener Button **„In Angebot übernehmen“** bleibt die zentrale Übergabe in den Angebotsbereich
+- Hinweis, dass Kundenauswahl, Angebotsnummer und Texte im Angebotsbereich gepflegt werden
+- Ziel: Übergang von Kalkulation zu Angebot verständlicher machen
+
+Prüfen:
+
+- Rechts sollte **Angebotsmodus V120** sichtbar sein.
+- Bei fehlerfreier Kalkulation sollte der Status **bereit** erscheinen.
+- Bei kritischen Kalkulationsfehlern sollte der Status **nicht bereit** erscheinen.
+- Netto, MwSt. und Brutto sollten plausibel angezeigt werden.
+- Klick auf **„In Angebot übernehmen“** soll weiterhin in den Angebotsbereich wechseln und eine Position anlegen.
+
+Geplanter nächster Schritt:
+
+### V121 – Angebotsbereich fachlich aufräumen
+
+Geplant:
+
+- Angebotsbereich übersichtlicher strukturieren
+- Kundenauswahl prominenter machen
+- Angebotsnummer und Datum klarer platzieren
+- Angebotspositionen kompakter darstellen
+- Summenblock Netto / MwSt. / Brutto sichtbarer machen
+- Vorbereitung für spätere PDF-/Druckausgabe

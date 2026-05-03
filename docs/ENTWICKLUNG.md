@@ -1,7 +1,7 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V148 – App-Dialoge sicher nachgezogen**
+Aktuelle Arbeitsversion: **V149 – App-Dialoge sicher nachgezogen**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
@@ -1562,3 +1562,40 @@ Geplant:
 - Lieferschein ohne Preise noch klarer gestalten
 - Auftragsbestätigung mit eigenem Text und Produktionshinweisen
 - Ursprungsdokument in Vorschau und Dokumentliste sichtbarer machen
+
+
+---
+
+### V149 – Dokumenttypen fachlich unterscheiden
+
+Eingebaut:
+
+- neuer Bereich **Dokumentlogik V149** im Angebots-/Dokumentbereich
+- je Dokumenttyp eigene fachliche Hinweise:
+  - Angebot: Gültigkeit, Angebotsstatus und Folgeprozess
+  - Auftragsbestätigung: Produktionsfreigabe, Lieferhinweis und Kundenauftrag
+  - Rechnung: Fälligkeit, Zahlungsstatus und Bankdaten
+  - Lieferschein: preisfreie Ansicht, Mengen und Lieferdaten
+  - Mahnung: Rechnungsbezug, offener Betrag und neue Zahlungsfrist
+- Betreff wird beim Dokumenttypwechsel passender gesetzt:
+  - Angebot: ...
+  - Auftragsbestätigung: ...
+  - Rechnung: ...
+  - Lieferschein: ...
+  - Mahnung: ...
+- Zahlungsbedingungen werden je Dokumenttyp sinnvoller vorbelegt
+- Lieferschein bleibt ohne Preise und Summen
+- Folgeprozesse aus angenommenem Angebot bleiben erhalten
+- App-Dialoge und stabiler Löschdialog bleiben unverändert
+
+Geplante nächste Schritte:
+
+### V150 – Dokumentvorschau je Dokumenttyp weiter verfeinern
+
+Geplant:
+
+- Auftragsbestätigung mit eigener Überschrift und Produktionshinweisen
+- Rechnung mit stärkerem Zahlungsblock und Fälligkeitsdatum
+- Lieferschein mit Lieferadresse, Versandart und optionalem Unterschriftsbereich
+- Mahnung mit offener Rechnung, Zahlungsfrist und Mahnstufe
+- Dokumentliste stärker nach Dokumenttyp und Status auswerten

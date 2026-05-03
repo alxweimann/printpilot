@@ -622,6 +622,30 @@ Prüfung:
 - Summe darf nicht mit Hinweisen oder Footer kollidieren
 - Dokumentfuß bleibt im magentafarbenen Balken
 
+
+
+### V140 – Dokumentnummern / Nummernkreise verbessert
+
+Eingebaut:
+
+- Nummernkreise für Dokumenttypen weiter ausgebaut
+- Nummernformat bleibt: Präfix · Jahr automatisch · laufende Nummer
+- Beispiel: `AN-2026-0027`
+- Angebotsbereich zeigt jetzt:
+  - aktuelle Dokumentnummer
+  - nächste freie Nummer aus dem Nummernkreis
+  - Hinweis zur automatischen Reservierung
+- Beim ersten Speichern eines neuen Dokuments wird die aktuelle Nummer automatisch reserviert, damit nicht versehentlich dieselbe Nummer erneut verwendet wird.
+- Nummer bleibt weiterhin manuell überschreibbar.
+- Einstellungen zeigen eine Übersicht aller Nummernkreise für:
+  - Angebot
+  - Auftragsbestätigung
+  - Rechnung
+  - Lieferschein
+  - Mahnung
+
+---
+
 ## Aktueller Stand
 
 Aktuelle Version: **V130**
@@ -663,6 +687,19 @@ Diese Punkte sind noch offen oder sollten später geprüft werden:
 ---
 
 ## Geplante nächste Schritte
+
+### V141 – Dokumentstatus / Angebotsworkflow
+
+Geplant:
+
+- Statuslogik für Angebote und Folgebelege verbessern
+- Statuswechsel: Entwurf → Gesendet → Angenommen / Abgelehnt
+- bei angenommenem Angebot Auftragsbestätigung vorbereiten
+- bei Rechnung Zahlungsstatus besser darstellen
+- Dokumentübersicht nach Status besser filtern
+
+---
+
 
 ### V119 – Weiterverarbeitung verbessern
 
@@ -959,7 +996,20 @@ Eingebaut:
 
 ---
 
-## Geplante nächste Schritte ab V124
+## Geplante nächste Schritte
+
+### V141 – Dokumentstatus / Angebotsworkflow
+
+Geplant:
+
+- Statuslogik für Angebote und Folgebelege verbessern
+- Statuswechsel: Entwurf → Gesendet → Angenommen / Abgelehnt
+- bei angenommenem Angebot Auftragsbestätigung vorbereiten
+- bei Rechnung Zahlungsstatus besser darstellen
+- Dokumentübersicht nach Status besser filtern
+
+---
+ ab V124
 
 ### V124 – Angebotsvorschau weiter verfeinern
 
@@ -1161,7 +1211,7 @@ Ziel:
 - Bereits vorgedruckte oder im Briefbogen gestaltete Bereiche dürfen nicht doppelt oder unkontrolliert belegt werden.
 - Die Stammdaten sollen später für Angebot, Rechnung, Lieferschein und Auftragsbestätigung gleich funktionieren.
 
-Aktuelle Version: **V139**
+Aktuelle Version: **V140**
 
 ---
 

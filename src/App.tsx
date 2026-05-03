@@ -1198,7 +1198,7 @@ function App() {
         }
       `}</style>
       <div className="fixed right-4 top-4 z-[9999] rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-500/30">
-        V139 aktiv
+        V140 aktiv
       </div>
       <div className="flex min-h-screen">
         <aside className="fixed inset-y-0 left-0 z-20 hidden w-80 flex-col bg-slate-950 text-white shadow-2xl shadow-slate-950/30 lg:flex">
@@ -1250,7 +1250,7 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V139</p>
+              <p className="text-sm font-black">PrintPilot V140</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
                 Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
@@ -3000,7 +3000,7 @@ function CalculatorPage({
       unitPrice: roundMoney(unitPrice),
       vatRate: 19,
       internalNote: [
-        `Quelle: Kalkulation V139`,
+        `Quelle: Kalkulation V140`,
         `Interne Kalkulation`,
         `Maschine: ${selectedMachine.name}`,
         `Druckbogen: ${totalSheets.toLocaleString("de-DE")}`,
@@ -3024,7 +3024,7 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V139
+                Kalkulation V140
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
                 Produkt- und Jobstruktur
@@ -3153,7 +3153,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                    Arbeitsmodus V139
+                    Arbeitsmodus V140
                   </p>
                   <p className="mt-1 text-sm font-black text-slate-950">
                     Schritte anklicken, Abschnitt öffnen, Werte prüfen, weiter zum nächsten Block.
@@ -4534,7 +4534,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V139</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V140</p>
                 <p className="mt-1 text-sm font-medium text-slate-300">wichtigster Preisblock bleibt offen</p>
               </div>
               <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200 group-open:hidden">Aufklappen</span>
@@ -4629,7 +4629,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] border border-emerald-200 bg-emerald-50 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V139</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V140</p>
                 <p className="mt-1 text-sm font-medium text-emerald-950">Kalkulation ist bereit für eine Angebotsposition</p>
               </div>
               <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm group-open:hidden">Aufklappen</span>
@@ -4678,7 +4678,7 @@ function CalculatorPage({
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V139</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V140</p>
                 <p className="mt-1 text-sm font-medium text-slate-600">{calculationStatusTone.headline}</p>
               </div>
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${calculationStatusTone.badgeClass}`}>
@@ -4691,7 +4691,7 @@ function CalculatorPage({
                 <p
                   className={`text-xs font-extrabold uppercase tracking-wide ${calculationStatusTone.textClass}`}
                 >
-                  Kalkulationsstatus V139
+                  Kalkulationsstatus V140
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   {calculationStatusTone.headline}
@@ -4863,7 +4863,7 @@ function CalculatorPage({
           <details className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V139</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V140</p>
                 <p className="mt-1 text-sm font-medium text-slate-500">Produktionskosten und Preisaufbau</p>
               </div>
               <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:hidden">Aufklappen</span>
@@ -4873,7 +4873,7 @@ function CalculatorPage({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Auswertung V139
+                  Auswertung V140
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   Produktionskosten & Preisaufbau
@@ -4989,7 +4989,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Produktionskosten V139
+                    Produktionskosten V140
                   </p>
                   <h4 className="mt-1 text-base font-semibold text-slate-950">
                     Detaillierte Kostenaufschlüsselung
@@ -5706,6 +5706,27 @@ function QuotesPage({
     }));
   }
 
+  function reserveCurrentDocumentNumberIfNeeded() {
+    if (activeSavedDocumentId) {
+      return;
+    }
+
+    const currentCircle = numberCircleSettings[activeBusinessDocumentType];
+    const expectedNextNumber = formatDocumentNumber(currentCircle);
+
+    if (quoteNumber !== expectedNextNumber) {
+      return;
+    }
+
+    setNumberCircleSettings((current) => ({
+      ...current,
+      [activeBusinessDocumentType]: {
+        ...current[activeBusinessDocumentType],
+        nextNumber: current[activeBusinessDocumentType].nextNumber + 1,
+      },
+    }));
+  }
+
   function handleSwitchBusinessDocumentType(documentType: DocumentType) {
     setActiveBusinessDocumentType(documentType);
     setIntroText(documentTemplateSettings[documentType].introText);
@@ -5823,6 +5844,8 @@ function QuotesPage({
 
   function handleSaveCurrentDocument() {
     const nextDocument = buildCurrentSavedDocument(activeSavedDocumentId);
+
+    reserveCurrentDocumentNumberIfNeeded();
 
     setSavedDocuments((current) => {
       const existingDocument = current.some(
@@ -6098,7 +6121,7 @@ function QuotesPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-yellow-300">
-                Angebote V139
+                Angebote V140
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 Angebotsvorschau erstellen
@@ -6131,7 +6154,7 @@ function QuotesPage({
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-              Angebotsbereich V139
+              Angebotsbereich V140
             </div>
             <h3 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950">
               Angebotsentwurf & Kundenvorschau
@@ -6210,6 +6233,24 @@ function QuotesPage({
             Vorschau drucken / PDF
           </button>
         </div>
+
+        <div className="mt-6 grid gap-3 md:grid-cols-3">
+          <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Nummernkreis V140</p>
+            <p className="mt-2 text-base font-semibold text-amber-950">{numberCircleSettings[activeBusinessDocumentType].prefix}-{new Date().getFullYear()}-{String(numberCircleSettings[activeBusinessDocumentType].nextNumber).padStart(numberCircleSettings[activeBusinessDocumentType].padding, "0")}</p>
+            <p className="mt-1 text-sm font-medium text-amber-800">nächste freie Nummer</p>
+          </div>
+          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Aktuelle Nummer</p>
+            <p className="mt-2 text-base font-semibold text-slate-950">{quoteNumber}</p>
+            <p className="mt-1 text-sm font-medium text-slate-500">manuell überschreibbar</p>
+          </div>
+          <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4">
+            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Vergabe</p>
+            <p className="mt-2 text-base font-semibold text-emerald-950">automatisch reserviert</p>
+            <p className="mt-1 text-sm font-medium text-emerald-700">beim ersten Speichern oder per Button</p>
+          </div>
+        </div>
       </section>
 
       <section className="grid gap-6 2xl:grid-cols-[1.1fr_0.9fr]">
@@ -6218,7 +6259,7 @@ function QuotesPage({
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-yellow-300 via-fuchsia-500 to-cyan-400" />
             <h3 className="mt-5 text-xl font-black">Dokumentkopf</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
-              Kundenauswahl und Stammdaten für die Kundenvorschau V139.
+              Kundenauswahl und Stammdaten für die Kundenvorschau V140.
             </p>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -6532,7 +6573,7 @@ function QuotesPage({
             <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
               <div>
                 <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 to-sky-500" />
-                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen V139</h3>
+                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen V140</h3>
                 <p className="mt-1 text-sm font-medium leading-6 text-slate-500">
                   Positionen sind jetzt als klare Bearbeitungskarten aufgebaut. Titel, Beschreibung, Menge,
                   Einzelpreis und MwSt. ändern die Angebotsvorschau sofort.
@@ -7053,7 +7094,7 @@ function QuotesPage({
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Kundenvorschau V139
+                  Kundenvorschau V140
                 </p>
                 <h3 className="mt-2 text-2xl font-black tracking-tight">
                   {quoteNumber}
@@ -7371,7 +7412,7 @@ function QuotesPage({
               <div className="-mx-6 -mt-6 mb-6 border-b border-slate-200 bg-slate-50 px-6 py-4 print:hidden">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V139</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V140</p>
                     <p className="mt-1 text-sm font-medium text-slate-600">So wirkt das Dokument später im Druck oder als PDF.</p>
                   </div>
                   <div className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Layout prüfbar</div>
@@ -12027,7 +12068,7 @@ function SettingsPage({
   function exportAppBackup() {
     const payload = {
       app: "PrintPilot",
-      version: "V139",
+      version: "V140",
       exportedAt: new Date().toISOString(),
       data: {
         company,
@@ -12510,7 +12551,7 @@ function SettingsPage({
             <h3 className="mt-5 text-xl font-black">Dokumenttypen</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Jeder Dokumenttyp hat eigene Abstände und Standardtexte. Die
-              Kundenvorschau V139 nutzt den aktiven Dokumenttyp: Angebot,
+              Kundenvorschau V140 nutzt den aktiven Dokumenttyp: Angebot,
               Auftragsbestätigung, Rechnung oder Lieferschein.
             </p>
             <div className="mt-6 grid gap-4 md:grid-cols-[0.8fr_1.2fr]">
@@ -12746,7 +12787,7 @@ function SettingsPage({
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-yellow-300 via-orange-400 to-rose-500" />
             <h3 className="mt-5 text-xl font-black">Nummernkreise</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
-              Lege Präfix, nächste Nummer und Stellenzahl je Dokumenttyp fest.
+              Lege Präfix, nächste freie Nummer und Stellenzahl je Dokumenttyp fest. Die Jahreszahl wird automatisch aus dem aktuellen Jahr gebildet.
             </p>
             <div className="mt-6 rounded-3xl bg-slate-50 p-5">
               <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
@@ -12785,6 +12826,27 @@ function SettingsPage({
                     numberCircleSettings[activeDocumentType],
                   )}
                 </p>
+                <p className="mt-2 text-sm font-medium text-slate-300">
+                  Format: Präfix · Jahr automatisch · fortlaufende Nummer
+                </p>
+              </div>
+
+              <div className="mt-5 grid gap-3 md:grid-cols-2">
+                {documentTypeOrder.map((documentType) => (
+                  <button
+                    key={documentType}
+                    type="button"
+                    onClick={() => setActiveDocumentType(documentType)}
+                    className={`rounded-2xl border p-4 text-left transition hover:-translate-y-0.5 ${activeDocumentType === documentType ? "border-amber-300 bg-amber-50 text-amber-950" : "border-slate-200 bg-white text-slate-700"}`}
+                  >
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                      {numberCircleSettings[documentType].label}
+                    </p>
+                    <p className="mt-1 text-lg font-semibold">
+                      {formatDocumentNumber(numberCircleSettings[documentType])}
+                    </p>
+                  </button>
+                ))}
               </div>
               <button
                 type="button"
@@ -12854,7 +12916,7 @@ function SettingsPage({
 
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-black">Kundenvorschau V139</h3>
+            <h3 className="mt-5 text-xl font-black">Kundenvorschau V140</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Aktive Vorlage: {activeDocumentTemplate.label}
             </p>
@@ -13233,7 +13295,7 @@ function paginateQuotePositionsByEstimatedHeight(positions: QuotePosition[]) {
     return [[] as QuotePosition[]];
   }
 
-  // V139: slightly less conservative height model. The protected footer area remains fixed,
+  // V140: slightly less conservative height model. The protected footer area remains fixed,
   // but the content area on page 1 may use more of the available white space before the footer.
   const firstPageCapacity = 156;
   const followingPageCapacity = 188;
@@ -14587,7 +14649,7 @@ function ImpositionPreview({
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-            Bogenvorschau rechts V139
+            Bogenvorschau rechts V140
           </p>
           <p className="mt-1 truncate text-sm font-black text-slate-800">
             {result.best.columns} × {result.best.rows} Nutzen · {result.best.orientation}

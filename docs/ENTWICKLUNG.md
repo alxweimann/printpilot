@@ -1,7 +1,7 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V149 – App-Dialoge sicher nachgezogen**
+Aktuelle Arbeitsversion: **V152 – Dokumentbereiche im Hauptmenü getrennt**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
@@ -27,14 +27,15 @@ Die App soll schrittweise folgende Bereiche abdecken:
 
 ## Aktueller Schwerpunkt
 
-Aktuell liegt der Fokus auf dem Übergang von der **Kalkulation** in den **Angebotsbereich**:
+Aktuell liegt der Fokus auf dem Übergang von der **Kalkulation** in eine klare **Dokumentverwaltung**:
 
 1. Kalkulation fachlich sauber abschließen
 2. Druckteile und Produktionskosten nachvollziehbar darstellen
 3. Kalkulation als Angebotsposition übernehmen
 4. Angebotsentwurf mit Kundendaten, Positionen und Summen aufbauen
 5. Angebotsvorschau und spätere PDF-Ausgabe vorbereiten
-6. Bedienung ruhig, geführt und übersichtlich halten
+6. Dokumentbereiche im Hauptmenü sauber trennen
+7. Bedienung ruhig, geführt und übersichtlich halten
 
 ---
 
@@ -1588,14 +1589,105 @@ Eingebaut:
 - Folgeprozesse aus angenommenem Angebot bleiben erhalten
 - App-Dialoge und stabiler Löschdialog bleiben unverändert
 
+---
+
+### V150 – Druck-/PDF-Ausgabe je Dokumenttyp sauberer
+
+Eingebaut:
+
+- Kundenvorschau / Druckausgabe wurde je Dokumenttyp erweitert.
+- Im Betreffbereich erscheinen jetzt dokumenttypabhängige Kurzinfos:
+  - Angebot: Angebotsdatum, gültig bis, Status
+  - Auftragsbestätigung: Bestätigungsdatum, Quelle, Status
+  - Rechnung: Rechnungsdatum, Fälligkeitsdatum, Zahlungsstatus
+  - Lieferschein: Lieferscheindatum, Quelle, Hinweis „Preise ausgeblendet“
+  - Mahnung: Mahndatum, Fälligkeit, offener Betrag
+- Tabellenkopf passt sich fachlich an:
+  - Leistung
+  - Auftragsposition
+  - Rechnungsposition
+  - Lieferposition
+  - Rechnung / Position
+- Fortsetzungsseiten bekommen eine passendere Überschrift je Dokumenttyp.
+- Lieferschein bleibt weiterhin ohne Preise und Summen.
+- Briefbogen, Footer im Magenta-Balken und Seitenumbruch bleiben erhalten.
+- App-Dialoge und stabiler Löschdialog bleiben unverändert.
+
+Ziel:
+
+- Angebot, Auftragsbestätigung, Rechnung, Lieferschein und Mahnung wirken im Druck/PDF nicht mehr wie dieselbe Vorlage mit anderem Namen.
+- Wichtige Dokumentinformationen stehen direkt sichtbar im Dokumentkopf.
+- Die Vorschau bleibt DIN-orientiert und briefbogenfähig.
+
 Geplante nächste Schritte:
 
-### V150 – Dokumentvorschau je Dokumenttyp weiter verfeinern
+### V152 – Rechnung fachlich ausbauen
 
 Geplant:
 
-- Auftragsbestätigung mit eigener Überschrift und Produktionshinweisen
-- Rechnung mit stärkerem Zahlungsblock und Fälligkeitsdatum
-- Lieferschein mit Lieferadresse, Versandart und optionalem Unterschriftsbereich
-- Mahnung mit offener Rechnung, Zahlungsfrist und Mahnstufe
-- Dokumentliste stärker nach Dokumenttyp und Status auswerten
+- Zahlungsblock auf Rechnungen stärker hervorheben
+- Fälligkeit, Zahlungsziel und offener Betrag klarer darstellen
+- Zahlungsstatus in Dokumentliste und Vorschau konsistenter machen
+- Bankdaten bei Rechnung optional als Pflicht-Hinweis prüfen
+- später: Teilzahlungen und Zahlungseingang sauber verwalten
+
+
+---
+
+### V152 – Dokumentbereiche im Hauptmenü getrennt
+
+Eingebaut:
+
+- Dokumentbereiche wurden aus dem überladenen Angebotsbereich herausgezogen.
+- Linkes Hauptmenü erweitert um eigene Bereiche:
+  - Angebote
+  - Aufträge
+  - Rechnungen
+  - Lieferscheine
+  - Mahnungen
+- Jeder Bereich startet mit dem passenden Dokumenttyp:
+  - Angebote → Angebot
+  - Aufträge → Auftragsbestätigung
+  - Rechnungen → Rechnung
+  - Lieferscheine → Lieferschein
+  - Mahnungen → Mahnung
+- Die Dokumentliste filtert beim Öffnen standardmäßig auf den jeweiligen Dokumenttyp.
+- Die vorhandene Dokumentlogik bleibt erhalten:
+  - Statuswechsel
+  - Folgeprozesse
+  - Nummernkreise
+  - Briefbogen
+  - Footer
+  - PDF-/Druckausgabe
+  - App-Dialoge
+  - Löschdialog
+
+Ziel:
+
+- Der Bereich „Angebote“ wird nicht mehr mit allen Dokumenttypen überladen.
+- Angebote, Aufträge, Rechnungen, Lieferscheine und Mahnungen wirken wie eigene Arbeitsbereiche.
+- Die App ist im linken Menü näher an einer echten Druckerei-/ERP-Software.
+
+Geplante nächste Schritte:
+
+### V152 – Dokumentbereiche weiter spezialisieren
+
+Geplant:
+
+- Angebote: Angebotsgültigkeit und Folgeprozess fokussieren
+- Aufträge: Produktions- und Lieferhinweise stärker ausbauen
+- Rechnungen: Zahlungsstatus, Fälligkeit und offener Betrag klarer machen
+- Lieferscheine: Lieferadresse, Versandart und Unterschriftsbereich vorbereiten
+- Mahnungen: Rechnungsbezug, Mahnstufe und Zahlungsfrist vorbereiten
+
+### V152 – Duplizieren mit App-Hinweis
+
+Eingebaut:
+
+- Beim Duplizieren von Angebotspositionen erscheint wieder ein App-Dialog.
+- Beim Duplizieren von Druckteilen erscheint ein App-Dialog.
+- Beim Duplizieren von Kalkulationsvorlagen erscheint ein App-Dialog.
+- Das Duplizieren gespeicherter Dokumente behält den App-Dialog bei.
+- Keine Browser-Popups.
+- Löschdialog aus V145 bleibt stabil.
+

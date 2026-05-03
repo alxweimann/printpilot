@@ -1,13 +1,21 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V153 – Dokumentbereiche im Hauptmenü getrennt**
+Aktuelle Arbeitsversion: **V167 – Mahngebühren optional als Position**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
 
 ---
 
+
+## V167 – Dokumenttyp-Leiste entfernt
+
+- Die obere Dokumenttyp-Leiste im Bearbeitungsbereich wurde entfernt.
+- Dokumentbereiche werden jetzt konsequent über die linke Navigation und passende Modulaktionen gesteuert.
+- Dadurch werden Angebot, Auftrag, Rechnung, Lieferschein und Mahnung nicht mehr doppelt ausgewählt.
+- Der Bearbeitungsbereich zeigt weiterhin klar den aktiven Bereich, Status, Quelle, Briefbogen und bei Mahnungen die konkrete Mahnstufe.
+- Mahnlogik aus V166 bleibt unverändert: Restbetrag, Mahnstufen, Mahntexte und optionale Mahngebühren funktionieren weiterhin.
 ## Ziel der App
 
 **PrintPilot** ist eine moderne Kalkulations- und Angebots-App für den Digitaldruck.
@@ -1798,3 +1806,215 @@ Ziel:
 - jeder Dokumentbereich wirkt fachlich eigenständiger
 - weniger Überladung im Dokumentbereich
 - Folgeprozesse sind besser nach Modul sortiert
+
+
+---
+
+### V160 – Mahnlogik fachlich abgesichert
+
+Korrigiert:
+
+- Mahnungen werden jetzt konsequent aus Rechnungen vorbereitet.
+- Die Mahnlogik prüft nicht mehr nur den Dokumentbereich, sondern den offenen Restbetrag.
+- Vollständig bezahlte Rechnungen blockieren die Mahnung zuverlässig.
+- Stornierte Rechnungen blockieren die Mahnung zuverlässig.
+- Teilbezahlte Rechnungen bleiben mahnfähig, aber nur mit dem offenen Restbetrag.
+- Wird eine Zahlung zurückgesetzt, ist eine Mahnung wieder möglich, sobald ein offener Betrag besteht.
+- Der direkte Mahnungs-Button nutzt jetzt dieselbe Prüfung wie „Mahnung vorbereiten“ im Rechnungsbereich.
+- Die Mahnung übernimmt den Rechnungsbezug und den offenen Betrag in den Einleitungstext.
+- Die Ursprungsrechnung wird beim Erstellen der Mahnung als Quelle gemerkt.
+- Sichtbarer Versionsmarker wurde auf **V160 aktiv** aktualisiert.
+
+Fachliche Logik:
+
+| Rechnungszustand | Mahnung möglich? |
+|---|---:|
+| Offen mit Restbetrag | Ja |
+| Überfällig mit Restbetrag | Ja |
+| Teilbezahlt mit Restbetrag | Ja |
+| Vollständig bezahlt | Nein |
+| Storniert | Nein |
+| Zahlung zurückgesetzt und wieder offen | Ja |
+
+Prüfen:
+
+- Rechnung vollständig bezahlt → „Mahnung vorbereiten“ muss deaktiviert/blockiert sein.
+- Rechnung storniert → Mahnung muss blockiert sein.
+- Rechnung teilbezahlt → Mahnung muss möglich sein und den offenen Restbetrag ausweisen.
+- Zahlung zurücksetzen → Mahnung muss wieder möglich sein, wenn ein offener Betrag vorhanden ist.
+- Direkter Klick auf „Mahnung“ darf eine bezahlte Rechnung nicht umgehen.
+
+Nächster sinnvoller Schritt:
+
+- Mahnstufen ergänzen: 1. Mahnung, 2. Mahnung, letzte Mahnung.
+- Mahngebühren und Verzugszinsen optional vorbereiten.
+- Mahnungen in der Dokumentliste stärker mit der Ursprungsrechnung verknüpfen.
+
+
+### V161 – Mahnung nutzt automatisch offenen Restbetrag
+
+Eingebaut:
+
+- Beim Erstellen einer Mahnung aus einer Rechnung werden die Mahnpositionen jetzt automatisch aus dem offenen Bruttorestbetrag berechnet.
+- Teilbezahlte Rechnungen übernehmen nicht mehr den ursprünglichen Rechnungsbetrag in die Mahnung.
+- Beispiel: Rechnung 2.915,50 €, Zahlung 1.915,50 €, Mahnung = 1.000,00 € offener Restbetrag.
+- Bei mehreren MwSt.-Sätzen wird der offene Restbetrag anteilig nach den ursprünglichen Bruttoanteilen verteilt.
+- Die Ursprungsrechnung bleibt als Quelle erhalten; die Mahnung enthält eine klare Position „Offener Restbetrag aus Rechnung …“.
+
+---
+
+
+### V164 – Mahnstufe sichtbar in Mahnhistorie
+
+**Ziel:** Die Mahnhistorie soll die jeweilige Mahnstufe direkt und eindeutig anzeigen, damit später sofort sichtbar ist, ob bereits eine Zahlungserinnerung, 1. Mahnung, 2. Mahnung oder Letzte Mahnung erzeugt wurde.
+
+**Geändert:**
+
+- In der Mahnhistorie wird die Mahnstufe jetzt als eigener Badge angezeigt.
+- Die Detailzeile nennt zusätzlich explizit `Mahnstufe: ...`.
+- Bereits gespeicherte ältere Mahnungen ohne vollständigen Snapshot werden beim Anzeigen anhand ihrer Reihenfolge sinnvoll rekonstruiert.
+- Die Reihenfolge der Historie wird stabil über Datum und Dokumentnummer sortiert.
+
+**Fachliche Logik:**
+
+1. Eintrag = Zahlungserinnerung
+2. Eintrag = 1. Mahnung
+3. Eintrag = 2. Mahnung
+4. und weitere Einträge = Letzte Mahnung
+
+### V162 – Mahnstufen & Mahnhistorie
+
+Eingebaut:
+
+- Mahnungen aus Rechnungen erhalten jetzt automatisch eine Mahnstufe.
+- Die nächste Mahnstufe wird aus der gespeicherten Mahnhistorie der Ursprungsrechnung berechnet.
+- Reihenfolge:
+  - 1. gespeicherte Mahnung: Zahlungserinnerung
+  - 2. gespeicherte Mahnung: 1. Mahnung
+  - 3. gespeicherte Mahnung: 2. Mahnung
+  - ab 4. gespeicherter Mahnung: Letzte Mahnung
+- Beim Erstellen der Mahnung wird ein Snapshot gespeichert:
+  - Mahnstufe
+  - Erstellungsdatum
+  - neue Zahlungsfrist
+  - Ursprungsrechnung
+  - ursprünglicher Rechnungsbetrag
+  - bereits bezahlter Betrag
+  - offener Restbetrag
+  - Überfälligkeit in Tagen
+- Die Rechnung zeigt jetzt eine Mahnhistorie mit gespeicherten Mahnungen, Mahnstufe, Datum, Frist und angemahntem Restbetrag.
+- Die Mahnung übernimmt weiterhin ausschließlich den offenen Restbetrag, nicht die ursprünglichen Rechnungspositionen.
+
+Fachliche Logik:
+
+| Zustand | Verhalten |
+|---|---|
+| Rechnung offen | nächste Mahnstufe wird vorbereitet |
+| Rechnung teilbezahlt | Mahnung wird nur über offenen Restbetrag erstellt |
+| Mahnung gespeichert | erscheint in der Mahnhistorie der Rechnung |
+| nächste Mahnung | Stufe erhöht sich automatisch |
+| vollständig bezahlt | Mahnung bleibt blockiert |
+| storniert | Mahnung bleibt blockiert |
+
+Prüfen:
+
+- Rechnung mit 2.915,50 € und Zahlung 1.915,50 € → Mahnung zeigt 1.000,00 €.
+- Erste Mahnung aus Rechnung → Zahlungserinnerung.
+- Mahnung speichern, Rechnung erneut öffnen → Mahnhistorie zeigt Zahlungserinnerung.
+- Zweite Mahnung aus derselben Rechnung → 1. Mahnung.
+- Vollständig bezahlte Rechnung → keine Mahnung möglich.
+
+---
+
+
+## V164 – Mahnstufe in der Mahnungsübersicht sichtbar
+
+- In der gespeicherten Dokumentliste werden Mahnungen nicht mehr nur generisch als „Mahnung“ angezeigt.
+- Die Übersicht zeigt jetzt direkt die konkrete Stufe: Zahlungserinnerung, 1. Mahnung, 2. Mahnung oder Letzte Mahnung.
+- Zusätzlich erscheint bei Mahnungen ein Badge „Mahnstufe: …“, damit die Stufe in der Listenansicht sofort erkennbar ist.
+- Für ältere Mahnungen ohne gespeicherten Snapshot wird die Stufe weiterhin aus Rechnungshistorie/Reihenfolge rekonstruiert.
+
+---
+
+## V165 – Mahntexte nach Mahnstufe automatisch vorbereitet
+
+**Ziel:** Beim Vorbereiten einer Mahnung soll nicht nur die Mahnstufe technisch gesetzt werden, sondern auch automatisch ein passender Text für die jeweilige Eskalationsstufe entstehen.
+
+**Eingebaut:**
+
+- Für jede Mahnstufe wird beim Erstellen automatisch eine eigene Textvorlage verwendet:
+  - Zahlungserinnerung: freundlich und zurückhaltend
+  - 1. Mahnung: sachlich und klar
+  - 2. Mahnung: deutlicher mit Hinweis auf weitere Schritte
+  - Letzte Mahnung: letzte Zahlungsfrist mit Eskalationshinweis
+- Die automatisch erzeugten Texte enthalten:
+  - Bezug zur Ursprungsrechnung
+  - ursprünglicher Rechnungsbetrag
+  - bereits bezahlter Betrag, falls vorhanden
+  - offener Restbetrag
+  - Überfälligkeit, falls vorhanden
+  - neue Zahlungsfrist
+- Die Zahlungsbedingungen werden passend zur Mahnstufe automatisch gesetzt.
+- Der Fußtext wird je Mahnstufe automatisch angepasst.
+- Im Mahn-Snapshot wird zusätzlich gespeichert, welche Textvorlage verwendet wurde.
+- In der Mahnkarte und Mahnhistorie wird die verwendete Vorlage angezeigt.
+
+**Fachliche Logik:**
+
+| Mahnstufe | Textwirkung |
+|---|---|
+| Zahlungserinnerung | freundlich, mögliches Versehen |
+| 1. Mahnung | sachlich, klare Zahlungsaufforderung |
+| 2. Mahnung | deutlicher, Hinweis auf weitere Schritte |
+| Letzte Mahnung | letzte Frist, Eskalation vorbereitet |
+
+**Prüfen:**
+
+1. Rechnung öffnen.
+2. Mahnung vorbereiten.
+3. Einleitung, Zahlungsbedingungen und Fußtext müssen automatisch zur Mahnstufe passen.
+4. Mahnung speichern.
+5. Rechnung öffnen und Mahnhistorie prüfen: Mahnstufe und verwendete Vorlage müssen sichtbar sein.
+
+
+---
+
+## V167 – Mahngebühren optional als Position
+
+**Ziel:** Mahnungen sollen den offenen Restbetrag weiterhin sauber übernehmen, können ab der 1. Mahnung aber automatisch eine optionale Mahngebühr als eigene Position enthalten.
+
+**Eingebaut:**
+
+- Zahlungserinnerung bleibt ohne Mahngebühr.
+- 1. Mahnung erhält automatisch eine vorgeschlagene Mahngebühr von 5,00 €.
+- 2. Mahnung erhält automatisch eine vorgeschlagene Mahngebühr von 10,00 €.
+- Letzte Mahnung erhält automatisch eine vorgeschlagene Mahngebühr von 15,00 €.
+- Die Mahngebühr wird als separate Position mit 0 % MwSt. angelegt.
+- Die Position ist bewusst editierbar bzw. löschbar, damit die Gebühr vor Versand angepasst oder entfernt werden kann.
+- Im Mahn-Snapshot werden zusätzlich gespeichert:
+  - offener Restbetrag
+  - Mahngebühr
+  - Verzugszinsen aktuell 0,00 € als vorbereitetes Feld
+  - Gesamtbetrag der Mahnung
+- Mahnkarte, Mahnhistorie und Dokumentliste zeigen vorhandene Mahngebühren an.
+- Die Mahntexte und Zahlungsbedingungen nennen automatisch den Gesamtbetrag, sobald eine Mahngebühr enthalten ist.
+
+**Fachliche Logik:**
+
+| Mahnstufe | Automatische Mahngebühr | Hinweis |
+|---|---:|---|
+| Zahlungserinnerung | 0,00 € | keine Gebühr |
+| 1. Mahnung | 5,00 € | als optionale Position |
+| 2. Mahnung | 10,00 € | als optionale Position |
+| Letzte Mahnung | 15,00 € | als optionale Position |
+
+**Wichtig:** Die Mahngebühr ist kein versteckter Zuschlag. Sie erscheint als eigene Position und kann vor dem Speichern oder Versand geändert werden.
+
+**Prüfen:**
+
+1. Rechnung öffnen.
+2. Zahlungserinnerung vorbereiten: keine Mahngebühr.
+3. Mahnung speichern.
+4. Rechnung erneut öffnen und nächste Mahnstufe vorbereiten.
+5. 1. Mahnung muss neben dem offenen Restbetrag eine separate Position „Mahngebühr 1. Mahnung“ mit 5,00 € enthalten.
+6. Mahnhistorie muss Restbetrag, Mahngebühr und Gesamtbetrag anzeigen.

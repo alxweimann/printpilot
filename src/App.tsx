@@ -121,6 +121,25 @@ type PaymentStatus =
   | "Überfällig"
   | "Storniert";
 
+type ReminderLevel = 1 | 2 | 3 | 4;
+
+type ReminderSnapshot = {
+  level: ReminderLevel;
+  levelLabel: string;
+  createdDate: string;
+  dueDate: string;
+  sourceInvoiceId?: string;
+  sourceInvoiceNumber?: string;
+  invoiceGrossAmount: number;
+  paidAmount: number;
+  openAmount: number;
+  reminderFeeAmount?: number;
+  interestAmount?: number;
+  reminderTotalAmount?: number;
+  overdueDays: number;
+  textTemplateLabel?: string;
+};
+
 type SavedDocument = {
   id: string;
   documentType: DocumentType;
@@ -151,6 +170,7 @@ type SavedDocument = {
   sourceDocumentId?: string;
   sourceDocumentType?: DocumentType;
   sourceDocumentNumber?: string;
+  reminderSnapshot?: ReminderSnapshot;
   createdAt: string;
   updatedAt: string;
 };
@@ -299,7 +319,6 @@ const paymentStatusOptions: PaymentStatus[] = [
   "Offen",
   "Teilbezahlt",
   "Bezahlt",
-  "Überfällig",
   "Storniert",
 ];
 
@@ -1237,7 +1256,7 @@ function App() {
         }
       `}</style>
       <div className="fixed right-4 top-4 z-[9999] rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-500/30">
-        V155 aktiv
+        V167 aktiv
       </div>
       <DeleteConfirmationModal />
       <AppActionDialogModal />
@@ -1291,7 +1310,7 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V155</p>
+              <p className="text-sm font-black">PrintPilot V167</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
                 Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
@@ -3132,7 +3151,7 @@ function CalculatorPage({
       unitPrice: roundMoney(unitPrice),
       vatRate: 19,
       internalNote: [
-        `Quelle: Kalkulation V155`,
+        `Quelle: Kalkulation V167`,
         `Interne Kalkulation`,
         `Maschine: ${selectedMachine.name}`,
         `Druckbogen: ${totalSheets.toLocaleString("de-DE")}`,
@@ -3156,7 +3175,7 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V155
+                Kalkulation V167
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
                 Produkt- und Jobstruktur
@@ -4666,7 +4685,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V155</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V167</p>
                 <p className="mt-1 text-sm font-medium text-slate-300">wichtigster Preisblock bleibt offen</p>
               </div>
               <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200 group-open:hidden">Aufklappen</span>
@@ -4761,7 +4780,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] border border-emerald-200 bg-emerald-50 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V155</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V167</p>
                 <p className="mt-1 text-sm font-medium text-emerald-950">Kalkulation ist bereit für eine Angebotsposition</p>
               </div>
               <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm group-open:hidden">Aufklappen</span>
@@ -4810,7 +4829,7 @@ function CalculatorPage({
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V155</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V167</p>
                 <p className="mt-1 text-sm font-medium text-slate-600">{calculationStatusTone.headline}</p>
               </div>
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${calculationStatusTone.badgeClass}`}>
@@ -4823,7 +4842,7 @@ function CalculatorPage({
                 <p
                   className={`text-xs font-extrabold uppercase tracking-wide ${calculationStatusTone.textClass}`}
                 >
-                  Kalkulationsstatus V155
+                  Kalkulationsstatus V167
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   {calculationStatusTone.headline}
@@ -4995,7 +5014,7 @@ function CalculatorPage({
           <details className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V155</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V167</p>
                 <p className="mt-1 text-sm font-medium text-slate-500">Produktionskosten und Preisaufbau</p>
               </div>
               <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:hidden">Aufklappen</span>
@@ -5005,7 +5024,7 @@ function CalculatorPage({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Auswertung V155
+                  Auswertung V167
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   Produktionskosten & Preisaufbau
@@ -5121,7 +5140,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Produktionskosten V155
+                    Produktionskosten V167
                   </p>
                   <h4 className="mt-1 text-base font-semibold text-slate-950">
                     Detaillierte Kostenaufschlüsselung
@@ -5622,6 +5641,8 @@ function QuotesPage({
   const [sourceDocumentType, setSourceDocumentType] =
     useState<DocumentType | "">("");
   const [sourceDocumentNumber, setSourceDocumentNumber] = useState("");
+  const [reminderSnapshot, setReminderSnapshot] =
+    useState<ReminderSnapshot | null>(null);
   const [documentStatus, setDocumentStatus] =
     useState<DocumentStatus>("Entwurf");
   const [documentSentDate, setDocumentSentDate] = useState("");
@@ -5821,7 +5842,10 @@ function QuotesPage({
   }, [quotePositions]);
   const isInvoice = activeBusinessDocumentType === "invoice";
   const safePaymentPaidAmount = Math.max(paymentPaidAmount, 0);
-  const openPaymentAmount = Math.max(grossTotal - safePaymentPaidAmount, 0);
+  const normalizedPaymentPaidAmount = Math.min(safePaymentPaidAmount, grossTotal);
+  const openPaymentAmount = paymentStatus === "Storniert" || paymentStatus === "Bezahlt"
+    ? 0
+    : Math.max(grossTotal - normalizedPaymentPaidAmount, 0);
   const currentResolvedPaymentStatus =
     getResolvedPaymentStatusForCurrentInvoice(
       paymentStatus,
@@ -5840,6 +5864,36 @@ function QuotesPage({
     paymentDueDate,
     openPaymentAmount,
   );
+  const invoicePaymentProgress = grossTotal > 0
+    ? Math.min(100, Math.max(0, (normalizedPaymentPaidAmount / grossTotal) * 100))
+    : 0;
+  const invoicePaymentProgressLabel = `${invoicePaymentProgress.toFixed(0)} %`;
+  const invoiceCanPrepareReminder =
+    activeBusinessDocumentType === "invoice" &&
+    openPaymentAmount > 0.01 &&
+    paymentStatus !== "Bezahlt" &&
+    paymentStatus !== "Storniert";
+  const invoiceReminderBlockedReason =
+    activeBusinessDocumentType !== "invoice"
+      ? "Mahnungen können nur aus Rechnungen vorbereitet werden."
+      : paymentStatus === "Storniert"
+        ? "Keine Mahnung möglich – die Rechnung ist storniert."
+        : paymentStatus === "Bezahlt" || openPaymentAmount <= 0.01
+          ? "Keine Mahnung möglich – die Rechnung ist vollständig bezahlt."
+          : currentInvoiceOverdueDays <= 0
+            ? "Mahnung möglich – Hinweis: Die Rechnung ist rechnerisch noch nicht überfällig."
+            : "Mahnung möglich – offener Restbetrag ist fällig.";
+  const currentInvoiceReminderHistory = getReminderHistoryForInvoice(
+    savedDocuments,
+    activeSavedDocumentId,
+    quoteNumber,
+  );
+  const nextReminderLevel = getNextReminderLevelForInvoice(
+    savedDocuments,
+    activeSavedDocumentId,
+    quoteNumber,
+  );
+  const nextReminderLevelLabel = getReminderLevelLabel(nextReminderLevel);
 
   const documentPrintMetaRows = (() => {
     if (activeBusinessDocumentType === "quote") {
@@ -6264,6 +6318,10 @@ function QuotesPage({
     setSourceDocumentNumber(quoteNumber);
   }
 
+  function clearReminderSnapshot() {
+    setReminderSnapshot(null);
+  }
+
   function getFollowUpHint(targetLabel: string) {
     if (isAcceptedQuote) {
       return `${targetLabel} wurde aus dem angenommenen Angebot ${quoteNumber} vorbereitet. Das Ursprungsangebot bleibt nachvollziehbar.`;
@@ -6274,6 +6332,7 @@ function QuotesPage({
 
   function handleCreateOrderConfirmation() {
     rememberCurrentDocumentAsSource();
+    clearReminderSnapshot();
     setActiveSavedDocumentId(null);
     setDocumentStatus("Entwurf");
     setDocumentSentDate("");
@@ -6290,6 +6349,7 @@ function QuotesPage({
 
   function handleCreateInvoice() {
     rememberCurrentDocumentAsSource();
+    clearReminderSnapshot();
     setActiveSavedDocumentId(null);
     setDocumentStatus("Entwurf");
     setDocumentSentDate("");
@@ -6310,6 +6370,7 @@ function QuotesPage({
 
   function handleCreateDeliveryNote() {
     rememberCurrentDocumentAsSource();
+    clearReminderSnapshot();
     setActiveSavedDocumentId(null);
     setDocumentStatus("Entwurf");
     setDocumentSentDate("");
@@ -6325,12 +6386,76 @@ function QuotesPage({
   }
 
   function handleCreateReminder() {
-    const originalInvoiceNumber =
-      activeBusinessDocumentType === "invoice" ? quoteNumber : "";
-    const openAmount = Math.max(grossTotal - safePaymentPaidAmount, 0);
-    const reminderDueDate = addDaysIso(todayIso(), 7);
-    const baseIntroText = documentTemplateSettings.reminder.introText;
+    if (activeBusinessDocumentType !== "invoice") {
+      showAppDialog(
+        "Mahnung aus Rechnung",
+        "Eine Mahnung kann nur aus einer Rechnung vorbereitet werden. Öffne zuerst die passende Rechnung und starte die Mahnung dort.",
+        "warning",
+      );
+      return;
+    }
 
+    if (!invoiceCanPrepareReminder) {
+      showAppDialog(
+        "Mahnung nicht möglich",
+        invoiceReminderBlockedReason,
+        paymentStatus === "Bezahlt" ? "success" : "warning",
+      );
+      return;
+    }
+
+    rememberCurrentDocumentAsSource();
+
+    const originalInvoiceId = activeSavedDocumentId ?? undefined;
+    const originalInvoiceNumber = quoteNumber;
+    const openAmount = roundMoney(openPaymentAmount);
+    const paidAmount = roundMoney(normalizedPaymentPaidAmount);
+    const invoiceGrossAmount = roundMoney(grossTotal);
+    const reminderLevel = nextReminderLevel;
+    const reminderLevelLabel = getReminderLevelLabel(reminderLevel);
+    const reminderFeeAmount = getDefaultReminderFeeAmount(reminderLevel);
+    const interestAmount = 0;
+    const reminderRestPositions = createReminderPositionsFromInvoiceRestAmount(
+      quotePositions,
+      openAmount,
+      originalInvoiceNumber,
+    );
+    const reminderFeePositions = createReminderFeePositions(reminderLevel, reminderLevelLabel);
+    const reminderPositions = [...reminderRestPositions, ...reminderFeePositions];
+    const reminderTotalAmount = roundMoney(openAmount + reminderFeeAmount + interestAmount);
+    const reminderCreatedDate = todayIso();
+    const reminderDueDate = addDaysIso(reminderCreatedDate, 7);
+    const reminderTextTemplate = createReminderTextTemplate({
+      level: reminderLevel,
+      levelLabel: reminderLevelLabel,
+      invoiceNumber: originalInvoiceNumber || undefined,
+      invoiceGrossAmount,
+      paidAmount,
+      openAmount,
+      reminderFeeAmount,
+      interestAmount,
+      reminderTotalAmount,
+      dueDate: reminderDueDate,
+      overdueDays: Math.max(currentInvoiceOverdueDays, 0),
+    });
+    const snapshot: ReminderSnapshot = {
+      level: reminderLevel,
+      levelLabel: reminderLevelLabel,
+      createdDate: reminderCreatedDate,
+      dueDate: reminderDueDate,
+      sourceInvoiceId: originalInvoiceId,
+      sourceInvoiceNumber: originalInvoiceNumber || undefined,
+      invoiceGrossAmount,
+      paidAmount,
+      openAmount,
+      reminderFeeAmount,
+      interestAmount,
+      reminderTotalAmount,
+      overdueDays: Math.max(currentInvoiceOverdueDays, 0),
+      textTemplateLabel: reminderTextTemplate.textTemplateLabel,
+    };
+
+    setReminderSnapshot(snapshot);
     setActiveSavedDocumentId(null);
     setDocumentStatus("Entwurf");
     setDocumentSentDate("");
@@ -6340,25 +6465,22 @@ function QuotesPage({
     setPaymentDueDate(reminderDueDate);
     setPaymentPaidDate("");
     setPaymentPaidAmount(0);
+    setQuoteDate(reminderCreatedDate);
     setValidUntil(reminderDueDate);
+    setQuotePositions(reminderPositions);
     setActiveBusinessDocumentType("reminder");
-    setIntroText(
-      [
-        baseIntroText,
-        originalInvoiceNumber
-          ? `Bezug: Rechnung ${originalInvoiceNumber}.`
-          : "",
-        `Offener Betrag: ${formatCurrency(openAmount)}.`,
-        `Neue Zahlungsfrist: ${formatDateGerman(reminderDueDate)}.`,
-      ]
-        .filter(Boolean)
-        .join("\\n"),
+    setDocumentSubject(
+      originalInvoiceNumber
+        ? `${reminderLevelLabel}: Rechnung ${originalInvoiceNumber}`
+        : reminderLevelLabel,
     );
-    setDeliveryTerms(documentTemplateSettings.reminder.footerText);
+    setIntroText(reminderTextTemplate.introText);
+    setPaymentTerms(reminderTextTemplate.paymentTerms);
+    setDeliveryTerms(reminderTextTemplate.footerText);
     handleCreateNextDocumentNumber("reminder", { silent: true });
     showAppDialog(
-      "Mahnung vorbereitet",
-      "Die aktuelle Rechnung wurde als Mahnung mit neuer Zahlungsfrist vorbereitet.",
+      `${reminderLevelLabel} vorbereitet`,
+      `Die Mahnung enthält den offenen Restbetrag ${formatCurrency(openAmount)}${reminderFeeAmount > 0 ? ` plus Mahngebühr ${formatCurrency(reminderFeeAmount)}` : ""}. Gesamt: ${formatCurrency(reminderTotalAmount)}. Mahnstufe: ${reminderLevelLabel}. Text: ${reminderTextTemplate.textTemplateLabel}.`,
       "warning",
     );
   }
@@ -6367,6 +6489,7 @@ function QuotesPage({
     setSourceDocumentId("");
     setSourceDocumentType("");
     setSourceDocumentNumber("");
+    clearReminderSnapshot();
     setActiveSavedDocumentId(null);
     setDocumentStatus("Entwurf");
     setDocumentSentDate("");
@@ -6393,6 +6516,95 @@ function QuotesPage({
     );
   }
 
+  function handleInvoicePaymentStatusChange(nextStatus: PaymentStatus) {
+    setPaymentStatus(nextStatus);
+
+    if (nextStatus === "Bezahlt") {
+      setPaymentPaidAmount(grossTotal);
+      setPaymentPaidDate(paymentPaidDate || todayIso());
+      setDocumentStatus("Bezahlt");
+      showAppDialog(
+        "Zahlungsstatus aktualisiert",
+        `Die Rechnung wurde als bezahlt markiert. Zahlungseingang: ${formatCurrency(grossTotal)}.`,
+        "success",
+      );
+      return;
+    }
+
+    if (nextStatus === "Offen") {
+      setPaymentPaidAmount(0);
+      setPaymentPaidDate("");
+      if (documentStatus === "Bezahlt") {
+        setDocumentStatus("Versendet");
+      }
+      showAppDialog(
+        "Zahlungsstatus aktualisiert",
+        "Die Rechnung ist wieder offen. Erfasste Zahlungen wurden zurückgesetzt.",
+        "info",
+      );
+      return;
+    }
+
+    if (nextStatus === "Storniert") {
+      setPaymentPaidAmount(0);
+      setPaymentPaidDate("");
+      setDocumentStatus("Storniert");
+      showAppDialog(
+        "Rechnung storniert",
+        "Die Rechnung wurde als storniert markiert. Der offene Betrag wird nicht mehr als Forderung geführt.",
+        "warning",
+      );
+      return;
+    }
+
+    showAppDialog(
+      "Zahlungsstatus aktualisiert",
+      nextStatus === "Teilbezahlt"
+        ? "Die Rechnung ist als teilbezahlt markiert. Bitte erfasse den tatsächlich gezahlten Betrag und übernimm die Zahlung."
+        : "Der Zahlungsstatus wurde aktualisiert.",
+      "info",
+    );
+  }
+
+  function handleApplyInvoicePaymentFromFields() {
+    const normalizedPaidAmount = Math.max(0, Math.min(paymentPaidAmount, grossTotal));
+    const remainingAmount = Math.max(grossTotal - normalizedPaidAmount, 0);
+    const paidDate = paymentPaidDate || todayIso();
+
+    setPaymentPaidAmount(normalizedPaidAmount);
+
+    if (normalizedPaidAmount <= 0) {
+      setPaymentStatus("Offen");
+      setPaymentPaidDate("");
+      showAppDialog(
+        "Zahlung zurückgesetzt",
+        "Für diese Rechnung ist aktuell kein Zahlungseingang hinterlegt.",
+        "info",
+      );
+      return;
+    }
+
+    setPaymentPaidDate(paidDate);
+
+    if (remainingAmount <= 0.01) {
+      setPaymentStatus("Bezahlt");
+      setDocumentStatus("Bezahlt");
+      showAppDialog(
+        "Rechnung bezahlt",
+        `Die Rechnung wurde vollständig bezahlt. Zahlungseingang: ${formatCurrency(normalizedPaidAmount)}.`,
+        "success",
+      );
+      return;
+    }
+
+    setPaymentStatus("Teilbezahlt");
+    showAppDialog(
+      "Teilzahlung erfasst",
+      `Erfasst: ${formatCurrency(normalizedPaidAmount)}. Offen bleiben ${formatCurrency(remainingAmount)}.`,
+      "info",
+    );
+  }
+
   function handleMarkInvoicePaid() {
     setPaymentStatus("Bezahlt");
     setPaymentPaidAmount(grossTotal);
@@ -6402,6 +6614,20 @@ function QuotesPage({
       "Zahlung erfasst",
       `Die Rechnung wurde als bezahlt markiert. Zahlungseingang: ${formatCurrency(grossTotal)}.`,
       "success",
+    );
+  }
+
+  function handleResetInvoicePayment() {
+    setPaymentStatus("Offen");
+    setPaymentPaidAmount(0);
+    setPaymentPaidDate("");
+    if (documentStatus === "Bezahlt" || documentStatus === "Storniert") {
+      setDocumentStatus("Versendet");
+    }
+    showAppDialog(
+      "Zahlung zurückgesetzt",
+      "Der Zahlungseingang wurde entfernt. Die Rechnung ist wieder offen. Eine Mahnung ist jetzt wieder möglich, solange ein offener Restbetrag besteht.",
+      "info",
     );
   }
 
@@ -6422,6 +6648,34 @@ function QuotesPage({
         "Mahnungen sollten fachlich aus einer Rechnung vorbereitet werden. Wechsle zuerst in den Rechnungsbereich oder öffne eine Rechnung.",
         "warning",
       );
+      return;
+    }
+
+    if (paymentStatus === "Storniert") {
+      showAppDialog(
+        "Mahnung nicht möglich",
+        "Diese Rechnung ist storniert. Für stornierte Rechnungen kann keine Mahnung vorbereitet werden.",
+        "warning",
+      );
+      return;
+    }
+
+    if (paymentStatus === "Bezahlt" || openPaymentAmount <= 0.01) {
+      showAppDialog(
+        "Mahnung nicht möglich",
+        "Diese Rechnung ist vollständig bezahlt. Es gibt keinen offenen Restbetrag für eine Mahnung.",
+        "success",
+      );
+      return;
+    }
+
+    if (currentInvoiceOverdueDays <= 0) {
+      showAppDialog(
+        "Mahnung vorbereitet",
+        "Die Mahnung wurde vorbereitet. Hinweis: Die Rechnung ist laut Fälligkeitsdatum noch nicht überfällig. Bitte prüfe die Zahlungsfrist vor dem Versand.",
+        "warning",
+      );
+      handleCreateReminder();
       return;
     }
 
@@ -6464,11 +6718,15 @@ function QuotesPage({
         activeBusinessDocumentType === "invoice" ? paymentPaidDate : undefined,
       paymentPaidAmount:
         activeBusinessDocumentType === "invoice"
-          ? safePaymentPaidAmount
+          ? normalizedPaymentPaidAmount
           : undefined,
       sourceDocumentId: sourceDocumentId || undefined,
       sourceDocumentType: sourceDocumentType || undefined,
       sourceDocumentNumber: sourceDocumentNumber || undefined,
+      reminderSnapshot:
+        activeBusinessDocumentType === "reminder"
+          ? reminderSnapshot ?? undefined
+          : undefined,
       createdAt:
         savedDocuments.find((documentItem) => documentItem.id === existingId)
           ?.createdAt ?? now,
@@ -6509,6 +6767,7 @@ function QuotesPage({
     setSourceDocumentId(documentItem.sourceDocumentId ?? "");
     setSourceDocumentType(documentItem.sourceDocumentType ?? "");
     setSourceDocumentNumber(documentItem.sourceDocumentNumber ?? "");
+    setReminderSnapshot(documentItem.reminderSnapshot ?? null);
     setQuoteNumber(documentItem.documentNumber);
     setSelectedCustomerId(documentItem.customerId);
     setCustomerName(documentItem.customerName);
@@ -6781,7 +7040,7 @@ function QuotesPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className={`text-sm font-black uppercase tracking-[0.35em] ${documentAreaTone[activeBusinessDocumentType].eyebrow}`}>
-                {documentAreaTitle ?? activeBusinessDocumentLabel} V155
+                {documentAreaTitle ?? activeBusinessDocumentLabel} V167
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 {documentAreaTitle ?? `${activeBusinessDocumentLabel} erstellen`}
@@ -6814,7 +7073,7 @@ function QuotesPage({
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-              Modulübersicht V155
+              Modulübersicht V167
             </div>
             <h3 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950">
               {activeBusinessDocumentLabel} im Überblick
@@ -6886,7 +7145,7 @@ function QuotesPage({
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-              {activeBusinessDocumentLabel} V155
+              {activeBusinessDocumentLabel} V167
             </div>
             <h3 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950">
               {activeBusinessDocumentLabel} bearbeiten & Vorschau
@@ -6925,6 +7184,22 @@ function QuotesPage({
                 Ursprung / Folgeprozess
               </p>
             </div>
+            {activeBusinessDocumentType === "reminder" && reminderSnapshot && (
+              <div className="rounded-3xl bg-rose-50 p-4">
+                <p className="text-xs font-semibold uppercase tracking-wide text-rose-700">Mahnstufe</p>
+                <p className="mt-1 truncate text-lg font-semibold text-rose-950">{reminderSnapshot.levelLabel}</p>
+                <p className="mt-1 text-sm font-medium text-rose-700">Restbetrag {formatCurrency(reminderSnapshot.openAmount)}</p>
+                {roundMoney(reminderSnapshot.reminderFeeAmount ?? 0) > 0 && (
+                  <p className="mt-1 text-sm font-medium text-rose-700">Mahngebühr {formatCurrency(reminderSnapshot.reminderFeeAmount ?? 0)}</p>
+                )}
+                {roundMoney(reminderSnapshot.reminderTotalAmount ?? reminderSnapshot.openAmount) > roundMoney(reminderSnapshot.openAmount) && (
+                  <p className="mt-1 text-sm font-black text-rose-950">Gesamt {formatCurrency(reminderSnapshot.reminderTotalAmount ?? reminderSnapshot.openAmount)}</p>
+                )}
+                {reminderSnapshot.textTemplateLabel && (
+                  <p className="mt-1 text-xs font-bold uppercase tracking-wide text-rose-600">{reminderSnapshot.textTemplateLabel}</p>
+                )}
+              </div>
+            )}
           </div>
         </div>
 
@@ -6978,7 +7253,7 @@ function QuotesPage({
         <div className="mt-4 rounded-3xl border border-slate-200 bg-slate-50 p-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Statuswechsel V155</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Statuswechsel V167</p>
               <p className="mt-1 text-sm font-medium text-slate-600">Setzt den Dokumentstatus mit App-Meldung. Bei „Versendet” und „Angenommen” wird automatisch ein Datum vorbereitet.</p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -7002,7 +7277,7 @@ function QuotesPage({
 
         <div className="mt-6 grid gap-3 md:grid-cols-3">
           <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Nummernkreis V155</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Nummernkreis V167</p>
             <p className="mt-2 text-base font-semibold text-amber-950">{numberCircleSettings[activeBusinessDocumentType].prefix}-{new Date().getFullYear()}-{String(numberCircleSettings[activeBusinessDocumentType].nextNumber).padStart(numberCircleSettings[activeBusinessDocumentType].padding, "0")}</p>
             <p className="mt-1 text-sm font-medium text-amber-800">nächste freie Nummer</p>
           </div>
@@ -7025,7 +7300,7 @@ function QuotesPage({
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-yellow-300 via-fuchsia-500 to-cyan-400" />
             <h3 className="mt-5 text-xl font-black">Dokumentkopf</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
-              Kundenauswahl und Stammdaten für die Kundenvorschau V155.
+              Kundenauswahl und Stammdaten für die Kundenvorschau V167.
             </p>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -7210,12 +7485,90 @@ function QuotesPage({
                   </div>
                 </div>
 
+                <div className="mt-5 grid gap-3 md:grid-cols-3">
+                  <div className="rounded-2xl bg-white p-4 shadow-sm">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Rechnungsbetrag</p>
+                    <p className="mt-1 text-lg font-semibold text-slate-950">{formatCurrency(grossTotal)}</p>
+                  </div>
+                  <div className="rounded-2xl bg-white p-4 shadow-sm">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Bezahlt</p>
+                    <p className="mt-1 text-lg font-semibold text-emerald-700">{formatCurrency(normalizedPaymentPaidAmount)}</p>
+                  </div>
+                  <div className="rounded-2xl bg-white p-4 shadow-sm">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Restbetrag</p>
+                    <p className={`mt-1 text-lg font-semibold ${openPaymentAmount > 0.01 ? "text-rose-700" : "text-emerald-700"}`}>{formatCurrency(openPaymentAmount)}</p>
+                  </div>
+                </div>
+
+                <div className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
+                  <div className="flex items-center justify-between gap-3">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Zahlungsfortschritt</p>
+                    <p className="text-sm font-semibold text-slate-700">{invoicePaymentProgressLabel}</p>
+                  </div>
+                  <div className="mt-3 h-3 overflow-hidden rounded-full bg-slate-100">
+                    <div
+                      className={`h-full rounded-full ${openPaymentAmount > 0.01 ? "bg-cyan-400" : "bg-emerald-500"}`}
+                      style={{ width: `${invoicePaymentProgress}%` }}
+                    />
+                  </div>
+                </div>
+
+                <div className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
+                  <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Mahnhistorie</p>
+                      <p className="mt-1 text-sm font-semibold text-slate-700">
+                        {currentInvoiceReminderHistory.length > 0
+                          ? `${currentInvoiceReminderHistory.length} Mahnung(en) zu dieser Rechnung gespeichert.`
+                          : `Nächste Stufe: ${nextReminderLevelLabel}. Noch keine Mahnung gespeichert.`}
+                      </p>
+                    </div>
+                    <div className="rounded-2xl bg-rose-50 px-4 py-3 text-right">
+                      <p className="text-xs font-bold uppercase tracking-wide text-rose-700">Nächste Mahnstufe</p>
+                      <p className="text-sm font-black text-rose-950">{nextReminderLevelLabel}</p>
+                    </div>
+                  </div>
+                  {currentInvoiceReminderHistory.length > 0 && (
+                    <div className="mt-4 grid gap-2">
+                      {currentInvoiceReminderHistory.map((item) => (
+                        <div key={item.documentId} className="rounded-2xl bg-slate-50 px-4 py-3">
+                          <div className="flex flex-col gap-2 md:flex-row md:items-center md:justify-between">
+                            <div>
+                              <div className="flex flex-wrap items-center gap-2">
+                                <span className="rounded-full bg-rose-100 px-3 py-1 text-xs font-black uppercase tracking-wide text-rose-700">
+                                  {item.levelLabel}
+                                </span>
+                                <p className="text-sm font-black text-slate-950">
+                                  {item.documentNumber}
+                                </p>
+                              </div>
+                              <p className="mt-1 text-xs font-semibold text-slate-500">
+                                Mahnstufe: {item.levelLabel} · Erstellt am {formatDateGerman(item.createdDate)} · Zahlungsfrist {formatDateGerman(item.dueDate)}
+                                {item.textTemplateLabel ? ` · ${item.textTemplateLabel}` : ""}
+                                {roundMoney(item.reminderFeeAmount ?? 0) > 0 ? ` · Mahngebühr ${formatCurrency(item.reminderFeeAmount ?? 0)}` : ""}
+                              </p>
+                            </div>
+                            <div className="text-left md:text-right">
+                              <p className="text-xs font-bold uppercase tracking-wide text-slate-400">angemahnter Restbetrag</p>
+                              <p className="text-sm font-black text-rose-700">{formatCurrency(item.openAmount)}</p>
+                              {roundMoney(item.reminderFeeAmount ?? 0) > 0 && (
+                                <p className="text-xs font-bold text-slate-500">+ Mahngebühr {formatCurrency(item.reminderFeeAmount ?? 0)}</p>
+                              )}
+                              <p className="text-xs font-black text-slate-950">Gesamt {formatCurrency(item.reminderTotalAmount ?? item.openAmount)}</p>
+                            </div>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+
                 <div className="mt-4 grid gap-4 md:grid-cols-2">
                   <SelectField
                     label="Zahlungsstatus"
                     value={paymentStatus}
                     onChange={(value) =>
-                      setPaymentStatus(value as PaymentStatus)
+                      handleInvoicePaymentStatusChange(value as PaymentStatus)
                     }
                     options={paymentStatusOptions.map((status) => ({
                       value: status,
@@ -7228,17 +7581,50 @@ function QuotesPage({
                     onChange={setPaymentDueDate}
                   />
                   <NumberField
-                    label="Zahlungseingang"
+                    label="Gezahlter Betrag"
                     value={paymentPaidAmount}
                     onChange={setPaymentPaidAmount}
                     suffix="€"
                     step={0.01}
                   />
                   <InputField
-                    label="Bezahlt am"
+                    label="Zahlungsdatum"
                     value={paymentPaidDate}
                     onChange={setPaymentPaidDate}
                   />
+                </div>
+
+                <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
+                  <button
+                    type="button"
+                    onClick={handleApplyInvoicePaymentFromFields}
+                    className="rounded-2xl bg-slate-950 px-4 py-3 text-xs font-semibold text-white shadow-sm transition hover:-translate-y-0.5"
+                  >
+                    Zahlung übernehmen
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleMarkInvoicePaid}
+                    className="rounded-2xl bg-emerald-600 px-4 py-3 text-xs font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-700"
+                  >
+                    Komplett bezahlt
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleResetInvoicePayment}
+                    className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-slate-600 shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-0.5 hover:bg-slate-50"
+                  >
+                    Zahlung zurücksetzen
+                  </button>
+                  {invoiceCanPrepareReminder && (
+                    <button
+                      type="button"
+                      onClick={handlePrepareReminderFromInvoice}
+                      className="rounded-2xl bg-rose-600 px-4 py-3 text-xs font-semibold text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-rose-700"
+                    >
+                      {nextReminderLevelLabel} vorbereiten
+                    </button>
+                  )}
                 </div>
               </div>
             )}
@@ -7246,7 +7632,7 @@ function QuotesPage({
             <div className={`mt-5 rounded-3xl border p-5 ${documentAreaTone[activeBusinessDocumentType].card}`}>
               <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                 <div>
-                  <p className={`text-xs font-semibold uppercase tracking-wide ${documentAreaTone[activeBusinessDocumentType].eyebrow}`}>Modulaktionen V155</p>
+                  <p className={`text-xs font-semibold uppercase tracking-wide ${documentAreaTone[activeBusinessDocumentType].eyebrow}`}>Modulaktionen V167</p>
                   <h4 className="mt-2 text-lg font-semibold tracking-tight text-slate-950">
                     Passende Aktionen für {activeBusinessDocumentLabel}
                   </h4>
@@ -7274,8 +7660,16 @@ function QuotesPage({
 
                   {activeBusinessDocumentType === "invoice" && (
                     <>
-                      <button type="button" onClick={handleMarkInvoicePaid} className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-emerald-700 shadow-sm ring-1 ring-emerald-200 transition hover:-translate-y-0.5 hover:bg-emerald-100">Zahlung erfassen</button>
-                      <button type="button" onClick={handlePrepareReminderFromInvoice} className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-rose-700 shadow-sm ring-1 ring-rose-200 transition hover:-translate-y-0.5 hover:bg-rose-100">Mahnung vorbereiten</button>
+                      <button type="button" onClick={handleMarkInvoicePaid} className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-emerald-700 shadow-sm ring-1 ring-emerald-200 transition hover:-translate-y-0.5 hover:bg-emerald-100">Komplett bezahlt</button>
+                      <button
+                        type="button"
+                        onClick={handlePrepareReminderFromInvoice}
+                        disabled={!invoiceCanPrepareReminder}
+                        title={invoiceReminderBlockedReason}
+                        className={`rounded-2xl px-4 py-3 text-xs font-semibold shadow-sm ring-1 transition ${invoiceCanPrepareReminder ? "bg-white text-rose-700 ring-rose-200 hover:-translate-y-0.5 hover:bg-rose-100" : "cursor-not-allowed bg-slate-100 text-slate-400 ring-slate-200"}`}
+                      >
+                        {nextReminderLevelLabel} vorbereiten
+                      </button>
                       <button type="button" onClick={() => showAppDialog("Zahlungsstatus", "Der Zahlungsstatus kann direkt in der Rechnungskarte gepflegt werden.", "info")} className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-cyan-700 shadow-sm ring-1 ring-cyan-200 transition hover:-translate-y-0.5 hover:bg-cyan-100">Status prüfen</button>
                     </>
                   )}
@@ -7291,7 +7685,7 @@ function QuotesPage({
                   {activeBusinessDocumentType === "reminder" && (
                     <>
                       <button type="button" onClick={handleMarkInvoicePaid} className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-emerald-700 shadow-sm ring-1 ring-emerald-200 transition hover:-translate-y-0.5 hover:bg-emerald-100">Zahlung erfassen</button>
-                      <button type="button" onClick={() => showAppDialog("Mahnstufe vorbereitet", "Mahnstufen, Fristen und Gebühren können wir im nächsten Schritt als eigenes Mahnwesen ausbauen.", "info")} className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-rose-700 shadow-sm ring-1 ring-rose-200 transition hover:-translate-y-0.5 hover:bg-rose-100">Mahnstufe / Frist</button>
+                      <button type="button" onClick={() => showAppDialog("Mahnstufe & Textvorlage", reminderSnapshot ? `${reminderSnapshot.levelLabel}: angemahnter Restbetrag ${formatCurrency(reminderSnapshot.openAmount)}${roundMoney(reminderSnapshot.reminderFeeAmount ?? 0) > 0 ? ` plus Mahngebühr ${formatCurrency(reminderSnapshot.reminderFeeAmount ?? 0)}` : ""}. Gesamt ${formatCurrency(reminderSnapshot.reminderTotalAmount ?? reminderSnapshot.openAmount)}. Zahlungsfrist ${formatDateGerman(reminderSnapshot.dueDate)}. ${reminderSnapshot.textTemplateLabel ?? "Textvorlage automatisch gewählt"}.` : "Mahnstufe, Frist, Mahngebühr und Textvorlage werden automatisch aus der Ursprungsrechnung gespeichert.", "info")} className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-rose-700 shadow-sm ring-1 ring-rose-200 transition hover:-translate-y-0.5 hover:bg-rose-100">Mahnstufe / Text</button>
                       <button type="button" onClick={handleCreateInvoice} className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-cyan-700 shadow-sm ring-1 ring-cyan-200 transition hover:-translate-y-0.5 hover:bg-cyan-100">Rechnung öffnen</button>
                     </>
                   )}
@@ -7302,7 +7696,7 @@ function QuotesPage({
             <div className={`mt-5 rounded-3xl border p-5 ${isAcceptedQuote ? "border-emerald-200 bg-emerald-50" : "border-amber-200 bg-amber-50"}`}>
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                  <p className={`text-xs font-semibold uppercase tracking-wide ${isAcceptedQuote ? "text-emerald-700" : "text-amber-700"}`}>Folgeprozess V155</p>
+                  <p className={`text-xs font-semibold uppercase tracking-wide ${isAcceptedQuote ? "text-emerald-700" : "text-amber-700"}`}>Folgeprozess V167</p>
                   <p className={`mt-1 text-sm font-medium leading-6 ${isAcceptedQuote ? "text-emerald-800" : "text-amber-800"}`}>
                     {isAcceptedQuote
                       ? `Dieses Angebot ist angenommen. Du kannst daraus jetzt Auftrag, Rechnung oder Lieferschein vorbereiten.`
@@ -7340,82 +7734,11 @@ function QuotesPage({
               )}
             </div>
 
-            <div className="mt-5 rounded-3xl bg-slate-50 p-5">
-              <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                Dokumenttyp
-              </p>
-              <div className="mt-4 grid gap-3 md:grid-cols-2 xl:grid-cols-[1fr_1.7fr_1fr_1fr_1fr]">
-                <button
-                  type="button"
-                  onClick={handleBackToQuote}
-                  className={`min-h-[64px] whitespace-nowrap rounded-2xl px-4 py-4 text-sm font-black leading-tight transition ${
-                    activeBusinessDocumentType === "quote"
-                      ? "bg-slate-950 text-white shadow-sm"
-                      : "bg-white text-slate-700 hover:bg-slate-100"
-                  }`}
-                >
-                  Angebot
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCreateOrderConfirmation}
-                  className={`min-h-[64px] whitespace-nowrap rounded-2xl px-4 py-4 text-sm font-black leading-tight transition ${
-                    activeBusinessDocumentType === "orderConfirmation"
-                      ? "bg-emerald-500 text-white shadow-sm"
-                      : "bg-emerald-50 text-emerald-700 hover:bg-emerald-100"
-                  }`}
-                >
-                  Auftragsbestätigung
-                </button>
-                <button
-                  type="button"
-                  onClick={handleCreateInvoice}
-                  className={`min-h-[64px] whitespace-nowrap rounded-2xl px-4 py-4 text-sm font-black leading-tight transition ${
-                    activeBusinessDocumentType === "invoice"
-                      ? "bg-cyan-500 text-white shadow-sm"
-                      : "bg-cyan-50 text-cyan-700 hover:bg-cyan-100"
-                  }`}
-                >
-                  Rechnung
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleCreateDeliveryNote}
-                  className={`min-h-[64px] whitespace-nowrap rounded-2xl px-4 py-4 text-sm font-black leading-tight transition ${
-                    activeBusinessDocumentType === "deliveryNote"
-                      ? "bg-violet-500 text-white shadow-sm"
-                      : "bg-violet-50 text-violet-700 hover:bg-violet-100"
-                  }`}
-                >
-                  Lieferschein
-                </button>
-
-                <button
-                  type="button"
-                  onClick={handleCreateReminder}
-                  className={`min-h-[64px] whitespace-nowrap rounded-2xl px-4 py-4 text-sm font-black leading-tight transition ${
-                    activeBusinessDocumentType === "reminder"
-                      ? "bg-rose-500 text-white shadow-sm"
-                      : "bg-rose-50 text-rose-700 hover:bg-rose-100"
-                  }`}
-                >
-                  Mahnung
-                </button>
-              </div>
-              <p className="mt-3 text-sm font-bold leading-6 text-slate-500">
-                Kunde, Positionen, Logo und Firmendaten bleiben erhalten. Bei
-                Angebot, Auftragsbestätigung, Rechnung und Mahnung werden Preise
-                gezeigt; beim Lieferschein werden Preise und Summen
-                ausgeblendet.
-              </p>
-            </div>
-
             <div className={`mt-5 rounded-3xl border p-5 ${documentTypeProfile.toneClass}`}>
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                   <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${documentTypeProfile.badgeClass}`}>
-                    Dokumentlogik V155 · {documentTypeProfile.eyebrow}
+                    Dokumentlogik V167 · {documentTypeProfile.eyebrow}
                   </span>
                   <h4 className="mt-3 text-lg font-semibold tracking-tight">
                     {documentTypeProfile.title}
@@ -7495,7 +7818,7 @@ function QuotesPage({
             <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
               <div>
                 <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 to-sky-500" />
-                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen V155</h3>
+                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen V167</h3>
                 <p className="mt-1 text-sm font-medium leading-6 text-slate-500">
                   Positionen sind jetzt als klare Bearbeitungskarten aufgebaut. Titel, Beschreibung, Menge,
                   Einzelpreis und MwSt. ändern die Angebotsvorschau sofort.
@@ -7759,7 +8082,7 @@ function QuotesPage({
         <div className="space-y-6">
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-semibold tracking-tight">Dokumentliste / Verwaltung V155</h3>
+            <h3 className="mt-5 text-xl font-semibold tracking-tight">Dokumentliste / Verwaltung V167</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Gespeicherte Dokumente dieses Bereichs suchen, filtern, öffnen, duplizieren oder löschen. Status, Kunde, Nummer und Betrag sind direkt sichtbar.
             </p>
@@ -7902,6 +8225,10 @@ function QuotesPage({
                   );
                   const isActiveDocument =
                     activeSavedDocumentId === documentItem.id;
+                  const reminderListLabel = getReminderDisplayLabelForDocument(
+                    savedDocuments,
+                    documentItem,
+                  );
 
                   return (
                     <div
@@ -7916,11 +8243,10 @@ function QuotesPage({
                         <div className="min-w-0">
                           <p className="truncate text-sm font-black text-slate-950">
                             {documentItem.documentNumber} ·{" "}
-                            {
+                            {reminderListLabel ??
                               documentTemplateSettings[
                                 documentItem.documentType
-                              ]?.label
-                            }
+                              ]?.label}
                           </p>
                           <p className="mt-1 truncate text-sm font-bold text-slate-500">
                             {documentItem.customerName}
@@ -7932,6 +8258,16 @@ function QuotesPage({
                             <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-500 shadow-sm">
                               {documentItem.status}
                             </span>
+                            {reminderListLabel && (
+                              <span className="rounded-full bg-rose-100 px-3 py-1 text-xs font-black text-rose-700 shadow-sm">
+                                Mahnstufe: {reminderListLabel}
+                              </span>
+                            )}
+                            {documentItem.documentType === "reminder" && roundMoney(documentItem.reminderSnapshot?.reminderFeeAmount ?? 0) > 0 && (
+                              <span className="rounded-full bg-amber-100 px-3 py-1 text-xs font-black text-amber-700 shadow-sm">
+                                Mahngebühr {formatCurrency(documentItem.reminderSnapshot?.reminderFeeAmount ?? 0)}
+                              </span>
+                            )}
                             {documentItem.documentType === "invoice" &&
                               resolvedPaymentStatus && (
                                 <span
@@ -8053,7 +8389,7 @@ function QuotesPage({
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Kundenvorschau V155
+                  Kundenvorschau V167
                 </p>
                 <h3 className="mt-2 text-2xl font-black tracking-tight">
                   {quoteNumber}
@@ -8379,7 +8715,7 @@ function QuotesPage({
               <div className="-mx-6 -mt-6 mb-6 border-b border-slate-200 bg-slate-50 px-6 py-4 print:hidden">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V155</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V167</p>
                     <p className="mt-1 text-sm font-medium text-slate-600">So wirkt das Dokument später im Druck oder als PDF.</p>
                   </div>
                   <div className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Layout prüfbar</div>
@@ -13081,7 +13417,7 @@ function SettingsPage({
   function exportAppBackup() {
     const payload = {
       app: "PrintPilot",
-      version: "V155",
+      version: "V167",
       exportedAt: new Date().toISOString(),
       data: {
         company,
@@ -13564,7 +13900,7 @@ function SettingsPage({
             <h3 className="mt-5 text-xl font-black">Dokumenttypen</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Jeder Dokumenttyp hat eigene Abstände und Standardtexte. Die
-              Kundenvorschau V155 nutzt den aktiven Dokumenttyp: Angebot,
+              Kundenvorschau V167 nutzt den aktiven Dokumenttyp: Angebot,
               Auftragsbestätigung, Rechnung oder Lieferschein.
             </p>
             <div className="mt-6 grid gap-4 md:grid-cols-[0.8fr_1.2fr]">
@@ -13929,7 +14265,7 @@ function SettingsPage({
 
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-black">Kundenvorschau V155</h3>
+            <h3 className="mt-5 text-xl font-black">Kundenvorschau V167</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Aktive Vorlage: {activeDocumentTemplate.label}
             </p>
@@ -16308,7 +16644,15 @@ function getInvoicePaymentHint(
 
 function getInvoiceOpenAmount(documentItem: SavedDocument) {
   const totals = calculateDocumentTotals(documentItem.positions);
-  const paidAmount = Math.max(Number(documentItem.paymentPaidAmount) || 0, 0);
+
+  if (documentItem.paymentStatus === "Bezahlt" || documentItem.paymentStatus === "Storniert") {
+    return 0;
+  }
+
+  const paidAmount = Math.min(
+    Math.max(Number(documentItem.paymentPaidAmount) || 0, 0),
+    totals.grossTotal,
+  );
 
   return Math.max(totals.grossTotal - paidAmount, 0);
 }
@@ -16405,6 +16749,380 @@ function calculateDocumentTotals(positions: Partial<QuotePosition>[]) {
     vatTotal,
     grossTotal: netTotal + vatTotal,
   };
+}
+
+type ReminderHistoryListItem = ReminderSnapshot & {
+  documentId: string;
+  documentNumber: string;
+};
+
+
+function createReminderTextTemplate({
+  level,
+  levelLabel,
+  invoiceNumber,
+  invoiceGrossAmount,
+  paidAmount,
+  openAmount,
+  reminderFeeAmount = 0,
+  interestAmount = 0,
+  reminderTotalAmount = openAmount,
+  dueDate,
+  overdueDays,
+}: {
+  level: ReminderLevel;
+  levelLabel: string;
+  invoiceNumber?: string;
+  invoiceGrossAmount: number;
+  paidAmount: number;
+  openAmount: number;
+  reminderFeeAmount?: number;
+  interestAmount?: number;
+  reminderTotalAmount?: number;
+  dueDate: string;
+  overdueDays: number;
+}) {
+  const invoiceReference = invoiceNumber
+    ? `Rechnung ${invoiceNumber}`
+    : "die unten aufgeführte Rechnung";
+  const overdueHint = overdueDays > 0
+    ? `Die Forderung ist seit ${overdueDays} Tag(en) fällig.`
+    : "Bitte prüfen Sie die Zahlung innerhalb der unten genannten Frist.";
+
+  const amountBlock = [
+    `Bezug: ${invoiceReference}.`,
+    `Ursprünglicher Rechnungsbetrag: ${formatCurrency(invoiceGrossAmount)}.`,
+    paidAmount > 0 ? `Bereits bezahlt: ${formatCurrency(paidAmount)}.` : "",
+    `Offener Restbetrag: ${formatCurrency(openAmount)}.`,
+    reminderFeeAmount > 0 ? `Mahngebühr: ${formatCurrency(reminderFeeAmount)}.` : "",
+    interestAmount > 0 ? `Verzugszinsen: ${formatCurrency(interestAmount)}.` : "",
+    reminderTotalAmount > openAmount ? `Zu zahlender Gesamtbetrag: ${formatCurrency(reminderTotalAmount)}.` : "",
+    overdueHint,
+    `Neue Zahlungsfrist: ${formatDateGerman(dueDate)}.`,
+  ]
+    .filter(Boolean)
+    .join("\n");
+
+  if (level === 1) {
+    return {
+      textTemplateLabel: "Vorlage Zahlungserinnerung",
+      introText: [
+        "bei der Prüfung unserer Zahlungseingänge ist aufgefallen, dass zu der unten genannten Rechnung noch ein offener Restbetrag besteht.",
+        "Vermutlich handelt es sich um ein Versehen. Bitte gleichen Sie den offenen Betrag innerhalb der angegebenen Frist aus.",
+        amountBlock,
+      ].join("\n\n"),
+      paymentTerms: `Bitte überweisen Sie den Gesamtbetrag von ${formatCurrency(reminderTotalAmount)} bis spätestens ${formatDateGerman(dueDate)}.`,
+      footerText:
+        "Sollte sich Ihre Zahlung mit diesem Schreiben überschnitten haben, betrachten Sie diese Zahlungserinnerung bitte als gegenstandslos.",
+    };
+  }
+
+  if (level === 2) {
+    return {
+      textTemplateLabel: "Vorlage 1. Mahnung",
+      introText: [
+        "trotz Fälligkeit konnten wir zu der unten genannten Rechnung noch keinen vollständigen Zahlungseingang feststellen.",
+        "Wir bitten Sie, den offenen Restbetrag nun innerhalb der gesetzten Frist zu überweisen.",
+        amountBlock,
+      ].join("\n\n"),
+      paymentTerms: `Bitte überweisen Sie den Gesamtbetrag von ${formatCurrency(reminderTotalAmount)} bis spätestens ${formatDateGerman(dueDate)}.`,
+      footerText:
+        "Sollte der Betrag bereits angewiesen worden sein, senden Sie uns bitte kurz den Zahlungsnachweis zu.",
+    };
+  }
+
+  if (level === 3) {
+    return {
+      textTemplateLabel: "Vorlage 2. Mahnung",
+      introText: [
+        "leider ist der offene Restbetrag aus der unten genannten Rechnung weiterhin nicht vollständig ausgeglichen.",
+        "Bitte nehmen Sie die Zahlung umgehend vor. Ohne Zahlungseingang behalten wir uns weitere Schritte ausdrücklich vor.",
+        amountBlock,
+      ].join("\n\n"),
+      paymentTerms: `Der Gesamtbetrag von ${formatCurrency(reminderTotalAmount)} ist bis spätestens ${formatDateGerman(dueDate)} zu zahlen.`,
+      footerText:
+        "Bei Rückfragen oder Unstimmigkeiten melden Sie sich bitte umgehend, damit wir den Vorgang gemeinsam klären können.",
+    };
+  }
+
+  return {
+    textTemplateLabel: "Vorlage Letzte Mahnung",
+    introText: [
+      "wir mahnen den offenen Restbetrag aus der unten genannten Rechnung hiermit letztmalig an.",
+      "Bitte gleichen Sie den offenen Betrag vollständig bis zur genannten Frist aus. Nach fruchtlosem Ablauf behalten wir uns vor, den Vorgang ohne weitere Ankündigung zur weiteren Bearbeitung zu übergeben.",
+      amountBlock,
+    ].join("\n\n"),
+    paymentTerms: `Letzte Zahlungsfrist: ${formatDateGerman(dueDate)}. Zu zahlender Gesamtbetrag: ${formatCurrency(reminderTotalAmount)}.`,
+    footerText:
+      "Sollte die Zahlung bereits erfolgt sein, senden Sie uns bitte umgehend einen Zahlungsnachweis zu.",
+  };
+}
+
+function getReminderLevelLabel(level: ReminderLevel) {
+  switch (level) {
+    case 1:
+      return "Zahlungserinnerung";
+    case 2:
+      return "1. Mahnung";
+    case 3:
+      return "2. Mahnung";
+    case 4:
+      return "Letzte Mahnung";
+    default:
+      return "Mahnung";
+  }
+}
+
+function getReminderLevelFromHistoryCount(count: number): ReminderLevel {
+  if (count <= 0) return 1;
+  if (count === 1) return 2;
+  if (count === 2) return 3;
+  return 4;
+}
+
+function isReminderForInvoice(
+  reminder: SavedDocument,
+  invoiceId: string | null,
+  invoiceNumber: string,
+) {
+  if (reminder.documentType !== "reminder") {
+    return false;
+  }
+
+  if (invoiceId && reminder.sourceDocumentId === invoiceId) {
+    return true;
+  }
+
+  if (!invoiceNumber) {
+    return false;
+  }
+
+  return (
+    reminder.sourceDocumentNumber === invoiceNumber ||
+    reminder.reminderSnapshot?.sourceInvoiceNumber === invoiceNumber
+  );
+}
+
+function getReminderHistoryForInvoice(
+  documents: SavedDocument[],
+  invoiceId: string | null,
+  invoiceNumber: string,
+): ReminderHistoryListItem[] {
+  return documents
+    .filter((documentItem) => isReminderForInvoice(documentItem, invoiceId, invoiceNumber))
+    .sort((a, b) => a.date.localeCompare(b.date) || a.documentNumber.localeCompare(b.documentNumber))
+    .map((documentItem, index) => {
+      const totals = calculateDocumentTotals(documentItem.positions);
+      const inferredLevel = getReminderLevelFromHistoryCount(index);
+      const storedSnapshot = documentItem.reminderSnapshot;
+      const snapshot: ReminderSnapshot = storedSnapshot
+        ? {
+            ...storedSnapshot,
+            level: storedSnapshot.level ?? inferredLevel,
+            levelLabel:
+              storedSnapshot.levelLabel && storedSnapshot.levelLabel !== "Mahnung"
+                ? storedSnapshot.levelLabel
+                : getReminderLevelLabel(storedSnapshot.level ?? inferredLevel),
+          }
+        : {
+            level: inferredLevel,
+            levelLabel: getReminderLevelLabel(inferredLevel),
+            createdDate: documentItem.date,
+            dueDate: documentItem.validUntil,
+            sourceInvoiceId: documentItem.sourceDocumentId,
+            sourceInvoiceNumber: documentItem.sourceDocumentNumber,
+            invoiceGrossAmount: totals.grossTotal,
+            paidAmount: 0,
+            openAmount: totals.grossTotal,
+            reminderFeeAmount: 0,
+            interestAmount: 0,
+            reminderTotalAmount: totals.grossTotal,
+            overdueDays: 0,
+            textTemplateLabel: `Vorlage ${getReminderLevelLabel(inferredLevel)}`,
+          };
+
+      return {
+        ...snapshot,
+        documentId: documentItem.id,
+        documentNumber: documentItem.documentNumber,
+      };
+    });
+}
+
+function getReminderDisplayLabelForDocument(
+  documents: SavedDocument[],
+  reminder: SavedDocument,
+) {
+  if (reminder.documentType !== "reminder") {
+    return undefined;
+  }
+
+  if (
+    reminder.reminderSnapshot?.levelLabel &&
+    reminder.reminderSnapshot.levelLabel !== "Mahnung"
+  ) {
+    return reminder.reminderSnapshot.levelLabel;
+  }
+
+  const sourceInvoiceId = reminder.sourceDocumentId ?? reminder.reminderSnapshot?.sourceInvoiceId ?? null;
+  const sourceInvoiceNumber =
+    reminder.sourceDocumentNumber ?? reminder.reminderSnapshot?.sourceInvoiceNumber ?? "";
+
+  if (sourceInvoiceId || sourceInvoiceNumber) {
+    const invoiceHistory = getReminderHistoryForInvoice(
+      documents,
+      sourceInvoiceId,
+      sourceInvoiceNumber,
+    );
+    const matchingHistoryItem = invoiceHistory.find(
+      (historyItem) => historyItem.documentId === reminder.id,
+    );
+
+    if (matchingHistoryItem?.levelLabel) {
+      return matchingHistoryItem.levelLabel;
+    }
+  }
+
+  const fallbackReminderIndex = documents
+    .filter((documentItem) => documentItem.documentType === "reminder")
+    .sort((a, b) => a.date.localeCompare(b.date) || a.documentNumber.localeCompare(b.documentNumber))
+    .findIndex((documentItem) => documentItem.id === reminder.id);
+
+  return getReminderLevelLabel(getReminderLevelFromHistoryCount(fallbackReminderIndex));
+}
+
+function getNextReminderLevelForInvoice(
+  documents: SavedDocument[],
+  invoiceId: string | null,
+  invoiceNumber: string,
+): ReminderLevel {
+  return getReminderLevelFromHistoryCount(
+    getReminderHistoryForInvoice(documents, invoiceId, invoiceNumber).length,
+  );
+}
+
+function getDefaultReminderFeeAmount(level: ReminderLevel) {
+  switch (level) {
+    case 1:
+      return 0;
+    case 2:
+      return 5;
+    case 3:
+      return 10;
+    case 4:
+      return 15;
+    default:
+      return 0;
+  }
+}
+
+function createReminderFeePositions(
+  level: ReminderLevel,
+  levelLabel: string,
+): QuotePosition[] {
+  const feeAmount = getDefaultReminderFeeAmount(level);
+
+  if (feeAmount <= 0) {
+    return [];
+  }
+
+  return [
+    {
+      id: createLocalId(),
+      title: `Mahngebühr ${levelLabel}`,
+      description:
+        "Optionale Mahngebühr als separate Position. Bei Bedarf kann diese Position vor dem Versand entfernt oder angepasst werden.",
+      quantity: 1,
+      unitPrice: feeAmount,
+      vatRate: 0,
+      internalNote: `Automatisch vorgeschlagene Mahngebühr für ${levelLabel}: ${formatCurrency(feeAmount)}.`,
+    },
+  ];
+}
+
+function createReminderPositionsFromInvoiceRestAmount(
+  invoicePositions: Partial<QuotePosition>[],
+  openGrossAmount: number,
+  invoiceNumber: string,
+): QuotePosition[] {
+  const safeOpenGrossAmount = roundMoney(Math.max(Number(openGrossAmount) || 0, 0));
+
+  if (safeOpenGrossAmount <= 0.01) {
+    return [];
+  }
+
+  const grossSharesByVat = new Map<number, number>();
+
+  invoicePositions.forEach((position) => {
+    const netAmount = calculatePositionNetTotal({
+      quantity: Number(position.quantity) || 0,
+      unitPrice: Number(position.unitPrice) || 0,
+    });
+
+    if (netAmount <= 0) {
+      return;
+    }
+
+    const vatRate = getPositionVatRate(position);
+    const grossAmount = netAmount * (1 + vatRate / 100);
+    grossSharesByVat.set(vatRate, (grossSharesByVat.get(vatRate) ?? 0) + grossAmount);
+  });
+
+  const vatShares = Array.from(grossSharesByVat.entries())
+    .map(([vatRate, grossAmount]) => ({ vatRate, grossAmount }))
+    .filter((item) => item.grossAmount > 0)
+    .sort((a, b) => a.vatRate - b.vatRate);
+
+  const fallbackVatRate = getPositionVatRate(invoicePositions[0] ?? { vatRate: 19 });
+
+  if (vatShares.length === 0) {
+    const netAmount = roundMoney(safeOpenGrossAmount / (1 + fallbackVatRate / 100));
+
+    return [
+      {
+        id: createLocalId(),
+        title: invoiceNumber
+          ? `Offener Restbetrag aus Rechnung ${invoiceNumber}`
+          : "Offener Restbetrag aus Rechnung",
+        description:
+          "Automatisch aus dem offenen Zahlungsbetrag der Ursprungsrechnung berechnet.",
+        quantity: 1,
+        unitPrice: netAmount,
+        vatRate: fallbackVatRate,
+        internalNote: `Mahnposition automatisch erzeugt. Offener Bruttobetrag: ${formatCurrency(safeOpenGrossAmount)}.`,
+      },
+    ];
+  }
+
+  const originalGrossTotal = vatShares.reduce(
+    (sum, item) => sum + item.grossAmount,
+    0,
+  );
+  let assignedGrossAmount = 0;
+
+  return vatShares.map((share, index) => {
+    const isLastShare = index === vatShares.length - 1;
+    const grossAmount = isLastShare
+      ? roundMoney(safeOpenGrossAmount - assignedGrossAmount)
+      : roundMoney(safeOpenGrossAmount * (share.grossAmount / originalGrossTotal));
+
+    assignedGrossAmount = roundMoney(assignedGrossAmount + grossAmount);
+
+    return {
+      id: createLocalId(),
+      title: invoiceNumber
+        ? `Offener Restbetrag aus Rechnung ${invoiceNumber}`
+        : "Offener Restbetrag aus Rechnung",
+      description:
+        vatShares.length > 1
+          ? `Automatisch berechneter offener Restbetrag mit ${formatNumber(share.vatRate)} % MwSt.`
+          : "Automatisch aus dem offenen Zahlungsbetrag der Ursprungsrechnung berechnet.",
+      quantity: 1,
+      unitPrice: roundMoney(grossAmount / (1 + share.vatRate / 100)),
+      vatRate: share.vatRate,
+      internalNote: `Mahnposition automatisch erzeugt. Offener Bruttobetrag: ${formatCurrency(grossAmount)}.`,
+    };
+  });
 }
 
 function createNextCustomerNumber(customers: Customer[]) {

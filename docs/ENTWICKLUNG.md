@@ -646,6 +646,30 @@ Eingebaut:
 
 ---
 
+### V141 – Angebotsliste / Dokumentverwaltung
+
+Eingebaut:
+
+- Angebotsbereich um eine deutlichere Dokumentverwaltung erweitert
+- Liste gespeicherter Angebote und Dokumente sichtbarer aufgebaut
+- Suche nach Nummer, Kunde, Dokumenttyp, Status und Betrag bleibt erhalten
+- Filter nach Dokumenttyp und Status bleiben erhalten
+- neue Schnellübersicht für:
+  - Angebote
+  - Entwürfe
+  - gesendete Dokumente
+  - angenommene Dokumente
+- Schnellfilter per Klick auf die Statuskarten
+- gespeicherte Dokumente können weiterhin geöffnet, dupliziert und gelöscht werden
+- aktueller Dokumententwurf bleibt bearbeitbar
+
+Ziel:
+
+- Angebote und Dokumente später sauber wiederfinden
+- Grundlage für spätere Workflows wie Angebot → Auftrag → Rechnung → Lieferschein
+
+---
+
 ## Aktueller Stand
 
 Aktuelle Version: **V130**
@@ -687,6 +711,19 @@ Diese Punkte sind noch offen oder sollten später geprüft werden:
 ---
 
 ## Geplante nächste Schritte
+
+### V142 – Dokumentstatus und Workflow verbessern
+
+Geplant:
+
+- Statuswechsel direkt in der Dokumentliste
+- klarere Farben für Entwurf / Versendet / Angenommen / Abgelehnt
+- Dokumente archivieren statt direkt löschen
+- später Workflow vorbereiten:
+  - Angebot angenommen → Auftrag erzeugen
+  - Auftrag abgeschlossen → Rechnung erzeugen
+  - Rechnung offen / bezahlt verfolgen
+
 
 ### V141 – Dokumentstatus / Angebotsworkflow
 
@@ -1211,7 +1248,7 @@ Ziel:
 - Bereits vorgedruckte oder im Briefbogen gestaltete Bereiche dürfen nicht doppelt oder unkontrolliert belegt werden.
 - Die Stammdaten sollen später für Angebot, Rechnung, Lieferschein und Auftragsbestätigung gleich funktionieren.
 
-Aktuelle Version: **V140**
+Aktuelle Version: **V141**
 
 ---
 

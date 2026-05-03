@@ -1117,8 +1117,23 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
+      <style>{`
+        @import url("https://fonts.googleapis.com/css2?family=Barlow:wght@400;500;600;700&display=swap");
+
+        :root, body, button, input, select, textarea {
+          font-family: "Barlow", Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        }
+
+        .font-black, .font-extrabold {
+          font-weight: 600 !important;
+        }
+
+        .font-bold {
+          font-weight: 500 !important;
+        }
+      `}</style>
       <div className="fixed right-4 top-4 z-[9999] rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-500/30">
-        V105 aktiv
+        V113 aktiv
       </div>
       <div className="flex min-h-screen">
         <aside className="fixed inset-y-0 left-0 z-20 hidden w-80 flex-col bg-slate-950 text-white shadow-2xl shadow-slate-950/30 lg:flex">
@@ -1170,7 +1185,7 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V105</p>
+              <p className="text-sm font-black">PrintPilot V113</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
                 Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
@@ -1600,6 +1615,29 @@ function CalculatorPage({
   });
 
   const safeItemsPerSheet = Math.max(impositionResult.best.total, 1);
+  const rotatedWouldBeBetter = impositionResult.rotated.total > impositionResult.normal.total;
+  const selectedBecause =
+    impositionResult.best.total <= 0
+      ? "Kein Nutzen möglich – Format, Beschnitt oder Rohbogen prüfen."
+      : impositionResult.best.orientation === "gedreht"
+        ? "Gedrehte Lage bringt den besten Nutzen auf dem Rohbogen."
+        : rotatedWouldBeBetter && !allowRotation
+          ? "Drehung ist gesperrt – normaler Nutzen wird verwendet."
+          : "Normale Lage ist fachlich ausreichend oder gleichwertig."
+  const impositionQuality =
+    impositionResult.best.total <= 0
+      ? "Fehler"
+      : !allowRotation && rotatedWouldBeBetter
+        ? "Prüfen"
+        : impositionResult.best.wastePercent > 45
+          ? "Prüfen"
+          : "OK";
+  const impositionQualityClass =
+    impositionQuality === "OK"
+      ? "bg-emerald-50 text-emerald-700 ring-emerald-200"
+      : impositionQuality === "Fehler"
+        ? "bg-rose-50 text-rose-700 ring-rose-200"
+        : "bg-amber-50 text-amber-700 ring-amber-200";
 
   const brochurePagesPerRawSheet =
     productType === "Broschüre" && calculateAsOpenSpread
@@ -2188,6 +2226,86 @@ function CalculatorPage({
             hint: "Die wichtigsten Plausibilitätsprüfungen sind unauffällig.",
           };
 
+  const calculationStepOverview = [
+    {
+      step: "1",
+      title: "Auftrag",
+      subtitle: "Name & Vorlage",
+      href: "#calc-step-1",
+      accent: "bg-cyan-400",
+      cardClass: "border-cyan-200 bg-cyan-50",
+      textClass: "text-cyan-700",
+      status: productName.trim().length > 0 ? "OK" : "Prüfen",
+      statusClass: productName.trim().length > 0 ? "bg-emerald-500 text-white" : "bg-amber-500 text-white",
+    },
+    {
+      step: "2",
+      title: "Auflage",
+      subtitle: "Menge & Nutzen",
+      href: "#calc-step-2",
+      accent: "bg-fuchsia-500",
+      cardClass: "border-fuchsia-200 bg-fuchsia-50",
+      textClass: "text-fuchsia-700",
+      status: safeQuantity > 0 && safeItemsPerSheet > 0 ? "OK" : "Prüfen",
+      statusClass: safeQuantity > 0 && safeItemsPerSheet > 0 ? "bg-emerald-500 text-white" : "bg-rose-600 text-white",
+    },
+    {
+      step: "3",
+      title: "Produkt",
+      subtitle: "Format & Seiten",
+      href: "#calc-step-3",
+      accent: "bg-yellow-400",
+      cardClass: "border-yellow-200 bg-yellow-50",
+      textClass: "text-yellow-700",
+      status: brochureWarnings.length > 0 ? "Prüfen" : "OK",
+      statusClass: brochureWarnings.length > 0 ? "bg-amber-500 text-white" : "bg-emerald-500 text-white",
+    },
+    {
+      step: "4",
+      title: "Druckteile",
+      subtitle: "Inhalt, Umschlag",
+      href: "#calc-step-4",
+      accent: "bg-emerald-400",
+      cardClass: "border-emerald-200 bg-emerald-50",
+      textClass: "text-emerald-700",
+      status: selectedMaterialItems.length > 0 ? "OK" : "Prüfen",
+      statusClass: selectedMaterialItems.length > 0 ? "bg-emerald-500 text-white" : "bg-rose-600 text-white",
+    },
+    {
+      step: "5",
+      title: "Produktion",
+      subtitle: "Maschine & Druck",
+      href: "#calc-step-5",
+      accent: "bg-sky-500",
+      cardClass: "border-sky-200 bg-sky-50",
+      textClass: "text-sky-700",
+      status: selectedMachine ? "OK" : "Prüfen",
+      statusClass: selectedMachine ? "bg-emerald-500 text-white" : "bg-rose-600 text-white",
+    },
+    {
+      step: "6",
+      title: "Weiterverarbeitung",
+      subtitle: "Finishing",
+      href: "#calc-step-6",
+      accent: "bg-lime-400",
+      cardClass: "border-lime-200 bg-lime-50",
+      textClass: "text-lime-700",
+      status: finishingSelections.length > 0 ? "OK" : "Optional",
+      statusClass: finishingSelections.length > 0 ? "bg-emerald-500 text-white" : "bg-slate-500 text-white",
+    },
+    {
+      step: "7",
+      title: "Preis",
+      subtitle: "Zuschläge & Marge",
+      href: "#calc-step-7",
+      accent: "bg-violet-500",
+      cardClass: "border-violet-200 bg-violet-50",
+      textClass: "text-violet-700",
+      status: sellingPrice >= totalCost && marginPercent >= 10 ? "OK" : "Prüfen",
+      statusClass: sellingPrice >= totalCost && marginPercent >= 10 ? "bg-emerald-500 text-white" : "bg-amber-500 text-white",
+    },
+  ];
+
   const tiers = [250, 500, 1000, 2500, 5000].map((tierQuantity) => {
     const tierScaleFactor = tierQuantity / safeQuantity;
 
@@ -2689,7 +2807,7 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V105
+                Kalkulation V113
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
                 Produkt- und Jobstruktur
@@ -2791,32 +2909,48 @@ function CalculatorPage({
 
           <div className="mt-4 space-y-4">
             <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-7">
-              {[
-                ["1", "Auftrag", "Name & Vorlage", "bg-cyan-400", "border-cyan-200 bg-cyan-50", "text-cyan-700"],
-                ["2", "Auflage", "Menge & Nutzen", "bg-fuchsia-500", "border-fuchsia-200 bg-fuchsia-50", "text-fuchsia-700"],
-                ["3", "Produkt", "Format & Seiten", "bg-yellow-400", "border-yellow-200 bg-yellow-50", "text-yellow-700"],
-                ["4", "Druckteile", "Inhalt, Umschlag", "bg-emerald-400", "border-emerald-200 bg-emerald-50", "text-emerald-700"],
-                ["5", "Produktion", "Maschine & Druck", "bg-sky-500", "border-sky-200 bg-sky-50", "text-sky-700"],
-                ["6", "Weiterverarbeitung", "Finishing", "bg-lime-400", "border-lime-200 bg-lime-50", "text-lime-700"],
-                ["7", "Preis", "Zuschläge & Marge", "bg-violet-500", "border-violet-200 bg-violet-50", "text-violet-700"],
-              ].map(([step, title, subtitle, accent, cardClass, textClass]) => (
-                <div
-                  key={step}
-                  className={`relative overflow-hidden rounded-2xl border p-3 shadow-sm transition hover:-translate-y-0.5 ${cardClass}`}
+              {calculationStepOverview.map((item) => (
+                <a
+                  key={item.step}
+                  href={item.href}
+                  className={`relative overflow-hidden rounded-2xl border p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${item.cardClass}`}
                 >
-                  <span className={`absolute left-0 top-0 h-full w-2 ${accent}`} />
+                  <span className={`absolute left-0 top-0 h-full w-2 ${item.accent}`} />
                   <div className="pl-3">
-                    <span className={`inline-flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black text-white ${accent}`}>
-                      {step}
-                    </span>
-                    <p className="mt-2 text-sm font-black text-slate-950">{title}</p>
-                    <p className={`mt-1 text-xs font-bold ${textClass}`}>{subtitle}</p>
+                    <div className="flex items-center justify-between gap-2">
+                      <span className={`inline-flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black text-white ${item.accent}`}>
+                        {item.step}
+                      </span>
+                      <span className={`rounded-full px-2 py-1 text-[0.62rem] font-black uppercase ${item.statusClass}`}>
+                        {item.status}
+                      </span>
+                    </div>
+                    <p className="mt-2 text-sm font-black text-slate-950">{item.title}</p>
+                    <p className={`mt-1 text-xs font-bold ${item.textClass}`}>{item.subtitle}</p>
                   </div>
-                </div>
+                </a>
               ))}
             </div>
 
-            <details open className="group rounded-3xl border border-cyan-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                    Arbeitsmodus V113
+                  </p>
+                  <p className="mt-1 text-sm font-black text-slate-950">
+                    Schritte anklicken, Abschnitt öffnen, Werte prüfen, weiter zum nächsten Block.
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2 text-[0.68rem] font-black">
+                  <span className="rounded-full bg-emerald-100 px-3 py-1 text-emerald-700">OK</span>
+                  <span className="rounded-full bg-amber-100 px-3 py-1 text-amber-700">Prüfen</span>
+                  <span className="rounded-full bg-slate-200 px-3 py-1 text-slate-600">Optional</span>
+                </div>
+              </div>
+            </div>
+
+            <details id="calc-step-1" open className="group scroll-mt-24 rounded-3xl border border-cyan-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-cyan-400 bg-cyan-50 px-4 py-4 transition hover:bg-cyan-100/70">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-cyan-700">1 · Auftrag / Vorlage</p>
@@ -2864,7 +2998,7 @@ function CalculatorPage({
               </div>
             </details>
 
-            <details className="group rounded-3xl border border-fuchsia-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
+            <details id="calc-step-2" className="group scroll-mt-24 rounded-3xl border border-fuchsia-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-fuchsia-500 bg-fuchsia-50 px-4 py-4 transition hover:bg-fuchsia-100/70">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-fuchsia-700">2 · Auflage</p>
@@ -3007,52 +3141,71 @@ function CalculatorPage({
                     </p>
                   </div>
 
-                  <div className="rounded-2xl bg-emerald-50 px-5 py-3 text-sm font-black text-emerald-700">
-                    Wird automatisch verwendet
+                  <div className={`rounded-2xl px-5 py-3 text-sm font-black ring-1 ${impositionQualityClass}`}>
+                    Status: {impositionQuality}
                   </div>
                 </div>
 
-                <div className="mt-5 grid gap-3 md:grid-cols-3">
-                  <InfoCard
-                    label="Normal"
-                    value={`${impositionResult.normal.columns} × ${impositionResult.normal.rows} = ${impositionResult.normal.total}`}
-                  />
-                  <InfoCard
-                    label="Gedreht"
-                    value={
-                      allowRotation
-                        ? `${impositionResult.rotated.columns} × ${impositionResult.rotated.rows} = ${impositionResult.rotated.total}`
-                        : "nicht erlaubt"
-                    }
-                  />
-                  <InfoCard
-                    label="Bester Nutzen"
-                    value={`${impositionResult.best.total} Nutzen / Bogen`}
-                  />
-                  <InfoCard
-                    label="Ausrichtung"
-                    value={impositionResult.best.orientation}
-                  />
-                  <InfoCard
-                    label="Belegte Fläche"
-                    value={`${impositionResult.best.usedWidth} × ${impositionResult.best.usedHeight} mm`}
-                  />
-                  <InfoCard
-                    label="Restfläche"
-                    value={`${formatNumber(impositionResult.best.wastePercent, 1)} %`}
-                  />
-                  <InfoCard
-                    label="Bogenbedarf"
-                    value={`${Math.ceil(safeQuantity / Math.max(impositionResult.best.total, 1)).toLocaleString("de-DE")} Bogen`}
-                  />
-                  <InfoCard
-                    label="Bundlogik"
-                    value={removeSpineBleed ? "aktiv" : "nicht aktiv"}
-                  />
-                  <InfoCard
-                    label="Bundrichtung"
-                    value={getSpineAxisLabel(impositionResult.best.spineAxis)}
-                  />
+                <div className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1fr)_21rem]">
+                  <div className="grid gap-3 md:grid-cols-3">
+                    <InfoCard
+                      label="Status"
+                      value={impositionQuality}
+                    />
+                    <InfoCard
+                      label="Bester Nutzen"
+                      value={`${impositionResult.best.total} Nutzen / Bogen`}
+                    />
+                    <InfoCard
+                      label="Bogenbedarf"
+                      value={`${Math.ceil(safeQuantity / Math.max(impositionResult.best.total, 1)).toLocaleString("de-DE")} Bogen`}
+                    />
+                    <InfoCard
+                      label="Normal"
+                      value={`${impositionResult.normal.columns} × ${impositionResult.normal.rows} = ${impositionResult.normal.total}`}
+                    />
+                    <InfoCard
+                      label="Gedreht"
+                      value={
+                        allowRotation
+                          ? `${impositionResult.rotated.columns} × ${impositionResult.rotated.rows} = ${impositionResult.rotated.total}`
+                          : "nicht erlaubt"
+                      }
+                    />
+                    <InfoCard
+                      label="Gewählt weil"
+                      value={selectedBecause}
+                    />
+                    <InfoCard
+                      label="Belegte Fläche"
+                      value={`${impositionResult.best.usedWidth} × ${impositionResult.best.usedHeight} mm`}
+                    />
+                    <InfoCard
+                      label="Restfläche"
+                      value={`${formatNumber(impositionResult.best.wastePercent, 1)} %`}
+                    />
+                    <InfoCard
+                      label="Bundrichtung"
+                      value={getSpineAxisLabel(impositionResult.best.spineAxis)}
+                    />
+                  </div>
+
+                  <aside className="xl:sticky xl:top-24">
+                    <ImpositionPreview
+                      sheetWidthMm={selectedRawSheet?.widthMm ?? 0}
+                      sheetHeightMm={selectedRawSheet?.heightMm ?? 0}
+                      finalWidthMm={finalWidthMm}
+                      finalHeightMm={finalHeightMm}
+                      bleedMm={bleedMm}
+                      removeSpineBleed={removeSpineBleed}
+                      calculateAsOpenSpread={calculateAsOpenSpread}
+                      gripperMarginMm={gripperMarginMm}
+                      sheetMarginMm={sheetMarginMm}
+                      gutterHorizontalMm={gutterHorizontalMm}
+                      gutterVerticalMm={gutterVerticalMm}
+                      result={impositionResult}
+                    />
+                  </aside>
                 </div>
 
                 <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-5">
@@ -3139,23 +3292,22 @@ function CalculatorPage({
                         Hinweis: Der beste Nutzen wird nur gedreht erreicht.
                       </p>
                     )}
+
+                    {!allowRotation && rotatedWouldBeBetter && (
+                      <p className="rounded-2xl bg-amber-50 px-4 py-3 text-sm font-bold leading-6 text-amber-700">
+                        Prüfen: Drehung ist gesperrt. Gedreht wären {impositionResult.rotated.total} Nutzen möglich,
+                        aktuell werden {impositionResult.normal.total} Nutzen verwendet.
+                      </p>
+                    )}
+
+                    {impositionResult.best.total > 0 && impositionResult.best.wastePercent > 45 && (
+                      <p className="rounded-2xl bg-amber-50 px-4 py-3 text-sm font-bold leading-6 text-amber-700">
+                        Prüfen: Die Restfläche liegt bei {formatNumber(impositionResult.best.wastePercent, 1)} %.
+                        Eventuell passt ein anderes Rohbogenformat besser.
+                      </p>
+                    )}
                   </div>
                 </div>
-
-                <ImpositionPreview
-                  sheetWidthMm={selectedRawSheet?.widthMm ?? 0}
-                  sheetHeightMm={selectedRawSheet?.heightMm ?? 0}
-                  finalWidthMm={finalWidthMm}
-                  finalHeightMm={finalHeightMm}
-                  bleedMm={bleedMm}
-                  removeSpineBleed={removeSpineBleed}
-                  calculateAsOpenSpread={calculateAsOpenSpread}
-                  gripperMarginMm={gripperMarginMm}
-                  sheetMarginMm={sheetMarginMm}
-                  gutterHorizontalMm={gutterHorizontalMm}
-                  gutterVerticalMm={gutterVerticalMm}
-                  result={impositionResult}
-                />
 
                 {impositionResult.best.total <= 0 && (
                   <p className="mt-4 rounded-2xl bg-rose-50 px-4 py-3 text-sm font-black text-rose-700">
@@ -3170,7 +3322,7 @@ function CalculatorPage({
             </details>
 
             {productType === "Broschüre" && (
-              <details className="group rounded-3xl border border-yellow-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
+              <details id="calc-step-3" className="group scroll-mt-24 rounded-3xl border border-yellow-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
                 <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-yellow-400 bg-yellow-50 px-4 py-4 transition hover:bg-yellow-100/70">
                   <div>
                     <p className="text-xs font-extrabold uppercase tracking-wide text-yellow-700">3 · Produktdaten / Broschüre</p>
@@ -3327,7 +3479,7 @@ function CalculatorPage({
             )}
 
 
-            <details className="group rounded-3xl border border-emerald-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
+            <details id="calc-step-4" className="group scroll-mt-24 rounded-3xl border border-emerald-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-emerald-400 bg-emerald-50 px-4 py-4 transition hover:bg-emerald-100/70">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-emerald-700">4 · Druckteile / Produktstruktur</p>
@@ -3665,7 +3817,7 @@ function CalculatorPage({
               </div>
             </details>
 
-            <details className="group rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
+            <details id="calc-step-5" className="group scroll-mt-24 rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-sky-500 bg-sky-50 px-4 py-4 transition hover:bg-sky-100/70">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-sky-700">5 · Maschine / Druck</p>
@@ -3830,7 +3982,7 @@ function CalculatorPage({
               </div>
             </details>
 
-            <details className="group rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
+            <details id="calc-step-6" className="group scroll-mt-24 rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-lime-400 bg-lime-50 px-4 py-4 transition hover:bg-lime-100/70">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-lime-700">6 · Weiterverarbeitung</p>
@@ -3965,7 +4117,7 @@ function CalculatorPage({
               </div>
             </details>
 
-            <details className="group rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
+            <details id="calc-step-7" className="group scroll-mt-24 rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-violet-500 bg-violet-50 px-4 py-4 transition hover:bg-violet-100/70">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-violet-700">7 · Zuschläge / Preislogik</p>
@@ -4120,7 +4272,7 @@ function CalculatorPage({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Auswertung V105
+                  Auswertung V113
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   Produktionskosten & Preisaufbau
@@ -4272,7 +4424,7 @@ function CalculatorPage({
                 <p
                   className={`text-xs font-extrabold uppercase tracking-wide ${calculationStatusTone.textClass}`}
                 >
-                  Kalkulationsstatus V105
+                  Kalkulationsstatus V113
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   {calculationStatusTone.headline}
@@ -11318,12 +11470,12 @@ function MetricCard({
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0 rounded-2xl bg-slate-50 p-4">
-      <p className="truncate text-xs font-extrabold uppercase tracking-wide text-slate-400">
+      <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
         {label}
       </p>
       <p
         title={value}
-        className="mt-2 truncate text-sm font-black text-slate-700"
+        className="mt-2 whitespace-normal break-words text-sm font-black leading-5 text-slate-700"
       >
         {value}
       </p>
@@ -12581,12 +12733,15 @@ function ImpositionPreview({
 }) {
   const safeSheetWidth = Math.max(Number(sheetWidthMm) || 0, 1);
   const safeSheetHeight = Math.max(Number(sheetHeightMm) || 0, 1);
-  const previewWidth = 540;
-  const previewHeight = Math.max(
-    (previewWidth / safeSheetWidth) * safeSheetHeight,
-    250,
+  const [isPreviewOpen, setIsPreviewOpen] = useState(true);
+  const maxPreviewWidth = 310;
+  const maxPreviewHeight = 260;
+  const scale = Math.min(
+    maxPreviewWidth / safeSheetWidth,
+    maxPreviewHeight / safeSheetHeight,
   );
-  const scale = previewWidth / safeSheetWidth;
+  const previewWidth = Math.max(Math.round(safeSheetWidth * scale), 120);
+  const previewHeight = Math.max(Math.round(safeSheetHeight * scale), 120);
 
   const safeSheetMargin = 0;
   const safeGripperMargin = 0;
@@ -12886,33 +13041,45 @@ function ImpositionPreview({
   }
 
   return (
-    <div className="mt-5 rounded-none border border-slate-300 bg-white p-5">
-      <div className="flex flex-col gap-3 md:flex-row md:items-end md:justify-between">
-        <div>
+    <div className="rounded-2xl border border-slate-200 bg-white/90 p-3 shadow-sm">
+      <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+        <div className="min-w-0">
           <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-            Grafische Bogenvorschau
+            Bogenvorschau rechts V113
           </p>
-          <p className="mt-2 text-sm font-bold leading-6 text-slate-500">
-            Maßstäblich vereinfachte Vorschau: Gelb ist Beschnitt, Weiß ist
-            Endformat. Im Broschürenmodus wird die offene Doppelseite mit Bundlinie
-            dargestellt; Beschnitt liegt nur außen.
+          <p className="mt-1 truncate text-sm font-black text-slate-800">
+            {result.best.columns} × {result.best.rows} Nutzen · {result.best.orientation}
           </p>
+          <p className="mt-1 text-xs font-bold leading-5 text-slate-500">
+            Kompakte technische Vorschau für Rohbogen, Endformat, Beschnitt und Zwischenschnitt.
+          </p>
+          <div className="mt-2 grid grid-cols-2 gap-1.5 text-[10px] font-black text-slate-600">
+            <span className="rounded-lg bg-slate-100 px-2 py-1">Rohbogen {formatNumber(safeSheetWidth, 0)} × {formatNumber(safeSheetHeight, 0)} mm</span>
+            <span className="rounded-lg bg-slate-100 px-2 py-1">Endformat {formatNumber(closedFinalWidth, 0)} × {formatNumber(closedFinalHeight, 0)} mm</span>
+            <span className="rounded-lg bg-amber-100 px-2 py-1">Beschnitt {formatNumber(safeBleed, 1)} mm</span>
+            <span className="rounded-lg bg-pink-100 px-2 py-1">Zwischenschnitt {formatNumber(Math.max(safeGutterHorizontal, safeGutterVertical), 1)} mm</span>
+          </div>
         </div>
 
-        <div className="rounded-2xl bg-white px-4 py-3 text-sm font-black text-slate-700 shadow-sm">
-          {result.best.columns} × {result.best.rows} · {result.best.orientation}
-        </div>
+        <button
+          type="button"
+          onClick={() => setIsPreviewOpen((value) => !value)}
+          className="rounded-xl border border-slate-200 bg-slate-950 px-4 py-2 text-xs font-black uppercase tracking-wide text-white shadow-sm transition hover:bg-slate-800"
+        >
+          {isPreviewOpen ? "Vorschau schließen" : "Vorschau öffnen"}
+        </button>
       </div>
 
-      <div className="mt-5 overflow-x-auto">
-        <svg
-          width={previewWidth}
-          height={previewHeight}
-          viewBox={"0 0 " + previewWidth + " " + previewHeight}
-          className="max-w-full rounded-none bg-white shadow-md"
-          role="img"
-          aria-label="Bogenvorschau"
-        >
+      {isPreviewOpen && (
+        <div className="mt-3 overflow-x-auto rounded-xl bg-slate-50 p-3">
+          <svg
+            width={previewWidth}
+            height={previewHeight}
+            viewBox={"0 0 " + previewWidth + " " + previewHeight}
+            className="mx-auto max-w-full rounded-lg bg-white shadow-sm"
+            role="img"
+            aria-label="Bogenvorschau"
+          >
           <rect
             x="0"
             y="0"
@@ -13124,15 +13291,16 @@ function ImpositionPreview({
               />
             );
           })}
-        </svg>
-      </div>
+          </svg>
 
-      <div className="mt-4 grid gap-3 text-sm font-bold text-slate-600 md:grid-cols-2 xl:grid-cols-4">
-        <p>Gelb: Beschnittbereich</p>
-        <p>Weiß: Endformat</p>
-        <p>Rot/Pink: Zwischenschnitt</p>
-        <p>Schwarz: Bund / Doppelseitenfalz</p>
-      </div>
+          <div className="mt-3 flex flex-wrap gap-2 text-[11px] font-black text-slate-600">
+            <span className="rounded-full bg-amber-100 px-2 py-1">Gelb: Beschnitt</span>
+            <span className="rounded-full bg-white px-2 py-1 ring-1 ring-slate-200">Weiß: Endformat</span>
+            <span className="rounded-full bg-pink-100 px-2 py-1">Pink: Zwischenschnitt</span>
+            <span className="rounded-full bg-slate-100 px-2 py-1">Schwarz: Bund/Falz</span>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

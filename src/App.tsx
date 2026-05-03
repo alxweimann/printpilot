@@ -1117,6 +1117,9 @@ function App() {
 
   return (
     <div className="min-h-screen bg-slate-50 text-slate-950">
+      <div className="fixed right-4 top-4 z-[9999] rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-500/30">
+        V105 aktiv
+      </div>
       <div className="flex min-h-screen">
         <aside className="fixed inset-y-0 left-0 z-20 hidden w-80 flex-col bg-slate-950 text-white shadow-2xl shadow-slate-950/30 lg:flex">
           <div className="border-b border-white/10 px-7 py-7">
@@ -1167,7 +1170,7 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V94</p>
+              <p className="text-sm font-black">PrintPilot V105</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
                 Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
@@ -2059,6 +2062,42 @@ function CalculatorPage({
     }
   });
 
+  if (selectedMaterialItems.length === 0) {
+    calculationWarnings.push({
+      level: "error",
+      title: "Kein Material gewählt",
+      description:
+        "Für die Kalkulation ist kein Material aktiv. Wähle mindestens Inhalt, Umschlag oder ein anderes Druckteil aus.",
+    });
+  }
+
+  if (safeQuantity <= 0) {
+    calculationWarnings.push({
+      level: "error",
+      title: "Auflage fehlt",
+      description:
+        "Die Auflage muss größer als 0 sein, damit Produktionskosten, Stückpreis und Verkaufspreis belastbar berechnet werden können.",
+    });
+  }
+
+  if (sellingPrice < totalCost) {
+    calculationWarnings.push({
+      level: "error",
+      title: "Verkaufspreis unter Selbstkosten",
+      description:
+        "Der Verkaufspreis liegt unter den berechneten Selbstkosten. Der Auftrag wäre in dieser Einstellung nicht kostendeckend.",
+    });
+  }
+
+  if (profit < 0) {
+    calculationWarnings.push({
+      level: "error",
+      title: "Negativer Deckungsbeitrag",
+      description:
+        "Der Deckungsbeitrag ist negativ. Prüfe Material, Maschine, Weiterverarbeitung, Gemeinkosten und Marge.",
+    });
+  }
+
   if (marginPercent < 10) {
     calculationWarnings.push({
       level: "info",
@@ -2099,6 +2138,55 @@ function CalculatorPage({
           ].includes(warning.title),
         )
       : [];
+
+  const criticalCalculationWarnings = calculationWarnings.filter(
+    (warning) => warning.level === "error",
+  );
+  const normalCalculationWarnings = calculationWarnings.filter(
+    (warning) => warning.level === "warning",
+  );
+  const infoCalculationWarnings = calculationWarnings.filter(
+    (warning) => warning.level === "info",
+  );
+  const primaryCalculationMessage =
+    criticalCalculationWarnings[0] ??
+    normalCalculationWarnings[0] ??
+    infoCalculationWarnings[0];
+  const calculationStatusTone = hasCalculationErrors
+    ? {
+        label: "Prüfen",
+        headline: "Kalkulation nicht freigabefähig",
+        panelClass: "border-rose-200 bg-rose-50",
+        textClass: "text-rose-800",
+        badgeClass: "bg-rose-600 text-white",
+        hint: "Bitte die roten Meldungen korrigieren, bevor daraus ein Angebot erstellt wird.",
+      }
+    : calculationWarningCount > 0
+      ? {
+          label: "Achtung",
+          headline: "Kalkulation fachlich prüfen",
+          panelClass: "border-amber-200 bg-amber-50",
+          textClass: "text-amber-800",
+          badgeClass: "bg-amber-500 text-white",
+          hint: "Die Kalkulation ist möglich, sollte aber vor dem Angebot kurz kontrolliert werden.",
+        }
+      : calculationInfoCount > 0
+        ? {
+            label: "Hinweis",
+            headline: "Kalkulation plausibel",
+            panelClass: "border-sky-200 bg-sky-50",
+            textClass: "text-sky-800",
+            badgeClass: "bg-sky-500 text-white",
+            hint: "Es gibt nur Hinweise ohne direkte Sperre für die Kalkulation.",
+          }
+        : {
+            label: "OK",
+            headline: "Kalkulation freigabefähig",
+            panelClass: "border-emerald-200 bg-emerald-50",
+            textClass: "text-emerald-800",
+            badgeClass: "bg-emerald-500 text-white",
+            hint: "Die wichtigsten Plausibilitätsprüfungen sind unauffällig.",
+          };
 
   const tiers = [250, 500, 1000, 2500, 5000].map((tierQuantity) => {
     const tierScaleFactor = tierQuantity / safeQuantity;
@@ -2601,7 +2689,7 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V99
+                Kalkulation V105
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
                 Produkt- und Jobstruktur
@@ -3242,7 +3330,7 @@ function CalculatorPage({
             <details className="group rounded-3xl border border-emerald-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
               <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-emerald-400 bg-emerald-50 px-4 py-4 transition hover:bg-emerald-100/70">
                 <div>
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-emerald-700">4 · Druckteile / Produktstruktur V103</p>
+                  <p className="text-xs font-extrabold uppercase tracking-wide text-emerald-700">4 · Druckteile / Produktstruktur</p>
                   <p className="mt-1 text-sm font-black text-slate-950">{selectedMaterialItems.length} Druckteil(e) · {formatCurrency(materialCost)}</p>
                   <p className="mt-1 text-xs font-bold text-emerald-900">Kompakte Übersicht, Details per Aufklappen.</p>
                 </div>
@@ -3254,7 +3342,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-emerald-700">
-                    4 · Druckteile / Produktstruktur V103
+                    4 · Druckteile / Produktstruktur
                   </p>
                   <h4 className="mt-2 text-lg font-black text-slate-950">
                     Kompakte Druckteilkarten
@@ -3975,20 +4063,38 @@ function CalculatorPage({
 
               <div className="mt-6 grid grid-cols-2 gap-3">
                 <div className="rounded-2xl bg-white/10 p-4">
-                  <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
+                  <p className="text-[0.68rem] font-bold uppercase tracking-wide text-slate-400">
+                    Produktionskosten
+                  </p>
+                  <p className="mt-2 text-base font-black">
+                    {formatCurrency(directCost)}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl bg-white/10 p-4">
+                  <p className="text-[0.68rem] font-bold uppercase tracking-wide text-slate-400">
                     Selbstkosten
                   </p>
-                  <p className="mt-2 text-lg font-black">
+                  <p className="mt-2 text-base font-black">
                     {formatCurrency(totalCost)}
                   </p>
                 </div>
 
                 <div className="rounded-2xl bg-emerald-400/15 p-4 text-emerald-200">
-                  <p className="text-xs font-bold uppercase tracking-wide text-emerald-300">
-                    Ertrag
+                  <p className="text-[0.68rem] font-bold uppercase tracking-wide text-emerald-300">
+                    Deckungsbeitrag
                   </p>
-                  <p className="mt-2 text-lg font-black">
+                  <p className="mt-2 text-base font-black">
                     {formatCurrency(profit)}
+                  </p>
+                </div>
+
+                <div className="rounded-2xl bg-cyan-400/15 p-4 text-cyan-100">
+                  <p className="text-[0.68rem] font-bold uppercase tracking-wide text-cyan-200">
+                    DB-Anteil
+                  </p>
+                  <p className="mt-2 text-base font-black">
+                    {formatNumber((profit / Math.max(sellingPrice, 0.01)) * 100, 1)} %
                   </p>
                 </div>
               </div>
@@ -4014,13 +4120,13 @@ function CalculatorPage({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Produktionskosten V99
+                  Auswertung V105
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
-                  Preisaufbau auf einen Blick
+                  Produktionskosten & Preisaufbau
                 </h3>
                 <p className="mt-1 text-sm font-bold leading-6 text-slate-500">
-                  Erst Produktionskosten, dann Gemeinkosten, Selbstkosten, Deckungsbeitrag und Verkaufspreis.
+                  Rechts siehst du jetzt zuerst das Ergebnis, dann die echten Produktionskosten und darunter die Preisbrücke bis zum Netto-Verkaufspreis.
                 </p>
               </div>
               <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
@@ -4028,7 +4134,16 @@ function CalculatorPage({
               </span>
             </div>
 
-            <div className="mt-5 grid grid-cols-3 gap-2">
+            <div className="mt-5 flex items-center justify-between gap-3">
+              <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                Produktionskosten
+              </p>
+              <p className="text-xs font-black text-slate-500">
+                {formatCurrency(directCost)} gesamt
+              </p>
+            </div>
+
+            <div className="mt-3 grid grid-cols-3 gap-2">
               {productionCostSections.map((section) => {
                 const percent = (section.value / section.percentBase) * 100;
 
@@ -4118,9 +4233,14 @@ function CalculatorPage({
             </div>
 
             <div className="mt-5 rounded-3xl bg-slate-950 p-4 text-white">
-              <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                Preisbrücke
-              </p>
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                  Preisbrücke
+                </p>
+                <p className="text-xs font-black text-slate-400">
+                  Netto-Aufbau
+                </p>
+              </div>
               <div className="mt-4 space-y-2">
                 {priceBridgeItems.map((item, index) => (
                   <div
@@ -4145,105 +4265,178 @@ function CalculatorPage({
           </div>
 
           <div
-            className={`rounded-[2rem] border p-5 shadow-sm ${
-              hasCalculationErrors
-                ? "border-rose-200 bg-rose-50"
-                : calculationWarningCount > 0
-                  ? "border-amber-200 bg-amber-50"
-                  : calculationInfoCount > 0
-                    ? "border-sky-200 bg-sky-50"
-                    : "border-emerald-200 bg-emerald-50"
-            }`}
+            className={`rounded-[2rem] border p-5 shadow-sm ${calculationStatusTone.panelClass}`}
           >
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p
-                  className={`text-xs font-extrabold uppercase tracking-wide ${
-                    hasCalculationErrors
-                      ? "text-rose-700"
-                      : calculationWarningCount > 0
-                        ? "text-amber-700"
-                        : calculationInfoCount > 0
-                          ? "text-sky-700"
-                          : "text-emerald-700"
-                  }`}
+                  className={`text-xs font-extrabold uppercase tracking-wide ${calculationStatusTone.textClass}`}
                 >
-                  Kalkulationsstatus
+                  Kalkulationsstatus V105
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
-                  {calculationWarnings.length === 0
-                    ? "Alles plausibel"
-                    : `${calculationWarnings.length} Meldung${
-                        calculationWarnings.length === 1 ? "" : "en"
-                      }`}
+                  {calculationStatusTone.headline}
                 </h3>
+                <p className="mt-2 text-sm font-bold leading-6 text-slate-600">
+                  {calculationStatusTone.hint}
+                </p>
               </div>
 
-              <div className="flex shrink-0 flex-wrap justify-end gap-1 text-xs font-black">
-                {calculationErrorCount > 0 && (
-                  <span className="rounded-full bg-rose-600 px-2 py-1 text-white">
-                    {calculationErrorCount} Fehler
-                  </span>
-                )}
-                {calculationWarningCount > 0 && (
-                  <span className="rounded-full bg-amber-500 px-2 py-1 text-white">
-                    {calculationWarningCount} Warnung
-                  </span>
-                )}
-                {calculationInfoCount > 0 && (
-                  <span className="rounded-full bg-sky-500 px-2 py-1 text-white">
-                    {calculationInfoCount} Info
-                  </span>
-                )}
+              <div className="flex shrink-0 flex-col items-end gap-2">
+                <span
+                  className={`rounded-full px-3 py-1 text-xs font-black ${calculationStatusTone.badgeClass}`}
+                >
+                  {calculationStatusTone.label}
+                </span>
+                <div className="flex flex-wrap justify-end gap-1 text-[0.68rem] font-black">
+                  {calculationErrorCount > 0 && (
+                    <span className="rounded-full bg-rose-600 px-2 py-1 text-white">
+                      {calculationErrorCount} Fehler
+                    </span>
+                  )}
+                  {calculationWarningCount > 0 && (
+                    <span className="rounded-full bg-amber-500 px-2 py-1 text-white">
+                      {calculationWarningCount} Warnung
+                    </span>
+                  )}
+                  {calculationInfoCount > 0 && (
+                    <span className="rounded-full bg-sky-500 px-2 py-1 text-white">
+                      {calculationInfoCount} Hinweis
+                    </span>
+                  )}
+                </div>
               </div>
             </div>
 
-            {calculationWarnings.length > 0 ? (
-              <div className="mt-4 space-y-3">
-                <div className="rounded-2xl bg-white px-4 py-3 shadow-sm">
-                  <p
-                    className={`text-sm font-black ${
-                      calculationWarnings[0].level === "error"
-                        ? "text-rose-800"
-                        : calculationWarnings[0].level === "warning"
-                          ? "text-yellow-900"
-                          : "text-sky-800"
+            {primaryCalculationMessage ? (
+              <div className="mt-4 rounded-2xl bg-white px-4 py-3 shadow-sm">
+                <div className="flex items-start justify-between gap-3">
+                  <div>
+                    <p
+                      className={`text-sm font-black ${
+                        primaryCalculationMessage.level === "error"
+                          ? "text-rose-800"
+                          : primaryCalculationMessage.level === "warning"
+                            ? "text-amber-800"
+                            : "text-sky-800"
+                      }`}
+                    >
+                      {primaryCalculationMessage.title}
+                    </p>
+                    <p className="mt-1 text-sm font-bold leading-6 text-slate-600">
+                      {primaryCalculationMessage.description}
+                    </p>
+                  </div>
+                  <span
+                    className={`shrink-0 rounded-full px-2 py-1 text-[0.65rem] font-black uppercase ${
+                      primaryCalculationMessage.level === "error"
+                        ? "bg-rose-100 text-rose-700"
+                        : primaryCalculationMessage.level === "warning"
+                          ? "bg-amber-100 text-amber-700"
+                          : "bg-sky-100 text-sky-700"
                     }`}
                   >
-                    {calculationWarnings[0].title}
-                  </p>
-                  <p className="mt-1 text-sm font-bold leading-6 text-slate-600">
-                    {calculationWarnings[0].description}
-                  </p>
+                    {primaryCalculationMessage.level === "error"
+                      ? "Fehler"
+                      : primaryCalculationMessage.level === "warning"
+                        ? "Warnung"
+                        : "Hinweis"}
+                  </span>
                 </div>
-
-                {calculationWarnings.length > 1 && (
-                  <details className="rounded-2xl bg-white/70 px-4 py-3 text-sm font-bold text-slate-700">
-                    <summary className="cursor-pointer font-black">
-                      Alle Meldungen anzeigen
-                    </summary>
-                    <div className="mt-3 space-y-3">
-                      {calculationWarnings.slice(1).map((warning, index) => (
-                        <div
-                          key={`${warning.title}-${index}`}
-                          className="border-t border-slate-200 pt-3"
-                        >
-                          <p className="font-black text-slate-950">
-                            {warning.title}
-                          </p>
-                          <p className="mt-1 leading-6 text-slate-600">
-                            {warning.description}
-                          </p>
-                        </div>
-                      ))}
-                    </div>
-                  </details>
-                )}
               </div>
+            ) : null}
+
+            {calculationWarnings.length > 0 ? (
+              <details className="mt-4 rounded-2xl bg-white/80 px-4 py-3 text-sm font-bold text-slate-700 shadow-sm">
+                <summary className="cursor-pointer font-black text-slate-950">
+                  Alle Prüfungen anzeigen
+                </summary>
+                <div className="mt-4 space-y-4">
+                  {criticalCalculationWarnings.length > 0 && (
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-wide text-rose-700">
+                        Muss korrigiert werden
+                      </p>
+                      <div className="mt-2 space-y-2">
+                        {criticalCalculationWarnings.map((warning, index) => (
+                          <div
+                            key={`${warning.title}-critical-${index}`}
+                            className="rounded-2xl border border-rose-100 bg-rose-50 px-3 py-2"
+                          >
+                            <p className="font-black text-rose-900">
+                              {warning.title}
+                            </p>
+                            <p className="mt-1 leading-6 text-slate-600">
+                              {warning.description}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {normalCalculationWarnings.length > 0 && (
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-wide text-amber-700">
+                        Fachlich prüfen
+                      </p>
+                      <div className="mt-2 space-y-2">
+                        {normalCalculationWarnings.map((warning, index) => (
+                          <div
+                            key={`${warning.title}-warning-${index}`}
+                            className="rounded-2xl border border-amber-100 bg-amber-50 px-3 py-2"
+                          >
+                            <p className="font-black text-amber-900">
+                              {warning.title}
+                            </p>
+                            <p className="mt-1 leading-6 text-slate-600">
+                              {warning.description}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+
+                  {infoCalculationWarnings.length > 0 && (
+                    <div>
+                      <p className="text-xs font-black uppercase tracking-wide text-sky-700">
+                        Hinweise
+                      </p>
+                      <div className="mt-2 space-y-2">
+                        {infoCalculationWarnings.map((warning, index) => (
+                          <div
+                            key={`${warning.title}-info-${index}`}
+                            className="rounded-2xl border border-sky-100 bg-sky-50 px-3 py-2"
+                          >
+                            <p className="font-black text-sky-900">
+                              {warning.title}
+                            </p>
+                            <p className="mt-1 leading-6 text-slate-600">
+                              {warning.description}
+                            </p>
+                          </div>
+                        ))}
+                      </div>
+                    </div>
+                  )}
+                </div>
+              </details>
             ) : (
-              <p className="mt-3 text-sm font-bold leading-6 text-emerald-800">
-                Die wichtigsten Plausibilitätsprüfungen sind unauffällig.
-              </p>
+              <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-black text-emerald-800">
+                <div className="rounded-2xl bg-white/80 px-3 py-2 shadow-sm">
+                  Nutzen möglich
+                </div>
+                <div className="rounded-2xl bg-white/80 px-3 py-2 shadow-sm">
+                  Preis über Selbstkosten
+                </div>
+                <div className="rounded-2xl bg-white/80 px-3 py-2 shadow-sm">
+                  Material geprüft
+                </div>
+                <div className="rounded-2xl bg-white/80 px-3 py-2 shadow-sm">
+                  DB plausibel
+                </div>
+              </div>
             )}
           </div>
 

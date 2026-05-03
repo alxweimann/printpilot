@@ -137,6 +137,9 @@ type SavedDocument = {
   paymentTerms: string;
   positions: QuotePosition[];
   status: DocumentStatus;
+  sentDate?: string;
+  acceptedDate?: string;
+  rejectionReason?: string;
   paymentStatus?: PaymentStatus;
   paymentDueDate?: string;
   paymentPaidDate?: string;
@@ -1203,7 +1206,7 @@ function App() {
         }
       `}</style>
       <div className="fixed right-4 top-4 z-[9999] rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-500/30">
-        V146 aktiv
+        V147 aktiv
       </div>
       <DeleteConfirmationModal />
       <AppActionDialogModal />
@@ -1257,7 +1260,7 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V146</p>
+              <p className="text-sm font-black">PrintPilot V147</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
                 Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
@@ -3014,7 +3017,7 @@ function CalculatorPage({
       unitPrice: roundMoney(unitPrice),
       vatRate: 19,
       internalNote: [
-        `Quelle: Kalkulation V146`,
+        `Quelle: Kalkulation V147`,
         `Interne Kalkulation`,
         `Maschine: ${selectedMachine.name}`,
         `Druckbogen: ${totalSheets.toLocaleString("de-DE")}`,
@@ -3038,7 +3041,7 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V146
+                Kalkulation V147
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
                 Produkt- und Jobstruktur
@@ -4548,7 +4551,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V146</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V147</p>
                 <p className="mt-1 text-sm font-medium text-slate-300">wichtigster Preisblock bleibt offen</p>
               </div>
               <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200 group-open:hidden">Aufklappen</span>
@@ -4643,7 +4646,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] border border-emerald-200 bg-emerald-50 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V146</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V147</p>
                 <p className="mt-1 text-sm font-medium text-emerald-950">Kalkulation ist bereit für eine Angebotsposition</p>
               </div>
               <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm group-open:hidden">Aufklappen</span>
@@ -4692,7 +4695,7 @@ function CalculatorPage({
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V146</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V147</p>
                 <p className="mt-1 text-sm font-medium text-slate-600">{calculationStatusTone.headline}</p>
               </div>
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${calculationStatusTone.badgeClass}`}>
@@ -4705,7 +4708,7 @@ function CalculatorPage({
                 <p
                   className={`text-xs font-extrabold uppercase tracking-wide ${calculationStatusTone.textClass}`}
                 >
-                  Kalkulationsstatus V146
+                  Kalkulationsstatus V147
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   {calculationStatusTone.headline}
@@ -4877,7 +4880,7 @@ function CalculatorPage({
           <details className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V146</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V147</p>
                 <p className="mt-1 text-sm font-medium text-slate-500">Produktionskosten und Preisaufbau</p>
               </div>
               <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:hidden">Aufklappen</span>
@@ -4887,7 +4890,7 @@ function CalculatorPage({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Auswertung V146
+                  Auswertung V147
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   Produktionskosten & Preisaufbau
@@ -5003,7 +5006,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Produktionskosten V146
+                    Produktionskosten V147
                   </p>
                   <h4 className="mt-1 text-base font-semibold text-slate-950">
                     Detaillierte Kostenaufschlüsselung
@@ -5317,6 +5320,9 @@ function QuotesPage({
   >(null);
   const [documentStatus, setDocumentStatus] =
     useState<DocumentStatus>("Entwurf");
+  const [documentSentDate, setDocumentSentDate] = useState("");
+  const [documentAcceptedDate, setDocumentAcceptedDate] = useState("");
+  const [documentRejectionReason, setDocumentRejectionReason] = useState("");
   const [paymentStatus, setPaymentStatus] = useState<PaymentStatus>("Offen");
   const [paymentDueDate, setPaymentDueDate] = useState(() =>
     addDaysIso("2026-05-01", 14),
@@ -5583,6 +5589,41 @@ function QuotesPage({
     (item) => item.id === selectedServiceItemId,
   );
   const isDeliveryNote = activeBusinessDocumentType === "deliveryNote";
+  const documentStatusTone = getDocumentStatusTone(documentStatus);
+  const documentStatusHint = getDocumentStatusHint(documentStatus, documentSentDate, documentAcceptedDate, documentRejectionReason);
+
+  function handleDocumentStatusChange(nextStatus: DocumentStatus) {
+    const today = todayIso();
+
+    setDocumentStatus(nextStatus);
+
+    if (nextStatus === "Versendet" && !documentSentDate) {
+      setDocumentSentDate(today);
+    }
+
+    if (nextStatus === "Angenommen" && !documentAcceptedDate) {
+      setDocumentAcceptedDate(today);
+    }
+
+    if (nextStatus !== "Abgelehnt") {
+      setDocumentRejectionReason("");
+    }
+
+    const dateHint =
+      nextStatus === "Versendet"
+        ? `Sendedatum: ${formatDateGerman(documentSentDate || today)}`
+        : nextStatus === "Angenommen"
+          ? `Annahmedatum: ${formatDateGerman(documentAcceptedDate || today)}`
+          : nextStatus === "Abgelehnt"
+            ? "Optional kannst du unten einen Ablehnungsgrund erfassen."
+            : "Der Dokumentstatus wurde aktualisiert.";
+
+    showAppDialog(
+      "Status geändert",
+      `${activeBusinessDocumentLabel} ${quoteNumber} steht jetzt auf „${nextStatus}”.\n${dateHint}`,
+      nextStatus === "Abgelehnt" ? "warning" : nextStatus === "Entwurf" ? "info" : "success",
+    );
+  }
 
   function addQuotePosition() {
     setQuotePositions((current) => [
@@ -5777,6 +5818,9 @@ function QuotesPage({
   function handleCreateOrderConfirmation() {
     setActiveSavedDocumentId(null);
     setDocumentStatus("Entwurf");
+    setDocumentSentDate("");
+    setDocumentAcceptedDate("");
+    setDocumentRejectionReason("");
     handleSwitchBusinessDocumentType("orderConfirmation");
     handleCreateNextDocumentNumber("orderConfirmation", { silent: true });
     showAppDialog(
@@ -5789,6 +5833,9 @@ function QuotesPage({
   function handleCreateInvoice() {
     setActiveSavedDocumentId(null);
     setDocumentStatus("Entwurf");
+    setDocumentSentDate("");
+    setDocumentAcceptedDate("");
+    setDocumentRejectionReason("");
     setPaymentStatus("Offen");
     setPaymentDueDate(addDaysIso(quoteDate, 14));
     setPaymentPaidDate("");
@@ -5805,6 +5852,9 @@ function QuotesPage({
   function handleCreateDeliveryNote() {
     setActiveSavedDocumentId(null);
     setDocumentStatus("Entwurf");
+    setDocumentSentDate("");
+    setDocumentAcceptedDate("");
+    setDocumentRejectionReason("");
     handleSwitchBusinessDocumentType("deliveryNote");
     handleCreateNextDocumentNumber("deliveryNote", { silent: true });
     showAppDialog(
@@ -5823,6 +5873,9 @@ function QuotesPage({
 
     setActiveSavedDocumentId(null);
     setDocumentStatus("Entwurf");
+    setDocumentSentDate("");
+    setDocumentAcceptedDate("");
+    setDocumentRejectionReason("");
     setPaymentStatus("Offen");
     setPaymentDueDate(reminderDueDate);
     setPaymentPaidDate("");
@@ -5853,6 +5906,9 @@ function QuotesPage({
   function handleBackToQuote() {
     setActiveSavedDocumentId(null);
     setDocumentStatus("Entwurf");
+    setDocumentSentDate("");
+    setDocumentAcceptedDate("");
+    setDocumentRejectionReason("");
     setPaymentStatus("Offen");
     setPaymentDueDate(addDaysIso(quoteDate, 14));
     setPaymentPaidDate("");
@@ -5890,6 +5946,9 @@ function QuotesPage({
       paymentTerms,
       positions: normalizeQuotePositions(quotePositions),
       status: documentStatus,
+      sentDate: documentSentDate || undefined,
+      acceptedDate: documentAcceptedDate || undefined,
+      rejectionReason: documentRejectionReason || undefined,
       paymentStatus:
         activeBusinessDocumentType === "invoice" ? paymentStatus : undefined,
       paymentDueDate:
@@ -5953,6 +6012,9 @@ function QuotesPage({
     setDeliveryTerms(documentItem.deliveryTerms);
     setPaymentTerms(documentItem.paymentTerms);
     setDocumentStatus(documentItem.status);
+    setDocumentSentDate(documentItem.sentDate ?? "");
+    setDocumentAcceptedDate(documentItem.acceptedDate ?? "");
+    setDocumentRejectionReason(documentItem.rejectionReason ?? "");
     setPaymentStatus(documentItem.paymentStatus ?? "Offen");
     setPaymentDueDate(
       documentItem.paymentDueDate ?? addDaysIso(documentItem.date, 14),
@@ -5969,6 +6031,9 @@ function QuotesPage({
       id: createLocalId(),
       documentNumber: `${documentItem.documentNumber}-KOPIE`,
       status: "Entwurf",
+      sentDate: undefined,
+      acceptedDate: undefined,
+      rejectionReason: undefined,
       paymentStatus:
         documentItem.documentType === "invoice" ? "Offen" : undefined,
       paymentDueDate:
@@ -6203,7 +6268,7 @@ function QuotesPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-yellow-300">
-                Angebote V146
+                Angebote V147
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 Angebotsvorschau erstellen
@@ -6236,7 +6301,7 @@ function QuotesPage({
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-              Angebotsbereich V146
+              Angebotsbereich V147
             </div>
             <h3 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950">
               Angebotsentwurf & Kundenvorschau
@@ -6252,10 +6317,10 @@ function QuotesPage({
               <p className="mt-1 truncate text-lg font-semibold text-slate-950">{activeBusinessDocumentLabel}</p>
               <p className="mt-1 text-sm font-medium text-slate-500">{quoteNumber}</p>
             </div>
-            <div className="rounded-3xl bg-emerald-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Status</p>
-              <p className="mt-1 text-lg font-semibold text-emerald-900">{documentStatus}</p>
-              <p className="mt-1 text-sm font-medium text-emerald-700">{activeSavedDocumentId ? "gespeichert" : "Entwurf offen"}</p>
+            <div className={`rounded-3xl p-4 ${documentStatusTone.panelClass}`}>
+              <p className={`text-xs font-semibold uppercase tracking-wide ${documentStatusTone.labelClass}`}>Status</p>
+              <p className={`mt-1 text-lg font-semibold ${documentStatusTone.valueClass}`}>{documentStatus}</p>
+              <p className={`mt-1 text-sm font-medium ${documentStatusTone.hintClass}`}>{documentStatusHint}</p>
             </div>
             <div className={`rounded-3xl p-4 ${showLetterhead ? "bg-cyan-50" : "bg-slate-50"}`}>
               <p className={`text-xs font-semibold uppercase tracking-wide ${showLetterhead ? "text-cyan-700" : "text-slate-400"}`}>Briefbogen</p>
@@ -6316,9 +6381,34 @@ function QuotesPage({
           </button>
         </div>
 
+        <div className="mt-4 rounded-3xl border border-slate-200 bg-slate-50 p-4">
+          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Statuswechsel V147</p>
+              <p className="mt-1 text-sm font-medium text-slate-600">Setzt den Dokumentstatus mit App-Meldung. Bei „Versendet” und „Angenommen” wird automatisch ein Datum vorbereitet.</p>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              {(["Entwurf", "Versendet", "Angenommen", "Abgelehnt"] as DocumentStatus[]).map((status) => (
+                <button
+                  key={status}
+                  type="button"
+                  onClick={() => handleDocumentStatusChange(status)}
+                  className={`rounded-2xl px-4 py-2 text-xs font-semibold shadow-sm ring-1 transition hover:-translate-y-0.5 ${
+                    documentStatus === status
+                      ? getDocumentStatusTone(status).buttonActiveClass
+                      : "bg-white text-slate-600 ring-slate-200 hover:bg-slate-100"
+                  }`}
+                >
+                  {status}
+                </button>
+              ))}
+            </div>
+          </div>
+        </div>
+
         <div className="mt-6 grid gap-3 md:grid-cols-3">
           <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Nummernkreis V146</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Nummernkreis V147</p>
             <p className="mt-2 text-base font-semibold text-amber-950">{numberCircleSettings[activeBusinessDocumentType].prefix}-{new Date().getFullYear()}-{String(numberCircleSettings[activeBusinessDocumentType].nextNumber).padStart(numberCircleSettings[activeBusinessDocumentType].padding, "0")}</p>
             <p className="mt-1 text-sm font-medium text-amber-800">nächste freie Nummer</p>
           </div>
@@ -6341,7 +6431,7 @@ function QuotesPage({
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-yellow-300 via-fuchsia-500 to-cyan-400" />
             <h3 className="mt-5 text-xl font-black">Dokumentkopf</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
-              Kundenauswahl und Stammdaten für die Kundenvorschau V146.
+              Kundenauswahl und Stammdaten für die Kundenvorschau V147.
             </p>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -6427,12 +6517,38 @@ function QuotesPage({
               <SelectField
                 label="Status"
                 value={documentStatus}
-                onChange={(value) => setDocumentStatus(value as DocumentStatus)}
+                onChange={(value) => handleDocumentStatusChange(value as DocumentStatus)}
                 options={documentStatusOptions.map((status) => ({
                   value: status,
                   label: status,
                 }))}
               />
+              {(documentStatus === "Versendet" || documentSentDate) && (
+                <InputField
+                  label="Sendedatum"
+                  value={documentSentDate}
+                  onChange={setDocumentSentDate}
+                />
+              )}
+              {(documentStatus === "Angenommen" || documentAcceptedDate) && (
+                <InputField
+                  label="Angenommen am"
+                  value={documentAcceptedDate}
+                  onChange={setDocumentAcceptedDate}
+                />
+              )}
+              {documentStatus === "Abgelehnt" && (
+                <label className="block md:col-span-2">
+                  <span className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ablehnungsgrund optional</span>
+                  <textarea
+                    value={documentRejectionReason}
+                    onChange={(event) => setDocumentRejectionReason(event.target.value)}
+                    rows={3}
+                    className="mt-2 w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 outline-none transition focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100"
+                    placeholder="z. B. Preis, Termin, Kunde hat Auftrag verschoben ..."
+                  />
+                </label>
+              )}
             </div>
 
             {selectedCustomer && (
@@ -6655,7 +6771,7 @@ function QuotesPage({
             <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
               <div>
                 <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 to-sky-500" />
-                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen V146</h3>
+                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen V147</h3>
                 <p className="mt-1 text-sm font-medium leading-6 text-slate-500">
                   Positionen sind jetzt als klare Bearbeitungskarten aufgebaut. Titel, Beschreibung, Menge,
                   Einzelpreis und MwSt. ändern die Angebotsvorschau sofort.
@@ -6919,7 +7035,7 @@ function QuotesPage({
         <div className="space-y-6">
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-semibold tracking-tight">Angebotsliste / Dokumentverwaltung V146</h3>
+            <h3 className="mt-5 text-xl font-semibold tracking-tight">Angebotsliste / Dokumentverwaltung V147</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Gespeicherte Angebote und Dokumente suchen, filtern, öffnen, duplizieren oder löschen. Status, Kunde, Nummer und Betrag sind direkt sichtbar.
             </p>
@@ -7213,7 +7329,7 @@ function QuotesPage({
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Kundenvorschau V146
+                  Kundenvorschau V147
                 </p>
                 <h3 className="mt-2 text-2xl font-black tracking-tight">
                   {quoteNumber}
@@ -7531,7 +7647,7 @@ function QuotesPage({
               <div className="-mx-6 -mt-6 mb-6 border-b border-slate-200 bg-slate-50 px-6 py-4 print:hidden">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V146</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V147</p>
                     <p className="mt-1 text-sm font-medium text-slate-600">So wirkt das Dokument später im Druck oder als PDF.</p>
                   </div>
                   <div className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Layout prüfbar</div>
@@ -12219,7 +12335,7 @@ function SettingsPage({
   function exportAppBackup() {
     const payload = {
       app: "PrintPilot",
-      version: "V146",
+      version: "V147",
       exportedAt: new Date().toISOString(),
       data: {
         company,
@@ -12702,7 +12818,7 @@ function SettingsPage({
             <h3 className="mt-5 text-xl font-black">Dokumenttypen</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Jeder Dokumenttyp hat eigene Abstände und Standardtexte. Die
-              Kundenvorschau V146 nutzt den aktiven Dokumenttyp: Angebot,
+              Kundenvorschau V147 nutzt den aktiven Dokumenttyp: Angebot,
               Auftragsbestätigung, Rechnung oder Lieferschein.
             </p>
             <div className="mt-6 grid gap-4 md:grid-cols-[0.8fr_1.2fr]">
@@ -13067,7 +13183,7 @@ function SettingsPage({
 
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-black">Kundenvorschau V146</h3>
+            <h3 className="mt-5 text-xl font-black">Kundenvorschau V147</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Aktive Vorlage: {activeDocumentTemplate.label}
             </p>
@@ -15557,6 +15673,78 @@ function createNextCustomerNumber(customers: Customer[]) {
   }, 10000);
 
   return `KD-${highestNumber + 1}`;
+}
+
+function getDocumentStatusTone(status: DocumentStatus) {
+  switch (status) {
+    case "Versendet":
+      return {
+        panelClass: "bg-cyan-50",
+        labelClass: "text-cyan-700",
+        valueClass: "text-cyan-950",
+        hintClass: "text-cyan-700",
+        buttonActiveClass: "bg-cyan-500 text-white ring-cyan-500",
+      };
+    case "Angenommen":
+    case "Bezahlt":
+      return {
+        panelClass: "bg-emerald-50",
+        labelClass: "text-emerald-700",
+        valueClass: "text-emerald-950",
+        hintClass: "text-emerald-700",
+        buttonActiveClass: "bg-emerald-500 text-white ring-emerald-500",
+      };
+    case "Abgelehnt":
+    case "Storniert":
+      return {
+        panelClass: "bg-rose-50",
+        labelClass: "text-rose-700",
+        valueClass: "text-rose-950",
+        hintClass: "text-rose-700",
+        buttonActiveClass: "bg-rose-600 text-white ring-rose-600",
+      };
+    case "Abgerechnet":
+      return {
+        panelClass: "bg-violet-50",
+        labelClass: "text-violet-700",
+        valueClass: "text-violet-950",
+        hintClass: "text-violet-700",
+        buttonActiveClass: "bg-violet-500 text-white ring-violet-500",
+      };
+    default:
+      return {
+        panelClass: "bg-slate-50",
+        labelClass: "text-slate-500",
+        valueClass: "text-slate-950",
+        hintClass: "text-slate-500",
+        buttonActiveClass: "bg-slate-950 text-white ring-slate-950",
+      };
+  }
+}
+
+function getDocumentStatusHint(
+  status: DocumentStatus,
+  sentDate?: string,
+  acceptedDate?: string,
+  rejectionReason?: string,
+) {
+  if (status === "Versendet") {
+    return sentDate ? `gesendet am ${formatDateGerman(sentDate)}` : "Sendedatum wird vorbereitet";
+  }
+
+  if (status === "Angenommen") {
+    return acceptedDate ? `angenommen am ${formatDateGerman(acceptedDate)}` : "Annahmedatum wird vorbereitet";
+  }
+
+  if (status === "Abgelehnt") {
+    return rejectionReason?.trim() ? `Grund: ${rejectionReason.trim()}` : "Ablehnungsgrund optional";
+  }
+
+  if (status === "Abgerechnet") return "Folgedokument wurde vorbereitet";
+  if (status === "Bezahlt") return "Zahlung vollständig erfasst";
+  if (status === "Storniert") return "Dokument wurde storniert";
+
+  return "Entwurf offen";
 }
 
 function createLocalId() {

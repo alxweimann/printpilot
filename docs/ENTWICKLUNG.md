@@ -1,7 +1,7 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V146 – App-Dialoge sicher nachgezogen**
+Aktuelle Arbeitsversion: **V147 – App-Dialoge sicher nachgezogen**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
@@ -1460,7 +1460,7 @@ Ziel:
 - Der Nutzer bekommt klare Rückmeldung, ohne Browser-Popups.
 - Der Dialog-Stil ist vorbereitet für spätere Aktionen wie Statusänderung, Angebot senden oder Nummernkreis-Prüfung.
 
-### V146 – App-Dialoge sicher nachgezogen
+### V147 – App-Dialoge sicher nachgezogen
 
 Geändert:
 
@@ -1497,3 +1497,38 @@ Geplant:
 - Statusänderung mit Datum.
 - Aus angenommenem Angebot später Auftrag/Rechnung/Lieferschein erzeugen.
 - Dokumentliste weiter in Richtung echter Dokumentverwaltung ausbauen.
+
+### V147 – Statuswechsel für Dokumente
+
+Eingebaut:
+
+- Statuswechsel direkt im Angebots-/Dokumentbereich
+- Statusoptionen für Angebot und Dokumente:
+  - Entwurf
+  - Versendet
+  - Angenommen
+  - Abgelehnt
+- Statuswechsel erzeugt einen App-Dialog statt Browsermeldung
+- bei „Versendet“ wird ein Sendedatum vorbereitet
+- bei „Angenommen“ wird ein Annahmedatum vorbereitet
+- bei „Abgelehnt“ kann ein Ablehnungsgrund gepflegt werden
+- Statuskarte ist farblich differenziert:
+  - Entwurf neutral
+  - Versendet cyan
+  - Angenommen grün
+  - Abgelehnt rot
+- Angebotsliste bleibt für spätere Folgeprozesse vorbereitet
+
+---
+
+## Nächster geplanter Schritt
+
+### V148 – Folgeprozess aus Status
+
+Geplant:
+
+- aus angenommenem Angebot Auftrag vorbereiten
+- Rechnung aus angenommenem Angebot erzeugen
+- Lieferschein aus angenommenem Angebot erzeugen
+- Statuswechsel und Folgeprozess fachlich stärker verbinden
+- gespeicherte Dokumente besser nach Status auswerten

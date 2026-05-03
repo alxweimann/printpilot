@@ -502,7 +502,7 @@ Eingebaut:
 ---
 
 
-### V118 – Rechte Karten besser priorisiert
+### V119 – Rechte Karten besser priorisiert
 
 Eingebaut:
 
@@ -520,7 +520,7 @@ Eingebaut:
 
 ## Aktueller Stand
 
-Aktuelle Version: **V118**
+Aktuelle Version: **V119**
 
 Aktuell gut funktionierende Bereiche:
 
@@ -559,7 +559,7 @@ Diese Punkte sind noch offen oder sollten später geprüft werden:
 
 ## Geplante nächste Schritte
 
-### V118 – Weiterverarbeitung verbessern
+### V119 – Weiterverarbeitung verbessern
 
 Geplant:
 
@@ -685,3 +685,30 @@ Verworfene Ideen bisher:
 - V110 Produktbild-Grafiken in der Bogenvorschau
 
 Diese Ideen sollen vorerst **nicht** erneut umgesetzt werden.
+
+
+---
+
+### V119 – Weiterverarbeitung klarer strukturiert
+
+Eingebaut:
+
+- Schritt **6 · Weiterverarbeitung** fachlich übersichtlicher gestaltet
+- Status direkt im Schritt sichtbar:
+  - **OK** bei plausibler Weiterverarbeitung
+  - **Prüfen** bei fachlichen Hinweisen
+- aktive Arbeitsschritte kompakt als Produktionskette angezeigt
+- klare Kennzeichnung von:
+  - Schneiden / Endbeschnitt
+  - Rillen / Falzvorbereitung
+  - Heften / Binden
+- Warnung, wenn bei Broschüren keine Heftung/Bindung gewählt ist
+- Warnung, wenn bei Broschüren kein Schneid-/Endbeschnitt-Schritt gewählt ist
+- Kosten je Arbeitsschritt weiterhin aufklappbar
+- Summe Weiterverarbeitung und manuelle Zusatzkosten getrennt dargestellt
+
+Prüfen:
+
+- Bei Broschüre mit Schneiden + Rückendrahtheftung sollte der Status grün/OK sein.
+- Entfernt man die Heftung, sollte der Status auf Prüfen wechseln.
+- Die rechte Auswertung aus V118 bleibt priorisiert und einklappbar.

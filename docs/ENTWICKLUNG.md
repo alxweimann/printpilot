@@ -501,9 +501,26 @@ Eingebaut:
 
 ---
 
+
+### V118 – Rechte Karten besser priorisiert
+
+Eingebaut:
+
+- Ergebnis / Verkaufspreis bleibt rechts standardmäßig offen
+- Kalkulationsstatus bleibt direkt darunter standardmäßig offen
+- Status ist bei guter Kalkulation grün sichtbar
+- Produktionskosten / Auswertung ist standardmäßig eingeklappt
+- Kostenmix ist standardmäßig eingeklappt
+- rechte Auswertung wirkt ruhiger und zeigt zuerst nur:
+  - Was kostet es?
+  - Ist die Kalkulation freigabefähig?
+  - Gibt es Warnungen?
+
+---
+
 ## Aktueller Stand
 
-Aktuelle Version: **V117**
+Aktuelle Version: **V118**
 
 Aktuell gut funktionierende Bereiche:
 
@@ -511,7 +528,7 @@ Aktuell gut funktionierende Bereiche:
 - alle Schritte einklappbar
 - farbliche Schrittführung
 - Druckteile kompakt
-- rechte Auswertung klarer
+- rechte Auswertung klarer und priorisiert
 - Kalkulationsstatus mit Warnungen
 - Bogenvorschau rechts
 - Hochformat-Fix

@@ -1133,7 +1133,7 @@ function App() {
         }
       `}</style>
       <div className="fixed right-4 top-4 z-[9999] rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-500/30">
-        V117 aktiv
+        V118 aktiv
       </div>
       <div className="flex min-h-screen">
         <aside className="fixed inset-y-0 left-0 z-20 hidden w-80 flex-col bg-slate-950 text-white shadow-2xl shadow-slate-950/30 lg:flex">
@@ -1185,7 +1185,7 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V117</p>
+              <p className="text-sm font-black">PrintPilot V118</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
                 Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
@@ -2932,13 +2932,13 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V117
+                Kalkulation V118
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
                 Produkt- und Jobstruktur
               </h2>
               <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-                Produktdaten, Druckteile, Nutzen, Maschine, Weiterverarbeitung und Zuschläge sind klar strukturiert; die Produktionskosten sind jetzt detaillierter nach Material, Druck, Maschine, Rüstzeit und Weiterverarbeitung aufgeschlüsselt.
+                Produktdaten, Druckteile, Nutzen, Maschine, Weiterverarbeitung und Zuschläge sind klar strukturiert; rechts bleiben Ergebnis und Status sofort sichtbar, Details sind einklappbar priorisiert.
                 Erst die Pflichtdaten, danach die Produktionsdetails, Details nur dort wo sie gebraucht werden.
               </p>
             </div>
@@ -3061,7 +3061,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                    Arbeitsmodus V117
+                    Arbeitsmodus V118
                   </p>
                   <p className="mt-1 text-sm font-black text-slate-950">
                     Schritte anklicken, Abschnitt öffnen, Werte prüfen, weiter zum nächsten Block.
@@ -4398,8 +4398,8 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V117</p>
-                <p className="mt-1 text-sm font-medium text-slate-300">Verkaufspreis, Stückpreis und Deckungsbeitrag</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V118</p>
+                <p className="mt-1 text-sm font-medium text-slate-300">wichtigster Preisblock bleibt offen</p>
               </div>
               <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200 group-open:hidden">Aufklappen</span>
               <span className="hidden rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200 group-open:inline-flex">Einklappen</span>
@@ -4490,233 +4490,13 @@ function CalculatorPage({
             </div>
           </details>
 
-          <details open className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
-              <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V117</p>
-                <p className="mt-1 text-sm font-medium text-slate-500">Produktionskosten und Preisaufbau</p>
-              </div>
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:hidden">Aufklappen</span>
-              <span className="hidden rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:inline-flex">Einklappen</span>
-            </summary>
-            <div className="mt-5 border-t border-slate-100 pt-5">
-            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
-              <div>
-                <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Auswertung V117
-                </p>
-                <h3 className="mt-1 text-lg font-black text-slate-950">
-                  Produktionskosten & Preisaufbau
-                </h3>
-                <p className="mt-1 text-sm font-bold leading-6 text-slate-500">
-                  Rechts siehst du zuerst das Ergebnis, dann Produktionskosten nach Material, Druck, Rüstzeit und Weiterverarbeitung sowie darunter die Preisbrücke bis zum Netto-Verkaufspreis.
-                </p>
-              </div>
-              <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
-                netto
-              </span>
-            </div>
-
-            <div className="mt-5 flex items-center justify-between gap-3">
-              <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                Produktionskosten
-              </p>
-              <p className="text-xs font-black text-slate-500">
-                {formatCurrency(directCost)} gesamt
-              </p>
-            </div>
-
-            <div className="mt-3 grid grid-cols-3 gap-2">
-              {productionCostSections.map((section) => {
-                const percent = (section.value / section.percentBase) * 100;
-
-                return (
-                  <div
-                    key={`${section.title}-compact`}
-                    className="rounded-2xl border border-slate-100 bg-slate-50 p-3"
-                  >
-                    <p className="text-[0.68rem] font-black uppercase tracking-wide text-slate-400">
-                      {section.shortTitle}
-                    </p>
-                    <p className="mt-1 truncate text-sm font-black text-slate-950">
-                      {formatCurrency(section.value)}
-                    </p>
-                    <p className="mt-1 text-[0.68rem] font-black text-slate-400">
-                      {formatNumber(percent, 0)} % Produktion
-                    </p>
-                  </div>
-                );
-              })}
-            </div>
-
-            <div className="mt-4 space-y-3">
-              {productionCostSections.map((section) => {
-                const percent = (section.value / section.percentBase) * 100;
-                const safePercent = Math.max(0, Math.min(percent, 100));
-
-                return (
-                  <details
-                    key={section.title}
-                    className="group rounded-3xl border border-slate-100 bg-slate-50 p-4 open:bg-white open:shadow-sm"
-                  >
-                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
-                      <div className="min-w-0">
-                        <div className="flex items-center gap-2">
-                          <span className={`h-3 w-3 shrink-0 rounded-full ${section.accentClass}`} />
-                          <p className="text-sm font-black text-slate-950">
-                            {section.title}
-                          </p>
-                        </div>
-                        <p className="mt-1 text-xs font-bold leading-5 text-slate-500">
-                          {section.summary}
-                        </p>
-                      </div>
-                      <div className="shrink-0 text-right">
-                        <p className="text-base font-black text-slate-950">
-                          {formatCurrency(section.value)}
-                        </p>
-                        <p className="mt-1 text-[0.68rem] font-black uppercase tracking-wide text-slate-400">
-                          Details
-                        </p>
-                      </div>
-                    </summary>
-
-                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
-                      <div
-                        className={`h-full rounded-full ${section.accentClass}`}
-                        style={{ width: `${safePercent}%` }}
-                      />
-                    </div>
-
-                    <div className="mt-4 space-y-2">
-                      {section.rows.map((row) => (
-                        <div
-                          key={`${section.title}-${row.label}`}
-                          className="rounded-2xl border border-slate-100 bg-white px-3 py-3"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="min-w-0">
-                              <p className="text-xs font-black text-slate-700">
-                                {row.label}
-                              </p>
-                              <p className="mt-1 text-[0.68rem] font-bold leading-4 text-slate-400">
-                                {row.note}
-                              </p>
-                            </div>
-                            <p className="shrink-0 text-xs font-black text-slate-950">
-                              {row.value}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </details>
-                );
-              })}
-            </div>
-
-            <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-4">
-              <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
-                <div>
-                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Produktionskosten V117
-                  </p>
-                  <h4 className="mt-1 text-base font-semibold text-slate-950">
-                    Detaillierte Kostenaufschlüsselung
-                  </h4>
-                </div>
-                <p className="text-xs font-medium text-slate-500">
-                  Summe: {formatCurrency(directCost)}
-                </p>
-              </div>
-
-              <div className="mt-4 grid gap-3">
-                {detailedProductionCostGroups.map((group) => (
-                  <details
-                    key={group.title}
-                    className={`group rounded-3xl border p-4 ${group.accentClass}`}
-                  >
-                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
-                      <div className="min-w-0">
-                        <p className="text-sm font-semibold text-slate-950">
-                          {group.title}
-                        </p>
-                        <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
-                          {group.description}
-                        </p>
-                      </div>
-                      <span className="shrink-0 rounded-full bg-white px-3 py-1 text-[0.68rem] font-semibold text-slate-600 shadow-sm ring-1 ring-slate-200">
-                        Details
-                      </span>
-                    </summary>
-
-                    <div className="mt-4 space-y-2">
-                      {group.rows.map((row) => (
-                        <div
-                          key={`${group.title}-${row.label}`}
-                          className="rounded-2xl bg-white px-3 py-3 shadow-sm ring-1 ring-slate-100"
-                        >
-                          <div className="flex items-start justify-between gap-3">
-                            <div className="min-w-0">
-                              <p className="text-xs font-semibold text-slate-800">
-                                {row.label}
-                              </p>
-                              <p className="mt-1 text-[0.68rem] font-medium leading-4 text-slate-400">
-                                {row.note}
-                              </p>
-                            </div>
-                            <p className="shrink-0 text-xs font-semibold text-slate-950">
-                              {row.value > 0 ? formatCurrency(row.value) : "Info"}
-                            </p>
-                          </div>
-                        </div>
-                      ))}
-                    </div>
-                  </details>
-                ))}
-              </div>
-            </div>
-
-            <div className="mt-5 rounded-3xl bg-slate-950 p-4 text-white">
-              <div className="flex items-center justify-between gap-3">
-                <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Preisbrücke
-                </p>
-                <p className="text-xs font-black text-slate-400">
-                  Netto-Aufbau
-                </p>
-              </div>
-              <div className="mt-4 space-y-2">
-                {priceBridgeItems.map((item, index) => (
-                  <div
-                    key={item.label}
-                    className={`rounded-2xl px-3 py-3 ${index === priceBridgeItems.length - 1 ? "bg-emerald-400 text-slate-950" : "bg-white/10"}`}
-                  >
-                    <div className="flex items-start justify-between gap-3">
-                      <div>
-                        <p className="text-xs font-black">{item.label}</p>
-                        <p className={`mt-1 text-[0.68rem] font-bold ${index === priceBridgeItems.length - 1 ? "text-slate-700" : "text-slate-400"}`}>
-                          {item.note}
-                        </p>
-                      </div>
-                      <p className="shrink-0 text-sm font-black">
-                        {formatCurrency(item.value)}
-                      </p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            </div>
-          </details>
-
           <details
             open
             className={`group rounded-[2rem] border p-5 shadow-sm ${calculationStatusTone.panelClass}`}
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V117</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V118</p>
                 <p className="mt-1 text-sm font-medium text-slate-600">{calculationStatusTone.headline}</p>
               </div>
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${calculationStatusTone.badgeClass}`}>
@@ -4729,7 +4509,7 @@ function CalculatorPage({
                 <p
                   className={`text-xs font-extrabold uppercase tracking-wide ${calculationStatusTone.textClass}`}
                 >
-                  Kalkulationsstatus V117
+                  Kalkulationsstatus V118
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   {calculationStatusTone.headline}
@@ -4898,7 +4678,227 @@ function CalculatorPage({
             </div>
           </details>
 
-          <details open className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+          <details className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+            <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V118</p>
+                <p className="mt-1 text-sm font-medium text-slate-500">Produktionskosten und Preisaufbau</p>
+              </div>
+              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:hidden">Aufklappen</span>
+              <span className="hidden rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:inline-flex">Einklappen</span>
+            </summary>
+            <div className="mt-5 border-t border-slate-100 pt-5">
+            <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+              <div>
+                <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                  Auswertung V118
+                </p>
+                <h3 className="mt-1 text-lg font-black text-slate-950">
+                  Produktionskosten & Preisaufbau
+                </h3>
+                <p className="mt-1 text-sm font-bold leading-6 text-slate-500">
+                  Rechts siehst du zuerst das Ergebnis, dann Produktionskosten nach Material, Druck, Rüstzeit und Weiterverarbeitung sowie darunter die Preisbrücke bis zum Netto-Verkaufspreis.
+                </p>
+              </div>
+              <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
+                netto
+              </span>
+            </div>
+
+            <div className="mt-5 flex items-center justify-between gap-3">
+              <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                Produktionskosten
+              </p>
+              <p className="text-xs font-black text-slate-500">
+                {formatCurrency(directCost)} gesamt
+              </p>
+            </div>
+
+            <div className="mt-3 grid grid-cols-3 gap-2">
+              {productionCostSections.map((section) => {
+                const percent = (section.value / section.percentBase) * 100;
+
+                return (
+                  <div
+                    key={`${section.title}-compact`}
+                    className="rounded-2xl border border-slate-100 bg-slate-50 p-3"
+                  >
+                    <p className="text-[0.68rem] font-black uppercase tracking-wide text-slate-400">
+                      {section.shortTitle}
+                    </p>
+                    <p className="mt-1 truncate text-sm font-black text-slate-950">
+                      {formatCurrency(section.value)}
+                    </p>
+                    <p className="mt-1 text-[0.68rem] font-black text-slate-400">
+                      {formatNumber(percent, 0)} % Produktion
+                    </p>
+                  </div>
+                );
+              })}
+            </div>
+
+            <div className="mt-4 space-y-3">
+              {productionCostSections.map((section) => {
+                const percent = (section.value / section.percentBase) * 100;
+                const safePercent = Math.max(0, Math.min(percent, 100));
+
+                return (
+                  <details
+                    key={section.title}
+                    className="group rounded-3xl border border-slate-100 bg-slate-50 p-4 open:bg-white open:shadow-sm"
+                  >
+                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <div className="flex items-center gap-2">
+                          <span className={`h-3 w-3 shrink-0 rounded-full ${section.accentClass}`} />
+                          <p className="text-sm font-black text-slate-950">
+                            {section.title}
+                          </p>
+                        </div>
+                        <p className="mt-1 text-xs font-bold leading-5 text-slate-500">
+                          {section.summary}
+                        </p>
+                      </div>
+                      <div className="shrink-0 text-right">
+                        <p className="text-base font-black text-slate-950">
+                          {formatCurrency(section.value)}
+                        </p>
+                        <p className="mt-1 text-[0.68rem] font-black uppercase tracking-wide text-slate-400">
+                          Details
+                        </p>
+                      </div>
+                    </summary>
+
+                    <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
+                      <div
+                        className={`h-full rounded-full ${section.accentClass}`}
+                        style={{ width: `${safePercent}%` }}
+                      />
+                    </div>
+
+                    <div className="mt-4 space-y-2">
+                      {section.rows.map((row) => (
+                        <div
+                          key={`${section.title}-${row.label}`}
+                          className="rounded-2xl border border-slate-100 bg-white px-3 py-3"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="text-xs font-black text-slate-700">
+                                {row.label}
+                              </p>
+                              <p className="mt-1 text-[0.68rem] font-bold leading-4 text-slate-400">
+                                {row.note}
+                              </p>
+                            </div>
+                            <p className="shrink-0 text-xs font-black text-slate-950">
+                              {row.value}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                );
+              })}
+            </div>
+
+            <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-4">
+              <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                    Produktionskosten V118
+                  </p>
+                  <h4 className="mt-1 text-base font-semibold text-slate-950">
+                    Detaillierte Kostenaufschlüsselung
+                  </h4>
+                </div>
+                <p className="text-xs font-medium text-slate-500">
+                  Summe: {formatCurrency(directCost)}
+                </p>
+              </div>
+
+              <div className="mt-4 grid gap-3">
+                {detailedProductionCostGroups.map((group) => (
+                  <details
+                    key={group.title}
+                    className={`group rounded-3xl border p-4 ${group.accentClass}`}
+                  >
+                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
+                      <div className="min-w-0">
+                        <p className="text-sm font-semibold text-slate-950">
+                          {group.title}
+                        </p>
+                        <p className="mt-1 text-xs font-medium leading-5 text-slate-500">
+                          {group.description}
+                        </p>
+                      </div>
+                      <span className="shrink-0 rounded-full bg-white px-3 py-1 text-[0.68rem] font-semibold text-slate-600 shadow-sm ring-1 ring-slate-200">
+                        Details
+                      </span>
+                    </summary>
+
+                    <div className="mt-4 space-y-2">
+                      {group.rows.map((row) => (
+                        <div
+                          key={`${group.title}-${row.label}`}
+                          className="rounded-2xl bg-white px-3 py-3 shadow-sm ring-1 ring-slate-100"
+                        >
+                          <div className="flex items-start justify-between gap-3">
+                            <div className="min-w-0">
+                              <p className="text-xs font-semibold text-slate-800">
+                                {row.label}
+                              </p>
+                              <p className="mt-1 text-[0.68rem] font-medium leading-4 text-slate-400">
+                                {row.note}
+                              </p>
+                            </div>
+                            <p className="shrink-0 text-xs font-semibold text-slate-950">
+                              {row.value > 0 ? formatCurrency(row.value) : "Info"}
+                            </p>
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+                  </details>
+                ))}
+              </div>
+            </div>
+
+            <div className="mt-5 rounded-3xl bg-slate-950 p-4 text-white">
+              <div className="flex items-center justify-between gap-3">
+                <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                  Preisbrücke
+                </p>
+                <p className="text-xs font-black text-slate-400">
+                  Netto-Aufbau
+                </p>
+              </div>
+              <div className="mt-4 space-y-2">
+                {priceBridgeItems.map((item, index) => (
+                  <div
+                    key={item.label}
+                    className={`rounded-2xl px-3 py-3 ${index === priceBridgeItems.length - 1 ? "bg-emerald-400 text-slate-950" : "bg-white/10"}`}
+                  >
+                    <div className="flex items-start justify-between gap-3">
+                      <div>
+                        <p className="text-xs font-black">{item.label}</p>
+                        <p className={`mt-1 text-[0.68rem] font-bold ${index === priceBridgeItems.length - 1 ? "text-slate-700" : "text-slate-400"}`}>
+                          {item.note}
+                        </p>
+                      </div>
+                      <p className="shrink-0 text-sm font-black">
+                        {formatCurrency(item.value)}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+            </div>
+          </details>
+
+          <details className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kostenmix</p>
@@ -13361,7 +13361,7 @@ function ImpositionPreview({
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-            Bogenvorschau rechts V117
+            Bogenvorschau rechts V118
           </p>
           <p className="mt-1 truncate text-sm font-black text-slate-800">
             {result.best.columns} × {result.best.rows} Nutzen · {result.best.orientation}

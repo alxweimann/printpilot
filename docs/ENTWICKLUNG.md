@@ -1,7 +1,7 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V114 – Nutzenbereich optisch aufgeräumt**
+Aktuelle Arbeitsversion: **V115 – Druckteile fachlich klarer**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
@@ -437,11 +437,37 @@ Eingebaut:
 - wichtigste Werte besser sortiert
 - Bogenvorschau bleibt rechts
 
+
+---
+
+### V115 – Druckteile fachlich klarer
+
+Eingebaut:
+
+- Schritt 4 „Druckteile“ fachlich verständlicher aufgebaut
+- je Druckteil zusätzliche Übersicht mit:
+  - Druckteiltyp
+  - Seiten-/Mengenlogik
+  - Farbigkeit
+  - Material
+  - Produktionsbogen
+  - Materialbogen gesamt
+  - Materialkosten
+  - Anteil an den Materialkosten
+- fachlicher Status je Druckteil:
+  - Druckteil plausibel
+  - Druckteil prüfen
+- Hinweise je Druckteil, z. B.:
+  - Inhaltsseiten nicht durch 4 teilbar
+  - Umschlag sollte 4 Seiten haben
+  - Materialbogen prüfen
+  - Materialpreis fehlt
+- Details bleiben weiterhin einklappbar
 ---
 
 ## Aktueller Stand
 
-Aktuelle Version: **V114**
+Aktuelle Version: **V115**
 
 Aktuell gut funktionierende Bereiche:
 
@@ -455,6 +481,7 @@ Aktuell gut funktionierende Bereiche:
 - Hochformat-Fix
 - Barlow-Schrift
 - Nutzenbereich optisch verbessert
+- Druckteile zeigen fachliche Prüfung und Kostenübersicht je Druckteil
 
 ---
 
@@ -479,27 +506,6 @@ Diese Punkte sind noch offen oder sollten später geprüft werden:
 ---
 
 ## Geplante nächste Schritte
-
-### V115 – Druckteile fachlich klarer machen
-
-Geplant:
-
-- Inhalt und Umschlag noch verständlicher darstellen
-- je Druckteil klare Werte:
-  - Seiten
-  - Material
-  - Farbigkeit
-  - Materialbogen
-  - Druckkosten
-  - Materialkosten
-  - Gesamtkosten
-- Hinweise je Druckteil:
-  - Material gewählt?
-  - Farbigkeit plausibel?
-  - Seitenzahl plausibel?
-  - Broschüreninhalt durch 4 teilbar?
-
----
 
 ### V116 – Produktionskosten detaillierter
 

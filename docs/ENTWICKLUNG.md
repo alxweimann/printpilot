@@ -1,10 +1,174 @@
+
+
+## V178 – Auftrag und Auftragsbestätigung fachlich getrennt
+
+- Im Menü und in der Dokumentzentrale wird der Bereich jetzt klar als **Auftrag** geführt.
+- Die **Auftragsbestätigung** ist nicht mehr als separater Zwischenschritt gedacht, sondern die Kundenausgabe des Auftrags.
+- Der Folgeprozess lautet jetzt fachlich sauber: **Angebot → Auftrag → Lieferschein/Rechnung → Mahnung**.
+- Buttons und Hinweise wurden sprachlich beruhigt: aus „Auftragsbestätigung vorbereiten“ wurde „Auftrag vorbereiten/erstellen“.
+- In der Kurzinfo des Auftrags wird erklärt, dass intern der Auftrag zählt und die AB nur die bestätigende Ausgabe für den Kunden ist.
+- Die bestehende Dokumentlogik bleibt kompatibel: technisch bleibt der Dokumenttyp `orderConfirmation` erhalten, damit vorhandene Dokumente und Nummern nicht brechen.
+
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V167 – Mahngebühren optional als Position**
+Aktuelle Arbeitsversion: **V178 – Kompakte Dokumentführung mit farbigen Schritten**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
+
+---
+## V178 – Kompakte Dokumentführung mit farbigen Schritten
+
+**Ziel:** Die Dokumentmaske soll nicht durch viele einzelne Karten erschlagen. Stattdessen bekommt jedes Dokument eine kompakte, zentrale Prozessführung mit klar farblich markierten Arbeitsschritten.
+
+**Eingebaut:**
+
+- Sichtbarer Versionsstand auf **V178** aktualisiert.
+- Neue kompakte Karte **Dokumentführung V178** oberhalb der Dokumentzentrale.
+- Der Ablauf wird als farbige Schrittleiste dargestellt:
+  - **Grün:** Schritt erledigt / verknüpftes Dokument vorhanden
+  - **Dunkel:** aktuelles Dokument
+  - **Gelb:** nächster sinnvoller Schritt
+  - **Orange:** im Prozess übersprungen
+  - **Grau:** noch offen
+- Die Karte **Jetzt wichtig** zeigt nur noch die nächste konkrete Aktion für das aktuelle Dokument.
+- Die Dokumentzentrale bleibt erhalten, aber die Erklärung wurde reduziert, damit die Oberfläche ruhiger wirkt.
+- Auftrag und Auftragsbestätigung bleiben fachlich getrennt: intern Auftrag, Kundenausgabe Auftragsbestätigung.
+- Bestehende Mahn-, Zahlungs-, Liefer- und Dokumentkettenlogik bleibt unverändert.
+
+**Prüfen:**
+
+1. Angebot öffnen: Schritt 1 muss dunkel markiert sein, Auftrag als nächster Schritt gelb.
+2. Auftrag aus Angebot erstellen und speichern: Angebot grün, Auftrag dunkel.
+3. Lieferschein oder Rechnung aus Auftrag erstellen: vorhandene Schritte werden grün markiert.
+4. Rechnung mit offenem Betrag öffnen: nächster Schritt zeigt Zahlung/Mahnung fachlich passend.
+5. Mahnung aus Rechnung öffnen: Rechnung grün, Mahnung dunkel.
+
+---
+
+
+## V178 – Dokumentkette / Verknüpfungen verbessert
+
+**Ziel:** Die Dokumente sollen nicht mehr nur einzeln betrachtet werden. In Angebot, Auftrag, Rechnung, Lieferschein und Mahnung soll klar sichtbar sein, aus welchem Dokument sie entstanden sind und welche Folgedokumente bereits existieren.
+
+**Eingebaut:**
+
+- Sichtbarer Versionsstand auf **V178** aktualisiert.
+- Neue Karte **Dokumentkette V178** im Bearbeitungsbereich.
+- Die Kette zeigt den Ablauf jetzt lesbar an, z. B.:
+  - Angebot → Auftrag → Rechnung
+  - Rechnung → Mahnung
+  - Angebot → Auftrag → Lieferschein
+- Ursprungsdokumente werden rückwärts über `sourceDocumentId` verfolgt.
+- Folgedokumente werden vorwärts über gespeicherte Dokumente mit passender Quelle erkannt.
+- Verknüpfte gespeicherte Dokumente sind direkt aus der Kette heraus anklickbar.
+- Das aktuelle Dokument wird als **aktuell** markiert.
+- Dokumente ohne Verknüpfung zeigen einen verständlichen Hinweis, dass noch kein Folgeprozess verbunden ist.
+- Die vorhandene Logik für Angebote, Aufträge, Rechnungen, Lieferscheine, Mahnungen, Restbeträge, Mahnstufen und Mahngebühren bleibt unverändert.
+
+**Fachliche Logik:**
+
+| Richtung | Grundlage |
+|---|---|
+| Ursprung | `sourceDocumentId`, `sourceDocumentType`, `sourceDocumentNumber` |
+| Aktuelles Dokument | aktueller Editorzustand / gespeichertes Dokument |
+| Folgedokumente | gespeicherte Dokumente, deren `sourceDocumentId` auf das aktuelle Dokument zeigt |
+
+**Prüfen:**
+
+1. Angebot speichern.
+2. Aus dem Angebot einen Auftrag erstellen und speichern.
+3. Auftrag öffnen: Dokumentkette muss **Angebot → Auftrag** zeigen.
+4. Aus dem Auftrag eine Rechnung erstellen und speichern.
+5. Rechnung öffnen: Dokumentkette muss **Angebot → Auftrag → Rechnung** zeigen.
+6. Angebot oder Auftrag öffnen: vorhandene Folgedokumente müssen als anklickbare Chips sichtbar sein.
+7. Aus einer Rechnung eine Mahnung erstellen: Kette muss den Rechnungsbezug anzeigen.
+
+---
+
+## V171 – Zahleneingaben ohne führende Null verbessert
+
+- Sichtbarer Versionsstand auf **V171** aktualisiert.
+- Nummerische Eingabefelder wurden von starren `type="number"`-Feldern auf flexiblere Textfelder mit dezimaler Tastatur umgestellt.
+- Felder mit Wert `0` leeren sich beim Fokus automatisch, damit Werte wie `450` direkt eingegeben werden können und nicht erst `0450` entsteht.
+- Bestehende Werte werden beim Fokus markiert, damit Beträge, Formate und Mengen schneller überschrieben werden können.
+- Deutsche Dezimaleingaben mit Komma werden unterstützt, z. B. `12,5`.
+- Leere oder ungültige Eingaben fallen beim Verlassen des Feldes sauber auf den Mindestwert zurück.
+
+## V169 – Rechnungsansicht fachlich verbessert
+
+**Ziel:** Rechnungen sollen schneller fachlich bewertet werden können. Zahlungsstatus, offener Restbetrag, Fälligkeit und nächste sinnvolle Aktion sollen direkt sichtbar sein.
+
+**Eingebaut:**
+
+- Sichtbarer Versionsstand auf **V169** aktualisiert.
+- Die Rechnungskarte zeigt weiterhin Rechnungsbetrag, gezahlten Betrag und offenen Restbetrag prominent.
+- Zusätzlich gibt es jetzt eine kompakte Prüfzeile mit:
+  - Fälligkeitsdatum
+  - Fälligkeitsprüfung / Überfälligkeit
+  - nächste Mahnstufe
+  - nächster sinnvoller Schritt
+- Der Bereich **Zahlung erfassen** wurde optisch klarer abgegrenzt.
+- Teilzahlung, Komplettzahlung und Zahlung zurücksetzen bleiben direkt in der Rechnung erreichbar.
+- Der Button **Komplett bezahlt** wird in den Modulaktionen deaktiviert, wenn kein offener Betrag mehr vorhanden ist.
+- Die bestehende Mahnlogik bleibt erhalten: Restbetrag, Mahnstufen, Mahntexte, Mahngebühren und Mahnhistorie.
+
+**Fachliche Logik:**
+
+| Rechnungszustand | Anzeige / Aktion |
+|---|---|
+| offen, nicht fällig | Zahlungseingang beobachten |
+| offen, überfällig | nächste Mahnstufe vorbereiten |
+| teilbezahlt | offener Restbetrag bleibt sichtbar und mahnfähig |
+| bezahlt | erledigt, keine Mahnung nötig |
+| storniert | keine Zahlungs-/Mahnaktion |
+
+**Prüfen:**
+
+1. Rechnung öffnen.
+2. Rechnungsbetrag, bezahlt und Restbetrag prüfen.
+3. Fälligkeitsprüfung muss korrekt zwischen „noch innerhalb der Frist”, „überfällig” und „erledigt” unterscheiden.
+4. Teilzahlung erfassen und prüfen, ob der Restbetrag weiterhin sichtbar bleibt.
+5. Bezahlte Rechnung prüfen: Mahnung darf weiterhin nicht möglich sein.
+
+---
+
+
+## V168 – Modulansichten aufgeräumt
+
+**Ziel:** Die Dokumentbereiche sollen stärker wie eigene Module wirken. Nachdem die obere Dokumenttyp-Leiste entfernt wurde, sollen auch Listen, Filter und Kennzahlen nicht mehr alle Dokumenttypen vermischen.
+
+**Eingebaut:**
+
+- Die Dokumentliste zeigt jetzt nur noch Dokumente des aktuell geöffneten Moduls.
+- Der Dokumenttyp-Filter wurde aus den Modulansichten entfernt, weil die linke Navigation den Bereich bereits eindeutig bestimmt.
+- Die Such- und Statusfilter bleiben erhalten, arbeiten aber nur innerhalb des aktiven Moduls.
+- Die Schnellfilter-Karten zeigen jetzt modulbezogene Werte:
+  - alle Dokumente im aktuellen Modul
+  - Entwürfe im aktuellen Modul
+  - versendete Dokumente im aktuellen Modul
+  - je nach Modul angenommene, erledigte oder überfällige Dokumente
+- Die leere Listenansicht und Hilfetexte wurden sprachlich auf das aktuelle Modul angepasst.
+- Mahnlogik aus V166/V167 bleibt unverändert erhalten: Restbetrag, Mahnstufen, Mahntexte, Mahngebühren und Mahnhistorie.
+
+**Fachliche Logik:**
+
+| Modul | Fokus der Ansicht |
+|---|---|
+| Angebote | Angebot, Annahme, Folgeprozess |
+| Aufträge | Auftrag, Produktion, Erledigung |
+| Rechnungen | Fälligkeit, Zahlung, Überfälligkeit |
+| Lieferscheine | Lieferung, Mengen, erledigte Lieferung |
+| Mahnungen | Mahnstufe, offener Betrag, Frist |
+
+**Prüfen:**
+
+1. Links in Angebote, Rechnungen, Lieferscheine und Mahnungen wechseln.
+2. Die Dokumentliste darf jeweils nur Dokumente des aktiven Bereichs zeigen.
+3. Es darf keine zusätzliche Dokumenttyp-Auswahl mehr in der Liste sichtbar sein.
+4. Suche und Statusfilter müssen weiterhin funktionieren.
+5. Mahnungen aus Rechnungen müssen weiterhin mit Restbetrag und Mahngebühr erzeugt werden.
 
 ---
 
@@ -2018,3 +2182,450 @@ Prüfen:
 4. Rechnung erneut öffnen und nächste Mahnstufe vorbereiten.
 5. 1. Mahnung muss neben dem offenen Restbetrag eine separate Position „Mahngebühr 1. Mahnung“ mit 5,00 € enthalten.
 6. Mahnhistorie muss Restbetrag, Mahngebühr und Gesamtbetrag anzeigen.
+
+---
+
+## V171 – Mahnungsansicht fachlich verbessert
+
+**Ziel:** Gespeicherte und vorbereitete Mahnungen sollen auf einen Blick fachlich verständlich sein: Mahnstufe, Restforderung, Mahngebühr, Gesamtbetrag, Zahlungsfrist und Textvorlage werden zentral zusammengefasst.
+
+**Eingebaut:**
+
+- In der Mahnungsbearbeitung gibt es jetzt eine eigene **Mahnungsübersicht V171**.
+- Die Übersicht zeigt prominent:
+  - konkrete Mahnstufe, z. B. Zahlungserinnerung, 1. Mahnung, 2. Mahnung oder Letzte Mahnung
+  - Ursprungsrechnung / Quelle
+  - offener Restbetrag
+  - Mahngebühr
+  - Gesamtbetrag der Mahnung
+  - Zahlungsfrist
+  - Überfälligkeit in Tagen, falls vorhanden
+  - verwendete Textvorlage
+- Restbetrag, Mahngebühr und Gesamtbetrag werden bewusst getrennt angezeigt, damit die Mahnung fachlich nachvollziehbar bleibt.
+- Die bestehende Mahnlogik aus V166 bis V170 bleibt unverändert:
+  - Restbetrag aus Teilzahlung
+  - Mahnstufen
+  - Mahntexte
+  - Mahngebühren
+  - Mahnhistorie
+  - Sperre bei bezahlten/stornierten Rechnungen
+
+**Fachliche Logik:**
+
+| Anzeige | Bedeutung |
+|---|---|
+| Offener Restbetrag | Betrag, der aus der Ursprungsrechnung noch offen ist |
+| Mahngebühr | separat vorgeschlagene, editierbare Position |
+| Gesamt Mahnung | Restbetrag plus Mahngebühr |
+| Zahlungsfrist | neue Frist dieser Mahnung |
+| Textvorlage | automatisch gewählte Vorlage je Mahnstufe |
+
+**Prüfen:**
+
+1. Rechnung mit offenem Restbetrag öffnen.
+2. Mahnung vorbereiten.
+3. In der Mahnungsansicht muss die neue Übersicht sichtbar sein.
+4. Prüfen, ob Restbetrag, Mahngebühr und Gesamtbetrag sauber getrennt angezeigt werden.
+5. Mahnung speichern und erneut öffnen.
+6. Die Übersicht muss weiterhin mit dem gespeicherten Snapshot übereinstimmen.
+
+
+---
+
+## V172 – Lieferscheinansicht fachlich verbessert
+
+**Ziel:** Lieferscheine sollen stärker wie ein Produktions- und Versanddokument wirken und nicht wie ein Angebot oder eine Rechnung mit ausgeblendeten Preisen. Der Fokus liegt jetzt auf Lieferstatus, Quelle, Positionen und Mengen.
+
+**Eingebaut:**
+
+- Sichtbarer Versionsstand auf **V172** gesetzt.
+- Neue **Lieferscheinübersicht V172** in der Lieferscheinbearbeitung.
+- Die Übersicht zeigt jetzt prominent:
+  - Lieferdatum
+  - Lieferstatus
+  - Quelle / Ursprungsauftrag bzw. Ursprungsrechnung
+  - Anzahl der Lieferpositionen
+  - gesamte Liefermenge
+  - nächsten sinnvollen Schritt für Produktion/Versand
+- Die obere Kennzahlenleiste in der Bearbeitung zeigt bei Lieferscheinen keine Netto-/Bruttowerte mehr, sondern Liefermenge und Lieferstatus.
+- Die gespeicherte Dokumentliste zeigt bei Lieferscheinen statt Netto/Brutto jetzt:
+  - Positionen
+  - „ohne Preise“
+  - Quelle, sofern vorhanden
+- Die Summenkarte rechts bleibt bei Lieferscheinen preisfrei und zeigt ergänzend Positionen, Gesamtmenge und Lieferstatus.
+- Statuswechsel wurden für Lieferscheine fachlicher angepasst: Entwurf, Versendet, Abgerechnet, Storniert.
+
+**Fachliche Logik:**
+
+| Bereich | Verhalten |
+|---|---|
+| Kundenvorschau / Druck | Preise bleiben ausgeblendet |
+| Bearbeitung | interne Preise bleiben technisch erhalten, aber der Fokus liegt auf Lieferung |
+| Liste | keine Netto-/Brutto-Badges bei Lieferscheinen |
+| Quelle | Ursprungsauftrag oder Rechnung wird klar angezeigt, wenn vorhanden |
+| Status | Lieferschein wird über Versand-/Abrechnungsstatus geführt |
+
+**Prüfen:**
+
+1. Links **Lieferscheine** öffnen.
+2. Einen Lieferschein aus Auftrag/Rechnung vorbereiten oder gespeicherten Lieferschein öffnen.
+3. Prüfen, ob die neue Lieferscheinübersicht sichtbar ist.
+4. Prüfen, ob keine Netto-/Brutto-Werte in der Lieferscheinliste angezeigt werden.
+5. Prüfen, ob Kundenvorschau und Druck weiterhin ohne Preise dargestellt werden.
+6. Statuswechsel auf Versendet testen.
+
+
+---
+
+## V173 – Auftragsansicht fachlich verbessert
+
+**Ziel:** Auftragsbestätigungen sollen stärker wie ein Produktions- und Folgeprozess-Dokument wirken. Der Fokus liegt jetzt nicht nur auf Betrag und Kundenvorschau, sondern auf Quelle, Produktionsstatus, Positionen, Mengen und dem nächsten sinnvollen Schritt.
+
+**Eingebaut:**
+
+- Sichtbarer Versionsstand auf **V173** gesetzt.
+- Neue **Auftragsübersicht V173** in der Auftragsbearbeitung.
+- Die Übersicht zeigt prominent:
+  - Auftragsdatum
+  - Produktionsstatus
+  - Quelle / ursprüngliches Angebot
+  - Anzahl der Auftragspositionen
+  - gesamte Auftragsmenge
+  - nächsten sinnvollen Schritt für Produktion, Lieferung oder Rechnung
+- Die obere Kennzahlenleiste zeigt bei Aufträgen jetzt statt Netto/Brutto stärker auftragsbezogene Werte:
+  - Auftragsmenge
+  - Produktionsstatus
+- Ein interner Produktionshinweis fasst Positionen und Mengen schnell zusammen.
+- Die bestehende Logik für Angebote, Rechnungen, Lieferscheine und Mahnungen bleibt unverändert.
+
+**Fachliche Logik:**
+
+| Status | Bedeutung / nächster Schritt |
+|---|---|
+| Entwurf | Produktionsdaten prüfen und Auftragsbestätigung versenden |
+| Versendet | Kundenfreigabe prüfen und Auftrag annehmen |
+| Angenommen | Lieferschein oder Rechnung aus Auftrag erstellen |
+| Abgerechnet | Auftrag ist abgeschlossen / abgerechnet |
+| Storniert | keine weitere Aktion |
+
+**Prüfen:**
+
+1. Links **Aufträge** öffnen.
+2. Einen Auftrag öffnen oder aus einem Angebot vorbereiten.
+3. Prüfen, ob die neue Auftragsübersicht sichtbar ist.
+4. Prüfen, ob Auftragsmenge, Produktionsstatus und Quelle korrekt angezeigt werden.
+5. Status auf Versendet und Angenommen testen.
+6. Prüfen, ob der nächste Schritt passend wechselt.
+
+
+---
+
+## V174 – Angebotsansicht fachlich verbessert
+
+**Ziel:** Angebote sollen als Startpunkt der Dokumentkette klarer geführt werden. Der Fokus liegt jetzt auf Angebotswert, Status, Gültigkeit, Entscheidung und Folgeprozess.
+
+**Eingebaut:**
+
+- Sichtbarer Versionsstand auf **V174** gesetzt.
+- Neue **Angebotsübersicht V174** in der Angebotsbearbeitung.
+- Die Übersicht zeigt prominent:
+  - Angebotsdatum
+  - Angebotsstatus
+  - Angebotswert netto
+  - Kundenbetrag brutto
+  - Gültigkeit
+  - nächsten sinnvollen Schritt
+- Entscheidungshinweis ergänzt, damit klar ist, ob das Angebot noch Entwurf ist, beim Kunden liegt, angenommen oder abgelehnt wurde.
+- Direkte Angebotsaktionen ergänzt:
+  - **Annehmen**
+  - **Ablehnen**
+  - **Auftrag erstellen**
+- Der Folgeprozess bleibt sauber mit dem Angebot verknüpft.
+- Die bestehende Logik für Aufträge, Rechnungen, Lieferscheine und Mahnungen bleibt unverändert.
+
+**Fachliche Logik:**
+
+| Status | Bedeutung / nächster Schritt |
+|---|---|
+| Entwurf | Leistung, Preis, Kunde und Gültigkeit prüfen |
+| Versendet | Rückmeldung des Kunden abwarten oder Entscheidung erfassen |
+| Angenommen | Auftrag aus Angebot erstellen |
+| Abgelehnt | Ablehnungsgrund dokumentieren oder neu kalkulieren |
+
+**Prüfen:**
+
+1. Links **Angebote** öffnen.
+2. Ein Angebot öffnen oder neu vorbereiten.
+3. Prüfen, ob die neue Angebotsübersicht sichtbar ist.
+4. Status auf **Versendet**, **Angenommen** und **Abgelehnt** testen.
+5. Prüfen, ob sich der nächste Schritt passend ändert.
+6. Über **Auftrag erstellen** prüfen, ob der Folgeprozess weiterhin sauber funktioniert.
+
+
+## V178 – Dokumentzentrale / Oberfläche beruhigt
+
+- Die zuvor getrennten Detailkarten wurden gebündelt, damit die Maske nicht mehr überladen wirkt.
+- Neue zentrale Karte **Dokumentzentrale V178** für das aktive Dokument.
+- Dokumentnummer, Kunde, Status, Betrag/Menge, nächster Schritt, Kurzinfo und Dokumentkette werden an einer Stelle zusammengeführt.
+- Die separate große Modulübersicht wurde auf einen kompakten Arbeitsstand reduziert.
+- Die Dokumentkette bleibt anklickbar, steht aber nicht mehr als zusätzlicher dominanter Block im Weg.
+- Fachlogik für Angebote, Aufträge, Rechnungen, Lieferscheine und Mahnungen bleibt unverändert erhalten.
+
+
+---
+
+## V179 – Status-Dropdown farblich hervorgehoben
+
+**Ziel:** Der Dokumentstatus soll als wichtiger Prozessschritt deutlich sichtbar sein und nicht wie ein normales Dropdown wirken.
+
+**Eingebaut:**
+
+- Sichtbarer Versionsstand auf **V179** gesetzt.
+- Das Status-Dropdown im Dokumentkopf wurde durch ein farbiges **Statusfeld** ersetzt.
+- Der aktuelle Status färbt das Feld automatisch:
+  - **Entwurf** = neutral / grau
+  - **Versendet** = cyan / beim Kunden
+  - **Angenommen** und **Bezahlt** = grün / freigegeben bzw. abgeschlossen
+  - **Abgelehnt** und **Storniert** = rot / gestoppt
+  - **Abgerechnet** = violett / Folgeprozess erledigt
+- Das Feld zeigt zusätzlich ein Badge **„wichtig”**.
+- Unter dem Dropdown steht jetzt direkt der Hinweis, dass der Status den nächsten Schritt steuert.
+- Die Statusoptionen wurden sprechender benannt, z. B. **„Versendet · liegt beim Kunden”** und **„Angenommen · freigegeben”**.
+- Die Statuswechsel-Leiste erklärt jetzt deutlicher, dass der Status den Folgeprozess beeinflusst.
+
+**Fachliche Logik bleibt unverändert:**
+
+- Statusänderungen setzen weiterhin automatisch Sendedatum oder Annahmedatum.
+- Der Status steuert weiterhin Hinweise, Folgeaktionen und Dokumentführung.
+- Bestehende Mahn-, Zahlungs-, Liefer- und Auftragslogik bleibt unverändert.
+
+**Prüfen:**
+
+1. Ein Angebot, einen Auftrag, eine Rechnung oder einen Lieferschein öffnen.
+2. Im Dokumentkopf das Feld **Status · wichtiger Prozessschritt** prüfen.
+3. Status auf **Versendet**, **Angenommen**, **Abgelehnt**, **Abgerechnet**, **Bezahlt** oder **Storniert** ändern.
+4. Prüfen, ob Farbe, Hinweistext und nächster Schritt passend wechseln.
+
+# PrintPilot – Entwicklung
+
+## V180 – Einheitliche Seitenstruktur für alle Module
+
+### Ziel
+Die Oberfläche wird nicht mehr modulweise unterschiedlich aufgebaut, sondern folgt in allen Bereichen derselben Arbeitslogik:
+
+1. Kopfbereich
+2. Jetzt wichtig
+3. Hauptinhalt
+4. Details / Zusatzinfos
+5. Abschluss / Status / Speichern
+
+Damit wird PrintPilot ruhiger, verständlicher und weniger überladen.
+
+### Geändert
+- Sichtbarer Versionsstand auf **V180** gesetzt.
+- Neue modulübergreifende Karte **Seitenstruktur V180** eingebaut.
+- Die Karte erscheint bei allen linken Menübereichen:
+  - Dashboard
+  - Kalkulation
+  - Angebote
+  - Aufträge
+  - Rechnungen
+  - Lieferscheine
+  - Mahnungen
+  - Kunden
+  - Material
+  - Maschinen
+  - Weiterverarbeitung
+  - Nutzenrechner
+  - Leistungen
+  - Vorlagen
+  - Einstellungen
+- Jeder Bereich zeigt jetzt kompakt:
+  - Kopf
+  - Jetzt wichtig
+  - Hauptinhalt
+  - Details
+  - Abschluss
+- Der aktuell wichtige Schritt wird farblich hervorgehoben.
+- Bereits erledigte Schritte werden grün dargestellt.
+- Offene Schritte bleiben grau.
+
+### Dokumentseiten
+Für Angebote, Aufträge, Rechnungen, Lieferscheine und Mahnungen wurde die Prozesslogik weiter beruhigt:
+
+- Der Status wurde aus dem Dokumentkopf entfernt.
+- Der Status steht jetzt bewusst in der **Abschlussleiste**.
+- Die Abschlussleiste enthält:
+  - Status-Dropdown
+  - Schnellstatus-Buttons
+  - Neue Nummer
+  - Vorschau / PDF
+  - Speichern
+- Dadurch ist die Arbeitsreihenfolge klarer:
+  - erst Dokument erfassen
+  - dann Positionen prüfen
+  - dann Details prüfen
+  - dann Status setzen
+  - dann speichern
+
+### Bestehende Logik bleibt erhalten
+- Mahnlogik bleibt unverändert:
+  - Restbetrag bei Teilzahlung
+  - Mahnstufen
+  - Mahntexte
+  - Mahngebühren
+  - Mahnhistorie
+- Dokumentkette bleibt erhalten.
+- Modulansichten bleiben aufgeräumt.
+- Zahleneingaben bleiben verbessert.
+
+### Fachlicher Grundsatz
+Der Status ist kein normales Stammdatenfeld. Er ist der finale Prozessschritt eines Dokuments und gehört deshalb in den Abschlussbereich.
+
+# PrintPilot – Entwicklung
+
+## V181 – Abschlussbereich nach unten verschoben & Speichern hervorgehoben
+
+### Ziel
+Die Dokumentseiten sollen ruhiger und logischer wirken. Der obere Bereich dient nur noch zur Orientierung und Eingabe. Entscheidungen wie Status setzen, Folgeaktion ausführen und Speichern stehen jetzt gebündelt im Abschlussbereich am Ende der Bearbeitung.
+
+### Geändert
+- Sichtbarer Versionsstand auf **V181** gesetzt.
+- Der Bereich **Modulaktionen / Folgeprozess / Dokumentlogik** wurde nach unten in den neuen Abschlussbereich verschoben.
+- Die **Status- und Speichern-Leiste** steht jetzt ebenfalls unten nach den Positionen.
+- Der Speichern-Button wurde deutlich auffälliger gestaltet:
+  - größer
+  - grün
+  - stärkerer Schatten
+  - Ring-Hervorhebung
+  - klare Beschriftung **Dokument speichern**
+- Der Abschlussbereich zeigt jetzt direkt, ob Änderungen ungespeichert sind:
+  - **Ungespeicherte Änderungen**
+  - **Gespeichert**
+
+### Warnung bei ungespeicherten Änderungen
+- Beim Neuladen oder Schließen des Browserfensters wird gewarnt, wenn ungespeicherte Änderungen vorhanden sind.
+- Beim Öffnen eines anderen gespeicherten Dokuments erscheint ein app-like Warnfenster:
+  - Zurück zum Dokument
+  - Ohne Speichern verlassen
+- Dadurch wird verhindert, dass versehentlich Änderungen verloren gehen.
+
+### Neue Arbeitsreihenfolge
+Die Dokumentseiten folgen jetzt klarer diesem Ablauf:
+
+1. Orientierung / Dokumentkopf
+2. Jetzt wichtig
+3. Inhalte und Positionen erfassen
+4. Texte und Details prüfen
+5. Abschlussbereich unten:
+   - Folgeaktion
+   - Dokumentlogik
+   - Status
+   - Speichern
+
+### Bestehende Logik bleibt erhalten
+- Mahnlogik bleibt unverändert:
+  - Restbetrag bei Teilzahlung
+  - Mahnstufen
+  - Mahntexte
+  - Mahngebühren
+  - Mahnhistorie
+- Dokumentkette bleibt erhalten.
+- Modulansichten bleiben aufgeräumt.
+- Zahleneingaben bleiben verbessert.
+- Lieferscheine bleiben ohne Preisangaben.
+
+### Fachlicher Grundsatz
+Speichern und Status sind finale Bearbeitungsschritte. Deshalb gehören sie nicht mitten in die Eingabe, sondern konsequent ans Ende der Seite.
+
+# ENTWICKLUNG – PrintPilot
+
+## V182 – Layout-Beruhigung / V181 zurückgenommen
+
+V181 wurde optisch verworfen, weil die Seite zu unruhig, zu breit und zu überladen wirkte. V182 geht bewusst auf die kompaktere, stabilere Oberfläche aus V179 zurück und übernimmt nur die sinnvollen Sicherheitsverbesserungen.
+
+### Geändert
+
+- Layout wieder kompakter und übersichtlicher.
+- Keine übergroße zweispaltige Abschluss-/Vorschau-Struktur mehr.
+- Speichern-Button wieder in einer ruhigen Karte, aber deutlich auffälliger.
+- Anzeige für gespeicherten/ungespeicherten Zustand ergänzt.
+- Browser-Warnung beim Schließen/Neuladen mit ungespeicherten Änderungen ergänzt.
+- App-like Warnfenster beim Öffnen eines anderen Dokuments mit ungespeicherten Änderungen ergänzt.
+
+### Beibehalten
+
+- Statusfarben aus V179 bleiben erhalten.
+- Dokumentführung bleibt kompakt.
+- Mahnlogik bleibt unverändert:
+  - Restbetrag bei Teilzahlung
+  - Mahnstufen
+  - Mahntexte
+  - Mahngebühren
+  - Mahnhistorie
+- Lieferschein-, Auftrags-, Rechnungs- und Angebotslogik bleiben erhalten.
+
+### Entscheidung
+
+Der Abschlussbereich wird nicht weiter aufgeblasen. Speichern und Status sollen sichtbar bleiben, aber die Seite darf nicht wie ein Dashboard mit zu vielen konkurrierenden Karten wirken.
+
+# ENTWICKLUNG – PrintPilot
+
+## V183 – Technische Aufräumrunde
+
+V183 ist bewusst keine neue UI-Version. Ziel war eine kleine, sichere Stabilisierung nach den vielen fachlichen Erweiterungen der vorherigen Versionen.
+
+### Geändert
+
+- Sichtbarer Versionsstand auf V183 gesetzt.
+- App-Version technisch zentral vorbereitet über `APP_VERSION`.
+- Backup-Export verwendet jetzt ebenfalls die zentrale Versionskonstante.
+- Zahleneingaben wurden robuster für deutsche Schreibweisen gemacht.
+- Der Zahlenparser versteht jetzt u. a.:
+  - `1000` → 1000
+  - `1.000` → 1000
+  - `1.000,50` → 1000,50
+  - `1000,50` → 1000,50
+  - `1000.50` → 1000,50
+- Leerzeichen, geschützte Leerzeichen und Apostrophe in Zahlen werden bereinigt.
+
+### Nicht geändert
+
+- Keine neue Optik.
+- Keine Änderung an Mahnlogik, Zahlungslogik oder Dokumentkette.
+- Keine Änderung an Kalkulationslogik.
+- Keine Änderung an gespeicherten Datenstrukturen.
+
+### Technische Prüfung
+
+- `App.tsx` wurde per TypeScript-Transpile geprüft.
+- Keine TSX-Syntaxfehler gefunden.
+
+## V182 – Layout-Beruhigung / V181 zurückgenommen
+
+V181 wurde optisch verworfen, weil die Seite zu unruhig, zu breit und zu überladen wirkte. V182 geht bewusst auf die kompaktere, stabilere Oberfläche aus V179 zurück und übernimmt nur die sinnvollen Sicherheitsverbesserungen.
+
+### Geändert
+
+- Layout wieder kompakter und übersichtlicher.
+- Keine übergroße zweispaltige Abschluss-/Vorschau-Struktur mehr.
+- Speichern-Button wieder in einer ruhigen Karte, aber deutlich auffälliger.
+- Anzeige für gespeicherten/ungespeicherten Zustand ergänzt.
+- Browser-Warnung beim Schließen/Neuladen mit ungespeicherten Änderungen ergänzt.
+- App-like Warnfenster beim Öffnen eines anderen Dokuments mit ungespeicherten Änderungen ergänzt.
+
+### Beibehalten
+
+- Statusfarben aus V179 bleiben erhalten.
+- Dokumentführung bleibt kompakt.
+- Mahnlogik bleibt unverändert:
+  - Restbetrag bei Teilzahlung
+  - Mahnstufen
+  - Mahntexte
+  - Mahngebühren
+  - Mahnhistorie
+- Lieferschein-, Auftrags-, Rechnungs- und Angebotslogik bleiben erhalten.
+
+### Entscheidung
+
+Der Abschlussbereich wird nicht weiter aufgeblasen. Speichern und Status sollen sichtbar bleiben, aber die Seite darf nicht wie ein Dashboard mit zu vielen konkurrierenden Karten wirken.

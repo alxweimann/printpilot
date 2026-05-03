@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { CSSProperties, Dispatch, SetStateAction } from "react";
+import type { CSSProperties, Dispatch, FocusEvent, SetStateAction } from "react";
 import "./index.css";
 
 import { materials } from "./data/materials";
@@ -15,6 +15,8 @@ import {
   getClicksForColorMode,
   getPricingModeLabel,
 } from "./lib/calculation";
+
+const APP_VERSION = "V183";
 
 type PageKey =
   | "dashboard"
@@ -305,6 +307,19 @@ const documentTypeOrder: DocumentType[] = [
   "reminder",
 ];
 
+
+type DocumentChainRelation = "source" | "current" | "followUp";
+
+type DocumentChainItem = {
+  id?: string;
+  documentType: DocumentType;
+  documentNumber: string;
+  label: string;
+  relation: DocumentChainRelation;
+  status?: DocumentStatus;
+  isCurrent: boolean;
+};
+
 const documentStatusOptions: DocumentStatus[] = [
   "Entwurf",
   "Versendet",
@@ -338,13 +353,13 @@ const DEFAULT_DOCUMENT_TEMPLATE_SETTINGS: DocumentTemplateSettings = {
     letterheadOpacity: 100,
   },
   orderConfirmation: {
-    label: "Auftragsbestätigung",
+    label: "Auftrag",
     topMm: 45,
     bottomMm: 32,
     leftMm: 20,
     rightMm: 20,
     introText:
-      "vielen Dank für Ihren Auftrag. Gerne bestätigen wir Ihnen die folgende Druckproduktion.",
+      "vielen Dank für Ihren Auftrag. Gerne bestätigen wir Ihnen die folgende Druckproduktion als Auftragsbestätigung.",
     footerText:
       "Produktion und Lieferung erfolgen nach Absprache. Änderungen nach Freigabe können Mehrkosten verursachen.",
     letterheadMode: "none",
@@ -395,8 +410,8 @@ const DEFAULT_DOCUMENT_TEMPLATE_SETTINGS: DocumentTemplateSettings = {
 const DEFAULT_NUMBER_CIRCLE_SETTINGS: NumberCircleSettings = {
   quote: { label: "Angebot", prefix: "AN", nextNumber: 1, padding: 4 },
   orderConfirmation: {
-    label: "Auftragsbestätigung",
-    prefix: "AB",
+    label: "Auftrag",
+    prefix: "AU",
     nextNumber: 1,
     padding: 4,
   },
@@ -432,7 +447,7 @@ const navItems: NavItem[] = [
   {
     key: "orders",
     label: "Aufträge",
-    description: "Auftragsbestätigungen",
+    description: "Kundenaufträge",
     accent: "bg-emerald-400",
   },
   {
@@ -1256,8 +1271,9 @@ function App() {
         }
       `}</style>
       <div className="fixed right-4 top-4 z-[9999] rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-500/30">
-        V167 aktiv
+        {APP_VERSION} aktiv
       </div>
+      <UnsavedDocumentConfirmationModal />
       <DeleteConfirmationModal />
       <AppActionDialogModal />
       <div className="flex min-h-screen">
@@ -1310,7 +1326,7 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V167</p>
+              <p className="text-sm font-black">PrintPilot {APP_VERSION}</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
                 Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
@@ -1381,7 +1397,7 @@ function App() {
                 key="orders"
                 initialDocumentType="orderConfirmation"
                 documentAreaTitle="Aufträge"
-                documentAreaDescription="Auftragsbestätigungen, Produktionshinweise und Auftragsbezug verwalten."
+                documentAreaDescription="Kundenaufträge, Produktionshinweise und Auftragsbestätigung als Kundendokument verwalten."
                 quotePositions={quotePositions}
                 setQuotePositions={setQuotePositions}
                 company={editableCompanyProfile}
@@ -3151,7 +3167,7 @@ function CalculatorPage({
       unitPrice: roundMoney(unitPrice),
       vatRate: 19,
       internalNote: [
-        `Quelle: Kalkulation V167`,
+        `Quelle: Kalkulation V183`,
         `Interne Kalkulation`,
         `Maschine: ${selectedMachine.name}`,
         `Druckbogen: ${totalSheets.toLocaleString("de-DE")}`,
@@ -3175,7 +3191,7 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V167
+                Kalkulation V183
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
                 Produkt- und Jobstruktur
@@ -4685,7 +4701,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V167</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V183</p>
                 <p className="mt-1 text-sm font-medium text-slate-300">wichtigster Preisblock bleibt offen</p>
               </div>
               <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200 group-open:hidden">Aufklappen</span>
@@ -4780,7 +4796,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] border border-emerald-200 bg-emerald-50 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V167</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V183</p>
                 <p className="mt-1 text-sm font-medium text-emerald-950">Kalkulation ist bereit für eine Angebotsposition</p>
               </div>
               <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm group-open:hidden">Aufklappen</span>
@@ -4829,7 +4845,7 @@ function CalculatorPage({
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V167</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V183</p>
                 <p className="mt-1 text-sm font-medium text-slate-600">{calculationStatusTone.headline}</p>
               </div>
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${calculationStatusTone.badgeClass}`}>
@@ -4842,7 +4858,7 @@ function CalculatorPage({
                 <p
                   className={`text-xs font-extrabold uppercase tracking-wide ${calculationStatusTone.textClass}`}
                 >
-                  Kalkulationsstatus V167
+                  Kalkulationsstatus V183
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   {calculationStatusTone.headline}
@@ -5014,7 +5030,7 @@ function CalculatorPage({
           <details className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V167</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V183</p>
                 <p className="mt-1 text-sm font-medium text-slate-500">Produktionskosten und Preisaufbau</p>
               </div>
               <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:hidden">Aufklappen</span>
@@ -5024,7 +5040,7 @@ function CalculatorPage({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Auswertung V167
+                  Auswertung V183
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   Produktionskosten & Preisaufbau
@@ -5140,7 +5156,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Produktionskosten V167
+                    Produktionskosten V183
                   </p>
                   <h4 className="mt-1 text-base font-semibold text-slate-950">
                     Detaillierte Kostenaufschlüsselung
@@ -5427,7 +5443,7 @@ function CalculatorPage({
 
 function getDefaultDocumentSubject(documentType: DocumentType, fallbackTitle: string) {
   if (documentType === "orderConfirmation") {
-    return `Auftragsbestätigung: ${fallbackTitle}`;
+    return `Auftragsbestätigung zu Auftrag: ${fallbackTitle}`;
   }
 
   if (documentType === "invoice") {
@@ -5454,11 +5470,11 @@ function getDocumentTypeProfile(
 ) {
   if (documentType === "orderConfirmation") {
     return {
-      eyebrow: "Auftragsbestätigung",
-      title: "Verbindliche Bestätigung des Kundenauftrags",
+      eyebrow: "Auftrag",
+      title: "Interner Kundenauftrag mit Auftragsbestätigung",
       toneClass: "border-emerald-200 bg-emerald-50 text-emerald-950",
       badgeClass: "bg-emerald-500 text-white",
-      focus: "Auftrag, Produktionsfreigabe und Liefertermin stehen im Vordergrund.",
+      focus: "Intern steht der Auftrag im Vordergrund. Die Auftragsbestätigung ist die Kundenausgabe dieses Auftrags.",
       meta: [
         { label: "Status", value: documentStatus },
         { label: "Quelle", value: sourceDocumentLabel || "ohne Angebotsbezug" },
@@ -5467,7 +5483,7 @@ function getDocumentTypeProfile(
       checklist: [
         "Kundendaten prüfen",
         "Produktions- und Lieferhinweis abstimmen",
-        "Auftragsfreigabe dokumentieren",
+        "Auftrag intern freigeben",
       ],
     };
   }
@@ -5655,7 +5671,6 @@ function QuotesPage({
   const [paymentPaidDate, setPaymentPaidDate] = useState("");
   const [paymentPaidAmount, setPaymentPaidAmount] = useState(0);
   const [documentSearch, setDocumentSearch] = useState("");
-  const [documentTypeFilter, setDocumentTypeFilter] = useState<string>(initialDocumentType);
   const [documentStatusFilter, setDocumentStatusFilter] =
     useState<string>("all");
   const [selectedServiceItemId, setSelectedServiceItemId] = useState(
@@ -5673,6 +5688,38 @@ function QuotesPage({
   const sourceDocumentLabel = sourceDocumentType
     ? `${documentTemplateSettings[sourceDocumentType].label} ${sourceDocumentNumber}`
     : "";
+
+  const currentDocumentChain = useMemo(
+    () =>
+      buildDocumentChain({
+        currentId: activeSavedDocumentId ?? undefined,
+        currentType: activeBusinessDocumentType,
+        currentNumber: quoteNumber,
+        currentStatus: documentStatus,
+        sourceId: sourceDocumentId || undefined,
+        sourceType: sourceDocumentType || undefined,
+        sourceNumber: sourceDocumentNumber || undefined,
+        savedDocuments,
+        documentTemplateSettings,
+      }),
+    [
+      activeSavedDocumentId,
+      activeBusinessDocumentType,
+      documentStatus,
+      documentTemplateSettings,
+      quoteNumber,
+      savedDocuments,
+      sourceDocumentId,
+      sourceDocumentNumber,
+      sourceDocumentType,
+    ],
+  );
+  const currentDocumentChainSourceCount = currentDocumentChain.filter(
+    (item) => item.relation === "source",
+  ).length;
+  const currentDocumentChainFollowUpCount = currentDocumentChain.filter(
+    (item) => item.relation === "followUp",
+  ).length;
   const isAcceptedQuote =
     activeBusinessDocumentType === "quote" && documentStatus === "Angenommen";
   const activeLetterheadMode = activeBusinessDocumentTemplate.letterheadMode ?? "none";
@@ -5883,6 +5930,12 @@ function QuotesPage({
           : currentInvoiceOverdueDays <= 0
             ? "Mahnung möglich – Hinweis: Die Rechnung ist rechnerisch noch nicht überfällig."
             : "Mahnung möglich – offener Restbetrag ist fällig.";
+  const invoiceDueStatusLabel =
+    openPaymentAmount <= 0.01 || paymentStatus === "Bezahlt"
+      ? "erledigt"
+      : currentInvoiceOverdueDays > 0
+        ? `${currentInvoiceOverdueDays} Tag${currentInvoiceOverdueDays === 1 ? "" : "e"} überfällig`
+        : "noch innerhalb der Frist";
   const currentInvoiceReminderHistory = getReminderHistoryForInvoice(
     savedDocuments,
     activeSavedDocumentId,
@@ -5894,6 +5947,14 @@ function QuotesPage({
     quoteNumber,
   );
   const nextReminderLevelLabel = getReminderLevelLabel(nextReminderLevel);
+  const invoiceNextActionLabel =
+    paymentStatus === "Storniert"
+      ? "Keine Aktion – Rechnung storniert"
+      : openPaymentAmount <= 0.01 || paymentStatus === "Bezahlt"
+        ? "Erledigt – keine Mahnung nötig"
+        : currentInvoiceOverdueDays > 0
+          ? `${nextReminderLevelLabel} vorbereiten`
+          : "Zahlungseingang beobachten";
 
   const documentPrintMetaRows = (() => {
     if (activeBusinessDocumentType === "quote") {
@@ -5985,27 +6046,15 @@ function QuotesPage({
         .toLowerCase()
         .includes(normalizedSearch);
 
-    const matchesType =
-      documentTypeFilter === "all" ||
-      documentItem.documentType === documentTypeFilter;
+    const matchesType = documentItem.documentType === activeBusinessDocumentType;
     const matchesStatus =
       documentStatusFilter === "all" ||
-      documentItem.status === documentStatusFilter;
+      (documentStatusFilter === "Überfällig"
+        ? getResolvedPaymentStatus(documentItem) === "Überfällig"
+        : documentItem.status === documentStatusFilter);
 
     return matchesSearch && matchesType && matchesStatus;
   });
-  const quoteDocumentCount = savedDocuments.filter(
-    (documentItem) => documentItem.documentType === "quote",
-  ).length;
-  const draftDocumentCount = savedDocuments.filter(
-    (documentItem) => documentItem.status === "Entwurf",
-  ).length;
-  const sentDocumentCount = savedDocuments.filter(
-    (documentItem) => documentItem.status === "Versendet",
-  ).length;
-  const acceptedDocumentCount = savedDocuments.filter(
-    (documentItem) => documentItem.status === "Angenommen",
-  ).length;
 
   const documentsInCurrentArea = savedDocuments.filter(
     (documentItem) => documentItem.documentType === activeBusinessDocumentType,
@@ -6018,6 +6067,12 @@ function QuotesPage({
   ).length;
   const currentAreaAcceptedCount = documentsInCurrentArea.filter(
     (documentItem) => documentItem.status === "Angenommen",
+  ).length;
+  const currentAreaDoneCount = documentsInCurrentArea.filter(
+    (documentItem) => documentItem.status === "Erledigt",
+  ).length;
+  const currentAreaOverdueInvoiceCount = documentsInCurrentArea.filter(
+    (documentItem) => getResolvedPaymentStatus(documentItem) === "Überfällig",
   ).length;
   const currentAreaRejectedCount = documentsInCurrentArea.filter(
     (documentItem) => documentItem.status === "Abgelehnt",
@@ -6052,6 +6107,40 @@ function QuotesPage({
             ? "Auftrag & Produktion"
             : "Angebot & Folgeprozess";
 
+  const isQuote = activeBusinessDocumentType === "quote";
+  const quoteOfferStatusLabel =
+    documentStatus === "Entwurf"
+      ? "Angebot in Vorbereitung"
+      : documentStatus === "Versendet"
+        ? "Angebot beim Kunden"
+        : documentStatus === "Angenommen"
+          ? "angenommen / beauftragbar"
+          : documentStatus === "Abgelehnt"
+            ? "abgelehnt / verloren"
+            : documentStatus;
+  const quoteNextActionLabel =
+    documentStatus === "Angenommen"
+      ? "Auftrag aus Angebot erstellen"
+      : documentStatus === "Versendet"
+        ? "Rückmeldung prüfen oder Angebot annehmen"
+        : documentStatus === "Entwurf"
+          ? "Leistung, Preis und Gültigkeit prüfen"
+          : documentStatus === "Abgelehnt"
+            ? "Ablehnungsgrund dokumentieren oder neu kalkulieren"
+            : "Angebotsstatus prüfen";
+  const quoteDecisionHint =
+    documentStatus === "Angenommen"
+      ? "Das Angebot ist angenommen. Auftrag, Rechnung oder Lieferschein können jetzt sauber daraus vorbereitet werden."
+      : documentStatus === "Abgelehnt"
+        ? "Das Angebot wurde abgelehnt. Der Grund kann unten für spätere Auswertungen dokumentiert werden."
+        : documentStatus === "Versendet"
+          ? "Das Angebot liegt beim Kunden. Als nächster Schritt folgt Rückmeldung, Annahme oder Ablehnung."
+          : "Das Angebot ist noch ein Entwurf. Kundendaten, Positionen und Konditionen sollten vor dem Versand geprüft werden.";
+  const quoteValidityLabel =
+    validUntil && validUntil < todayIso() && documentStatus !== "Angenommen"
+      ? "Gültigkeit überschritten"
+      : formatDateGerman(validUntil);
+
   const activeServiceItems = serviceItems.filter(
     (item) => item.status === "Aktiv",
   );
@@ -6059,6 +6148,59 @@ function QuotesPage({
     (item) => item.id === selectedServiceItemId,
   );
   const isDeliveryNote = activeBusinessDocumentType === "deliveryNote";
+  const deliveryPositionCount = quotePositions.length;
+  const deliveryTotalQuantity = quotePositions.reduce(
+    (sum, position) => sum + Math.max(position.quantity || 0, 0),
+    0,
+  );
+  const deliveryStatusLabel =
+    documentStatus === "Versendet"
+      ? "Versendet / erledigt"
+      : documentStatus === "Entwurf"
+        ? "In Vorbereitung"
+        : documentStatus;
+  const deliverySourceLabel = sourceDocumentLabel || "ohne Auftragsbezug";
+  const deliveryNextActionLabel =
+    documentStatus === "Versendet"
+      ? "Lieferung ist als versendet markiert"
+      : deliveryPositionCount > 0
+        ? "Liefermengen prüfen und Lieferschein versenden"
+        : "Lieferpositionen aus Auftrag oder Rechnung übernehmen";
+  const isOrderConfirmation = activeBusinessDocumentType === "orderConfirmation";
+  const orderPositionCount = quotePositions.length;
+  const orderTotalQuantity = quotePositions.reduce(
+    (sum, position) => sum + Math.max(position.quantity || 0, 0),
+    0,
+  );
+  const orderSourceLabel = sourceDocumentLabel || "ohne Angebotsbezug";
+  const orderProductionStatusLabel =
+    documentStatus === "Entwurf"
+      ? "Auftrag vorbereiten"
+      : documentStatus === "Versendet"
+        ? "Bestätigung versendet"
+        : documentStatus === "Angenommen"
+          ? "freigegeben / Produktion"
+          : documentStatus === "Abgerechnet"
+            ? "abgerechnet"
+            : documentStatus === "Storniert"
+              ? "storniert"
+              : documentStatus;
+  const orderNextActionLabel =
+    documentStatus === "Angenommen"
+      ? "Lieferschein oder Rechnung aus Auftrag erstellen"
+      : documentStatus === "Versendet"
+        ? "Kundenfreigabe prüfen und Auftrag annehmen"
+        : documentStatus === "Entwurf"
+          ? "Produktionsdaten prüfen und AB senden"
+          : documentStatus === "Abgerechnet"
+            ? "Auftrag ist abgerechnet"
+            : documentStatus === "Storniert"
+              ? "Keine Aktion – Auftrag storniert"
+              : "Auftragsstatus prüfen";
+  const orderInternalProductionHint =
+    orderPositionCount > 0
+      ? `${orderPositionCount} Position${orderPositionCount === 1 ? "" : "en"} mit insgesamt ${formatNumber(orderTotalQuantity, 0)} Stück / Einheiten.`
+      : "Noch keine Auftragspositionen hinterlegt.";
   const documentTypeProfile = getDocumentTypeProfile(
     activeBusinessDocumentType,
     validUntil,
@@ -6068,6 +6210,111 @@ function QuotesPage({
   );
   const documentStatusTone = getDocumentStatusTone(documentStatus);
   const documentStatusHint = getDocumentStatusHint(documentStatus, documentSentDate, documentAcceptedDate, documentRejectionReason);
+  const workflowTypeOrder: DocumentType[] = [
+    "quote",
+    "orderConfirmation",
+    "deliveryNote",
+    "invoice",
+    "reminder",
+  ];
+  const workflowCurrentIndex = workflowTypeOrder.indexOf(activeBusinessDocumentType);
+  const workflowFirstMissingAfterCurrentIndex = workflowTypeOrder.findIndex(
+    (workflowType, workflowIndex) =>
+      workflowIndex > workflowCurrentIndex &&
+      !currentDocumentChain.some((chainItem) => chainItem.documentType === workflowType),
+  );
+  const documentWorkflowSteps = workflowTypeOrder.map((workflowType, workflowIndex) => {
+    const chainItem = currentDocumentChain.find(
+      (item) => item.documentType === workflowType,
+    );
+    const isCurrent = workflowType === activeBusinessDocumentType;
+    const isLinked = Boolean(chainItem && (chainItem.id || chainItem.isCurrent));
+    const isNext =
+      workflowFirstMissingAfterCurrentIndex === workflowIndex &&
+      activeBusinessDocumentType !== "reminder";
+    const isSkipped = workflowIndex < workflowCurrentIndex && !isLinked;
+    const state = isCurrent
+      ? "current"
+      : isLinked
+        ? "done"
+        : isSkipped
+          ? "skipped"
+          : isNext
+            ? "next"
+            : "todo";
+
+    const stateLabel =
+      state === "current"
+        ? "aktiv"
+        : state === "done"
+          ? "erledigt"
+          : state === "next"
+            ? "nächster Schritt"
+            : state === "skipped"
+              ? "übersprungen"
+              : "offen";
+
+    const toneClass =
+      state === "current"
+        ? "border-slate-950 bg-slate-950 text-white shadow-lg shadow-slate-950/20"
+        : state === "done"
+          ? "border-emerald-200 bg-emerald-50 text-emerald-950"
+          : state === "next"
+            ? "border-amber-200 bg-amber-50 text-amber-950"
+            : state === "skipped"
+              ? "border-orange-200 bg-orange-50 text-orange-950"
+              : "border-slate-200 bg-white text-slate-500";
+
+    const badgeClass =
+      state === "current"
+        ? "bg-white/15 text-white"
+        : state === "done"
+          ? "bg-emerald-100 text-emerald-700"
+          : state === "next"
+            ? "bg-amber-100 text-amber-700"
+            : state === "skipped"
+              ? "bg-orange-100 text-orange-700"
+              : "bg-slate-100 text-slate-500";
+
+    const label =
+      workflowType === "orderConfirmation"
+        ? "Auftrag"
+        : workflowType === "deliveryNote"
+          ? "Lieferschein"
+          : documentTemplateSettings[workflowType].label;
+
+    const helper =
+      workflowType === "quote"
+        ? "Kalkulieren / anbieten"
+        : workflowType === "orderConfirmation"
+          ? "Auftrag bestätigen"
+          : workflowType === "deliveryNote"
+            ? "Produktion / Lieferung"
+            : workflowType === "invoice"
+              ? "Abrechnen"
+              : "Offene Zahlung mahnen";
+
+    return {
+      workflowType,
+      label,
+      helper,
+      documentNumber: chainItem?.documentNumber,
+      state,
+      stateLabel,
+      toneClass,
+      badgeClass,
+    };
+  });
+  const compactActionToneClass =
+    activeBusinessDocumentType === "invoice" && invoiceCanPrepareReminder
+      ? "border-rose-200 bg-rose-50 text-rose-950"
+      : activeBusinessDocumentType === "reminder"
+        ? "border-rose-200 bg-rose-50 text-rose-950"
+        : activeBusinessDocumentType === "deliveryNote"
+          ? "border-lime-200 bg-lime-50 text-lime-950"
+          : activeBusinessDocumentType === "orderConfirmation"
+            ? "border-emerald-200 bg-emerald-50 text-emerald-950"
+            : "border-cyan-200 bg-cyan-50 text-cyan-950";
 
   function handleDocumentStatusChange(nextStatus: DocumentStatus) {
     const today = todayIso();
@@ -6306,7 +6553,7 @@ function QuotesPage({
     } else if (documentType === "invoice") {
       setPaymentTerms("Zahlbar innerhalb von 14 Tagen netto.");
     } else if (documentType === "orderConfirmation") {
-      setPaymentTerms("Produktion und Lieferung gemäß Auftragsbestätigung.");
+      setPaymentTerms("Produktion und Lieferung gemäß Auftrag / Auftragsbestätigung.");
     } else {
       setPaymentTerms("Zahlbar innerhalb von 14 Tagen netto.");
     }
@@ -6341,8 +6588,8 @@ function QuotesPage({
     handleSwitchBusinessDocumentType("orderConfirmation");
     handleCreateNextDocumentNumber("orderConfirmation", { silent: true });
     showAppDialog(
-      "Auftragsbestätigung vorbereitet",
-      getFollowUpHint("Die Auftragsbestätigung"),
+      "Auftrag vorbereitet",
+      getFollowUpHint("Der Auftrag"),
       isAcceptedQuote ? "success" : "warning",
     );
   }
@@ -6734,6 +6981,99 @@ function QuotesPage({
     };
   }
 
+  const currentDocumentDraftSignature = useMemo(
+    () =>
+      createSavedDocumentComparableSignature({
+        documentType: activeBusinessDocumentType,
+        documentNumber: quoteNumber,
+        customerId: selectedCustomerId,
+        customerName: quoteCustomerName,
+        customerContactPerson,
+        customerStreet,
+        customerZip,
+        customerCity,
+        customerEmail,
+        customerPhone,
+        date: quoteDate,
+        validUntil,
+        subject: documentSubject,
+        introText,
+        deliveryTerms,
+        paymentTerms,
+        positions: normalizeQuotePositions(quotePositions),
+        status: documentStatus,
+        sentDate: documentSentDate || undefined,
+        acceptedDate: documentAcceptedDate || undefined,
+        rejectionReason: documentRejectionReason || undefined,
+        paymentStatus: activeBusinessDocumentType === "invoice" ? paymentStatus : undefined,
+        paymentDueDate: activeBusinessDocumentType === "invoice" ? paymentDueDate : undefined,
+        paymentPaidDate: activeBusinessDocumentType === "invoice" ? paymentPaidDate : undefined,
+        paymentPaidAmount: activeBusinessDocumentType === "invoice" ? normalizedPaymentPaidAmount : undefined,
+        sourceDocumentId: sourceDocumentId || undefined,
+        sourceDocumentType: sourceDocumentType || undefined,
+        sourceDocumentNumber: sourceDocumentNumber || undefined,
+        reminderSnapshot: activeBusinessDocumentType === "reminder" ? reminderSnapshot ?? undefined : undefined,
+      }),
+    [
+      activeBusinessDocumentType,
+      customerCity,
+      customerContactPerson,
+      customerEmail,
+      customerPhone,
+      customerStreet,
+      customerZip,
+      deliveryTerms,
+      documentAcceptedDate,
+      documentRejectionReason,
+      documentSentDate,
+      documentStatus,
+      documentSubject,
+      introText,
+      normalizedPaymentPaidAmount,
+      paymentDueDate,
+      paymentPaidDate,
+      paymentStatus,
+      paymentTerms,
+      quoteCustomerName,
+      quoteDate,
+      quoteNumber,
+      quotePositions,
+      reminderSnapshot,
+      selectedCustomerId,
+      sourceDocumentId,
+      sourceDocumentNumber,
+      sourceDocumentType,
+      validUntil,
+    ],
+  );
+
+  const savedDocumentForDirtyCheck = useMemo(
+    () => savedDocuments.find((documentItem) => documentItem.id === activeSavedDocumentId) ?? null,
+    [activeSavedDocumentId, savedDocuments],
+  );
+
+  const savedDocumentDraftSignature = useMemo(
+    () => createSavedDocumentComparableSignature(savedDocumentForDirtyCheck),
+    [savedDocumentForDirtyCheck],
+  );
+
+  const documentHasUnsavedChanges = activeSavedDocumentId
+    ? currentDocumentDraftSignature !== savedDocumentDraftSignature
+    : true;
+
+  useEffect(() => {
+    if (!documentHasUnsavedChanges) return;
+
+    const handleBeforeUnload = (event: BeforeUnloadEvent) => {
+      event.preventDefault();
+      event.returnValue = "";
+    };
+
+    window.addEventListener("beforeunload", handleBeforeUnload);
+
+    return () => window.removeEventListener("beforeunload", handleBeforeUnload);
+  }, [documentHasUnsavedChanges]);
+
   function handleSaveCurrentDocument() {
     const nextDocument = buildCurrentSavedDocument(activeSavedDocumentId);
 
@@ -6761,7 +7101,16 @@ function QuotesPage({
     );
   }
 
-  function handleOpenSavedDocument(documentItem: SavedDocument) {
+  async function handleOpenSavedDocument(documentItem: SavedDocument) {
+    if (documentHasUnsavedChanges) {
+      const mayLeave = await confirmLeaveUnsavedDocument(
+        "Dokument ohne Speichern verlassen?",
+        "Du hast Änderungen im aktuellen Dokument, die noch nicht gespeichert wurden.",
+      );
+
+      if (!mayLeave) return;
+    }
+
     setActiveSavedDocumentId(documentItem.id);
     setActiveBusinessDocumentType(documentItem.documentType);
     setSourceDocumentId(documentItem.sourceDocumentId ?? "");
@@ -7040,7 +7389,7 @@ function QuotesPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className={`text-sm font-black uppercase tracking-[0.35em] ${documentAreaTone[activeBusinessDocumentType].eyebrow}`}>
-                {documentAreaTitle ?? activeBusinessDocumentLabel} V167
+                {documentAreaTitle ?? activeBusinessDocumentLabel} V183
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 {documentAreaTitle ?? `${activeBusinessDocumentLabel} erstellen`}
@@ -7071,73 +7420,52 @@ function QuotesPage({
 
       <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-          <div>
+          <div className="max-w-3xl">
             <div className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-              Modulübersicht V167
+              Dokumentführung V183
             </div>
             <h3 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950">
-              {activeBusinessDocumentLabel} im Überblick
+              Kompakter Ablauf statt Karten-Chaos
             </h3>
-            <p className="mt-2 max-w-3xl text-sm font-medium leading-6 text-slate-500">
-              Jeder Dokumentbereich hat jetzt eine ruhigere Startfläche mit Kennzahlen, aktuellem Fokus und den wichtigsten nächsten Aktionen. Die eigentliche Bearbeitung bleibt darunter.
+            <p className="mt-2 text-sm font-medium leading-6 text-slate-500">
+              Die nächsten Arbeitsschritte sind jetzt farblich markiert: Grün ist erledigt, Dunkel ist das aktuelle Dokument, Gelb ist der nächste sinnvolle Schritt und Grau ist noch offen.
             </p>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4 xl:w-[360px]">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Modul-Fokus</p>
-            <p className="mt-1 text-lg font-semibold text-slate-950">{currentAreaFocusLabel}</p>
-            <p className="mt-1 text-sm font-medium leading-5 text-slate-500">{currentAreaActionLabel}</p>
-          </div>
-        </div>
 
-        <div className="mt-6 grid gap-3 md:grid-cols-2 xl:grid-cols-5">
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Dokumente</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-950">{documentsInCurrentArea.length}</p>
-            <p className="mt-1 text-xs font-medium text-slate-500">in diesem Bereich</p>
-          </div>
-          <div className="rounded-3xl border border-slate-200 bg-white p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Entwürfe</p>
-            <p className="mt-2 text-2xl font-semibold text-slate-950">{currentAreaDraftCount}</p>
-            <p className="mt-1 text-xs font-medium text-slate-500">noch offen</p>
-          </div>
-          <div className="rounded-3xl border border-cyan-200 bg-cyan-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-cyan-700">Versendet</p>
-            <p className="mt-2 text-2xl font-semibold text-cyan-950">{currentAreaSentCount}</p>
-            <p className="mt-1 text-xs font-medium text-cyan-700">beim Kunden</p>
-          </div>
-          <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angenommen</p>
-            <p className="mt-2 text-2xl font-semibold text-emerald-950">{currentAreaAcceptedCount}</p>
-            <p className="mt-1 text-xs font-medium text-emerald-700">bereit für Folgeprozess</p>
-          </div>
-          <div className={`rounded-3xl border p-4 ${activeBusinessDocumentType === "invoice" ? "border-rose-200 bg-rose-50" : currentAreaRejectedCount > 0 ? "border-rose-200 bg-rose-50" : "border-slate-200 bg-white"}`}>
-            <p className={`text-xs font-semibold uppercase tracking-wide ${activeBusinessDocumentType === "invoice" || currentAreaRejectedCount > 0 ? "text-rose-700" : "text-slate-400"}`}>
-              {activeBusinessDocumentType === "invoice" ? "Offen" : "Abgelehnt"}
-            </p>
-            <p className={`mt-2 text-2xl font-semibold ${activeBusinessDocumentType === "invoice" || currentAreaRejectedCount > 0 ? "text-rose-950" : "text-slate-950"}`}>
-              {activeBusinessDocumentType === "invoice" ? formatCurrency(currentAreaOpenInvoiceTotal) : currentAreaRejectedCount}
-            </p>
-            <p className={`mt-1 text-xs font-medium ${activeBusinessDocumentType === "invoice" || currentAreaRejectedCount > 0 ? "text-rose-700" : "text-slate-500"}`}>
-              {activeBusinessDocumentType === "invoice" ? "Brutto abzüglich Zahlung" : "nicht beauftragt"}
+          <div className={`w-full rounded-3xl border p-4 xl:max-w-[420px] ${compactActionToneClass}`}>
+            <p className="text-xs font-black uppercase tracking-[0.24em] opacity-70">Jetzt wichtig</p>
+            <p className="mt-2 text-base font-black leading-6">
+              {isQuote
+                ? quoteNextActionLabel
+                : isOrderConfirmation
+                  ? orderNextActionLabel
+                  : isDeliveryNote
+                    ? deliveryNextActionLabel
+                    : activeBusinessDocumentType === "invoice"
+                      ? invoiceNextActionLabel
+                      : activeBusinessDocumentType === "reminder" && reminderSnapshot
+                        ? `${reminderSnapshot.levelLabel} versenden / Zahlung überwachen`
+                        : currentAreaActionLabel}
             </p>
           </div>
         </div>
 
-        <div className="mt-5 grid gap-3 lg:grid-cols-3">
-          <div className="rounded-3xl bg-slate-950 p-4 text-white">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Aktueller Entwurf</p>
-            <p className="mt-2 text-lg font-semibold">{quoteNumber}</p>
-            <p className="mt-1 text-sm font-medium text-slate-300">{quoteCustomerName || "ohne Kunde"}</p>
-          </div>
-          <div className="rounded-3xl border border-slate-200 bg-white p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Volumen netto</p>
-            <p className="mt-2 text-lg font-semibold text-slate-950">{formatCurrency(currentAreaNetTotal)}</p>
-            <p className="mt-1 text-sm font-medium text-slate-500">gespeicherte Dokumente im Modul</p>
-          </div>
-          <div className="rounded-3xl border border-violet-200 bg-violet-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-violet-700">Nächster Schritt</p>
-            <p className="mt-2 text-sm font-semibold leading-5 text-violet-950">{currentAreaActionLabel}</p>
-          </div>
+        <div className="mt-5 grid gap-2 md:grid-cols-5">
+          {documentWorkflowSteps.map((step, stepIndex) => (
+            <div key={step.workflowType} className={`rounded-3xl border p-4 transition ${step.toneClass}`}>
+              <div className="flex items-center justify-between gap-2">
+                <span className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${step.badgeClass}`}>
+                  {step.stateLabel}
+                </span>
+                <span className="text-xs font-black opacity-60">{stepIndex + 1}</span>
+              </div>
+              <p className="mt-3 text-sm font-black leading-5">{step.label}</p>
+              <p className="mt-1 min-h-[2rem] text-xs font-semibold leading-4 opacity-70">{step.helper}</p>
+              {step.documentNumber && (
+                <p className="mt-2 truncate text-xs font-black opacity-80">{step.documentNumber}</p>
+              )}
+            </div>
+          ))}
         </div>
       </section>
 
@@ -7145,7 +7473,7 @@ function QuotesPage({
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-              {activeBusinessDocumentLabel} V167
+              {activeBusinessDocumentLabel} V183
             </div>
             <h3 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950">
               {activeBusinessDocumentLabel} bearbeiten & Vorschau
@@ -7203,26 +7531,147 @@ function QuotesPage({
           </div>
         </div>
 
-        <div className="mt-6 grid gap-4 lg:grid-cols-4">
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kunde</p>
-            <p className="mt-2 truncate text-base font-semibold text-slate-950">{quoteCustomerName}</p>
-            <p className="mt-1 text-sm font-medium text-slate-500">{selectedCustomer ? selectedCustomer.customerNumber : "Freitext"}</p>
+        <div className="mt-6 rounded-[1.75rem] border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-50 p-5 shadow-sm">
+          <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+            <div>
+              <p className="text-xs font-black uppercase tracking-[0.24em] text-slate-400">Dokumentzentrale V183</p>
+              <h4 className="mt-2 text-xl font-black tracking-tight text-slate-950">
+                {activeBusinessDocumentLabel} auf einen Blick
+              </h4>
+              <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
+                Die wichtigsten Infos bleiben zentral gebündelt. Der farbige Ablauf oben zeigt sofort, was erledigt ist und welcher Schritt als nächstes ansteht.
+              </p>
+            </div>
+            <div className={`rounded-3xl px-4 py-3 text-right shadow-sm ${documentStatusTone.panelClass}`}>
+              <p className={`text-xs font-bold uppercase tracking-wide ${documentStatusTone.labelClass}`}>Status</p>
+              <p className={`mt-1 text-lg font-black ${documentStatusTone.valueClass}`}>{documentStatus}</p>
+              <p className={`mt-1 text-xs font-semibold ${documentStatusTone.hintClass}`}>{documentStatusHint}</p>
+            </div>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Positionen</p>
-            <p className="mt-2 text-base font-semibold text-slate-950">{quotePositions.length}</p>
-            <p className="mt-1 text-sm font-medium text-slate-500">aus Kalkulation / manuell</p>
+
+          <div className="mt-5 grid gap-3 lg:grid-cols-4">
+            <div className="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Dokument</p>
+              <p className="mt-2 truncate text-base font-black text-slate-950">{quoteNumber}</p>
+              <p className="mt-1 text-xs font-semibold text-slate-500">{activeBusinessDocumentLabel}</p>
+            </div>
+            <div className="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Kunde</p>
+              <p className="mt-2 truncate text-base font-black text-slate-950">{quoteCustomerName || "ohne Kunde"}</p>
+              <p className="mt-1 text-xs font-semibold text-slate-500">{selectedCustomer ? selectedCustomer.customerNumber : "Freitext"}</p>
+            </div>
+            <div className="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
+                {isDeliveryNote ? "Liefermenge" : isOrderConfirmation ? "Auftragsmenge" : activeBusinessDocumentType === "invoice" ? "Offen" : activeBusinessDocumentType === "reminder" && reminderSnapshot ? "Gesamt Mahnung" : "Brutto"}
+              </p>
+              <p className={`mt-2 text-base font-black ${activeBusinessDocumentType === "invoice" && openPaymentAmount > 0.01 ? "text-rose-950" : activeBusinessDocumentType === "reminder" ? "text-rose-950" : "text-slate-950"}`}>
+                {isDeliveryNote
+                  ? formatNumber(deliveryTotalQuantity, 0)
+                  : isOrderConfirmation
+                    ? formatNumber(orderTotalQuantity, 0)
+                    : activeBusinessDocumentType === "invoice"
+                      ? formatCurrency(openPaymentAmount)
+                      : activeBusinessDocumentType === "reminder" && reminderSnapshot
+                        ? formatCurrency(reminderSnapshot.reminderTotalAmount ?? reminderSnapshot.openAmount)
+                        : formatCurrency(grossTotal)}
+              </p>
+              <p className="mt-1 text-xs font-semibold text-slate-500">
+                {isDeliveryNote
+                  ? `${deliveryPositionCount} Position${deliveryPositionCount === 1 ? "" : "en"} · ohne Preise`
+                  : isOrderConfirmation
+                    ? `${orderPositionCount} Position${orderPositionCount === 1 ? "" : "en"}`
+                    : activeBusinessDocumentType === "invoice"
+                      ? `Bezahlt ${formatCurrency(normalizedPaymentPaidAmount)}`
+                      : activeBusinessDocumentType === "reminder" && reminderSnapshot
+                        ? `Rest ${formatCurrency(reminderSnapshot.openAmount)} · Gebühr ${formatCurrency(reminderSnapshot.reminderFeeAmount ?? 0)}`
+                        : `Netto ${formatCurrency(netTotal)}`}
+              </p>
+            </div>
+            <div className="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Nächster Schritt</p>
+              <p className="mt-2 text-sm font-black leading-5 text-slate-950">
+                {isQuote
+                  ? quoteNextActionLabel
+                  : isOrderConfirmation
+                    ? orderNextActionLabel
+                    : isDeliveryNote
+                      ? deliveryNextActionLabel
+                      : activeBusinessDocumentType === "invoice"
+                        ? invoiceNextActionLabel
+                        : activeBusinessDocumentType === "reminder" && reminderSnapshot
+                          ? `${reminderSnapshot.levelLabel} versenden / Zahlung überwachen`
+                          : currentAreaActionLabel}
+              </p>
+              <p className="mt-1 text-xs font-semibold text-slate-500">kontextbezogen</p>
+            </div>
           </div>
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Netto</p>
-            <p className="mt-2 text-base font-semibold text-slate-950">{isDeliveryNote ? "ohne Preise" : formatCurrency(netTotal)}</p>
-            <p className="mt-1 text-sm font-medium text-slate-500">zzgl. MwSt.</p>
-          </div>
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Brutto</p>
-            <p className="mt-2 text-base font-semibold text-slate-950">{isDeliveryNote ? "—" : formatCurrency(grossTotal)}</p>
-            <p className="mt-1 text-sm font-medium text-slate-500">Kundenbetrag</p>
+
+          <div className="mt-4 grid gap-3 xl:grid-cols-[1.3fr_1fr]">
+            <div className="rounded-3xl border border-slate-200 bg-white p-4">
+              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Dokumentkette</p>
+                  <p className="mt-1 text-sm font-semibold leading-5 text-slate-700">
+                    {currentDocumentChain.length > 1
+                      ? currentDocumentChain.map((item) => item.label).join(" → ")
+                      : "Noch kein Folgeprozess verknüpft"}
+                  </p>
+                </div>
+                <div className="flex flex-wrap gap-2">
+                  {currentDocumentChain.map((chainItem) => {
+                    const relatedDocument = chainItem.id
+                      ? savedDocuments.find((documentItem) => documentItem.id === chainItem.id)
+                      : undefined;
+                    const chainBadgeClass = chainItem.isCurrent
+                      ? "bg-slate-950 text-white"
+                      : chainItem.relation === "source"
+                        ? "bg-emerald-100 text-emerald-800"
+                        : "bg-cyan-100 text-cyan-800";
+
+                    if (relatedDocument && !chainItem.isCurrent) {
+                      return (
+                        <button
+                          key={`${chainItem.relation}-${chainItem.id ?? chainItem.documentNumber}`}
+                          type="button"
+                          onClick={() => handleOpenSavedDocument(relatedDocument)}
+                          className={`rounded-full px-3 py-2 text-xs font-black shadow-sm transition hover:-translate-y-0.5 ${chainBadgeClass}`}
+                          title={`${chainItem.label} öffnen`}
+                        >
+                          {chainItem.label}
+                        </button>
+                      );
+                    }
+
+                    return (
+                      <span
+                        key={`${chainItem.relation}-${chainItem.id ?? chainItem.documentNumber}`}
+                        className={`rounded-full px-3 py-2 text-xs font-black shadow-sm ${chainBadgeClass}`}
+                        title={chainItem.status ? `Status: ${chainItem.status}` : undefined}
+                      >
+                        {chainItem.label}{chainItem.isCurrent ? " · aktuell" : ""}
+                      </span>
+                    );
+                  })}
+                </div>
+              </div>
+            </div>
+
+            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
+              <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Kurzinfo</p>
+              <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
+                {isQuote
+                  ? quoteDecisionHint
+                  : isOrderConfirmation
+                    ? `${orderInternalProductionHint} Intern ist dieses Dokument der Auftrag; die Auftragsbestätigung ist die Kundenausgabe dazu.`
+                    : isDeliveryNote
+                      ? `Quelle: ${deliverySourceLabel}. ${deliveryNextActionLabel}.`
+                      : activeBusinessDocumentType === "invoice"
+                        ? `${invoiceDueStatusLabel}. ${invoicePaymentHint}`
+                        : activeBusinessDocumentType === "reminder" && reminderSnapshot
+                          ? `Mahnstufe: ${reminderSnapshot.levelLabel}. Zahlungsfrist: ${formatDateGerman(reminderSnapshot.dueDate)}.`
+                          : currentAreaActionLabel}
+              </p>
+            </div>
           </div>
         </div>
 
@@ -7253,11 +7702,11 @@ function QuotesPage({
         <div className="mt-4 rounded-3xl border border-slate-200 bg-slate-50 p-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Statuswechsel V167</p>
-              <p className="mt-1 text-sm font-medium text-slate-600">Setzt den Dokumentstatus mit App-Meldung. Bei „Versendet” und „Angenommen” wird automatisch ein Datum vorbereitet.</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Statuswechsel V183</p>
+              <p className="mt-1 text-sm font-medium text-slate-600">Der Status ist ein wichtiger Prozessschritt: Er steuert, welche Folgeaktion sinnvoll ist. Bei „Versendet” und „Angenommen” wird automatisch ein Datum vorbereitet.</p>
             </div>
             <div className="flex flex-wrap gap-2">
-              {(["Entwurf", "Versendet", "Angenommen", "Abgelehnt"] as DocumentStatus[]).map((status) => (
+              {((isDeliveryNote ? ["Entwurf", "Versendet", "Abgerechnet", "Storniert"] : ["Entwurf", "Versendet", "Angenommen", "Abgelehnt"]) as DocumentStatus[]).map((status) => (
                 <button
                   key={status}
                   type="button"
@@ -7277,7 +7726,7 @@ function QuotesPage({
 
         <div className="mt-6 grid gap-3 md:grid-cols-3">
           <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Nummernkreis V167</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Nummernkreis V183</p>
             <p className="mt-2 text-base font-semibold text-amber-950">{numberCircleSettings[activeBusinessDocumentType].prefix}-{new Date().getFullYear()}-{String(numberCircleSettings[activeBusinessDocumentType].nextNumber).padStart(numberCircleSettings[activeBusinessDocumentType].padding, "0")}</p>
             <p className="mt-1 text-sm font-medium text-amber-800">nächste freie Nummer</p>
           </div>
@@ -7300,7 +7749,7 @@ function QuotesPage({
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-yellow-300 via-fuchsia-500 to-cyan-400" />
             <h3 className="mt-5 text-xl font-black">Dokumentkopf</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
-              Kundenauswahl und Stammdaten für die Kundenvorschau V167.
+              Kundenauswahl und Stammdaten für die Kundenvorschau V183.
             </p>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -7383,13 +7832,14 @@ function QuotesPage({
                 value={validUntil}
                 onChange={setValidUntil}
               />
-              <SelectField
-                label="Status"
+              <StatusSelectField
+                label="Status · wichtiger Prozessschritt"
                 value={documentStatus}
-                onChange={(value) => handleDocumentStatusChange(value as DocumentStatus)}
+                onChange={handleDocumentStatusChange}
+                hint={documentStatusHint}
                 options={documentStatusOptions.map((status) => ({
                   value: status,
-                  label: status,
+                  label: getDocumentStatusOptionLabel(status),
                 }))}
               />
               {(documentStatus === "Versendet" || documentSentDate) && (
@@ -7513,6 +7963,25 @@ function QuotesPage({
                   </div>
                 </div>
 
+                <div className="mt-4 grid gap-3 lg:grid-cols-4">
+                  <div className="rounded-2xl bg-white p-4 shadow-sm">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Fällig am</p>
+                    <p className="mt-1 text-sm font-black text-slate-950">{formatDateGerman(paymentDueDate)}</p>
+                  </div>
+                  <div className="rounded-2xl bg-white p-4 shadow-sm">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Fälligkeitsprüfung</p>
+                    <p className={`mt-1 text-sm font-black ${currentInvoiceOverdueDays > 0 && openPaymentAmount > 0.01 ? "text-rose-700" : "text-emerald-700"}`}>{invoiceDueStatusLabel}</p>
+                  </div>
+                  <div className="rounded-2xl bg-white p-4 shadow-sm">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Nächste Mahnstufe</p>
+                    <p className="mt-1 text-sm font-black text-rose-700">{invoiceCanPrepareReminder ? nextReminderLevelLabel : "nicht erforderlich"}</p>
+                  </div>
+                  <div className="rounded-2xl bg-white p-4 shadow-sm">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Nächster Schritt</p>
+                    <p className={`mt-1 text-sm font-black ${invoiceCanPrepareReminder ? "text-rose-700" : "text-slate-700"}`}>{invoiceNextActionLabel}</p>
+                  </div>
+                </div>
+
                 <div className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
                   <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
                     <div>
@@ -7563,7 +8032,15 @@ function QuotesPage({
                   )}
                 </div>
 
-                <div className="mt-4 grid gap-4 md:grid-cols-2">
+                <div className="mt-4 rounded-2xl bg-white p-4 shadow-sm">
+                  <div className="mb-4 flex flex-col gap-1 sm:flex-row sm:items-end sm:justify-between">
+                    <div>
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Zahlung erfassen</p>
+                      <p className="mt-1 text-sm font-semibold text-slate-700">Teilzahlung, Komplettzahlung oder Rücksetzung direkt an der Rechnung pflegen.</p>
+                    </div>
+                    <p className="text-xs font-bold text-slate-500">Offen aktuell: {formatCurrency(openPaymentAmount)}</p>
+                  </div>
+                  <div className="grid gap-4 md:grid-cols-2">
                   <SelectField
                     label="Zahlungsstatus"
                     value={paymentStatus}
@@ -7592,6 +8069,7 @@ function QuotesPage({
                     value={paymentPaidDate}
                     onChange={setPaymentPaidDate}
                   />
+                  </div>
                 </div>
 
                 <div className="mt-4 flex flex-col gap-2 sm:flex-row sm:flex-wrap">
@@ -7632,7 +8110,7 @@ function QuotesPage({
             <div className={`mt-5 rounded-3xl border p-5 ${documentAreaTone[activeBusinessDocumentType].card}`}>
               <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                 <div>
-                  <p className={`text-xs font-semibold uppercase tracking-wide ${documentAreaTone[activeBusinessDocumentType].eyebrow}`}>Modulaktionen V167</p>
+                  <p className={`text-xs font-semibold uppercase tracking-wide ${documentAreaTone[activeBusinessDocumentType].eyebrow}`}>Modulaktionen V183</p>
                   <h4 className="mt-2 text-lg font-semibold tracking-tight text-slate-950">
                     Passende Aktionen für {activeBusinessDocumentLabel}
                   </h4>
@@ -7644,7 +8122,7 @@ function QuotesPage({
                 <div className="grid w-full gap-2 sm:grid-cols-2 xl:w-auto xl:min-w-[520px] xl:grid-cols-3">
                   {activeBusinessDocumentType === "quote" && (
                     <>
-                      <button type="button" onClick={handleCreateOrderConfirmation} className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-emerald-700 shadow-sm ring-1 ring-emerald-200 transition hover:-translate-y-0.5 hover:bg-emerald-100">In Auftrag übernehmen</button>
+                      <button type="button" onClick={handleCreateOrderConfirmation} className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-emerald-700 shadow-sm ring-1 ring-emerald-200 transition hover:-translate-y-0.5 hover:bg-emerald-100">Auftrag erstellen</button>
                       <button type="button" onClick={handleCreateInvoice} className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-cyan-700 shadow-sm ring-1 ring-cyan-200 transition hover:-translate-y-0.5 hover:bg-cyan-100">Rechnung vorbereiten</button>
                       <button type="button" onClick={handleCreateDeliveryNote} className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-lime-700 shadow-sm ring-1 ring-lime-200 transition hover:-translate-y-0.5 hover:bg-lime-100">Lieferschein vorbereiten</button>
                     </>
@@ -7660,7 +8138,7 @@ function QuotesPage({
 
                   {activeBusinessDocumentType === "invoice" && (
                     <>
-                      <button type="button" onClick={handleMarkInvoicePaid} className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-emerald-700 shadow-sm ring-1 ring-emerald-200 transition hover:-translate-y-0.5 hover:bg-emerald-100">Komplett bezahlt</button>
+                      <button type="button" onClick={handleMarkInvoicePaid} disabled={paymentStatus === "Bezahlt" || openPaymentAmount <= 0.01} className={`rounded-2xl px-4 py-3 text-xs font-semibold shadow-sm ring-1 transition ${paymentStatus === "Bezahlt" || openPaymentAmount <= 0.01 ? "cursor-not-allowed bg-slate-100 text-slate-400 ring-slate-200" : "bg-white text-emerald-700 ring-emerald-200 hover:-translate-y-0.5 hover:bg-emerald-100"}`}>Komplett bezahlt</button>
                       <button
                         type="button"
                         onClick={handlePrepareReminderFromInvoice}
@@ -7696,7 +8174,7 @@ function QuotesPage({
             <div className={`mt-5 rounded-3xl border p-5 ${isAcceptedQuote ? "border-emerald-200 bg-emerald-50" : "border-amber-200 bg-amber-50"}`}>
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                  <p className={`text-xs font-semibold uppercase tracking-wide ${isAcceptedQuote ? "text-emerald-700" : "text-amber-700"}`}>Folgeprozess V167</p>
+                  <p className={`text-xs font-semibold uppercase tracking-wide ${isAcceptedQuote ? "text-emerald-700" : "text-amber-700"}`}>Folgeprozess V183</p>
                   <p className={`mt-1 text-sm font-medium leading-6 ${isAcceptedQuote ? "text-emerald-800" : "text-amber-800"}`}>
                     {isAcceptedQuote
                       ? `Dieses Angebot ist angenommen. Du kannst daraus jetzt Auftrag, Rechnung oder Lieferschein vorbereiten.`
@@ -7738,7 +8216,7 @@ function QuotesPage({
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                   <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${documentTypeProfile.badgeClass}`}>
-                    Dokumentlogik V167 · {documentTypeProfile.eyebrow}
+                    Dokumentlogik V183 · {documentTypeProfile.eyebrow}
                   </span>
                   <h4 className="mt-3 text-lg font-semibold tracking-tight">
                     {documentTypeProfile.title}
@@ -7770,20 +8248,25 @@ function QuotesPage({
             <div className="mt-5 rounded-3xl bg-slate-50 p-5">
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                    Speichern
-                  </p>
+                  <div className="flex flex-wrap items-center gap-2">
+                    <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                      Speichern
+                    </p>
+                    <span className={`rounded-full px-3 py-1 text-[0.68rem] font-black uppercase tracking-wide ${documentHasUnsavedChanges ? "bg-amber-100 text-amber-800" : "bg-emerald-100 text-emerald-700"}`}>
+                      {documentHasUnsavedChanges ? "Ungespeichert" : "Gespeichert"}
+                    </span>
+                  </div>
                   <p className="mt-2 text-sm font-bold text-slate-500">
-                    {activeSavedDocumentId
-                      ? "Dieses Dokument ist gespeichert und kann überschrieben werden."
-                      : "Dieses Dokument ist noch nicht gespeichert."}
+                    {documentHasUnsavedChanges
+                      ? "Bitte speichern, bevor du ein anderes Dokument öffnest oder die Seite verlässt."
+                      : "Dieses Dokument ist gespeichert und kann überschrieben werden."}
                   </p>
                 </div>
 
                 <button
                   type="button"
                   onClick={handleSaveCurrentDocument}
-                  className="rounded-2xl bg-emerald-500 px-5 py-3 text-sm font-black text-white shadow-sm transition hover:-translate-y-0.5 hover:bg-emerald-600"
+                  className="rounded-3xl bg-emerald-500 px-8 py-4 text-base font-black text-white shadow-2xl shadow-emerald-500/25 ring-4 ring-emerald-100 transition hover:-translate-y-0.5 hover:bg-emerald-600"
                 >
                   Dokument speichern
                 </button>
@@ -7818,7 +8301,7 @@ function QuotesPage({
             <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
               <div>
                 <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 to-sky-500" />
-                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen V167</h3>
+                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen V183</h3>
                 <p className="mt-1 text-sm font-medium leading-6 text-slate-500">
                   Positionen sind jetzt als klare Bearbeitungskarten aufgebaut. Titel, Beschreibung, Menge,
                   Einzelpreis und MwSt. ändern die Angebotsvorschau sofort.
@@ -8082,32 +8565,17 @@ function QuotesPage({
         <div className="space-y-6">
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-semibold tracking-tight">Dokumentliste / Verwaltung V167</h3>
+            <h3 className="mt-5 text-xl font-semibold tracking-tight">Dokumentliste / Verwaltung V183</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
-              Gespeicherte Dokumente dieses Bereichs suchen, filtern, öffnen, duplizieren oder löschen. Status, Kunde, Nummer und Betrag sind direkt sichtbar.
+              Gespeicherte Dokumente werden jetzt nur noch für dieses Modul angezeigt. Dadurch bleiben Rechnungen, Mahnungen, Lieferscheine, Aufträge und Angebote getrennt und die Liste ist deutlich ruhiger.
             </p>
 
-            <div className="mt-6 grid gap-3 xl:grid-cols-[1.2fr_0.9fr_0.9fr]">
+            <div className="mt-6 grid gap-3 xl:grid-cols-[1.4fr_0.8fr]">
               <SearchField
-                label="Dokument suchen"
+                label={`${activeBusinessDocumentLabel} suchen`}
                 value={documentSearch}
                 onChange={setDocumentSearch}
                 placeholder="Nummer, Kunde, Status oder Betrag suchen..."
-              />
-
-              <SelectField
-                label="Dokumenttyp"
-                value={documentTypeFilter}
-                onChange={setDocumentTypeFilter}
-                options={[
-                  { value: "all", label: "Alle Dokumenttypen" },
-                  ...documentTypeOrder.map((documentType) => ({
-                    value: documentType,
-                    label:
-                      documentTemplateSettings[documentType]?.label ??
-                      documentType,
-                  })),
-                ]}
               />
 
               <SelectField
@@ -8127,38 +8595,35 @@ function QuotesPage({
             <div className="mt-5 grid gap-3 md:grid-cols-4">
               <button
                 type="button"
-                onClick={() => {
-                  setDocumentTypeFilter("quote");
-                  setDocumentStatusFilter("all");
-                }}
-                className="rounded-3xl border border-yellow-200 bg-yellow-50 p-4 text-left transition hover:-translate-y-0.5"
+                onClick={() => setDocumentStatusFilter("all")}
+                className={`rounded-3xl border p-4 text-left transition hover:-translate-y-0.5 ${documentStatusFilter === "all" ? "border-slate-950 bg-slate-950 text-white" : "border-slate-200 bg-white text-slate-950"}`}
               >
-                <p className="text-xs font-semibold uppercase tracking-wide text-yellow-700">Angebote</p>
-                <p className="mt-1 text-lg font-semibold text-yellow-950">{quoteDocumentCount}</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${documentStatusFilter === "all" ? "text-slate-300" : "text-slate-400"}`}>Alle im Modul</p>
+                <p className="mt-1 text-lg font-semibold">{documentsInCurrentArea.length}</p>
               </button>
               <button
                 type="button"
                 onClick={() => setDocumentStatusFilter("Entwurf")}
-                className="rounded-3xl border border-slate-200 bg-white p-4 text-left transition hover:-translate-y-0.5"
+                className={`rounded-3xl border p-4 text-left transition hover:-translate-y-0.5 ${documentStatusFilter === "Entwurf" ? "border-slate-950 bg-slate-950 text-white" : "border-slate-200 bg-white text-slate-950"}`}
               >
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Entwürfe</p>
-                <p className="mt-1 text-lg font-semibold text-slate-950">{draftDocumentCount}</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${documentStatusFilter === "Entwurf" ? "text-slate-300" : "text-slate-400"}`}>Entwürfe</p>
+                <p className="mt-1 text-lg font-semibold">{currentAreaDraftCount}</p>
               </button>
               <button
                 type="button"
                 onClick={() => setDocumentStatusFilter("Versendet")}
-                className="rounded-3xl border border-cyan-200 bg-cyan-50 p-4 text-left transition hover:-translate-y-0.5"
+                className={`rounded-3xl border p-4 text-left transition hover:-translate-y-0.5 ${documentStatusFilter === "Versendet" ? "border-cyan-400 bg-cyan-50" : "border-cyan-200 bg-cyan-50"}`}
               >
                 <p className="text-xs font-semibold uppercase tracking-wide text-cyan-700">Gesendet</p>
-                <p className="mt-1 text-lg font-semibold text-cyan-950">{sentDocumentCount}</p>
+                <p className="mt-1 text-lg font-semibold text-cyan-950">{currentAreaSentCount}</p>
               </button>
               <button
                 type="button"
-                onClick={() => setDocumentStatusFilter("Angenommen")}
+                onClick={() => setDocumentStatusFilter(activeBusinessDocumentType === "quote" ? "Angenommen" : activeBusinessDocumentType === "invoice" ? "Überfällig" : "Erledigt")}
                 className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 text-left transition hover:-translate-y-0.5"
               >
-                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angenommen</p>
-                <p className="mt-1 text-lg font-semibold text-emerald-950">{acceptedDocumentCount}</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">{activeBusinessDocumentType === "invoice" ? "Überfällig" : activeBusinessDocumentType === "quote" ? "Angenommen" : "Erledigt"}</p>
+                <p className="mt-1 text-lg font-semibold text-emerald-950">{activeBusinessDocumentType === "quote" ? currentAreaAcceptedCount : activeBusinessDocumentType === "invoice" ? currentAreaOverdueInvoiceCount : currentAreaDoneCount}</p>
               </button>
             </div>
 
@@ -8169,7 +8634,7 @@ function QuotesPage({
                     Gespeichert
                   </p>
                   <p className="mt-1 font-black text-slate-800">
-                    {savedDocuments.length}
+                    {documentsInCurrentArea.length}
                   </p>
                 </div>
                 <div>
@@ -8195,7 +8660,7 @@ function QuotesPage({
               {savedDocuments.length === 0 ? (
                 <div className="rounded-3xl border border-dashed border-slate-300 bg-slate-50 p-5">
                   <p className="text-sm font-black text-slate-700">
-                    Noch keine Dokumente gespeichert
+                    Noch keine Dokumente in diesem Modul gespeichert
                   </p>
                   <p className="mt-1 text-sm font-medium text-slate-500">
                     Speichere das aktuelle Dokument, damit es hier erscheint.
@@ -8207,7 +8672,7 @@ function QuotesPage({
                     Keine Dokumente gefunden
                   </p>
                   <p className="mt-1 text-sm font-medium text-slate-500">
-                    Passe Suche, Dokumenttyp oder Statusfilter an.
+                    Passe Suche oder Statusfilter an.
                   </p>
                 </div>
               ) : (
@@ -8295,12 +8760,30 @@ function QuotesPage({
                                 Offen {formatCurrency(invoiceOpenAmount)}
                               </span>
                             )}
-                            <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-500 shadow-sm">
-                              Netto {formatCurrency(documentTotal)}
-                            </span>
-                            <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-500 shadow-sm">
-                              Brutto {formatCurrency(documentTotals.grossTotal)}
-                            </span>
+                            {documentItem.documentType === "deliveryNote" ? (
+                              <>
+                                <span className="rounded-full bg-lime-100 px-3 py-1 text-xs font-black text-lime-700 shadow-sm">
+                                  Positionen {documentItem.positions.length}
+                                </span>
+                                <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-500 shadow-sm">
+                                  ohne Preise
+                                </span>
+                                {documentItem.sourceDocumentNumber && (
+                                  <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-500 shadow-sm">
+                                    Quelle {documentItem.sourceDocumentNumber}
+                                  </span>
+                                )}
+                              </>
+                            ) : (
+                              <>
+                                <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-500 shadow-sm">
+                                  Netto {formatCurrency(documentTotal)}
+                                </span>
+                                <span className="rounded-full bg-white px-3 py-1 text-xs font-black text-slate-500 shadow-sm">
+                                  Brutto {formatCurrency(documentTotals.grossTotal)}
+                                </span>
+                              </>
+                            )}
                           </div>
                         </div>
 
@@ -8353,14 +8836,19 @@ function QuotesPage({
             </p>
 
             {isDeliveryNote ? (
-              <div className="mt-6 rounded-3xl bg-violet-50 p-5 text-violet-700">
-                <p className="text-xs font-extrabold uppercase tracking-wide">
-                  Preisfreie Ansicht
-                </p>
-                <p className="mt-2 text-sm font-bold leading-6">
-                  Einzelpreise, Gesamtpreise, MwSt. und Summen werden im
-                  Lieferschein ausgeblendet.
-                </p>
+              <div className="mt-6 space-y-3">
+                <div className="rounded-3xl bg-violet-50 p-5 text-violet-700">
+                  <p className="text-xs font-extrabold uppercase tracking-wide">
+                    Preisfreie Ansicht
+                  </p>
+                  <p className="mt-2 text-sm font-bold leading-6">
+                    Einzelpreise, Gesamtpreise, MwSt. und Summen werden im
+                    Lieferschein ausgeblendet.
+                  </p>
+                </div>
+                <CostRow label="Lieferpositionen" value={String(deliveryPositionCount)} />
+                <CostRow label="Liefermenge gesamt" value={formatNumber(deliveryTotalQuantity, 0)} />
+                <CostRow label="Lieferstatus" value={deliveryStatusLabel} highlight />
               </div>
             ) : (
               <div className="mt-6 space-y-3">
@@ -8389,7 +8877,7 @@ function QuotesPage({
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Kundenvorschau V167
+                  Kundenvorschau V183
                 </p>
                 <h3 className="mt-2 text-2xl font-black tracking-tight">
                   {quoteNumber}
@@ -8715,7 +9203,7 @@ function QuotesPage({
               <div className="-mx-6 -mt-6 mb-6 border-b border-slate-200 bg-slate-50 px-6 py-4 print:hidden">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V167</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V183</p>
                     <p className="mt-1 text-sm font-medium text-slate-600">So wirkt das Dokument später im Druck oder als PDF.</p>
                   </div>
                   <div className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Layout prüfbar</div>
@@ -13417,7 +13905,7 @@ function SettingsPage({
   function exportAppBackup() {
     const payload = {
       app: "PrintPilot",
-      version: "V167",
+      version: APP_VERSION,
       exportedAt: new Date().toISOString(),
       data: {
         company,
@@ -13560,7 +14048,7 @@ function SettingsPage({
               </h2>
               <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
                 Firmenprofil und Dokumentvorlagen für Angebot,
-                Auftragsbestätigung, Rechnung, Lieferschein und Mahnung.
+                Auftrag, Rechnung, Lieferschein und Mahnung.
               </p>
             </div>
             <div className="rounded-3xl bg-white p-5 text-slate-950 shadow-xl">
@@ -13798,7 +14286,7 @@ function SettingsPage({
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-lime-400 to-emerald-500" />
             <h3 className="mt-5 text-xl font-black">Dokumentanzeige</h3>
             <p className="mt-1 text-sm font-medium leading-6 text-slate-500">
-              Lege fest, welche Stammdaten auf Angeboten, Rechnungen, Lieferscheinen und Auftragsbestätigungen zusätzlich ausgegeben werden. Bei vorgedrucktem Briefbogen kannst du alles deaktiviert lassen.
+              Lege fest, welche Stammdaten auf Angeboten, Aufträgen, Rechnungen und Lieferscheinen zusätzlich ausgegeben werden. Bei vorgedrucktem Briefbogen kannst du alles deaktiviert lassen.
             </p>
             <div className="mt-6 grid gap-3 md:grid-cols-2">
               {[
@@ -13900,8 +14388,8 @@ function SettingsPage({
             <h3 className="mt-5 text-xl font-black">Dokumenttypen</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Jeder Dokumenttyp hat eigene Abstände und Standardtexte. Die
-              Kundenvorschau V167 nutzt den aktiven Dokumenttyp: Angebot,
-              Auftragsbestätigung, Rechnung oder Lieferschein.
+              Kundenvorschau V183 nutzt den aktiven Dokumenttyp: Angebot,
+              Auftrag, Rechnung oder Lieferschein.
             </p>
             <div className="mt-6 grid gap-4 md:grid-cols-[0.8fr_1.2fr]">
               <div className="space-y-3">
@@ -14265,7 +14753,7 @@ function SettingsPage({
 
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-black">Kundenvorschau V167</h3>
+            <h3 className="mt-5 text-xl font-black">Kundenvorschau V183</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Aktive Vorlage: {activeDocumentTemplate.label}
             </p>
@@ -14472,6 +14960,46 @@ function TextAreaField({
   );
 }
 
+function parseFlexibleNumberInput(rawValue: string) {
+  const trimmedValue = rawValue
+    .trim()
+    .replace(/[\s\u00a0']/g, "");
+
+  if (!trimmedValue || trimmedValue === "," || trimmedValue === "." || trimmedValue === "-") {
+    return Number.NaN;
+  }
+
+  const lastCommaIndex = trimmedValue.lastIndexOf(",");
+  const lastDotIndex = trimmedValue.lastIndexOf(".");
+  const hasComma = lastCommaIndex >= 0;
+  const hasDot = lastDotIndex >= 0;
+
+  if (hasComma && hasDot) {
+    const decimalSeparator = lastCommaIndex > lastDotIndex ? "," : ".";
+    const thousandSeparator = decimalSeparator === "," ? "." : ",";
+    return Number(
+      trimmedValue
+        .replace(new RegExp(`\\${thousandSeparator}`, "g"), "")
+        .replace(decimalSeparator, "."),
+    );
+  }
+
+  if (hasComma) {
+    return Number(trimmedValue.replace(/\./g, "").replace(",", "."));
+  }
+
+  if (hasDot) {
+    const dotParts = trimmedValue.split(".");
+    const looksLikeGermanThousands =
+      dotParts.length > 2 ||
+      (dotParts.length === 2 && /^-?\d{1,3}$/.test(dotParts[0]) && /^\d{3}$/.test(dotParts[1]));
+
+    return Number(looksLikeGermanThousands ? dotParts.join("") : trimmedValue);
+  }
+
+  return Number(trimmedValue);
+}
+
 function NumberField({
   label,
   value,
@@ -14487,15 +15015,52 @@ function NumberField({
   step?: number;
   min?: number;
 }) {
+  const [draftValue, setDraftValue] = useState(String(value));
+  const [isFocused, setIsFocused] = useState(false);
+
+  useEffect(() => {
+    if (!isFocused) {
+      setDraftValue(String(value));
+    }
+  }, [isFocused, value]);
+
   function handleChange(rawValue: string) {
-    const nextValue = Number(rawValue);
+    setDraftValue(rawValue);
+
+    const nextValue = parseFlexibleNumberInput(rawValue);
 
     if (Number.isNaN(nextValue)) {
-      onChange(min);
       return;
     }
 
     onChange(Math.max(nextValue, min));
+  }
+
+  function handleFocus(event: FocusEvent<HTMLInputElement>) {
+    setIsFocused(true);
+
+    if (value === min && min === 0) {
+      setDraftValue("");
+      return;
+    }
+
+    event.currentTarget.select();
+  }
+
+  function handleBlur() {
+    setIsFocused(false);
+
+    const nextValue = parseFlexibleNumberInput(draftValue);
+
+    if (Number.isNaN(nextValue)) {
+      onChange(min);
+      setDraftValue(String(min));
+      return;
+    }
+
+    const cleanedValue = Math.max(nextValue, min);
+    onChange(cleanedValue);
+    setDraftValue(String(cleanedValue));
   }
 
   return (
@@ -14505,10 +15070,12 @@ function NumberField({
       </span>
       <div className="mt-2 flex overflow-hidden rounded-2xl border border-slate-200 bg-slate-50 transition focus-within:border-slate-950 focus-within:bg-white">
         <input
-          type="number"
-          value={value}
-          min={min}
+          type="text"
+          inputMode="decimal"
+          value={draftValue}
           step={step}
+          onFocus={handleFocus}
+          onBlur={handleBlur}
           onChange={(event) => handleChange(event.target.value)}
           className="w-full border-0 bg-transparent px-4 py-3 text-sm font-bold text-slate-950 outline-none"
         />
@@ -14549,6 +15116,49 @@ function SelectField({
           </option>
         ))}
       </select>
+    </label>
+  );
+}
+
+function StatusSelectField({
+  label,
+  value,
+  onChange,
+  options,
+  hint,
+}: {
+  label: string;
+  value: DocumentStatus;
+  onChange: (value: DocumentStatus) => void;
+  options: { value: DocumentStatus; label: string }[];
+  hint: string;
+}) {
+  const tone = getDocumentStatusTone(value);
+
+  return (
+    <label className="block">
+      <div className="flex items-center justify-between gap-3">
+        <span className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+          {label}
+        </span>
+        <span className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${tone.buttonActiveClass}`}>
+          wichtig
+        </span>
+      </div>
+      <select
+        value={value}
+        onChange={(event) => onChange(event.target.value as DocumentStatus)}
+        className={`mt-2 w-full rounded-2xl border px-4 py-3 text-sm font-black outline-none transition ${getDocumentStatusSelectClass(value)}`}
+      >
+        {options.map((option) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+      <div className={`mt-2 rounded-2xl px-3 py-2 text-xs font-bold leading-5 ${tone.panelClass} ${tone.hintClass}`}>
+        Status steuert den nächsten Schritt: {hint}
+      </div>
     </label>
   );
 }
@@ -16858,6 +17468,108 @@ function createReminderTextTemplate({
   };
 }
 
+function buildDocumentChain({
+  currentId,
+  currentType,
+  currentNumber,
+  currentStatus,
+  sourceId,
+  sourceType,
+  sourceNumber,
+  savedDocuments,
+  documentTemplateSettings,
+}: {
+  currentId?: string;
+  currentType: DocumentType;
+  currentNumber: string;
+  currentStatus: DocumentStatus;
+  sourceId?: string;
+  sourceType?: DocumentType;
+  sourceNumber?: string;
+  savedDocuments: SavedDocument[];
+  documentTemplateSettings: DocumentTemplateSettings;
+}): DocumentChainItem[] {
+  const documentById = new Map(savedDocuments.map((documentItem) => [documentItem.id, documentItem]));
+  const sourceItems: DocumentChainItem[] = [];
+  const visitedIds = new Set<string>();
+  let nextSourceId = sourceId;
+  let fallbackSourceType = sourceType;
+  let fallbackSourceNumber = sourceNumber;
+
+  for (let index = 0; index < 8; index += 1) {
+    if (nextSourceId) {
+      if (visitedIds.has(nextSourceId)) {
+        break;
+      }
+
+      visitedIds.add(nextSourceId);
+      const sourceDocument = documentById.get(nextSourceId);
+
+      if (!sourceDocument) {
+        break;
+      }
+
+      sourceItems.unshift({
+        id: sourceDocument.id,
+        documentType: sourceDocument.documentType,
+        documentNumber: sourceDocument.documentNumber,
+        label: `${documentTemplateSettings[sourceDocument.documentType]?.label ?? "Dokument"} ${sourceDocument.documentNumber}`,
+        relation: "source",
+        status: sourceDocument.status,
+        isCurrent: false,
+      });
+
+      nextSourceId = sourceDocument.sourceDocumentId;
+      fallbackSourceType = sourceDocument.sourceDocumentType;
+      fallbackSourceNumber = sourceDocument.sourceDocumentNumber;
+      continue;
+    }
+
+    if (fallbackSourceType && fallbackSourceNumber) {
+      sourceItems.unshift({
+        documentType: fallbackSourceType,
+        documentNumber: fallbackSourceNumber,
+        label: `${documentTemplateSettings[fallbackSourceType]?.label ?? "Dokument"} ${fallbackSourceNumber}`,
+        relation: "source",
+        isCurrent: false,
+      });
+    }
+
+    break;
+  }
+
+  const currentItem: DocumentChainItem = {
+    id: currentId,
+    documentType: currentType,
+    documentNumber: currentNumber,
+    label: `${documentTemplateSettings[currentType]?.label ?? "Dokument"} ${currentNumber}`,
+    relation: "current",
+    status: currentStatus,
+    isCurrent: true,
+  };
+
+  const followUpItems = currentId
+    ? savedDocuments
+        .filter((documentItem) => documentItem.sourceDocumentId === currentId)
+        .sort((firstDocument, secondDocument) => {
+          const firstDate = firstDocument.date || firstDocument.createdAt;
+          const secondDate = secondDocument.date || secondDocument.createdAt;
+          return firstDate.localeCompare(secondDate) || firstDocument.documentNumber.localeCompare(secondDocument.documentNumber);
+        })
+        .map<DocumentChainItem>((documentItem) => ({
+          id: documentItem.id,
+          documentType: documentItem.documentType,
+          documentNumber: documentItem.documentNumber,
+          label: `${documentTemplateSettings[documentItem.documentType]?.label ?? "Dokument"} ${documentItem.documentNumber}`,
+          relation: "followUp",
+          status: documentItem.status,
+          isCurrent: false,
+        }))
+    : [];
+
+  return [...sourceItems, currentItem, ...followUpItems];
+}
+
 function getReminderLevelLabel(level: ReminderLevel) {
   switch (level) {
     case 1:
@@ -17139,6 +17851,44 @@ function createNextCustomerNumber(customers: Customer[]) {
   return `KD-${highestNumber + 1}`;
 }
 
+function getDocumentStatusOptionLabel(status: DocumentStatus) {
+  switch (status) {
+    case "Entwurf":
+      return "Entwurf · intern offen";
+    case "Versendet":
+      return "Versendet · liegt beim Kunden";
+    case "Angenommen":
+      return "Angenommen · freigegeben";
+    case "Abgelehnt":
+      return "Abgelehnt · nicht beauftragt";
+    case "Abgerechnet":
+      return "Abgerechnet · Folgeprozess erledigt";
+    case "Bezahlt":
+      return "Bezahlt · abgeschlossen";
+    case "Storniert":
+      return "Storniert · gestoppt";
+    default:
+      return status;
+  }
+}
+
+function getDocumentStatusSelectClass(status: DocumentStatus) {
+  switch (status) {
+    case "Versendet":
+      return "border-cyan-300 bg-cyan-50 text-cyan-950 focus:border-cyan-500 focus:bg-white";
+    case "Angenommen":
+    case "Bezahlt":
+      return "border-emerald-300 bg-emerald-50 text-emerald-950 focus:border-emerald-500 focus:bg-white";
+    case "Abgelehnt":
+    case "Storniert":
+      return "border-rose-300 bg-rose-50 text-rose-950 focus:border-rose-500 focus:bg-white";
+    case "Abgerechnet":
+      return "border-violet-300 bg-violet-50 text-violet-950 focus:border-violet-500 focus:bg-white";
+    default:
+      return "border-slate-300 bg-slate-50 text-slate-950 focus:border-slate-950 focus:bg-white";
+  }
+}
+
 function getDocumentStatusTone(status: DocumentStatus) {
   switch (status) {
     case "Versendet":
@@ -17211,6 +17961,62 @@ function getDocumentStatusHint(
   return "Entwurf offen";
 }
 
+
+function createSavedDocumentComparableSignature(documentItem: Partial<SavedDocument> | null | undefined) {
+  if (!documentItem) return "";
+
+  return JSON.stringify({
+    documentType: documentItem.documentType,
+    documentNumber: documentItem.documentNumber,
+    customerId: documentItem.customerId,
+    customerName: documentItem.customerName,
+    customerContactPerson: documentItem.customerContactPerson ?? "",
+    customerStreet: documentItem.customerStreet ?? "",
+    customerZip: documentItem.customerZip ?? "",
+    customerCity: documentItem.customerCity ?? "",
+    customerEmail: documentItem.customerEmail ?? "",
+    customerPhone: documentItem.customerPhone ?? "",
+    date: documentItem.date,
+    validUntil: documentItem.validUntil,
+    subject: documentItem.subject,
+    introText: documentItem.introText,
+    deliveryTerms: documentItem.deliveryTerms,
+    paymentTerms: documentItem.paymentTerms,
+    positions: documentItem.positions ?? [],
+    status: documentItem.status,
+    sentDate: documentItem.sentDate ?? "",
+    acceptedDate: documentItem.acceptedDate ?? "",
+    rejectionReason: documentItem.rejectionReason ?? "",
+    paymentStatus: documentItem.paymentStatus ?? "",
+    paymentDueDate: documentItem.paymentDueDate ?? "",
+    paymentPaidDate: documentItem.paymentPaidDate ?? "",
+    paymentPaidAmount: roundMoney(Number(documentItem.paymentPaidAmount) || 0),
+    sourceDocumentId: documentItem.sourceDocumentId ?? "",
+    sourceDocumentType: documentItem.sourceDocumentType ?? "",
+    sourceDocumentNumber: documentItem.sourceDocumentNumber ?? "",
+    reminderSnapshot: documentItem.reminderSnapshot ?? null,
+  });
+}
+
+type UnsavedDocumentConfirmationRequest = {
+  title: string;
+  detail?: string;
+  resolve: (value: boolean) => void;
+};
+
+let openUnsavedDocumentConfirmationDialog: ((request: UnsavedDocumentConfirmationRequest) => void) | null = null;
+
+function confirmLeaveUnsavedDocument(title: string, detail?: string) {
+  return new Promise<boolean>((resolve) => {
+    if (openUnsavedDocumentConfirmationDialog) {
+      openUnsavedDocumentConfirmationDialog({ title, detail, resolve });
+      return;
+    }
+
+    resolve(false);
+  });
+}
+
 function createLocalId() {
   return `${Date.now()}-${Math.random().toString(36).slice(2)}`;
 }
@@ -17260,6 +18066,75 @@ function showAppDialog(
 
     resolve();
   });
+}
+
+
+function UnsavedDocumentConfirmationModal() {
+  const [request, setRequest] = useState<UnsavedDocumentConfirmationRequest | null>(null);
+
+  useEffect(() => {
+    openUnsavedDocumentConfirmationDialog = setRequest;
+
+    return () => {
+      openUnsavedDocumentConfirmationDialog = null;
+    };
+  }, []);
+
+  if (!request) return null;
+
+  function close(confirmed: boolean) {
+    const resolver = request.resolve;
+    setRequest(null);
+    window.setTimeout(() => resolver(confirmed), 0);
+  }
+
+  return (
+    <div className="fixed inset-0 z-[10030] grid place-items-center bg-slate-950/55 px-4 backdrop-blur-sm">
+      <div className="w-full max-w-lg overflow-hidden rounded-[2rem] border border-white/20 bg-white shadow-2xl shadow-slate-950/30">
+        <div className="bg-gradient-to-r from-amber-400 via-orange-400 to-rose-400 px-6 py-3" />
+        <div className="p-6">
+          <div className="flex items-start gap-4">
+            <div className="grid h-12 w-12 shrink-0 place-items-center rounded-2xl bg-amber-50 text-2xl font-semibold text-amber-600">
+              !
+            </div>
+            <div>
+              <p className="text-xs font-semibold uppercase tracking-[0.24em] text-amber-600">
+                Ungespeicherte Änderungen
+              </p>
+              <h3 className="mt-2 text-2xl font-semibold tracking-tight text-slate-950">
+                {request.title}
+              </h3>
+              {request.detail && (
+                <p className="mt-3 whitespace-pre-line text-sm font-medium leading-6 text-slate-600">
+                  {request.detail}
+                </p>
+              )}
+              <p className="mt-4 rounded-2xl bg-amber-50 px-4 py-3 text-sm font-semibold leading-6 text-amber-800">
+                Speichere das Dokument zuerst, wenn diese Änderungen erhalten bleiben sollen.
+              </p>
+            </div>
+          </div>
+
+          <div className="mt-7 flex flex-col-reverse gap-3 sm:flex-row sm:justify-end">
+            <button
+              type="button"
+              onClick={() => close(false)}
+              className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm transition hover:bg-slate-50"
+            >
+              Zurück zum Dokument
+            </button>
+            <button
+              type="button"
+              onClick={() => close(true)}
+              className="rounded-2xl bg-rose-600 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-rose-600/25 transition hover:bg-rose-700"
+            >
+              Ohne Speichern verlassen
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 function DeleteConfirmationModal() {

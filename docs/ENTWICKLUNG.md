@@ -1,7 +1,7 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V147 – App-Dialoge sicher nachgezogen**
+Aktuelle Arbeitsversion: **V148 – App-Dialoge sicher nachgezogen**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
@@ -1460,7 +1460,7 @@ Ziel:
 - Der Nutzer bekommt klare Rückmeldung, ohne Browser-Popups.
 - Der Dialog-Stil ist vorbereitet für spätere Aktionen wie Statusänderung, Angebot senden oder Nummernkreis-Prüfung.
 
-### V147 – App-Dialoge sicher nachgezogen
+### V148 – App-Dialoge sicher nachgezogen
 
 Geändert:
 
@@ -1485,7 +1485,7 @@ Ziel:
 
 Nächster sinnvoller Schritt:
 
-### V147 – Dokumentstatus und Folgeprozess
+### V148 – Dokumentstatus und Folgeprozess
 
 Geplant:
 
@@ -1498,7 +1498,7 @@ Geplant:
 - Aus angenommenem Angebot später Auftrag/Rechnung/Lieferschein erzeugen.
 - Dokumentliste weiter in Richtung echter Dokumentverwaltung ausbauen.
 
-### V147 – Statuswechsel für Dokumente
+### V148 – Statuswechsel für Dokumente
 
 Eingebaut:
 
@@ -1532,3 +1532,33 @@ Geplant:
 - Lieferschein aus angenommenem Angebot erzeugen
 - Statuswechsel und Folgeprozess fachlich stärker verbinden
 - gespeicherte Dokumente besser nach Status auswerten
+
+
+---
+
+### V148 – Folgeprozesse aus angenommenem Angebot
+
+Eingebaut:
+
+- neuer Bereich **Folgeprozess V148** im Angebotsbereich
+- aus einem angenommenen Angebot können vorbereitet werden:
+  - Auftragsbestätigung / Auftrag
+  - Rechnung
+  - Lieferschein
+- Folgedokumente bekommen eine neue Nummer aus dem passenden Nummernkreis
+- Ursprungsdokument wird als Quelle gespeichert und angezeigt
+- Hinweis, wenn ein Folgedokument erzeugt wird, obwohl das Angebot noch nicht angenommen ist
+- App-Dialog bestätigt den Folgeprozess
+- bestehende Löschdialoge bleiben unverändert stabil
+
+Geplante nächste Schritte:
+
+### V149 – Dokumenttypen fachlich trennen
+
+Geplant:
+
+- Angebotsvorschau je Dokumenttyp optimieren
+- Rechnung mit Zahlungsdaten und Fälligkeit stärker hervorheben
+- Lieferschein ohne Preise noch klarer gestalten
+- Auftragsbestätigung mit eigenem Text und Produktionshinweisen
+- Ursprungsdokument in Vorschau und Dokumentliste sichtbarer machen

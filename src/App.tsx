@@ -144,6 +144,9 @@ type SavedDocument = {
   paymentDueDate?: string;
   paymentPaidDate?: string;
   paymentPaidAmount?: number;
+  sourceDocumentId?: string;
+  sourceDocumentType?: DocumentType;
+  sourceDocumentNumber?: string;
   createdAt: string;
   updatedAt: string;
 };
@@ -1206,7 +1209,7 @@ function App() {
         }
       `}</style>
       <div className="fixed right-4 top-4 z-[9999] rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-500/30">
-        V147 aktiv
+        V148 aktiv
       </div>
       <DeleteConfirmationModal />
       <AppActionDialogModal />
@@ -1260,7 +1263,7 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V147</p>
+              <p className="text-sm font-black">PrintPilot V148</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
                 Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
@@ -3017,7 +3020,7 @@ function CalculatorPage({
       unitPrice: roundMoney(unitPrice),
       vatRate: 19,
       internalNote: [
-        `Quelle: Kalkulation V147`,
+        `Quelle: Kalkulation V148`,
         `Interne Kalkulation`,
         `Maschine: ${selectedMachine.name}`,
         `Druckbogen: ${totalSheets.toLocaleString("de-DE")}`,
@@ -3041,7 +3044,7 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V147
+                Kalkulation V148
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
                 Produkt- und Jobstruktur
@@ -4551,7 +4554,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V147</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V148</p>
                 <p className="mt-1 text-sm font-medium text-slate-300">wichtigster Preisblock bleibt offen</p>
               </div>
               <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200 group-open:hidden">Aufklappen</span>
@@ -4646,7 +4649,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] border border-emerald-200 bg-emerald-50 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V147</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V148</p>
                 <p className="mt-1 text-sm font-medium text-emerald-950">Kalkulation ist bereit für eine Angebotsposition</p>
               </div>
               <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm group-open:hidden">Aufklappen</span>
@@ -4695,7 +4698,7 @@ function CalculatorPage({
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V147</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V148</p>
                 <p className="mt-1 text-sm font-medium text-slate-600">{calculationStatusTone.headline}</p>
               </div>
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${calculationStatusTone.badgeClass}`}>
@@ -4708,7 +4711,7 @@ function CalculatorPage({
                 <p
                   className={`text-xs font-extrabold uppercase tracking-wide ${calculationStatusTone.textClass}`}
                 >
-                  Kalkulationsstatus V147
+                  Kalkulationsstatus V148
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   {calculationStatusTone.headline}
@@ -4880,7 +4883,7 @@ function CalculatorPage({
           <details className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V147</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V148</p>
                 <p className="mt-1 text-sm font-medium text-slate-500">Produktionskosten und Preisaufbau</p>
               </div>
               <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:hidden">Aufklappen</span>
@@ -4890,7 +4893,7 @@ function CalculatorPage({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Auswertung V147
+                  Auswertung V148
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   Produktionskosten & Preisaufbau
@@ -5006,7 +5009,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Produktionskosten V147
+                    Produktionskosten V148
                   </p>
                   <h4 className="mt-1 text-base font-semibold text-slate-950">
                     Detaillierte Kostenaufschlüsselung
@@ -5318,6 +5321,10 @@ function QuotesPage({
   const [activeSavedDocumentId, setActiveSavedDocumentId] = useState<
     string | null
   >(null);
+  const [sourceDocumentId, setSourceDocumentId] = useState("");
+  const [sourceDocumentType, setSourceDocumentType] =
+    useState<DocumentType | "">("");
+  const [sourceDocumentNumber, setSourceDocumentNumber] = useState("");
   const [documentStatus, setDocumentStatus] =
     useState<DocumentStatus>("Entwurf");
   const [documentSentDate, setDocumentSentDate] = useState("");
@@ -5345,6 +5352,11 @@ function QuotesPage({
   const activeBusinessDocumentTemplate =
     documentTemplateSettings[activeBusinessDocumentType];
   const activeBusinessDocumentLabel = activeBusinessDocumentTemplate.label;
+  const sourceDocumentLabel = sourceDocumentType
+    ? `${documentTemplateSettings[sourceDocumentType].label} ${sourceDocumentNumber}`
+    : "";
+  const isAcceptedQuote =
+    activeBusinessDocumentType === "quote" && documentStatus === "Angenommen";
   const activeLetterheadMode = activeBusinessDocumentTemplate.letterheadMode ?? "none";
   const activeLetterheadOpacity = Math.max(0, Math.min(activeBusinessDocumentTemplate.letterheadOpacity ?? 100, 100));
   const hasUploadedLetterhead = Boolean(activeBusinessDocumentTemplate.letterheadDataUrl);
@@ -5815,7 +5827,22 @@ function QuotesPage({
     setDocumentSubject(`${documentTemplateSettings[documentType].label}: ${quotePositions[0]?.title || quoteNumber}`);
   }
 
+  function rememberCurrentDocumentAsSource() {
+    setSourceDocumentId(activeSavedDocumentId ?? "");
+    setSourceDocumentType(activeBusinessDocumentType);
+    setSourceDocumentNumber(quoteNumber);
+  }
+
+  function getFollowUpHint(targetLabel: string) {
+    if (isAcceptedQuote) {
+      return `${targetLabel} wurde aus dem angenommenen Angebot ${quoteNumber} vorbereitet. Das Ursprungsangebot bleibt nachvollziehbar.`;
+    }
+
+    return `${targetLabel} wurde vorbereitet. Hinweis: Der sauberste Folgeprozess startet aus einem Angebot mit Status „Angenommen”.`;
+  }
+
   function handleCreateOrderConfirmation() {
+    rememberCurrentDocumentAsSource();
     setActiveSavedDocumentId(null);
     setDocumentStatus("Entwurf");
     setDocumentSentDate("");
@@ -5825,12 +5852,13 @@ function QuotesPage({
     handleCreateNextDocumentNumber("orderConfirmation", { silent: true });
     showAppDialog(
       "Auftragsbestätigung vorbereitet",
-      "Die aktuelle Dokumentposition wurde in eine neue Auftragsbestätigung übernommen.",
-      "success",
+      getFollowUpHint("Die Auftragsbestätigung"),
+      isAcceptedQuote ? "success" : "warning",
     );
   }
 
   function handleCreateInvoice() {
+    rememberCurrentDocumentAsSource();
     setActiveSavedDocumentId(null);
     setDocumentStatus("Entwurf");
     setDocumentSentDate("");
@@ -5844,12 +5872,13 @@ function QuotesPage({
     handleCreateNextDocumentNumber("invoice", { silent: true });
     showAppDialog(
       "Rechnung vorbereitet",
-      "Die aktuelle Position wurde in eine neue Rechnung übernommen. Zahlungsstatus und Fälligkeit wurden vorbereitet.",
-      "success",
+      `${getFollowUpHint("Die Rechnung")} Zahlungsstatus und Fälligkeit wurden vorbereitet.`,
+      isAcceptedQuote ? "success" : "warning",
     );
   }
 
   function handleCreateDeliveryNote() {
+    rememberCurrentDocumentAsSource();
     setActiveSavedDocumentId(null);
     setDocumentStatus("Entwurf");
     setDocumentSentDate("");
@@ -5859,8 +5888,8 @@ function QuotesPage({
     handleCreateNextDocumentNumber("deliveryNote", { silent: true });
     showAppDialog(
       "Lieferschein vorbereitet",
-      "Die aktuelle Position wurde in einen neuen Lieferschein übernommen.",
-      "success",
+      getFollowUpHint("Der Lieferschein"),
+      isAcceptedQuote ? "success" : "warning",
     );
   }
 
@@ -5904,6 +5933,9 @@ function QuotesPage({
   }
 
   function handleBackToQuote() {
+    setSourceDocumentId("");
+    setSourceDocumentType("");
+    setSourceDocumentNumber("");
     setActiveSavedDocumentId(null);
     setDocumentStatus("Entwurf");
     setDocumentSentDate("");
@@ -5959,6 +5991,9 @@ function QuotesPage({
         activeBusinessDocumentType === "invoice"
           ? safePaymentPaidAmount
           : undefined,
+      sourceDocumentId: sourceDocumentId || undefined,
+      sourceDocumentType: sourceDocumentType || undefined,
+      sourceDocumentNumber: sourceDocumentNumber || undefined,
       createdAt:
         savedDocuments.find((documentItem) => documentItem.id === existingId)
           ?.createdAt ?? now,
@@ -5996,6 +6031,9 @@ function QuotesPage({
   function handleOpenSavedDocument(documentItem: SavedDocument) {
     setActiveSavedDocumentId(documentItem.id);
     setActiveBusinessDocumentType(documentItem.documentType);
+    setSourceDocumentId(documentItem.sourceDocumentId ?? "");
+    setSourceDocumentType(documentItem.sourceDocumentType ?? "");
+    setSourceDocumentNumber(documentItem.sourceDocumentNumber ?? "");
     setQuoteNumber(documentItem.documentNumber);
     setSelectedCustomerId(documentItem.customerId);
     setCustomerName(documentItem.customerName);
@@ -6268,7 +6306,7 @@ function QuotesPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-yellow-300">
-                Angebote V147
+                Angebote V148
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 Angebotsvorschau erstellen
@@ -6301,7 +6339,7 @@ function QuotesPage({
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-              Angebotsbereich V147
+              Angebotsbereich V148
             </div>
             <h3 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950">
               Angebotsentwurf & Kundenvorschau
@@ -6311,7 +6349,7 @@ function QuotesPage({
             </p>
           </div>
 
-          <div className="grid min-w-full gap-3 sm:grid-cols-2 xl:min-w-[460px]">
+          <div className="grid min-w-full gap-3 sm:grid-cols-2 xl:min-w-[520px]">
             <div className="rounded-3xl bg-slate-50 p-4">
               <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Dokument</p>
               <p className="mt-1 truncate text-lg font-semibold text-slate-950">{activeBusinessDocumentLabel}</p>
@@ -6329,6 +6367,15 @@ function QuotesPage({
               </p>
               <p className={`mt-1 text-sm font-medium ${showLetterhead ? "text-cyan-700" : "text-slate-500"}`}>
                 für {activeBusinessDocumentLabel}
+              </p>
+            </div>
+            <div className={`rounded-3xl p-4 ${sourceDocumentLabel ? "bg-emerald-50" : "bg-slate-50"}`}>
+              <p className={`text-xs font-semibold uppercase tracking-wide ${sourceDocumentLabel ? "text-emerald-700" : "text-slate-400"}`}>Quelle</p>
+              <p className={`mt-1 truncate text-lg font-semibold ${sourceDocumentLabel ? "text-emerald-950" : "text-slate-950"}`}>
+                {sourceDocumentLabel || "ohne Bezug"}
+              </p>
+              <p className={`mt-1 text-sm font-medium ${sourceDocumentLabel ? "text-emerald-700" : "text-slate-500"}`}>
+                Ursprung / Folgeprozess
               </p>
             </div>
           </div>
@@ -6384,7 +6431,7 @@ function QuotesPage({
         <div className="mt-4 rounded-3xl border border-slate-200 bg-slate-50 p-4">
           <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Statuswechsel V147</p>
+              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Statuswechsel V148</p>
               <p className="mt-1 text-sm font-medium text-slate-600">Setzt den Dokumentstatus mit App-Meldung. Bei „Versendet” und „Angenommen” wird automatisch ein Datum vorbereitet.</p>
             </div>
             <div className="flex flex-wrap gap-2">
@@ -6408,7 +6455,7 @@ function QuotesPage({
 
         <div className="mt-6 grid gap-3 md:grid-cols-3">
           <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Nummernkreis V147</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Nummernkreis V148</p>
             <p className="mt-2 text-base font-semibold text-amber-950">{numberCircleSettings[activeBusinessDocumentType].prefix}-{new Date().getFullYear()}-{String(numberCircleSettings[activeBusinessDocumentType].nextNumber).padStart(numberCircleSettings[activeBusinessDocumentType].padding, "0")}</p>
             <p className="mt-1 text-sm font-medium text-amber-800">nächste freie Nummer</p>
           </div>
@@ -6431,7 +6478,7 @@ function QuotesPage({
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-yellow-300 via-fuchsia-500 to-cyan-400" />
             <h3 className="mt-5 text-xl font-black">Dokumentkopf</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
-              Kundenauswahl und Stammdaten für die Kundenvorschau V147.
+              Kundenauswahl und Stammdaten für die Kundenvorschau V148.
             </p>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -6649,6 +6696,47 @@ function QuotesPage({
               </div>
             )}
 
+            <div className={`mt-5 rounded-3xl border p-5 ${isAcceptedQuote ? "border-emerald-200 bg-emerald-50" : "border-amber-200 bg-amber-50"}`}>
+              <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
+                <div>
+                  <p className={`text-xs font-semibold uppercase tracking-wide ${isAcceptedQuote ? "text-emerald-700" : "text-amber-700"}`}>Folgeprozess V148</p>
+                  <p className={`mt-1 text-sm font-medium leading-6 ${isAcceptedQuote ? "text-emerald-800" : "text-amber-800"}`}>
+                    {isAcceptedQuote
+                      ? `Dieses Angebot ist angenommen. Du kannst daraus jetzt Auftrag, Rechnung oder Lieferschein vorbereiten.`
+                      : `Folgedokumente sollten aus einem Angebot mit Status „Angenommen” erzeugt werden. Der Bezug wird trotzdem dokumentiert.`}
+                  </p>
+                </div>
+                <div className="grid gap-2 sm:grid-cols-3">
+                  <button
+                    type="button"
+                    onClick={handleCreateOrderConfirmation}
+                    className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-emerald-700 shadow-sm ring-1 ring-emerald-200 transition hover:-translate-y-0.5 hover:bg-emerald-100"
+                  >
+                    Auftrag vorbereiten
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCreateInvoice}
+                    className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-cyan-700 shadow-sm ring-1 ring-cyan-200 transition hover:-translate-y-0.5 hover:bg-cyan-100"
+                  >
+                    Rechnung vorbereiten
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handleCreateDeliveryNote}
+                    className="rounded-2xl bg-white px-4 py-3 text-xs font-semibold text-violet-700 shadow-sm ring-1 ring-violet-200 transition hover:-translate-y-0.5 hover:bg-violet-100"
+                  >
+                    Lieferschein vorbereiten
+                  </button>
+                </div>
+              </div>
+              {sourceDocumentLabel && (
+                <p className="mt-3 rounded-2xl bg-white/70 px-4 py-3 text-sm font-semibold text-slate-700">
+                  Dieses Dokument wurde aus {sourceDocumentLabel} vorbereitet.
+                </p>
+              )}
+            </div>
+
             <div className="mt-5 rounded-3xl bg-slate-50 p-5">
               <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
                 Dokumenttyp
@@ -6771,7 +6859,7 @@ function QuotesPage({
             <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
               <div>
                 <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 to-sky-500" />
-                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen V147</h3>
+                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen V148</h3>
                 <p className="mt-1 text-sm font-medium leading-6 text-slate-500">
                   Positionen sind jetzt als klare Bearbeitungskarten aufgebaut. Titel, Beschreibung, Menge,
                   Einzelpreis und MwSt. ändern die Angebotsvorschau sofort.
@@ -7035,7 +7123,7 @@ function QuotesPage({
         <div className="space-y-6">
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-semibold tracking-tight">Angebotsliste / Dokumentverwaltung V147</h3>
+            <h3 className="mt-5 text-xl font-semibold tracking-tight">Angebotsliste / Dokumentverwaltung V148</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Gespeicherte Angebote und Dokumente suchen, filtern, öffnen, duplizieren oder löschen. Status, Kunde, Nummer und Betrag sind direkt sichtbar.
             </p>
@@ -7329,7 +7417,7 @@ function QuotesPage({
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Kundenvorschau V147
+                  Kundenvorschau V148
                 </p>
                 <h3 className="mt-2 text-2xl font-black tracking-tight">
                   {quoteNumber}
@@ -7647,7 +7735,7 @@ function QuotesPage({
               <div className="-mx-6 -mt-6 mb-6 border-b border-slate-200 bg-slate-50 px-6 py-4 print:hidden">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V147</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V148</p>
                     <p className="mt-1 text-sm font-medium text-slate-600">So wirkt das Dokument später im Druck oder als PDF.</p>
                   </div>
                   <div className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Layout prüfbar</div>
@@ -12335,7 +12423,7 @@ function SettingsPage({
   function exportAppBackup() {
     const payload = {
       app: "PrintPilot",
-      version: "V147",
+      version: "V148",
       exportedAt: new Date().toISOString(),
       data: {
         company,
@@ -12818,7 +12906,7 @@ function SettingsPage({
             <h3 className="mt-5 text-xl font-black">Dokumenttypen</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Jeder Dokumenttyp hat eigene Abstände und Standardtexte. Die
-              Kundenvorschau V147 nutzt den aktiven Dokumenttyp: Angebot,
+              Kundenvorschau V148 nutzt den aktiven Dokumenttyp: Angebot,
               Auftragsbestätigung, Rechnung oder Lieferschein.
             </p>
             <div className="mt-6 grid gap-4 md:grid-cols-[0.8fr_1.2fr]">
@@ -13183,7 +13271,7 @@ function SettingsPage({
 
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-black">Kundenvorschau V147</h3>
+            <h3 className="mt-5 text-xl font-black">Kundenvorschau V148</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Aktive Vorlage: {activeDocumentTemplate.label}
             </p>

@@ -1,7 +1,7 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V115 – Druckteile fachlich klarer**
+Aktuelle Arbeitsversion: **V117 – rechte Auswertung einklappbar & Status grün**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
@@ -463,11 +463,47 @@ Eingebaut:
   - Materialbogen prüfen
   - Materialpreis fehlt
 - Details bleiben weiterhin einklappbar
+
+---
+
+### V116 – Produktionskosten detaillierter
+
+Eingebaut:
+
+- rechte Auswertung um eine detaillierte Kostenaufschlüsselung erweitert
+- Produktionskosten werden klarer getrennt nach:
+  - Material nach Druckteil
+  - Druck nach Druckteil
+  - Rüstzeit & Maschine
+  - Weiterverarbeitung
+- Material wird getrennt gezeigt für:
+  - Inhalt
+  - Umschlag
+  - weitere Druckteile
+- variable Druckkosten werden rechnerisch anhand der Produktionsbogen auf Druckteile verteilt
+- Rüstzeit wird separat mit Minuten und Maschinenstundensatz angezeigt
+- Weiterverarbeitung zeigt Arbeitsschritte, Zusatzkosten und Gesamtsumme getrennt
+- Preisbrücke bleibt darunter erhalten
+- Ziel: Produktionskosten nicht nur als Summe anzeigen, sondern nachvollziehbar erklären
+---
+
+### V117 – Rechte Auswertung einklappbar & Status grün
+
+Eingebaut:
+
+- rechte Auswertungskarten sind jetzt ebenfalls einklappbar
+- Ergebnis-Karte kann ein- und ausgeklappt werden
+- Produktionskosten-/Preisaufbau-Karte kann ein- und ausgeklappt werden
+- Kalkulationsstatus kann ein- und ausgeklappt werden
+- Kostenmix-Karte kann ein- und ausgeklappt werden
+- Status wirkt ruhiger und wird bei plausibler Kalkulation klar grün dargestellt
+- Ziel: rechte Seite genauso ruhig und schrittweise bedienbar machen wie die linke Eingabemaske
+
 ---
 
 ## Aktueller Stand
 
-Aktuelle Version: **V115**
+Aktuelle Version: **V117**
 
 Aktuell gut funktionierende Bereiche:
 
@@ -482,6 +518,9 @@ Aktuell gut funktionierende Bereiche:
 - Barlow-Schrift
 - Nutzenbereich optisch verbessert
 - Druckteile zeigen fachliche Prüfung und Kostenübersicht je Druckteil
+- Produktionskosten sind nach Material, Druck, Rüstzeit/Maschine und Weiterverarbeitung aufgeschlüsselt
+- rechte Auswertungskarten sind einklappbar
+- plausibler Kalkulationsstatus wird grün angezeigt
 
 ---
 
@@ -489,14 +528,10 @@ Aktuell gut funktionierende Bereiche:
 
 Diese Punkte sind noch offen oder sollten später geprüft werden:
 
-- Produktionskosten fachlich noch genauer aufschlüsseln
-- Druckkosten genauer trennen nach:
-  - Klickkosten
-  - Maschinenzeit
-  - Rüstkosten
-  - Duplex / Simplex
+- Druckkosten später noch exakter nach Simplex/Duplex und Farbigkeit je Druckteil trennen
+- Maschinenzeit später realistisch anhand Geschwindigkeit/Bögen pro Stunde berechnen
 - Weiterverarbeitung detaillierter berechnen
-- Materialkosten je Druckteil genauer dokumentieren
+- Materialkosten je Druckteil weiter mit Stammdaten/Lager verknüpfen
 - Angebotsmodus mit sauberer Ausgabe
 - PDF-/Druckansicht für Angebote
 - Stammdaten stärker mit Kalkulation verknüpfen
@@ -507,23 +542,7 @@ Diese Punkte sind noch offen oder sollten später geprüft werden:
 
 ## Geplante nächste Schritte
 
-### V116 – Produktionskosten detaillierter
-
-Geplant:
-
-- Produktionskosten fachlich sauberer aufsplitten:
-  - Material Inhalt
-  - Material Umschlag
-  - Druck Inhalt
-  - Druck Umschlag
-  - Weiterverarbeitung
-  - Rüstkosten
-  - Maschinenzeit
-- bessere Nachvollziehbarkeit der Kosten
-
----
-
-### V117 – Weiterverarbeitung verbessern
+### V118 – Weiterverarbeitung verbessern
 
 Geplant:
 
@@ -541,7 +560,7 @@ Geplant:
 
 ---
 
-### V118 – Angebotsmodus vorbereiten
+### V119 – Angebotsmodus vorbereiten
 
 Geplant:
 
@@ -555,7 +574,7 @@ Geplant:
 
 ---
 
-### V119 – Code-Struktur verbessern
+### V120 – Code-Struktur verbessern
 
 Geplant:
 

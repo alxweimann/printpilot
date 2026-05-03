@@ -1,7 +1,7 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V121 – Angebotsbereich aufgebaut**
+Aktuelle Arbeitsversion: **V122 – Angebotsentwurf aus Kalkulation übernommen**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
@@ -27,14 +27,14 @@ Die App soll schrittweise folgende Bereiche abdecken:
 
 ## Aktueller Schwerpunkt
 
-Aktuell liegt der Fokus auf der **Kalkulation**:
+Aktuell liegt der Fokus auf dem Übergang von der **Kalkulation** in den **Angebotsbereich**:
 
-1. Eingabemaske klar strukturieren
-2. Druckteile fachlich sauber abbilden
-3. Nutzenberechnung und Bogenvorschau verbessern
-4. Produktionskosten verständlich darstellen
-5. Warnungen und Kalkulationsstatus einbauen
-6. Bedienung ruhiger und übersichtlicher machen
+1. Kalkulation fachlich sauber abschließen
+2. Druckteile und Produktionskosten nachvollziehbar darstellen
+3. Kalkulation als Angebotsposition übernehmen
+4. Angebotsentwurf mit Kundendaten, Positionen und Summen aufbauen
+5. Angebotsvorschau und spätere PDF-Ausgabe vorbereiten
+6. Bedienung ruhig, geführt und übersichtlich halten
 
 ---
 
@@ -774,9 +774,41 @@ Prüfen:
 - **Neue Nummer vergeben** sollte eine neue Dokumentnummer erzeugen.
 - **Vorschau drucken / PDF** sollte weiterhin die Druck-/PDF-Vorschau öffnen.
 
+---
+
+### V122 – Angebotsentwurf aus Kalkulation übernommen
+
+Eingebaut:
+
+- Button **„In Angebot übernehmen“** erzeugt jetzt klarer einen Angebotsentwurf aus der aktuellen Kalkulation
+- Kalkulationsposition wird im Angebotsbereich vorne einsortiert
+- Standard-Demoposition wird ersetzt, wenn sie noch unverändert vorhanden ist
+- übernommene Position enthält:
+  - Produktname
+  - Auflage
+  - Endformat
+  - Farbigkeit / Produktionsmodus
+  - Materialdetails
+  - Weiterverarbeitung
+  - Netto-Verkaufspreis je Einheit
+  - MwSt. 19 %
+  - Brutto über die Angebotsberechnung
+- interne Notiz enthält jetzt die Quelle **Kalkulation V122** und die wichtigsten Kalkulationswerte
+- rechter Angebotsmodus erklärt die Übergabe verständlicher
+- sichtbarer Versionsmarker auf **V122 aktiv** aktualisiert
+
+Prüfen:
+
+- In der Kalkulation sollte **Kalkulation V122** sichtbar sein.
+- Oben rechts sollte **V122 aktiv** sichtbar sein.
+- Klick auf **„In Angebot übernehmen“** sollte in den Bereich **Angebote** wechseln.
+- Im Angebotsbereich sollte die neue Kalkulationsposition oben stehen.
+- Netto, MwSt. und Brutto sollten aus der übernommenen Position plausibel berechnet werden.
+- Die unveränderte Demoposition sollte ersetzt werden, nicht zusätzlich stehen bleiben.
+
 Geplanter nächster Schritt:
 
-### V122 – Angebotspositionen kompakter und kundentauglicher
+### V123 – Angebotspositionen kompakter und kundentauglicher
 
 Geplant:
 

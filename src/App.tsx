@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import type { Dispatch, SetStateAction } from "react";
+import type { CSSProperties, Dispatch, SetStateAction } from "react";
 import "./index.css";
 
 import { materials } from "./data/materials";
@@ -212,7 +212,20 @@ type CalculationTemplate = ProductTemplate & {
   rawSheetMaterialId: string;
 };
 
-type CompanyProfile = typeof companyProfile & { logoDataUrl?: string };
+type CompanyProfile = typeof companyProfile & {
+  logoDataUrl?: string;
+  accountHolder?: string;
+  showCompanyAddressOnDocuments?: boolean;
+  showCompanyContactOnDocuments?: boolean;
+  showTaxDataOnDocuments?: boolean;
+  showBankDataOnDocuments?: boolean;
+  showCompanyFooterOnDocuments?: boolean;
+  documentFooterPlacement?: "content" | "letterheadBar";
+  documentFooterColumns?: "2" | "3";
+  documentFooterBottomMm?: number;
+  documentFooterHeightMm?: number;
+  documentFooterTextTone?: "dark" | "white";
+};
 
 type DocumentType =
   | "quote"
@@ -220,6 +233,8 @@ type DocumentType =
   | "invoice"
   | "deliveryNote"
   | "reminder";
+
+type LetterheadMode = "none" | "demo" | "upload";
 
 type DocumentTemplate = {
   label: string;
@@ -229,6 +244,9 @@ type DocumentTemplate = {
   rightMm: number;
   introText: string;
   footerText: string;
+  letterheadMode: LetterheadMode;
+  letterheadDataUrl: string;
+  letterheadOpacity: number;
 };
 
 type DocumentTemplateSettings = Record<DocumentType, DocumentTemplate>;
@@ -271,55 +289,70 @@ const paymentStatusOptions: PaymentStatus[] = [
 const DEFAULT_DOCUMENT_TEMPLATE_SETTINGS: DocumentTemplateSettings = {
   quote: {
     label: "Angebot",
-    topMm: 35,
-    bottomMm: 20,
-    leftMm: 18,
-    rightMm: 18,
+    topMm: 45,
+    bottomMm: 32,
+    leftMm: 20,
+    rightMm: 20,
     introText:
       "vielen Dank für Ihre Anfrage. Gerne bieten wir Ihnen folgende Druckproduktion an.",
     footerText:
       "Lieferung nach Absprache. Preise verstehen sich netto zuzüglich gesetzlicher Mehrwertsteuer.",
+    letterheadMode: "none",
+    letterheadDataUrl: "",
+    letterheadOpacity: 100,
   },
   orderConfirmation: {
     label: "Auftragsbestätigung",
-    topMm: 35,
-    bottomMm: 20,
-    leftMm: 18,
-    rightMm: 18,
+    topMm: 45,
+    bottomMm: 32,
+    leftMm: 20,
+    rightMm: 20,
     introText:
       "vielen Dank für Ihren Auftrag. Gerne bestätigen wir Ihnen die folgende Druckproduktion.",
     footerText:
       "Produktion und Lieferung erfolgen nach Absprache. Änderungen nach Freigabe können Mehrkosten verursachen.",
+    letterheadMode: "none",
+    letterheadDataUrl: "",
+    letterheadOpacity: 100,
   },
   invoice: {
     label: "Rechnung",
-    topMm: 35,
-    bottomMm: 25,
-    leftMm: 18,
-    rightMm: 18,
+    topMm: 45,
+    bottomMm: 32,
+    leftMm: 20,
+    rightMm: 20,
     introText: "für die erbrachten Leistungen berechnen wir Ihnen wie folgt.",
     footerText:
       "Bitte überweisen Sie den Rechnungsbetrag innerhalb der angegebenen Zahlungsfrist.",
+    letterheadMode: "none",
+    letterheadDataUrl: "",
+    letterheadOpacity: 100,
   },
   deliveryNote: {
     label: "Lieferschein",
-    topMm: 35,
-    bottomMm: 20,
-    leftMm: 18,
-    rightMm: 18,
+    topMm: 45,
+    bottomMm: 32,
+    leftMm: 20,
+    rightMm: 20,
     introText: "wir liefern Ihnen folgende Positionen.",
     footerText: "Die Lieferung erfolgt gemäß Vereinbarung.",
+    letterheadMode: "none",
+    letterheadDataUrl: "",
+    letterheadOpacity: 100,
   },
   reminder: {
     label: "Mahnung",
-    topMm: 35,
-    bottomMm: 25,
-    leftMm: 18,
-    rightMm: 18,
+    topMm: 45,
+    bottomMm: 32,
+    leftMm: 20,
+    rightMm: 20,
     introText:
       "leider konnten wir zu der unten aufgeführten Rechnung noch keinen Zahlungseingang feststellen.",
     footerText:
       "Sollte sich Ihre Zahlung mit diesem Schreiben überschnitten haben, betrachten Sie diese Mahnung bitte als gegenstandslos.",
+    letterheadMode: "none",
+    letterheadDataUrl: "",
+    letterheadOpacity: 100,
   },
 };
 
@@ -736,6 +769,24 @@ const sampleServiceItems: ServiceItem[] = [
   },
 ];
 
+function normalizeCompanyProfile(savedProfile?: Partial<CompanyProfile>): CompanyProfile {
+  return {
+    ...companyProfile,
+    accountHolder: companyProfile.name,
+    showCompanyAddressOnDocuments: false,
+    showCompanyContactOnDocuments: false,
+    showTaxDataOnDocuments: false,
+    showBankDataOnDocuments: false,
+    showCompanyFooterOnDocuments: false,
+    documentFooterPlacement: "letterheadBar",
+    documentFooterColumns: "3",
+    documentFooterBottomMm: -6,
+    documentFooterHeightMm: 20,
+    documentFooterTextTone: "white",
+    ...savedProfile,
+  };
+}
+
 function App() {
   const [activePage, setActivePage] = useState<PageKey>("dashboard");
   const [editableCompanyProfile, setEditableCompanyProfile] =
@@ -746,15 +797,12 @@ function App() {
         );
 
         if (!savedProfile) {
-          return { ...companyProfile };
+          return normalizeCompanyProfile();
         }
 
-        return {
-          ...companyProfile,
-          ...JSON.parse(savedProfile),
-        };
+        return normalizeCompanyProfile(JSON.parse(savedProfile));
       } catch {
-        return { ...companyProfile };
+        return normalizeCompanyProfile();
       }
     });
   const [documentTemplateSettings, setDocumentTemplateSettings] =
@@ -1143,7 +1191,7 @@ function App() {
         }
       `}</style>
       <div className="fixed right-4 top-4 z-[9999] rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-500/30">
-        V123 aktiv
+        V133 aktiv
       </div>
       <div className="flex min-h-screen">
         <aside className="fixed inset-y-0 left-0 z-20 hidden w-80 flex-col bg-slate-950 text-white shadow-2xl shadow-slate-950/30 lg:flex">
@@ -1195,7 +1243,7 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V123</p>
+              <p className="text-sm font-black">PrintPilot V133</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
                 Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
@@ -2945,7 +2993,7 @@ function CalculatorPage({
       unitPrice: roundMoney(unitPrice),
       vatRate: 19,
       internalNote: [
-        `Quelle: Kalkulation V123`,
+        `Quelle: Kalkulation V133`,
         `Interne Kalkulation`,
         `Maschine: ${selectedMachine.name}`,
         `Druckbogen: ${totalSheets.toLocaleString("de-DE")}`,
@@ -2969,7 +3017,7 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V123
+                Kalkulation V133
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
                 Produkt- und Jobstruktur
@@ -3098,7 +3146,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                    Arbeitsmodus V123
+                    Arbeitsmodus V133
                   </p>
                   <p className="mt-1 text-sm font-black text-slate-950">
                     Schritte anklicken, Abschnitt öffnen, Werte prüfen, weiter zum nächsten Block.
@@ -3777,7 +3825,7 @@ function CalculatorPage({
                       </summary>
 
                       <div className="space-y-4 border-t border-slate-100 p-4">
-                        <div className="rounded-2xl border border-slate-200 bg-slate-50 p-4">
+                        <div className="quote-preview-card rounded-2xl border border-slate-200 bg-slate-50 p-4">
                           <div className="flex flex-col gap-3 lg:flex-row lg:items-start lg:justify-between">
                             <div>
                               <p className="text-xs font-semibold uppercase tracking-wide text-slate-500">Fachliche Übersicht</p>
@@ -4479,7 +4527,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V123</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V133</p>
                 <p className="mt-1 text-sm font-medium text-slate-300">wichtigster Preisblock bleibt offen</p>
               </div>
               <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200 group-open:hidden">Aufklappen</span>
@@ -4574,7 +4622,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] border border-emerald-200 bg-emerald-50 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V123</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V133</p>
                 <p className="mt-1 text-sm font-medium text-emerald-950">Kalkulation ist bereit für eine Angebotsposition</p>
               </div>
               <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm group-open:hidden">Aufklappen</span>
@@ -4623,7 +4671,7 @@ function CalculatorPage({
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V123</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V133</p>
                 <p className="mt-1 text-sm font-medium text-slate-600">{calculationStatusTone.headline}</p>
               </div>
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${calculationStatusTone.badgeClass}`}>
@@ -4636,7 +4684,7 @@ function CalculatorPage({
                 <p
                   className={`text-xs font-extrabold uppercase tracking-wide ${calculationStatusTone.textClass}`}
                 >
-                  Kalkulationsstatus V123
+                  Kalkulationsstatus V133
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   {calculationStatusTone.headline}
@@ -4808,7 +4856,7 @@ function CalculatorPage({
           <details className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V123</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V133</p>
                 <p className="mt-1 text-sm font-medium text-slate-500">Produktionskosten und Preisaufbau</p>
               </div>
               <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:hidden">Aufklappen</span>
@@ -4818,7 +4866,7 @@ function CalculatorPage({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Auswertung V123
+                  Auswertung V133
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   Produktionskosten & Preisaufbau
@@ -4934,7 +4982,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Produktionskosten V123
+                    Produktionskosten V133
                   </p>
                   <h4 className="mt-1 text-base font-semibold text-slate-950">
                     Detaillierte Kostenaufschlüsselung
@@ -5270,6 +5318,25 @@ function QuotesPage({
   const activeBusinessDocumentTemplate =
     documentTemplateSettings[activeBusinessDocumentType];
   const activeBusinessDocumentLabel = activeBusinessDocumentTemplate.label;
+  const activeLetterheadMode = activeBusinessDocumentTemplate.letterheadMode ?? "none";
+  const activeLetterheadOpacity = Math.max(0, Math.min(activeBusinessDocumentTemplate.letterheadOpacity ?? 100, 100));
+  const hasUploadedLetterhead = Boolean(activeBusinessDocumentTemplate.letterheadDataUrl);
+  const showUploadedLetterhead = activeLetterheadMode === "upload" && hasUploadedLetterhead;
+  const showDemoLetterhead = activeLetterheadMode === "demo";
+  const showLetterhead = showUploadedLetterhead || showDemoLetterhead;
+  const useRealLetterheadBackground = showUploadedLetterhead;
+  const documentContentTopMm = useRealLetterheadBackground
+    ? Math.max(activeBusinessDocumentTemplate.topMm, 45)
+    : activeBusinessDocumentTemplate.topMm;
+  const documentContentBottomMm = useRealLetterheadBackground
+    ? Math.max(activeBusinessDocumentTemplate.bottomMm, 32)
+    : activeBusinessDocumentTemplate.bottomMm;
+  const documentContentLeftMm = useRealLetterheadBackground
+    ? Math.max(activeBusinessDocumentTemplate.leftMm, 20)
+    : activeBusinessDocumentTemplate.leftMm;
+  const documentContentRightMm = useRealLetterheadBackground
+    ? Math.max(activeBusinessDocumentTemplate.rightMm, 20)
+    : activeBusinessDocumentTemplate.rightMm;
   const [selectedCustomerId, setSelectedCustomerId] = useState(
     customers[0]?.id ?? "manual",
   );
@@ -5304,6 +5371,74 @@ function QuotesPage({
   const companySenderLine = [company.name, company.street, companyCityLine]
     .filter(Boolean)
     .join(" · ");
+  const showCompanyFooterData = Boolean(company.showCompanyFooterOnDocuments);
+  const documentCompanyNameFooterLine = Boolean(company.showCompanyAddressOnDocuments)
+    ? company.name
+    : "";
+  const documentCompanyAddressLine = Boolean(company.showCompanyAddressOnDocuments)
+    ? [company.street, companyCityLine].filter(Boolean).join(" · ")
+    : "";
+  const documentCompanyContactLine = Boolean(company.showCompanyContactOnDocuments)
+    ? [company.phone, company.email, company.website].filter(Boolean).join(" · ")
+    : "";
+  const documentCompanyTaxNumberLine = Boolean(company.showTaxDataOnDocuments) && company.taxNumber
+    ? `St.-Nr. ${company.taxNumber}`
+    : "";
+  const documentCompanyVatLine = Boolean(company.showTaxDataOnDocuments) && company.vatId
+    ? `USt-ID ${company.vatId}`
+    : "";
+  const documentCompanyBankNameLine = Boolean(company.showBankDataOnDocuments)
+    ? [company.bankName, company.accountHolder ? `Inh. ${company.accountHolder}` : ""].filter(Boolean).join(" · ")
+    : "";
+  const documentCompanyIbanLine = Boolean(company.showBankDataOnDocuments) && company.iban
+    ? `IBAN ${company.iban}`
+    : "";
+  const documentCompanyBicLine = Boolean(company.showBankDataOnDocuments) && company.bic
+    ? `BIC ${company.bic}`
+    : "";
+  const documentFooterLines = [
+    documentCompanyNameFooterLine,
+    documentCompanyAddressLine,
+    documentCompanyContactLine,
+    documentCompanyTaxNumberLine,
+    documentCompanyVatLine,
+    documentCompanyBankNameLine,
+    documentCompanyIbanLine,
+    documentCompanyBicLine,
+  ].filter(Boolean);
+  const documentFooterColumns = company.documentFooterColumns ?? "3";
+  const documentFooterBottomMm = Math.max(-30, Math.min(Number(company.documentFooterBottomMm ?? -6), 35));
+  const documentFooterHeightMm = Math.max(10, Math.min(Number(company.documentFooterHeightMm ?? 20), 36));
+  const documentFooterTextTone = company.documentFooterTextTone ?? "white";
+  const showFooterInLetterheadBar =
+    showCompanyFooterData &&
+    documentFooterLines.length > 0 &&
+    useRealLetterheadBackground;
+  const documentFooterGroups = [
+    {
+      title: "Firma",
+      lines: [
+        documentCompanyNameFooterLine,
+        documentCompanyAddressLine,
+        documentCompanyContactLine,
+      ].filter(Boolean),
+    },
+    {
+      title: "Steuer",
+      lines: [
+        documentCompanyTaxNumberLine,
+        documentCompanyVatLine,
+      ].filter(Boolean),
+    },
+    {
+      title: "Bank",
+      lines: [
+        documentCompanyBankNameLine,
+        documentCompanyIbanLine,
+        documentCompanyBicLine,
+      ].filter(Boolean),
+    },
+  ].filter((group) => group.lines.length > 0);
 
   const customerAddressLines = selectedCustomer
     ? [
@@ -5329,6 +5464,26 @@ function QuotesPage({
   const netTotal = documentTotals.netTotal;
   const vatTotals = documentTotals.vatTotals;
   const grossTotal = documentTotals.grossTotal;
+  const firstLetterheadPagePositionLimit = 2;
+  const followingLetterheadPagePositionLimit = 5;
+  const letterheadPositionPages = useMemo(() => {
+    if (quotePositions.length === 0) {
+      return [[] as QuotePosition[]];
+    }
+
+    const pages: QuotePosition[][] = [];
+    pages.push(quotePositions.slice(0, firstLetterheadPagePositionLimit));
+
+    for (
+      let index = firstLetterheadPagePositionLimit;
+      index < quotePositions.length;
+      index += followingLetterheadPagePositionLimit
+    ) {
+      pages.push(quotePositions.slice(index, index + followingLetterheadPagePositionLimit));
+    }
+
+    return pages.filter((page) => page.length > 0);
+  }, [quotePositions]);
   const isInvoice = activeBusinessDocumentType === "invoice";
   const safePaymentPaidAmount = Math.max(paymentPaidAmount, 0);
   const openPaymentAmount = Math.max(grossTotal - safePaymentPaidAmount, 0);
@@ -5747,10 +5902,10 @@ function QuotesPage({
     const isPdfMode = action === "pdf";
     const documentFileName = `${quoteNumber}${safeCustomerName ? `_${safeCustomerName}` : ""}`;
 
-    const printTopMm = Math.max(activeBusinessDocumentTemplate.topMm, 0);
-    const printBottomMm = Math.max(activeBusinessDocumentTemplate.bottomMm, 0);
-    const printLeftMm = Math.max(activeBusinessDocumentTemplate.leftMm, 18);
-    const printRightMm = Math.max(activeBusinessDocumentTemplate.rightMm, 18);
+    const printTopMm = showLetterhead ? 0 : Math.max(activeBusinessDocumentTemplate.topMm, 0);
+    const printBottomMm = showLetterhead ? 0 : Math.max(activeBusinessDocumentTemplate.bottomMm, 0);
+    const printLeftMm = showLetterhead ? 0 : Math.max(activeBusinessDocumentTemplate.leftMm, 18);
+    const printRightMm = showLetterhead ? 0 : Math.max(activeBusinessDocumentTemplate.rightMm, 18);
 
     const styles = Array.from(
       document.querySelectorAll('style, link[rel="stylesheet"]'),
@@ -5799,20 +5954,89 @@ function QuotesPage({
             }
 
             .print-area {
-              width: 100% !important;
-              max-width: 100% !important;
-              min-height: 0 !important;
+              width: 210mm !important;
+              max-width: 210mm !important;
+              min-height: 297mm !important;
               height: auto !important;
-              margin: 0 !important;
+              margin: 0 auto !important;
               padding: 0 !important;
               box-shadow: none !important;
               border: none !important;
               border-radius: 0 !important;
               background: white !important;
+              overflow: visible !important;
+            }
+
+            .document-letterhead-background {
+              display: block !important;
+              left: 0 !important;
+              top: 0 !important;
+              width: 210mm !important;
+              height: 297mm !important;
+              object-fit: fill !important;
+              max-width: none !important;
+              max-height: none !important;
+            }
+
+            .document-content-layer {
+              position: relative !important;
+              z-index: 10 !important;
+              min-height: 297mm !important;
+            }
+
+            .document-content-layer.with-real-letterhead {
+              padding-top: var(--doc-top-mm) !important;
+              padding-bottom: var(--doc-bottom-mm) !important;
+              padding-left: var(--doc-left-mm) !important;
+              padding-right: var(--doc-right-mm) !important;
+            }
+
+            .document-content-layer.din-letterhead-content {
+              break-inside: avoid;
+              page-break-inside: avoid;
+            }
+
+            .document-content-layer.din-letterhead-content .quote-preview-card {
+              border-radius: 4mm !important;
             }
 
             .print-area * {
               box-sizing: border-box;
+            }
+
+            .document-page {
+              position: relative !important;
+              width: 210mm !important;
+              height: 297mm !important;
+              min-height: 297mm !important;
+              margin: 0 auto 10mm !important;
+              overflow: hidden !important;
+              background: white !important;
+              page-break-after: always;
+              break-after: page;
+            }
+
+            .document-page:last-child {
+              page-break-after: auto;
+              break-after: auto;
+              margin-bottom: 0 !important;
+            }
+
+            .document-page-background {
+              position: absolute !important;
+              inset: 0 !important;
+              width: 210mm !important;
+              height: 297mm !important;
+              object-fit: contain !important;
+              object-position: center center !important;
+              max-width: none !important;
+              max-height: none !important;
+              z-index: 0 !important;
+            }
+
+            .document-page-content {
+              position: relative !important;
+              z-index: 10 !important;
             }
 
             button {
@@ -5847,7 +6071,7 @@ function QuotesPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-yellow-300">
-                Angebote V123
+                Angebote V133
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 Angebotsvorschau erstellen
@@ -5880,7 +6104,7 @@ function QuotesPage({
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-              Angebotsbereich V123
+              Angebotsbereich V133
             </div>
             <h3 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950">
               Angebotsentwurf & Kundenvorschau
@@ -5900,6 +6124,15 @@ function QuotesPage({
               <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Status</p>
               <p className="mt-1 text-lg font-semibold text-emerald-900">{documentStatus}</p>
               <p className="mt-1 text-sm font-medium text-emerald-700">{activeSavedDocumentId ? "gespeichert" : "Entwurf offen"}</p>
+            </div>
+            <div className={`rounded-3xl p-4 ${showLetterhead ? "bg-cyan-50" : "bg-slate-50"}`}>
+              <p className={`text-xs font-semibold uppercase tracking-wide ${showLetterhead ? "text-cyan-700" : "text-slate-400"}`}>Briefbogen</p>
+              <p className={`mt-1 text-lg font-semibold ${showLetterhead ? "text-cyan-900" : "text-slate-950"}`}>
+                {showUploadedLetterhead ? "Eigener Hintergrund" : showDemoLetterhead ? "Demo aktiv" : "Ohne Hintergrund"}
+              </p>
+              <p className={`mt-1 text-sm font-medium ${showLetterhead ? "text-cyan-700" : "text-slate-500"}`}>
+                für {activeBusinessDocumentLabel}
+              </p>
             </div>
           </div>
         </div>
@@ -5958,7 +6191,7 @@ function QuotesPage({
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-yellow-300 via-fuchsia-500 to-cyan-400" />
             <h3 className="mt-5 text-xl font-black">Dokumentkopf</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
-              Kundenauswahl und Stammdaten für die Kundenvorschau V123.
+              Kundenauswahl und Stammdaten für die Kundenvorschau V133.
             </p>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -6680,7 +6913,7 @@ function QuotesPage({
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Kundenvorschau V123
+                  Kundenvorschau V133
                 </p>
                 <h3 className="mt-2 text-2xl font-black tracking-tight">
                   {quoteNumber}
@@ -6707,24 +6940,306 @@ function QuotesPage({
             </div>
 
             <div
-              className="print-area mt-8 overflow-hidden rounded-[2rem] border border-slate-200 bg-white p-0 shadow-sm"
-              style={{
-                paddingTop: `${activeBusinessDocumentTemplate.topMm}mm`,
-                paddingBottom: `${activeBusinessDocumentTemplate.bottomMm}mm`,
-                paddingLeft: `${activeBusinessDocumentTemplate.leftMm}mm`,
-                paddingRight: `${activeBusinessDocumentTemplate.rightMm}mm`,
-              }}
+              className="print-area relative mx-auto mt-8 w-full max-w-[210mm] overflow-visible rounded-[2rem] border border-slate-200 bg-white p-0 shadow-sm"
+              style={
+                {
+                  "--doc-top-mm": `${documentContentTopMm}mm`,
+                  "--doc-bottom-mm": `${documentContentBottomMm}mm`,
+                  "--doc-left-mm": `${documentContentLeftMm}mm`,
+                  "--doc-right-mm": `${documentContentRightMm}mm`,
+                } as CSSProperties
+              }
             >
+              {useRealLetterheadBackground ? (
+                <div className="document-page-stack space-y-8 print:space-y-0">
+                  {letterheadPositionPages.map((pagePositions, pageIndex) => {
+                    const isFirstPage = pageIndex === 0;
+                    const isLastPage = pageIndex === letterheadPositionPages.length - 1;
+                    const startPositionNumber = letterheadPositionPages
+                      .slice(0, pageIndex)
+                      .reduce((sum, page) => sum + page.length, 0);
+
+                    return (
+                      <section
+                        key={`letterhead-page-${pageIndex}`}
+                        className="document-page relative h-[297mm] min-h-[297mm] w-[210mm] overflow-hidden bg-white shadow-sm print:shadow-none"
+                      >
+                        <img
+                          src={activeBusinessDocumentTemplate.letterheadDataUrl}
+                          alt="Briefbogen-Hintergrund"
+                          className="document-page-background pointer-events-none absolute inset-0"
+                          style={{
+                            opacity: activeLetterheadOpacity / 100,
+                            width: "210mm",
+                            height: "297mm",
+                            objectFit: "contain",
+                            objectPosition: "center center",
+                          }}
+                        />
+
+                        <div className="document-page-content relative z-10 h-full text-slate-800">
+                          <div className="absolute left-[20mm] top-[52mm] w-[85mm]">
+                            {isFirstPage ? (
+                              <>
+                                <p className="text-[9px] font-semibold uppercase tracking-wide text-slate-400">
+                                  Empfänger
+                                </p>
+                                <div className="mt-[4mm] space-y-[1.5mm] text-[11px] font-medium leading-tight text-slate-800">
+                                  {customerAddressLines.map((line) => (
+                                    <p key={line}>{line}</p>
+                                  ))}
+                                </div>
+                              </>
+                            ) : (
+                              <div className="rounded-[3mm] bg-white/85 px-[4mm] py-[3mm] text-[9px] font-medium text-slate-500">
+                                {activeBusinessDocumentLabel} {quoteNumber} · Seite {pageIndex + 1}
+                              </div>
+                            )}
+                          </div>
+
+                          {isFirstPage && (
+                            <>
+                              <div className="absolute left-[20mm] right-[20mm] top-[88mm] rounded-[4mm] border border-slate-200 bg-white/88 p-[5mm]">
+                                <p className="text-[8px] font-semibold uppercase tracking-wide text-slate-400">
+                                  Kundendaten
+                                </p>
+                                <div className="mt-[3mm] grid gap-[2mm] text-[9px] font-medium">
+                                  {customerMetaRows.length > 0 ? (
+                                    customerMetaRows.map((row) => (
+                                      <div key={row.label} className="flex justify-between gap-[8mm]">
+                                        <span className="text-slate-400">{row.label}</span>
+                                        <span className="text-right text-slate-700">{row.value}</span>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <p className="text-slate-500">Freitext-Kunde ohne Stammdaten</p>
+                                  )}
+                                </div>
+                              </div>
+
+                              <div className="absolute left-[20mm] right-[20mm] top-[130mm]">
+                                <p className="text-[8px] font-semibold uppercase tracking-wide text-slate-400">
+                                  Betreff
+                                </p>
+                                <h4 className="mt-[2.5mm] text-[16px] font-medium leading-tight tracking-normal text-slate-950">
+                                  {activeBusinessDocumentLabel}: {quotePositions[0]?.title || quoteNumber}
+                                </h4>
+                                <p className="mt-[3.5mm] text-[9.5px] font-medium leading-[1.42] text-slate-600">
+                                  {introText}
+                                </p>
+                              </div>
+                            </>
+                          )}
+
+                          <div
+                            className={`${isFirstPage ? "absolute left-[20mm] right-[20mm] top-[158mm] bottom-[49mm]" : "absolute left-[20mm] right-[20mm] top-[44mm] bottom-[49mm]"} overflow-hidden`}
+                          >
+                            {!isFirstPage && (
+                              <div className="mb-[4mm] flex items-center justify-between border-b border-slate-200 pb-[2mm]">
+                                <p className="text-[9px] font-semibold uppercase tracking-wide text-slate-400">
+                                  Leistungen · Fortsetzung
+                                </p>
+                                <p className="text-[9px] font-medium text-slate-400">
+                                  Seite {pageIndex + 1} / {letterheadPositionPages.length}
+                                </p>
+                              </div>
+                            )}
+
+                            <div className="overflow-hidden rounded-[3.5mm] border border-slate-200 bg-white/90">
+                              <div
+                                className={`grid gap-[2mm] bg-slate-100 px-[4mm] py-[2.5mm] text-[8px] font-semibold uppercase tracking-wide text-slate-500 ${
+                                  isDeliveryNote
+                                    ? "grid-cols-[1fr_0.3fr]"
+                                    : "grid-cols-[1fr_0.22fr_0.28fr_0.2fr_0.32fr]"
+                                }`}
+                              >
+                                <span>Leistung</span>
+                                <span className="text-right">Menge</span>
+                                {!isDeliveryNote && <span className="text-right">Einzel</span>}
+                                {!isDeliveryNote && <span className="text-right">MwSt.</span>}
+                                {!isDeliveryNote && <span className="text-right">Gesamt</span>}
+                              </div>
+
+                              {pagePositions.map((position, positionIndex) => {
+                                const positionTotal = position.quantity * position.unitPrice;
+                                const absolutePositionIndex = startPositionNumber + positionIndex;
+
+                                return (
+                                  <div
+                                    key={position.id}
+                                    className={`grid gap-[2mm] border-t border-slate-100 px-[4mm] py-[3mm] text-[9.5px] ${
+                                      isDeliveryNote
+                                        ? "grid-cols-[1fr_0.3fr]"
+                                        : "grid-cols-[1fr_0.22fr_0.28fr_0.2fr_0.32fr]"
+                                    }`}
+                                  >
+                                    <div>
+                                      <p className="font-semibold text-slate-950">
+                                        {absolutePositionIndex + 1}. {position.title}
+                                      </p>
+                                      <p className="mt-[1.5mm] whitespace-pre-line text-[8.5px] font-medium leading-[1.35] text-slate-500">
+                                        {position.description}
+                                      </p>
+                                    </div>
+                                    <p className="text-right font-medium text-slate-600">
+                                      {position.quantity.toLocaleString("de-DE")}
+                                    </p>
+                                    {!isDeliveryNote && (
+                                      <p className="text-right font-medium text-slate-600">
+                                        {formatCurrency(position.unitPrice)}
+                                      </p>
+                                    )}
+                                    {!isDeliveryNote && (
+                                      <p className="text-right font-medium text-slate-600">
+                                        {formatNumber(getPositionVatRate(position), 0)} %
+                                      </p>
+                                    )}
+                                    {!isDeliveryNote && (
+                                      <p className="text-right font-semibold text-slate-950">
+                                        {formatCurrency(positionTotal)}
+                                      </p>
+                                    )}
+                                  </div>
+                                );
+                              })}
+                            </div>
+
+                            {isLastPage && !isDeliveryNote && (
+                              <div className="mt-[7mm] flex justify-end">
+                                <div className="w-[78mm] overflow-hidden rounded-[3.5mm] border border-slate-200 bg-white/92">
+                                  <div className="flex items-center justify-between border-b border-slate-100 px-[4mm] py-[2.5mm] text-[10px] font-medium text-slate-600">
+                                    <span>Netto</span>
+                                    <span>{formatCurrency(netTotal)}</span>
+                                  </div>
+                                  {vatTotals.length > 0 ? (
+                                    vatTotals.map((taxLine) => (
+                                      <div
+                                        key={taxLine.rate}
+                                        className="flex items-center justify-between border-b border-slate-100 px-[4mm] py-[2.5mm] text-[10px] font-medium text-slate-600"
+                                      >
+                                        <span>MwSt. {formatNumber(taxLine.rate, 0)} %</span>
+                                        <span>{formatCurrency(taxLine.amount)}</span>
+                                      </div>
+                                    ))
+                                  ) : (
+                                    <div className="flex items-center justify-between border-b border-slate-100 px-[4mm] py-[2.5mm] text-[10px] font-medium text-slate-600">
+                                      <span>MwSt.</span>
+                                      <span>{formatCurrency(0)}</span>
+                                    </div>
+                                  )}
+                                  <div className="flex items-center justify-between bg-slate-950 px-[4mm] py-[3mm] text-[10px] font-semibold text-white">
+                                    <span>Brutto</span>
+                                    <span>{formatCurrency(grossTotal)}</span>
+                                  </div>
+                                </div>
+                              </div>
+                            )}
+                          </div>
+
+                          {isLastPage && (
+                            <div className="absolute left-[20mm] right-[20mm] bottom-[33mm] border-t border-slate-200 pt-[3mm] text-[9px] font-medium leading-[1.45] text-slate-600">
+                              <p className="mb-[2mm] text-[8px] font-semibold uppercase tracking-wide text-slate-400">
+                                Hinweise & Bedingungen
+                              </p>
+                              <p>{deliveryTerms}</p>
+                              {!isDeliveryNote && <p className="mt-[2mm]">{paymentTerms}</p>}
+                              {showCompanyFooterData && documentFooterLines.length > 0 && !showFooterInLetterheadBar && (
+                                <div className="mt-[2mm] grid gap-[1mm] text-[7.5px] leading-[1.35] text-slate-500">
+                                  {documentFooterLines.map((line) => (
+                                    <p key={line}>{line}</p>
+                                  ))}
+                                </div>
+                              )}
+                              {isDeliveryNote && (
+                                <p className="mt-[2mm] font-semibold text-slate-700">
+                                  Ware ordnungsgemäß erhalten: ______________________________
+                                </p>
+                              )}
+                            </div>
+                          )}
+
+                          {showFooterInLetterheadBar && documentFooterGroups.length > 0 && (
+                            <div
+                              className={`absolute left-[20mm] right-[20mm] grid gap-[5mm] overflow-hidden ${
+                                documentFooterColumns === "2" ? "grid-cols-2" : "grid-cols-3"
+                              } ${
+                                documentFooterTextTone === "white"
+                                  ? "text-white drop-shadow-[0_1px_1px_rgba(0,0,0,0.28)]"
+                                  : "text-slate-950"
+                              }`}
+                              style={{
+                                bottom: `${documentFooterBottomMm}mm`,
+                                height: `${documentFooterHeightMm}mm`,
+                              }}
+                            >
+                              {documentFooterGroups.map((group) => (
+                                <div key={group.title} className="min-w-0">
+                                  <p className={`text-[6.8px] font-semibold uppercase tracking-[0.18em] ${
+                                    documentFooterTextTone === "white" ? "text-white/80" : "text-slate-700"
+                                  }`}>
+                                    {group.title}
+                                  </p>
+                                  <div className="mt-[1.1mm] space-y-[0.55mm] text-[6.9px] font-medium leading-[1.18]">
+                                    {group.lines.map((line) => (
+                                      <p key={line} className="break-words">{line}</p>
+                                    ))}
+                                  </div>
+                                </div>
+                              ))}
+                            </div>
+                          )}
+                        </div>
+                      </section>
+                    );
+                  })}
+                </div>
+              ) : (
+                <>
+              {showUploadedLetterhead && (
+                <img
+                  src={activeBusinessDocumentTemplate.letterheadDataUrl}
+                  alt="Briefbogen-Hintergrund"
+                  className="document-letterhead-background pointer-events-none absolute left-0 top-0"
+                  style={{
+                    opacity: activeLetterheadOpacity / 100,
+                    width: "210mm",
+                    height: "297mm",
+                    objectFit: "fill",
+                  }}
+                />
+              )}
+              {showDemoLetterhead && (
+                <div
+                  className="document-letterhead-background pointer-events-none absolute inset-0"
+                  style={{
+                    opacity: activeLetterheadOpacity / 100,
+                    background:
+                      "linear-gradient(135deg, rgba(6,199,242,0.18), transparent 35%), linear-gradient(315deg, rgba(225,57,242,0.16), transparent 32%), linear-gradient(0deg, rgba(255,208,28,0.12), transparent 28%)",
+                  }}
+                />
+              )}
+              <div
+                className={`document-content-layer relative z-10 ${useRealLetterheadBackground ? "with-real-letterhead din-letterhead-content" : ""}`}
+                style={{
+                  paddingTop: useRealLetterheadBackground ? undefined : `${documentContentTopMm}mm`,
+                  paddingBottom: useRealLetterheadBackground ? undefined : `${documentContentBottomMm}mm`,
+                  paddingLeft: useRealLetterheadBackground ? undefined : `${documentContentLeftMm}mm`,
+                  paddingRight: useRealLetterheadBackground ? undefined : `${documentContentRightMm}mm`,
+                }}
+              >
+              {!useRealLetterheadBackground && (
               <div className="-mx-6 -mt-6 mb-6 border-b border-slate-200 bg-slate-50 px-6 py-4 print:hidden">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V123</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V133</p>
                     <p className="mt-1 text-sm font-medium text-slate-600">So wirkt das Dokument später im Druck oder als PDF.</p>
                   </div>
                   <div className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Layout prüfbar</div>
                 </div>
               </div>
+              )}
 
+              {!useRealLetterheadBackground && (
               <div className="border-b border-slate-200 pb-5">
                 <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
                   <div>
@@ -6783,7 +7298,9 @@ function QuotesPage({
                   </div>
                 </div>
               </div>
+              )}
 
+              {!useRealLetterheadBackground && (
               <div className="mt-6 grid gap-3 rounded-2xl border border-slate-200 bg-slate-50 p-4 text-xs font-medium text-slate-600 md:grid-cols-4">
                 <div>
                   <p className="font-semibold uppercase tracking-wide text-slate-400">Dokument</p>
@@ -6802,14 +7319,15 @@ function QuotesPage({
                   <p className="mt-1 text-slate-900">{validUntil}</p>
                 </div>
               </div>
+              )}
 
-              {companySenderLine && (
+              {companySenderLine && !useRealLetterheadBackground && (
                 <p className="mt-8 border-b border-slate-200 pb-1 text-[10px] font-bold text-slate-400">
                   {companySenderLine}
                 </p>
               )}
 
-              <div className="mt-4 grid gap-8 md:grid-cols-[1fr_0.9fr]">
+              <div className={`grid gap-6 md:grid-cols-[1fr_0.9fr] ${useRealLetterheadBackground ? "mt-0" : "mt-4"}`}>
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
                     Empfänger
@@ -6847,11 +7365,11 @@ function QuotesPage({
                 </div>
               </div>
 
-              <div className="mt-10">
+              <div className={useRealLetterheadBackground ? "mt-7" : "mt-10"}>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
                   Betreff
                 </p>
-                <h4 className="mt-2 text-2xl font-black tracking-tight text-slate-950">
+                <h4 className="mt-2 text-xl font-semibold tracking-normal text-slate-950">
                   {activeBusinessDocumentLabel}: {quotePositions[0]?.title || quoteNumber}
                 </h4>
                 <p className="mt-4 text-sm font-medium leading-7 text-slate-600">
@@ -6859,7 +7377,7 @@ function QuotesPage({
                 </p>
               </div>
 
-              <div className="mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white">
+              <div className={useRealLetterheadBackground ? "mt-6 overflow-hidden rounded-2xl border border-slate-200 bg-white" : "mt-8 overflow-hidden rounded-2xl border border-slate-200 bg-white"}>
                 <div
                   className={`grid gap-3 bg-slate-100 px-4 py-3 text-xs font-semibold uppercase tracking-wide text-slate-500 ${
                     isDeliveryNote
@@ -6884,7 +7402,7 @@ function QuotesPage({
                   return (
                     <div
                       key={position.id}
-                      className={`grid gap-3 border-t border-slate-100 px-4 py-4 text-sm ${
+                      className={`grid gap-3 border-t border-slate-100 px-4 py-3 text-sm ${
                         isDeliveryNote
                           ? "grid-cols-[1fr_0.3fr]"
                           : "grid-cols-[1fr_0.24fr_0.32fr_0.24fr_0.38fr]"
@@ -6922,9 +7440,9 @@ function QuotesPage({
               </div>
 
               {!isDeliveryNote && (
-                <div className="mt-8 flex justify-end">
+                <div className={useRealLetterheadBackground ? "mt-5 flex justify-end" : "mt-8 flex justify-end"}>
                   <div className="w-full max-w-sm overflow-hidden rounded-2xl border border-slate-200 bg-white">
-                    <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 text-sm font-bold text-slate-600">
+                    <div className="flex items-center justify-between border-b border-slate-100 px-4 py-2.5 text-sm font-bold text-slate-600">
                       <span>Netto</span>
                       <span>{formatCurrency(netTotal)}</span>
                     </div>
@@ -6932,19 +7450,19 @@ function QuotesPage({
                       vatTotals.map((taxLine) => (
                         <div
                           key={taxLine.rate}
-                          className="flex items-center justify-between border-b border-slate-100 px-4 py-3 text-sm font-bold text-slate-600"
+                          className="flex items-center justify-between border-b border-slate-100 px-4 py-2.5 text-sm font-bold text-slate-600"
                         >
                           <span>MwSt. {formatNumber(taxLine.rate, 0)} %</span>
                           <span>{formatCurrency(taxLine.amount)}</span>
                         </div>
                       ))
                     ) : (
-                      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-3 text-sm font-bold text-slate-600">
+                      <div className="flex items-center justify-between border-b border-slate-100 px-4 py-2.5 text-sm font-bold text-slate-600">
                         <span>MwSt.</span>
                         <span>{formatCurrency(0)}</span>
                       </div>
                     )}
-                    <div className="flex items-center justify-between bg-slate-950 px-4 py-4 text-sm font-black text-white">
+                    <div className="flex items-center justify-between bg-slate-950 px-4 py-3 text-sm font-black text-white">
                       <span>Brutto</span>
                       <span>{formatCurrency(grossTotal)}</span>
                     </div>
@@ -6952,7 +7470,7 @@ function QuotesPage({
                 </div>
               )}
 
-              <div className="mt-8 space-y-3 border-t border-slate-200 pt-5 text-sm font-medium leading-7 text-slate-600">
+              <div className={useRealLetterheadBackground ? "mt-5 space-y-2 border-t border-slate-200 pt-4 text-sm font-medium leading-6 text-slate-600" : "mt-8 space-y-3 border-t border-slate-200 pt-5 text-sm font-medium leading-7 text-slate-600"}>
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Hinweise & Bedingungen</p>
                 <p>{deliveryTerms}</p>
                 {!isDeliveryNote && <p>{paymentTerms}</p>}
@@ -6963,31 +7481,16 @@ function QuotesPage({
                 )}
               </div>
 
-              <div className="mt-8 grid gap-3 border-t border-slate-200 pt-5 text-xs font-bold leading-5 text-slate-500 md:grid-cols-2">
-                <p>
-                  {[company.name, companyAddressLine]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </p>
-                <p className="md:text-right">
-                  {[
-                    company.taxNumber ? `St.-Nr. ${company.taxNumber}` : "",
-                    company.vatId ? `USt-ID ${company.vatId}` : "",
-                  ]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </p>
-                <p>
-                  {[company.bankName, company.iban, company.bic]
-                    .filter(Boolean)
-                    .join(" · ")}
-                </p>
-                <p className="md:text-right">
-                  {isDeliveryNote
-                    ? "Vielen Dank für Ihren Auftrag."
-                    : "Vielen Dank für Ihre Anfrage."}
-                </p>
+              {!useRealLetterheadBackground && showCompanyFooterData && documentFooterLines.length > 0 && (
+              <div className="mt-8 grid gap-3 border-t border-slate-200 pt-5 text-xs font-medium leading-5 text-slate-500 md:grid-cols-2">
+                {documentFooterLines.map((line) => (
+                  <p key={line}>{line}</p>
+                ))}
               </div>
+              )}
+              </div>
+                </>
+              )}
             </div>
           </div>
         </div>
@@ -11261,7 +11764,7 @@ function SettingsPage({
     useState<DocumentType>("quote");
   const activeDocumentTemplate = documentTemplateSettings[activeDocumentType];
 
-  function updateCompanyField(field: keyof CompanyProfile, value: string) {
+  function updateCompanyField(field: keyof CompanyProfile, value: string | boolean) {
     setCompany((current) => ({ ...current, [field]: value }));
   }
 
@@ -11291,6 +11794,37 @@ function SettingsPage({
       [activeDocumentType]: {
         ...current[activeDocumentType],
         [field]: value,
+      },
+    }));
+  }
+
+  function handleLetterheadUpload(file: File | null) {
+    if (!file) return;
+
+    const reader = new FileReader();
+
+    reader.onload = () => {
+      const result = typeof reader.result === "string" ? reader.result : "";
+      setDocumentTemplateSettings((current) => ({
+        ...current,
+        [activeDocumentType]: {
+          ...current[activeDocumentType],
+          letterheadMode: "upload",
+          letterheadDataUrl: result,
+        },
+      }));
+    };
+
+    reader.readAsDataURL(file);
+  }
+
+  function removeLetterheadUpload() {
+    setDocumentTemplateSettings((current) => ({
+      ...current,
+      [activeDocumentType]: {
+        ...current[activeDocumentType],
+        letterheadMode: "none",
+        letterheadDataUrl: "",
       },
     }));
   }
@@ -11339,7 +11873,7 @@ function SettingsPage({
   }
 
   function resetCompanyProfile() {
-    setCompany({ ...companyProfile });
+    setCompany(normalizeCompanyProfile());
     try {
       window.localStorage.removeItem(COMPANY_PROFILE_STORAGE_KEY);
     } catch {}
@@ -11353,7 +11887,7 @@ function SettingsPage({
   function exportAppBackup() {
     const payload = {
       app: "PrintPilot",
-      version: "V92",
+      version: "V133",
       exportedAt: new Date().toISOString(),
       data: {
         company,
@@ -11395,7 +11929,7 @@ function SettingsPage({
         const data = parsed.data ?? parsed;
 
         if (data.company) {
-          setCompany({ ...companyProfile, ...data.company });
+          setCompany(normalizeCompanyProfile(data.company));
         }
 
         if (data.documentTemplateSettings) {
@@ -11722,6 +12256,112 @@ function SettingsPage({
                 value={company.bic}
                 onChange={(value) => updateCompanyField("bic", value)}
               />
+              <InputField
+                label="Kontoinhaber"
+                value={company.accountHolder ?? company.name}
+                onChange={(value) => updateCompanyField("accountHolder", value)}
+              />
+            </div>
+          </div>
+
+          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-lime-400 to-emerald-500" />
+            <h3 className="mt-5 text-xl font-black">Dokumentanzeige</h3>
+            <p className="mt-1 text-sm font-medium leading-6 text-slate-500">
+              Lege fest, welche Stammdaten auf Angeboten, Rechnungen, Lieferscheinen und Auftragsbestätigungen zusätzlich ausgegeben werden. Bei vorgedrucktem Briefbogen kannst du alles deaktiviert lassen.
+            </p>
+            <div className="mt-6 grid gap-3 md:grid-cols-2">
+              {[
+                ["showCompanyAddressOnDocuments", "Adresse auf Dokumenten anzeigen", "Firmenname, Straße, PLZ und Ort"],
+                ["showCompanyContactOnDocuments", "Kontaktdaten anzeigen", "Telefon, E-Mail und Website"],
+                ["showTaxDataOnDocuments", "Steuerdaten anzeigen", "Steuernummer und USt-ID"],
+                ["showBankDataOnDocuments", "Bankdaten anzeigen", "Bank, IBAN, BIC und Kontoinhaber"],
+                ["showCompanyFooterOnDocuments", "Stammdaten im Dokumentfuß anzeigen", "aktiviert die Ausgabe im Footer des Briefbogens"],
+              ].map(([field, label, description]) => (
+                <label
+                  key={field}
+                  className="flex cursor-pointer gap-3 rounded-3xl border border-slate-200 bg-slate-50 p-4 transition hover:border-slate-300 hover:bg-white"
+                >
+                  <input
+                    type="checkbox"
+                    checked={Boolean(company[field as keyof CompanyProfile])}
+                    onChange={(event) =>
+                      updateCompanyField(
+                        field as keyof CompanyProfile,
+                        event.target.checked,
+                      )
+                    }
+                    className="mt-1 h-5 w-5 rounded border-slate-300 text-slate-950 focus:ring-slate-950"
+                  />
+                  <span>
+                    <span className="block text-sm font-semibold text-slate-950">{label}</span>
+                    <span className="mt-1 block text-xs font-medium leading-5 text-slate-500">{description}</span>
+                  </span>
+                </label>
+              ))}
+            </div>
+
+            <div className="mt-6 rounded-3xl border border-fuchsia-100 bg-fuchsia-50/60 p-5">
+              <div className="flex flex-col gap-2 md:flex-row md:items-start md:justify-between">
+                <div>
+                  <p className="text-xs font-semibold uppercase tracking-wide text-fuchsia-700">
+                    Footerposition im Briefbogen
+                  </p>
+                  <p className="mt-1 text-sm font-medium leading-6 text-fuchsia-900/70">
+                    Für den echten Briefbogen werden die Stammdaten fest im Footer gesetzt. Firma, Steuer und Bank werden professionell als 3-zeilige Gruppen umbrochen. Die Y-Position kann auch in den Minusbereich geschoben werden.
+                  </p>
+                </div>
+              </div>
+
+              <div className="mt-5 rounded-2xl border border-fuchsia-200 bg-white/70 px-4 py-3 text-sm font-semibold leading-6 text-fuchsia-950">
+                Footer im Briefbogen: 3 Gruppen mit sinnvoller Zeilenlogik. Firma = Name, Adresse, Kontakt. Steuer = Steuernummer und USt-ID. Bank = Bank/Inhaber, IBAN, BIC. Negative Y-Werte schieben die Stammdaten weiter nach unten in den magentafarbenen Balken.
+              </div>
+
+              <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+                <SelectField
+                  label="Spalten"
+                  value={company.documentFooterColumns ?? "3"}
+                  onChange={(value) =>
+                    updateCompanyField(
+                      "documentFooterColumns",
+                      value as CompanyProfile["documentFooterColumns"],
+                    )
+                  }
+                  options={[
+                    { value: "2", label: "2 Spalten" },
+                    { value: "3", label: "3 Spalten" },
+                  ]}
+                />
+                <NumberField
+                  label="Footer Y-Position"
+                  value={Number(company.documentFooterBottomMm ?? -6)}
+                  onChange={(value) => updateCompanyField("documentFooterBottomMm", value)}
+                  suffix="mm"
+                  step={1}
+                  min={-30}
+                />
+                <NumberField
+                  label="Footerhöhe"
+                  value={Number(company.documentFooterHeightMm ?? 20)}
+                  onChange={(value) => updateCompanyField("documentFooterHeightMm", value)}
+                  suffix="mm"
+                  step={1}
+                />
+                <SelectField
+                  label="Textfarbe"
+                  value={company.documentFooterTextTone ?? "white"}
+                  onChange={(value) =>
+                    updateCompanyField(
+                      "documentFooterTextTone",
+                      value as CompanyProfile["documentFooterTextTone"],
+                    )
+                  }
+                  options={[
+                    { value: "white", label: "Weiß auf Magenta" },
+                    { value: "dark", label: "Dunkel" },
+                  ]}
+                />
+              </div>
             </div>
           </div>
 
@@ -11730,7 +12370,7 @@ function SettingsPage({
             <h3 className="mt-5 text-xl font-black">Dokumenttypen</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Jeder Dokumenttyp hat eigene Abstände und Standardtexte. Die
-              Kundenvorschau V123 nutzt den aktiven Dokumenttyp: Angebot,
+              Kundenvorschau V133 nutzt den aktiven Dokumenttyp: Angebot,
               Auftragsbestätigung, Rechnung oder Lieferschein.
             </p>
             <div className="mt-6 grid gap-4 md:grid-cols-[0.8fr_1.2fr]">
@@ -11759,7 +12399,7 @@ function SettingsPage({
                 </h4>
                 <div className="mt-5 grid gap-4 md:grid-cols-2">
                   <NumberField
-                    label="Abstand oben"
+                    label="Abstand oben / DIN-Fenster"
                     value={activeDocumentTemplate.topMm}
                     onChange={(value) =>
                       updateDocumentTemplateField("topMm", value)
@@ -11791,6 +12431,141 @@ function SettingsPage({
                     suffix="mm"
                   />
                 </div>
+                <div className="mt-5 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                  <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
+                    <div>
+                      <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                        Briefbogen / Hintergrund
+                      </p>
+                      <h5 className="mt-2 text-lg font-semibold text-slate-950">
+                        Hintergrund für {activeDocumentTemplate.label}
+                      </h5>
+                      <p className="mt-1 text-sm font-medium leading-6 text-slate-500">
+                        Verwende einen A4-Briefbogen als Bild-Hintergrund. Die Dokumentinhalte werden DIN-orientiert darüber gelegt. Ideal: PNG/JPG in A4 Hochformat mit 300 dpi. Für euren Briefbogen empfiehlt sich ca. 45 mm oben, 20 mm links/rechts und 32 mm unten.
+                      </p>
+                    </div>
+                    <span className={`rounded-full px-3 py-1 text-xs font-semibold ${activeDocumentTemplate.letterheadMode === "none" ? "bg-slate-100 text-slate-500" : "bg-emerald-50 text-emerald-700"}`}>
+                      {activeDocumentTemplate.letterheadMode === "none"
+                        ? "ohne Briefbogen"
+                        : activeDocumentTemplate.letterheadMode === "demo"
+                          ? "Demo aktiv"
+                          : "eigener Briefbogen"}
+                    </span>
+                  </div>
+
+                  <div className="mt-5 grid gap-4 lg:grid-cols-[1fr_0.9fr]">
+                    <div className="space-y-4">
+                      <SelectField
+                        label="Briefbogen verwenden"
+                        value={activeDocumentTemplate.letterheadMode ?? "none"}
+                        onChange={(value) =>
+                          updateDocumentTemplateField(
+                            "letterheadMode",
+                            value as LetterheadMode,
+                          )
+                        }
+                        options={[
+                          { value: "none", label: "Ohne Briefbogen" },
+                          { value: "demo", label: "Demo-Briefbogen" },
+                          { value: "upload", label: "Eigenen Briefbogen verwenden" },
+                        ]}
+                      />
+                      <NumberField
+                        label="Deckkraft"
+                        value={activeDocumentTemplate.letterheadOpacity ?? 100}
+                        onChange={(value) =>
+                          updateDocumentTemplateField(
+                            "letterheadOpacity",
+                            Math.max(0, Math.min(value, 100)),
+                          )
+                        }
+                        suffix="%"
+                      />
+                      <label className="block">
+                        <span className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                          Briefbogen hochladen
+                        </span>
+                        <input
+                          type="file"
+                          accept="image/png,image/jpeg,image/webp"
+                          onChange={(event) =>
+                            handleLetterheadUpload(event.target.files?.[0] ?? null)
+                          }
+                          className="mt-2 w-full rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-bold text-slate-950"
+                        />
+                      </label>
+                      <div className="flex flex-col gap-3 sm:flex-row">
+                        <button
+                          type="button"
+                          onClick={() =>
+                            updateDocumentTemplateField("letterheadMode", "demo")
+                          }
+                          className="rounded-2xl bg-cyan-50 px-4 py-3 text-sm font-semibold text-cyan-700 shadow-sm transition hover:-translate-y-0.5"
+                        >
+                          Demo anzeigen
+                        </button>
+                        <button
+                          type="button"
+                          onClick={removeLetterheadUpload}
+                          className="rounded-2xl bg-white px-4 py-3 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-0.5"
+                        >
+                          Briefbogen entfernen
+                        </button>
+                      </div>
+                    </div>
+
+                    <div className="overflow-hidden rounded-3xl border border-slate-200 bg-slate-50 p-4">
+                      <div className="relative mx-auto aspect-[210/297] max-h-80 overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+                        {activeDocumentTemplate.letterheadMode === "upload" &&
+                        activeDocumentTemplate.letterheadDataUrl ? (
+                          <img
+                            src={activeDocumentTemplate.letterheadDataUrl}
+                            alt="Briefbogen-Vorschau"
+                            className="absolute inset-0 h-full w-full object-cover"
+                            style={{
+                              opacity:
+                                Math.max(
+                                  0,
+                                  Math.min(
+                                    activeDocumentTemplate.letterheadOpacity ?? 100,
+                                    100,
+                                  ),
+                                ) / 100,
+                            }}
+                          />
+                        ) : activeDocumentTemplate.letterheadMode === "demo" ? (
+                          <div
+                            className="absolute inset-0"
+                            style={{
+                              opacity:
+                                Math.max(
+                                  0,
+                                  Math.min(
+                                    activeDocumentTemplate.letterheadOpacity ?? 100,
+                                    100,
+                                  ),
+                                ) / 100,
+                              background:
+                                "linear-gradient(135deg, rgba(6,199,242,0.22), transparent 35%), linear-gradient(315deg, rgba(225,57,242,0.18), transparent 32%), linear-gradient(0deg, rgba(255,208,28,0.14), transparent 28%)",
+                            }}
+                          />
+                        ) : (
+                          <div className="absolute inset-0 grid place-items-center text-center text-xs font-semibold uppercase tracking-wide text-slate-300">
+                            Ohne Briefbogen
+                          </div>
+                        )}
+                        <div className="absolute inset-x-6 top-8 h-10 rounded-xl bg-slate-950/90" />
+                        <div className="absolute left-6 top-24 h-2 w-28 rounded-full bg-slate-300" />
+                        <div className="absolute left-6 top-32 h-2 w-36 rounded-full bg-slate-200" />
+                        <div className="absolute inset-x-6 bottom-10 h-2 rounded-full bg-slate-200" />
+                      </div>
+                      <p className="mt-4 text-center text-xs font-semibold leading-5 text-slate-500">
+                        Vorschau für den aktiven Dokumenttyp. PDF-Hintergrund wird später sauber erweitert; aktuell funktioniert die Druckvorschau mit Bild-Hintergrund.
+                      </p>
+                    </div>
+                  </div>
+                </div>
+
                 <div className="mt-5 space-y-4">
                   <TextAreaField
                     label="Standard-Einleitung"
@@ -11916,12 +12691,30 @@ function SettingsPage({
                   .filter(Boolean)
                   .join(" · ") || "Kontakt"}
               </p>
+              <div className="mt-5 rounded-2xl bg-white p-4 text-xs font-medium leading-5 text-slate-500 shadow-sm">
+                <p className="mb-2 font-semibold uppercase tracking-wide text-slate-400">Aktive Dokumentanzeige</p>
+                {Boolean(company.showCompanyFooterOnDocuments) && [
+                  company.showCompanyAddressOnDocuments ? "Adresse" : "",
+                  company.showCompanyContactOnDocuments ? "Kontakt" : "",
+                  company.showTaxDataOnDocuments ? "Steuerdaten" : "",
+                  company.showBankDataOnDocuments ? "Bankdaten" : "",
+                ].filter(Boolean).length > 0 ? (
+                  <p>{[
+                    company.showCompanyAddressOnDocuments ? "Adresse" : "",
+                    company.showCompanyContactOnDocuments ? "Kontakt" : "",
+                    company.showTaxDataOnDocuments ? "Steuerdaten" : "",
+                    company.showBankDataOnDocuments ? "Bankdaten" : "",
+                  ].filter(Boolean).join(" · ")}</p>
+                ) : (
+                  <p>Keine zusätzlichen Stammdaten auf Dokumenten aktiv.</p>
+                )}
+              </div>
             </div>
           </div>
 
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-black">Kundenvorschau V123</h3>
+            <h3 className="mt-5 text-xl font-black">Kundenvorschau V133</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Aktive Vorlage: {activeDocumentTemplate.label}
             </p>
@@ -13593,7 +14386,7 @@ function ImpositionPreview({
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-            Bogenvorschau rechts V123
+            Bogenvorschau rechts V133
           </p>
           <p className="mt-1 truncate text-sm font-black text-slate-800">
             {result.best.columns} × {result.best.rows} Nutzen · {result.best.orientation}

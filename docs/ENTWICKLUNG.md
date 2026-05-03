@@ -1,7 +1,7 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V122 – Angebotsentwurf aus Kalkulation übernommen**
+Aktuelle Arbeitsversion: **V130 – DIN-Briefbogen und Satzspiegel korrigiert**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
@@ -518,9 +518,78 @@ Eingebaut:
 
 ---
 
+### V124 – Briefbogen-Hintergrund für Dokumente
+
+Eingebaut:
+
+- Dokumentdesign in den Einstellungen erweitert
+- Briefbogen je Dokumenttyp vorbereitbar für:
+  - Angebot
+  - Auftragsbestätigung
+  - Rechnung
+  - Lieferschein
+  - Mahnung
+- Auswahl je Dokumenttyp:
+  - ohne Briefbogen
+  - Demo-Briefbogen
+  - eigener Briefbogen als Bild
+- Upload für PNG/JPG/WebP-Briefbogen
+- Deckkraft einstellbar
+- Vorschau im Bereich Einstellungen
+- Angebots-/Dokumentvorschau nutzt den aktiven Briefbogen als Hintergrund
+- Druck-/PDF-Vorschau übernimmt den Hintergrund
+
+Hinweis:
+
+- Für den ersten Schritt wird ein Bild-Hintergrund verwendet.
+- Ideal ist ein A4-Hochformat-Briefbogen als PNG/JPG mit 300 dpi.
+- Später kann der PDF-Export um echte PDF-Hintergründe erweitert werden.
+
+
+### V125 – Briefbogen randlos und sicher positioniert
+
+Eingebaut:
+
+- echter Briefbogen-Hintergrund wird randlos hinter die Dokumentseite gelegt
+- bei eigenem Briefbogen werden App-Firmenkopf und App-Footer in der Vorschau ausgeblendet
+- verhindert doppelte Logos, doppelte Kontaktdaten und Überlagerungen
+- Inhaltsbereich wird bei eigenem Briefbogen automatisch weiter nach unten gesetzt
+- Druck-/PDF-Ausgabe nutzt bei Briefbogen `@page margin: 0`, damit der Hintergrund nicht zusätzlich eingerückt wird
+- Dokumentseite ist auf A4-Breite begrenzt, damit die Vorschau nicht unkontrolliert skaliert
+
+Wichtig:
+
+- Für echte Firmenbriefbögen sollte die Datei als `public/briefbogen.png` liegen
+- Im Dokumentdesign sollte „Eigenen Briefbogen verwenden“ aktiv sein
+- Der Briefbogen selbst enthält bereits Logo, Kopfbereich und Fußbereich
+- Die App legt nur noch Empfänger, Dokumentinhalt, Positionen und Summen darüber
+
+---
+
+
+### V130 – Stammdaten für Dokumentfooter / Bank- und Steuerdaten
+
+Eingebaut:
+
+- Firmenprofil um Dokumentanzeige erweitert
+- Bankdaten ergänzt um Kontoinhaber
+- Haken in den Stammdaten für:
+  - Adresse auf Dokumenten anzeigen
+  - Kontaktdaten anzeigen
+  - Steuerdaten anzeigen
+  - Bankdaten anzeigen
+  - Stammdaten im Dokumentfuß anzeigen
+- Angebots-/Dokumentvorschau nutzt diese Stammdaten dynamisch
+- bei echtem Briefbogen bleiben Stammdaten standardmäßig deaktiviert, damit nichts doppelt erscheint
+- vorbereitet für Angebot, Rechnung, Lieferschein und Auftragsbestätigung
+
+Hinweis:
+
+Die Anzeige erfolgt nur, wenn der Haupt-Haken **Stammdaten im Dokumentfuß anzeigen** aktiv ist und zusätzlich die gewünschten Datenbereiche aktiviert wurden.
+
 ## Aktueller Stand
 
-Aktuelle Version: **V121**
+Aktuelle Version: **V130**
 
 Aktuell gut funktionierende Bereiche:
 
@@ -534,6 +603,7 @@ Aktuell gut funktionierende Bereiche:
 - Hochformat-Fix
 - Barlow-Schrift
 - Nutzenbereich optisch verbessert
+- Briefbogen-Hintergrund randlos und ohne doppelte Firmenkopfdaten
 - Druckteile zeigen fachliche Prüfung und Kostenübersicht je Druckteil
 - Produktionskosten sind nach Material, Druck, Rüstzeit/Maschine und Weiterverarbeitung aufgeschlüsselt
 - rechte Auswertungskarten sind einklappbar
@@ -618,784 +688,19 @@ Ziel:
 
 ---
 
-## Arbeitsregel für neue Versionen
 
-Bei jedem größeren Entwicklungsschritt:
-
-1. neue Version bauen
-2. lokal testen:
-   ```bash
-   npm run dev
-   ```
-3. Build prüfen:
-   ```bash
-   npm run build
-   ```
-4. Dokumentation aktualisieren
-5. Git prüfen:
-   ```bash
-   git status
-   ```
-6. alles übernehmen:
-   ```bash
-   git add .
-   ```
-7. committen:
-   ```bash
-   git commit -m "Kurze Beschreibung der Änderung"
-   ```
-8. pushen:
-   ```bash
-   git push
-   ```
-
----
-
-## Empfohlene Commit-Regel
-
-Commit-Nachrichten sollten kurz beschreiben, was fachlich geändert wurde.
-
-Beispiele:
-
-```bash
-git commit -m "Improve automatic imposition area"
-git commit -m "Switch app typography to Barlow"
-git commit -m "Improve sheet preview with technical data"
-git commit -m "Add calculation status warnings"
-git commit -m "Make all calculation input steps collapsible"
-```
-
----
-
-## Wichtig für weitere Arbeit mit ChatGPT
-
-Wenn an der App weitergearbeitet wird, sollte diese Datei immer mit geprüft werden.
-
-Wichtig sind vor allem:
-
-- aktuelle Version
-- letzte Änderung
-- offene Punkte
-- geplante nächste Schritte
-- verworfene Ideen, damit sie nicht versehentlich erneut gebaut werden
-
-Verworfene Ideen bisher:
-
-- V107 kompakte Bogenvorschau per Button
-- V110 Produktbild-Grafiken in der Bogenvorschau
-
-Diese Ideen sollen vorerst **nicht** erneut umgesetzt werden.
-
-
----
-
-### V119 – Weiterverarbeitung klarer strukturiert
-
-Eingebaut:
-
-- Schritt **6 · Weiterverarbeitung** fachlich übersichtlicher gestaltet
-- Status direkt im Schritt sichtbar:
-  - **OK** bei plausibler Weiterverarbeitung
-  - **Prüfen** bei fachlichen Hinweisen
-- aktive Arbeitsschritte kompakt als Produktionskette angezeigt
-- klare Kennzeichnung von:
-  - Schneiden / Endbeschnitt
-  - Rillen / Falzvorbereitung
-  - Heften / Binden
-- Warnung, wenn bei Broschüren keine Heftung/Bindung gewählt ist
-- Warnung, wenn bei Broschüren kein Schneid-/Endbeschnitt-Schritt gewählt ist
-- Kosten je Arbeitsschritt weiterhin aufklappbar
-- Summe Weiterverarbeitung und manuelle Zusatzkosten getrennt dargestellt
-
-Prüfen:
-
-- Bei Broschüre mit Schneiden + Rückendrahtheftung sollte der Status grün/OK sein.
-- Entfernt man die Heftung, sollte der Status auf Prüfen wechseln.
-- Die rechte Auswertung aus V118 bleibt priorisiert und einklappbar.
-
-
----
-
-### V120 – Angebotsmodus vorbereitet
-
-Eingebaut:
-
-- rechter Bereich **Angebotsmodus V120** ergänzt
-- Positionsvorschau direkt aus der Kalkulation:
-  - Produktname
-  - Auflage
-  - Endformat
-  - Maschine
-  - Netto
-  - MwSt. 19 %
-  - Brutto
-- Status zeigt, ob die Kalkulation als Angebotsposition bereit ist
-- vorhandener Button **„In Angebot übernehmen“** bleibt die zentrale Übergabe in den Angebotsbereich
-- Hinweis, dass Kundenauswahl, Angebotsnummer und Texte im Angebotsbereich gepflegt werden
-- Ziel: Übergang von Kalkulation zu Angebot verständlicher machen
-
-Prüfen:
-
-- Rechts sollte **Angebotsmodus V120** sichtbar sein.
-- Bei fehlerfreier Kalkulation sollte der Status **bereit** erscheinen.
-- Bei kritischen Kalkulationsfehlern sollte der Status **nicht bereit** erscheinen.
-- Netto, MwSt. und Brutto sollten plausibel angezeigt werden.
-- Klick auf **„In Angebot übernehmen“** soll weiterhin in den Angebotsbereich wechseln und eine Position anlegen.
-
----
-
-### V121 – Angebotsbereich aufgebaut
-
-Eingebaut:
-
-- Angebotsbereich mit neuem **Angebotsentwurf V121** erweitert
-- oberer Cockpit-Bereich im Angebotsmodul ergänzt
-- zentrale Informationen direkt sichtbar:
-  - Dokumenttyp
-  - Dokumentnummer
-  - Status
-  - Kunde
-  - Anzahl Positionen
-  - Netto
-  - Brutto
-- Buttons direkt im Entwurfsbereich:
-  - Entwurf speichern
-  - neue Nummer vergeben
-  - Vorschau drucken / PDF
-- Kundenauswahl und Dokumentkopf bleiben darunter vollständig bearbeitbar
-- Dokumentenliste bleibt rechts erhalten
-- Ziel: aus der Kalkulationsübergabe entsteht sichtbarer ein echter Angebotsentwurf
-
-Prüfen:
-
-- Im Bereich **Angebote** sollte oben **Angebotsbereich V121** sichtbar sein.
-- Der Entwurfsbereich sollte Dokumentnummer, Kunde, Positionen, Netto und Brutto anzeigen.
-- **Entwurf speichern** sollte das aktuelle Dokument in die Dokumentenliste übernehmen.
-- **Neue Nummer vergeben** sollte eine neue Dokumentnummer erzeugen.
-- **Vorschau drucken / PDF** sollte weiterhin die Druck-/PDF-Vorschau öffnen.
-
----
-
-### V122 – Angebotsentwurf aus Kalkulation übernommen
-# PrintPilot – Entwicklungsdokumentation
-
-Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V122 – Angebotsentwurf aus Kalkulation übernommen**
-
-Diese Datei dient als laufende Projektdokumentation für GitHub.  
-Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
-
----
-
-## Ziel der App
-
-**PrintPilot** ist eine moderne Kalkulations- und Angebots-App für den Digitaldruck.
-
-Die App soll schrittweise folgende Bereiche abdecken:
-
-- schnelle Kalkulation von Druckprodukten
-- saubere Produkt-/Jobstruktur mit Druckteilen
-- automatische Nutzenberechnung
-- Material-, Maschinen- und Weiterverarbeitungskosten
-- Angebots- und Dokumentenerstellung
-- Stammdatenverwaltung
-- lokale Datensicherung / Import / Export
-- später optional Lager, Auftragsverwaltung und Produktion
-
----
-
-## Aktueller Schwerpunkt
-
-Aktuell liegt der Fokus auf dem Übergang von der **Kalkulation** in den **Angebotsbereich**:
-
-1. Kalkulation fachlich sauber abschließen
-2. Druckteile und Produktionskosten nachvollziehbar darstellen
-3. Kalkulation als Angebotsposition übernehmen
-4. Angebotsentwurf mit Kundendaten, Positionen und Summen aufbauen
-5. Angebotsvorschau und spätere PDF-Ausgabe vorbereiten
-6. Bedienung ruhig, geführt und übersichtlich halten
-
----
-
-## Entwicklungsstand nach Versionen
-
-### V87 – Datensicherung / Import & Export
-
-Eingebaut:
-
-- Einstellungen für Datensicherung
-- JSON-Backup für lokale Daten
-- Sicherung importieren
-- Vorbereitung für Export von:
-  - Firmenprofil
-  - Kunden
-  - Dokumente
-  - Maschinen
-  - Material
-  - Weiterverarbeitung
-  - Leistungen
-  - Produkttypen
-  - Kalkulationsvorlagen
-  - Dokumenttypen
-
----
-
-### V88 – Produkt-/Jobstruktur in der Kalkulation
-
-Eingebaut:
-
-- Grundstruktur für Druckteile
-- Trennung von:
-  - Inhalt
-  - Umschlag
-  - Beileger
-  - Zusatzbogen
-- Vorbereitung für mehrteilige Produkte wie:
-  - Broschüren
-  - SD-Sätze
-  - Blöcke
-  - Mailings
-
----
-
-### V89 – Druckteile bearbeitbar
-
-Eingebaut:
-
-- Druckteile als bearbeitbare Karten
-- Druckteil duplizieren
-- Druckteil löschen
-- Druckteiltyp ändern
-- Material, Druckart und Seiten je Druckteil editierbar
-
----
-
-### V90 – Broschüren-Druckteile bearbeitbar
-
-Eingebaut:
-
-- Bearbeitungsbereich für Druckteile auch bei Broschüren sichtbar
-- Inhalt und Umschlag können direkt bearbeitet werden
-
----
-
-### V91 – Druckteile oben bearbeiten
-
-Eingebaut:
-
-- Druckteile weiter nach oben in die Kalkulation verschoben
-- Bearbeitung näher an der Produktstruktur
-- kein separater Bearbeitungsblock weiter unten
-
----
-
-### V92 – Broschüren-Grunddaten oben
-
-Eingebaut:
-
-- Broschüren-Grunddaten vor den Druckteilen platziert
-- Reihenfolge verbessert:
-  - Format
-  - Auflage
-  - Inhaltsseiten
-  - Umschlagseiten
-  - Inhaltspapier
-  - Umschlagpapier
-  - danach Druckteile
-
----
-
-### V93 – Seiten je Bogen automatisch
-
-Eingebaut:
-
-- „Seiten je Bogen“ ist kein Eingabefeld mehr
-- Wert wird automatisch berechnet
-- verhindert versehentliche falsche Eingaben
-- Broschürenlogik:
-  - Nutzen offene Doppelseite × 4 Seiten
-
----
-
-### V94 – Broschürenprüfung & Warnungen
-
-Eingebaut:
-
-- Prüfung, ob Inhaltsseiten durch 4 teilbar sind
-- Umschlagseiten fest auf 4 Seiten
-- Warnungen direkt im Broschürenblock
-- erste fachliche Plausibilitätsprüfungen
-
----
-
-### V95 – Kostenblöcke
-
-Eingebaut:
-
-- erste klarere Kostenübersicht
-- Trennung nach:
-  - Material
-  - Druck / Maschine
-  - Weiterverarbeitung
-  - Gemeinkosten
-  - Deckungsbeitrag
-
----
-
-### V96 – Kalkulation übersichtlicher
-
-Eingebaut:
-
-- rechte Kalkulationsauswertung neu strukturiert
-- klarere Trennung:
-  - Ergebnis
-  - Produktionskosten
-  - Preisaufbau
-  - Details
-
----
-
-### V97 – Eingabemaske klar strukturiert
-
-Eingebaut:
-
-- linke Kalkulationsseite in klare Abschnitte gegliedert:
-  1. Auftrag / Vorlage
-  2. Produktdaten / Broschüre
-  3. Druckteile
-  4. Auflage / Format / Nutzen
-  5. Maschine / Druck
-  6. Weiterverarbeitung
-  7. Zuschläge / Preislogik
-
----
-
-### V98 – Reihenfolge der Kalkulation angepasst
-
-Neue Reihenfolge:
-
-1. Auftrag / Vorlage
-2. Auflage
-3. Produktdaten / Broschüre
-4. Druckteile
-5. Maschine / Druck
-6. Weiterverarbeitung
-7. Zuschläge / Preislogik
-
----
-
-### V99 – Farbliche Eingabeschritte
-
-Eingebaut:
-
-- Schritte 1–7 farblich differenziert
-- Farbwirkung passend zur linken Hauptnavigation
-- bessere Orientierung in der Kalkulation
-
-Farben:
-
-- Auftrag / Vorlage: Cyan
-- Auflage: Fuchsia
-- Produktdaten / Broschüre: Gelb
-- Druckteile: Grün
-- Maschine / Druck: Blau
-- Weiterverarbeitung: Lime
-- Zuschläge / Preislogik: Violett
-
----
-
-### V100 – Eingabeblöcke kompakter & einklappbar
-
-Eingebaut:
-
-- erste Blöcke einklappbar
-- Maschine / Druck, Weiterverarbeitung und Zuschläge kompakter
-
----
-
-### V101 – Alle Eingabeschritte einklappbar
-
-Eingebaut:
-
-- alle Schritte 1–7 einklappbar
-- Schritt 1 standardmäßig offen
-- deutlich ruhigere Eingabemaske
-- Nutzer kann Schritt für Schritt durch die Kalkulation gehen
-
----
-
-### V102 – Druckteile kompakter
-
-Eingebaut:
-
-- Schritt 4 „Druckteile“ kompakter gestaltet
-- Inhalt und Umschlag als kurze Karten/Zeilen
-- wichtige Kurzinfos direkt sichtbar:
-  - Seiten
-  - Farbigkeit
-  - Material
-  - Materialbogen
-  - Kosten
-- Details erst beim Aufklappen
-
----
-
-### V103 – Druckteilkarten breiter / kompakter
-
-Eingebaut:
-
-- linke Kalkulationsspalte breiter
-- Druckteilkarten luftiger
-- kleinere Info-Chips
-- bessere Lesbarkeit bei Inhalt/Umschlag
-
----
-
-### V104 – Auswertung / Produktionskosten klarer
-
-Eingebaut:
-
-- rechte Kalkulationsseite verbessert
-- Ergebnis oben klarer:
-  - Verkaufspreis
-  - Stückpreis
-  - Produktionskosten
-  - Selbstkosten
-  - Deckungsbeitrag
-  - DB-Anteil
-- Preisbrücke verständlicher:
-  - Produktionskosten
-  - Gemeinkosten
-  - Selbstkosten
-  - Deckungsbeitrag
-  - Verkaufspreis netto
-
----
-
-### V105 – Kalkulationsstatus / Warnungen
-
-Eingebaut:
-
-- Kalkulationsstatus mit Ampel-Logik
-- Meldungen gruppiert nach:
-  - Muss korrigiert werden
-  - Fachlich prüfen
-  - Hinweise
-- zusätzliche Prüfungen:
-  - Auflage fehlt
-  - Material fehlt
-  - Verkaufspreis unter Selbstkosten
-  - negativer Deckungsbeitrag
-- sichtbarer Versionsmarker:
-  - V105 aktiv
-
----
-
-### V106 – Schrittstatus in der Kalkulation
-
-Eingebaut:
-
-- Schrittkarten 1–7 mit Status-Badges
-- Status:
-  - OK
-  - Prüfen
-  - Optional
-- Klick auf Schrittkarte springt zum passenden Eingabeblock
-- bessere Orientierung in der Eingabemaske
-
----
-
-### V107 – Bogenvorschau kompakt
-
-Eingebaut, aber anschließend verworfen:
-
-- Bogenvorschau kompakt geschlossen
-- per Button ein-/ausklappbar
-
-Grund für Rücknahme:
-
-- Bediengefühl war nicht optimal
-- Vorschau sollte besser rechts im Nutzenbereich stehen
-
----
-
-### V108 – Bogenvorschau rechts
-
-Eingebaut:
-
-- Bogenvorschau rechts neben dem Nutzenbereich
-- alter großer Vorschau-Block entfernt
-- Eingabe links dadurch ruhiger
-
----
-
-### V109 – Hochformat-Fix für Bogenvorschau
-
-Eingebaut:
-
-- Hochformat wird vollständig dargestellt
-- Vorschau skaliert nach Breite und Höhe
-- keine abgeschnittene Darstellung mehr
-
----
-
-### V110 – Produktbild im Nutzen
-
-Eingebaut, aber anschließend verworfen:
-
-- Versuch, je Produktart kleine Produktgrafiken in den Nutzen anzuzeigen:
-  - Broschüre
-  - Visitenkarte
-  - Poster
-  - Aufkleber
-  - Block
-
-Grund für Rücknahme:
-
-- optisch nicht überzeugend
-- schlichte technische Vorschau war besser
-
----
-
-### V111 – Bogenvorschau mit technischen Daten
-
-Eingebaut:
-
-- schlichte Vorschau aus V109 beibehalten
-- technische Kurzinfos ergänzt:
-  - Rohbogenformat
-  - Endformat
-  - Beschnitt
-  - Zwischenschnitt
-- Vorschau minimal breiter
-
----
-
-### V112 – Nutzenberechnung fachlich absichern
-
-Eingebaut:
-
-- Nutzenstatus:
-  - OK
-  - Prüfen
-  - Fehler
-- bessere Erklärung, warum ein Nutzen gewählt wurde
-- Vergleich Normal vs. Gedreht
-- Hinweis, wenn Drehung gesperrt ist, aber besser wäre
-- Warnung bei hoher Restfläche
-- Hinweis, wenn Produkt nicht auf den Rohbogen passt
-
----
-
-### V113 – Schrift auf Barlow umgestellt
-
-Eingebaut:
-
-- App-Schrift auf **Barlow** umgestellt
-- weniger fette Schriftgewichte
-- App wirkt ruhiger, schmaler und weniger blockig
-- lange Texte brechen besser um
-
-Gewichtung:
-
-- normale Texte: 400 / 500
-- Werte: 500
-- Abschnittstitel: 600
-- keine übermäßig fetten 800/900-Gewichte mehr
-
----
-
-### V114 – Nutzenbereich optisch aufgeräumt
-
-Eingebaut:
-
-- Nutzenbereich ruhiger gestaltet
-- „Gewählt weil“ über volle Breite
-- lange Texte werden vollständig angezeigt
-- Status kompakter
-- wichtigste Werte besser sortiert
-- Bogenvorschau bleibt rechts
-
-
----
-
-### V115 – Druckteile fachlich klarer
-
-Eingebaut:
-
-- Schritt 4 „Druckteile“ fachlich verständlicher aufgebaut
-- je Druckteil zusätzliche Übersicht mit:
-  - Druckteiltyp
-  - Seiten-/Mengenlogik
-  - Farbigkeit
-  - Material
-  - Produktionsbogen
-  - Materialbogen gesamt
-  - Materialkosten
-  - Anteil an den Materialkosten
-- fachlicher Status je Druckteil:
-  - Druckteil plausibel
-  - Druckteil prüfen
-- Hinweise je Druckteil, z. B.:
-  - Inhaltsseiten nicht durch 4 teilbar
-  - Umschlag sollte 4 Seiten haben
-  - Materialbogen prüfen
-  - Materialpreis fehlt
-- Details bleiben weiterhin einklappbar
-
----
-
-### V116 – Produktionskosten detaillierter
-
-Eingebaut:
-
-- rechte Auswertung um eine detaillierte Kostenaufschlüsselung erweitert
-- Produktionskosten werden klarer getrennt nach:
-  - Material nach Druckteil
-  - Druck nach Druckteil
-  - Rüstzeit & Maschine
-  - Weiterverarbeitung
-- Material wird getrennt gezeigt für:
-  - Inhalt
-  - Umschlag
-  - weitere Druckteile
-- variable Druckkosten werden rechnerisch anhand der Produktionsbogen auf Druckteile verteilt
-- Rüstzeit wird separat mit Minuten und Maschinenstundensatz angezeigt
-- Weiterverarbeitung zeigt Arbeitsschritte, Zusatzkosten und Gesamtsumme getrennt
-- Preisbrücke bleibt darunter erhalten
-- Ziel: Produktionskosten nicht nur als Summe anzeigen, sondern nachvollziehbar erklären
----
-
-### V117 – Rechte Auswertung einklappbar & Status grün
-
-Eingebaut:
-
-- rechte Auswertungskarten sind jetzt ebenfalls einklappbar
-- Ergebnis-Karte kann ein- und ausgeklappt werden
-- Produktionskosten-/Preisaufbau-Karte kann ein- und ausgeklappt werden
-- Kalkulationsstatus kann ein- und ausgeklappt werden
-- Kostenmix-Karte kann ein- und ausgeklappt werden
-- Status wirkt ruhiger und wird bei plausibler Kalkulation klar grün dargestellt
-- Ziel: rechte Seite genauso ruhig und schrittweise bedienbar machen wie die linke Eingabemaske
-
----
-
-
-### V119 – Rechte Karten besser priorisiert
-
-Eingebaut:
-
-- Ergebnis / Verkaufspreis bleibt rechts standardmäßig offen
-- Kalkulationsstatus bleibt direkt darunter standardmäßig offen
-- Status ist bei guter Kalkulation grün sichtbar
-- Produktionskosten / Auswertung ist standardmäßig eingeklappt
-- Kostenmix ist standardmäßig eingeklappt
-- rechte Auswertung wirkt ruhiger und zeigt zuerst nur:
-  - Was kostet es?
-  - Ist die Kalkulation freigabefähig?
-  - Gibt es Warnungen?
-
----
-
-## Aktueller Stand
-
-Aktuelle Version: **V121**
-
-Aktuell gut funktionierende Bereiche:
-
-- klare Eingabeschritte 1–7
-- alle Schritte einklappbar
-- farbliche Schrittführung
-- Druckteile kompakt
-- rechte Auswertung klarer und priorisiert
-- Kalkulationsstatus mit Warnungen
-- Bogenvorschau rechts
-- Hochformat-Fix
-- Barlow-Schrift
-- Nutzenbereich optisch verbessert
-- Druckteile zeigen fachliche Prüfung und Kostenübersicht je Druckteil
-- Produktionskosten sind nach Material, Druck, Rüstzeit/Maschine und Weiterverarbeitung aufgeschlüsselt
-- rechte Auswertungskarten sind einklappbar
-- plausibler Kalkulationsstatus wird grün angezeigt
-
----
-
-## Bekannte offene Punkte
-
-Diese Punkte sind noch offen oder sollten später geprüft werden:
-
-- Druckkosten später noch exakter nach Simplex/Duplex und Farbigkeit je Druckteil trennen
-- Maschinenzeit später realistisch anhand Geschwindigkeit/Bögen pro Stunde berechnen
-- Weiterverarbeitung detaillierter berechnen
-- Materialkosten je Druckteil weiter mit Stammdaten/Lager verknüpfen
-- Angebotsbereich mit Entwurfscockpit und Dokumentenübersicht weiter ausbauen
-- PDF-/Druckansicht für Angebote
-- Stammdaten stärker mit Kalkulation verknüpfen
-- Datenmodell später aus `App.tsx` herauslösen
-- Komponentenstruktur aufbauen, damit `App.tsx` nicht zu groß wird
-
----
-
-## Geplante nächste Schritte
-
-### V119 – Weiterverarbeitung verbessern
+### V125 – Angebotsdaten bearbeitbar machen
 
 Geplant:
 
-- Weiterverarbeitung übersichtlicher darstellen
-- Kosten je Arbeitsschritt besser erklären
-- typische Druckerei-Schritte:
-  - Schneiden
-  - Falzen
-  - Rillen
-  - Rückendrahtheftung
-  - Blockleimung
-  - Klebebindung
-  - Handarbeit
-- spätere Verknüpfung mit Stammdaten
+- Kunde auswählbar / bearbeitbar
+- Angebotsnummer bearbeitbar
+- Datum / Gültigkeit bearbeitbar
+- Einleitungstext bearbeitbar
+- Schlusstext bearbeitbar
+- Positionstext bearbeitbar
+- Rabatte / Zuschläge je Angebot vorbereiten
 
----
-
-### V119 – Angebotsmodus vorbereiten
-
-Geplant:
-
-- aus Kalkulation ein Angebot erzeugen
-- Kundenauswahl
-- Angebotsnummer
-- Angebotstext
-- Positionen
-- Netto / MwSt. / Brutto
-- später PDF-Ausgabe
-
----
-
-### V120 – Code-Struktur verbessern
-
-Geplant:
-
-- große `App.tsx` schrittweise aufteilen
-- mögliche Struktur:
-
-```text
-src/
-├ components/
-│ ├ calculation/
-│ ├ layout/
-│ ├ ui/
-├ data/
-├ lib/
-├ pages/
-└ App.tsx
-```
-
-Ziel:
-
-- wartbarer Code
-- weniger Risiko bei Änderungen
-- einzelne Bereiche besser bearbeitbar
-
----
 
 ## Arbeitsregel für neue Versionen
 
@@ -1641,43 +946,231 @@ Geplant:
 - zusätzliche Positionen hinzufügen
 - Positionen duplizieren oder entfernen
 
+
+---
+
+### V127 – Briefbogen-Satzspiegel korrigiert
+
 Eingebaut:
 
-- Button **„In Angebot übernehmen“** erzeugt jetzt klarer einen Angebotsentwurf aus der aktuellen Kalkulation
-- Kalkulationsposition wird im Angebotsbereich vorne einsortiert
-- Standard-Demoposition wird ersetzt, wenn sie noch unverändert vorhanden ist
-- übernommene Position enthält:
-  - Produktname
-  - Auflage
-  - Endformat
-  - Farbigkeit / Produktionsmodus
-  - Materialdetails
-  - Weiterverarbeitung
-  - Netto-Verkaufspreis je Einheit
-  - MwSt. 19 %
-  - Brutto über die Angebotsberechnung
-- interne Notiz enthält jetzt die Quelle **Kalkulation V122** und die wichtigsten Kalkulationswerte
-- rechter Angebotsmodus erklärt die Übergabe verständlicher
-- sichtbarer Versionsmarker auf **V122 aktiv** aktualisiert
+- echte Briefbogen-Hintergründe bleiben randlos im Hintergrund
+- Dokumentinhalt wird nicht mehr über das `print-area`-Padding positioniert, sondern über eine eigene `document-content-layer`
+- dadurch bleiben die Abstände auch in Druck/PDF erhalten
+- fester Satzspiegel für echten Briefbogen vorbereitet:
+  - oben mindestens 55 mm frei für Logo/Briefkopf
+  - links mindestens 18 mm
+  - rechts mindestens 18 mm
+  - unten mindestens 42 mm frei für Footer
+- App-Firmenkopf und App-Footer bleiben bei eigenem Briefbogen ausgeblendet
+- Druck-/PDF-CSS überschreibt die Inhaltsabstände nicht mehr
+- sichtbarer Versionsmarker auf **V127 aktiv** aktualisiert
+
+Warum diese Änderung nötig war:
+
+- Der Briefbogen selbst war korrekt eingebunden.
+- Beim PDF/Druck wurden die Inhaltsabstände aber durch die Print-CSS-Regel `padding: 0 !important` wieder entfernt.
+- Dadurch saßen Empfänger, Kundendaten und Positionen zu weit oben bzw. zu nah am Footer.
+- V127 legt die Inhalte jetzt in eine eigene Ebene über dem Briefbogen.
 
 Prüfen:
 
-- In der Kalkulation sollte **Kalkulation V122** sichtbar sein.
-- Oben rechts sollte **V122 aktiv** sichtbar sein.
-- Klick auf **„In Angebot übernehmen“** sollte in den Bereich **Angebote** wechseln.
-- Im Angebotsbereich sollte die neue Kalkulationsposition oben stehen.
-- Netto, MwSt. und Brutto sollten aus der übernommenen Position plausibel berechnet werden.
-- Die unveränderte Demoposition sollte ersetzt werden, nicht zusätzlich stehen bleiben.
+- In der App sollte **V127 aktiv** sichtbar sein.
+- In der Angebotsvorschau sollte der Briefbogen randlos im Hintergrund liegen.
+- Der Inhalt sollte unterhalb des Logos beginnen.
+- Der pinke Footer des Briefbogens sollte frei bleiben.
+- Beim Drucken / PDF speichern sollten die Abstände genauso erhalten bleiben.
+- `npm run build` sollte sauber durchlaufen.
 
 Geplanter nächster Schritt:
 
-### V123 – Angebotspositionen kompakter und kundentauglicher
+### V127 – Briefbogen-Layout feinjustierbar machen
 
 Geplant:
 
-- Angebotspositionen optisch ruhiger darstellen
-- Preisfelder besser gruppieren
-- Positionsbeschreibung für Kunden sauberer formulieren
-- interne Notiz stärker von Kundentext trennen
-- Summenblock Netto / MwSt. / Brutto stärker hervorheben
-- Vorbereitung für echte Angebotsvorschau mit Briefkopf
+- in den Einstellungen Satzspiegel für Briefbogen bearbeitbar machen
+- getrennte Werte für:
+  - Abstand oben
+  - Abstand unten
+  - Abstand links
+  - Abstand rechts
+- je Dokumenttyp eigene Werte speichern
+- Vorschau direkt aktualisieren
+- Preset für awima/Weimann-Briefbogen vorbereiten
+
+
+---
+
+### V127 – DIN-Briefbogen und Satzspiegel korrigiert
+
+Eingebaut:
+
+- Briefbogen-Hintergrund wird nicht mehr über die gesamte Dokumenthöhe gestreckt
+- Logo wird nicht mehr durch falsches Skalieren angeschnitten
+- Hintergrund wird fest auf A4 gesetzt: 210 × 297 mm
+- Satzspiegel DIN-orientiert vorbereitet:
+  - oben ca. 45 mm
+  - links ca. 20 mm
+  - rechts ca. 20 mm
+  - unten ca. 32 mm
+- Angebotstext, Positionstabelle, Summen und Hinweise wurden kompakter gesetzt
+- Ziel: ein einseitiges Standard-Angebot mit Briefbogen soll auf A4 bleiben
+- Druck-/PDF-Ausgabe übernimmt die feste A4-Hintergrundlogik
+
+Wichtig:
+
+- Der Briefbogen bleibt weiterhin als `public/briefbogen.png` eingebunden.
+- Für echte Briefbogen ist ein randloses A4-PNG mit 300 dpi ideal.
+- Der Browserdruck kann nur randlos sein, wenn der Druckdialog ebenfalls randlos bzw. ohne Ränder eingestellt wird.
+
+Nächster sinnvoller Schritt:
+
+- V129 – Dokumentlayout weiter DIN-5008-orientiert machen:
+  - Adressfenster genauer positionieren
+  - Informationsblock rechts optional machen
+  - mehrseitige Dokumente mit Folgeseitenlogik vorbereiten
+  - Briefbogen nur auf Seite 1 oder auf allen Seiten steuerbar machen
+
+
+---
+
+### V129 – DIN-Briefbogen mit festen Bereichen und Folgeseiten
+
+Eingebaut:
+
+- echte A4-Seitenlogik für Dokumente mit Briefbogen
+- pro Seite wird ein eigener Briefbogen-Hintergrund angelegt
+- Empfänger, Kundendaten und Betreff sind auf Seite 1 fest positioniert
+- Leistungen/Positionen sind der variable Bereich
+- wenn mehr Positionen vorhanden sind, werden automatisch Folgeseiten erzeugt
+- Folgeseiten erhalten ebenfalls den Briefbogen-Hintergrund
+- Hinweise & Bedingungen werden unten fest oberhalb des Footerbereichs platziert
+- Logo wird über `object-fit: contain` sicherer dargestellt, damit es nicht rechts abgeschnitten wird
+- Druck-/PDF-Ausgabe nutzt dieselbe Seitenstruktur wie die Vorschau
+
+Ziel:
+
+```text
+Seite 1
+├ Briefbogen-Hintergrund
+├ Empfänger fest
+├ Kundendaten fest
+├ Betreff fest
+├ Leistungen variabel
+└ Hinweise unten fest
+
+Folgeseiten
+├ Briefbogen-Hintergrund
+├ Dokumentnummer / Seitenhinweis
+├ Leistungen Fortsetzung variabel
+└ Hinweise auf letzter Seite unten fest
+```
+
+Prüfen:
+
+- Logo vollständig sichtbar
+- Seite 1 wirkt DIN-konformer
+- Leistungen laufen nicht mehr unkontrolliert in Footer/Briefkopf
+- mehrere Positionen erzeugen sichtbare Folgeseiten mit Briefbogen
+- Drucken / PDF speichern übernimmt die gleiche Struktur
+
+
+---
+
+### V129 – Betreffbereich DIN-konformer positioniert
+
+Eingebaut:
+
+- Betreffbereich auf dem Briefbogen weiter nach unten gesetzt
+- Abstand zwischen Kundendaten und Betreff vergrößert
+- Betreff-Schrift weniger fett gesetzt
+- Laufweite normalisiert, damit `Angebot: Broschüre A4` sauberer wirkt
+- Leistungsbereich entsprechend etwas nach unten verschoben
+- feste Briefbogen-/Folgeseitenlogik aus V128 bleibt erhalten
+
+Prüfen:
+
+- Betreff überlappt nicht mehr mit Kundendaten
+- Betreff wirkt DIN-gerechter und ruhiger
+- Logo bleibt vollständig sichtbar
+- Footer bleibt frei
+- normale Angebote passen weiterhin auf eine Seite
+
+---
+
+### V131 – Stammdaten im magentafarbenen Briefbogen-Footer
+
+Eingebaut:
+
+- Stammdaten können im echten Briefbogen jetzt direkt im magentafarbenen Footerbereich erscheinen.
+- Die Ausgabe ist professioneller als reiner Fließtext unter „Hinweise & Bedingungen“.
+- Footerdaten werden in Gruppen gesetzt:
+  - Firma
+  - Steuer
+  - Bank
+- In den Stammdaten / Firmenprofil gibt es neue Einstellmöglichkeiten:
+  - Platzierung: im magenta Balken oder unter Hinweise
+  - Spalten: 2 oder 3 Spalten
+  - Abstand von unten in mm
+  - Footerhöhe in mm
+  - Textfarbe: Weiß auf Magenta oder Dunkel
+- Die Ausgabe bleibt über Haken steuerbar:
+  - Adresse anzeigen
+  - Kontaktdaten anzeigen
+  - Steuerdaten anzeigen
+  - Bankdaten anzeigen
+  - Stammdaten im Dokumentfuß anzeigen
+
+Ziel:
+
+- Der echte Briefbogen soll professionell genutzt werden.
+- Bereits vorgedruckte oder im Briefbogen gestaltete Bereiche dürfen nicht doppelt oder unkontrolliert belegt werden.
+- Die Stammdaten sollen später für Angebot, Rechnung, Lieferschein und Auftragsbestätigung gleich funktionieren.
+
+Aktuelle Version: **V133**
+
+---
+
+### V132 – Footerposition ohne Dropdown mit Minusbereich
+
+Eingebaut:
+
+- Platzierungsauswahl entfernt
+- Stammdaten werden bei echtem Briefbogen immer im Footer/Briefbogenbereich ausgegeben
+- Footer-Y-Position erlaubt jetzt negative Werte
+- negative Werte schieben die Stammdaten weiter nach unten in den magentafarbenen Balken
+- Standardposition auf -6 mm gesetzt
+- Steuerung bleibt über:
+  - Spalten 2 / 3
+  - Footer Y-Position
+  - Footerhöhe
+  - Textfarbe
+- Beschreibung in den Stammdaten klarer formuliert
+
+Ziel:
+
+- professionellere Platzierung im vorhandenen Briefbogen-Footer
+- keine unnötige Auswahl „Unter Hinweise“ mehr
+- bessere Feinjustierung bei randlosen Briefbögen
+
+---
+
+### V133 – Footer dreizeilig und professioneller umbrochen
+
+Eingebaut:
+
+- Footer bleibt fest im magentafarbenen Briefbogen-Balken
+- keine Dropdown-Platzierung, weiterhin nur Footer
+- Footer-Gruppen werden sinnvoll dreizeilig aufgebaut:
+  - Firma: Firmenname, Adresse, Kontakt
+  - Steuer: Steuernummer, USt-ID
+  - Bank: Bank/Inhaber, IBAN, BIC
+- lange Zeilen werden nicht mehr abgeschnitten
+- Footertext bricht sauber um
+- 2- und 3-Spalten-Ausgabe bleiben verfügbar
+- negative Y-Position bleibt erhalten
+
+Ziel:
+
+- professioneller Dokumentfuß im Briefbogen
+- keine abgeschnittenen Bankdaten
+- besser lesbare Stammdaten im Magenta-Balken

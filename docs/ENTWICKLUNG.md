@@ -1126,7 +1126,7 @@ Ziel:
 - Bereits vorgedruckte oder im Briefbogen gestaltete Bereiche dürfen nicht doppelt oder unkontrolliert belegt werden.
 - Die Stammdaten sollen später für Angebot, Rechnung, Lieferschein und Auftragsbestätigung gleich funktionieren.
 
-Aktuelle Version: **V133**
+Aktuelle Version: **V134**
 
 ---
 

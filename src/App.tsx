@@ -123,8 +123,15 @@ type SavedDocument = {
   documentNumber: string;
   customerId: string;
   customerName: string;
+  customerContactPerson?: string;
+  customerStreet?: string;
+  customerZip?: string;
+  customerCity?: string;
+  customerEmail?: string;
+  customerPhone?: string;
   date: string;
   validUntil: string;
+  subject?: string;
   introText: string;
   deliveryTerms: string;
   paymentTerms: string;
@@ -1191,7 +1198,7 @@ function App() {
         }
       `}</style>
       <div className="fixed right-4 top-4 z-[9999] rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-500/30">
-        V133 aktiv
+        V134 aktiv
       </div>
       <div className="flex min-h-screen">
         <aside className="fixed inset-y-0 left-0 z-20 hidden w-80 flex-col bg-slate-950 text-white shadow-2xl shadow-slate-950/30 lg:flex">
@@ -1243,7 +1250,7 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V133</p>
+              <p className="text-sm font-black">PrintPilot V134</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
                 Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
@@ -2993,7 +3000,7 @@ function CalculatorPage({
       unitPrice: roundMoney(unitPrice),
       vatRate: 19,
       internalNote: [
-        `Quelle: Kalkulation V133`,
+        `Quelle: Kalkulation V134`,
         `Interne Kalkulation`,
         `Maschine: ${selectedMachine.name}`,
         `Druckbogen: ${totalSheets.toLocaleString("de-DE")}`,
@@ -3017,7 +3024,7 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V133
+                Kalkulation V134
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
                 Produkt- und Jobstruktur
@@ -3146,7 +3153,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                    Arbeitsmodus V133
+                    Arbeitsmodus V134
                   </p>
                   <p className="mt-1 text-sm font-black text-slate-950">
                     Schritte anklicken, Abschnitt öffnen, Werte prüfen, weiter zum nächsten Block.
@@ -4527,7 +4534,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V133</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V134</p>
                 <p className="mt-1 text-sm font-medium text-slate-300">wichtigster Preisblock bleibt offen</p>
               </div>
               <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200 group-open:hidden">Aufklappen</span>
@@ -4622,7 +4629,7 @@ function CalculatorPage({
           <details open className="group overflow-hidden rounded-[2rem] border border-emerald-200 bg-emerald-50 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V133</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V134</p>
                 <p className="mt-1 text-sm font-medium text-emerald-950">Kalkulation ist bereit für eine Angebotsposition</p>
               </div>
               <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm group-open:hidden">Aufklappen</span>
@@ -4671,7 +4678,7 @@ function CalculatorPage({
           >
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V133</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V134</p>
                 <p className="mt-1 text-sm font-medium text-slate-600">{calculationStatusTone.headline}</p>
               </div>
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${calculationStatusTone.badgeClass}`}>
@@ -4684,7 +4691,7 @@ function CalculatorPage({
                 <p
                   className={`text-xs font-extrabold uppercase tracking-wide ${calculationStatusTone.textClass}`}
                 >
-                  Kalkulationsstatus V133
+                  Kalkulationsstatus V134
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   {calculationStatusTone.headline}
@@ -4856,7 +4863,7 @@ function CalculatorPage({
           <details className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
             <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V133</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V134</p>
                 <p className="mt-1 text-sm font-medium text-slate-500">Produktionskosten und Preisaufbau</p>
               </div>
               <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:hidden">Aufklappen</span>
@@ -4866,7 +4873,7 @@ function CalculatorPage({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Auswertung V133
+                  Auswertung V134
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   Produktionskosten & Preisaufbau
@@ -4982,7 +4989,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Produktionskosten V133
+                    Produktionskosten V134
                   </p>
                   <h4 className="mt-1 text-base font-semibold text-slate-950">
                     Detaillierte Kostenaufschlüsselung
@@ -5343,8 +5350,29 @@ function QuotesPage({
   const [customerName, setCustomerName] = useState(
     customers[0]?.company ?? "Musterkunde GmbH",
   );
+  const [customerContactPerson, setCustomerContactPerson] = useState(
+    customers[0]?.contactPerson ?? "",
+  );
+  const [customerStreet, setCustomerStreet] = useState(
+    customers[0]?.street ?? "",
+  );
+  const [customerZip, setCustomerZip] = useState(
+    customers[0]?.zip ?? "",
+  );
+  const [customerCity, setCustomerCity] = useState(
+    customers[0]?.city ?? "",
+  );
+  const [customerEmail, setCustomerEmail] = useState(
+    customers[0]?.email ?? "",
+  );
+  const [customerPhone, setCustomerPhone] = useState(
+    customers[0]?.phone ?? "",
+  );
   const [quoteDate, setQuoteDate] = useState("2026-05-01");
   const [validUntil, setValidUntil] = useState("2026-05-15");
+  const [documentSubject, setDocumentSubject] = useState(() =>
+    `${activeBusinessDocumentLabel}: ${quotePositions[0]?.title || "Broschüre A4"}`,
+  );
   const [introText, setIntroText] = useState(
     activeBusinessDocumentTemplate.introText,
   );
@@ -5360,7 +5388,7 @@ function QuotesPage({
       ? undefined
       : customers.find((customer) => customer.id === selectedCustomerId);
 
-  const quoteCustomerName = selectedCustomer?.company ?? customerName;
+  const quoteCustomerName = customerName;
   const companyCityLine = [company.zip, company.city].filter(Boolean).join(" ");
   const companyAddressLine = [company.street, companyCityLine]
     .filter(Boolean)
@@ -5440,25 +5468,20 @@ function QuotesPage({
     },
   ].filter((group) => group.lines.length > 0);
 
-  const customerAddressLines = selectedCustomer
-    ? [
-        selectedCustomer.company,
-        selectedCustomer.contactPerson
-          ? `z. Hd. ${selectedCustomer.contactPerson}`
-          : "",
-        selectedCustomer.street,
-        `${selectedCustomer.zip} ${selectedCustomer.city}`.trim(),
-      ].filter(Boolean)
-    : [quoteCustomerName].filter(Boolean);
+  const customerCityAddressLine = [customerZip, customerCity].filter(Boolean).join(" ");
+  const customerAddressLines = [
+    quoteCustomerName,
+    customerContactPerson ? `z. Hd. ${customerContactPerson}` : "",
+    customerStreet,
+    customerCityAddressLine,
+  ].filter(Boolean);
 
-  const customerMetaRows = selectedCustomer
-    ? [
-        { label: "Kundennummer", value: selectedCustomer.customerNumber },
-        { label: "Ansprechpartner", value: selectedCustomer.contactPerson },
-        { label: "E-Mail", value: selectedCustomer.email },
-        { label: "Telefon", value: selectedCustomer.phone },
-      ].filter((item) => Boolean(item.value))
-    : [];
+  const customerMetaRows = [
+    { label: "Kundennummer", value: selectedCustomer?.customerNumber ?? "" },
+    { label: "Ansprechpartner", value: customerContactPerson },
+    { label: "E-Mail", value: customerEmail },
+    { label: "Telefon", value: customerPhone },
+  ].filter((item) => Boolean(item.value));
 
   const documentTotals = calculateDocumentTotals(quotePositions);
   const netTotal = documentTotals.netTotal;
@@ -5676,6 +5699,12 @@ function QuotesPage({
 
     if (customer) {
       setCustomerName(customer.company);
+      setCustomerContactPerson(customer.contactPerson);
+      setCustomerStreet(customer.street);
+      setCustomerZip(customer.zip);
+      setCustomerCity(customer.city);
+      setCustomerEmail(customer.email);
+      setCustomerPhone(customer.phone);
     }
   }
 
@@ -5698,6 +5727,7 @@ function QuotesPage({
     setActiveBusinessDocumentType(documentType);
     setIntroText(documentTemplateSettings[documentType].introText);
     setDeliveryTerms(documentTemplateSettings[documentType].footerText);
+    setDocumentSubject(`${documentTemplateSettings[documentType].label}: ${quotePositions[0]?.title || quoteNumber}`);
   }
 
   function handleCreateOrderConfirmation() {
@@ -5777,8 +5807,15 @@ function QuotesPage({
       documentNumber: quoteNumber,
       customerId: selectedCustomerId,
       customerName: quoteCustomerName,
+      customerContactPerson,
+      customerStreet,
+      customerZip,
+      customerCity,
+      customerEmail,
+      customerPhone,
       date: quoteDate,
       validUntil,
+      subject: documentSubject,
       introText,
       deliveryTerms,
       paymentTerms,
@@ -5827,8 +5864,15 @@ function QuotesPage({
     setQuoteNumber(documentItem.documentNumber);
     setSelectedCustomerId(documentItem.customerId);
     setCustomerName(documentItem.customerName);
+    setCustomerContactPerson(documentItem.customerContactPerson ?? "");
+    setCustomerStreet(documentItem.customerStreet ?? "");
+    setCustomerZip(documentItem.customerZip ?? "");
+    setCustomerCity(documentItem.customerCity ?? "");
+    setCustomerEmail(documentItem.customerEmail ?? "");
+    setCustomerPhone(documentItem.customerPhone ?? "");
     setQuoteDate(documentItem.date);
     setValidUntil(documentItem.validUntil);
+    setDocumentSubject(documentItem.subject ?? `${documentTemplateSettings[documentItem.documentType].label}: ${documentItem.positions[0]?.title ?? documentItem.documentNumber}`);
     setIntroText(documentItem.introText);
     setDeliveryTerms(documentItem.deliveryTerms);
     setPaymentTerms(documentItem.paymentTerms);
@@ -6071,7 +6115,7 @@ function QuotesPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-yellow-300">
-                Angebote V133
+                Angebote V134
               </p>
               <h2 className="mt-3 text-4xl font-black tracking-tight">
                 Angebotsvorschau erstellen
@@ -6104,13 +6148,13 @@ function QuotesPage({
         <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
           <div>
             <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-              Angebotsbereich V133
+              Angebotsbereich V134
             </div>
             <h3 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950">
               Angebotsentwurf & Kundenvorschau
             </h3>
             <p className="mt-2 max-w-3xl text-sm font-medium leading-6 text-slate-500">
-              Die Kalkulation wird als Angebotsentwurf übernommen. Rechts bzw. unten entsteht daraus eine kundenfähige Vorschau mit Kopf, Empfänger, Positionen, Netto, MwSt., Brutto und Schlusstext.
+              Dokumentdaten, Empfänger, Betreff, Texte und Positionen sind jetzt direkt bearbeitbar. Die Vorschau aktualisiert sich sofort auf dem Briefbogen.
             </p>
           </div>
 
@@ -6191,7 +6235,7 @@ function QuotesPage({
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-yellow-300 via-fuchsia-500 to-cyan-400" />
             <h3 className="mt-5 text-xl font-black">Dokumentkopf</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
-              Kundenauswahl und Stammdaten für die Kundenvorschau V133.
+              Kundenauswahl und Stammdaten für die Kundenvorschau V134.
             </p>
 
             <div className="mt-6 grid gap-4 md:grid-cols-2">
@@ -6225,6 +6269,36 @@ function QuotesPage({
                 label="Kunde / Freitext"
                 value={customerName}
                 onChange={setCustomerName}
+              />
+              <InputField
+                label="Ansprechpartner / z. Hd."
+                value={customerContactPerson}
+                onChange={setCustomerContactPerson}
+              />
+              <InputField
+                label="Straße"
+                value={customerStreet}
+                onChange={setCustomerStreet}
+              />
+              <InputField
+                label="PLZ"
+                value={customerZip}
+                onChange={setCustomerZip}
+              />
+              <InputField
+                label="Ort"
+                value={customerCity}
+                onChange={setCustomerCity}
+              />
+              <InputField
+                label="E-Mail"
+                value={customerEmail}
+                onChange={setCustomerEmail}
+              />
+              <InputField
+                label="Telefon"
+                value={customerPhone}
+                onChange={setCustomerPhone}
               />
               <InputField
                 label="Datum"
@@ -6264,15 +6338,15 @@ function QuotesPage({
                   {selectedCustomer.company}
                 </p>
                 <p className="mt-1 text-sm font-bold text-slate-500">
-                  {selectedCustomer.contactPerson} ·{" "}
+                  {customerContactPerson || selectedCustomer.contactPerson} ·{" "}
                   {selectedCustomer.customerNumber}
                 </p>
                 <p className="mt-1 text-sm font-bold text-slate-500">
-                  {selectedCustomer.street}, {selectedCustomer.zip}{" "}
-                  {selectedCustomer.city}
+                  {customerStreet || selectedCustomer.street}, {customerZip || selectedCustomer.zip}{" "}
+                  {customerCity || selectedCustomer.city}
                 </p>
                 <p className="mt-1 text-sm font-bold text-slate-500">
-                  {[selectedCustomer.email, selectedCustomer.phone]
+                  {[customerEmail || selectedCustomer.email, customerPhone || selectedCustomer.phone]
                     .filter(Boolean)
                     .join(" · ")}
                 </p>
@@ -6448,6 +6522,11 @@ function QuotesPage({
             </div>
 
             <div className="mt-5 space-y-4">
+              <InputField
+                label="Betreff"
+                value={documentSubject}
+                onChange={setDocumentSubject}
+              />
               <TextAreaField
                 label="Einleitung"
                 value={introText}
@@ -6913,7 +6992,7 @@ function QuotesPage({
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Kundenvorschau V133
+                  Kundenvorschau V134
                 </p>
                 <h3 className="mt-2 text-2xl font-black tracking-tight">
                   {quoteNumber}
@@ -7022,7 +7101,7 @@ function QuotesPage({
                                   Betreff
                                 </p>
                                 <h4 className="mt-[2.5mm] text-[16px] font-medium leading-tight tracking-normal text-slate-950">
-                                  {activeBusinessDocumentLabel}: {quotePositions[0]?.title || quoteNumber}
+                                  {documentSubject}
                                 </h4>
                                 <p className="mt-[3.5mm] text-[9.5px] font-medium leading-[1.42] text-slate-600">
                                   {introText}
@@ -7231,7 +7310,7 @@ function QuotesPage({
               <div className="-mx-6 -mt-6 mb-6 border-b border-slate-200 bg-slate-50 px-6 py-4 print:hidden">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V133</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V134</p>
                     <p className="mt-1 text-sm font-medium text-slate-600">So wirkt das Dokument später im Druck oder als PDF.</p>
                   </div>
                   <div className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Layout prüfbar</div>
@@ -7370,7 +7449,7 @@ function QuotesPage({
                   Betreff
                 </p>
                 <h4 className="mt-2 text-xl font-semibold tracking-normal text-slate-950">
-                  {activeBusinessDocumentLabel}: {quotePositions[0]?.title || quoteNumber}
+                  {documentSubject}
                 </h4>
                 <p className="mt-4 text-sm font-medium leading-7 text-slate-600">
                   {introText}
@@ -11887,7 +11966,7 @@ function SettingsPage({
   function exportAppBackup() {
     const payload = {
       app: "PrintPilot",
-      version: "V133",
+      version: "V134",
       exportedAt: new Date().toISOString(),
       data: {
         company,
@@ -12370,7 +12449,7 @@ function SettingsPage({
             <h3 className="mt-5 text-xl font-black">Dokumenttypen</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Jeder Dokumenttyp hat eigene Abstände und Standardtexte. Die
-              Kundenvorschau V133 nutzt den aktiven Dokumenttyp: Angebot,
+              Kundenvorschau V134 nutzt den aktiven Dokumenttyp: Angebot,
               Auftragsbestätigung, Rechnung oder Lieferschein.
             </p>
             <div className="mt-6 grid gap-4 md:grid-cols-[0.8fr_1.2fr]">
@@ -12714,7 +12793,7 @@ function SettingsPage({
 
           <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
             <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-black">Kundenvorschau V133</h3>
+            <h3 className="mt-5 text-xl font-black">Kundenvorschau V134</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Aktive Vorlage: {activeDocumentTemplate.label}
             </p>
@@ -14386,7 +14465,7 @@ function ImpositionPreview({
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-            Bogenvorschau rechts V133
+            Bogenvorschau rechts V134
           </p>
           <p className="mt-1 truncate text-sm font-black text-slate-800">
             {result.best.columns} × {result.best.rows} Nutzen · {result.best.orientation}

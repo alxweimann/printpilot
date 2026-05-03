@@ -1133,7 +1133,7 @@ function App() {
         }
       `}</style>
       <div className="fixed right-4 top-4 z-[9999] rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-500/30">
-        V113 aktiv
+        V114 aktiv
       </div>
       <div className="flex min-h-screen">
         <aside className="fixed inset-y-0 left-0 z-20 hidden w-80 flex-col bg-slate-950 text-white shadow-2xl shadow-slate-950/30 lg:flex">
@@ -1185,7 +1185,7 @@ function App() {
 
           <div className="border-t border-white/10 p-5">
             <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot V113</p>
+              <p className="text-sm font-black">PrintPilot V114</p>
               <p className="mt-2 text-xs leading-5 text-slate-400">
                 Stammdaten sind kompakt organisiert und können gesichert werden.
               </p>
@@ -2807,7 +2807,7 @@ function CalculatorPage({
           <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V113
+                Kalkulation V114
               </p>
               <h2 className="mt-2 text-3xl font-black tracking-tight">
                 Produkt- und Jobstruktur
@@ -2936,7 +2936,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                    Arbeitsmodus V113
+                    Arbeitsmodus V114
                   </p>
                   <p className="mt-1 text-sm font-black text-slate-950">
                     Schritte anklicken, Abschnitt öffnen, Werte prüfen, weiter zum nächsten Block.
@@ -3121,12 +3121,15 @@ function CalculatorPage({
               </div>
 
               <div className="mt-5 rounded-3xl border border-slate-200 bg-white p-5">
-                <div className="flex flex-col gap-4 xl:flex-row xl:items-end xl:justify-between">
-                  <div>
-                    <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                  <div className="min-w-0 flex-1">
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                       Automatischer Nutzen
                     </p>
-                    <p className="mt-2 text-sm font-bold leading-6 text-slate-500">
+                    <h4 className="mt-2 text-lg font-semibold text-slate-950">
+                      Nutzen, Bogenbedarf und Vorschau
+                    </h4>
+                    <p className="mt-2 max-w-4xl text-sm font-medium leading-6 text-slate-500">
                       Rohbogen: {selectedRawSheet?.widthMm ?? 0} ×{" "}
                       {selectedRawSheet?.heightMm ?? 0} mm · Nutzmaß inkl.
                       Beschnitt: {impositionResult.productWidthWithBleed} ×{" "}
@@ -3141,17 +3144,13 @@ function CalculatorPage({
                     </p>
                   </div>
 
-                  <div className={`rounded-2xl px-5 py-3 text-sm font-black ring-1 ${impositionQualityClass}`}>
+                  <div className={`shrink-0 rounded-2xl px-4 py-2 text-sm font-semibold ring-1 ${impositionQualityClass}`}>
                     Status: {impositionQuality}
                   </div>
                 </div>
 
                 <div className="mt-5 grid gap-4 xl:grid-cols-[minmax(0,1fr)_21rem]">
-                  <div className="grid gap-3 md:grid-cols-3">
-                    <InfoCard
-                      label="Status"
-                      value={impositionQuality}
-                    />
+                  <div className="grid auto-rows-min gap-3 md:grid-cols-3">
                     <InfoCard
                       label="Bester Nutzen"
                       value={`${impositionResult.best.total} Nutzen / Bogen`}
@@ -3159,6 +3158,10 @@ function CalculatorPage({
                     <InfoCard
                       label="Bogenbedarf"
                       value={`${Math.ceil(safeQuantity / Math.max(impositionResult.best.total, 1)).toLocaleString("de-DE")} Bogen`}
+                    />
+                    <InfoCard
+                      label="Restfläche"
+                      value={`${formatNumber(impositionResult.best.wastePercent, 1)} %`}
                     />
                     <InfoCard
                       label="Normal"
@@ -3173,20 +3176,28 @@ function CalculatorPage({
                       }
                     />
                     <InfoCard
-                      label="Gewählt weil"
-                      value={selectedBecause}
+                      label="Bundrichtung"
+                      value={getSpineAxisLabel(impositionResult.best.spineAxis)}
                     />
+                    <div className="min-w-0 rounded-2xl border border-slate-200 bg-slate-50 p-4 md:col-span-3">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
+                        Gewählt weil
+                      </p>
+                      <p className="mt-2 whitespace-normal break-words text-sm font-medium leading-6 text-slate-700">
+                        {selectedBecause}
+                      </p>
+                    </div>
                     <InfoCard
                       label="Belegte Fläche"
                       value={`${impositionResult.best.usedWidth} × ${impositionResult.best.usedHeight} mm`}
                     />
                     <InfoCard
-                      label="Restfläche"
-                      value={`${formatNumber(impositionResult.best.wastePercent, 1)} %`}
+                      label="Nutzbare Fläche"
+                      value={`${impositionResult.availableWidth} × ${impositionResult.availableHeight} mm`}
                     />
                     <InfoCard
-                      label="Bundrichtung"
-                      value={getSpineAxisLabel(impositionResult.best.spineAxis)}
+                      label="Status"
+                      value={impositionQuality}
                     />
                   </div>
 
@@ -3211,19 +3222,19 @@ function CalculatorPage({
                 <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-5">
                   <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
                     <div>
-                      <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+                      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                         Nutzenanalyse
                       </p>
-                      <h4 className="mt-2 text-lg font-black text-slate-950">
+                      <h4 className="mt-2 text-lg font-semibold text-slate-950">
                         Prüfdaten für die Bogenaufteilung
                       </h4>
-                      <p className="mt-2 text-sm font-bold leading-6 text-slate-500">
+                      <p className="mt-2 text-sm font-medium leading-6 text-slate-500">
                         Diese Werte zeigen, warum der aktuelle Nutzen gewählt wurde.
                       </p>
                     </div>
 
                     {removeSpineBleed && (
-                      <div className="rounded-2xl bg-yellow-100 px-4 py-3 text-sm font-black text-yellow-800">
+                      <div className="rounded-2xl bg-yellow-100 px-4 py-3 text-sm font-semibold text-yellow-800">
                         Broschürenlogik aktiv: außen Beschnitt, im Bund kein Beschnitt.
                       </div>
                     )}
@@ -4272,7 +4283,7 @@ function CalculatorPage({
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Auswertung V113
+                  Auswertung V114
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   Produktionskosten & Preisaufbau
@@ -4424,7 +4435,7 @@ function CalculatorPage({
                 <p
                   className={`text-xs font-extrabold uppercase tracking-wide ${calculationStatusTone.textClass}`}
                 >
-                  Kalkulationsstatus V113
+                  Kalkulationsstatus V114
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   {calculationStatusTone.headline}
@@ -11470,12 +11481,12 @@ function MetricCard({
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
     <div className="min-w-0 rounded-2xl bg-slate-50 p-4">
-      <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
+      <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
         {label}
       </p>
       <p
         title={value}
-        className="mt-2 whitespace-normal break-words text-sm font-black leading-5 text-slate-700"
+        className="mt-2 whitespace-normal break-words text-sm font-medium leading-5 text-slate-700"
       >
         {value}
       </p>
@@ -13045,7 +13056,7 @@ function ImpositionPreview({
       <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
         <div className="min-w-0">
           <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-            Bogenvorschau rechts V113
+            Bogenvorschau rechts V114
           </p>
           <p className="mt-1 truncate text-sm font-black text-slate-800">
             {result.best.columns} × {result.best.rows} Nutzen · {result.best.orientation}

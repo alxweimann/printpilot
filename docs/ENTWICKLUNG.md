@@ -1,7 +1,7 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V145 – App-Dialoge vereinheitlicht**
+Aktuelle Arbeitsversion: **V146 – App-Dialoge sicher nachgezogen**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
@@ -1460,9 +1460,32 @@ Ziel:
 - Der Nutzer bekommt klare Rückmeldung, ohne Browser-Popups.
 - Der Dialog-Stil ist vorbereitet für spätere Aktionen wie Statusänderung, Angebot senden oder Nummernkreis-Prüfung.
 
+### V146 – App-Dialoge sicher nachgezogen
+
+Geändert:
+
+- Der stabile Löschdialog aus V145 bleibt unverändert erhalten.
+- Weitere app-like Rückmeldungen wurden ergänzt, ohne die Löschlogik erneut zu verändern.
+- Zusätzliche Dialoge erscheinen jetzt bei:
+  - Auftragsbestätigung vorbereiten
+  - Rechnung vorbereiten
+  - Lieferschein vorbereiten
+  - Mahnung vorbereiten
+  - zurück zum Angebotsmodus wechseln
+- Erfolgs-, Hinweis- und Warndialoge nutzen denselben PrintPilot-Stil.
+- Browser-Popups werden weiter vermieden.
+
+Ziel:
+
+- Die App wirkt konsistenter und professioneller.
+- Wichtige Dokumentaktionen bekommen klare Rückmeldung.
+- Die zuvor reparierte Löschfunktion bleibt stabil.
+
+---
+
 Nächster sinnvoller Schritt:
 
-### V145 – Dokumentstatus und Folgeprozess
+### V147 – Dokumentstatus und Folgeprozess
 
 Geplant:
 

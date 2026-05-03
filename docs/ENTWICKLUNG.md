@@ -1,7 +1,7 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V120 – Angebotsmodus vorbereitet**
+Aktuelle Arbeitsversion: **V121 – Angebotsbereich aufgebaut**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
@@ -520,7 +520,7 @@ Eingebaut:
 
 ## Aktueller Stand
 
-Aktuelle Version: **V119**
+Aktuelle Version: **V121**
 
 Aktuell gut funktionierende Bereiche:
 
@@ -549,7 +549,7 @@ Diese Punkte sind noch offen oder sollten später geprüft werden:
 - Maschinenzeit später realistisch anhand Geschwindigkeit/Bögen pro Stunde berechnen
 - Weiterverarbeitung detaillierter berechnen
 - Materialkosten je Druckteil weiter mit Stammdaten/Lager verknüpfen
-- Angebotsmodus mit sauberer Ausgabe
+- Angebotsbereich mit Entwurfscockpit und Dokumentenübersicht weiter ausbauen
 - PDF-/Druckansicht für Angebote
 - Stammdaten stärker mit Kalkulation verknüpfen
 - Datenmodell später aus `App.tsx` herauslösen
@@ -742,15 +742,47 @@ Prüfen:
 - Netto, MwSt. und Brutto sollten plausibel angezeigt werden.
 - Klick auf **„In Angebot übernehmen“** soll weiterhin in den Angebotsbereich wechseln und eine Position anlegen.
 
+---
+
+### V121 – Angebotsbereich aufgebaut
+
+Eingebaut:
+
+- Angebotsbereich mit neuem **Angebotsentwurf V121** erweitert
+- oberer Cockpit-Bereich im Angebotsmodul ergänzt
+- zentrale Informationen direkt sichtbar:
+  - Dokumenttyp
+  - Dokumentnummer
+  - Status
+  - Kunde
+  - Anzahl Positionen
+  - Netto
+  - Brutto
+- Buttons direkt im Entwurfsbereich:
+  - Entwurf speichern
+  - neue Nummer vergeben
+  - Vorschau drucken / PDF
+- Kundenauswahl und Dokumentkopf bleiben darunter vollständig bearbeitbar
+- Dokumentenliste bleibt rechts erhalten
+- Ziel: aus der Kalkulationsübergabe entsteht sichtbarer ein echter Angebotsentwurf
+
+Prüfen:
+
+- Im Bereich **Angebote** sollte oben **Angebotsbereich V121** sichtbar sein.
+- Der Entwurfsbereich sollte Dokumentnummer, Kunde, Positionen, Netto und Brutto anzeigen.
+- **Entwurf speichern** sollte das aktuelle Dokument in die Dokumentenliste übernehmen.
+- **Neue Nummer vergeben** sollte eine neue Dokumentnummer erzeugen.
+- **Vorschau drucken / PDF** sollte weiterhin die Druck-/PDF-Vorschau öffnen.
+
 Geplanter nächster Schritt:
 
-### V121 – Angebotsbereich fachlich aufräumen
+### V122 – Angebotspositionen kompakter und kundentauglicher
 
 Geplant:
 
-- Angebotsbereich übersichtlicher strukturieren
-- Kundenauswahl prominenter machen
-- Angebotsnummer und Datum klarer platzieren
-- Angebotspositionen kompakter darstellen
-- Summenblock Netto / MwSt. / Brutto sichtbarer machen
-- Vorbereitung für spätere PDF-/Druckausgabe
+- Angebotspositionen optisch ruhiger darstellen
+- Preisfelder besser gruppieren
+- Positionsbeschreibung für Kunden sauberer formulieren
+- interne Notiz stärker von Kundentext trennen
+- Summenblock Netto / MwSt. / Brutto stärker hervorheben
+- Vorbereitung für echte Angebotsvorschau mit Briefkopf

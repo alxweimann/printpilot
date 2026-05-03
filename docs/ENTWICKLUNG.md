@@ -1,7 +1,7 @@
 # PrintPilot – Entwicklungsdokumentation
 
 Stand: 2026-05-03  
-Aktuelle Arbeitsversion: **V143 – App-Löschdialog statt Browser-Bestätigung**
+Aktuelle Arbeitsversion: **V145 – App-Dialoge vereinheitlicht**
 
 Diese Datei dient als laufende Projektdokumentation für GitHub.  
 Sie soll nach jedem größeren Entwicklungsschritt aktualisiert und mitgepusht werden.
@@ -669,6 +669,17 @@ Ziel:
 - Grundlage für spätere Workflows wie Angebot → Auftrag → Rechnung → Lieferschein
 
 ---
+
+
+### V145 – Löschdialog stabilisiert
+
+Korrigiert:
+
+- App-Löschdialog bleibt erhalten
+- Bestätigen führt die Löschaktion wieder zuverlässig aus
+- Löschdialog liegt visuell über anderen App-Dialogen
+- Dialog schließt zuerst und führt danach die bestätigte Aktion aus
+- keine Browser-Popups
 
 ## Aktueller Stand
 
@@ -1420,9 +1431,38 @@ Ziel:
 - Löschvorgänge wirken nicht mehr wie eine Browser-Funktion, sondern wie ein nativer Teil der App.
 - Die Bedienung ist professioneller und konsistenter.
 
+
+---
+
+### V145 – App-Dialoge vereinheitlicht
+
+Eingebaut:
+
+- Neben dem Löschdialog gibt es jetzt einen allgemeinen PrintPilot-Dialog für Rückmeldungen.
+- Aktionen mit sichtbarer App-Rückmeldung:
+  - Dokument speichern
+  - Dokument aktualisieren
+  - Neue Dokumentnummer vergeben
+  - Dokument duplizieren
+  - Kalkulation in Angebot übernehmen
+  - ungültige Sicherungsdatei beim Import
+- Browser-Meldungen werden weiter reduziert.
+- Der neue Dialog nutzt denselben Stil wie der Löschdialog:
+  - Overlay über der App
+  - farbiger Akzent oben
+  - Barlow-Schrift
+  - klare Aktionstaste
+  - Varianten für Erfolg, Hinweis und Warnung
+
+Ziel:
+
+- Wichtige Aktionen fühlen sich app-like an.
+- Der Nutzer bekommt klare Rückmeldung, ohne Browser-Popups.
+- Der Dialog-Stil ist vorbereitet für spätere Aktionen wie Statusänderung, Angebot senden oder Nummernkreis-Prüfung.
+
 Nächster sinnvoller Schritt:
 
-### V144 – Dokumentstatus und Folgeprozess
+### V145 – Dokumentstatus und Folgeprozess
 
 Geplant:
 

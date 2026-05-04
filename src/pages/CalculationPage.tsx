@@ -6,6 +6,7 @@ import { FieldGrid } from "../ui/FieldGrid";
 import { Input } from "../ui/Input";
 import { SectionHeader } from "../ui/SectionHeader";
 import { Select } from "../ui/Select";
+import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 export function CalculationPage() {
   const module = getModuleConfig("calculation");
@@ -21,17 +22,11 @@ export function CalculationPage() {
       <PageTabs tabs={module.tabs ?? []} activeTab="Eingabe" />
 
       <section className="calculation-sheet">
-        <div className="calculation-sheet-header">
-          <div>
-            <div className="sheet-kicker">Eingabemaske</div>
-            <h2>Druckprodukt kalkulieren</h2>
-          </div>
-
-          <div className="sheet-meta">
-            <span>Status</span>
-            <strong>Entwurf</strong>
-          </div>
-        </div>
+        <WorkspaceHeader
+          kicker="Eingabemaske"
+          title="Druckprodukt kalkulieren"
+          statusValue="Entwurf"
+        />
 
         <SectionHeader>Kunde</SectionHeader>
 
@@ -342,7 +337,7 @@ export function CalculationPage() {
           </button>
 
           <button type="button" className="button-primary">
-            Weiter zur Übersicht
+            Angebot erstellen
           </button>
         </div>
       </section>

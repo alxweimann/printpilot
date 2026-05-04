@@ -15,29 +15,45 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
       />
 
       <section className="dashboard-grid">
-        <div className="dashboard-metric-card dashboard-metric-quotes">
+        <button
+          type="button"
+          className="dashboard-metric-card dashboard-metric-quotes"
+          onClick={() => onNavigate("quotes")}
+        >
           <div className="dashboard-metric-label">Offene Angebote</div>
           <div className="dashboard-metric-value">12</div>
           <div className="dashboard-metric-hint">3 Entwürfe, 9 offen</div>
-        </div>
+        </button>
 
-        <div className="dashboard-metric-card dashboard-metric-orders">
+        <button
+          type="button"
+          className="dashboard-metric-card dashboard-metric-orders"
+          onClick={() => onNavigate("orders")}
+        >
           <div className="dashboard-metric-label">Aktive Aufträge</div>
           <div className="dashboard-metric-value">8</div>
           <div className="dashboard-metric-hint">2 in Produktion</div>
-        </div>
+        </button>
 
-        <div className="dashboard-metric-card dashboard-metric-invoices">
+        <button
+          type="button"
+          className="dashboard-metric-card dashboard-metric-invoices"
+          onClick={() => onNavigate("invoices")}
+        >
           <div className="dashboard-metric-label">Offene Rechnungen</div>
           <div className="dashboard-metric-value">5</div>
           <div className="dashboard-metric-hint">später mit Summe</div>
-        </div>
+        </button>
 
-        <div className="dashboard-metric-card dashboard-metric-material">
+        <button
+          type="button"
+          className="dashboard-metric-card dashboard-metric-material"
+          onClick={() => onNavigate("material")}
+        >
           <div className="dashboard-metric-label">Materialhinweise</div>
           <div className="dashboard-metric-value">3</div>
           <div className="dashboard-metric-hint">Mindestbestand prüfen</div>
-        </div>
+        </button>
       </section>
 
       <section className="master-detail-layout dashboard-layout">

@@ -493,12 +493,19 @@ button {
 
 .dashboard-metric-card {
   position: relative;
+  width: 100%;
   overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
   background: var(--color-surface);
   box-shadow: var(--shadow-soft);
   padding: 16px;
+  text-align: left;
+}
+
+.dashboard-metric-card:hover {
+  border-color: color-mix(in srgb, var(--dashboard-accent, var(--module-accent)) 34%, var(--color-border));
+  transform: translateY(-1px);
 }
 
 .dashboard-metric-card::before {

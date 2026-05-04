@@ -17,12 +17,13 @@ import { getModuleConfig } from "./moduleConfig";
 
 type AppRouterProps = {
   activePage: string;
+  onNavigate: (pageId: string) => void;
 };
 
-export function AppRouter({ activePage }: AppRouterProps) {
+export function AppRouter({ activePage, onNavigate }: AppRouterProps) {
   switch (activePage) {
     case "dashboard":
-      return <DashboardPage />;
+      return <DashboardPage onNavigate={onNavigate} />;
 
     case "calculation":
       return <CalculationPage />;

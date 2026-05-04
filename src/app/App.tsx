@@ -13,7 +13,7 @@ export function App() {
       accentColor={activeModule.accentColor}
       onNavigate={setActivePage}
     >
-      <AppRouter activePage={activePage} />
+      <AppRouter activePage={activePage} onNavigate={setActivePage} />
     </AppShell>
   );
 }

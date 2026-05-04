@@ -2,7 +2,11 @@ import { PageHeader } from "../layout/PageHeader";
 import { Badge } from "../ui/Badge";
 import { DataTable } from "../ui/Table";
 
-export function DashboardPage() {
+type DashboardPageProps = {
+  onNavigate: (pageId: string) => void;
+};
+
+export function DashboardPage({ onNavigate }: DashboardPageProps) {
   return (
     <div className="page">
       <PageHeader
@@ -95,22 +99,38 @@ export function DashboardPage() {
           </div>
 
           <div className="dashboard-action-list">
-            <button type="button" className="dashboard-action-item dashboard-action-calculation">
+            <button
+              type="button"
+              className="dashboard-action-item dashboard-action-calculation"
+              onClick={() => onNavigate("calculation")}
+            >
               <span>Kalkulation starten</span>
               <small>neues Druckprodukt vorbereiten</small>
             </button>
 
-            <button type="button" className="dashboard-action-item dashboard-action-quotes">
+            <button
+              type="button"
+              className="dashboard-action-item dashboard-action-quotes"
+              onClick={() => onNavigate("quotes")}
+            >
               <span>Angebot erstellen</span>
               <small>aus Kalkulation oder manuell</small>
             </button>
 
-            <button type="button" className="dashboard-action-item dashboard-action-customers">
+            <button
+              type="button"
+              className="dashboard-action-item dashboard-action-customers"
+              onClick={() => onNavigate("customers")}
+            >
               <span>Kunde anlegen</span>
               <small>Stammdaten vorbereiten</small>
             </button>
 
-            <button type="button" className="dashboard-action-item dashboard-action-material">
+            <button
+              type="button"
+              className="dashboard-action-item dashboard-action-material"
+              onClick={() => onNavigate("material")}
+            >
               <span>Material prüfen</span>
               <small>Preise und Lagerbestand</small>
             </button>

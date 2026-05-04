@@ -122,7 +122,8 @@ export function QuotesPage() {
                     <th>Pos.</th>
                     <th>Bezeichnung</th>
                     <th>Menge</th>
-                    <th>Gesamt</th>
+                    <th>Einheit</th>
+                    <th>Netto</th>
                   </tr>
                 </thead>
 
@@ -131,6 +132,7 @@ export function QuotesPage() {
                     <td>1</td>
                     <td>Druckprodukt aus Kalkulation übernehmen</td>
                     <td>—</td>
+                    <td>Stk.</td>
                     <td>—</td>
                   </tr>
 
@@ -138,6 +140,12 @@ export function QuotesPage() {
                     <td>2</td>
                     <td>Optionale Zusatzleistung</td>
                     <td>—</td>
+                    <td>pauschal</td>
+                    <td>—</td>
+                  </tr>
+
+                  <tr className="data-table-summary-row">
+                    <td colSpan={4}>Zwischensumme netto</td>
                     <td>—</td>
                   </tr>
                 </tbody>
@@ -183,7 +191,8 @@ export function QuotesPage() {
 
             <div className="calculation-footer">
               <Button>Entwurf speichern</Button>
-              <Button variant="primary">Zur Vorschau</Button>
+              <Button>Vorschau prüfen</Button>
+              <Button variant="primary">Angebot ausgeben</Button>
             </div>
           </section>
         </div>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -11,8 +12,124 @@ import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
+const materialTabs = ["Liste", "Papier", "Verpackung", "Verbrauchsmaterial", "Gesperrt"] as const;
+
+type MaterialTab = (typeof materialTabs)[number];
+
+const materialRowsByTab = {
+  Liste: [
+    {
+      name: "135 g/m² Bilderdruck matt",
+      type: "Papier",
+      format: "SRA3",
+      status: "Aktiv",
+      badgeVariant: "success" as const,
+    },
+    {
+      name: "300 g/m² Bilderdruck matt",
+      type: "Papier",
+      format: "SRA3",
+      status: "Aktiv",
+      badgeVariant: undefined,
+    },
+    {
+      name: "Versandkarton A4",
+      type: "Verpackung",
+      format: "A4",
+      status: "Entwurf",
+      badgeVariant: undefined,
+    },
+  ],
+  Papier: [
+    {
+      name: "135 g/m² Bilderdruck matt",
+      type: "Papier",
+      format: "SRA3",
+      status: "Aktiv",
+      badgeVariant: "success" as const,
+    },
+    {
+      name: "300 g/m² Bilderdruck matt",
+      type: "Papier",
+      format: "SRA3",
+      status: "Aktiv",
+      badgeVariant: undefined,
+    },
+  ],
+  Verpackung: [
+    {
+      name: "Versandkarton A4",
+      type: "Verpackung",
+      format: "A4",
+      status: "Entwurf",
+      badgeVariant: undefined,
+    },
+  ],
+  Verbrauchsmaterial: [
+    {
+      name: "Toner / Klickkosten Reserve",
+      type: "Verbrauchsmaterial",
+      format: "—",
+      status: "Aktiv",
+      badgeVariant: undefined,
+    },
+  ],
+  Gesperrt: [
+    {
+      name: "Altes Sonderpapier",
+      type: "Papier",
+      format: "A3",
+      status: "Gesperrt",
+      badgeVariant: undefined,
+    },
+  ],
+};
+
+function getMaterialTitle(tab: MaterialTab) {
+  switch (tab) {
+    case "Liste":
+      return "Material verwalten";
+    case "Papier":
+      return "Papiermaterial verwalten";
+    case "Verpackung":
+      return "Verpackung verwalten";
+    case "Verbrauchsmaterial":
+      return "Verbrauchsmaterial verwalten";
+    case "Gesperrt":
+      return "Gesperrtes Material prüfen";
+  }
+}
+
+function getMaterialStatus(tab: MaterialTab) {
+  if (tab === "Gesperrt") {
+    return "Gesperrt";
+  }
+
+  return "Aktiv";
+}
+
+function getMaterialType(tab: MaterialTab) {
+  if (tab === "Liste" || tab === "Gesperrt") {
+    return "";
+  }
+
+  return tab;
+}
+
+function isMaterialTab(tab: string): tab is MaterialTab {
+  return materialTabs.includes(tab as MaterialTab);
+}
+
 export function MaterialPage() {
   const module = getModuleConfig("material");
+  const [activeTab, setActiveTab] = useState<MaterialTab>("Liste");
+  const materialRows = materialRowsByTab[activeTab];
+
+  function handleTabChange(tab: string) {
+    if (isMaterialTab(tab)) {
+      setActiveTab(tab);
+    }
+  }
 
   return (
     <div className="page">
@@ -22,13 +139,17 @@ export function MaterialPage() {
         actionLabel={module.actionLabel}
       />
 
-      <PageTabs tabs={module.tabs ?? []} activeTab="Liste" />
+      <PageTabs
+        tabs={[...materialTabs]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <section className="calculation-sheet">
         <WorkspaceHeader
           kicker="Materialmaske"
-          title="Material verwalten"
-          statusValue="Aktiv"
+          title={getMaterialTitle(activeTab)}
+          statusValue={getMaterialStatus(activeTab)}
         />
 
         <div className="master-detail-layout">
@@ -49,32 +170,16 @@ export function MaterialPage() {
               </thead>
 
               <tbody>
-                <tr>
-                  <td>135 g/m² Bilderdruck matt</td>
-                  <td>Papier</td>
-                  <td>SRA3</td>
-                  <td>
-                    <Badge variant="success">Aktiv</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>300 g/m² Bilderdruck matt</td>
-                  <td>Papier</td>
-                  <td>SRA3</td>
-                  <td>
-                    <Badge>Aktiv</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Versandkarton A4</td>
-                  <td>Verpackung</td>
-                  <td>A4</td>
-                  <td>
-                    <Badge>Entwurf</Badge>
-                  </td>
-                </tr>
+                {materialRows.map((material) => (
+                  <tr key={material.name}>
+                    <td>{material.name}</td>
+                    <td>{material.type}</td>
+                    <td>{material.format}</td>
+                    <td>
+                      <Badge variant={material.badgeVariant}>{material.status}</Badge>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </DataTable>
           </section>
@@ -92,12 +197,14 @@ export function MaterialPage() {
               </Field>
 
               <Field label="Materialtyp">
-                <Select defaultValue="">
+                <Select
+                  value={getMaterialType(activeTab)}
+                  onChange={(event) => handleTabChange(event.target.value)}
+                >
                   <option value="" disabled>
                     Typ wählen
                   </option>
                   <option>Papier</option>
-                  <option>Karton</option>
                   <option>Verpackung</option>
                   <option>Verbrauchsmaterial</option>
                 </Select>
@@ -159,9 +266,15 @@ export function MaterialPage() {
               </Field>
 
               <Field label="Status">
-                <Select defaultValue="Aktiv">
+                <Select
+                  value={getMaterialStatus(activeTab)}
+                  onChange={(event) => {
+                    if (event.target.value === "Gesperrt") {
+                      handleTabChange("Gesperrt");
+                    }
+                  }}
+                >
                   <option>Aktiv</option>
-                  <option>Entwurf</option>
                   <option>Gesperrt</option>
                 </Select>
               </Field>

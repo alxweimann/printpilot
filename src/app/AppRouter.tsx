@@ -1,6 +1,7 @@
 import { CalculationPage } from "../pages/CalculationPage";
 import { CustomersPage } from "../pages/CustomersPage";
 import { DashboardPage } from "../pages/DashboardPage";
+import { InvoicesPage } from "../pages/InvoicesPage";
 import { OrdersPage } from "../pages/OrdersPage";
 import { PlaceholderPage } from "../pages/PlaceholderPage";
 import { QuotesPage } from "../pages/QuotesPage";
@@ -23,6 +24,9 @@ export function AppRouter({ activePage }: AppRouterProps) {
 
     case "orders":
       return <OrdersPage />;
+
+    case "invoices":
+      return <InvoicesPage />;
 
     case "customers":
       return <CustomersPage />;

@@ -33,7 +33,7 @@ Aktueller Arbeitsbranch:
 restart-designsystem
 ```
 
-## Arbeitsweise ab jetzt
+## Arbeitsweise
 
 Nach dem Recovery wurde die Arbeitsweise angepasst:
 
@@ -50,9 +50,13 @@ Nach dem Recovery wurde die Arbeitsweise angepasst:
 
 Große ZIP-Pakete werden vermieden, außer sie werden ausdrücklich gewünscht.
 
-## Bisherige Schritte
+Die Dokumentation wird nicht nach jedem Mini-Step aktualisiert, sondern gesammelt nach mehreren kleinen Änderungen oder bei größeren Design-/Architekturentscheidungen.
 
-### 1. Neue Projektstruktur angelegt
+---
+
+# Bisherige Schritte
+
+## 1. Neue Projektstruktur angelegt
 
 Angelegt wurden:
 
@@ -67,7 +71,7 @@ src/ui/
 
 Zusätzlich wurde `_OLD_/` in `.gitignore` aufgenommen, damit alte Sicherungsdaten nicht versehentlich ins Repository gelangen.
 
-### 2. Grundlayout erstellt
+## 2. Grundlayout erstellt
 
 Umgesetzt:
 
@@ -80,7 +84,7 @@ Umgesetzt:
 - erste Kalkulations-Eingabemaske ohne Fachlogik
 - Kunden-Liste als Layoutbeispiel
 
-### 3. Modulfarben eingeführt
+## 3. Modulfarben eingeführt
 
 Jedes Hauptmodul erhält eine eigene Akzentfarbe.
 
@@ -116,7 +120,7 @@ Vorlagen               Grau
 Einstellungen          Hellgrau
 ```
 
-### 4. App-Struktur verschlankt
+## 4. App-Struktur verschlankt
 
 Die App wurde modularisiert, damit `App.tsx` klein bleibt.
 
@@ -136,7 +140,7 @@ Vorteil:
 - Fehler lassen sich gezielter eingrenzen
 - bessere Basis für spätere Fachmodule
 
-### 5. UI-Komponenten ausgelagert
+## 5. UI-Komponenten ausgelagert
 
 Die ersten wiederverwendbaren UI-Komponenten wurden eingeführt:
 
@@ -149,11 +153,12 @@ src/ui/FieldGrid.tsx
 src/ui/SectionHeader.tsx
 src/ui/Badge.tsx
 src/ui/Table.tsx
+src/ui/WorkspaceHeader.tsx
 ```
 
 Diese Komponenten bilden die Grundlage für kompakte technische Eingabemasken und ein einheitliches Oberflächendesign.
 
-### 6. Kalkulationsmaske als Designmaske verfeinert
+## 6. Kalkulationsmaske als Designmaske verfeinert
 
 Die Kalkulationsseite wurde als reine technische Eingabemaske ausgebaut.
 
@@ -177,11 +182,11 @@ Designentscheidungen:
 - klare Abschnittszeilen
 - mehr Select-Felder für typische Kalkulationsauswahl
 - deaktivierte Platzhalterfelder für spätere automatische Werte
-- Footer mit Entwurf speichern und Weiter zur Übersicht
+- Footer mit Entwurf speichern und Angebot erstellen
 - optischer Kopfbereich für die Eingabemaske
 - Modulfarbe bleibt als Akzentfarbe erhalten
 
-### 7. Recovery-Baseline erstellt
+## 7. Recovery-Baseline erstellt
 
 Nach Problemen mit einer zu großen Änderung wurde ein stabiler Baseline-Stand hergestellt.
 
@@ -199,7 +204,7 @@ Commit:
 Restore stable redesign baseline
 ```
 
-### 8. Angebotsseite minimal angelegt und geroutet
+## 8. Angebotsseite minimal angelegt und geroutet
 
 Die Angebotsseite wurde zunächst nur als einfache eigene Page angelegt.
 
@@ -219,7 +224,7 @@ Wichtig:
 - keine PDF-Erzeugung
 - nur Seitenbasis mit Header, Tabs und Empty-State
 
-### 9. Sidebar-Hover mit Modulfarben
+## 9. Sidebar-Hover mit Modulfarben
 
 Die Sidebar zeigt jetzt beim Mouseover die jeweilige Modulfarbe.
 
@@ -245,7 +250,159 @@ Mouseover = Modulfarbe als Vorschau sichtbar
 
 Dadurch erkennt man bereits beim Überfahren der Navigation, welcher Bereich welche Prozessfarbe hat.
 
-## Aktuelle Kern-Dateien
+## 10. Einheitlicher WorkspaceHeader
+
+Für Arbeitsmasken wurde ein einheitlicher WorkspaceHeader eingeführt.
+
+Datei:
+
+```text
+src/ui/WorkspaceHeader.tsx
+```
+
+Aktuell verwendet in:
+
+```text
+src/pages/CalculationPage.tsx
+src/pages/QuotesPage.tsx
+```
+
+Ziel:
+
+- gleicher Kopfbereich für alle Arbeitsmasken
+- Kicker oben links
+- Titel darunter
+- optionaler Statusblock rechts
+- Darstellung über Modulfarbe
+
+Beispiele:
+
+```text
+Kalkulation:
+EINGABEMASKE
+Druckprodukt kalkulieren
+Status: Entwurf
+
+Angebote:
+ANGEBOTSMASKE
+Angebot erstellen
+Status: Entwurf
+```
+
+## 11. Angebotsseite als Designmaske ausgebaut
+
+Die Angebotsseite wurde von einer einfachen Platzhalterseite zu einer zweigeteilten Arbeitsmaske ausgebaut.
+
+Aktueller Aufbau:
+
+```text
+oben:
+PageHeader
+Tabs
+WorkspaceHeader
+
+links:
+kompakte Angebotsliste
+
+rechts:
+technische Angebotsmaske
+```
+
+Die rechte Angebotsmaske enthält aktuell:
+
+```text
+Angebotskopf
+Positionen
+Konditionen & Ausgabe
+Footer-Aktionen
+```
+
+Umgesetzte Designpunkte:
+
+- Sucheingabe
+- Filterbutton
+- kompakte Angebotsliste
+- Angebotsnummer als Platzhalterfeld
+- Kunde
+- Angebotsdatum
+- Betreff
+- Gültig bis
+- Status
+- Positionstabelle
+- Zwischensumme netto als Designplatzhalter
+- Zahlungsbedingungen
+- Lieferbedingungen
+- Angebotsvorlage
+- Buttons: Entwurf speichern, Vorschau prüfen, Angebot ausgeben
+
+Wichtig:
+
+- keine Angebotslogik
+- keine Speicherung
+- keine PDF-Ausgabe
+- keine Berechnung
+- alle Daten sind reine statische Design-Daten
+
+## 12. QuotesPage CSS bereinigt
+
+Inline-Styles wurden aus `QuotesPage.tsx` entfernt und in `globals.css` überführt.
+
+Neue/benutzte CSS-Klassen:
+
+```text
+quotes-layout
+quotes-list-panel
+quotes-editor-panel
+quotes-position-table
+data-table-summary-row
+```
+
+Ziel:
+
+- sauberere `QuotesPage.tsx`
+- bessere Wartbarkeit
+- Layoutänderungen zentral in CSS
+- weniger Risiko bei späteren Änderungen
+
+## 13. Prozessvorbereitung Kalkulation → Angebot
+
+In der Kalkulationsmaske wurde der untere Primärbutton von:
+
+```text
+Weiter zur Übersicht
+```
+
+auf:
+
+```text
+Angebot erstellen
+```
+
+geändert.
+
+Das ist weiterhin nur Designvorbereitung.
+
+Der spätere Prozess soll sein:
+
+```text
+Kalkulation erstellen
+↓
+Kalkulation prüfen
+↓
+Angebot erstellen
+↓
+Angebot wird im Modul Angebote abgelegt
+↓
+Angebot bearbeiten
+↓
+Angebot ausgeben
+↓
+später Auftrag / Rechnung / Lieferschein
+```
+
+---
+
+# Aktuelle Kern-Dateien
 
 ```text
 src/main.tsx
@@ -253,16 +410,20 @@ src/app/App.tsx
 src/app/AppRouter.tsx
 src/app/moduleConfig.ts
 src/app/navigation.ts
+
 src/layout/AppShell.tsx
 src/layout/Sidebar.tsx
 src/layout/PageHeader.tsx
 src/layout/PageTabs.tsx
+
 src/pages/DashboardPage.tsx
 src/pages/CalculationPage.tsx
 src/pages/QuotesPage.tsx
 src/pages/CustomersPage.tsx
 src/pages/PlaceholderPage.tsx
+
 src/styles/globals.css
+
 src/ui/Button.tsx
 src/ui/Input.tsx
 src/ui/Select.tsx
@@ -271,32 +432,35 @@ src/ui/FieldGrid.tsx
 src/ui/SectionHeader.tsx
 src/ui/Badge.tsx
 src/ui/Table.tsx
+src/ui/WorkspaceHeader.tsx
 ```
 
-## Dokumentationsregel
+---
 
-Bei relevanten Änderungen wird diese Dokumentation mitgeführt.
+# Dokumentationsregel
 
-Jeder größere Schritt bekommt:
+Bei relevanten Änderungen wird diese Dokumentation gesammelt mitgeführt.
+
+Jeder größere Block bekommt:
 
 - kurze Beschreibung
 - betroffene Dateien
 - Designentscheidung
 - Commit-Hinweis
 
-## Nächster geplanter Schritt
+---
 
-Die Angebotsseite wird weiter in kleinen Schritten aufgebaut.
+# Nächster geplanter Schritt
 
-Reihenfolge:
+Die Angebotsseite ist als Designgrundlage ausreichend weit vorbereitet.
+
+Sinnvolle nächste Mini-Schritte:
 
 ```text
-1. Angebotsliste ergänzen
-2. build testen
-3. dev testen
-4. committen
-5. Angebotsmaske rechts ergänzen
-6. wieder testen und committen
+1. Angebotstabs funktional als Designzustände vorbereiten
+2. Kundenmodul mit WorkspaceHeader und Detailmaske angleichen
+3. Aufträge als nächste Designseite vorbereiten
+4. Oder Kalkulationsmaske weiter optisch verfeinern
 ```
 
 Weiterhin gilt:

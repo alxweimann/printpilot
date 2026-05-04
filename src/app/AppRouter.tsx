@@ -2,6 +2,7 @@ import { CalculationPage } from "../pages/CalculationPage";
 import { CustomersPage } from "../pages/CustomersPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import { PlaceholderPage } from "../pages/PlaceholderPage";
+import { QuotesPage } from "../pages/QuotesPage";
 import { getModuleConfig } from "./moduleConfig";
 
 type AppRouterProps = {
@@ -15,6 +16,9 @@ export function AppRouter({ activePage }: AppRouterProps) {
 
     case "calculation":
       return <CalculationPage />;
+
+    case "quotes":
+      return <QuotesPage />;
 
     case "customers":
       return <CustomersPage />;

@@ -10,6 +10,7 @@ import { OrdersPage } from "../pages/OrdersPage";
 import { PlaceholderPage } from "../pages/PlaceholderPage";
 import { QuotesPage } from "../pages/QuotesPage";
 import { RemindersPage } from "../pages/RemindersPage";
+import { ServicesPage } from "../pages/ServicesPage";
 import { getModuleConfig } from "./moduleConfig";
 
 type AppRouterProps = {
@@ -50,6 +51,9 @@ export function AppRouter({ activePage }: AppRouterProps) {
 
     case "finishing":
       return <FinishingPage />;
+
+    case "services":
+      return <ServicesPage />;
 
     default: {
       const module = getModuleConfig(activePage);

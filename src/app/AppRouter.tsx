@@ -11,6 +11,7 @@ import { PlaceholderPage } from "../pages/PlaceholderPage";
 import { QuotesPage } from "../pages/QuotesPage";
 import { RemindersPage } from "../pages/RemindersPage";
 import { ServicesPage } from "../pages/ServicesPage";
+import { SettingsPage } from "../pages/SettingsPage";
 import { TemplatesPage } from "../pages/TemplatesPage";
 import { getModuleConfig } from "./moduleConfig";
 
@@ -58,6 +59,9 @@ export function AppRouter({ activePage }: AppRouterProps) {
 
     case "templates":
       return <TemplatesPage />;
+
+    case "settings":
+      return <SettingsPage />;
 
     default: {
       const module = getModuleConfig(activePage);

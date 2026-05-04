@@ -31,8 +31,8 @@ export function InvoicesPage() {
           statusValue="Entwurf"
         />
 
-        <div className="quotes-layout">
-          <section className="workspace-panel quotes-list-panel">
+        <div className="master-detail-layout">
+          <section className="workspace-panel master-list-panel">
             <TableToolbar>
               <Input className="search-input" placeholder="Rechnungen suchen..." />
               <Button>Filter</Button>
@@ -79,7 +79,7 @@ export function InvoicesPage() {
             </DataTable>
           </section>
 
-          <section className="workspace-panel quotes-editor-panel">
+          <section className="workspace-panel master-editor-panel">
             <SectionHeader>Rechnungskopf</SectionHeader>
 
             <FieldGrid>
@@ -116,7 +116,7 @@ export function InvoicesPage() {
 
             <SectionHeader>Positionen</SectionHeader>
 
-            <div className="quotes-position-table">
+            <div className="master-position-table">
               <DataTable>
                 <thead>
                   <tr>

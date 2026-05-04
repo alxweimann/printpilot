@@ -29,8 +29,8 @@ export function SettingsPage() {
           statusValue="Lokal"
         />
 
-        <div className="quotes-layout">
-          <section className="workspace-panel quotes-list-panel">
+        <div className="master-detail-layout">
+          <section className="workspace-panel master-list-panel">
             <SectionHeader>Bereiche</SectionHeader>
 
             <div className="settings-nav-list">
@@ -49,7 +49,7 @@ export function SettingsPage() {
             </div>
           </section>
 
-          <section className="workspace-panel quotes-editor-panel">
+          <section className="workspace-panel master-editor-panel">
             <SectionHeader>Allgemein</SectionHeader>
 
             <FieldGrid>

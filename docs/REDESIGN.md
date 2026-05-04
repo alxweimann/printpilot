@@ -82,73 +82,27 @@ Verwendete CSS-Variable:
 ## Modulfarben
 
 ```text
-Dashboard              Grau
-Kalkulation            Cyan
-Angebote               Grün
-Aufträge               Violett
-Rechnungen             Blau
-Lieferscheine          Orange
-Mahnungen              Rot
-Kunden                 Türkis
-Material               Ocker
-Maschinen              Stahlblau
-Weiterverarbeitung     Magenta
-Leistungen             Lila
-Vorlagen               Grau
-Einstellungen          Hellgrau
+Dashboard        Grau
+Kalkulation      Cyan
+Angebote         Grün
+Aufträge         Violett
+Rechnungen       Blau
+Lieferscheine    Orange
+Mahnungen        Rot
+Kunden           Türkis
+Material         Ocker
+Maschinen        Stahlblau
+Weiterverarbeitung Magenta
+Leistungen       Lila
+Vorlagen         Grau
+Einstellungen    Hellgrau
 ```
-
-### 4. App-Struktur verschlankt
-
-Die App wurde weiter modularisiert, damit `App.tsx` klein bleibt.
-
-Neu eingeführt:
-
-```text
-src/app/AppRouter.tsx
-src/app/moduleConfig.ts
-```
-
-Aufgabenverteilung:
-
-```text
-App.tsx              Startpunkt, aktive Seite, AppShell
-AppRouter.tsx        entscheidet, welche Page gerendert wird
-moduleConfig.ts      Titel, Beschreibung, Tabs, Buttontexte, Modulfarben
-navigation.ts        Navigation aus Modulkonfiguration
-```
-
-Vorteil:
-
-- weniger Code in `App.tsx`
-- Änderungen pro Modul leichter möglich
-- Fehler lassen sich gezielter eingrenzen
-- bessere Basis für spätere Fachmodule
-
-### 5. UI-Komponenten ausgelagert
-
-Die ersten wiederverwendbaren UI-Komponenten wurden eingeführt:
-
-```text
-src/ui/Button.tsx
-src/ui/Input.tsx
-src/ui/Select.tsx
-src/ui/Field.tsx
-src/ui/FieldGrid.tsx
-src/ui/SectionHeader.tsx
-src/ui/Badge.tsx
-src/ui/Table.tsx
-```
-
-Diese Komponenten bilden die Grundlage für kompakte technische Eingabemasken und ein einheitliches Oberflächendesign.
 
 ## Aktuelle Kern-Dateien
 
 ```text
 src/main.tsx
 src/app/App.tsx
-src/app/AppRouter.tsx
-src/app/moduleConfig.ts
 src/app/navigation.ts
 src/layout/AppShell.tsx
 src/layout/Sidebar.tsx
@@ -159,17 +113,9 @@ src/pages/CalculationPage.tsx
 src/pages/CustomersPage.tsx
 src/pages/PlaceholderPage.tsx
 src/styles/globals.css
-src/ui/Button.tsx
-src/ui/Input.tsx
-src/ui/Select.tsx
-src/ui/Field.tsx
-src/ui/FieldGrid.tsx
-src/ui/SectionHeader.tsx
-src/ui/Badge.tsx
-src/ui/Table.tsx
 ```
 
-## Dokumentationsregel
+## Dokumentationsregel ab jetzt
 
 Bei relevanten Änderungen wird diese Dokumentation mitgeführt.
 
@@ -182,11 +128,18 @@ Jeder größere Schritt bekommt:
 
 ## Nächster geplanter Schritt
 
-Die technische Kalkulationsmaske optisch weiter verfeinern:
+Designsystem-Komponenten sauber auslagern:
 
-- noch kompakteres Raster
-- saubere Pflichtfeld-Optik
-- Select-Felder statt Texteingaben, wo sinnvoll
-- klare Abschnittsstruktur für Kunde, Produkt, Papier, Druck, Weiterverarbeitung, Verpackung und Versand
+```text
+src/design-system/tokens.ts
+src/ui/Button.tsx
+src/ui/Input.tsx
+src/ui/Select.tsx
+src/ui/Field.tsx
+src/ui/FieldGrid.tsx
+src/ui/SectionHeader.tsx
+src/ui/Badge.tsx
+src/ui/Table.tsx
+```
 
-Weiterhin gilt: keine Fachlogik, bevor das Designsystem stabil ist.
+Danach werden die hart geschriebenen HTML-Elemente in den Seiten durch eigene UI-Komponenten ersetzt.

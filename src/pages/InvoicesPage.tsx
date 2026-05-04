@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -11,8 +12,109 @@ import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
+const invoiceTabs = ["Liste", "Entwurf", "Offen", "Bezahlt", "Überfällig"] as const;
+
+type InvoiceTab = (typeof invoiceTabs)[number];
+
+const invoiceRowsByTab = {
+  Liste: [
+    {
+      number: "RE-2026-001",
+      customer: "Sonnendruck GmbH",
+      subject: "Broschüre A4",
+      status: "Entwurf",
+      badgeVariant: "success" as const,
+    },
+    {
+      number: "RE-2026-002",
+      customer: "Musterkunde GmbH",
+      subject: "Flyer A5",
+      status: "Offen",
+      badgeVariant: undefined,
+    },
+    {
+      number: "RE-2026-003",
+      customer: "Beispiel AG",
+      subject: "Folder DIN lang",
+      status: "Bezahlt",
+      badgeVariant: "success" as const,
+    },
+  ],
+  Entwurf: [
+    {
+      number: "RE-2026-001",
+      customer: "Sonnendruck GmbH",
+      subject: "Broschüre A4",
+      status: "Entwurf",
+      badgeVariant: "success" as const,
+    },
+  ],
+  Offen: [
+    {
+      number: "RE-2026-002",
+      customer: "Musterkunde GmbH",
+      subject: "Flyer A5",
+      status: "Offen",
+      badgeVariant: undefined,
+    },
+  ],
+  Bezahlt: [
+    {
+      number: "RE-2026-003",
+      customer: "Beispiel AG",
+      subject: "Folder DIN lang",
+      status: "Bezahlt",
+      badgeVariant: "success" as const,
+    },
+  ],
+  Überfällig: [
+    {
+      number: "RE-2026-009",
+      customer: "Testkunde KG",
+      subject: "Plakat A1",
+      status: "Überfällig",
+      badgeVariant: undefined,
+    },
+  ],
+};
+
+function getInvoiceTitle(tab: InvoiceTab) {
+  switch (tab) {
+    case "Liste":
+      return "Rechnung vorbereiten";
+    case "Entwurf":
+      return "Rechnungsentwurf bearbeiten";
+    case "Offen":
+      return "Offene Rechnung prüfen";
+    case "Bezahlt":
+      return "Bezahlte Rechnung";
+    case "Überfällig":
+      return "Überfällige Rechnung";
+  }
+}
+
+function getInvoiceStatus(tab: InvoiceTab) {
+  if (tab === "Liste") {
+    return "Entwurf";
+  }
+
+  return tab;
+}
+
+function isInvoiceTab(tab: string): tab is InvoiceTab {
+  return invoiceTabs.includes(tab as InvoiceTab);
+}
+
 export function InvoicesPage() {
   const module = getModuleConfig("invoices");
+  const [activeTab, setActiveTab] = useState<InvoiceTab>("Liste");
+  const invoiceRows = invoiceRowsByTab[activeTab];
+
+  function handleTabChange(tab: string) {
+    if (isInvoiceTab(tab)) {
+      setActiveTab(tab);
+    }
+  }
 
   return (
     <div className="page">
@@ -22,13 +124,17 @@ export function InvoicesPage() {
         actionLabel={module.actionLabel}
       />
 
-      <PageTabs tabs={module.tabs ?? []} activeTab="Liste" />
+      <PageTabs
+        tabs={[...invoiceTabs]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <section className="calculation-sheet">
         <WorkspaceHeader
           kicker="Rechnungsmaske"
-          title="Rechnung vorbereiten"
-          statusValue="Entwurf"
+          title={getInvoiceTitle(activeTab)}
+          statusValue={getInvoiceStatus(activeTab)}
         />
 
         <div className="master-detail-layout">
@@ -49,32 +155,16 @@ export function InvoicesPage() {
               </thead>
 
               <tbody>
-                <tr>
-                  <td>RE-2026-001</td>
-                  <td>Sonnendruck GmbH</td>
-                  <td>Broschüre A4</td>
-                  <td>
-                    <Badge variant="success">Entwurf</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>RE-2026-002</td>
-                  <td>Musterkunde GmbH</td>
-                  <td>Flyer A5</td>
-                  <td>
-                    <Badge>Offen</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>RE-2026-003</td>
-                  <td>Beispiel AG</td>
-                  <td>Folder DIN lang</td>
-                  <td>
-                    <Badge>Bezahlt</Badge>
-                  </td>
-                </tr>
+                {invoiceRows.map((invoice) => (
+                  <tr key={invoice.number}>
+                    <td>{invoice.number}</td>
+                    <td>{invoice.customer}</td>
+                    <td>{invoice.subject}</td>
+                    <td>
+                      <Badge variant={invoice.badgeVariant}>{invoice.status}</Badge>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </DataTable>
           </section>
@@ -104,10 +194,12 @@ export function InvoicesPage() {
               </Field>
 
               <Field label="Status">
-                <Select defaultValue="Entwurf">
+                <Select
+                  value={getInvoiceStatus(activeTab)}
+                  onChange={(event) => handleTabChange(event.target.value)}
+                >
                   <option>Entwurf</option>
                   <option>Offen</option>
-                  <option>Teilbezahlt</option>
                   <option>Bezahlt</option>
                   <option>Überfällig</option>
                 </Select>

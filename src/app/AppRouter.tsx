@@ -6,6 +6,7 @@ import { InvoicesPage } from "../pages/InvoicesPage";
 import { OrdersPage } from "../pages/OrdersPage";
 import { PlaceholderPage } from "../pages/PlaceholderPage";
 import { QuotesPage } from "../pages/QuotesPage";
+import { RemindersPage } from "../pages/RemindersPage";
 import { getModuleConfig } from "./moduleConfig";
 
 type AppRouterProps = {
@@ -31,6 +32,9 @@ export function AppRouter({ activePage }: AppRouterProps) {
 
     case "delivery-notes":
       return <DeliveryNotesPage />;
+
+    case "reminders":
+      return <RemindersPage />;
 
     case "customers":
       return <CustomersPage />;

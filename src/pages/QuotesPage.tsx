@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -11,8 +12,90 @@ import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
+const quoteTabs = ["Entwurf", "Offen", "Angenommen", "Abgelehnt"] as const;
+
+type QuoteTab = (typeof quoteTabs)[number];
+
+const quoteRowsByTab = {
+  Entwurf: [
+    {
+      number: "AG-2026-001",
+      customer: "Sonnendruck GmbH",
+      subject: "Broschüre A4",
+      status: "Entwurf",
+      badgeVariant: "success" as const,
+    },
+    {
+      number: "AG-2026-004",
+      customer: "Agentur Beispiel",
+      subject: "Visitenkarten",
+      status: "Entwurf",
+      badgeVariant: undefined,
+    },
+  ],
+  Offen: [
+    {
+      number: "AG-2026-002",
+      customer: "Musterkunde GmbH",
+      subject: "Flyer A5",
+      status: "Offen",
+      badgeVariant: undefined,
+    },
+    {
+      number: "AG-2026-005",
+      customer: "Druckpartner Süd",
+      subject: "Plakat A2",
+      status: "Offen",
+      badgeVariant: undefined,
+    },
+  ],
+  Angenommen: [
+    {
+      number: "AG-2026-006",
+      customer: "Beispiel AG",
+      subject: "Folder DIN lang",
+      status: "Angenommen",
+      badgeVariant: "success" as const,
+    },
+  ],
+  Abgelehnt: [
+    {
+      number: "AG-2026-007",
+      customer: "Testkunde KG",
+      subject: "Einladungskarten",
+      status: "Abgelehnt",
+      badgeVariant: undefined,
+    },
+  ],
+};
+
+function getQuoteTitle(tab: QuoteTab) {
+  switch (tab) {
+    case "Entwurf":
+      return "Angebot erstellen";
+    case "Offen":
+      return "Offenes Angebot prüfen";
+    case "Angenommen":
+      return "Angenommenes Angebot";
+    case "Abgelehnt":
+      return "Abgelehntes Angebot";
+  }
+}
+
+function isQuoteTab(tab: string): tab is QuoteTab {
+  return quoteTabs.includes(tab as QuoteTab);
+}
+
 export function QuotesPage() {
   const module = getModuleConfig("quotes");
+  const [activeTab, setActiveTab] = useState<QuoteTab>("Entwurf");
+  const quoteRows = quoteRowsByTab[activeTab];
+
+  function handleTabChange(tab: string) {
+    if (isQuoteTab(tab)) {
+      setActiveTab(tab);
+    }
+  }
 
   return (
     <div className="page">
@@ -22,13 +105,17 @@ export function QuotesPage() {
         actionLabel={module.actionLabel}
       />
 
-      <PageTabs tabs={module.tabs ?? []} activeTab="Entwurf" />
+      <PageTabs
+        tabs={[...quoteTabs]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <section className="calculation-sheet">
         <WorkspaceHeader
           kicker="Angebotsmaske"
-          title="Angebot erstellen"
-          statusValue="Entwurf"
+          title={getQuoteTitle(activeTab)}
+          statusValue={activeTab}
         />
 
         <div className="master-detail-layout">
@@ -49,32 +136,16 @@ export function QuotesPage() {
               </thead>
 
               <tbody>
-                <tr>
-                  <td>AG-2026-001</td>
-                  <td>Sonnendruck GmbH</td>
-                  <td>Broschüre A4</td>
-                  <td>
-                    <Badge variant="success">Entwurf</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>AG-2026-002</td>
-                  <td>Musterkunde GmbH</td>
-                  <td>Flyer A5</td>
-                  <td>
-                    <Badge>Offen</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>AG-2026-003</td>
-                  <td>Beispiel AG</td>
-                  <td>Folder DIN lang</td>
-                  <td>
-                    <Badge>In Prüfung</Badge>
-                  </td>
-                </tr>
+                {quoteRows.map((quote) => (
+                  <tr key={quote.number}>
+                    <td>{quote.number}</td>
+                    <td>{quote.customer}</td>
+                    <td>{quote.subject}</td>
+                    <td>
+                      <Badge variant={quote.badgeVariant}>{quote.status}</Badge>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </DataTable>
           </section>
@@ -104,11 +175,13 @@ export function QuotesPage() {
               </Field>
 
               <Field label="Status">
-                <Select defaultValue="Entwurf">
-                  <option>Entwurf</option>
-                  <option>Offen</option>
-                  <option>Angenommen</option>
-                  <option>Abgelehnt</option>
+                <Select
+                  value={activeTab}
+                  onChange={(event) => handleTabChange(event.target.value)}
+                >
+                  {quoteTabs.map((tab) => (
+                    <option key={tab}>{tab}</option>
+                  ))}
                 </Select>
               </Field>
             </FieldGrid>

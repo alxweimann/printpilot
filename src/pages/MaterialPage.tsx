@@ -31,8 +31,8 @@ export function MaterialPage() {
           statusValue="Aktiv"
         />
 
-        <div className="quotes-layout">
-          <section className="workspace-panel quotes-list-panel">
+        <div className="master-detail-layout">
+          <section className="workspace-panel master-list-panel">
             <TableToolbar>
               <Input className="search-input" placeholder="Material suchen..." />
               <Button>Filter</Button>
@@ -79,7 +79,7 @@ export function MaterialPage() {
             </DataTable>
           </section>
 
-          <section className="workspace-panel quotes-editor-panel">
+          <section className="workspace-panel master-editor-panel">
             <SectionHeader>Materialdaten</SectionHeader>
 
             <FieldGrid>

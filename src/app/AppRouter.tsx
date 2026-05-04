@@ -3,6 +3,7 @@ import { CustomersPage } from "../pages/CustomersPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import { DeliveryNotesPage } from "../pages/DeliveryNotesPage";
 import { InvoicesPage } from "../pages/InvoicesPage";
+import { MachinesPage } from "../pages/MachinesPage";
 import { MaterialPage } from "../pages/MaterialPage";
 import { OrdersPage } from "../pages/OrdersPage";
 import { PlaceholderPage } from "../pages/PlaceholderPage";
@@ -42,6 +43,9 @@ export function AppRouter({ activePage }: AppRouterProps) {
 
     case "material":
       return <MaterialPage />;
+
+    case "machines":
+      return <MachinesPage />;
 
     default: {
       const module = getModuleConfig(activePage);

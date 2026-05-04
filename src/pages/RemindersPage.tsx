@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -11,8 +12,109 @@ import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
+const reminderTabs = ["Liste", "Entwurf", "Offen", "Versendet", "Erledigt"] as const;
+
+type ReminderTab = (typeof reminderTabs)[number];
+
+const reminderRowsByTab = {
+  Liste: [
+    {
+      number: "MA-2026-001",
+      customer: "Sonnendruck GmbH",
+      invoice: "RE-2026-001",
+      status: "Entwurf",
+      badgeVariant: "success" as const,
+    },
+    {
+      number: "MA-2026-002",
+      customer: "Musterkunde GmbH",
+      invoice: "RE-2026-002",
+      status: "Offen",
+      badgeVariant: undefined,
+    },
+    {
+      number: "MA-2026-003",
+      customer: "Beispiel AG",
+      invoice: "RE-2026-003",
+      status: "Versendet",
+      badgeVariant: undefined,
+    },
+  ],
+  Entwurf: [
+    {
+      number: "MA-2026-001",
+      customer: "Sonnendruck GmbH",
+      invoice: "RE-2026-001",
+      status: "Entwurf",
+      badgeVariant: "success" as const,
+    },
+  ],
+  Offen: [
+    {
+      number: "MA-2026-002",
+      customer: "Musterkunde GmbH",
+      invoice: "RE-2026-002",
+      status: "Offen",
+      badgeVariant: undefined,
+    },
+  ],
+  Versendet: [
+    {
+      number: "MA-2026-003",
+      customer: "Beispiel AG",
+      invoice: "RE-2026-003",
+      status: "Versendet",
+      badgeVariant: undefined,
+    },
+  ],
+  Erledigt: [
+    {
+      number: "MA-2026-008",
+      customer: "Druckpartner Süd",
+      invoice: "RE-2026-008",
+      status: "Erledigt",
+      badgeVariant: "success" as const,
+    },
+  ],
+};
+
+function getReminderTitle(tab: ReminderTab) {
+  switch (tab) {
+    case "Liste":
+      return "Mahnung vorbereiten";
+    case "Entwurf":
+      return "Mahnungsentwurf bearbeiten";
+    case "Offen":
+      return "Offene Mahnung prüfen";
+    case "Versendet":
+      return "Versendete Mahnung prüfen";
+    case "Erledigt":
+      return "Erledigte Mahnung";
+  }
+}
+
+function getReminderStatus(tab: ReminderTab) {
+  if (tab === "Liste") {
+    return "Entwurf";
+  }
+
+  return tab;
+}
+
+function isReminderTab(tab: string): tab is ReminderTab {
+  return reminderTabs.includes(tab as ReminderTab);
+}
+
 export function RemindersPage() {
   const module = getModuleConfig("reminders");
+  const [activeTab, setActiveTab] = useState<ReminderTab>("Liste");
+  const reminderRows = reminderRowsByTab[activeTab];
+
+  function handleTabChange(tab: string) {
+    if (isReminderTab(tab)) {
+      setActiveTab(tab);
+    }
+  }
 
   return (
     <div className="page">
@@ -22,13 +124,17 @@ export function RemindersPage() {
         actionLabel={module.actionLabel}
       />
 
-      <PageTabs tabs={module.tabs ?? []} activeTab="Liste" />
+      <PageTabs
+        tabs={[...reminderTabs]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <section className="calculation-sheet">
         <WorkspaceHeader
           kicker="Mahnmaske"
-          title="Mahnung vorbereiten"
-          statusValue="Entwurf"
+          title={getReminderTitle(activeTab)}
+          statusValue={getReminderStatus(activeTab)}
         />
 
         <div className="master-detail-layout">
@@ -49,32 +155,16 @@ export function RemindersPage() {
               </thead>
 
               <tbody>
-                <tr>
-                  <td>MA-2026-001</td>
-                  <td>Sonnendruck GmbH</td>
-                  <td>RE-2026-001</td>
-                  <td>
-                    <Badge variant="success">Entwurf</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>MA-2026-002</td>
-                  <td>Musterkunde GmbH</td>
-                  <td>RE-2026-002</td>
-                  <td>
-                    <Badge>Offen</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>MA-2026-003</td>
-                  <td>Beispiel AG</td>
-                  <td>RE-2026-003</td>
-                  <td>
-                    <Badge>Stufe 2</Badge>
-                  </td>
-                </tr>
+                {reminderRows.map((reminder) => (
+                  <tr key={reminder.number}>
+                    <td>{reminder.number}</td>
+                    <td>{reminder.customer}</td>
+                    <td>{reminder.invoice}</td>
+                    <td>
+                      <Badge variant={reminder.badgeVariant}>{reminder.status}</Badge>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </DataTable>
           </section>
@@ -104,7 +194,10 @@ export function RemindersPage() {
               </Field>
 
               <Field label="Status">
-                <Select defaultValue="Entwurf">
+                <Select
+                  value={getReminderStatus(activeTab)}
+                  onChange={(event) => handleTabChange(event.target.value)}
+                >
                   <option>Entwurf</option>
                   <option>Offen</option>
                   <option>Versendet</option>

@@ -492,17 +492,60 @@ button {
 }
 
 .dashboard-metric-card {
+  position: relative;
+  overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-lg);
-  background:
-    linear-gradient(135deg, color-mix(in srgb, var(--module-accent) 8%, white), white 70%),
-    var(--color-surface);
+  background: var(--color-surface);
   box-shadow: var(--shadow-soft);
   padding: 16px;
 }
 
+.dashboard-metric-card::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 5px;
+  background: var(--dashboard-accent, var(--module-accent));
+  content: "";
+}
+
+.dashboard-metric-card::after {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    135deg,
+    color-mix(in srgb, var(--dashboard-accent, var(--module-accent)) 11%, transparent),
+    transparent 62%
+  );
+  content: "";
+  pointer-events: none;
+}
+
+.dashboard-metric-quotes {
+  --dashboard-accent: #16a34a;
+}
+
+.dashboard-metric-orders {
+  --dashboard-accent: #7c3aed;
+}
+
+.dashboard-metric-invoices {
+  --dashboard-accent: #2563eb;
+}
+
+.dashboard-metric-material {
+  --dashboard-accent: #ca8a04;
+}
+
+.dashboard-metric-label,
+.dashboard-metric-value,
+.dashboard-metric-hint {
+  position: relative;
+  z-index: 1;
+}
+
 .dashboard-metric-label {
-  color: var(--color-text-muted);
+  color: var(--dashboard-accent, var(--color-text-muted));
   font-size: 11px;
   font-weight: 800;
   letter-spacing: 0.08em;
@@ -534,6 +577,10 @@ button {
   margin-bottom: 12px;
 }
 
+.master-editor-panel > .dashboard-panel-header {
+  padding: 16px 16px 0;
+}
+
 .dashboard-panel-header h2 {
   margin: 2px 0 0;
   color: var(--color-text);
@@ -542,8 +589,38 @@ button {
   letter-spacing: -0.01em;
 }
 
-.master-editor-panel > .dashboard-panel-header {
-  padding: 16px 16px 0;
+.dashboard-work-row {
+  --work-accent: var(--module-accent);
+}
+
+.dashboard-work-quotes {
+  --work-accent: #16a34a;
+}
+
+.dashboard-work-orders {
+  --work-accent: #7c3aed;
+}
+
+.dashboard-work-invoices {
+  --work-accent: #2563eb;
+}
+
+.dashboard-work-row td:first-child {
+  position: relative;
+  padding-left: 16px;
+  font-weight: 700;
+}
+
+.dashboard-work-row td:first-child::before {
+  position: absolute;
+  top: 50%;
+  left: 4px;
+  width: 4px;
+  height: 18px;
+  border-radius: 999px;
+  background: var(--work-accent);
+  transform: translateY(-50%);
+  content: "";
 }
 
 .dashboard-action-list {
@@ -553,21 +630,48 @@ button {
 }
 
 .dashboard-action-item {
+  --action-accent: var(--module-accent);
+  position: relative;
   display: grid;
   gap: 3px;
   width: 100%;
   min-height: 58px;
+  overflow: hidden;
   border: 1px solid var(--color-border);
   border-radius: var(--radius-md);
   background: white;
-  padding: 10px 12px;
+  padding: 10px 12px 10px 16px;
   color: var(--color-text);
   text-align: left;
 }
 
+.dashboard-action-item::before {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 4px;
+  background: var(--action-accent);
+  content: "";
+}
+
 .dashboard-action-item:hover {
-  border-color: color-mix(in srgb, var(--module-accent) 34%, var(--color-border));
-  background: color-mix(in srgb, var(--module-accent) 6%, white);
+  border-color: color-mix(in srgb, var(--action-accent) 34%, var(--color-border));
+  background: color-mix(in srgb, var(--action-accent) 6%, white);
+}
+
+.dashboard-action-calculation {
+  --action-accent: #00aeef;
+}
+
+.dashboard-action-quotes {
+  --action-accent: #16a34a;
+}
+
+.dashboard-action-customers {
+  --action-accent: #0891b2;
+}
+
+.dashboard-action-material {
+  --action-accent: #ca8a04;
 }
 
 .dashboard-action-item span {

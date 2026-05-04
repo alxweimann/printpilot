@@ -1,26 +1,31 @@
+import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
+import { Badge } from "../ui/Badge";
+import { Button } from "../ui/Button";
+import { Input } from "../ui/Input";
+import { DataTable, TableToolbar } from "../ui/Table";
 
 export function CustomersPage() {
+  const module = getModuleConfig("customers");
+
   return (
     <div className="page">
       <PageHeader
-        title="Kunden"
-        description="Kundenstammdaten als kompakte Listenansicht. Noch ohne Speicherung."
-        actionLabel="Neuer Kunde"
+        title={module.title}
+        description={module.description}
+        actionLabel={module.actionLabel}
       />
 
-      <PageTabs tabs={["Liste", "Details", "Kontakte", "Historie"]} activeTab="Liste" />
+      <PageTabs tabs={module.tabs ?? []} activeTab="Liste" />
 
       <section className="workspace-panel">
-        <div className="table-toolbar">
-          <input className="search-input" placeholder="Kunden suchen..." />
-          <button type="button" className="button-secondary">
-            Filter
-          </button>
-        </div>
+        <TableToolbar>
+          <Input className="search-input" placeholder="Kunden suchen..." />
+          <Button>Filter</Button>
+        </TableToolbar>
 
-        <table className="data-table">
+        <DataTable>
           <thead>
             <tr>
               <th>Kunde</th>
@@ -36,7 +41,7 @@ export function CustomersPage() {
               <td>Wiesloch</td>
               <td>—</td>
               <td>
-                <span className="badge badge-success">Aktiv</span>
+                <Badge variant="success">Aktiv</Badge>
               </td>
             </tr>
 
@@ -45,11 +50,11 @@ export function CustomersPage() {
               <td>Heidelberg</td>
               <td>—</td>
               <td>
-                <span className="badge badge-muted">Entwurf</span>
+                <Badge>Entwurf</Badge>
               </td>
             </tr>
           </tbody>
-        </table>
+        </DataTable>
       </section>
     </div>
   );

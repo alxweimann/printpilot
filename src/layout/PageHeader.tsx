@@ -1,3 +1,5 @@
+import { Button } from "../ui/Button";
+
 type PageHeaderProps = {
   title: string;
   description?: string;
@@ -12,11 +14,7 @@ export function PageHeader({ title, description, actionLabel }: PageHeaderProps)
         {description ? <p>{description}</p> : null}
       </div>
 
-      {actionLabel ? (
-        <button type="button" className="button-primary">
-          {actionLabel}
-        </button>
-      ) : null}
+      {actionLabel ? <Button variant="primary">{actionLabel}</Button> : null}
     </header>
   );
 }

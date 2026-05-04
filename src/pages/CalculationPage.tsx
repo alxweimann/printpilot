@@ -1,107 +1,96 @@
+import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
+import { Field } from "../ui/Field";
+import { FieldGrid } from "../ui/FieldGrid";
+import { Input } from "../ui/Input";
+import { SectionHeader } from "../ui/SectionHeader";
 
 export function CalculationPage() {
+  const module = getModuleConfig("calculation");
+
   return (
     <div className="page">
       <PageHeader
-        title="Kalkulation"
-        description="Technische Eingabemaske für Druckprodukte. Noch ohne Berechnungslogik."
-        actionLabel="Neue Kalkulation"
+        title={module.title}
+        description={module.description}
+        actionLabel={module.actionLabel}
       />
 
-      <PageTabs
-        tabs={["Eingabe", "Positionen", "Kalkulation", "Übersicht", "Ausgabe"]}
-        activeTab="Eingabe"
-      />
+      <PageTabs tabs={module.tabs ?? []} activeTab="Eingabe" />
 
       <section className="form-sheet">
-        <div className="form-section-title">Kundendaten</div>
+        <SectionHeader>Kundendaten</SectionHeader>
 
-        <div className="field-grid">
-          <label className="field">
-            <span>Kunde</span>
-            <input placeholder="Kunde auswählen" />
-          </label>
+        <FieldGrid>
+          <Field label="Kunde">
+            <Input placeholder="Kunde auswählen" />
+          </Field>
 
-          <label className="field">
-            <span>Ansprechpartner</span>
-            <input placeholder="Name" />
-          </label>
+          <Field label="Ansprechpartner">
+            <Input placeholder="Name" />
+          </Field>
 
-          <label className="field">
-            <span>Datum</span>
-            <input type="date" />
-          </label>
-        </div>
+          <Field label="Datum">
+            <Input type="date" />
+          </Field>
+        </FieldGrid>
 
-        <div className="form-section-title">Produktdaten</div>
+        <SectionHeader>Produktdaten</SectionHeader>
 
-        <div className="field-grid">
-          <label className="field">
-            <span>Produkt</span>
-            <input placeholder="z. B. Broschüre A4" />
-          </label>
+        <FieldGrid>
+          <Field label="Produkt">
+            <Input placeholder="z. B. Broschüre A4" />
+          </Field>
 
-          <label className="field">
-            <span>Auflage</span>
-            <input placeholder="z. B. 500" />
-          </label>
+          <Field label="Auflage">
+            <Input placeholder="z. B. 500" />
+          </Field>
 
-          <label className="field">
-            <span>Format</span>
-            <input placeholder="z. B. A4" />
-          </label>
+          <Field label="Format">
+            <Input placeholder="z. B. A4" />
+          </Field>
 
-          <label className="field">
-            <span>Umfang</span>
-            <input placeholder="z. B. 32 Seiten" />
-          </label>
+          <Field label="Umfang">
+            <Input placeholder="z. B. 32 Seiten" />
+          </Field>
 
-          <label className="field">
-            <span>Farbigkeit</span>
-            <input placeholder="z. B. 4/4-farbig" />
-          </label>
+          <Field label="Farbigkeit">
+            <Input placeholder="z. B. 4/4-farbig" />
+          </Field>
 
-          <label className="field">
-            <span>Liefertermin</span>
-            <input type="date" />
-          </label>
-        </div>
+          <Field label="Liefertermin">
+            <Input type="date" />
+          </Field>
+        </FieldGrid>
 
-        <div className="form-section-title">Produktion</div>
+        <SectionHeader>Produktion</SectionHeader>
 
-        <div className="field-grid">
-          <label className="field">
-            <span>Papier Inhalt</span>
-            <input placeholder="Material auswählen" />
-          </label>
+        <FieldGrid>
+          <Field label="Papier Inhalt">
+            <Input placeholder="Material auswählen" />
+          </Field>
 
-          <label className="field">
-            <span>Papier Umschlag</span>
-            <input placeholder="Optional" />
-          </label>
+          <Field label="Papier Umschlag">
+            <Input placeholder="Optional" />
+          </Field>
 
-          <label className="field">
-            <span>Maschine</span>
-            <input placeholder="Maschine auswählen" />
-          </label>
+          <Field label="Maschine">
+            <Input placeholder="Maschine auswählen" />
+          </Field>
 
-          <label className="field">
-            <span>Weiterverarbeitung</span>
-            <input placeholder="z. B. schneiden, heften" />
-          </label>
+          <Field label="Weiterverarbeitung">
+            <Input placeholder="z. B. schneiden, heften" />
+          </Field>
 
-          <label className="field">
-            <span>Verpackung</span>
-            <input placeholder="z. B. Karton" />
-          </label>
+          <Field label="Verpackung">
+            <Input placeholder="z. B. Karton" />
+          </Field>
 
-          <label className="field">
-            <span>Versand</span>
-            <input placeholder="z. B. Lieferung" />
-          </label>
-        </div>
+          <Field label="Versand">
+            <Input placeholder="z. B. Lieferung" />
+          </Field>
+        </FieldGrid>
       </section>
     </div>
   );

@@ -76,7 +76,10 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
             </thead>
 
             <tbody>
-              <tr className="dashboard-work-row dashboard-work-quotes">
+              <tr
+                className="dashboard-work-row dashboard-work-quotes"
+                onClick={() => onNavigate("quotes")}
+              >
                 <td>Angebot</td>
                 <td>AG-2026-001</td>
                 <td>Sonnendruck GmbH</td>
@@ -85,7 +88,10 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                 </td>
               </tr>
 
-              <tr className="dashboard-work-row dashboard-work-orders">
+              <tr
+                className="dashboard-work-row dashboard-work-orders"
+                onClick={() => onNavigate("orders")}
+              >
                 <td>Auftrag</td>
                 <td>AU-2026-002</td>
                 <td>Musterkunde GmbH</td>
@@ -94,7 +100,10 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                 </td>
               </tr>
 
-              <tr className="dashboard-work-row dashboard-work-invoices">
+              <tr
+                className="dashboard-work-row dashboard-work-invoices"
+                onClick={() => onNavigate("invoices")}
+              >
                 <td>Rechnung</td>
                 <td>RE-2026-003</td>
                 <td>Beispiel AG</td>

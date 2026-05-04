@@ -598,6 +598,11 @@ button {
 
 .dashboard-work-row {
   --work-accent: var(--module-accent);
+  cursor: pointer;
+}
+
+.dashboard-work-row:hover td {
+  background: color-mix(in srgb, var(--work-accent) 7%, white);
 }
 
 .dashboard-work-quotes {

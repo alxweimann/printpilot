@@ -91,14 +91,17 @@ Jedes Hauptmodul erhält eine eigene Akzentfarbe.
 Die Modulfarbe steuert:
 
 - aktiven Strich in der Sidebar
+- Hover-Farbe in der Sidebar
 - aktiven Tab-Unterstrich
 - Primärbutton
 - Input-Fokus
+- WorkspaceHeader-Akzent
 
-Verwendete CSS-Variable:
+Verwendete CSS-Variablen:
 
 ```css
 --module-accent
+--item-accent
 ```
 
 ## Modulfarben
@@ -142,7 +145,7 @@ Vorteil:
 
 ## 5. UI-Komponenten ausgelagert
 
-Die ersten wiederverwendbaren UI-Komponenten wurden eingeführt:
+Die wiederverwendbaren UI-Komponenten wurden eingeführt:
 
 ```text
 src/ui/Button.tsx
@@ -158,35 +161,7 @@ src/ui/WorkspaceHeader.tsx
 
 Diese Komponenten bilden die Grundlage für kompakte technische Eingabemasken und ein einheitliches Oberflächendesign.
 
-## 6. Kalkulationsmaske als Designmaske verfeinert
-
-Die Kalkulationsseite wurde als reine technische Eingabemaske ausgebaut.
-
-Wichtig: Es wurde weiterhin keine Fachlogik eingebaut.
-
-Die Maske ist gegliedert in:
-
-```text
-Kunde
-Produkt
-Format & Umfang
-Papier
-Druck
-Weiterverarbeitung
-Verpackung & Versand
-```
-
-Designentscheidungen:
-
-- kompakte 3-Spalten-Eingabe
-- klare Abschnittszeilen
-- mehr Select-Felder für typische Kalkulationsauswahl
-- deaktivierte Platzhalterfelder für spätere automatische Werte
-- Footer mit Entwurf speichern und Angebot erstellen
-- optischer Kopfbereich für die Eingabemaske
-- Modulfarbe bleibt als Akzentfarbe erhalten
-
-## 7. Recovery-Baseline erstellt
+## 6. Recovery-Baseline erstellt
 
 Nach Problemen mit einer zu großen Änderung wurde ein stabiler Baseline-Stand hergestellt.
 
@@ -194,9 +169,9 @@ Wichtig:
 
 - die alte große `src/App.tsx` wurde entfernt
 - alte Daten-/Logikdateien wurden entfernt
-- die App läuft wieder über die neue Struktur unter `src/app/App.tsx`
+- die App läuft über die neue Struktur unter `src/app/App.tsx`
 - die CSS-Datei wird über `index.html` geladen
-- die Angebotsseite wurde wieder minimal und kontrolliert aufgebaut
+- die weitere Arbeit erfolgt in kleinen Einzeldatei-Schritten
 
 Commit:
 
@@ -204,185 +179,55 @@ Commit:
 Restore stable redesign baseline
 ```
 
-## 8. Angebotsseite minimal angelegt und geroutet
+---
 
-Die Angebotsseite wurde zunächst nur als einfache eigene Page angelegt.
+# Aktueller Designstand der Module
 
-Danach wurde sie separat über `AppRouter.tsx` eingebunden.
+## Dashboard
 
-Dateien:
+Aktueller Zustand:
 
-```text
-src/pages/QuotesPage.tsx
-src/app/AppRouter.tsx
-```
+- einfache Startseite
+- PageHeader
+- WorkspacePanel
+- Empty-State
 
-Wichtig:
+Geplanter Ausbau:
 
-- keine Angebotslogik
-- keine Speicherung
-- keine PDF-Erzeugung
-- nur Seitenbasis mit Header, Tabs und Empty-State
+- Kennzahlenkarten
+- offene Vorgänge
+- Schnellzugriffe
+- Produktions-/Verkaufsübersicht
 
-## 9. Sidebar-Hover mit Modulfarben
-
-Die Sidebar zeigt jetzt beim Mouseover die jeweilige Modulfarbe.
-
-Umgesetzt:
-
-- jedes Navigationselement erhält `--item-accent`
-- Hover-Hintergrund nutzt die jeweilige Modulfarbe
-- der kleine aktive/hover Strich nutzt ebenfalls die Modulfarbe
-
-Betroffene Dateien:
-
-```text
-src/layout/Sidebar.tsx
-src/styles/globals.css
-```
-
-Designentscheidung:
-
-```text
-Aktive Seite = Modulfarbe sichtbar
-Mouseover = Modulfarbe als Vorschau sichtbar
-```
-
-Dadurch erkennt man bereits beim Überfahren der Navigation, welcher Bereich welche Prozessfarbe hat.
-
-## 10. Einheitlicher WorkspaceHeader
-
-Für Arbeitsmasken wurde ein einheitlicher WorkspaceHeader eingeführt.
+## Kalkulation
 
 Datei:
 
 ```text
-src/ui/WorkspaceHeader.tsx
-```
-
-Aktuell verwendet in:
-
-```text
 src/pages/CalculationPage.tsx
-src/pages/QuotesPage.tsx
 ```
 
-Ziel:
+Aktueller Zustand:
 
-- gleicher Kopfbereich für alle Arbeitsmasken
-- Kicker oben links
-- Titel darunter
-- optionaler Statusblock rechts
-- Darstellung über Modulfarbe
-
-Beispiele:
-
-```text
-Kalkulation:
-EINGABEMASKE
-Druckprodukt kalkulieren
-Status: Entwurf
-
-Angebote:
-ANGEBOTSMASKE
-Angebot erstellen
-Status: Entwurf
-```
-
-## 11. Angebotsseite als Designmaske ausgebaut
-
-Die Angebotsseite wurde von einer einfachen Platzhalterseite zu einer zweigeteilten Arbeitsmaske ausgebaut.
-
-Aktueller Aufbau:
-
-```text
-oben:
-PageHeader
-Tabs
-WorkspaceHeader
-
-links:
-kompakte Angebotsliste
-
-rechts:
-technische Angebotsmaske
-```
-
-Die rechte Angebotsmaske enthält aktuell:
-
-```text
-Angebotskopf
-Positionen
-Konditionen & Ausgabe
-Footer-Aktionen
-```
-
-Umgesetzte Designpunkte:
-
-- Sucheingabe
-- Filterbutton
-- kompakte Angebotsliste
-- Angebotsnummer als Platzhalterfeld
+- technische Eingabemaske
+- WorkspaceHeader
+- Tabs
 - Kunde
-- Angebotsdatum
-- Betreff
-- Gültig bis
-- Status
-- Positionstabelle
-- Zwischensumme netto als Designplatzhalter
-- Zahlungsbedingungen
-- Lieferbedingungen
-- Angebotsvorlage
-- Buttons: Entwurf speichern, Vorschau prüfen, Angebot ausgeben
+- Produkt
+- Format & Umfang
+- Papier
+- Druck
+- Weiterverarbeitung
+- Verpackung & Versand
+- Footer mit „Entwurf speichern“ und „Angebot erstellen“
 
 Wichtig:
 
-- keine Angebotslogik
+- keine Berechnungslogik
 - keine Speicherung
-- keine PDF-Ausgabe
-- keine Berechnung
-- alle Daten sind reine statische Design-Daten
+- keine Angebotserzeugung
 
-## 12. QuotesPage CSS bereinigt
-
-Inline-Styles wurden aus `QuotesPage.tsx` entfernt und in `globals.css` überführt.
-
-Neue/benutzte CSS-Klassen:
-
-```text
-quotes-layout
-quotes-list-panel
-quotes-editor-panel
-quotes-position-table
-data-table-summary-row
-```
-
-Ziel:
-
-- sauberere `QuotesPage.tsx`
-- bessere Wartbarkeit
-- Layoutänderungen zentral in CSS
-- weniger Risiko bei späteren Änderungen
-
-## 13. Prozessvorbereitung Kalkulation → Angebot
-
-In der Kalkulationsmaske wurde der untere Primärbutton von:
-
-```text
-Weiter zur Übersicht
-```
-
-auf:
-
-```text
-Angebot erstellen
-```
-
-geändert.
-
-Das ist weiterhin nur Designvorbereitung.
-
-Der spätere Prozess soll sein:
+Vorbereiteter späterer Prozess:
 
 ```text
 Kalkulation erstellen
@@ -392,13 +237,372 @@ Kalkulation prüfen
 Angebot erstellen
 ↓
 Angebot wird im Modul Angebote abgelegt
-↓
-Angebot bearbeiten
-↓
-Angebot ausgeben
-↓
-später Auftrag / Rechnung / Lieferschein
 ```
+
+## Angebote
+
+Datei:
+
+```text
+src/pages/QuotesPage.tsx
+```
+
+Aktueller Zustand:
+
+- Angebotsliste links
+- Angebotsmaske rechts
+- WorkspaceHeader
+- Angebotskopf
+- Positionen
+- Zwischensumme netto als Designplatzhalter
+- Konditionen & Ausgabe
+- Footer mit Entwurf speichern, Vorschau prüfen, Angebot ausgeben
+
+Wichtig:
+
+- keine Angebotslogik
+- keine Speicherung
+- keine PDF-Ausgabe
+- keine Berechnung
+
+## Aufträge
+
+Datei:
+
+```text
+src/pages/OrdersPage.tsx
+```
+
+Aktueller Zustand:
+
+- Auftragsliste links
+- Auftragsmaske rechts
+- WorkspaceHeader
+- Auftragskopf
+- Produktion
+- Übergabe
+- Footer mit Entwurf speichern und Auftrag vorbereiten
+
+Wichtig:
+
+- keine Auftragslogik
+- keine Übergabe aus Angebot
+- keine Produktionssteuerung
+
+## Rechnungen
+
+Datei:
+
+```text
+src/pages/InvoicesPage.tsx
+```
+
+Aktueller Zustand:
+
+- Rechnungsliste links
+- Rechnungsmaske rechts
+- WorkspaceHeader
+- Rechnungskopf
+- Positionen
+- Rechnungssumme netto als Designplatzhalter
+- Zahlung & Ausgabe
+- Footer mit Entwurf speichern, Vorschau prüfen, Rechnung ausgeben
+
+Wichtig:
+
+- keine Rechnungslogik
+- keine Zahlungserfassung
+- keine PDF-Ausgabe
+
+## Lieferscheine
+
+Datei:
+
+```text
+src/pages/DeliveryNotesPage.tsx
+```
+
+Aktueller Zustand:
+
+- Lieferscheinliste links
+- Lieferscheinmaske rechts
+- WorkspaceHeader
+- Lieferscheinkopf
+- Lieferadresse
+- Positionen
+- Ausgabe
+- Footer mit Entwurf speichern, Vorschau prüfen, Lieferschein ausgeben
+
+Wichtig:
+
+- keine Lieferlogik
+- keine Auftragsübernahme
+- keine Ausgabe
+
+## Mahnungen
+
+Datei:
+
+```text
+src/pages/RemindersPage.tsx
+```
+
+Aktueller Zustand:
+
+- Mahnungsliste links
+- Mahnmaske rechts
+- WorkspaceHeader
+- Mahnkopf
+- Mahninformationen
+- Ausgabe
+- Footer mit Entwurf speichern, Vorschau prüfen, Mahnung ausgeben
+
+Wichtig:
+
+- keine Mahnlogik
+- keine Rechnungsauswertung
+- keine Fristenberechnung
+- keine Ausgabe
+
+## Kunden
+
+Datei:
+
+```text
+src/pages/CustomersPage.tsx
+```
+
+Aktueller Zustand:
+
+- Kundenliste links
+- Kundendatenmaske rechts
+- WorkspaceHeader
+- Kundendaten
+- Kontakt
+- Konditionen
+- Footer mit Änderungen verwerfen und Kunde speichern
+
+Wichtig:
+
+- keine Speicherung
+- keine Kundendatenbank
+- keine Kontaktlogik
+
+## Material
+
+Datei:
+
+```text
+src/pages/MaterialPage.tsx
+```
+
+Aktueller Zustand:
+
+- Materialliste links
+- Materialmaske rechts
+- WorkspaceHeader
+- Materialdaten
+- Preise
+- Lager
+- Footer mit Änderungen verwerfen und Material speichern
+
+Wichtig:
+
+- keine Lagerlogik
+- keine Preisberechnung
+- keine Materialdatenbank
+
+## Maschinen
+
+Datei:
+
+```text
+src/pages/MachinesPage.tsx
+```
+
+Aktueller Zustand:
+
+- Maschinenliste links
+- Maschinenmaske rechts
+- WorkspaceHeader
+- Maschinendaten
+- Kostenparameter
+- Hinweise
+- Footer mit Änderungen verwerfen und Maschine speichern
+
+Wichtig:
+
+- keine Maschinenlogik
+- keine Klickpreisberechnung
+- keine Produktionsdaten
+
+## Weiterverarbeitung
+
+Datei:
+
+```text
+src/pages/FinishingPage.tsx
+```
+
+Aktueller Zustand:
+
+- Prozessliste links
+- Prozessmaske rechts
+- WorkspaceHeader
+- Prozessdaten
+- Kostenparameter
+- Hinweise
+- Footer mit Änderungen verwerfen und Prozess speichern
+
+Wichtig:
+
+- keine Preislogik
+- keine Prozessberechnung
+- keine Kalkulationsintegration
+
+## Leistungen
+
+Datei:
+
+```text
+src/pages/ServicesPage.tsx
+```
+
+Aktueller Zustand:
+
+- Leistungsliste links
+- Leistungsmaske rechts
+- WorkspaceHeader
+- Leistungsdaten
+- Preise
+- Beschreibung
+- Footer mit Änderungen verwerfen und Leistung speichern
+
+Wichtig:
+
+- keine Leistungslogik
+- keine Preisberechnung
+- keine Angebotsintegration
+
+## Vorlagen
+
+Datei:
+
+```text
+src/pages/TemplatesPage.tsx
+```
+
+Aktueller Zustand:
+
+- Vorlagenliste links
+- Vorlagenmaske rechts
+- WorkspaceHeader
+- Vorlagendaten
+- Produktparameter
+- Ausgabe
+- Footer mit Änderungen verwerfen und Vorlage speichern
+
+Wichtig:
+
+- keine Vorlagenlogik
+- keine Dokumenterzeugung
+- keine Produktübernahme
+
+## Einstellungen
+
+Datei:
+
+```text
+src/pages/SettingsPage.tsx
+```
+
+Aktueller Zustand:
+
+- Einstellungsbereiche links
+- Einstellungsmaske rechts
+- WorkspaceHeader
+- Allgemein
+- Nummernkreise
+- Firma
+- Design
+- Footer mit Änderungen verwerfen und Einstellungen speichern
+
+Wichtig:
+
+- keine Speicherung
+- keine Systemlogik
+- keine Persistenz
+
+---
+
+# Routing-Stand
+
+Aktiv im Router:
+
+```text
+dashboard
+calculation
+quotes
+orders
+invoices
+delivery-notes
+reminders
+customers
+material
+machines
+finishing
+services
+templates
+settings
+```
+
+Datei:
+
+```text
+src/app/AppRouter.tsx
+```
+
+---
+
+# Layout- und CSS-Stand
+
+Wichtige CSS-Klassen:
+
+```text
+app-shell
+sidebar
+sidebar-item
+page
+page-header
+page-tabs
+workspace-panel
+calculation-sheet
+calculation-sheet-header
+field-grid
+field
+input
+select
+calculation-footer
+quotes-layout
+quotes-list-panel
+quotes-editor-panel
+quotes-position-table
+data-table
+data-table-summary-row
+badge
+empty-state
+```
+
+Die Klasse `quotes-layout` wird aktuell nicht nur für Angebote verwendet, sondern allgemein als zweigeteiltes Arbeitslayout für Listen links und Masken rechts.
+
+Später kann diese Klasse umbenannt werden, z. B. in:
+
+```text
+split-workspace
+master-detail-layout
+```
+
+Das wäre ein sinnvoller Refactoring-Schritt.
 
 ---
 
@@ -406,6 +610,7 @@ später Auftrag / Rechnung / Lieferschein
 
 ```text
 src/main.tsx
+
 src/app/App.tsx
 src/app/AppRouter.tsx
 src/app/moduleConfig.ts
@@ -419,7 +624,17 @@ src/layout/PageTabs.tsx
 src/pages/DashboardPage.tsx
 src/pages/CalculationPage.tsx
 src/pages/QuotesPage.tsx
+src/pages/OrdersPage.tsx
+src/pages/InvoicesPage.tsx
+src/pages/DeliveryNotesPage.tsx
+src/pages/RemindersPage.tsx
 src/pages/CustomersPage.tsx
+src/pages/MaterialPage.tsx
+src/pages/MachinesPage.tsx
+src/pages/FinishingPage.tsx
+src/pages/ServicesPage.tsx
+src/pages/TemplatesPage.tsx
+src/pages/SettingsPage.tsx
 src/pages/PlaceholderPage.tsx
 
 src/styles/globals.css
@@ -437,31 +652,21 @@ src/ui/WorkspaceHeader.tsx
 
 ---
 
-# Dokumentationsregel
+# Nächste sinnvolle Schritte
 
-Bei relevanten Änderungen wird diese Dokumentation gesammelt mitgeführt.
+## Kurzfristig
 
-Jeder größere Block bekommt:
+1. `quotes-layout` zu allgemeiner Layout-Klasse umbenennen
+2. Dashboard optisch ausbauen
+3. gemeinsame Master-Detail-Komponente prüfen
+4. Dokumentation nachziehen, sobald der nächste Block abgeschlossen ist
 
-- kurze Beschreibung
-- betroffene Dateien
-- Designentscheidung
-- Commit-Hinweis
+## Danach
 
----
-
-# Nächster geplanter Schritt
-
-Die Angebotsseite ist als Designgrundlage ausreichend weit vorbereitet.
-
-Sinnvolle nächste Mini-Schritte:
-
-```text
-1. Angebotstabs funktional als Designzustände vorbereiten
-2. Kundenmodul mit WorkspaceHeader und Detailmaske angleichen
-3. Aufträge als nächste Designseite vorbereiten
-4. Oder Kalkulationsmaske weiter optisch verfeinern
-```
+1. Designsystem weiter stabilisieren
+2. Tabellen-/Listenkomponenten verbessern
+3. Tabs als echte Designzustände vorbereiten
+4. erst danach erste kleine Fachlogik planen
 
 Weiterhin gilt:
 

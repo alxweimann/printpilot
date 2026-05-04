@@ -4,14 +4,15 @@
 
 PrintPilot wird als moderne Druckerei-Software neu aufgebaut.
 
-Der Fokus liegt zuerst ausschließlich auf:
+Der Fokus liegt zuerst auf:
 
 - Designsystem
 - Grundlayout
 - Navigation
 - kompakte technische Eingabemasken
 - klare Modulstruktur
-- keine Fachlogik
+- einheitliche Arbeitsmasken
+- keine Fachlogik, solange das Designsystem noch nicht stabil ist
 
 ## Grundprinzipien
 
@@ -54,37 +55,62 @@ Die Dokumentation wird nicht nach jedem Mini-Step aktualisiert, sondern gesammel
 
 ---
 
-# Bisherige Schritte
+# Architekturstand
 
-## 1. Neue Projektstruktur angelegt
-
-Angelegt wurden:
+## App-Struktur
 
 ```text
-src/app/
-src/design-system/
-src/layout/
+src/main.tsx
+
+src/app/App.tsx
+src/app/AppRouter.tsx
+src/app/moduleConfig.ts
+src/app/navigation.ts
+
+src/layout/AppShell.tsx
+src/layout/Sidebar.tsx
+src/layout/PageHeader.tsx
+src/layout/PageTabs.tsx
+
 src/pages/
-src/styles/
+src/styles/globals.css
 src/ui/
 ```
 
-Zusätzlich wurde `_OLD_/` in `.gitignore` aufgenommen, damit alte Sicherungsdaten nicht versehentlich ins Repository gelangen.
+## Aufgabenverteilung
 
-## 2. Grundlayout erstellt
+```text
+App.tsx              hält activePage und reicht Navigation weiter
+AppRouter.tsx        rendert die aktive Seite
+moduleConfig.ts      Titel, Beschreibung, Tabs, Buttontexte, Modulfarben
+navigation.ts        Navigation aus Modulkonfiguration
+AppShell.tsx         Sidebar + Arbeitsbereich
+Sidebar.tsx          Hauptnavigation
+```
 
-Umgesetzt:
+## UI-Komponenten
 
-- AppShell
-- dunkle Sidebar
-- rechter Arbeitsbereich
-- PageHeader
-- PageTabs
-- Dummy-Seiten
-- erste Kalkulations-Eingabemaske ohne Fachlogik
-- Kunden-Liste als Layoutbeispiel
+Wiederverwendbare Komponenten:
 
-## 3. Modulfarben eingeführt
+```text
+src/ui/Button.tsx
+src/ui/Input.tsx
+src/ui/Select.tsx
+src/ui/Field.tsx
+src/ui/FieldGrid.tsx
+src/ui/SectionHeader.tsx
+src/ui/Badge.tsx
+src/ui/Table.tsx
+src/ui/WorkspaceHeader.tsx
+```
+
+Diese Komponenten bilden die Grundlage für kompakte technische Eingabemasken und ein einheitliches Oberflächendesign.
+
+---
+
+# Designsystem
+
+## Modulfarben
 
 Jedes Hauptmodul erhält eine eigene Akzentfarbe.
 
@@ -96,6 +122,7 @@ Die Modulfarbe steuert:
 - Primärbutton
 - Input-Fokus
 - WorkspaceHeader-Akzent
+- Dashboard-Akzente
 
 Verwendete CSS-Variablen:
 
@@ -104,7 +131,7 @@ Verwendete CSS-Variablen:
 --item-accent
 ```
 
-## Modulfarben
+## Modulfarben Übersicht
 
 ```text
 Dashboard              Grau
@@ -123,60 +150,105 @@ Vorlagen               Grau
 Einstellungen          Hellgrau
 ```
 
-## 4. App-Struktur verschlankt
+## Sidebar
 
-Die App wurde modularisiert, damit `App.tsx` klein bleibt.
+Die Sidebar zeigt:
 
-Aufgabenverteilung:
+- aktive Seite mit Modulfarbe
+- Hover-Effekt mit jeweiliger Modulfarbe
+- Prozessgruppen
+- einheitliche Navigationsstruktur
+
+Designentscheidung:
 
 ```text
-App.tsx              Startpunkt, aktive Seite, AppShell
-AppRouter.tsx        entscheidet, welche Page gerendert wird
-moduleConfig.ts      Titel, Beschreibung, Tabs, Buttontexte, Modulfarben
-navigation.ts        Navigation aus Modulkonfiguration
+Aktive Seite = Modulfarbe sichtbar
+Mouseover = Modulfarbe als Vorschau sichtbar
 ```
 
-Vorteil:
+---
 
-- weniger Code in `App.tsx`
-- Änderungen pro Modul leichter möglich
-- Fehler lassen sich gezielter eingrenzen
-- bessere Basis für spätere Fachmodule
+# Master-Detail-Refactoring
 
-## 5. UI-Komponenten ausgelagert
+## Ausgangspunkt
 
-Die wiederverwendbaren UI-Komponenten wurden eingeführt:
+Die zweigeteilte Arbeitsansicht wurde zuerst in der Angebotsseite entwickelt und hieß deshalb technisch:
 
 ```text
-src/ui/Button.tsx
-src/ui/Input.tsx
-src/ui/Select.tsx
-src/ui/Field.tsx
-src/ui/FieldGrid.tsx
-src/ui/SectionHeader.tsx
-src/ui/Badge.tsx
-src/ui/Table.tsx
-src/ui/WorkspaceHeader.tsx
+quotes-layout
+quotes-list-panel
+quotes-editor-panel
+quotes-position-table
 ```
 
-Diese Komponenten bilden die Grundlage für kompakte technische Eingabemasken und ein einheitliches Oberflächendesign.
+Diese Klassen wurden später in vielen Modulen verwendet:
 
-## 6. Recovery-Baseline erstellt
+- Angebote
+- Kunden
+- Aufträge
+- Rechnungen
+- Lieferscheine
+- Mahnungen
+- Material
+- Maschinen
+- Weiterverarbeitung
+- Leistungen
+- Vorlagen
+- Einstellungen
 
-Nach Problemen mit einer zu großen Änderung wurde ein stabiler Baseline-Stand hergestellt.
+## Refactoring-Entscheidung
 
-Wichtig:
+Da die Klassen nicht mehr nur für Angebote verwendet wurden, wurden sie neutralisiert.
 
-- die alte große `src/App.tsx` wurde entfernt
-- alte Daten-/Logikdateien wurden entfernt
-- die App läuft über die neue Struktur unter `src/app/App.tsx`
-- die CSS-Datei wird über `index.html` geladen
-- die weitere Arbeit erfolgt in kleinen Einzeldatei-Schritten
-
-Commit:
+Neue Klassen:
 
 ```text
-Restore stable redesign baseline
+master-detail-layout
+master-list-panel
+master-editor-panel
+master-position-table
+```
+
+Die alten `quotes-*` CSS-Aliase wurden zuerst parallel unterstützt und danach entfernt.
+
+## Ergebnis
+
+Alle Arbeitsseiten verwenden jetzt neutrale Master-Detail-Klassen.
+
+Vorteile:
+
+- klarere Benennung
+- weniger Angebotsbezug im globalen CSS
+- bessere Wartbarkeit
+- einheitliches Layoutsystem für alle Module
+
+---
+
+# Routing-Stand
+
+Aktiv im Router:
+
+```text
+dashboard
+calculation
+quotes
+orders
+invoices
+delivery-notes
+reminders
+customers
+material
+machines
+finishing
+services
+templates
+settings
+```
+
+Datei:
+
+```text
+src/app/AppRouter.tsx
 ```
 
 ---
@@ -185,19 +257,47 @@ Restore stable redesign baseline
 
 ## Dashboard
 
+Datei:
+
+```text
+src/pages/DashboardPage.tsx
+```
+
 Aktueller Zustand:
 
-- einfache Startseite
-- PageHeader
-- WorkspacePanel
-- Empty-State
-
-Geplanter Ausbau:
-
-- Kennzahlenkarten
-- offene Vorgänge
+- echte Startseite statt Empty-State
+- Kennzahlen-Kacheln
+- aktuelle Arbeiten
 - Schnellzugriffe
-- Produktions-/Verkaufsübersicht
+- Modulfarben als Akzente
+- Kennzahlen sind anklickbar
+- aktuelle Arbeiten sind anklickbar
+- Schnellzugriffe sind anklickbar
+
+Aktuelle Navigation im Dashboard:
+
+```text
+Offene Angebote      → Angebote
+Aktive Aufträge      → Aufträge
+Offene Rechnungen    → Rechnungen
+Materialhinweise     → Material
+
+Angebot   AG-2026-001 → Angebote
+Auftrag   AU-2026-002 → Aufträge
+Rechnung  RE-2026-003 → Rechnungen
+
+Kalkulation starten  → Kalkulation
+Angebot erstellen    → Angebote
+Kunde anlegen        → Kunden
+Material prüfen      → Material
+```
+
+Wichtig:
+
+- Werte sind aktuell statische Designwerte
+- keine Datenlogik
+- keine echte Auswertung
+- keine Persistenz
 
 ## Kalkulation
 
@@ -535,35 +635,6 @@ Wichtig:
 
 ---
 
-# Routing-Stand
-
-Aktiv im Router:
-
-```text
-dashboard
-calculation
-quotes
-orders
-invoices
-delivery-notes
-reminders
-customers
-material
-machines
-finishing
-services
-templates
-settings
-```
-
-Datei:
-
-```text
-src/app/AppRouter.tsx
-```
-
----
-
 # Layout- und CSS-Stand
 
 Wichtige CSS-Klassen:
@@ -583,26 +654,22 @@ field
 input
 select
 calculation-footer
-quotes-layout
-quotes-list-panel
-quotes-editor-panel
-quotes-position-table
+master-detail-layout
+master-list-panel
+master-editor-panel
+master-position-table
+dashboard-grid
+dashboard-metric-card
+dashboard-panel-header
+dashboard-action-list
+dashboard-action-item
 data-table
 data-table-summary-row
 badge
+settings-nav-list
+settings-nav-item
 empty-state
 ```
-
-Die Klasse `quotes-layout` wird aktuell nicht nur für Angebote verwendet, sondern allgemein als zweigeteiltes Arbeitslayout für Listen links und Masken rechts.
-
-Später kann diese Klasse umbenannt werden, z. B. in:
-
-```text
-split-workspace
-master-detail-layout
-```
-
-Das wäre ein sinnvoller Refactoring-Schritt.
 
 ---
 
@@ -656,17 +723,19 @@ src/ui/WorkspaceHeader.tsx
 
 ## Kurzfristig
 
-1. `quotes-layout` zu allgemeiner Layout-Klasse umbenennen
-2. Dashboard optisch ausbauen
+1. Dashboard visuell final prüfen
+2. Dashboard eventuell um Status-/Hinweisbereich ergänzen
 3. gemeinsame Master-Detail-Komponente prüfen
-4. Dokumentation nachziehen, sobald der nächste Block abgeschlossen ist
+4. Tabellen-/Listenkomponenten verbessern
+5. Tabs als echte Designzustände vorbereiten
 
 ## Danach
 
 1. Designsystem weiter stabilisieren
-2. Tabellen-/Listenkomponenten verbessern
-3. Tabs als echte Designzustände vorbereiten
-4. erst danach erste kleine Fachlogik planen
+2. erste echte Datenstruktur planen
+3. lokale Speicherung planen
+4. Kalkulationslogik fachlich schrittweise vorbereiten
+5. Prozess Kalkulation → Angebot technisch planen
 
 Weiterhin gilt:
 

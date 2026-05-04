@@ -1,10 +1,14 @@
 type PageTabsProps = {
   tabs: string[];
   activeTab: string;
-  onChange?: (tab: string) => void;
+  onTabChange?: (tab: string) => void;
 };
 
-export function PageTabs({ tabs, activeTab, onChange }: PageTabsProps) {
+export function PageTabs({ tabs, activeTab, onTabChange }: PageTabsProps) {
+  if (tabs.length === 0) {
+    return null;
+  }
+
   return (
     <div className="page-tabs">
       {tabs.map((tab) => {
@@ -15,7 +19,7 @@ export function PageTabs({ tabs, activeTab, onChange }: PageTabsProps) {
             type="button"
             key={tab}
             className={isActive ? "page-tab active" : "page-tab"}
-            onClick={() => onChange?.(tab)}
+            onClick={() => onTabChange?.(tab)}
           >
             {tab}
           </button>

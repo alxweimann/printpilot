@@ -2,6 +2,7 @@ import { CalculationPage } from "../pages/CalculationPage";
 import { CustomersPage } from "../pages/CustomersPage";
 import { DashboardPage } from "../pages/DashboardPage";
 import { DeliveryNotesPage } from "../pages/DeliveryNotesPage";
+import { FinishingPage } from "../pages/FinishingPage";
 import { InvoicesPage } from "../pages/InvoicesPage";
 import { MachinesPage } from "../pages/MachinesPage";
 import { MaterialPage } from "../pages/MaterialPage";
@@ -46,6 +47,9 @@ export function AppRouter({ activePage }: AppRouterProps) {
 
     case "machines":
       return <MachinesPage />;
+
+    case "finishing":
+      return <FinishingPage />;
 
     default: {
       const module = getModuleConfig(activePage);

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -11,8 +12,98 @@ import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
+const orderTabs = ["Liste", "Vorbereitung", "Produktion", "Abgeschlossen"] as const;
+
+type OrderTab = (typeof orderTabs)[number];
+
+const orderRowsByTab = {
+  Liste: [
+    {
+      number: "AU-2026-001",
+      customer: "Sonnendruck GmbH",
+      product: "Broschüre A4",
+      status: "Vorbereitung",
+      badgeVariant: "success" as const,
+    },
+    {
+      number: "AU-2026-002",
+      customer: "Musterkunde GmbH",
+      product: "Flyer A5",
+      status: "Produktion",
+      badgeVariant: undefined,
+    },
+    {
+      number: "AU-2026-003",
+      customer: "Beispiel AG",
+      product: "Folder DIN lang",
+      status: "Offen",
+      badgeVariant: undefined,
+    },
+  ],
+  Vorbereitung: [
+    {
+      number: "AU-2026-001",
+      customer: "Sonnendruck GmbH",
+      product: "Broschüre A4",
+      status: "Vorbereitung",
+      badgeVariant: "success" as const,
+    },
+  ],
+  Produktion: [
+    {
+      number: "AU-2026-002",
+      customer: "Musterkunde GmbH",
+      product: "Flyer A5",
+      status: "Produktion",
+      badgeVariant: undefined,
+    },
+  ],
+  Abgeschlossen: [
+    {
+      number: "AU-2026-008",
+      customer: "Druckpartner Süd",
+      product: "Plakat A2",
+      status: "Abgeschlossen",
+      badgeVariant: "success" as const,
+    },
+  ],
+};
+
+function getOrderTitle(tab: OrderTab) {
+  switch (tab) {
+    case "Liste":
+      return "Auftrag vorbereiten";
+    case "Vorbereitung":
+      return "Auftrag in Vorbereitung";
+    case "Produktion":
+      return "Auftrag in Produktion";
+    case "Abgeschlossen":
+      return "Abgeschlossener Auftrag";
+  }
+}
+
+function getOrderStatus(tab: OrderTab) {
+  if (tab === "Liste") {
+    return "In Vorbereitung";
+  }
+
+  return tab;
+}
+
+function isOrderTab(tab: string): tab is OrderTab {
+  return orderTabs.includes(tab as OrderTab);
+}
+
 export function OrdersPage() {
   const module = getModuleConfig("orders");
+  const [activeTab, setActiveTab] = useState<OrderTab>("Liste");
+  const orderRows = orderRowsByTab[activeTab];
+
+  function handleTabChange(tab: string) {
+    if (isOrderTab(tab)) {
+      setActiveTab(tab);
+    }
+  }
 
   return (
     <div className="page">
@@ -22,13 +113,17 @@ export function OrdersPage() {
         actionLabel={module.actionLabel}
       />
 
-      <PageTabs tabs={module.tabs ?? []} activeTab="Liste" />
+      <PageTabs
+        tabs={[...orderTabs]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <section className="calculation-sheet">
         <WorkspaceHeader
           kicker="Auftragsmaske"
-          title="Auftrag vorbereiten"
-          statusValue="In Vorbereitung"
+          title={getOrderTitle(activeTab)}
+          statusValue={getOrderStatus(activeTab)}
         />
 
         <div className="master-detail-layout">
@@ -49,32 +144,16 @@ export function OrdersPage() {
               </thead>
 
               <tbody>
-                <tr>
-                  <td>AU-2026-001</td>
-                  <td>Sonnendruck GmbH</td>
-                  <td>Broschüre A4</td>
-                  <td>
-                    <Badge variant="success">Vorbereitung</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>AU-2026-002</td>
-                  <td>Musterkunde GmbH</td>
-                  <td>Flyer A5</td>
-                  <td>
-                    <Badge>Produktion</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>AU-2026-003</td>
-                  <td>Beispiel AG</td>
-                  <td>Folder DIN lang</td>
-                  <td>
-                    <Badge>Offen</Badge>
-                  </td>
-                </tr>
+                {orderRows.map((order) => (
+                  <tr key={order.number}>
+                    <td>{order.number}</td>
+                    <td>{order.customer}</td>
+                    <td>{order.product}</td>
+                    <td>
+                      <Badge variant={order.badgeVariant}>{order.status}</Badge>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </DataTable>
           </section>
@@ -112,11 +191,9 @@ export function OrdersPage() {
 
             <FieldGrid>
               <Field label="Produktionsstatus">
-                <Select defaultValue="Vorbereitung">
+                <Select value={getOrderStatus(activeTab)} onChange={(event) => handleTabChange(event.target.value)}>
                   <option>Vorbereitung</option>
-                  <option>In Produktion</option>
-                  <option>Weiterverarbeitung</option>
-                  <option>Versandbereit</option>
+                  <option>Produktion</option>
                   <option>Abgeschlossen</option>
                 </Select>
               </Field>

@@ -463,6 +463,28 @@ button {
   background: var(--color-surface-muted);
 }
 
+.quotes-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 0.92fr) minmax(440px, 1.08fr);
+  gap: 14px;
+  align-items: start;
+  padding: 18px;
+}
+
+.quotes-list-panel,
+.quotes-editor-panel {
+  box-shadow: none;
+}
+
+.quotes-editor-panel {
+  overflow: hidden;
+  padding: 0;
+}
+
+.quotes-position-table {
+  padding: 0 18px;
+}
+
 .table-toolbar {
   display: flex;
   gap: 10px;
@@ -541,6 +563,12 @@ button {
   line-height: 1.5;
 }
 
+@media (max-width: 1180px) {
+  .quotes-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
 @media (max-width: 1050px) {
   .field-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -584,5 +612,9 @@ button {
 
   .calculation-footer {
     display: grid;
+  }
+
+  .quotes-layout {
+    padding: 14px;
   }
 }

@@ -22,7 +22,7 @@ export function QuotesPage() {
         actionLabel={module.actionLabel}
       />
 
-      <PageTabs tabs={module.tabs ?? []} activeTab="Liste" />
+      <PageTabs tabs={module.tabs ?? []} activeTab="Entwurf" />
 
       <section className="calculation-sheet">
         <WorkspaceHeader
@@ -31,21 +31,8 @@ export function QuotesPage() {
           statusValue="Entwurf"
         />
 
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: "minmax(0, 0.95fr) minmax(420px, 1.05fr)",
-            gap: "14px",
-            padding: "18px",
-            alignItems: "start",
-          }}
-        >
-          <section
-            className="workspace-panel"
-            style={{
-              boxShadow: "none",
-            }}
-          >
+        <div className="quotes-layout">
+          <section className="workspace-panel quotes-list-panel">
             <TableToolbar>
               <Input className="search-input" placeholder="Angebote suchen..." />
               <Button>Filter</Button>
@@ -92,14 +79,7 @@ export function QuotesPage() {
             </DataTable>
           </section>
 
-          <section
-            className="workspace-panel"
-            style={{
-              boxShadow: "none",
-              padding: 0,
-              overflow: "hidden",
-            }}
-          >
+          <section className="workspace-panel quotes-editor-panel">
             <SectionHeader>Angebotskopf</SectionHeader>
 
             <FieldGrid>
@@ -133,7 +113,38 @@ export function QuotesPage() {
               </Field>
             </FieldGrid>
 
-            <SectionHeader>Konditionen</SectionHeader>
+            <SectionHeader>Positionen</SectionHeader>
+
+            <div className="quotes-position-table">
+              <DataTable>
+                <thead>
+                  <tr>
+                    <th>Pos.</th>
+                    <th>Bezeichnung</th>
+                    <th>Menge</th>
+                    <th>Gesamt</th>
+                  </tr>
+                </thead>
+
+                <tbody>
+                  <tr>
+                    <td>1</td>
+                    <td>Druckprodukt aus Kalkulation übernehmen</td>
+                    <td>—</td>
+                    <td>—</td>
+                  </tr>
+
+                  <tr>
+                    <td>2</td>
+                    <td>Optionale Zusatzleistung</td>
+                    <td>—</td>
+                    <td>—</td>
+                  </tr>
+                </tbody>
+              </DataTable>
+            </div>
+
+            <SectionHeader>Konditionen & Ausgabe</SectionHeader>
 
             <FieldGrid>
               <Field label="Zahlungsbedingungen">
@@ -169,37 +180,6 @@ export function QuotesPage() {
                 </Select>
               </Field>
             </FieldGrid>
-
-            <SectionHeader>Positionen</SectionHeader>
-
-            <div style={{ padding: "0 18px" }}>
-              <DataTable>
-                <thead>
-                  <tr>
-                    <th>Pos.</th>
-                    <th>Bezeichnung</th>
-                    <th>Menge</th>
-                    <th>Gesamt</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Druckprodukt aus Kalkulation übernehmen</td>
-                    <td>—</td>
-                    <td>—</td>
-                  </tr>
-
-                  <tr>
-                    <td>2</td>
-                    <td>Optionale Zusatzleistung</td>
-                    <td>—</td>
-                    <td>—</td>
-                  </tr>
-                </tbody>
-              </DataTable>
-            </div>
 
             <div className="calculation-footer">
               <Button>Entwurf speichern</Button>

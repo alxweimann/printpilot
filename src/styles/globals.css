@@ -463,6 +463,7 @@ button {
   background: var(--color-surface-muted);
 }
 
+.master-detail-layout,
 .quotes-layout {
   display: grid;
   grid-template-columns: minmax(0, 0.92fr) minmax(440px, 1.08fr);
@@ -471,16 +472,20 @@ button {
   padding: 18px;
 }
 
+.master-list-panel,
+.master-editor-panel,
 .quotes-list-panel,
 .quotes-editor-panel {
   box-shadow: none;
 }
 
+.master-editor-panel,
 .quotes-editor-panel {
   overflow: hidden;
   padding: 0;
 }
 
+.master-position-table,
 .quotes-position-table {
   padding: 0 18px;
 }
@@ -555,6 +560,35 @@ button {
   color: #64748b;
 }
 
+.settings-nav-list {
+  display: grid;
+  gap: 6px;
+  padding: 0 2px;
+}
+
+.settings-nav-item {
+  height: 34px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--color-text-muted);
+  padding: 0 10px;
+  font-size: 13px;
+  font-weight: 600;
+  text-align: left;
+}
+
+.settings-nav-item:hover {
+  background: var(--color-surface-muted);
+  color: var(--color-text);
+}
+
+.settings-nav-item.active {
+  border-color: color-mix(in srgb, var(--module-accent) 28%, var(--color-border));
+  background: color-mix(in srgb, var(--module-accent) 9%, white);
+  color: var(--color-text);
+}
+
 .empty-state {
   display: grid;
   min-height: 240px;
@@ -577,6 +611,7 @@ button {
 }
 
 @media (max-width: 1180px) {
+  .master-detail-layout,
   .quotes-layout {
     grid-template-columns: 1fr;
   }
@@ -627,6 +662,7 @@ button {
     display: grid;
   }
 
+  .master-detail-layout,
   .quotes-layout {
     padding: 14px;
   }

@@ -12,7 +12,7 @@ export function WorkspaceHeader({
   statusValue,
 }: WorkspaceHeaderProps) {
   return (
-    <div className="workspace-header">
+    <div className="calculation-sheet-header">
       <div>
         <div className="sheet-kicker">{kicker}</div>
         <h2>{title}</h2>

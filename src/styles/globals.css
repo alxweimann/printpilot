@@ -485,6 +485,101 @@ button {
   padding: 0 18px;
 }
 
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+}
+
+.dashboard-metric-card {
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  background:
+    linear-gradient(135deg, color-mix(in srgb, var(--module-accent) 8%, white), white 70%),
+    var(--color-surface);
+  box-shadow: var(--shadow-soft);
+  padding: 16px;
+}
+
+.dashboard-metric-label {
+  color: var(--color-text-muted);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.dashboard-metric-value {
+  margin-top: 8px;
+  color: var(--color-text);
+  font-size: 30px;
+  font-weight: 800;
+  letter-spacing: -0.04em;
+}
+
+.dashboard-metric-hint {
+  margin-top: 4px;
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
+.dashboard-layout {
+  padding: 0;
+}
+
+.dashboard-panel-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.dashboard-panel-header h2 {
+  margin: 2px 0 0;
+  color: var(--color-text);
+  font-size: 17px;
+  font-weight: 750;
+  letter-spacing: -0.01em;
+}
+
+.master-editor-panel > .dashboard-panel-header {
+  padding: 16px 16px 0;
+}
+
+.dashboard-action-list {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+}
+
+.dashboard-action-item {
+  display: grid;
+  gap: 3px;
+  width: 100%;
+  min-height: 58px;
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-md);
+  background: white;
+  padding: 10px 12px;
+  color: var(--color-text);
+  text-align: left;
+}
+
+.dashboard-action-item:hover {
+  border-color: color-mix(in srgb, var(--module-accent) 34%, var(--color-border));
+  background: color-mix(in srgb, var(--module-accent) 6%, white);
+}
+
+.dashboard-action-item span {
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.dashboard-action-item small {
+  color: var(--color-text-muted);
+  font-size: 12px;
+}
+
 .table-toolbar {
   display: flex;
   gap: 10px;
@@ -609,6 +704,10 @@ button {
   .master-detail-layout {
     grid-template-columns: 1fr;
   }
+
+  .dashboard-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
 }
 
 @media (max-width: 1050px) {
@@ -639,7 +738,8 @@ button {
     display: none;
   }
 
-  .field-grid {
+  .field-grid,
+  .dashboard-grid {
     grid-template-columns: 1fr;
   }
 

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -11,8 +12,124 @@ import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
+const machineTabs = ["Liste", "Digitaldruck Farbe", "Digitaldruck Schwarz", "Großformat", "Wartung"] as const;
+
+type MachineTab = (typeof machineTabs)[number];
+
+const machineRowsByTab = {
+  Liste: [
+    {
+      name: "Xerox Iridesse",
+      type: "Digitaldruck Farbe",
+      colorMode: "4/4 + Sonderfarben",
+      status: "Aktiv",
+      badgeVariant: "success" as const,
+    },
+    {
+      name: "Xerox Nuvera",
+      type: "Digitaldruck Schwarz",
+      colorMode: "1/1 schwarz",
+      status: "Aktiv",
+      badgeVariant: undefined,
+    },
+    {
+      name: "Roland TrueVis VG3 540",
+      type: "Großformat",
+      colorMode: "CMYK",
+      status: "Aktiv",
+      badgeVariant: undefined,
+    },
+  ],
+  "Digitaldruck Farbe": [
+    {
+      name: "Xerox Iridesse",
+      type: "Digitaldruck Farbe",
+      colorMode: "4/4 + Sonderfarben",
+      status: "Aktiv",
+      badgeVariant: "success" as const,
+    },
+  ],
+  "Digitaldruck Schwarz": [
+    {
+      name: "Xerox Nuvera",
+      type: "Digitaldruck Schwarz",
+      colorMode: "1/1 schwarz",
+      status: "Aktiv",
+      badgeVariant: undefined,
+    },
+    {
+      name: "Canon VP140",
+      type: "Digitaldruck Schwarz",
+      colorMode: "1/1 schwarz",
+      status: "Aktiv",
+      badgeVariant: undefined,
+    },
+  ],
+  Großformat: [
+    {
+      name: "Roland TrueVis VG3 540",
+      type: "Großformat",
+      colorMode: "CMYK",
+      status: "Aktiv",
+      badgeVariant: undefined,
+    },
+  ],
+  Wartung: [
+    {
+      name: "Xerox Iridesse Sonderfarben",
+      type: "Digitaldruck Farbe",
+      colorMode: "4/4 + Sonderfarben",
+      status: "Wartung",
+      badgeVariant: undefined,
+    },
+  ],
+};
+
+function getMachineTitle(tab: MachineTab) {
+  switch (tab) {
+    case "Liste":
+      return "Maschine verwalten";
+    case "Digitaldruck Farbe":
+      return "Farbdruckmaschine verwalten";
+    case "Digitaldruck Schwarz":
+      return "Schwarzweißmaschine verwalten";
+    case "Großformat":
+      return "Großformatmaschine verwalten";
+    case "Wartung":
+      return "Maschine in Wartung prüfen";
+  }
+}
+
+function getMachineStatus(tab: MachineTab) {
+  if (tab === "Wartung") {
+    return "Wartung";
+  }
+
+  return "Aktiv";
+}
+
+function getMachineType(tab: MachineTab) {
+  if (tab === "Liste" || tab === "Wartung") {
+    return "";
+  }
+
+  return tab;
+}
+
+function isMachineTab(tab: string): tab is MachineTab {
+  return machineTabs.includes(tab as MachineTab);
+}
+
 export function MachinesPage() {
   const module = getModuleConfig("machines");
+  const [activeTab, setActiveTab] = useState<MachineTab>("Liste");
+  const machineRows = machineRowsByTab[activeTab];
+
+  function handleTabChange(tab: string) {
+    if (isMachineTab(tab)) {
+      setActiveTab(tab);
+    }
+  }
 
   return (
     <div className="page">
@@ -22,13 +139,17 @@ export function MachinesPage() {
         actionLabel={module.actionLabel}
       />
 
-      <PageTabs tabs={module.tabs ?? []} activeTab="Liste" />
+      <PageTabs
+        tabs={[...machineTabs]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <section className="calculation-sheet">
         <WorkspaceHeader
           kicker="Maschinenmaske"
-          title="Maschine verwalten"
-          statusValue="Aktiv"
+          title={getMachineTitle(activeTab)}
+          statusValue={getMachineStatus(activeTab)}
         />
 
         <div className="master-detail-layout">
@@ -49,32 +170,16 @@ export function MachinesPage() {
               </thead>
 
               <tbody>
-                <tr>
-                  <td>Xerox Iridesse</td>
-                  <td>Digitaldruck</td>
-                  <td>4/4 + Sonderfarben</td>
-                  <td>
-                    <Badge variant="success">Aktiv</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Xerox Nuvera</td>
-                  <td>Digitaldruck S/W</td>
-                  <td>1/1 schwarz</td>
-                  <td>
-                    <Badge>Aktiv</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Roland TrueVis VG3 540</td>
-                  <td>Großformat</td>
-                  <td>CMYK</td>
-                  <td>
-                    <Badge>Aktiv</Badge>
-                  </td>
-                </tr>
+                {machineRows.map((machine) => (
+                  <tr key={machine.name}>
+                    <td>{machine.name}</td>
+                    <td>{machine.type}</td>
+                    <td>{machine.colorMode}</td>
+                    <td>
+                      <Badge variant={machine.badgeVariant}>{machine.status}</Badge>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </DataTable>
           </section>
@@ -92,14 +197,16 @@ export function MachinesPage() {
               </Field>
 
               <Field label="Maschinentyp">
-                <Select defaultValue="">
+                <Select
+                  value={getMachineType(activeTab)}
+                  onChange={(event) => handleTabChange(event.target.value)}
+                >
                   <option value="" disabled>
                     Typ wählen
                   </option>
                   <option>Digitaldruck Farbe</option>
                   <option>Digitaldruck Schwarz</option>
                   <option>Großformat</option>
-                  <option>Inkjet Produktion</option>
                 </Select>
               </Field>
 
@@ -121,10 +228,16 @@ export function MachinesPage() {
               </Field>
 
               <Field label="Status">
-                <Select defaultValue="Aktiv">
+                <Select
+                  value={getMachineStatus(activeTab)}
+                  onChange={(event) => {
+                    if (event.target.value === "Wartung") {
+                      handleTabChange("Wartung");
+                    }
+                  }}
+                >
                   <option>Aktiv</option>
                   <option>Wartung</option>
-                  <option>Gesperrt</option>
                 </Select>
               </Field>
             </FieldGrid>

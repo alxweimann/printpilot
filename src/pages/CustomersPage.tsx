@@ -31,8 +31,8 @@ export function CustomersPage() {
           statusValue="Aktiv"
         />
 
-        <div className="quotes-layout">
-          <section className="workspace-panel quotes-list-panel">
+        <div className="master-detail-layout">
+          <section className="workspace-panel master-list-panel">
             <TableToolbar>
               <Input className="search-input" placeholder="Kunden suchen..." />
               <Button>Filter</Button>
@@ -79,7 +79,7 @@ export function CustomersPage() {
             </DataTable>
           </section>
 
-          <section className="workspace-panel quotes-editor-panel">
+          <section className="workspace-panel master-editor-panel">
             <SectionHeader>Kundendaten</SectionHeader>
 
             <FieldGrid>

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -11,8 +12,109 @@ import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
+const deliveryTabs = ["Liste", "Entwurf", "Versandbereit", "Geliefert", "Abgeschlossen"] as const;
+
+type DeliveryTab = (typeof deliveryTabs)[number];
+
+const deliveryRowsByTab = {
+  Liste: [
+    {
+      number: "LS-2026-001",
+      customer: "Sonnendruck GmbH",
+      order: "AU-2026-001",
+      status: "Entwurf",
+      badgeVariant: "success" as const,
+    },
+    {
+      number: "LS-2026-002",
+      customer: "Musterkunde GmbH",
+      order: "AU-2026-002",
+      status: "Versandbereit",
+      badgeVariant: undefined,
+    },
+    {
+      number: "LS-2026-003",
+      customer: "Beispiel AG",
+      order: "AU-2026-003",
+      status: "Geliefert",
+      badgeVariant: "success" as const,
+    },
+  ],
+  Entwurf: [
+    {
+      number: "LS-2026-001",
+      customer: "Sonnendruck GmbH",
+      order: "AU-2026-001",
+      status: "Entwurf",
+      badgeVariant: "success" as const,
+    },
+  ],
+  Versandbereit: [
+    {
+      number: "LS-2026-002",
+      customer: "Musterkunde GmbH",
+      order: "AU-2026-002",
+      status: "Versandbereit",
+      badgeVariant: undefined,
+    },
+  ],
+  Geliefert: [
+    {
+      number: "LS-2026-003",
+      customer: "Beispiel AG",
+      order: "AU-2026-003",
+      status: "Geliefert",
+      badgeVariant: "success" as const,
+    },
+  ],
+  Abgeschlossen: [
+    {
+      number: "LS-2026-008",
+      customer: "Druckpartner Süd",
+      order: "AU-2026-008",
+      status: "Abgeschlossen",
+      badgeVariant: "success" as const,
+    },
+  ],
+};
+
+function getDeliveryTitle(tab: DeliveryTab) {
+  switch (tab) {
+    case "Liste":
+      return "Lieferschein vorbereiten";
+    case "Entwurf":
+      return "Lieferscheinentwurf bearbeiten";
+    case "Versandbereit":
+      return "Versandbereiten Lieferschein prüfen";
+    case "Geliefert":
+      return "Gelieferten Lieferschein prüfen";
+    case "Abgeschlossen":
+      return "Abgeschlossenen Lieferschein";
+  }
+}
+
+function getDeliveryStatus(tab: DeliveryTab) {
+  if (tab === "Liste") {
+    return "Entwurf";
+  }
+
+  return tab;
+}
+
+function isDeliveryTab(tab: string): tab is DeliveryTab {
+  return deliveryTabs.includes(tab as DeliveryTab);
+}
+
 export function DeliveryNotesPage() {
   const module = getModuleConfig("delivery-notes");
+  const [activeTab, setActiveTab] = useState<DeliveryTab>("Liste");
+  const deliveryRows = deliveryRowsByTab[activeTab];
+
+  function handleTabChange(tab: string) {
+    if (isDeliveryTab(tab)) {
+      setActiveTab(tab);
+    }
+  }
 
   return (
     <div className="page">
@@ -22,13 +124,17 @@ export function DeliveryNotesPage() {
         actionLabel={module.actionLabel}
       />
 
-      <PageTabs tabs={module.tabs ?? []} activeTab="Liste" />
+      <PageTabs
+        tabs={[...deliveryTabs]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <section className="calculation-sheet">
         <WorkspaceHeader
           kicker="Lieferscheinmaske"
-          title="Lieferschein vorbereiten"
-          statusValue="Entwurf"
+          title={getDeliveryTitle(activeTab)}
+          statusValue={getDeliveryStatus(activeTab)}
         />
 
         <div className="master-detail-layout">
@@ -49,32 +155,16 @@ export function DeliveryNotesPage() {
               </thead>
 
               <tbody>
-                <tr>
-                  <td>LS-2026-001</td>
-                  <td>Sonnendruck GmbH</td>
-                  <td>AU-2026-001</td>
-                  <td>
-                    <Badge variant="success">Entwurf</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>LS-2026-002</td>
-                  <td>Musterkunde GmbH</td>
-                  <td>AU-2026-002</td>
-                  <td>
-                    <Badge>Versandbereit</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>LS-2026-003</td>
-                  <td>Beispiel AG</td>
-                  <td>AU-2026-003</td>
-                  <td>
-                    <Badge>Geliefert</Badge>
-                  </td>
-                </tr>
+                {deliveryRows.map((deliveryNote) => (
+                  <tr key={deliveryNote.number}>
+                    <td>{deliveryNote.number}</td>
+                    <td>{deliveryNote.customer}</td>
+                    <td>{deliveryNote.order}</td>
+                    <td>
+                      <Badge variant={deliveryNote.badgeVariant}>{deliveryNote.status}</Badge>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </DataTable>
           </section>
@@ -112,7 +202,10 @@ export function DeliveryNotesPage() {
               </Field>
 
               <Field label="Status">
-                <Select defaultValue="Entwurf">
+                <Select
+                  value={getDeliveryStatus(activeTab)}
+                  onChange={(event) => handleTabChange(event.target.value)}
+                >
                   <option>Entwurf</option>
                   <option>Versandbereit</option>
                   <option>Geliefert</option>

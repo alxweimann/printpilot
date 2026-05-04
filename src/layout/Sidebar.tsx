@@ -1,3 +1,4 @@
+import type { CSSProperties } from "react";
 import { navigationGroups, navigationItems } from "../app/navigation";
 
 type SidebarProps = {
@@ -34,6 +35,7 @@ export function Sidebar({ activePage, onNavigate }: SidebarProps) {
                       type="button"
                       key={item.id}
                       className={isActive ? "sidebar-item active" : "sidebar-item"}
+                      style={{ "--item-accent": item.accentColor } as CSSProperties}
                       onClick={() => onNavigate(item.id)}
                     >
                       <span className="sidebar-item-mark" />

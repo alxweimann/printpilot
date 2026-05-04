@@ -34,6 +34,7 @@
   --color-info: #0284c7;
 
   --module-accent: #00aeef;
+  --item-accent: #00aeef;
 
   --radius-sm: 6px;
   --radius-md: 8px;
@@ -160,8 +161,12 @@ button {
 }
 
 .sidebar-item:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: color-mix(in srgb, var(--item-accent) 18%, transparent);
   color: white;
+}
+
+.sidebar-item:hover .sidebar-item-mark {
+  background: var(--item-accent);
 }
 
 .sidebar-item.active {
@@ -177,7 +182,7 @@ button {
 }
 
 .sidebar-item.active .sidebar-item-mark {
-  background: var(--module-accent);
+  background: var(--item-accent);
 }
 
 .app-main {

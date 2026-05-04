@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -11,8 +12,105 @@ import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
+const customerTabs = ["Liste", "Aktiv", "Entwurf", "Gesperrt"] as const;
+
+type CustomerTab = (typeof customerTabs)[number];
+
+const customerRowsByTab = {
+  Liste: [
+    {
+      name: "Sonnendruck GmbH",
+      city: "Wiesloch",
+      phone: "—",
+      status: "Aktiv",
+      badgeVariant: "success" as const,
+    },
+    {
+      name: "Musterkunde GmbH",
+      city: "Heidelberg",
+      phone: "—",
+      status: "Entwurf",
+      badgeVariant: undefined,
+    },
+    {
+      name: "Beispiel AG",
+      city: "Mannheim",
+      phone: "—",
+      status: "Aktiv",
+      badgeVariant: undefined,
+    },
+  ],
+  Aktiv: [
+    {
+      name: "Sonnendruck GmbH",
+      city: "Wiesloch",
+      phone: "—",
+      status: "Aktiv",
+      badgeVariant: "success" as const,
+    },
+    {
+      name: "Beispiel AG",
+      city: "Mannheim",
+      phone: "—",
+      status: "Aktiv",
+      badgeVariant: undefined,
+    },
+  ],
+  Entwurf: [
+    {
+      name: "Musterkunde GmbH",
+      city: "Heidelberg",
+      phone: "—",
+      status: "Entwurf",
+      badgeVariant: undefined,
+    },
+  ],
+  Gesperrt: [
+    {
+      name: "Testkunde KG",
+      city: "Karlsruhe",
+      phone: "—",
+      status: "Gesperrt",
+      badgeVariant: undefined,
+    },
+  ],
+};
+
+function getCustomerTitle(tab: CustomerTab) {
+  switch (tab) {
+    case "Liste":
+      return "Kundendaten bearbeiten";
+    case "Aktiv":
+      return "Aktiven Kunden bearbeiten";
+    case "Entwurf":
+      return "Kundenentwurf bearbeiten";
+    case "Gesperrt":
+      return "Gesperrten Kunden prüfen";
+  }
+}
+
+function getCustomerStatus(tab: CustomerTab) {
+  if (tab === "Liste") {
+    return "Aktiv";
+  }
+
+  return tab;
+}
+
+function isCustomerTab(tab: string): tab is CustomerTab {
+  return customerTabs.includes(tab as CustomerTab);
+}
+
 export function CustomersPage() {
   const module = getModuleConfig("customers");
+  const [activeTab, setActiveTab] = useState<CustomerTab>("Liste");
+  const customerRows = customerRowsByTab[activeTab];
+
+  function handleTabChange(tab: string) {
+    if (isCustomerTab(tab)) {
+      setActiveTab(tab);
+    }
+  }
 
   return (
     <div className="page">
@@ -22,13 +120,17 @@ export function CustomersPage() {
         actionLabel={module.actionLabel}
       />
 
-      <PageTabs tabs={module.tabs ?? []} activeTab="Liste" />
+      <PageTabs
+        tabs={[...customerTabs]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <section className="calculation-sheet">
         <WorkspaceHeader
           kicker="Kundenmaske"
-          title="Kundendaten bearbeiten"
-          statusValue="Aktiv"
+          title={getCustomerTitle(activeTab)}
+          statusValue={getCustomerStatus(activeTab)}
         />
 
         <div className="master-detail-layout">
@@ -49,32 +151,16 @@ export function CustomersPage() {
               </thead>
 
               <tbody>
-                <tr>
-                  <td>Sonnendruck GmbH</td>
-                  <td>Wiesloch</td>
-                  <td>—</td>
-                  <td>
-                    <Badge variant="success">Aktiv</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Musterkunde GmbH</td>
-                  <td>Heidelberg</td>
-                  <td>—</td>
-                  <td>
-                    <Badge>Entwurf</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Beispiel AG</td>
-                  <td>Mannheim</td>
-                  <td>—</td>
-                  <td>
-                    <Badge>Aktiv</Badge>
-                  </td>
-                </tr>
+                {customerRows.map((customer) => (
+                  <tr key={customer.name}>
+                    <td>{customer.name}</td>
+                    <td>{customer.city}</td>
+                    <td>{customer.phone}</td>
+                    <td>
+                      <Badge variant={customer.badgeVariant}>{customer.status}</Badge>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </DataTable>
           </section>
@@ -158,7 +244,10 @@ export function CustomersPage() {
               </Field>
 
               <Field label="Status">
-                <Select defaultValue="Aktiv">
+                <Select
+                  value={getCustomerStatus(activeTab)}
+                  onChange={(event) => handleTabChange(event.target.value)}
+                >
                   <option>Aktiv</option>
                   <option>Entwurf</option>
                   <option>Gesperrt</option>

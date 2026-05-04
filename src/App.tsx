@@ -16,7 +16,7 @@ import {
   getPricingModeLabel,
 } from "./lib/calculation";
 
-const APP_VERSION = "V183";
+const APP_VERSION = "V199";
 
 type PageKey =
   | "dashboard"
@@ -544,6 +544,7 @@ const PRINT_PART_COLOR_MODE_OPTIONS = [
 const DEFAULT_PRODUCT_TYPES: ProductType[] = [
   "Einzelblatt",
   "Flyer",
+  "Folder",
   "Visitenkarten",
   "Karte",
   "Poster",
@@ -1036,7 +1037,9 @@ function App() {
       const parsedProductTypes = JSON.parse(savedProductTypes);
 
       return Array.isArray(parsedProductTypes) && parsedProductTypes.length > 0
-        ? parsedProductTypes.map((type) => String(type).trim()).filter(Boolean)
+        ? mergeProductTypesWithDefaults(
+            parsedProductTypes.map((type) => String(type).trim()).filter(Boolean),
+          )
         : [...DEFAULT_PRODUCT_TYPES];
     } catch {
       return [...DEFAULT_PRODUCT_TYPES];
@@ -1063,14 +1066,20 @@ function App() {
       const parsedTemplates = JSON.parse(savedTemplates);
 
       return Array.isArray(parsedTemplates) && parsedTemplates.length > 0
-        ? parsedTemplates.map((template) =>
-            normalizeCalculationTemplate(
-              template,
-              editableMaterials,
-              editableMachines,
-              editableFinishingOperations,
-              productTypes,
+        ? mergeCalculationTemplatesWithDefaults(
+            parsedTemplates.map((template) =>
+              normalizeCalculationTemplate(
+                template,
+                editableMaterials,
+                editableMachines,
+                editableFinishingOperations,
+                productTypes,
+              ),
             ),
+            editableMaterials,
+            editableMachines,
+            editableFinishingOperations,
+            productTypes,
           )
         : createDefaultCalculationTemplates(
             editableMaterials,
@@ -1224,6 +1233,22 @@ function App() {
 
   const activeItem =
     navItems.find((item) => item.key === activePage) ?? navItems[0];
+  const isDocumentModulePage = ["quotes", "orders", "invoices", "deliveryNotes", "reminders"].includes(activePage);
+
+  const navSections = [
+    {
+      title: "Workflow",
+      keys: ["dashboard", "calculator", "quotes", "orders", "invoices", "deliveryNotes", "reminders"],
+    },
+    {
+      title: "Stammdaten",
+      keys: ["customers", "materials", "machines", "finishing", "imposition", "services", "calcTemplates"],
+    },
+    {
+      title: "System",
+      keys: ["settings"],
+    },
+  ] as const;
 
   function addQuotePositionFromCalculation(
     position: Omit<QuotePosition, "id">,
@@ -1269,73 +1294,559 @@ function App() {
         .font-bold {
           font-weight: 500 !important;
         }
+
+        input:not([type="checkbox"]):not([type="radio"]),
+        select,
+        textarea {
+          border-radius: 0.875rem;
+          border-color: #dbe4ef;
+          background-color: #f8fafc;
+          color: #0f172a;
+          transition: border-color 160ms ease, box-shadow 160ms ease, background-color 160ms ease;
+        }
+
+        input:not([type="checkbox"]):not([type="radio"]):focus,
+        select:focus,
+        textarea:focus {
+          border-color: #12b8d4 !important;
+          background-color: #ffffff;
+          box-shadow: 0 0 0 3px rgba(18, 184, 212, 0.16);
+          outline: none;
+        }
+
+        input[type="number"],
+        input[inputmode="decimal"],
+        input[inputmode="numeric"] {
+          text-align: right;
+          font-variant-numeric: tabular-nums;
+        }
+
+        select {
+          min-height: 2.45rem;
+        }
+
+        textarea {
+          min-height: 6rem;
+          line-height: 1.55;
+        }
+
+        label {
+          color: #334155;
+        }
+
+        .form-panel {
+          border: 1px solid #dbe4ef;
+          background: #ffffff;
+          border-radius: 1.25rem;
+        }
+
+        .form-section-title {
+          color: #071225;
+          font-size: 0.95rem;
+          font-weight: 600;
+          letter-spacing: -0.01em;
+        }
+
+        .form-help {
+          color: #64748b;
+          font-size: 0.78rem;
+          line-height: 1.35;
+        }
+
+        /* V195: Einheitliche Eingabemasken */
+        .work-surface {
+          border: 1px solid #dbe4ef;
+          background: #ffffff;
+          border-radius: 1.25rem;
+          box-shadow: 0 10px 24px rgba(15, 23, 42, 0.045);
+        }
+
+        .input-mask,
+        .form-grid {
+          display: grid;
+          grid-template-columns: repeat(12, minmax(0, 1fr));
+          gap: 1rem;
+          align-items: start;
+        }
+
+        .input-mask > *,
+        .form-grid > * {
+          min-width: 0;
+        }
+
+        .field,
+        .form-field {
+          display: flex;
+          min-width: 0;
+          flex-direction: column;
+          gap: 0.45rem;
+        }
+
+        .field label,
+        .form-field label,
+        label.form-label {
+          min-height: 1rem;
+          font-size: 0.72rem;
+          font-weight: 700;
+          letter-spacing: 0.11em;
+          line-height: 1;
+          text-transform: uppercase;
+          color: #64748b;
+        }
+
+        .field input:not([type="checkbox"]):not([type="radio"]),
+        .field select,
+        .field textarea,
+        .form-field input:not([type="checkbox"]):not([type="radio"]),
+        .form-field select,
+        .form-field textarea {
+          width: 100%;
+          min-height: 2.45rem;
+          border-radius: 0.9rem;
+          border: 1px solid #dbe4ef;
+          background-color: #f8fafc;
+          padding: 0.65rem 0.85rem;
+          font-size: 0.92rem;
+          font-weight: 500;
+          color: #0f172a;
+        }
+
+        .input-row,
+        .form-row {
+          display: grid;
+          grid-template-columns: repeat(12, minmax(0, 1fr));
+          gap: 1rem;
+          align-items: end;
+        }
+
+        .span-2 { grid-column: span 2 / span 2; }
+        .span-3 { grid-column: span 3 / span 3; }
+        .span-4 { grid-column: span 4 / span 4; }
+        .span-5 { grid-column: span 5 / span 5; }
+        .span-6 { grid-column: span 6 / span 6; }
+        .span-7 { grid-column: span 7 / span 7; }
+        .span-8 { grid-column: span 8 / span 8; }
+        .span-9 { grid-column: span 9 / span 9; }
+        .span-10 { grid-column: span 10 / span 10; }
+        .span-12 { grid-column: span 12 / span 12; }
+
+        .section-line {
+          display: flex;
+          align-items: center;
+          gap: 0.75rem;
+          padding-bottom: 0.7rem;
+          border-bottom: 1px solid #e2e8f0;
+        }
+
+        .section-line::after {
+          content: "";
+          height: 1px;
+          flex: 1;
+          background: #e2e8f0;
+        }
+
+        .mask-section {
+          border: 1px solid #e2e8f0;
+          border-radius: 1.25rem;
+          background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+          padding: 1rem;
+        }
+
+        @media (max-width: 1024px) {
+          .input-mask,
+          .form-grid,
+          .input-row,
+          .form-row {
+            grid-template-columns: repeat(6, minmax(0, 1fr));
+          }
+          .span-7,
+          .span-8,
+          .span-9,
+          .span-10,
+          .span-12 {
+            grid-column: span 6 / span 6;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .input-mask,
+          .form-grid,
+          .input-row,
+          .form-row {
+            grid-template-columns: 1fr;
+          }
+          .span-2,
+          .span-3,
+          .span-4,
+          .span-5,
+          .span-6,
+          .span-7,
+          .span-8,
+          .span-9,
+          .span-10,
+          .span-12 {
+            grid-column: span 1 / span 1;
+          }
+        }
+
+        /* V196: Produktionsmasken wie klassische Druckerei-Software, aber im PrintPilot-Design */
+        .production-mask {
+          display: grid;
+          grid-template-columns: minmax(0, 1.12fr) minmax(420px, 0.88fr);
+          gap: 1rem;
+          align-items: start;
+        }
+
+        .production-column {
+          display: flex;
+          flex-direction: column;
+          gap: 0.75rem;
+          min-width: 0;
+        }
+
+        .production-group {
+          border: 1px solid #dbe4ef;
+          border-radius: 1rem;
+          background: #ffffff;
+          overflow: hidden;
+        }
+
+        .production-group-header {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 0.75rem;
+          min-height: 2.2rem;
+          padding: 0.5rem 0.75rem;
+          border-bottom: 1px solid #dbe4ef;
+          background: #f1f5f9;
+          color: #071225;
+          font-size: 0.82rem;
+          font-weight: 700;
+          letter-spacing: 0.01em;
+        }
+
+        .production-group-body {
+          padding: 0.75rem;
+        }
+
+        .production-grid {
+          display: grid;
+          grid-template-columns: 150px minmax(0, 1fr) 56px minmax(0, 1fr);
+          gap: 0.45rem 0.75rem;
+          align-items: center;
+        }
+
+        .production-grid-wide {
+          display: grid;
+          grid-template-columns: 170px minmax(0, 1fr) minmax(0, 1fr) minmax(0, 1fr);
+          gap: 0.45rem 0.75rem;
+          align-items: center;
+        }
+
+        .production-label {
+          color: #334155;
+          font-size: 0.78rem;
+          font-weight: 700;
+          line-height: 1.1;
+        }
+
+        .production-unit {
+          color: #64748b;
+          font-size: 0.72rem;
+          font-weight: 700;
+          text-align: center;
+        }
+
+        .production-mask input:not([type="checkbox"]):not([type="radio"]),
+        .production-mask select,
+        .production-mask textarea {
+          min-height: 2.05rem;
+          border-radius: 0.35rem;
+          border: 1px solid #cbd5e1;
+          background: #ffffff;
+          padding: 0.3rem 0.5rem;
+          font-size: 0.82rem;
+          box-shadow: inset 0 1px 1px rgba(15, 23, 42, 0.04);
+        }
+
+        .production-mask textarea {
+          min-height: 4.25rem;
+        }
+
+        .production-mask input:not([type="checkbox"]):not([type="radio"]):focus,
+        .production-mask select:focus,
+        .production-mask textarea:focus {
+          border-color: #12b8d4 !important;
+          box-shadow: 0 0 0 2px rgba(18, 184, 212, 0.18);
+        }
+
+        .production-preview {
+          border: 1px solid #cbd5e1;
+          border-radius: 1rem;
+          background: #f8fafc;
+          min-height: 18rem;
+          padding: 0.75rem;
+        }
+
+        .production-result-table {
+          width: 100%;
+          border-collapse: collapse;
+          font-size: 0.78rem;
+        }
+
+        .production-result-table th {
+          background: #f1f5f9;
+          color: #475569;
+          font-size: 0.7rem;
+          font-weight: 800;
+          letter-spacing: 0.08em;
+          text-transform: uppercase;
+        }
+
+        .production-result-table th,
+        .production-result-table td {
+          border-bottom: 1px solid #e2e8f0;
+          padding: 0.45rem 0.5rem;
+          text-align: right;
+          font-variant-numeric: tabular-nums;
+        }
+
+        .production-result-table th:first-child,
+        .production-result-table td:first-child {
+          text-align: left;
+        }
+
+        @media (max-width: 1180px) {
+          .production-mask {
+            grid-template-columns: 1fr;
+          }
+        }
+
+        @media (max-width: 760px) {
+          .production-grid,
+          .production-grid-wide {
+            grid-template-columns: 1fr;
+          }
+          .production-unit {
+            text-align: left;
+          }
+        }
+
+        /* V197: Kalkulation wirklich als kompakte Produktionsmaske */
+        .calculator-production-shell {
+          border: 1px solid #dbe4ef;
+          border-radius: 1.25rem;
+          background: #ffffff;
+          padding: 0.85rem;
+          box-shadow: 0 10px 24px rgba(15, 23, 42, 0.045);
+        }
+
+        .calculator-production-shell .rounded-3xl,
+        .calculator-production-shell .rounded-\[1\.5rem\],
+        .calculator-production-shell .rounded-\[2rem\] {
+          border-radius: 1rem !important;
+        }
+
+        .calculator-production-shell section {
+          box-shadow: none !important;
+        }
+
+        .calculator-production-shell [class*="border-l-8"] {
+          border-left-width: 0 !important;
+        }
+
+        .calculator-production-shell .input-mask {
+          grid-template-columns: repeat(12, minmax(0, 1fr));
+          gap: 0.55rem 0.75rem;
+        }
+
+        .calculator-production-shell .input-mask > * {
+          grid-column: span 4 / span 4;
+        }
+
+        .calculator-production-shell input:not([type="checkbox"]):not([type="radio"]),
+        .calculator-production-shell select,
+        .calculator-production-shell textarea {
+          min-height: 2.15rem;
+          border-radius: 0.45rem;
+          padding: 0.35rem 0.55rem;
+          font-size: 0.82rem;
+        }
+
+        .calculator-production-shell label {
+          font-size: 0.68rem;
+          letter-spacing: 0.08em;
+        }
+
+        .calculator-result-panel {
+          position: sticky;
+          top: 1rem;
+          border: 1px solid #dbe4ef;
+          border-radius: 1.25rem;
+          background: #ffffff;
+          padding: 0.85rem;
+          box-shadow: 0 10px 24px rgba(15, 23, 42, 0.045);
+        }
+
+        .calculator-result-panel .rounded-3xl,
+        .calculator-result-panel .rounded-\[1\.5rem\] {
+          border-radius: 1rem !important;
+        }
+
+        .calculator-mask-heading {
+          display: flex;
+          align-items: center;
+          justify-content: space-between;
+          gap: 1rem;
+          border-bottom: 1px solid #e2e8f0;
+          padding-bottom: 0.65rem;
+          margin-bottom: 0.75rem;
+        }
+
+        .calculator-mask-heading-title {
+          color: #071225;
+          font-size: 0.95rem;
+          font-weight: 700;
+          letter-spacing: -0.01em;
+        }
+
+        .calculator-mask-heading-subtitle {
+          margin-top: 0.1rem;
+          color: #64748b;
+          font-size: 0.75rem;
+          font-weight: 600;
+        }
+
+        .calculator-compact-status {
+          border-left: 4px solid #12b8d4;
+          border-radius: 0.65rem;
+          background: #ecfeff;
+          padding: 0.55rem 0.75rem;
+          color: #155e75;
+          font-size: 0.78rem;
+          font-weight: 700;
+        }
+
+        @media (max-width: 1280px) {
+          .calculator-result-panel {
+            position: static;
+          }
+        }
+
+        /* V199: Vollständige Kalkulationsmaske */
+        .calculator-production-shell .production-group-header {
+          min-height: 2rem;
+          padding: 0.42rem 0.7rem;
+        }
+
+        .calculator-production-shell .production-group-body {
+          padding: 0.65rem;
+        }
+
+        .calculator-production-shell button {
+          white-space: nowrap;
+        }
+
+        @media (max-width: 900px) {
+          .calculator-production-shell .input-mask > * {
+            grid-column: span 6 / span 6;
+          }
+        }
+
+        @media (max-width: 640px) {
+          .calculator-production-shell .input-mask > * {
+            grid-column: span 12 / span 12;
+          }
+        }
       `}</style>
-      <div className="fixed right-4 top-4 z-[9999] rounded-full bg-emerald-500 px-4 py-2 text-xs font-black uppercase tracking-[0.2em] text-white shadow-2xl shadow-emerald-500/30">
+      <div className="hidden">
         {APP_VERSION} aktiv
       </div>
       <UnsavedDocumentConfirmationModal />
       <DeleteConfirmationModal />
       <AppActionDialogModal />
       <div className="flex min-h-screen">
-        <aside className="fixed inset-y-0 left-0 z-20 hidden w-80 flex-col bg-slate-950 text-white shadow-2xl shadow-slate-950/30 lg:flex">
-          <div className="border-b border-white/10 px-7 py-7">
+        <aside className="fixed inset-y-0 left-0 z-20 hidden w-64 flex-col border-r border-white/5 bg-[#071225] text-white lg:flex">
+          <div className="border-b border-white/10 px-5 py-5">
             <div className="flex items-center gap-3">
-              <div className="grid h-12 w-12 place-items-center rounded-2xl bg-white text-xl font-black text-slate-950">
+              <div className="grid h-10 w-10 place-items-center rounded-2xl bg-white text-base font-black text-[#071225] shadow-sm">
                 PP
               </div>
               <div>
-                <p className="text-xl font-black tracking-tight">PrintPilot</p>
-                <p className="text-sm text-slate-400">Druckerei Cockpit</p>
+                <p className="text-lg font-black tracking-tight">PrintPilot</p>
+                <p className="text-xs uppercase tracking-[0.22em] text-cyan-300/80">Druckerei Cockpit</p>
               </div>
             </div>
           </div>
 
-          <nav className="flex-1 space-y-2 overflow-y-auto px-4 py-6">
-            {navItems.map((item) => {
-              const isActive = item.key === activePage;
+          <nav className="flex-1 overflow-y-auto px-3 py-5">
+            <div className="space-y-6">
+              {navSections.map((section) => (
+                <div key={section.title}>
+                  <p className="px-3 pb-2 text-[11px] font-bold uppercase tracking-[0.28em] text-slate-500">
+                    {section.title}
+                  </p>
+                  <div className="space-y-1.5">
+                    {section.keys.map((key) => {
+                      const item = navItems.find((entry) => entry.key === key);
+                      if (!item) return null;
 
-              return (
-                <button
-                  key={item.key}
-                  onClick={() => setActivePage(item.key)}
-                  className={`group flex w-full items-center gap-4 rounded-2xl px-4 py-4 text-left transition ${
-                    isActive
-                      ? "bg-white text-slate-950 shadow-xl shadow-black/20"
-                      : "text-slate-300 hover:bg-white/10 hover:text-white"
-                  }`}
-                >
-                  <span className={`h-11 w-2 rounded-full ${item.accent}`} />
-                  <span>
-                    <span className="block text-sm font-black">
-                      {item.label}
-                    </span>
-                    <span
-                      className={`block text-xs ${
-                        isActive
-                          ? "text-slate-500"
-                          : "text-slate-500 group-hover:text-slate-300"
-                      }`}
-                    >
-                      {item.description}
-                    </span>
-                  </span>
-                </button>
-              );
-            })}
+                      const isActive = item.key === activePage;
+
+                      return (
+                        <button
+                          key={item.key}
+                          onClick={() => setActivePage(item.key)}
+                          className={`group flex w-full items-center gap-3 rounded-2xl px-3.5 py-3 text-left transition-all ${
+                            isActive
+                              ? "bg-cyan-500 text-white shadow-lg shadow-cyan-950/25"
+                              : "text-slate-300 hover:bg-white/5 hover:text-white"
+                          }`}
+                        >
+                          <span
+                            className={`h-2.5 w-2.5 rounded-full transition ${
+                              isActive
+                                ? "bg-white"
+                                : "bg-slate-600 group-hover:bg-cyan-300"
+                            }`}
+                          />
+                          <span className="min-w-0 flex-1">
+                            <span className="block truncate text-sm font-semibold">
+                              {item.label}
+                            </span>
+                            <span
+                              className={`mt-0.5 block truncate text-[11px] ${
+                                isActive
+                                  ? "text-cyan-50/85"
+                                  : "text-slate-500 group-hover:text-slate-300"
+                              }`}
+                            >
+                              {item.description}
+                            </span>
+                          </span>
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+              ))}
+            </div>
           </nav>
 
-          <div className="border-t border-white/10 p-5">
-            <div className="rounded-3xl bg-white/10 p-5">
-              <p className="text-sm font-black">PrintPilot {APP_VERSION}</p>
-              <p className="mt-2 text-xs leading-5 text-slate-400">
-                Stammdaten sind kompakt organisiert und können gesichert werden.
+
+          <div className="border-t border-white/10 p-4">
+            <div className="rounded-2xl border border-white/10 bg-white/5 px-4 py-4">
+              <p className="text-sm font-black text-white">PrintPilot {APP_VERSION}</p>
+              <p className="mt-1 text-xs leading-5 text-slate-400">
+                Navigation im Mockup-Stil: ruhiger, klarer und kompakter.
               </p>
             </div>
           </div>
         </aside>
 
-        <main className="min-h-screen flex-1 lg:pl-80">
-          <header className="sticky top-0 z-10 border-b border-slate-200/80 bg-white/80 px-5 py-4 backdrop-blur-xl lg:px-8">
+        <main className="min-h-screen flex-1 lg:pl-64">
+          <header className={`${isDocumentModulePage ? "hidden" : "sticky"} top-0 z-10 border-b border-slate-200/80 bg-white/80 px-5 py-4 backdrop-blur-xl lg:px-8`}>
             <div className="flex flex-col gap-4 xl:flex-row xl:items-center xl:justify-between">
               <div>
                 <p className="text-sm font-bold uppercase tracking-[0.3em] text-slate-400">
@@ -1347,7 +1858,7 @@ function App() {
               </div>
 
               <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-                <div className="rounded-2xl border border-slate-200 bg-white px-4 py-3 shadow-sm">
+                <div className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 shadow-sm">
                   <input
                     placeholder="Suchen..."
                     className="w-full min-w-72 border-0 bg-transparent text-sm font-medium outline-none placeholder:text-slate-400"
@@ -1615,7 +2126,7 @@ function DashboardPage() {
             <div className={`h-2 bg-gradient-to-r ${stat.color}`} />
             <div className="p-6">
               <p className="text-sm font-bold text-slate-500">{stat.label}</p>
-              <p className="mt-3 text-4xl font-black tracking-tight">
+              <p className="mt-2 text-3xl font-black tracking-tight">
                 {stat.value}
               </p>
               <p className="mt-2 text-sm font-semibold text-slate-400">
@@ -1627,7 +2138,7 @@ function DashboardPage() {
       </section>
 
       <section className="grid gap-6 xl:grid-cols-[1.4fr_0.9fr]">
-        <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <h3 className="text-xl font-black">Aktuelle Vorgänge</h3>
           <p className="mt-1 text-sm font-medium text-slate-500">
             Beispielhafte Jobs für die spätere Angebots- und
@@ -1660,7 +2171,7 @@ function DashboardPage() {
           </div>
         </div>
 
-        <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <h3 className="text-xl font-black">Aktueller Ausbau</h3>
           <p className="mt-2 text-sm leading-6 text-slate-500">
             Die wichtigsten Module sind angelegt und werden jetzt miteinander
@@ -1713,7 +2224,13 @@ function CalculatorPage({
     useState(activeCalculationTemplates[0]?.id ?? "");
   const [productType, setProductType] = useState<ProductType>("Broschüre");
   const [productName, setProductName] = useState("Broschüre A4");
+  const [calculationCustomerName, setCalculationCustomerName] = useState("");
+  const [calculationContactName, setCalculationContactName] = useState("");
+  const [calculationProjectTitle, setCalculationProjectTitle] = useState("");
   const [quantity, setQuantity] = useState(1000);
+  const [calculationTab, setCalculationTab] = useState<
+    "basis" | "produktion" | "kosten" | "ergebnis" | "vorschau"
+  >("basis");
 
   const [materialSelections, setMaterialSelections] = useState<
     MaterialSelection[]
@@ -1795,6 +2312,13 @@ function CalculatorPage({
   const [finishingExtraCost, setFinishingExtraCost] = useState(0);
   const [overheadPercent, setOverheadPercent] = useState(12);
   const [marginPercent, setMarginPercent] = useState(35);
+  const [packagingType, setPackagingType] = useState("Karton");
+  const [packagesCount, setPackagesCount] = useState(1);
+  const [unitsPerPackage, setUnitsPerPackage] = useState(100);
+  const [packagingCost, setPackagingCost] = useState(0);
+  const [shippingMode, setShippingMode] = useState("Abholung");
+  const [shippingCost, setShippingCost] = useState(0);
+  const [deliveryDate, setDeliveryDate] = useState("");
 
   const selectedMachine =
     machines.find((machine) => machine.id === selectedMachineId) ?? machines[0];
@@ -3167,7 +3691,7 @@ function CalculatorPage({
       unitPrice: roundMoney(unitPrice),
       vatRate: 19,
       internalNote: [
-        `Quelle: Kalkulation V183`,
+        `Quelle: Kalkulation V199`,
         `Interne Kalkulation`,
         `Maschine: ${selectedMachine.name}`,
         `Druckbogen: ${totalSheets.toLocaleString("de-DE")}`,
@@ -3181,171 +3705,540 @@ function CalculatorPage({
   }
 
 
+
+  const calculationTabs = [
+    { id: "basis", label: "Eingabemaske", hint: "Kunde, Produkt, Papier, Druck, Weiterverarbeitung, Verpackung und Versand erfassen." },
+    { id: "produktion", label: "Produktion", hint: "Material, Druck, Nutzen, Maschine und Weiterverarbeitung prüfen." },
+    { id: "kosten", label: "Kosten", hint: "Zuschläge, Ausschuss, Gemeinkosten und Marge einstellen." },
+    { id: "ergebnis", label: "Ergebnis", hint: "Verkaufspreis, Deckungsbeitrag und Angebotsübergabe prüfen." },
+    { id: "vorschau", label: "Vorschau", hint: "Produktions- und Angebotsvorschau kontrollieren." },
+  ] as const;
+
+  const activeCalculationTab = calculationTabs.find((tab) => tab.id === calculationTab) ?? calculationTabs[0];
+
+  const calculationProcessSteps = [
+    { label: "Produkt", state: calculationTab === "basis" ? "current" : "done" },
+    { label: "Material", state: calculationTab === "produktion" ? "current" : calculationTab === "basis" ? "next" : "done" },
+    { label: "Druck", state: calculationTab === "produktion" ? "current" : calculationTab === "basis" ? "open" : "done" },
+    { label: "Weiterverarbeitung", state: calculationTab === "produktion" ? "current" : calculationTab === "basis" ? "open" : "done" },
+    { label: "Ergebnis", state: calculationTab === "ergebnis" || calculationTab === "vorschau" ? "current" : "next" },
+  ] as const;
+
+  const calculationProcessClass = (state: "done" | "current" | "next" | "open") => {
+    if (state === "done") return "bg-emerald-500 text-white";
+    if (state === "current") return "bg-slate-950 text-white";
+    if (state === "next") return "bg-yellow-300 text-slate-950";
+    return "bg-slate-100 text-slate-500";
+  };
+
+  const calculationTabButtonClass = (tabId: typeof calculationTabs[number]["id"]) =>
+    calculationTab === tabId
+      ? "bg-slate-950 text-white shadow-sm"
+      : "bg-slate-100 text-slate-600 hover:bg-slate-200";
+
   return (
-    <div className="space-y-5">
-      <section className="overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
-        <div className="relative p-5 lg:p-6">
-          <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-fuchsia-500/20 blur-3xl" />
-          <div className="absolute bottom-0 right-40 h-56 w-56 rounded-full bg-cyan-400/20 blur-3xl" />
+    <div className="space-y-4">
+      <section className="overflow-hidden rounded-[1.65rem] bg-slate-950 px-6 py-5 text-white shadow-sm">
+        <div className="flex flex-col gap-5 lg:flex-row lg:items-center lg:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-[0.32em] text-cyan-300">
+              Kalkulation {APP_VERSION}
+            </p>
+            <h2 className="mt-2 text-3xl font-black tracking-tight">
+              {productName || "Neue Kalkulation"}
+            </h2>
+            <p className="mt-2 max-w-3xl text-sm font-medium leading-6 text-slate-300">
+              {safeQuantity.toLocaleString("de-DE")} Stück · {finalWidthMm} × {finalHeightMm} mm · {selectedMachine.name}
+            </p>
+          </div>
 
-          <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="grid min-w-[22rem] grid-cols-2 gap-3 rounded-2xl bg-white p-3 text-slate-950 shadow-lg">
             <div>
-              <p className="text-sm font-black uppercase tracking-[0.35em] text-fuchsia-300">
-                Kalkulation V183
-              </p>
-              <h2 className="mt-2 text-3xl font-black tracking-tight">
-                Produkt- und Jobstruktur
-              </h2>
-              <p className="mt-2 max-w-2xl text-sm leading-6 text-slate-300">
-                Produktdaten, Druckteile, Nutzen, Maschine, Weiterverarbeitung und Zuschläge sind klar strukturiert; rechts bleiben Ergebnis und Status sofort sichtbar, Details sind einklappbar priorisiert.
-                Erst die Pflichtdaten, danach die Produktionsdetails, Details nur dort wo sie gebraucht werden.
-              </p>
+              <p className="text-[0.68rem] font-black uppercase tracking-wide text-slate-400">Netto</p>
+              <p className="mt-1 text-xl font-black">{formatCurrency(sellingPrice)}</p>
             </div>
-
-            <div className="rounded-3xl bg-white p-4 text-slate-950 shadow-xl">
-              <p className="text-sm font-bold text-slate-500">
-                Verkaufspreis netto
-              </p>
-              <p className="mt-1 text-3xl font-black">
-                {formatCurrency(sellingPrice)}
-              </p>
-              <p className="mt-1 text-sm font-bold text-slate-500">
-                {formatCurrency(unitPrice)} pro Stück
-              </p>
+            <div>
+              <p className="text-[0.68rem] font-black uppercase tracking-wide text-slate-400">Stückpreis</p>
+              <p className="mt-1 text-xl font-black">{formatCurrency(unitPrice)}</p>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="grid gap-3 md:grid-cols-2 2xl:grid-cols-4">
-        <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-            Produkt
-          </p>
-          <p className="mt-2 truncate text-lg font-black" title={productName}>
-            {productName}
-          </p>
-          <p className="mt-1 text-sm font-bold text-slate-500">
-            {safeQuantity.toLocaleString("de-DE")} Stück · {finalWidthMm} ×{" "}
-            {finalHeightMm} mm
-          </p>
-        </div>
-
-        <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-            Nutzen
-          </p>
-          <p className="mt-2 text-lg font-black">
-            {safeItemsPerSheet} pro Bogen
-          </p>
-          <p className="mt-1 text-sm font-bold text-slate-500">
-            Auto: {impositionResult.best.total} ·{" "}
-            {impositionResult.best.orientation}
-          </p>
-        </div>
-
-        <div className="rounded-3xl border border-slate-200 bg-white p-4 shadow-sm">
-          <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-            Maschine
-          </p>
-          <p
-            className="mt-2 truncate text-lg font-black"
-            title={selectedMachine.name}
-          >
-            {selectedMachine.name}
-          </p>
-          <p className="mt-1 text-sm font-bold text-slate-500">
-            {getMachineCostModelLabel(machineCostModel)}
-          </p>
-        </div>
-
-        <div className="rounded-3xl border border-slate-200 bg-slate-950 p-4 text-white shadow-sm">
-          <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-            Verkauf netto
-          </p>
-          <p className="mt-2 text-2xl font-black">
-            {formatCurrency(sellingPrice)}
-          </p>
-          <p className="mt-1 text-sm font-bold text-slate-400">
-            {formatCurrency(unitPrice)} / Stück
-          </p>
+      <section className="rounded-[1.35rem] border border-slate-200 bg-white px-4 py-3 shadow-sm">
+        <div className="flex flex-col gap-3 xl:flex-row xl:items-center xl:justify-between">
+          <div>
+            <p className="text-xs font-black uppercase tracking-wide text-slate-400">Produktionsprozess</p>
+            <p className="mt-1 text-sm font-semibold text-slate-600">Produkt → Material → Druck → Weiterverarbeitung → Ergebnis</p>
+          </div>
+          <div className="flex flex-wrap gap-2">
+            {calculationProcessSteps.map((step) => (
+              <span key={step.label} className={`rounded-full px-4 py-2 text-xs font-black ${calculationProcessClass(step.state)}`}>
+                {step.label}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
-      <section className="grid gap-5 xl:grid-cols-[minmax(0,1.35fr)_23rem] 2xl:grid-cols-[minmax(0,1.55fr)_24rem] xl:items-start">
-        <div className="rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
-          <div className="flex flex-col gap-3 border-b border-slate-100 pb-5 md:flex-row md:items-end md:justify-between">
+      <section className="rounded-[1.5rem] border border-slate-200 bg-white p-3 shadow-sm">
+        <div className="flex flex-wrap gap-2">
+          {calculationTabs.map((tab) => (
+            <button
+              key={tab.id}
+              type="button"
+              onClick={() => setCalculationTab(tab.id)}
+              className={`rounded-2xl px-4 py-2 text-sm font-black transition ${calculationTabButtonClass(tab.id)}`}
+            >
+              {tab.label}
+            </button>
+          ))}
+        </div>
+        <div className="mt-3 calculator-compact-status">
+          Jetzt wichtig: {activeCalculationTab.hint}
+        </div>
+      </section>
+      <section className="space-y-4">
+        <div className="calculator-production-shell production-column">
+          <div className="calculator-mask-heading">
             <div>
-              <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                Kalkulation
+              <p className="text-xs font-extrabold uppercase tracking-wide text-cyan-600">
+                {activeCalculationTab.label}
               </p>
-              <h3 className="mt-2 text-2xl font-black tracking-tight">
-                Eingabemaske
+              <h3 className="calculator-mask-heading-title">
+                Kalkulation bearbeiten
               </h3>
-              <p className="mt-1 text-xs font-semibold text-slate-500">
-                Geführter Workflow: Alle Eingabeschritte 1–7 sind einklappbar. Schritt 1 startet geöffnet, danach gehst du die Kalkulation sauber Abschnitt für Abschnitt durch.
+              <p className="calculator-mask-heading-subtitle">
+                {activeCalculationTab.hint}
               </p>
             </div>
-            <span className="rounded-full bg-slate-100 px-4 py-2 text-xs font-black text-slate-600">
-              Live-Kalkulation
+            <span className="rounded-full bg-slate-950 px-3 py-1.5 text-[0.7rem] font-black text-white">
+              Live
             </span>
           </div>
 
           <div className="mt-4 space-y-4">
-            <div className="grid gap-3 md:grid-cols-3 xl:grid-cols-7">
-              {calculationStepOverview.map((item) => (
-                <a
-                  key={item.step}
-                  href={item.href}
-                  className={`relative overflow-hidden rounded-2xl border p-3 shadow-sm transition hover:-translate-y-0.5 hover:shadow-md ${item.cardClass}`}
-                >
-                  <span className={`absolute left-0 top-0 h-full w-2 ${item.accent}`} />
-                  <div className="pl-3">
-                    <div className="flex items-center justify-between gap-2">
-                      <span className={`inline-flex h-7 w-7 items-center justify-center rounded-xl text-xs font-black text-white ${item.accent}`}>
-                        {item.step}
-                      </span>
-                      <span className={`rounded-full px-2 py-1 text-[0.62rem] font-black uppercase ${item.statusClass}`}>
-                        {item.status}
-                      </span>
-                    </div>
-                    <p className="mt-2 text-sm font-black text-slate-950">{item.title}</p>
-                    <p className={`mt-1 text-xs font-bold ${item.textClass}`}>{item.subtitle}</p>
-                  </div>
-                </a>
-              ))}
-            </div>
+            <section className={`${calculationTab !== "basis" ? "hidden" : ""} production-group`}>
+              <div className="production-group-header">
+                <span>Vollständige Kalkulations-Eingabemaske</span>
+                <span className="text-[0.7rem] font-bold text-slate-500">von oben nach unten erfassen</span>
+              </div>
 
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-              <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
-                <div>
-                  <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                    Arbeitsmodus V140
-                  </p>
-                  <p className="mt-1 text-sm font-black text-slate-950">
-                    Schritte anklicken, Abschnitt öffnen, Werte prüfen, weiter zum nächsten Block.
-                  </p>
+              <div className="production-group-body space-y-4">
+                <div className="production-group">
+                  <div className="production-group-header">
+                    <span>1 · Kunde</span>
+                  </div>
+                  <div className="production-group-body">
+                    <div className="input-mask">
+                      <InputField
+                        label="Kunde"
+                        value={calculationCustomerName}
+                        onChange={setCalculationCustomerName}
+                      />
+                      <InputField
+                        label="Ansprechpartner"
+                        value={calculationContactName}
+                        onChange={setCalculationContactName}
+                      />
+                      <InputField
+                        label="Projekt / Betreff"
+                        value={calculationProjectTitle}
+                        onChange={setCalculationProjectTitle}
+                      />
+                    </div>
+                  </div>
                 </div>
-                <div className="flex flex-wrap gap-2 text-[0.68rem] font-black">
-                  <span className="rounded-full bg-emerald-100 px-3 py-1 text-emerald-700">OK</span>
-                  <span className="rounded-full bg-amber-100 px-3 py-1 text-amber-700">Prüfen</span>
-                  <span className="rounded-full bg-slate-200 px-3 py-1 text-slate-600">Optional</span>
+
+                <div className="production-group">
+                  <div className="production-group-header">
+                    <span>2 · Produkt</span>
+                  </div>
+                  <div className="production-group-body">
+                    <div className="input-mask">
+                      <SelectField
+                        label="Kalkulationsvorlage"
+                        value={selectedCalculationTemplateId}
+                        onChange={setSelectedCalculationTemplateId}
+                        options={activeCalculationTemplates.map((template) => ({
+                          value: template.id,
+                          label: `${template.name} · ${template.productType}`,
+                        }))}
+                      />
+                      <InputField
+                        label="Produktname"
+                        value={productName}
+                        onChange={setProductName}
+                      />
+                      <SelectField
+                        label="Produktart"
+                        value={productType}
+                        onChange={(value) => setProductType(value as ProductType)}
+                        options={[
+                          { value: "Broschüre", label: "Broschüre" },
+                          { value: "Flyer", label: "Flyer" },
+                          { value: "Folder", label: "Folder" },
+                          { value: "Visitenkarte", label: "Visitenkarte" },
+                          { value: "Plakat", label: "Plakat" },
+                          { value: "Sonstiges", label: "Sonstiges" },
+                        ]}
+                      />
+                      <NumberField
+                        label="Auflage"
+                        value={quantity}
+                        onChange={setQuantity}
+                        suffix="Stück"
+                      />
+                      <button
+                        type="button"
+                        onClick={applySelectedTemplate}
+                        className="rounded-xl bg-slate-950 px-4 py-2 text-sm font-black text-white transition hover:bg-slate-800"
+                      >
+                        Vorlage anwenden
+                      </button>
+                    </div>
+                  </div>
+                </div>
+
+                <div className="production-group">
+                  <div className="production-group-header">
+                    <span>3 · Umfang / Seiten / Format / Farbigkeit</span>
+                  </div>
+                  <div className="production-group-body">
+                    <div className="input-mask">
+                      <ReadOnlyField label="Druckteile" value={`${materialSelections.length}`} />
+                      <ReadOnlyField
+                        label="Seiten gesamt"
+                        value={`${materialSelections.reduce((sum, item) => sum + Math.max(item.pages || 0, 0), 0)}`}
+                      />
+                      <NumberField label="Geschlossen Breite" value={finalWidthMm} onChange={setFinalWidthMm} suffix="mm" />
+                      <NumberField label="Geschlossen Höhe" value={finalHeightMm} onChange={setFinalHeightMm} suffix="mm" />
+                      <ReadOnlyField
+                        label="Offenes Format"
+                        value={`${calculateAsOpenSpread ? finalWidthMm * 2 : finalWidthMm} × ${finalHeightMm} mm`}
+                      />
+                      <SelectField
+                        label="Broschürenmodus"
+                        value={calculateAsOpenSpread ? "spread" : "closed"}
+                        onChange={(value) => setCalculateAsOpenSpread(value === "spread")}
+                        options={[
+                          { value: "spread", label: "offene Doppelseite" },
+                          { value: "closed", label: "geschlossenes Format" },
+                        ]}
+                      />
+                      <SelectField
+                        label="Farbigkeit"
+                        value={colorMode}
+                        onChange={setColorMode}
+                        options={[
+                          { value: "4/4 farbig", label: "4/4 farbig" },
+                          { value: "4/0 farbig", label: "4/0 farbig" },
+                          { value: "1/1 schwarz", label: "1/1 schwarz" },
+                          { value: "1/0 schwarz", label: "1/0 schwarz" },
+                          { value: "Sonderfarbe", label: "Sonderfarbe" },
+                        ]}
+                      />
+                      <ReadOnlyField label="Berechneter Nutzen" value={`${safeItemsPerSheet} Nutzen`} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="production-group">
+                  <div className="production-group-header">
+                    <span>4 · Papier / Material</span>
+                    <button
+                      type="button"
+                      onClick={() => addPrintPart("Sonstiges")}
+                      className="rounded-lg bg-white px-3 py-1 text-[0.7rem] font-black text-slate-700 ring-1 ring-slate-200"
+                    >
+                      + Druckteil
+                    </button>
+                  </div>
+                  <div className="production-group-body space-y-3">
+                    {materialSelections.map((selection, index) => {
+                      const material =
+                        materials.find((item) => item.id === selection.materialId) ??
+                        materials[0];
+
+                      return (
+                        <div key={selection.id} className="rounded-xl border border-slate-200 bg-slate-50 p-3">
+                          <div className="mb-3 flex items-center justify-between gap-3">
+                            <p className="text-xs font-black uppercase tracking-wide text-slate-500">
+                              Druckteil {index + 1}
+                            </p>
+                            <div className="flex gap-2">
+                              <button type="button" onClick={() => duplicateMaterialSelection(selection.id)} className="rounded-lg bg-white px-2.5 py-1 text-[0.7rem] font-black text-slate-600 ring-1 ring-slate-200">
+                                Duplizieren
+                              </button>
+                              <button type="button" onClick={() => removeMaterialSelection(selection.id)} className="rounded-lg bg-white px-2.5 py-1 text-[0.7rem] font-black text-rose-600 ring-1 ring-rose-100">
+                                Löschen
+                              </button>
+                            </div>
+                          </div>
+
+                          <div className="input-mask">
+                            <InputField label="Bezeichnung" value={selection.label} onChange={(value) => updateMaterialSelection(selection.id, "label", value)} />
+                            <SelectField
+                              label="Druckteil"
+                              value={selection.partType ?? "Sonstiges"}
+                              onChange={(value) => updateMaterialSelection(selection.id, "partType", value as PrintPartType)}
+                              options={[
+                                { value: "Inhalt", label: "Inhalt" },
+                                { value: "Umschlag", label: "Umschlag" },
+                                { value: "Beileger", label: "Beileger" },
+                                { value: "Zusatzbogen", label: "Zusatzbogen" },
+                                { value: "Zusatzmaterial", label: "Zusatzmaterial" },
+                                { value: "Sonstiges", label: "Sonstiges" },
+                              ]}
+                            />
+                            <SelectField
+                              label="Papier / Material"
+                              value={selection.materialId}
+                              onChange={(value) => updateMaterialSelection(selection.id, "materialId", value)}
+                              options={materials.map((item) => ({ value: item.id, label: `${item.name} · ${item.grammage} g/m²` }))}
+                            />
+                            <ReadOnlyField label="Rohbogen" value={`${material?.widthMm ?? 0} × ${material?.heightMm ?? 0} mm`} />
+                            <NumberField label="Seiten" value={selection.pages} onChange={(value) => updateMaterialSelection(selection.id, "pages", value)} suffix="S." />
+                            <NumberField label="Seiten je Bogen" value={selection.pagesPerSheet} onChange={(value) => updateMaterialSelection(selection.id, "pagesPerSheet", value)} />
+                            <NumberField label="Faktor je Exemplar" value={selection.factorPerCopy} onChange={(value) => updateMaterialSelection(selection.id, "factorPerCopy", value)} />
+                            <SelectField
+                              label="Berechnung"
+                              value={selection.calculationMode}
+                              onChange={(value) => updateMaterialSelection(selection.id, "calculationMode", value as MaterialCalculationMode)}
+                              options={[
+                                { value: "pages", label: "über Seiten" },
+                                { value: "perCopy", label: "pro Exemplar" },
+                                { value: "manual", label: "manuelle Bogen" },
+                              ]}
+                            />
+                            <SelectField
+                              label="Vorderseite"
+                              value={selection.frontColorMode ?? "4-farbig"}
+                              onChange={(value) => updateMaterialSelection(selection.id, "frontColorMode", value)}
+                              options={[
+                                { value: "4-farbig", label: "4-farbig" },
+                                { value: "schwarz", label: "schwarz" },
+                                { value: "unbedruckt", label: "unbedruckt" },
+                              ]}
+                            />
+                            <SelectField
+                              label="Rückseite"
+                              value={selection.backColorMode ?? "4-farbig"}
+                              onChange={(value) => updateMaterialSelection(selection.id, "backColorMode", value)}
+                              options={[
+                                { value: "4-farbig", label: "4-farbig" },
+                                { value: "schwarz", label: "schwarz" },
+                                { value: "unbedruckt", label: "unbedruckt" },
+                              ]}
+                            />
+                            <SelectField
+                              label="Druckart"
+                              value={selection.printSideMode ?? "duplex"}
+                              onChange={(value) => updateMaterialSelection(selection.id, "printSideMode", value as PrintSideMode)}
+                              options={[
+                                { value: "simplex", label: "einseitig" },
+                                { value: "duplex", label: "beidseitig" },
+                                { value: "materialOnly", label: "nur Material" },
+                              ]}
+                            />
+                            <ReadOnlyField label="Papierpreis" value={formatCurrency(material?.pricePerSheet ?? 0)} />
+                          </div>
+                        </div>
+                      );
+                    })}
+
+                    <div className="input-mask">
+                      <SelectField
+                        label="Standard-Rohbogen"
+                        value={rawSheetMaterialId}
+                        onChange={setRawSheetMaterialId}
+                        options={materials.map((material) => ({ value: material.id, label: `${material.name} · ${material.widthMm} × ${material.heightMm} mm` }))}
+                      />
+                      <NumberField label="Beschnitt" value={bleedMm} onChange={setBleedMm} step={1} suffix="mm" />
+                      <NumberField label="Zwischenschnitt H" value={gutterHorizontalMm} onChange={setGutterHorizontalMm} step={1} suffix="mm" />
+                      <NumberField label="Zwischenschnitt V" value={gutterVerticalMm} onChange={setGutterVerticalMm} step={1} suffix="mm" />
+                      <SelectField
+                        label="Drehung"
+                        value={allowRotation ? "yes" : "no"}
+                        onChange={(value) => setAllowRotation(value === "yes")}
+                        options={[
+                          { value: "yes", label: "erlaubt" },
+                          { value: "no", label: "gesperrt" },
+                        ]}
+                      />
+                      <SelectField
+                        label="Laufrichtung"
+                        value={respectGrainDirection ? "yes" : "no"}
+                        onChange={(value) => setRespectGrainDirection(value === "yes")}
+                        options={[
+                          { value: "yes", label: "beachten" },
+                          { value: "no", label: "ignorieren" },
+                        ]}
+                      />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="production-group">
+                  <div className="production-group-header">
+                    <span>5 · Druck / Maschine</span>
+                  </div>
+                  <div className="production-group-body">
+                    <div className="input-mask">
+                      <SelectField
+                        label="Maschine"
+                        value={selectedMachineId}
+                        onChange={setSelectedMachineId}
+                        options={machines.map((machine) => ({ value: machine.id, label: machine.name }))}
+                      />
+                      <SelectField
+                        label="Farbmodus"
+                        value={colorMode}
+                        onChange={setColorMode}
+                        options={[
+                          { value: "4/4 farbig", label: "4/4 farbig" },
+                          { value: "4/0 farbig", label: "4/0 farbig" },
+                          { value: "1/1 schwarz", label: "1/1 schwarz" },
+                          { value: "1/0 schwarz", label: "1/0 schwarz" },
+                          { value: "Sonderfarbe", label: "Sonderfarbe" },
+                        ]}
+                      />
+                      <NumberField label="Rüstzeit" value={setupMinutes} onChange={setSetupMinutes} suffix="Min." />
+                      <ReadOnlyField label="Druckbogen" value={`${totalSheets.toLocaleString("de-DE")} Bg.`} />
+                      <ReadOnlyField label="Maschinenmodell" value={getMachineCostModelLabel(machineCostModel)} />
+                      <ReadOnlyField label="Druckkosten" value={formatCurrency(printCost + setupCost)} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="production-group">
+                  <div className="production-group-header">
+                    <span>6 · Weiterverarbeitung</span>
+                    <button type="button" onClick={addFinishingSelection} className="rounded-lg bg-white px-3 py-1 text-[0.7rem] font-black text-slate-700 ring-1 ring-slate-200">
+                      + Schritt
+                    </button>
+                  </div>
+                  <div className="production-group-body space-y-3">
+                    {finishingSelections.map((selection, index) => {
+                      const operation =
+                        finishingOperations.find((item) => item.id === selection.operationId) ??
+                        finishingOperations[0];
+
+                      return (
+                        <div key={selection.id} className="input-mask rounded-xl border border-slate-200 bg-slate-50 p-3">
+                          <ReadOnlyField label={`Schritt ${index + 1}`} value={operation?.name ?? "Weiterverarbeitung"} />
+                          <SelectField
+                            label="Arbeitsgang"
+                            value={selection.operationId}
+                            onChange={(value) => updateFinishingSelection(selection.id, value)}
+                            options={finishingOperations.map((item) => ({ value: item.id, label: item.name }))}
+                          />
+                          <ReadOnlyField label="Preislogik" value={getPricingModeLabel(operation.pricingMode)} />
+                          <ReadOnlyField
+                            label="Kosten"
+                            value={formatCurrency(
+                              calculateFinishingPrice({
+                                pricingMode: operation.pricingMode,
+                                basePrice: operation.basePrice,
+                                unitPrice: operation.unitPrice,
+                                minimumPrice: operation.minimumPrice,
+                                setupMinutes: operation.setupMinutes,
+                                hourlyRate: operation.hourlyRate,
+                                quantity: safeQuantity,
+                                sheets: totalSheets,
+                              }),
+                            )}
+                          />
+                          <button type="button" onClick={() => removeFinishingSelection(selection.id)} className="rounded-xl bg-white px-3 py-2 text-sm font-black text-rose-600 ring-1 ring-rose-100">
+                            Entfernen
+                          </button>
+                        </div>
+                      );
+                    })}
+                    <div className="input-mask">
+                      <NumberField label="Zusatzkosten WV" value={finishingExtraCost} onChange={setFinishingExtraCost} suffix="€" />
+                      <ReadOnlyField label="WV gesamt" value={formatCurrency(finishingCost)} />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="production-group">
+                  <div className="production-group-header">
+                    <span>7 · Verpackung</span>
+                  </div>
+                  <div className="production-group-body">
+                    <div className="input-mask">
+                      <SelectField
+                        label="Verpackungsart"
+                        value={packagingType}
+                        onChange={setPackagingType}
+                        options={[
+                          { value: "Karton", label: "Karton" },
+                          { value: "Paket", label: "Paket" },
+                          { value: "Palette", label: "Palette" },
+                          { value: "Banderole", label: "Banderole" },
+                          { value: "Ohne Verpackung", label: "Ohne Verpackung" },
+                        ]}
+                      />
+                      <NumberField label="Pakete / Kartons" value={packagesCount} onChange={setPackagesCount} suffix="Stk." />
+                      <NumberField label="Stück je Paket" value={unitsPerPackage} onChange={setUnitsPerPackage} suffix="Stk." />
+                      <NumberField label="Verpackungskosten" value={packagingCost} onChange={setPackagingCost} suffix="€" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="production-group">
+                  <div className="production-group-header">
+                    <span>8 · Versand / Lieferung</span>
+                  </div>
+                  <div className="production-group-body">
+                    <div className="input-mask">
+                      <SelectField
+                        label="Lieferart"
+                        value={shippingMode}
+                        onChange={setShippingMode}
+                        options={[
+                          { value: "Abholung", label: "Abholung" },
+                          { value: "Eigene Lieferung", label: "Eigene Lieferung" },
+                          { value: "Paketdienst", label: "Paketdienst" },
+                          { value: "Spedition", label: "Spedition" },
+                        ]}
+                      />
+                      <InputField label="Liefertermin" value={deliveryDate} onChange={setDeliveryDate} />
+                      <NumberField label="Versandkosten" value={shippingCost} onChange={setShippingCost} suffix="€" />
+                    </div>
+                  </div>
+                </div>
+
+                <div className="production-group">
+                  <div className="production-group-header">
+                    <span>9 · Zuschläge / Kalkulation</span>
+                  </div>
+                  <div className="production-group-body">
+                    <div className="input-mask">
+                      <NumberField label="Fester Zuschuss" value={fixedOvers} onChange={setFixedOvers} suffix="Bg." />
+                      <NumberField label="Ausschuss" value={wastePercent} onChange={setWastePercent} suffix="%" />
+                      <NumberField label="Gemeinkosten" value={overheadPercent} onChange={setOverheadPercent} suffix="%" />
+                      <NumberField label="Marge" value={marginPercent} onChange={setMarginPercent} suffix="%" />
+                      <ReadOnlyField label="Selbstkosten" value={formatCurrency(totalCost)} />
+                      <ReadOnlyField label="Verkaufspreis netto" value={formatCurrency(sellingPrice)} />
+                      <ReadOnlyField label="Stückpreis" value={formatCurrency(unitPrice)} />
+                    </div>
+                  </div>
                 </div>
               </div>
-            </div>
+            </section>
 
-            <details id="calc-step-1" open className="group scroll-mt-24 rounded-3xl border border-cyan-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-cyan-400 bg-cyan-50 px-4 py-4 transition hover:bg-cyan-100/70">
+            <section id="calc-step-1" open className={`hidden ${calculationTab !== "basis" ? "hidden" : ""} group scroll-mt-24 rounded-3xl border border-cyan-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden`}>
+              <div className="production-group-header">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-cyan-700">1 · Auftrag / Vorlage</p>
                   <p className="mt-1 text-sm font-black text-slate-950">{productName || "Neues Produkt"}</p>
                   <p className="mt-1 text-xs font-bold text-cyan-900">Vorlage wählen, Produktname prüfen und danach mit Auflage weitermachen.</p>
                 </div>
-                <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-cyan-700 shadow-sm ring-1 ring-cyan-100 group-open:hidden">Aufklappen</span>
-                <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-black text-cyan-700 shadow-sm ring-1 ring-cyan-100 group-open:inline-flex">Einklappen</span>
-              </summary>
-              <div className="px-0 pb-0">
-            <div className="rounded-3xl border border-cyan-200 bg-cyan-50 p-4">
+              </div>
+              <div className="production-group-body">
+            <div className="production-group">
               <p className="text-xs font-extrabold uppercase tracking-wide text-cyan-700">
                 1 · Auftrag / Vorlage
               </p>
@@ -3380,20 +4273,18 @@ function CalculatorPage({
               </div>
             </div>
               </div>
-            </details>
+            </section>
 
-            <details id="calc-step-2" className="group scroll-mt-24 rounded-3xl border border-fuchsia-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-fuchsia-500 bg-fuchsia-50 px-4 py-4 transition hover:bg-fuchsia-100/70">
+            <section id="calc-step-2" className={`hidden ${calculationTab !== "basis" ? "hidden" : ""} group scroll-mt-24 rounded-3xl border border-fuchsia-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden`}>
+              <div className="production-group-header">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-fuchsia-700">2 · Auflage</p>
                   <p className="mt-1 text-sm font-black text-slate-950">{safeQuantity.toLocaleString("de-DE")} Stück · {safeItemsPerSheet} Nutzen / Bogen</p>
                   <p className="mt-1 text-xs font-bold text-fuchsia-900">Auflage, Format und automatische Nutzenbasis prüfen.</p>
                 </div>
-                <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-fuchsia-700 shadow-sm ring-1 ring-fuchsia-100 group-open:hidden">Aufklappen</span>
-                <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-black text-fuchsia-700 shadow-sm ring-1 ring-fuchsia-100 group-open:inline-flex">Einklappen</span>
-              </summary>
-              <div className="px-0 pb-0">
-            <div className="rounded-3xl border border-fuchsia-200 bg-fuchsia-50 p-4 shadow-sm">
+              </div>
+              <div className="production-group-body">
+            <div className="production-group">
               <p className="text-xs font-extrabold uppercase tracking-wide text-fuchsia-700">
                 2 · Auflage
               </p>
@@ -3401,7 +4292,7 @@ function CalculatorPage({
                 Hier werden nur die produktionsrelevanten Eckdaten gesetzt. Nutzen und Seiten je Bogen bleiben automatische Kontrollwerte.
               </p>
 
-              <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <div className="mt-4 input-mask">
                 <NumberField
                   label="Auflage"
                   value={quantity}
@@ -3433,7 +4324,7 @@ function CalculatorPage({
                 <p className="mt-1 text-sm font-bold text-slate-500">
                   Beschnitt, Bund, Zwischenschnitt und Rohbogen steuern den automatischen Nutzenrechner.
                 </p>
-              <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              <div className="mt-4 input-mask">
                 <NumberField
                   label="Beschnitt"
                   value={bleedMm}
@@ -3505,7 +4396,7 @@ function CalculatorPage({
               </div>
 
               <div className="mt-5 rounded-3xl border border-slate-200 bg-white p-5">
-                <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                <div className="flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between">
                   <div className="min-w-0 flex-1">
                     <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                       Automatischer Nutzen
@@ -3604,7 +4495,7 @@ function CalculatorPage({
                 </div>
 
                 <div className="mt-5 rounded-3xl border border-slate-200 bg-slate-50 p-5">
-                  <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+                  <div className="flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between">
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                         Nutzenanalyse
@@ -3624,7 +4515,7 @@ function CalculatorPage({
                     )}
                   </div>
 
-                  <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                  <div className="mt-5 input-mask xl:grid-cols-4">
                     <InfoCard
                       label="Geschlossenes Endformat"
                       value={`${finalWidthMm} × ${finalHeightMm} mm`}
@@ -3714,21 +4605,19 @@ function CalculatorPage({
             </div>
             </div>
               </div>
-            </details>
+            </section>
 
             {productType === "Broschüre" && (
-              <details id="calc-step-3" className="group scroll-mt-24 rounded-3xl border border-yellow-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
-                <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-yellow-400 bg-yellow-50 px-4 py-4 transition hover:bg-yellow-100/70">
+              <section id="calc-step-3" className={`${calculationTab !== "produktion" ? "hidden" : ""} group scroll-mt-24 rounded-3xl border border-yellow-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden`}>
+                <div className="production-group-header">
                   <div>
                     <p className="text-xs font-extrabold uppercase tracking-wide text-yellow-700">3 · Produktdaten / Broschüre</p>
                     <p className="mt-1 text-sm font-black text-slate-950">{finalWidthMm} × {finalHeightMm} mm · {materialSelections.find((selection) => selection.label.toLowerCase().includes("inhalt"))?.pages ?? 32} Inhaltsseiten</p>
                     <p className="mt-1 text-xs font-bold text-yellow-900">Format, Inhaltsseiten, Umschlag und Papiere prüfen.</p>
                   </div>
-                  <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-yellow-700 shadow-sm ring-1 ring-yellow-100 group-open:hidden">Aufklappen</span>
-                  <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-black text-yellow-700 shadow-sm ring-1 ring-yellow-100 group-open:inline-flex">Einklappen</span>
-                </summary>
-                <div className="px-0 pb-0">
-              <div className="rounded-3xl border border-yellow-200 bg-yellow-50 p-4 shadow-sm">
+                </div>
+                <div className="production-group-body">
+              <div className="production-group">
                 <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                   <div>
                     <p className="text-xs font-extrabold uppercase tracking-wide text-yellow-700">
@@ -3793,7 +4682,7 @@ function CalculatorPage({
                   </div>
                 )}
 
-                <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+                <div className="mt-5 input-mask">
                   <SelectField
                     label="Broschürenformat"
                     value={finalWidthMm === 148 && finalHeightMm === 210 ? "A5" : "A4"}
@@ -3814,11 +4703,11 @@ function CalculatorPage({
                 </div>
 
                 <div className="mt-5 grid gap-4 xl:grid-cols-2">
-                  <div className="rounded-3xl border border-amber-200 bg-white p-4">
+                  <div className="production-group">
                     <p className="text-xs font-extrabold uppercase tracking-wide text-amber-700">
                       Inhalt
                     </p>
-                    <div className="mt-4 grid gap-4 md:grid-cols-2">
+                    <div className="mt-4 input-mask">
                       <NumberField
                         label="Inhaltsseiten"
                         value={materialSelections.find((selection) => selection.label.toLowerCase().includes("inhalt"))?.pages ?? 32}
@@ -3837,11 +4726,11 @@ function CalculatorPage({
                     </div>
                   </div>
 
-                  <div className="rounded-3xl border border-amber-200 bg-white p-4">
+                  <div className="production-group">
                     <p className="text-xs font-extrabold uppercase tracking-wide text-amber-700">
                       Umschlag
                     </p>
-                    <div className="mt-4 grid gap-4 md:grid-cols-2">
+                    <div className="mt-4 input-mask">
                       <div>
                         <ReadOnlyField
                           label="Umschlagseiten"
@@ -3870,22 +4759,20 @@ function CalculatorPage({
                 </p>
               </div>
                 </div>
-              </details>
+              </section>
             )}
 
 
-            <details id="calc-step-4" className="group scroll-mt-24 rounded-3xl border border-emerald-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-emerald-400 bg-emerald-50 px-4 py-4 transition hover:bg-emerald-100/70">
+            <section id="calc-step-4" className={`${calculationTab !== "produktion" ? "hidden" : ""} group scroll-mt-24 rounded-3xl border border-emerald-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden`}>
+              <div className="production-group-header">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-emerald-700">4 · Druckteile / Produktstruktur</p>
                   <p className="mt-1 text-sm font-black text-slate-950">{selectedMaterialItems.length} Druckteil(e) · {formatCurrency(materialCost)}</p>
                   <p className="mt-1 text-xs font-bold text-emerald-900">Kompakte Übersicht, Details per Aufklappen.</p>
                 </div>
-                <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-emerald-700 shadow-sm ring-1 ring-emerald-100 group-open:hidden">Aufklappen</span>
-                <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-black text-emerald-700 shadow-sm ring-1 ring-emerald-100 group-open:inline-flex">Einklappen</span>
-              </summary>
-              <div className="px-0 pb-0">
-            <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4 shadow-sm">
+              </div>
+              <div className="production-group-body">
+            <div className="production-group">
               <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-emerald-700">
@@ -3960,11 +4847,11 @@ function CalculatorPage({
                     materialCost > 0 ? (item.cost / materialCost) * 100 : 0;
 
                   return (
-                    <details
+                    <section
                       key={item.id}
                       className="group overflow-hidden rounded-2xl border border-slate-200 bg-white"
                     >
-                      <summary className="grid cursor-pointer list-none gap-3 px-4 py-3 transition hover:bg-slate-50 xl:grid-cols-[minmax(180px,1.1fr)_minmax(0,2.8fr)_auto] xl:items-center [&::-webkit-details-marker]:hidden">
+                      <div className="grid cursor-pointer list-none gap-3 px-4 py-3 transition hover:bg-slate-50 xl:grid-cols-[minmax(180px,1.1fr)_minmax(0,2.8fr)_auto] xl:items-center [&::-webkit-details-marker]:hidden">
                         <div className="min-w-0">
                           <div className="flex flex-wrap items-center gap-2">
                             <span className="rounded-full bg-slate-950 px-3 py-1 text-xs font-black text-white">
@@ -3996,7 +4883,7 @@ function CalculatorPage({
                             ▼
                           </span>
                         </div>
-                      </summary>
+                      </div>
 
                       <div className="space-y-4 border-t border-slate-100 p-4">
                         <div className="quote-preview-card rounded-2xl border border-slate-200 bg-slate-50 p-4">
@@ -4165,7 +5052,7 @@ function CalculatorPage({
                         </div>
 
                         {item.calculationMode === "manual" && (
-                          <div className="grid gap-3 md:grid-cols-2 md:items-end">
+                          <div className="input-mask md:items-end">
                             <NumberField
                               label="Bogen manuell"
                               value={item.manualSheets}
@@ -4277,7 +5164,7 @@ function CalculatorPage({
                         </p>
                         <p>Kosten: {formatCurrency(item.cost)}</p>
                       </div>
-                    </details>
+                    </section>
                   );
                 })}
               </div>
@@ -4288,20 +5175,18 @@ function CalculatorPage({
               </div>
             </div>
               </div>
-            </details>
+            </section>
 
-            <details id="calc-step-5" className="group scroll-mt-24 rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-sky-500 bg-sky-50 px-4 py-4 transition hover:bg-sky-100/70">
+            <section id="calc-step-5" className={`${calculationTab !== "produktion" ? "hidden" : ""} group scroll-mt-24 rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden`}>
+              <div className="production-group-header">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-sky-700">5 · Maschine / Druck</p>
                   <p className="mt-1 text-sm font-black text-slate-950">{selectedMachine.name} · {getMachineCostModelLabel(machineCostModel)}</p>
                   <p className="mt-1 text-xs font-bold text-sky-900">Aufklappen, wenn Maschine, Farbmodus oder Produktionsparameter geändert werden sollen.</p>
                 </div>
-                <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-sky-700 shadow-sm ring-1 ring-sky-100 group-open:hidden">Aufklappen</span>
-                <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-black text-sky-700 shadow-sm ring-1 ring-sky-100 group-open:inline-flex">Einklappen</span>
-              </summary>
-              <div className="px-0 pb-0">
-            <div className="rounded-3xl border border-sky-200 bg-sky-50 p-4 shadow-sm">
+              </div>
+              <div className="production-group-body">
+            <div className="production-group">
               <p className="text-xs font-extrabold uppercase tracking-wide text-sky-700">
                 5 · Maschine / Druck
               </p>
@@ -4309,7 +5194,7 @@ function CalculatorPage({
                 Maschine wählen, Farb-/Kostenmodell prüfen und nur die passenden Produktionsfelder bearbeiten.
               </p>
 
-              <div className="mt-4 grid gap-4 md:grid-cols-2 md:items-end">
+              <div className="mt-4 input-mask md:items-end">
                 <SelectField
                   label="Druckmaschine"
                   value={selectedMachineId}
@@ -4453,10 +5338,10 @@ function CalculatorPage({
               )}
             </div>
               </div>
-            </details>
+            </section>
 
-            <details id="calc-step-6" className="group scroll-mt-24 rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-lime-400 bg-lime-50 px-4 py-4 transition hover:bg-lime-100/70">
+            <section id="calc-step-6" className={`${calculationTab !== "produktion" ? "hidden" : ""} group scroll-mt-24 rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden`}>
+              <div className="production-group-header">
                 <div className="min-w-0">
                   <div className="flex flex-wrap items-center gap-2">
                     <p className="text-xs font-semibold uppercase tracking-wide text-lime-700">6 · Weiterverarbeitung</p>
@@ -4471,11 +5356,9 @@ function CalculatorPage({
                     {activeFinishingNames || "Keine Weiterverarbeitung gewählt"}
                   </p>
                 </div>
-                <span className="rounded-full bg-white px-3 py-2 text-xs font-semibold text-lime-700 shadow-sm ring-1 ring-lime-100 group-open:hidden">Aufklappen</span>
-                <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-semibold text-lime-700 shadow-sm ring-1 ring-lime-100 group-open:inline-flex">Einklappen</span>
-              </summary>
-              <div className="px-0 pb-0">
-                <div className="rounded-3xl border border-lime-200 bg-lime-50 p-4 shadow-sm">
+              </div>
+              <div className="production-group-body">
+                <div className="production-group">
                   <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
                     <div>
                       <p className="text-xs font-semibold uppercase tracking-wide text-lime-700">
@@ -4540,11 +5423,11 @@ function CalculatorPage({
                       const { operation, price, selectionId } = item;
 
                       return (
-                        <details
+                        <section
                           key={selectionId}
                           className="group overflow-hidden rounded-2xl border border-slate-200 bg-white"
                         >
-                          <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
+                          <div className="flex cursor-pointer list-none items-center justify-between gap-4 px-4 py-3 transition hover:bg-slate-50 [&::-webkit-details-marker]:hidden">
                             <div className="min-w-0">
                               <div className="flex flex-wrap items-center gap-2">
                                 <span className="grid h-7 w-7 place-items-center rounded-full bg-lime-100 text-xs font-semibold text-lime-800">
@@ -4566,7 +5449,7 @@ function CalculatorPage({
                                 ▼
                               </span>
                             </div>
-                          </summary>
+                          </div>
 
                           <div className="border-t border-slate-100 p-4">
                             <div className="flex flex-col gap-3 md:flex-row md:items-end">
@@ -4607,12 +5490,12 @@ function CalculatorPage({
                               <p>Berechnet: {formatCurrency(price)}</p>
                             </div>
                           </div>
-                        </details>
+                        </section>
                       );
                     })}
                   </div>
 
-                  <div className="mt-5 grid gap-3 md:grid-cols-2">
+                  <div className="mt-5 input-mask">
                     <div className="rounded-3xl bg-slate-950 p-5 text-white">
                       <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
                         Summe Weiterverarbeitung
@@ -4632,20 +5515,18 @@ function CalculatorPage({
                   </div>
                 </div>
               </div>
-            </details>
+            </section>
 
-            <details id="calc-step-7" className="group scroll-mt-24 rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden">
-              <summary className="flex cursor-pointer list-none items-center justify-between gap-4 rounded-3xl border-l-8 border-violet-500 bg-violet-50 px-4 py-4 transition hover:bg-violet-100/70">
+            <section id="calc-step-7" className={`${calculationTab !== "kosten" ? "hidden" : ""} group scroll-mt-24 rounded-3xl border border-slate-200 bg-white p-0 shadow-sm [&>summary::-webkit-details-marker]:hidden`}>
+              <div className="production-group-header">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-violet-700">7 · Zuschläge / Preislogik</p>
                   <p className="mt-1 text-sm font-black text-slate-950">Gemeinkosten {overheadPercent}% · Marge {marginPercent}%</p>
                   <p className="mt-1 text-xs font-bold text-violet-900">Aufklappen, wenn Zuschuss, Ausschuss, Rüstzeit, Gemeinkosten oder Marge geändert werden sollen.</p>
                 </div>
-                <span className="rounded-full bg-white px-3 py-2 text-xs font-black text-violet-700 shadow-sm ring-1 ring-violet-100 group-open:hidden">Aufklappen</span>
-                <span className="hidden rounded-full bg-white px-3 py-2 text-xs font-black text-violet-700 shadow-sm ring-1 ring-violet-100 group-open:inline-flex">Einklappen</span>
-              </summary>
-              <div className="px-0 pb-0">
-            <div className="rounded-3xl border border-violet-200 bg-violet-50 p-4 shadow-sm">
+              </div>
+              <div className="production-group-body">
+            <div className="production-group">
               <p className="text-xs font-extrabold uppercase tracking-wide text-violet-700">
                 7 · Zuschläge / Preislogik
               </p>
@@ -4653,7 +5534,7 @@ function CalculatorPage({
                 Diese Werte beeinflussen die Produktionssicherheit und den Verkaufspreis. Die eigentliche Preisbrücke steht rechts im Ergebnisbereich.
               </p>
 
-              <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+              <div className="mt-4 input-mask">
                 <NumberField
                   label="Zuschuss"
                   value={fixedOvers}
@@ -4693,20 +5574,18 @@ function CalculatorPage({
               </div>
             </div>
               </div>
-            </details>
+            </section>
           </div>
         </div>
 
         <div className="space-y-5 xl:sticky xl:top-28 xl:self-start">
-          <details open className="group overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
+          <section className="group overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
+            <div className="flex cursor-pointer list-none items-center justify-between gap-4 px-6 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V183</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Ergebnis V192</p>
                 <p className="mt-1 text-sm font-medium text-slate-300">wichtigster Preisblock bleibt offen</p>
               </div>
-              <span className="rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200 group-open:hidden">Aufklappen</span>
-              <span className="hidden rounded-full bg-white/10 px-3 py-1 text-xs font-semibold text-slate-200 group-open:inline-flex">Einklappen</span>
-            </summary>
+            </div>
             <div className="border-t border-white/10 p-6">
               <div className="flex items-start justify-between gap-4">
                 <div>
@@ -4791,19 +5670,17 @@ function CalculatorPage({
                   : "In Angebot übernehmen"}
               </button>
             </div>
-          </details>
+          </section>
 
-          <details open className="group overflow-hidden rounded-[2rem] border border-emerald-200 bg-emerald-50 shadow-sm">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
+          <section className="group overflow-hidden rounded-[2rem] border border-emerald-200 bg-emerald-50 shadow-sm">
+            <div className="flex cursor-pointer list-none items-center justify-between gap-4 px-5 py-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V183</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Angebotsmodus V192</p>
                 <p className="mt-1 text-sm font-medium text-emerald-950">Kalkulation ist bereit für eine Angebotsposition</p>
               </div>
-              <span className="rounded-full bg-white px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm group-open:hidden">Aufklappen</span>
-              <span className="hidden rounded-full bg-white px-3 py-1 text-xs font-semibold text-emerald-700 shadow-sm group-open:inline-flex">Einklappen</span>
-            </summary>
+            </div>
             <div className="border-t border-emerald-200/70 p-5">
-              <div className="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-emerald-100">
+              <div className="production-group">
                 <div className="flex items-start justify-between gap-4">
                   <div>
                     <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Positionsvorschau</p>
@@ -4837,28 +5714,27 @@ function CalculatorPage({
                 </div>
               </div>
             </div>
-          </details>
+          </section>
 
-          <details
-            open
+          <section
             className={`group rounded-[2rem] border p-5 shadow-sm ${calculationStatusTone.panelClass}`}
           >
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
+            <div className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V183</p>
+                <p className={`text-xs font-semibold uppercase tracking-wide ${calculationStatusTone.textClass}`}>Kalkulationsstatus V192</p>
                 <p className="mt-1 text-sm font-medium text-slate-600">{calculationStatusTone.headline}</p>
               </div>
               <span className={`rounded-full px-3 py-1 text-xs font-semibold ${calculationStatusTone.badgeClass}`}>
                 {calculationStatusTone.label}
               </span>
-            </summary>
+            </div>
             <div className="mt-5 border-t border-white/60 pt-5">
             <div className="flex items-start justify-between gap-4">
               <div>
                 <p
                   className={`text-xs font-extrabold uppercase tracking-wide ${calculationStatusTone.textClass}`}
                 >
-                  Kalkulationsstatus V183
+                  Kalkulationsstatus V192
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   {calculationStatusTone.headline}
@@ -4933,10 +5809,10 @@ function CalculatorPage({
             ) : null}
 
             {calculationWarnings.length > 0 ? (
-              <details className="mt-4 rounded-2xl bg-white/80 px-4 py-3 text-sm font-bold text-slate-700 shadow-sm">
-                <summary className="cursor-pointer font-black text-slate-950">
+              <section className="mt-4 rounded-2xl bg-white/80 px-4 py-3 text-sm font-bold text-slate-700 shadow-sm">
+                <div className="cursor-pointer font-black text-slate-950">
                   Alle Prüfungen anzeigen
-                </summary>
+                </div>
                 <div className="mt-4 space-y-4">
                   {criticalCalculationWarnings.length > 0 && (
                     <div>
@@ -5007,7 +5883,7 @@ function CalculatorPage({
                     </div>
                   )}
                 </div>
-              </details>
+              </section>
             ) : (
               <div className="mt-4 grid grid-cols-2 gap-2 text-xs font-black text-emerald-800">
                 <div className="rounded-2xl bg-white/80 px-3 py-2 shadow-sm">
@@ -5025,22 +5901,20 @@ function CalculatorPage({
               </div>
             )}
             </div>
-          </details>
+          </section>
 
-          <details className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
+          <section className="group work-surface p-5">
+            <div className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
-                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V183</p>
+                <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Auswertung V192</p>
                 <p className="mt-1 text-sm font-medium text-slate-500">Produktionskosten und Preisaufbau</p>
               </div>
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:hidden">Aufklappen</span>
-              <span className="hidden rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:inline-flex">Einklappen</span>
-            </summary>
+            </div>
             <div className="mt-5 border-t border-slate-100 pt-5">
             <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Auswertung V183
+                  Auswertung V192
                 </p>
                 <h3 className="mt-1 text-lg font-black text-slate-950">
                   Produktionskosten & Preisaufbau
@@ -5092,11 +5966,11 @@ function CalculatorPage({
                 const safePercent = Math.max(0, Math.min(percent, 100));
 
                 return (
-                  <details
+                  <section
                     key={section.title}
                     className="group rounded-3xl border border-slate-100 bg-slate-50 p-4 open:bg-white open:shadow-sm"
                   >
-                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
+                    <div className="flex cursor-pointer list-none items-start justify-between gap-4">
                       <div className="min-w-0">
                         <div className="flex items-center gap-2">
                           <span className={`h-3 w-3 shrink-0 rounded-full ${section.accentClass}`} />
@@ -5116,7 +5990,7 @@ function CalculatorPage({
                           Details
                         </p>
                       </div>
-                    </summary>
+                    </div>
 
                     <div className="mt-3 h-2 overflow-hidden rounded-full bg-slate-100">
                       <div
@@ -5147,7 +6021,7 @@ function CalculatorPage({
                         </div>
                       ))}
                     </div>
-                  </details>
+                  </section>
                 );
               })}
             </div>
@@ -5156,7 +6030,7 @@ function CalculatorPage({
               <div className="flex flex-col gap-1 md:flex-row md:items-end md:justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">
-                    Produktionskosten V183
+                    Produktionskosten V192
                   </p>
                   <h4 className="mt-1 text-base font-semibold text-slate-950">
                     Detaillierte Kostenaufschlüsselung
@@ -5169,11 +6043,11 @@ function CalculatorPage({
 
               <div className="mt-4 grid gap-3">
                 {detailedProductionCostGroups.map((group) => (
-                  <details
+                  <section
                     key={group.title}
                     className={`group rounded-3xl border p-4 ${group.accentClass}`}
                   >
-                    <summary className="flex cursor-pointer list-none items-start justify-between gap-4">
+                    <div className="flex cursor-pointer list-none items-start justify-between gap-4">
                       <div className="min-w-0">
                         <p className="text-sm font-semibold text-slate-950">
                           {group.title}
@@ -5185,7 +6059,7 @@ function CalculatorPage({
                       <span className="shrink-0 rounded-full bg-white px-3 py-1 text-[0.68rem] font-semibold text-slate-600 shadow-sm ring-1 ring-slate-200">
                         Details
                       </span>
-                    </summary>
+                    </div>
 
                     <div className="mt-4 space-y-2">
                       {group.rows.map((row) => (
@@ -5209,7 +6083,7 @@ function CalculatorPage({
                         </div>
                       ))}
                     </div>
-                  </details>
+                  </section>
                 ))}
               </div>
             </div>
@@ -5245,17 +6119,15 @@ function CalculatorPage({
               </div>
             </div>
             </div>
-          </details>
+          </section>
 
-          <details className="group rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-            <summary className="flex cursor-pointer list-none items-center justify-between gap-4">
+          <section className="group work-surface p-5">
+            <div className="flex cursor-pointer list-none items-center justify-between gap-4">
               <div>
                 <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kostenmix</p>
                 <p className="mt-1 text-sm font-medium text-slate-500">Kostentreiber im Verhältnis</p>
               </div>
-              <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:hidden">Aufklappen</span>
-              <span className="hidden rounded-full bg-slate-100 px-3 py-1 text-xs font-semibold text-slate-600 group-open:inline-flex">Einklappen</span>
-            </summary>
+            </div>
             <div className="mt-5 border-t border-slate-100 pt-5">
             <div className="flex items-start justify-between gap-4">
               <div>
@@ -5285,12 +6157,12 @@ function CalculatorPage({
               })}
             </div>
             </div>
-          </details>
+          </section>
 
-          <details className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-            <summary className="cursor-pointer text-sm font-semibold uppercase tracking-wide text-slate-500">
+          <section className="work-surface p-5">
+            <div className="cursor-pointer text-sm font-semibold uppercase tracking-wide text-slate-500">
               Kostenübersicht anzeigen
-            </summary>
+            </div>
 
             <div className="mt-5 space-y-3">
               <CostRow
@@ -5381,12 +6253,12 @@ function CalculatorPage({
                 highlight
               />
             </div>
-          </details>
+          </section>
 
-          <details className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-            <summary className="cursor-pointer text-sm font-semibold uppercase tracking-wide text-slate-500">
+          <section className="work-surface p-5">
+            <div className="cursor-pointer text-sm font-semibold uppercase tracking-wide text-slate-500">
               Staffelpreise anzeigen
-            </summary>
+            </div>
 
             <div className="mt-5 space-y-3">
               {tiers.map((tier) => (
@@ -5405,14 +6277,14 @@ function CalculatorPage({
                 </div>
               ))}
             </div>
-          </details>
+          </section>
 
-          <details className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-            <summary className="cursor-pointer text-sm font-semibold uppercase tracking-wide text-slate-500">
+          <section className="work-surface p-5">
+            <div className="cursor-pointer text-sm font-semibold uppercase tracking-wide text-slate-500">
               Maschinendetails anzeigen
-            </summary>
+            </div>
 
-            <div className="mt-5 rounded-3xl bg-slate-50 p-5">
+            <div className="mt-4 rounded-2xl bg-slate-50 p-4">
               <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
                 Maschine
               </p>
@@ -5432,7 +6304,7 @@ function CalculatorPage({
                 </p>
               ))}
             </div>
-          </details>
+          </section>
         </div>
 
       </section>
@@ -5598,6 +6470,9 @@ function QuotesPage({
 }) {
   const [activeBusinessDocumentType, setActiveBusinessDocumentType] =
     useState<DocumentType>(initialDocumentType);
+  const [activeDocumentWorkspaceTab, setActiveDocumentWorkspaceTab] = useState<
+    "basis" | "positions" | "details" | "documents" | "preview"
+  >("basis");
   const documentAreaTone: Record<
     DocumentType,
     {
@@ -7379,31 +8254,159 @@ function QuotesPage({
     printWindow.document.close();
   }
 
-  return (
-    <div className="space-y-6">
-      <section className="overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
-        <div className="relative p-7 lg:p-9">
-          <div className={`absolute right-0 top-0 h-56 w-56 rounded-full ${documentAreaTone[activeBusinessDocumentType].glowPrimary} blur-3xl`} />
-          <div className={`absolute bottom-0 right-40 h-56 w-56 rounded-full ${documentAreaTone[activeBusinessDocumentType].glowSecondary} blur-3xl`} />
+  const documentWorkspaceTabs = [
+    {
+      id: "basis",
+      label: "Basisdaten",
+      helper: "Kunde, Nummer, Datum, Status",
+    },
+    {
+      id: "positions",
+      label: "Positionen",
+      helper: "Leistungen, Mengen, Preise",
+    },
+    {
+      id: "details",
+      label: "Texte & Hinweise",
+      helper: "Betreff, Einleitung, Bedingungen",
+    },
+    {
+      id: "documents",
+      label: "Verwaltung",
+      helper: "Gespeicherte Dokumente",
+    },
+    {
+      id: "preview",
+      label: "Vorschau",
+      helper: "Druck / PDF prüfen",
+    },
+  ] as const;
 
-          <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+  return (
+    <div className="document-workspace-v190 space-y-5">
+      <style>{`
+        .document-workspace-v190 {
+          --pp-dark: #071225;
+          --pp-cyan: #12b8d4;
+          --pp-bg: #f5f7fb;
+          --pp-line: #dbe4ef;
+        }
+        .document-workspace-v190 .shadow-sm,
+        .document-workspace-v190 .shadow-lg,
+        .document-workspace-v190 .shadow-xl { box-shadow: none !important; }
+        .document-workspace-v190 .rounded-3xl { border-radius: 24px !important; }
+        .document-workspace-v190 .rounded-2xl { border-radius: 16px !important; }
+        .document-workspace-v190 .rounded-xl { border-radius: 13px !important; }
+        .document-workspace-v190 input,
+        .document-workspace-v190 textarea,
+        .document-workspace-v190 select {
+          box-shadow: none !important;
+          border-color: var(--pp-line) !important;
+          background: #f8fafc !important;
+        }
+        .document-workspace-v190 > section:first-of-type {
+          background: var(--pp-dark) !important;
+          color: #fff !important;
+          padding: 24px 28px !important;
+          border: 0 !important;
+        }
+        .document-workspace-v190 > section:first-of-type h2,
+        .document-workspace-v190 > section:first-of-type p { color: inherit; }
+        .document-workspace-v190 > section:first-of-type h2 {
+          color: #fff !important;
+          font-size: 30px !important;
+          line-height: 1.05 !important;
+          letter-spacing: -0.03em !important;
+        }
+        .document-workspace-v190 > section:first-of-type h2 + p,
+        .document-workspace-v190 > section:first-of-type p:not(:first-child) { color: #cbd5e1 !important; }
+        .document-workspace-v190 > section:first-of-type > div > div > div:last-child {
+          background: #fff !important;
+          border-radius: 16px !important;
+          color: var(--pp-dark) !important;
+          min-width: 180px;
+        }
+        .document-workspace-v190 > section:nth-of-type(2) {
+          background: #fff !important;
+          border: 1px solid var(--pp-line) !important;
+          border-radius: 24px !important;
+          padding: 20px 24px !important;
+        }
+        .document-workspace-v190 > section:nth-of-type(2) .grid.md\:grid-cols-5:first-of-type > div {
+          min-height: 36px;
+          border-radius: 13px !important;
+          padding: 8px 12px !important;
+        }
+        .document-workspace-v190 > section:nth-of-type(2) .grid.md\:grid-cols-5:first-of-type > div.border-slate-950 {
+          background: var(--pp-dark) !important;
+          color: #fff !important;
+          border-color: var(--pp-dark) !important;
+        }
+        .document-workspace-v190 > section:nth-of-type(2) button.bg-slate-950 {
+          background: var(--pp-dark) !important;
+          color: #fff !important;
+        }
+        .document-workspace-v190 > section:nth-of-type(2) button:not(.bg-slate-950) {
+          background: #f1f5f9 !important;
+          color: #334155 !important;
+          border: 1px solid var(--pp-line) !important;
+          box-shadow: none !important;
+        }
+        .document-workspace-v190 > section:nth-of-type(2) [class*="bg-cyan-50"],
+        .document-workspace-v190 > section:nth-of-type(2) [class*="bg-emerald-50"],
+        .document-workspace-v190 > section:nth-of-type(2) [class*="bg-lime-50"],
+        .document-workspace-v190 > section:nth-of-type(2) [class*="bg-rose-50"] {
+          background: #ecfeff !important;
+          border-color: #67e8f9 !important;
+          color: #0f172a !important;
+        }
+        .document-workspace-v190 > section:nth-of-type(3) {
+          background: #fff !important;
+          border: 1px solid var(--pp-line) !important;
+          border-radius: 24px !important;
+          padding: 24px !important;
+        }
+        .document-workspace-v190 .document-module-panel {
+          border: 1px solid var(--pp-line) !important;
+          background: #f8fafc !important;
+        }
+        .document-workspace-v190 .document-module-panel .bg-white,
+        .document-workspace-v190 .document-module-panel .bg-white\/70,
+        .document-workspace-v190 .document-module-panel .bg-white\/75 {
+          background: #fff !important;
+        }
+        .document-workspace-v190 button.bg-emerald-500,
+        .document-workspace-v190 button.bg-emerald-600 {
+          background: #10b981 !important;
+          color: #fff !important;
+          border-radius: 16px !important;
+          padding: 13px 28px !important;
+          font-weight: 600 !important;
+        }
+      `}</style>
+      <section className="rounded-3xl bg-[#071225] px-7 py-6 text-white">
+        <div className="relative">
+          <div className="hidden" />
+          <div className="hidden" />
+
+          <div className="relative flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
-              <p className={`text-sm font-black uppercase tracking-[0.35em] ${documentAreaTone[activeBusinessDocumentType].eyebrow}`}>
-                {documentAreaTitle ?? activeBusinessDocumentLabel} V183
+              <p className={`text-[0.68rem] font-black uppercase tracking-[0.24em] ${documentAreaTone[activeBusinessDocumentType].eyebrow}`}>
+                {documentAreaTitle ?? activeBusinessDocumentLabel} V192
               </p>
-              <h2 className="mt-3 text-4xl font-black tracking-tight">
+              <h2 className="mt-1 text-3xl font-black tracking-tight text-white">
                 {documentAreaTitle ?? `${activeBusinessDocumentLabel} erstellen`}
               </h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+              <p className="mt-1 max-w-3xl text-sm leading-5 text-slate-300">
                 {documentAreaDescription ?? "Dokumente fachlich getrennt vorbereiten und als saubere Kundenvorschau prüfen."}
               </p>
             </div>
 
-            <div className="rounded-3xl bg-white p-5 text-slate-950 shadow-xl">
+            <div className="rounded-2xl bg-white px-5 py-3 text-slate-950">
               <p className="text-sm font-bold text-slate-500">
                 {isDeliveryNote ? "Positionen" : "Dokument brutto"}
               </p>
-              <p className="mt-2 text-4xl font-black">
+              <p className="mt-1 text-2xl font-black">
                 {isDeliveryNote
                   ? quotePositions.length
                   : formatCurrency(grossTotal)}
@@ -7418,23 +8421,20 @@ function QuotesPage({
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
-        <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
+      <section className="rounded-3xl border border-[#dbe4ef] bg-white px-6 py-5">
+        <div className="flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between">
           <div className="max-w-3xl">
-            <div className="inline-flex items-center gap-2 rounded-full bg-slate-950 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-white">
-              Dokumentführung V183
+            <div className="inline-flex items-center gap-2 rounded-full bg-slate-100 px-3 py-1 text-[0.68rem] font-black uppercase tracking-wide text-slate-600">
+              Prozess
             </div>
-            <h3 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950">
-              Kompakter Ablauf statt Karten-Chaos
-            </h3>
-            <p className="mt-2 text-sm font-medium leading-6 text-slate-500">
-              Die nächsten Arbeitsschritte sind jetzt farblich markiert: Grün ist erledigt, Dunkel ist das aktuelle Dokument, Gelb ist der nächste sinnvolle Schritt und Grau ist noch offen.
+            <p className="mt-2 text-sm font-black tracking-tight text-slate-950">
+              Arbeitsfolge prüfen, passenden Tab öffnen und unten speichern.
             </p>
           </div>
 
-          <div className={`w-full rounded-3xl border p-4 xl:max-w-[420px] ${compactActionToneClass}`}>
-            <p className="text-xs font-black uppercase tracking-[0.24em] opacity-70">Jetzt wichtig</p>
-            <p className="mt-2 text-base font-black leading-6">
+          <div className={`w-full rounded-2xl border px-4 py-3 xl:max-w-[460px] ${compactActionToneClass}`}>
+            <p className="text-[0.68rem] font-black uppercase tracking-[0.20em] opacity-70">Jetzt wichtig</p>
+            <p className="mt-0.5 text-sm font-black leading-5">
               {isQuote
                 ? quoteNextActionLabel
                 : isOrderConfirmation
@@ -7450,309 +8450,60 @@ function QuotesPage({
           </div>
         </div>
 
-        <div className="mt-5 grid gap-2 md:grid-cols-5">
+        <div className="mt-2 grid gap-1 md:grid-cols-5">
           {documentWorkflowSteps.map((step, stepIndex) => (
-            <div key={step.workflowType} className={`rounded-3xl border p-4 transition ${step.toneClass}`}>
+            <div key={step.workflowType} className={`rounded-xl border px-3 py-2 transition ${step.toneClass}`}>
               <div className="flex items-center justify-between gap-2">
                 <span className={`rounded-full px-2.5 py-1 text-[10px] font-black uppercase tracking-wide ${step.badgeClass}`}>
                   {step.stateLabel}
                 </span>
                 <span className="text-xs font-black opacity-60">{stepIndex + 1}</span>
               </div>
-              <p className="mt-3 text-sm font-black leading-5">{step.label}</p>
-              <p className="mt-1 min-h-[2rem] text-xs font-semibold leading-4 opacity-70">{step.helper}</p>
+              <p className="mt-0.5 text-xs font-black leading-4">{step.label}</p>
               {step.documentNumber && (
-                <p className="mt-2 truncate text-xs font-black opacity-80">{step.documentNumber}</p>
+                <p className="mt-1 truncate text-xs font-black opacity-80">{step.documentNumber}</p>
               )}
             </div>
           ))}
         </div>
-      </section>
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-        <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-          <div>
-            <div className="inline-flex items-center gap-2 rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald-700">
-              {activeBusinessDocumentLabel} V183
-            </div>
-            <h3 className="mt-4 text-2xl font-semibold tracking-tight text-slate-950">
-              {activeBusinessDocumentLabel} bearbeiten & Vorschau
-            </h3>
-            <p className="mt-2 max-w-3xl text-sm font-medium leading-6 text-slate-500">
-              Dokumentdaten, Empfänger, Betreff, Texte und Positionen sind direkt bearbeitbar. Dieser Bereich ist auf den gewählten Dokumenttyp fokussiert.
-            </p>
-          </div>
+        <div className="mt-4 border-t border-slate-200 pt-3">
+          <div className="grid gap-1 md:grid-cols-5">
+            {documentWorkspaceTabs.map((tab) => {
+              const isActiveTab = activeDocumentWorkspaceTab === tab.id;
 
-          <div className="grid min-w-full gap-3 sm:grid-cols-2 xl:min-w-[520px]">
-            <div className="rounded-3xl bg-slate-50 p-4">
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Dokument</p>
-              <p className="mt-1 truncate text-lg font-semibold text-slate-950">{activeBusinessDocumentLabel}</p>
-              <p className="mt-1 text-sm font-medium text-slate-500">{quoteNumber}</p>
-            </div>
-            <div className={`rounded-3xl p-4 ${documentStatusTone.panelClass}`}>
-              <p className={`text-xs font-semibold uppercase tracking-wide ${documentStatusTone.labelClass}`}>Status</p>
-              <p className={`mt-1 text-lg font-semibold ${documentStatusTone.valueClass}`}>{documentStatus}</p>
-              <p className={`mt-1 text-sm font-medium ${documentStatusTone.hintClass}`}>{documentStatusHint}</p>
-            </div>
-            <div className={`rounded-3xl p-4 ${showLetterhead ? "bg-cyan-50" : "bg-slate-50"}`}>
-              <p className={`text-xs font-semibold uppercase tracking-wide ${showLetterhead ? "text-cyan-700" : "text-slate-400"}`}>Briefbogen</p>
-              <p className={`mt-1 text-lg font-semibold ${showLetterhead ? "text-cyan-900" : "text-slate-950"}`}>
-                {showUploadedLetterhead ? "Eigener Hintergrund" : showDemoLetterhead ? "Demo aktiv" : "Ohne Hintergrund"}
-              </p>
-              <p className={`mt-1 text-sm font-medium ${showLetterhead ? "text-cyan-700" : "text-slate-500"}`}>
-                für {activeBusinessDocumentLabel}
-              </p>
-            </div>
-            <div className={`rounded-3xl p-4 ${sourceDocumentLabel ? "bg-emerald-50" : "bg-slate-50"}`}>
-              <p className={`text-xs font-semibold uppercase tracking-wide ${sourceDocumentLabel ? "text-emerald-700" : "text-slate-400"}`}>Quelle</p>
-              <p className={`mt-1 truncate text-lg font-semibold ${sourceDocumentLabel ? "text-emerald-950" : "text-slate-950"}`}>
-                {sourceDocumentLabel || "ohne Bezug"}
-              </p>
-              <p className={`mt-1 text-sm font-medium ${sourceDocumentLabel ? "text-emerald-700" : "text-slate-500"}`}>
-                Ursprung / Folgeprozess
-              </p>
-            </div>
-            {activeBusinessDocumentType === "reminder" && reminderSnapshot && (
-              <div className="rounded-3xl bg-rose-50 p-4">
-                <p className="text-xs font-semibold uppercase tracking-wide text-rose-700">Mahnstufe</p>
-                <p className="mt-1 truncate text-lg font-semibold text-rose-950">{reminderSnapshot.levelLabel}</p>
-                <p className="mt-1 text-sm font-medium text-rose-700">Restbetrag {formatCurrency(reminderSnapshot.openAmount)}</p>
-                {roundMoney(reminderSnapshot.reminderFeeAmount ?? 0) > 0 && (
-                  <p className="mt-1 text-sm font-medium text-rose-700">Mahngebühr {formatCurrency(reminderSnapshot.reminderFeeAmount ?? 0)}</p>
-                )}
-                {roundMoney(reminderSnapshot.reminderTotalAmount ?? reminderSnapshot.openAmount) > roundMoney(reminderSnapshot.openAmount) && (
-                  <p className="mt-1 text-sm font-black text-rose-950">Gesamt {formatCurrency(reminderSnapshot.reminderTotalAmount ?? reminderSnapshot.openAmount)}</p>
-                )}
-                {reminderSnapshot.textTemplateLabel && (
-                  <p className="mt-1 text-xs font-bold uppercase tracking-wide text-rose-600">{reminderSnapshot.textTemplateLabel}</p>
-                )}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="mt-6 rounded-[1.75rem] border border-slate-200 bg-gradient-to-br from-slate-50 via-white to-slate-50 p-5 shadow-sm">
-          <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
-            <div>
-              <p className="text-xs font-black uppercase tracking-[0.24em] text-slate-400">Dokumentzentrale V183</p>
-              <h4 className="mt-2 text-xl font-black tracking-tight text-slate-950">
-                {activeBusinessDocumentLabel} auf einen Blick
-              </h4>
-              <p className="mt-2 max-w-3xl text-sm font-semibold leading-6 text-slate-500">
-                Die wichtigsten Infos bleiben zentral gebündelt. Der farbige Ablauf oben zeigt sofort, was erledigt ist und welcher Schritt als nächstes ansteht.
-              </p>
-            </div>
-            <div className={`rounded-3xl px-4 py-3 text-right shadow-sm ${documentStatusTone.panelClass}`}>
-              <p className={`text-xs font-bold uppercase tracking-wide ${documentStatusTone.labelClass}`}>Status</p>
-              <p className={`mt-1 text-lg font-black ${documentStatusTone.valueClass}`}>{documentStatus}</p>
-              <p className={`mt-1 text-xs font-semibold ${documentStatusTone.hintClass}`}>{documentStatusHint}</p>
-            </div>
-          </div>
-
-          <div className="mt-5 grid gap-3 lg:grid-cols-4">
-            <div className="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Dokument</p>
-              <p className="mt-2 truncate text-base font-black text-slate-950">{quoteNumber}</p>
-              <p className="mt-1 text-xs font-semibold text-slate-500">{activeBusinessDocumentLabel}</p>
-            </div>
-            <div className="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Kunde</p>
-              <p className="mt-2 truncate text-base font-black text-slate-950">{quoteCustomerName || "ohne Kunde"}</p>
-              <p className="mt-1 text-xs font-semibold text-slate-500">{selectedCustomer ? selectedCustomer.customerNumber : "Freitext"}</p>
-            </div>
-            <div className="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-400">
-                {isDeliveryNote ? "Liefermenge" : isOrderConfirmation ? "Auftragsmenge" : activeBusinessDocumentType === "invoice" ? "Offen" : activeBusinessDocumentType === "reminder" && reminderSnapshot ? "Gesamt Mahnung" : "Brutto"}
-              </p>
-              <p className={`mt-2 text-base font-black ${activeBusinessDocumentType === "invoice" && openPaymentAmount > 0.01 ? "text-rose-950" : activeBusinessDocumentType === "reminder" ? "text-rose-950" : "text-slate-950"}`}>
-                {isDeliveryNote
-                  ? formatNumber(deliveryTotalQuantity, 0)
-                  : isOrderConfirmation
-                    ? formatNumber(orderTotalQuantity, 0)
-                    : activeBusinessDocumentType === "invoice"
-                      ? formatCurrency(openPaymentAmount)
-                      : activeBusinessDocumentType === "reminder" && reminderSnapshot
-                        ? formatCurrency(reminderSnapshot.reminderTotalAmount ?? reminderSnapshot.openAmount)
-                        : formatCurrency(grossTotal)}
-              </p>
-              <p className="mt-1 text-xs font-semibold text-slate-500">
-                {isDeliveryNote
-                  ? `${deliveryPositionCount} Position${deliveryPositionCount === 1 ? "" : "en"} · ohne Preise`
-                  : isOrderConfirmation
-                    ? `${orderPositionCount} Position${orderPositionCount === 1 ? "" : "en"}`
-                    : activeBusinessDocumentType === "invoice"
-                      ? `Bezahlt ${formatCurrency(normalizedPaymentPaidAmount)}`
-                      : activeBusinessDocumentType === "reminder" && reminderSnapshot
-                        ? `Rest ${formatCurrency(reminderSnapshot.openAmount)} · Gebühr ${formatCurrency(reminderSnapshot.reminderFeeAmount ?? 0)}`
-                        : `Netto ${formatCurrency(netTotal)}`}
-              </p>
-            </div>
-            <div className="rounded-3xl bg-white p-4 shadow-sm ring-1 ring-slate-100">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Nächster Schritt</p>
-              <p className="mt-2 text-sm font-black leading-5 text-slate-950">
-                {isQuote
-                  ? quoteNextActionLabel
-                  : isOrderConfirmation
-                    ? orderNextActionLabel
-                    : isDeliveryNote
-                      ? deliveryNextActionLabel
-                      : activeBusinessDocumentType === "invoice"
-                        ? invoiceNextActionLabel
-                        : activeBusinessDocumentType === "reminder" && reminderSnapshot
-                          ? `${reminderSnapshot.levelLabel} versenden / Zahlung überwachen`
-                          : currentAreaActionLabel}
-              </p>
-              <p className="mt-1 text-xs font-semibold text-slate-500">kontextbezogen</p>
-            </div>
-          </div>
-
-          <div className="mt-4 grid gap-3 xl:grid-cols-[1.3fr_1fr]">
-            <div className="rounded-3xl border border-slate-200 bg-white p-4">
-              <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-                <div>
-                  <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Dokumentkette</p>
-                  <p className="mt-1 text-sm font-semibold leading-5 text-slate-700">
-                    {currentDocumentChain.length > 1
-                      ? currentDocumentChain.map((item) => item.label).join(" → ")
-                      : "Noch kein Folgeprozess verknüpft"}
-                  </p>
-                </div>
-                <div className="flex flex-wrap gap-2">
-                  {currentDocumentChain.map((chainItem) => {
-                    const relatedDocument = chainItem.id
-                      ? savedDocuments.find((documentItem) => documentItem.id === chainItem.id)
-                      : undefined;
-                    const chainBadgeClass = chainItem.isCurrent
-                      ? "bg-slate-950 text-white"
-                      : chainItem.relation === "source"
-                        ? "bg-emerald-100 text-emerald-800"
-                        : "bg-cyan-100 text-cyan-800";
-
-                    if (relatedDocument && !chainItem.isCurrent) {
-                      return (
-                        <button
-                          key={`${chainItem.relation}-${chainItem.id ?? chainItem.documentNumber}`}
-                          type="button"
-                          onClick={() => handleOpenSavedDocument(relatedDocument)}
-                          className={`rounded-full px-3 py-2 text-xs font-black shadow-sm transition hover:-translate-y-0.5 ${chainBadgeClass}`}
-                          title={`${chainItem.label} öffnen`}
-                        >
-                          {chainItem.label}
-                        </button>
-                      );
-                    }
-
-                    return (
-                      <span
-                        key={`${chainItem.relation}-${chainItem.id ?? chainItem.documentNumber}`}
-                        className={`rounded-full px-3 py-2 text-xs font-black shadow-sm ${chainBadgeClass}`}
-                        title={chainItem.status ? `Status: ${chainItem.status}` : undefined}
-                      >
-                        {chainItem.label}{chainItem.isCurrent ? " · aktuell" : ""}
-                      </span>
-                    );
-                  })}
-                </div>
-              </div>
-            </div>
-
-            <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-              <p className="text-xs font-bold uppercase tracking-wide text-slate-400">Kurzinfo</p>
-              <p className="mt-2 text-sm font-semibold leading-6 text-slate-700">
-                {isQuote
-                  ? quoteDecisionHint
-                  : isOrderConfirmation
-                    ? `${orderInternalProductionHint} Intern ist dieses Dokument der Auftrag; die Auftragsbestätigung ist die Kundenausgabe dazu.`
-                    : isDeliveryNote
-                      ? `Quelle: ${deliverySourceLabel}. ${deliveryNextActionLabel}.`
-                      : activeBusinessDocumentType === "invoice"
-                        ? `${invoiceDueStatusLabel}. ${invoicePaymentHint}`
-                        : activeBusinessDocumentType === "reminder" && reminderSnapshot
-                          ? `Mahnstufe: ${reminderSnapshot.levelLabel}. Zahlungsfrist: ${formatDateGerman(reminderSnapshot.dueDate)}.`
-                          : currentAreaActionLabel}
-              </p>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
-          <button
-            type="button"
-            onClick={handleSaveCurrentDocument}
-            className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-slate-950/15 transition hover:-translate-y-0.5"
-          >
-            Entwurf speichern
-          </button>
-          <button
-            type="button"
-            onClick={() => handleCreateNextDocumentNumber()}
-            className="rounded-2xl bg-white px-5 py-3 text-sm font-semibold text-slate-700 shadow-sm ring-1 ring-slate-200 transition hover:-translate-y-0.5"
-          >
-            Neue Nummer vergeben
-          </button>
-          <button
-            type="button"
-            onClick={() => handlePrintDocument("print")}
-            className="rounded-2xl bg-cyan-50 px-5 py-3 text-sm font-semibold text-cyan-700 shadow-sm transition hover:-translate-y-0.5"
-          >
-            Vorschau drucken / PDF
-          </button>
-        </div>
-
-        <div className="mt-4 rounded-3xl border border-slate-200 bg-slate-50 p-4">
-          <div className="flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
-            <div>
-              <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Statuswechsel V183</p>
-              <p className="mt-1 text-sm font-medium text-slate-600">Der Status ist ein wichtiger Prozessschritt: Er steuert, welche Folgeaktion sinnvoll ist. Bei „Versendet” und „Angenommen” wird automatisch ein Datum vorbereitet.</p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              {((isDeliveryNote ? ["Entwurf", "Versendet", "Abgerechnet", "Storniert"] : ["Entwurf", "Versendet", "Angenommen", "Abgelehnt"]) as DocumentStatus[]).map((status) => (
+              return (
                 <button
-                  key={status}
+                  key={tab.id}
                   type="button"
-                  onClick={() => handleDocumentStatusChange(status)}
-                  className={`rounded-2xl px-4 py-2 text-xs font-semibold shadow-sm ring-1 transition hover:-translate-y-0.5 ${
-                    documentStatus === status
-                      ? getDocumentStatusTone(status).buttonActiveClass
-                      : "bg-white text-slate-600 ring-slate-200 hover:bg-slate-100"
+                  onClick={() => setActiveDocumentWorkspaceTab(tab.id)}
+                  className={`rounded-xl px-4 py-3 text-left transition ${
+                    isActiveTab
+                      ? "bg-slate-950 text-white"
+                      : "bg-white text-slate-600 ring-1 ring-slate-200 hover:bg-slate-50"
                   }`}
                 >
-                  {status}
+                  <p className={`text-sm font-black ${isActiveTab ? "text-white" : "text-slate-800"}`}>{tab.label}</p>
+                  <p className="sr-only">{tab.helper}</p>
                 </button>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-6 grid gap-3 md:grid-cols-3">
-          <div className="rounded-3xl border border-amber-200 bg-amber-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-amber-700">Nummernkreis V183</p>
-            <p className="mt-2 text-base font-semibold text-amber-950">{numberCircleSettings[activeBusinessDocumentType].prefix}-{new Date().getFullYear()}-{String(numberCircleSettings[activeBusinessDocumentType].nextNumber).padStart(numberCircleSettings[activeBusinessDocumentType].padding, "0")}</p>
-            <p className="mt-1 text-sm font-medium text-amber-800">nächste freie Nummer</p>
-          </div>
-          <div className="rounded-3xl border border-slate-200 bg-slate-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Aktuelle Nummer</p>
-            <p className="mt-2 text-base font-semibold text-slate-950">{quoteNumber}</p>
-            <p className="mt-1 text-sm font-medium text-slate-500">manuell überschreibbar</p>
-          </div>
-          <div className="rounded-3xl border border-emerald-200 bg-emerald-50 p-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-emerald-700">Vergabe</p>
-            <p className="mt-2 text-base font-semibold text-emerald-950">automatisch reserviert</p>
-            <p className="mt-1 text-sm font-medium text-emerald-700">beim ersten Speichern oder per Button</p>
+              );
+            })}
           </div>
         </div>
       </section>
 
-      <section className="grid gap-6 2xl:grid-cols-[1.1fr_0.9fr]">
-        <div className="space-y-6">
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-yellow-300 via-fuchsia-500 to-cyan-400" />
-            <h3 className="mt-5 text-xl font-black">Dokumentkopf</h3>
-            <p className="mt-1 text-sm font-medium text-slate-500">
-              Kundenauswahl und Stammdaten für die Kundenvorschau V183.
-            </p>
+      <section className="rounded-3xl border border-[#dbe4ef] bg-white p-6">
+        <div className="space-y-4">
+          <div className={`${activeDocumentWorkspaceTab === "basis" ? "block" : "hidden"}`}>
+            <div className="flex flex-col gap-1 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Basisdaten</p>
+                <h3 className="mt-1 text-xl font-black tracking-tight text-slate-950">Dokumentkopf</h3>
+              </div>
+              <p className="text-sm font-semibold text-slate-500">Kunde, Nummer, Datum und Status.</p>
+            </div>
 
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <div className="mt-5 input-mask">
               <div className="grid gap-3 md:grid-cols-[1fr_auto] md:items-end">
                 <InputField
                   label="Dokumentnummer"
@@ -7863,7 +8614,7 @@ function QuotesPage({
                     value={documentRejectionReason}
                     onChange={(event) => setDocumentRejectionReason(event.target.value)}
                     rows={3}
-                    className="mt-2 w-full resize-none rounded-2xl border border-slate-200 bg-white px-4 py-3 text-sm font-medium text-slate-900 outline-none transition focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100"
+                    className="mt-2 w-full resize-none rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 text-sm font-medium text-slate-900 outline-none transition focus:border-cyan-300 focus:ring-4 focus:ring-cyan-100"
                     placeholder="z. B. Preis, Termin, Kunde hat Auftrag verschoben ..."
                   />
                 </label>
@@ -7871,7 +8622,7 @@ function QuotesPage({
             </div>
 
             {selectedCustomer && (
-              <div className="mt-5 rounded-3xl bg-slate-50 p-5">
+              <div className="mt-4 rounded-2xl bg-slate-50 p-4">
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
                   Ausgewählter Kunde
                 </p>
@@ -8040,7 +8791,7 @@ function QuotesPage({
                     </div>
                     <p className="text-xs font-bold text-slate-500">Offen aktuell: {formatCurrency(openPaymentAmount)}</p>
                   </div>
-                  <div className="grid gap-4 md:grid-cols-2">
+                  <div className="input-mask">
                   <SelectField
                     label="Zahlungsstatus"
                     value={paymentStatus}
@@ -8108,9 +8859,9 @@ function QuotesPage({
             )}
 
             <div className={`mt-5 rounded-3xl border p-5 ${documentAreaTone[activeBusinessDocumentType].card}`}>
-              <div className="flex flex-col gap-4 xl:flex-row xl:items-start xl:justify-between">
+              <div className="flex flex-col gap-2 xl:flex-row xl:items-center xl:justify-between">
                 <div>
-                  <p className={`text-xs font-semibold uppercase tracking-wide ${documentAreaTone[activeBusinessDocumentType].eyebrow}`}>Modulaktionen V183</p>
+                  <p className={`text-xs font-semibold uppercase tracking-wide ${documentAreaTone[activeBusinessDocumentType].eyebrow}`}>Nächste Aktionen</p>
                   <h4 className="mt-2 text-lg font-semibold tracking-tight text-slate-950">
                     Passende Aktionen für {activeBusinessDocumentLabel}
                   </h4>
@@ -8174,7 +8925,7 @@ function QuotesPage({
             <div className={`mt-5 rounded-3xl border p-5 ${isAcceptedQuote ? "border-emerald-200 bg-emerald-50" : "border-amber-200 bg-amber-50"}`}>
               <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
                 <div>
-                  <p className={`text-xs font-semibold uppercase tracking-wide ${isAcceptedQuote ? "text-emerald-700" : "text-amber-700"}`}>Folgeprozess V183</p>
+                  <p className={`text-xs font-semibold uppercase tracking-wide ${isAcceptedQuote ? "text-emerald-700" : "text-amber-700"}`}>Folgeprozess</p>
                   <p className={`mt-1 text-sm font-medium leading-6 ${isAcceptedQuote ? "text-emerald-800" : "text-amber-800"}`}>
                     {isAcceptedQuote
                       ? `Dieses Angebot ist angenommen. Du kannst daraus jetzt Auftrag, Rechnung oder Lieferschein vorbereiten.`
@@ -8216,7 +8967,7 @@ function QuotesPage({
               <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
                 <div>
                   <span className={`inline-flex rounded-full px-3 py-1 text-xs font-semibold uppercase tracking-wide ${documentTypeProfile.badgeClass}`}>
-                    Dokumentlogik V183 · {documentTypeProfile.eyebrow}
+                    Dokumentlogik · {documentTypeProfile.eyebrow}
                   </span>
                   <h4 className="mt-3 text-lg font-semibold tracking-tight">
                     {documentTypeProfile.title}
@@ -8245,7 +8996,7 @@ function QuotesPage({
               </div>
             </div>
 
-            <div className="mt-5 rounded-3xl bg-slate-50 p-5">
+            <div className="mt-4 rounded-2xl bg-slate-50 p-4">
               <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
                 <div>
                   <div className="flex flex-wrap items-center gap-2">
@@ -8266,11 +9017,22 @@ function QuotesPage({
                 <button
                   type="button"
                   onClick={handleSaveCurrentDocument}
-                  className="rounded-3xl bg-emerald-500 px-8 py-4 text-base font-black text-white shadow-2xl shadow-emerald-500/25 ring-4 ring-emerald-100 transition hover:-translate-y-0.5 hover:bg-emerald-600"
+                  className="rounded-2xl bg-emerald-500 px-7 py-3.5 text-sm font-black text-white shadow-lg shadow-emerald-500/20 ring-2 ring-emerald-100 transition hover:-translate-y-0.5 hover:bg-emerald-600"
                 >
-                  Dokument speichern
+                  Speichern
                 </button>
               </div>
+            </div>
+
+          </div>
+
+          <div className={`${activeDocumentWorkspaceTab === "details" ? "block" : "hidden"}`}>
+            <div className="flex flex-col gap-1 border-b border-slate-200 pb-4 sm:flex-row sm:items-end sm:justify-between">
+              <div>
+                <p className="text-xs font-black uppercase tracking-[0.18em] text-slate-400">Texte & Hinweise</p>
+                <h3 className="mt-1 text-xl font-black tracking-tight text-slate-950">Dokumenttexte</h3>
+              </div>
+              <p className="text-sm font-semibold text-slate-500">Betreff, Einleitung und Bedingungen.</p>
             </div>
 
             <div className="mt-5 space-y-4">
@@ -8297,11 +9059,11 @@ function QuotesPage({
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+          <div className={`${activeDocumentWorkspaceTab === "positions" ? "block" : "hidden"}`}>
             <div className="flex flex-col gap-5 xl:flex-row xl:items-start xl:justify-between">
               <div>
-                <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 to-sky-500" />
-                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen V183</h3>
+                <div className="h-1 w-14 rounded-full bg-gradient-to-r from-cyan-400 to-sky-500" />
+                <h3 className="mt-5 text-xl font-semibold tracking-tight">Positionen</h3>
                 <p className="mt-1 text-sm font-medium leading-6 text-slate-500">
                   Positionen sind jetzt als klare Bearbeitungskarten aufgebaut. Titel, Beschreibung, Menge,
                   Einzelpreis und MwSt. ändern die Angebotsvorschau sofort.
@@ -8451,7 +9213,7 @@ function QuotesPage({
                         />
                       </div>
 
-                      <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-[0.7fr_0.85fr_0.55fr_0.85fr_0.85fr] xl:items-end">
+                      <div className="input-mask xl:grid-cols-[0.7fr_0.85fr_0.55fr_0.85fr_0.85fr] xl:items-end">
                         <NumberField
                           label="Menge"
                           value={position.quantity}
@@ -8562,10 +9324,10 @@ function QuotesPage({
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-semibold tracking-tight">Dokumentliste / Verwaltung V183</h3>
+        <div className="space-y-4">
+          <div className={`${activeDocumentWorkspaceTab === "documents" ? "block" : "hidden"}`}>
+            <div className="h-1 w-14 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
+            <h3 className="mt-5 text-xl font-semibold tracking-tight">Dokumentliste / Verwaltung</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Gespeicherte Dokumente werden jetzt nur noch für dieses Modul angezeigt. Dadurch bleiben Rechnungen, Mahnungen, Lieferscheine, Aufträge und Angebote getrennt und die Liste ist deutlich ruhiger.
             </p>
@@ -8824,9 +9586,9 @@ function QuotesPage({
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-emerald-400 to-green-600" />
-            <h3 className="mt-5 text-xl font-black">
+          <div className={`${activeDocumentWorkspaceTab === "positions" || activeDocumentWorkspaceTab === "preview" ? "block" : "hidden"}`}>
+            <div className="h-1 w-14 rounded-full bg-gradient-to-r from-emerald-400 to-green-600" />
+            <h3 className="mt-4 text-lg font-black">
               {isDeliveryNote ? "Lieferschein" : "Summen"}
             </h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
@@ -8873,11 +9635,11 @@ function QuotesPage({
             )}
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+          <div className={`${activeDocumentWorkspaceTab === "preview" ? "block" : "hidden"}`}>
             <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
               <div>
                 <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
-                  Kundenvorschau V183
+                  Kundenvorschau
                 </p>
                 <h3 className="mt-2 text-2xl font-black tracking-tight">
                   {quoteNumber}
@@ -9203,7 +9965,7 @@ function QuotesPage({
               <div className="-mx-6 -mt-6 mb-6 border-b border-slate-200 bg-slate-50 px-6 py-4 print:hidden">
                 <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
                   <div>
-                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau V183</p>
+                    <p className="text-xs font-semibold uppercase tracking-wide text-slate-400">Kundenvorschau</p>
                     <p className="mt-1 text-sm font-medium text-slate-600">So wirkt das Dokument später im Druck oder als PDF.</p>
                   </div>
                   <div className="inline-flex rounded-full bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700">Layout prüfbar</div>
@@ -9649,21 +10411,21 @@ function CustomersPage({
   }
 
   return (
-    <div className="space-y-6">
-      <section className="overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
-        <div className="relative p-7 lg:p-9">
+    <div className="space-y-4">
+      <section className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 shadow-sm">
+        <div className="relative">
           <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-emerald-400/20 blur-3xl" />
           <div className="absolute bottom-0 right-40 h-56 w-56 rounded-full bg-cyan-400/20 blur-3xl" />
 
-          <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="relative flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-emerald-300">
                 Kundenverwaltung V3
               </p>
-              <h2 className="mt-3 text-4xl font-black tracking-tight">
+              <h2 className="mt-1 text-3xl font-black tracking-tight text-white">
                 Kundenstamm
               </h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+              <p className="mt-1 max-w-3xl text-sm leading-5 text-slate-500">
                 Kunden anlegen, bearbeiten, suchen und dauerhaft im Browser
                 speichern.
               </p>
@@ -9708,11 +10470,11 @@ function CustomersPage({
       </section>
 
       {isEditorOpen && (
-        <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <div className="h-2 w-24 rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-sky-500" />
-              <h3 className="mt-5 text-xl font-black">
+              <div className="h-1 w-14 rounded-full bg-gradient-to-r from-emerald-400 via-cyan-400 to-sky-500" />
+              <h3 className="mt-4 text-lg font-black">
                 {editingCustomerId ? "Kunde bearbeiten" : "Kunde anlegen"}
               </h3>
               <p className="mt-1 text-sm font-medium text-slate-500">
@@ -9729,7 +10491,7 @@ function CustomersPage({
             </button>
           </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <div className="mt-6 input-mask">
             <InputField
               label="Kundennummer"
               value={customerForm.customerNumber}
@@ -9818,7 +10580,7 @@ function CustomersPage({
         </section>
       )}
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="work-surface p-5">
         <div className="grid gap-4 xl:grid-cols-[1.4fr_0.8fr_auto] xl:items-end">
           <SearchField
             label="Suche"
@@ -9875,11 +10637,11 @@ function CustomersPage({
                 .join(", ") || "—";
 
             return (
-              <details
+              <section
                 key={customer.id}
                 className="group bg-white open:bg-slate-50/60 [&>summary::-webkit-details-marker]:hidden"
               >
-                <summary className="grid cursor-pointer gap-3 px-5 py-4 text-sm transition hover:bg-slate-50 md:grid-cols-[0.8fr_1.45fr_1fr_1fr_1.25fr_0.7fr] md:items-center">
+                <div className="grid cursor-pointer gap-3 px-5 py-4 text-sm transition hover:bg-slate-50 md:grid-cols-[0.8fr_1.45fr_1fr_1fr_1.25fr_0.7fr] md:items-center">
                   <span className="font-black text-slate-950">
                     {customer.customerNumber}
                   </span>
@@ -9907,7 +10669,7 @@ function CustomersPage({
                       {customer.status}
                     </span>
                   </span>
-                </summary>
+                </div>
 
                 <div className="border-t border-slate-100 px-5 py-5">
                   <div className="grid gap-4 lg:grid-cols-[1fr_1fr_auto] lg:items-start">
@@ -9949,7 +10711,7 @@ function CustomersPage({
                     </div>
                   </div>
                 </div>
-              </details>
+              </section>
             );
           })}
         </div>
@@ -10290,21 +11052,21 @@ function CalculationTemplatesPage({
   }
 
   return (
-    <div className="space-y-6">
-      <section className="overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
-        <div className="relative p-7 lg:p-9">
+    <div className="space-y-4">
+      <section className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 shadow-sm">
+        <div className="relative">
           <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-pink-500/20 blur-3xl" />
           <div className="absolute bottom-0 right-40 h-56 w-56 rounded-full bg-fuchsia-500/20 blur-3xl" />
 
-          <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="relative flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-pink-300">
                 Kalkulationsvorlagen V2
               </p>
-              <h2 className="mt-3 text-4xl font-black tracking-tight">
+              <h2 className="mt-1 text-3xl font-black tracking-tight text-white">
                 Produktvorlagen verwalten
               </h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+              <p className="mt-1 max-w-3xl text-sm leading-5 text-slate-500">
                 Lege wiederkehrende Druckprodukte inklusive Beschnitt,
                 Zwischenschnitt, Laufrichtung und Standard-Rohbogen als Vorlage an.
               </p>
@@ -10357,11 +11119,11 @@ function CalculationTemplatesPage({
         />
       </section>
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
           <div>
-            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-pink-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-black">Produkttypen</h3>
+            <div className="h-1 w-14 rounded-full bg-gradient-to-r from-pink-500 to-fuchsia-500" />
+            <h3 className="mt-4 text-lg font-black">Produkttypen</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Diese Typen stehen in Kalkulationsvorlagen und in der Kalkulation
               zur Auswahl.
@@ -10392,7 +11154,7 @@ function CalculationTemplatesPage({
           </button>
         </div>
 
-        <div className="mt-5 grid gap-3 md:grid-cols-2 xl:grid-cols-3">
+        <div className="mt-5 input-mask xl:grid-cols-3">
           {productTypes.map((type, index) => (
             <div
               key={`${type}-${index}`}
@@ -10420,7 +11182,7 @@ function CalculationTemplatesPage({
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="work-surface p-5">
         <div className="grid gap-4 xl:grid-cols-[1.4fr_0.9fr_0.8fr]">
           <SearchField
             label="Suche"
@@ -10451,11 +11213,11 @@ function CalculationTemplatesPage({
       </section>
 
       {isEditorOpen && (
-        <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <div className="h-2 w-24 rounded-full bg-gradient-to-r from-pink-500 to-fuchsia-500" />
-              <h3 className="mt-5 text-xl font-black">
+              <div className="h-1 w-14 rounded-full bg-gradient-to-r from-pink-500 to-fuchsia-500" />
+              <h3 className="mt-4 text-lg font-black">
                 {editingTemplateId ? "Vorlage bearbeiten" : "Vorlage anlegen"}
               </h3>
               <p className="mt-1 text-sm font-medium text-slate-500">
@@ -10472,7 +11234,7 @@ function CalculationTemplatesPage({
             </button>
           </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-6 input-mask">
             <InputField
               label="Vorlagenname"
               value={templateForm.name}
@@ -10508,7 +11270,7 @@ function CalculationTemplatesPage({
             />
           </div>
 
-          <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-4 input-mask">
             <InputField
               label="Produktname"
               value={templateForm.productName}
@@ -10542,7 +11304,7 @@ function CalculationTemplatesPage({
             />
           </div>
 
-          <div className="mt-4 grid gap-4 md:grid-cols-2">
+          <div className="mt-4 input-mask">
             <NumberField
               label="Endformat Breite"
               value={templateForm.finalWidthMm}
@@ -10565,7 +11327,7 @@ function CalculationTemplatesPage({
               Diese Werte werden später vom Nutzenrechner verwendet: Beschnitt,
               Zwischenschnitt, Drehung und Laufrichtung.
             </p>
-            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-3">
+            <div className="mt-5 input-mask">
               <NumberField
                 label="Beschnitt"
                 value={templateForm.bleedMm}
@@ -11229,21 +11991,21 @@ function ServicesPage({
   }
 
   return (
-    <div className="space-y-6">
-      <section className="overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
-        <div className="relative p-7 lg:p-9">
+    <div className="space-y-4">
+      <section className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 shadow-sm">
+        <div className="relative">
           <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-indigo-500/20 blur-3xl" />
           <div className="absolute bottom-0 right-40 h-56 w-56 rounded-full bg-cyan-400/20 blur-3xl" />
 
-          <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="relative flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-indigo-300">
                 Leistungsstamm V2
               </p>
-              <h2 className="mt-3 text-4xl font-black tracking-tight">
+              <h2 className="mt-1 text-3xl font-black tracking-tight text-white">
                 Artikel und Leistungen
               </h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+              <p className="mt-1 max-w-3xl text-sm leading-5 text-slate-500">
                 Häufige Angebotspositionen speichern, pflegen und später direkt
                 in Dokumente übernehmen.
               </p>
@@ -11288,11 +12050,11 @@ function ServicesPage({
       </section>
 
       {isEditorOpen && (
-        <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <div className="h-2 w-24 rounded-full bg-gradient-to-r from-indigo-500 via-cyan-400 to-emerald-400" />
-              <h3 className="mt-5 text-xl font-black">
+              <div className="h-1 w-14 rounded-full bg-gradient-to-r from-indigo-500 via-cyan-400 to-emerald-400" />
+              <h3 className="mt-4 text-lg font-black">
                 {editingServiceId ? "Leistung bearbeiten" : "Leistung anlegen"}
               </h3>
               <p className="mt-1 text-sm font-medium text-slate-500">
@@ -11309,7 +12071,7 @@ function ServicesPage({
             </button>
           </div>
 
-          <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <div className="mt-6 input-mask">
             <InputField
               label="Artikelnummer"
               value={serviceForm.itemNumber}
@@ -11390,7 +12152,7 @@ function ServicesPage({
         </section>
       )}
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="work-surface p-5">
         <div className="grid gap-4 xl:grid-cols-[1.4fr_0.8fr_0.8fr_auto] xl:items-end">
           <SearchField
             label="Suche"
@@ -11449,11 +12211,11 @@ function ServicesPage({
                 : "bg-slate-100 text-slate-500";
 
             return (
-              <details
+              <section
                 key={item.id}
                 className="group bg-white open:bg-slate-50/60 [&>summary::-webkit-details-marker]:hidden"
               >
-                <summary className="grid cursor-pointer gap-3 px-5 py-4 text-sm transition hover:bg-slate-50 md:grid-cols-[0.85fr_1.55fr_1fr_0.7fr_0.8fr_0.6fr_0.7fr] md:items-center">
+                <div className="grid cursor-pointer gap-3 px-5 py-4 text-sm transition hover:bg-slate-50 md:grid-cols-[0.85fr_1.55fr_1fr_0.7fr_0.8fr_0.6fr_0.7fr] md:items-center">
                   <span className="font-black text-slate-950">
                     {item.itemNumber}
                   </span>
@@ -11484,7 +12246,7 @@ function ServicesPage({
                       {item.status}
                     </span>
                   </span>
-                </summary>
+                </div>
 
                 <div className="border-t border-slate-100 px-5 py-5">
                   <div className="grid gap-4 lg:grid-cols-[1fr_1fr_auto] lg:items-start">
@@ -11529,7 +12291,7 @@ function ServicesPage({
                     </div>
                   </div>
                 </div>
-              </details>
+              </section>
             );
           })}
         </div>
@@ -11653,20 +12415,20 @@ function MaterialsPage({
   }
 
   return (
-    <div className="space-y-6">
-      <section className="overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
-        <div className="relative p-7 lg:p-9">
+    <div className="space-y-4">
+      <section className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 shadow-sm">
+        <div className="relative">
           <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-orange-400/20 blur-3xl" />
           <div className="absolute bottom-0 right-40 h-56 w-56 rounded-full bg-yellow-300/20 blur-3xl" />
-          <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="relative flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-orange-300">
                 Materialverwaltung V3
               </p>
-              <h2 className="mt-3 text-4xl font-black tracking-tight">
+              <h2 className="mt-1 text-3xl font-black tracking-tight text-white">
                 Papier- und Materialstamm
               </h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+              <p className="mt-1 max-w-3xl text-sm leading-5 text-slate-500">
                 Material anlegen, bearbeiten, löschen, Preise pflegen und
                 dauerhaft speichern.
               </p>
@@ -11718,7 +12480,7 @@ function MaterialsPage({
         />
       </section>
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="work-surface p-5">
         <div className="grid gap-4 xl:grid-cols-[1.4fr_0.8fr_0.8fr_0.8fr]">
           <SearchField
             label="Suche"
@@ -11763,8 +12525,8 @@ function MaterialsPage({
         <section className="rounded-[2rem] border border-orange-200 bg-white p-6 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <div className="h-2 w-24 rounded-full bg-gradient-to-r from-orange-400 to-yellow-300" />
-              <h3 className="mt-5 text-xl font-black">Material bearbeiten</h3>
+              <div className="h-1 w-14 rounded-full bg-gradient-to-r from-orange-400 to-yellow-300" />
+              <h3 className="mt-4 text-lg font-black">Material bearbeiten</h3>
               <p className="mt-1 text-sm font-medium text-slate-500">
                 Preise, Format, Laufrichtung und Lagerbestand pflegen.
               </p>
@@ -12075,7 +12837,7 @@ function MaterialsPage({
 
                 {isExpanded && (
                   <div className="border-t border-slate-100 bg-slate-50 px-5 py-5">
-                    <div className="grid gap-3 md:grid-cols-2 xl:grid-cols-4">
+                    <div className="input-mask xl:grid-cols-4">
                       <InfoCard
                         label="Laufrichtung"
                         value={material.grainDirection}
@@ -12367,21 +13129,21 @@ function MachinesPage({
   }
 
   return (
-    <div className="space-y-6">
-      <section className="overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
-        <div className="relative p-7 lg:p-9">
+    <div className="space-y-4">
+      <section className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 shadow-sm">
+        <div className="relative">
           <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-sky-500/20 blur-3xl" />
           <div className="absolute bottom-0 right-40 h-56 w-56 rounded-full bg-cyan-400/20 blur-3xl" />
 
-          <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="relative flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-sky-300">
                 Maschinenverwaltung V5
               </p>
-              <h2 className="mt-3 text-4xl font-black tracking-tight">
+              <h2 className="mt-1 text-3xl font-black tracking-tight text-white">
                 Maschinen-Stammdaten
               </h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+              <p className="mt-1 max-w-3xl text-sm leading-5 text-slate-500">
                 Maschinen kompakt verwalten, bei Bedarf Details ausklappen und
                 inklusive Tinten-/Kartuschenkosten dauerhaft speichern.
               </p>
@@ -12435,11 +13197,11 @@ function MachinesPage({
       </section>
 
       {editingMachine && (
-        <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-4 lg:flex-row lg:items-start lg:justify-between">
             <div>
-              <div className="h-2 w-24 rounded-full bg-gradient-to-r from-sky-500 to-cyan-400" />
-              <h3 className="mt-5 text-xl font-black">
+              <div className="h-1 w-14 rounded-full bg-gradient-to-r from-sky-500 to-cyan-400" />
+              <h3 className="mt-4 text-lg font-black">
                 {machines.some((machine) => machine.id === editingMachine.id)
                   ? "Maschine bearbeiten"
                   : "Maschine anlegen"}
@@ -12486,7 +13248,7 @@ function MachinesPage({
             />
           </div>
 
-          <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          <div className="mt-5 input-mask">
             <NumberField
               label="Max. Breite"
               value={editingMachine.maxWidthMm}
@@ -12518,7 +13280,7 @@ function MachinesPage({
           </div>
 
           {getMachineCostModel(editingMachine.name) === "click" ? (
-            <div className="mt-5 rounded-3xl bg-slate-50 p-5">
+            <div className="mt-4 rounded-2xl bg-slate-50 p-4">
               <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
                 Klickkosten
               </p>
@@ -12526,7 +13288,7 @@ function MachinesPage({
                 Nur Klickkosten-Maschinen wie Iridesse, Nuvera oder Canon
                 verwenden Farb-/S/W-Klickpreise.
               </p>
-              <div className="mt-4 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <div className="mt-4 input-mask">
                 <NumberField
                   label="Farbklick"
                   value={editingMachine.colorClickCost}
@@ -12568,7 +13330,7 @@ function MachinesPage({
               </div>
             </div>
           ) : (
-            <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+            <div className="mt-5 input-mask">
               <NumberField
                 label="Stundensatz"
                 value={editingMachine.hourlyRate}
@@ -12603,7 +13365,7 @@ function MachinesPage({
           )}
 
           {getMachineCostModel(editingMachine.name) !== "click" && (
-            <div className="mt-5 rounded-3xl bg-slate-50 p-5">
+            <div className="mt-4 rounded-2xl bg-slate-50 p-4">
               <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                 <div>
                   <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
@@ -12813,7 +13575,7 @@ function MachinesPage({
         </section>
       )}
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="work-surface p-5">
         <div className="grid gap-4 xl:grid-cols-[1.4fr_0.9fr_0.8fr]">
           <SearchField
             label="Suche"
@@ -13337,21 +14099,21 @@ function FinishingPage({
   }
 
   return (
-    <div className="space-y-6">
-      <section className="overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
-        <div className="relative p-7 lg:p-9">
+    <div className="space-y-4">
+      <section className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 shadow-sm">
+        <div className="relative">
           <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-lime-400/20 blur-3xl" />
           <div className="absolute bottom-0 right-40 h-56 w-56 rounded-full bg-emerald-400/20 blur-3xl" />
 
-          <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="relative flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-lime-300">
                 Weiterverarbeitung V3
               </p>
-              <h2 className="mt-3 text-4xl font-black tracking-tight">
+              <h2 className="mt-1 text-3xl font-black tracking-tight text-white">
                 Weiterverarbeitung
               </h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+              <p className="mt-1 max-w-3xl text-sm leading-5 text-slate-500">
                 Kompakte Listenansicht für Schneiden, Falzen, Rillen, Heften,
                 Leimen, Stanzen, Kuvertieren und Handarbeit.
               </p>
@@ -13405,11 +14167,11 @@ function FinishingPage({
       </section>
 
       {editingOperation && (
-        <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+        <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
           <div className="flex flex-col gap-4 md:flex-row md:items-start md:justify-between">
             <div>
-              <div className="h-2 w-24 rounded-full bg-gradient-to-r from-lime-400 to-emerald-500" />
-              <h3 className="mt-5 text-xl font-black">Vorgang bearbeiten</h3>
+              <div className="h-1 w-14 rounded-full bg-gradient-to-r from-lime-400 to-emerald-500" />
+              <h3 className="mt-4 text-lg font-black">Vorgang bearbeiten</h3>
               <p className="mt-1 text-sm font-medium text-slate-500">
                 Änderungen werden automatisch im Browser gespeichert und in der
                 Kalkulation verwendet.
@@ -13533,7 +14295,7 @@ function FinishingPage({
         </section>
       )}
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-5 shadow-sm">
+      <section className="work-surface p-5">
         <div className="grid gap-4 xl:grid-cols-[1.4fr_0.9fr_0.8fr]">
           <SearchField
             label="Suche"
@@ -14033,25 +14795,25 @@ function SettingsPage({
   }
 
   return (
-    <div className="space-y-6">
-      <section className="overflow-hidden rounded-[2rem] bg-slate-950 text-white shadow-2xl shadow-slate-950/20">
-        <div className="relative p-7 lg:p-9">
+    <div className="space-y-4">
+      <section className="rounded-2xl border border-slate-200 bg-slate-50 px-4 py-3 shadow-sm">
+        <div className="relative">
           <div className="absolute right-0 top-0 h-56 w-56 rounded-full bg-violet-500/20 blur-3xl" />
           <div className="absolute bottom-0 right-40 h-56 w-56 rounded-full bg-cyan-400/20 blur-3xl" />
-          <div className="relative flex flex-col gap-6 xl:flex-row xl:items-end xl:justify-between">
+          <div className="relative flex flex-col gap-3 lg:flex-row lg:items-center lg:justify-between">
             <div>
               <p className="text-sm font-black uppercase tracking-[0.35em] text-violet-300">
                 Einstellungen V7
               </p>
-              <h2 className="mt-3 text-4xl font-black tracking-tight">
+              <h2 className="mt-1 text-3xl font-black tracking-tight text-white">
                 Firmenprofil, Dokumenttypen & Nummernkreise
               </h2>
-              <p className="mt-4 max-w-2xl text-sm leading-7 text-slate-300">
+              <p className="mt-1 max-w-3xl text-sm leading-5 text-slate-500">
                 Firmenprofil und Dokumentvorlagen für Angebot,
                 Auftrag, Rechnung, Lieferschein und Mahnung.
               </p>
             </div>
-            <div className="rounded-3xl bg-white p-5 text-slate-950 shadow-xl">
+            <div className="rounded-xl border border-slate-200 bg-slate-50 px-4 py-3 text-slate-950">
               <p className="text-sm font-bold text-slate-500">
                 Aktives Firmenprofil
               </p>
@@ -14082,11 +14844,11 @@ function SettingsPage({
         </div>
       </section>
 
-      <section className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
+      <section className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
         <div className="flex flex-col gap-5 xl:flex-row xl:items-center xl:justify-between">
           <div>
-            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 via-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-black">Datensicherung</h3>
+            <div className="h-1 w-14 rounded-full bg-gradient-to-r from-cyan-400 via-violet-500 to-fuchsia-500" />
+            <h3 className="mt-4 text-lg font-black">Datensicherung</h3>
             <p className="mt-1 max-w-3xl text-sm font-medium leading-6 text-slate-500">
               Sichere alle lokalen PrintPilot-Daten als JSON-Datei oder spiele eine
               Sicherung wieder ein. Enthalten sind Firmenprofil, Kunden,
@@ -14119,14 +14881,14 @@ function SettingsPage({
       </section>
 
       <section className="grid gap-6 2xl:grid-cols-[1.15fr_0.85fr]">
-        <div className="space-y-6">
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-400" />
-            <h3 className="mt-5 text-xl font-black">Unternehmen</h3>
+        <div className="space-y-4">
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="h-1 w-14 rounded-full bg-gradient-to-r from-violet-500 via-fuchsia-500 to-cyan-400" />
+            <h3 className="mt-4 text-lg font-black">Unternehmen</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Diese Daten erscheinen in deinen Dokumenten.
             </p>
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
+            <div className="mt-6 input-mask">
               <InputField
                 label="Firmenname"
                 value={company.name}
@@ -14160,9 +14922,9 @@ function SettingsPage({
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400" />
-            <h3 className="mt-5 text-xl font-black">Logo</h3>
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="h-1 w-14 rounded-full bg-gradient-to-r from-emerald-400 to-cyan-400" />
+            <h3 className="mt-4 text-lg font-black">Logo</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Lade ein Firmenlogo hoch. Es wird lokal im Browser gespeichert und
               in Angeboten sowie in der Druckansicht verwendet.
@@ -14228,10 +14990,10 @@ function SettingsPage({
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 to-sky-500" />
-            <h3 className="mt-5 text-xl font-black">Kontakt</h3>
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="h-1 w-14 rounded-full bg-gradient-to-r from-cyan-400 to-sky-500" />
+            <h3 className="mt-4 text-lg font-black">Kontakt</h3>
+            <div className="mt-6 input-mask">
               <InputField
                 label="Telefon"
                 value={company.phone}
@@ -14245,10 +15007,10 @@ function SettingsPage({
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-yellow-300 to-orange-400" />
-            <h3 className="mt-5 text-xl font-black">Steuer / Bank</h3>
-            <div className="mt-6 grid gap-4 md:grid-cols-2">
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="h-1 w-14 rounded-full bg-gradient-to-r from-yellow-300 to-orange-400" />
+            <h3 className="mt-4 text-lg font-black">Steuer / Bank</h3>
+            <div className="mt-6 input-mask">
               <InputField
                 label="Steuernummer"
                 value={company.taxNumber}
@@ -14282,13 +15044,13 @@ function SettingsPage({
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-lime-400 to-emerald-500" />
-            <h3 className="mt-5 text-xl font-black">Dokumentanzeige</h3>
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="h-1 w-14 rounded-full bg-gradient-to-r from-lime-400 to-emerald-500" />
+            <h3 className="mt-4 text-lg font-black">Dokumentanzeige</h3>
             <p className="mt-1 text-sm font-medium leading-6 text-slate-500">
               Lege fest, welche Stammdaten auf Angeboten, Aufträgen, Rechnungen und Lieferscheinen zusätzlich ausgegeben werden. Bei vorgedrucktem Briefbogen kannst du alles deaktiviert lassen.
             </p>
-            <div className="mt-6 grid gap-3 md:grid-cols-2">
+            <div className="mt-6 input-mask">
               {[
                 ["showCompanyAddressOnDocuments", "Adresse auf Dokumenten anzeigen", "Firmenname, Straße, PLZ und Ort"],
                 ["showCompanyContactOnDocuments", "Kontaktdaten anzeigen", "Telefon, E-Mail und Website"],
@@ -14335,7 +15097,7 @@ function SettingsPage({
                 Footer im Briefbogen: 3 Gruppen mit sinnvoller Zeilenlogik. Firma = Name, Adresse, Kontakt. Steuer = Steuernummer und USt-ID. Bank = Bank/Inhaber, IBAN, BIC. Negative Y-Werte schieben die Stammdaten weiter nach unten in den magentafarbenen Balken.
               </div>
 
-              <div className="mt-5 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+              <div className="mt-5 input-mask">
                 <SelectField
                   label="Spalten"
                   value={company.documentFooterColumns ?? "3"}
@@ -14383,12 +15145,12 @@ function SettingsPage({
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-rose-500 via-yellow-300 to-cyan-400" />
-            <h3 className="mt-5 text-xl font-black">Dokumenttypen</h3>
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="h-1 w-14 rounded-full bg-gradient-to-r from-rose-500 via-yellow-300 to-cyan-400" />
+            <h3 className="mt-4 text-lg font-black">Dokumenttypen</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Jeder Dokumenttyp hat eigene Abstände und Standardtexte. Die
-              Kundenvorschau V183 nutzt den aktiven Dokumenttyp: Angebot,
+              Kundenvorschau nutzt den aktiven Dokumenttyp: Angebot,
               Auftrag, Rechnung oder Lieferschein.
             </p>
             <div className="mt-6 grid gap-4 md:grid-cols-[0.8fr_1.2fr]">
@@ -14415,7 +15177,7 @@ function SettingsPage({
                 <h4 className="mt-2 text-2xl font-black">
                   {activeDocumentTemplate.label}
                 </h4>
-                <div className="mt-5 grid gap-4 md:grid-cols-2">
+                <div className="mt-5 input-mask">
                   <NumberField
                     label="Abstand oben / DIN-Fenster"
                     value={activeDocumentTemplate.topMm}
@@ -14449,7 +15211,7 @@ function SettingsPage({
                     suffix="mm"
                   />
                 </div>
-                <div className="mt-5 rounded-3xl border border-slate-200 bg-white p-5 shadow-sm">
+                <div className="mt-5 work-surface p-5">
                   <div className="flex flex-col gap-3 md:flex-row md:items-start md:justify-between">
                     <div>
                       <p className="text-xs font-extrabold uppercase tracking-wide text-slate-400">
@@ -14620,9 +15382,9 @@ function SettingsPage({
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-yellow-300 via-orange-400 to-rose-500" />
-            <h3 className="mt-5 text-xl font-black">Nummernkreise</h3>
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="h-1 w-14 rounded-full bg-gradient-to-r from-yellow-300 via-orange-400 to-rose-500" />
+            <h3 className="mt-4 text-lg font-black">Nummernkreise</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Lege Präfix, nächste freie Nummer und Stellenzahl je Dokumenttyp fest. Die Jahreszahl wird automatisch aus dem aktuellen Jahr gebildet.
             </p>
@@ -14668,7 +15430,7 @@ function SettingsPage({
                 </p>
               </div>
 
-              <div className="mt-5 grid gap-3 md:grid-cols-2">
+              <div className="mt-5 input-mask">
                 {documentTypeOrder.map((documentType) => (
                   <button
                     key={documentType}
@@ -14696,10 +15458,10 @@ function SettingsPage({
           </div>
         </div>
 
-        <div className="space-y-6">
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-emerald-400 to-green-600" />
-            <h3 className="mt-5 text-xl font-black">Vorschau</h3>
+        <div className="space-y-4">
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="h-1 w-14 rounded-full bg-gradient-to-r from-emerald-400 to-green-600" />
+            <h3 className="mt-4 text-lg font-black">Vorschau</h3>
             <div className="mt-6 rounded-[2rem] border border-slate-200 bg-slate-50 p-6">
               {company.logoDataUrl ? (
                 <img
@@ -14751,9 +15513,9 @@ function SettingsPage({
             </div>
           </div>
 
-          <div className="rounded-[2rem] border border-slate-200 bg-white p-6 shadow-sm">
-            <div className="h-2 w-24 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
-            <h3 className="mt-5 text-xl font-black">Kundenvorschau V183</h3>
+          <div className="rounded-xl border border-slate-200 bg-white p-4 shadow-sm">
+            <div className="h-1 w-14 rounded-full bg-gradient-to-r from-violet-500 to-fuchsia-500" />
+            <h3 className="mt-4 text-lg font-black">Kundenvorschau</h3>
             <p className="mt-1 text-sm font-medium text-slate-500">
               Aktive Vorlage: {activeDocumentTemplate.label}
             </p>
@@ -14813,7 +15575,7 @@ function PlaceholderPage({ title }: { title: string }) {
   return (
     <div className="rounded-[2rem] border border-slate-200 bg-white p-8 shadow-sm">
       <div className="max-w-3xl">
-        <div className="h-2 w-24 rounded-full bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-yellow-300" />
+        <div className="h-1 w-14 rounded-full bg-gradient-to-r from-cyan-400 via-fuchsia-500 to-yellow-300" />
         <h2 className="mt-6 text-3xl font-black tracking-tight">{title}</h2>
         <p className="mt-4 text-base leading-8 text-slate-500">
           Dieses Modul ist vorbereitet. Im nächsten Schritt bekommt es echte
@@ -15506,7 +16268,7 @@ function createDefaultCalculationTemplates(
   finishingCatalog: FinishingOperation[],
   productTypeCatalog: ProductType[] = DEFAULT_PRODUCT_TYPES,
 ): CalculationTemplate[] {
-  return productTypeCatalog.map((type, index) => {
+  const defaultTemplates = productTypeCatalog.map((type, index) => {
     const baseTemplate = getProductTemplate(type, materialCatalog);
 
     return normalizeCalculationTemplate(
@@ -15525,6 +16287,110 @@ function createDefaultCalculationTemplates(
       productTypeCatalog,
     );
   });
+
+  return [
+    ...defaultTemplates,
+    ...createAdditionalDefaultCalculationTemplates(
+      materialCatalog,
+      machineCatalog,
+      finishingCatalog,
+      productTypeCatalog,
+    ),
+  ];
+}
+
+function createAdditionalDefaultCalculationTemplates(
+  materialCatalog: Material[],
+  machineCatalog: Machine[],
+  finishingCatalog: FinishingOperation[],
+  productTypeCatalog: ProductType[] = DEFAULT_PRODUCT_TYPES,
+): CalculationTemplate[] {
+  const folderProductType = productTypeCatalog.includes("Folder")
+    ? "Folder"
+    : (productTypeCatalog[0] ?? "Flyer");
+  const offsetMaterialId =
+    findMaterialIdInCatalog(materialCatalog, "Offset") ?? materialCatalog[0]?.id ?? "";
+
+  return [
+    normalizeCalculationTemplate(
+      {
+        id: "template-folder-6-seiter-din-a4-wickelfalz",
+        name: "Folder 6-Seiter DIN-A4 · Wickelfalz",
+        productType: folderProductType,
+        productName: "Folder 6-Seiter DIN-A4 · Wickelfalz",
+        defaultQuantity: 1000,
+        finalWidthMm: 627,
+        finalHeightMm: 297,
+        itemsPerSheet: 1,
+        colorMode: "4/4 farbig",
+        materialSelections: [
+          {
+            label: "Folder offen 627 × 297 mm",
+            materialId: offsetMaterialId,
+            calculationMode: "perCopy",
+            manualSheets: 1000,
+            factorPerCopy: 1,
+            pages: 2,
+            pagesPerSheet: 2,
+            itemsPerSheet: 1,
+          },
+        ],
+        finishingNames: ["Schneiden", "Falzen"],
+        bleedMm: 3,
+        removeSpineBleed: false,
+        calculateAsOpenSpread: false,
+        gripperMarginMm: 0,
+        sheetMarginMm: 0,
+        gutterHorizontalMm: 0,
+        gutterVerticalMm: 0,
+        allowRotation: false,
+        respectGrainDirection: true,
+        rawSheetMaterialId: offsetMaterialId,
+        machineId: pickDefaultMachineForTemplate(folderProductType, machineCatalog),
+        status: "Aktiv",
+      },
+      materialCatalog,
+      machineCatalog,
+      finishingCatalog,
+      productTypeCatalog,
+    ),
+  ];
+}
+
+function mergeProductTypesWithDefaults(productTypes: ProductType[]) {
+  const normalizedTypes = productTypes
+    .map((type) => String(type || "").trim())
+    .filter(Boolean);
+
+  return Array.from(new Set([...normalizedTypes, ...DEFAULT_PRODUCT_TYPES]));
+}
+
+function mergeCalculationTemplatesWithDefaults(
+  templates: CalculationTemplate[],
+  materialCatalog: Material[],
+  machineCatalog: Machine[],
+  finishingCatalog: FinishingOperation[],
+  productTypeCatalog: ProductType[] = DEFAULT_PRODUCT_TYPES,
+) {
+  const defaultTemplates = createDefaultCalculationTemplates(
+    materialCatalog,
+    machineCatalog,
+    finishingCatalog,
+    productTypeCatalog,
+  );
+
+  const hasEquivalentTemplate = (candidate: CalculationTemplate) =>
+    templates.some(
+      (template) =>
+        template.id === candidate.id ||
+        template.name === candidate.name ||
+        template.productName === candidate.productName,
+    );
+
+  return [
+    ...templates,
+    ...defaultTemplates.filter((template) => !hasEquivalentTemplate(template)),
+  ];
 }
 
 function createEmptyCalculationTemplate(
@@ -15779,6 +16645,33 @@ function getProductTemplate(
         },
       ],
       finishingNames: ["Schneiden"],
+    },
+    Folder: {
+      productName: "Folder 6-Seiter DIN-A4 · Zickzackfalz",
+      finalWidthMm: 630,
+      finalHeightMm: 297,
+      itemsPerSheet: 1,
+      colorMode: "4/4 farbig",
+      materialSelections: [
+        {
+          label: "Folder offen 630 × 297 mm",
+          materialId: offsetMaterialId,
+          calculationMode: "perCopy",
+          manualSheets: 1000,
+          factorPerCopy: 1,
+          pages: 2,
+          pagesPerSheet: 2,
+          itemsPerSheet: 1,
+        },
+      ],
+      finishingNames: ["Schneiden", "Falzen"],
+      bleedMm: 3,
+      gutterHorizontalMm: 0,
+      gutterVerticalMm: 0,
+      allowRotation: false,
+      respectGrainDirection: true,
+      calculateAsOpenSpread: false,
+      removeSpineBleed: false,
     },
     Visitenkarten: {
       productName: "Visitenkarten 85 × 55 mm",

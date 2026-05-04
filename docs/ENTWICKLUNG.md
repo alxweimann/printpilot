@@ -2629,3 +2629,671 @@ V181 wurde optisch verworfen, weil die Seite zu unruhig, zu breit und zu überla
 ### Entscheidung
 
 Der Abschlussbereich wird nicht weiter aufgeblasen. Speichern und Status sollen sichtbar bleiben, aber die Seite darf nicht wie ein Dashboard mit zu vielen konkurrierenden Karten wirken.
+
+# PrintPilot Entwicklung
+
+## V185 – Grundlayout mit Tabs statt Kartenflut
+
+V185 beruhigt die Dokumentseiten strukturell. Die Fachlogik bleibt erhalten, aber die Bearbeitung ist nicht mehr als lange Kartenstrecke aufgebaut, sondern als klarer Arbeitsbereich mit Tabs.
+
+### Ziel
+
+- weniger gleichzeitig sichtbare Karten
+- klarere Reihenfolge beim Arbeiten
+- kompakte Prozessführung oben
+- Bearbeitung über Arbeitsbereiche statt Scroll-Chaos
+- bessere Orientierung nach dem Prinzip: **Kopf → Prozess → Arbeitsbereich → Speichern**
+
+### Neu
+
+- Neuer Arbeitsbereich **Grundlayout V185**.
+- Einführung von Tabs in den Dokumentmodulen:
+  - **Basisdaten**
+  - **Positionen**
+  - **Texte & Hinweise**
+  - **Verwaltung**
+  - **Vorschau**
+- Die farbige Prozessleiste bleibt oben sichtbar.
+- Die bisher verstreuten Bereiche werden über Tabs ein- und ausgeblendet.
+- Dokumentliste, Summen und Vorschau liegen nicht mehr dauerhaft offen auf der Seite.
+- Positionen werden nur im Tab **Positionen** angezeigt.
+- Gespeicherte Dokumente werden nur im Tab **Verwaltung** angezeigt.
+- Die Druck-/PDF-Vorschau wird nur im Tab **Vorschau** angezeigt.
+
+### Bewusst unverändert
+
+- Keine Änderung an Mahnlogik.
+- Keine Änderung an Zahlungslogik.
+- Keine Änderung an Dokumentnummern.
+- Keine Änderung an gespeicherten Datenstrukturen.
+- Keine Änderung an der Kalkulationslogik.
+- Folder-Vorlagen aus V184 bleiben erhalten.
+
+### Nächster sinnvoller Schritt
+
+V186 sollte das neue Grundlayout auf die Stammdaten- und Kalkulationsseiten übertragen. Dort sollten ebenfalls weniger Karten und mehr klare Arbeitsbereiche genutzt werden.
+
+# PrintPilot Entwicklung
+
+## V186 – Layout verfeinert und Oberfläche beruhigt
+
+V186 verfeinert das in V185 eingeführte Tab-Grundlayout. Ziel ist keine neue Fachlogik, sondern eine ruhigere Arbeitsmaske nach dem Prinzip: **Printy-Logik, moderne PrintPilot-Optik**.
+
+### Ziel
+
+- weniger visuelle Schwere
+- kompaktere Kopf- und Prozessbereiche
+- Tabs als klare Arbeitsnavigation
+- weniger Schatten, weniger Rahmen, weniger Kartenwirkung
+- mehr nutzbare Arbeitsfläche
+- Speichern bleibt sichtbar und wichtig, ohne die Oberfläche zu dominieren
+
+### Neu / geändert
+
+- Sichtbarer Versionsstand auf **V186** gesetzt.
+- Kopfbereich der Dokumentseiten wurde kompakter gestaltet.
+- Die Prozessleiste wurde optisch verschlankt.
+- Die Tab-Leiste wurde kompakter und ruhiger gestaltet.
+- Tab-Hilfstexte sind nicht mehr dauerhaft sichtbar, damit die Leiste weniger überladen wirkt.
+- Die Hinweisbox **Jetzt wichtig** wurde reduziert und wirkt jetzt mehr wie eine Arbeitsanweisung statt wie eine weitere große Karte.
+- Arbeitskarten wurden optisch beruhigt:
+  - kleinere Rundungen
+  - weniger große Abstände
+  - weniger dominante Dekorleisten
+  - reduzierte Schatten
+- Der Speichern-Button bleibt grün und deutlich, ist aber kompakter eingebunden.
+
+### Bewusst unverändert
+
+- Keine Änderung an Mahnlogik.
+- Keine Änderung an Zahlungslogik.
+- Keine Änderung an Dokumentnummern.
+- Keine Änderung an gespeicherten Datenstrukturen.
+- Keine Änderung an der Kalkulationslogik.
+- Keine Änderung an den Folder-Vorlagen aus V184.
+
+### Nächster sinnvoller Schritt
+
+V187 sollte das gleiche ruhige Grundprinzip auf die Kalkulation und Stammdaten übertragen. Dort sollten ebenfalls weniger einzelne Karten sichtbar sein und stärker mit klaren Arbeitsbereichen oder Master-Detail-Ansichten gearbeitet werden.
+
+# PrintPilot Entwicklung
+
+## V187 – Layout verfeinert und Oberfläche beruhigt
+
+V187 verfeinert das in V185 eingeführte Tab-Grundlayout. Ziel ist keine neue Fachlogik, sondern eine ruhigere Arbeitsmaske nach dem Prinzip: **Printy-Logik, moderne PrintPilot-Optik**.
+
+### Ziel
+
+- weniger visuelle Schwere
+- kompaktere Kopf- und Prozessbereiche
+- Tabs als klare Arbeitsnavigation
+- weniger Schatten, weniger Rahmen, weniger Kartenwirkung
+- mehr nutzbare Arbeitsfläche
+- Speichern bleibt sichtbar und wichtig, ohne die Oberfläche zu dominieren
+
+### Neu / geändert
+
+- Sichtbarer Versionsstand auf **V187** gesetzt.
+- Kopfbereich der Dokumentseiten wurde kompakter gestaltet.
+- Die Prozessleiste wurde optisch verschlankt.
+- Die Tab-Leiste wurde kompakter und ruhiger gestaltet.
+- Tab-Hilfstexte sind nicht mehr dauerhaft sichtbar, damit die Leiste weniger überladen wirkt.
+- Die Hinweisbox **Jetzt wichtig** wurde reduziert und wirkt jetzt mehr wie eine Arbeitsanweisung statt wie eine weitere große Karte.
+- Arbeitskarten wurden optisch beruhigt:
+  - kleinere Rundungen
+  - weniger große Abstände
+  - weniger dominante Dekorleisten
+  - reduzierte Schatten
+- Der Speichern-Button bleibt grün und deutlich, ist aber kompakter eingebunden.
+
+### Bewusst unverändert
+
+- Keine Änderung an Mahnlogik.
+- Keine Änderung an Zahlungslogik.
+- Keine Änderung an Dokumentnummern.
+- Keine Änderung an gespeicherten Datenstrukturen.
+- Keine Änderung an der Kalkulationslogik.
+- Keine Änderung an den Folder-Vorlagen aus V184.
+
+### Nächster sinnvoller Schritt
+
+V187 sollte das gleiche ruhige Grundprinzip auf die Kalkulation und Stammdaten übertragen. Dort sollten ebenfalls weniger einzelne Karten sichtbar sein und stärker mit klaren Arbeitsbereichen oder Master-Detail-Ansichten gearbeitet werden.
+
+## V187 – Grundlayout wirklich reduziert
+
+- Der große dunkle Dokument-Header wurde durch einen kompakten weißen Arbeitskopf ersetzt.
+- Die Layout-Erklärung wurde stark reduziert und als kurze Arbeitsanweisung dargestellt.
+- Prozessleiste, Tabs und Arbeitsbereich wirken flacher und weniger wie einzelne Karten.
+- Ziel: weniger visuelles Rauschen, weniger Verschachtelung, klarerer Arbeitsfluss.
+- Keine Änderung an Mahnlogik, Zahlungslogik, Kalkulation oder gespeicherten Daten.
+
+# PrintPilot Entwicklung
+
+## V188 – Layout näher am Mockup ausgerichtet
+
+Ziel: Das V185-Mockup stärker in die echte App übernehmen und die Dokumentseiten sichtbar ruhiger gestalten.
+
+### Änderungen
+
+- sichtbarer Versionsstand auf **V188** gesetzt
+- Dokumentkopf wieder als kompakter dunkler Arbeitskopf wie im Mockup
+- Prozessbereich stärker als klare Arbeitsfolge dargestellt
+- Tabs ruhiger und klarer innerhalb eines zentralen Arbeitsbereichs
+- Hauptinhalt stärker in eine große Arbeitsfläche gebündelt
+- zusätzliche Schatten und Kartenwirkung im Dokumentbereich reduziert
+- Basisdaten wirken weniger wie eine separate Karte und mehr wie ein Arbeitsformular
+- bestehende Fachlogik unverändert:
+  - Mahnlogik
+  - Zahlungslogik
+  - Dokumentkette
+  - Statusfarben
+  - Kalkulation
+  - Folder-Vorlagen
+
+### Zielbild
+
+Die Dokumentseite folgt stärker dem Aufbau:
+
+```text
+Kopf
+↓
+Prozessleiste
+↓
+Tabs
+↓
+Arbeitsbereich
+↓
+Abschluss / Speichern
+```
+
+V188 ist ein sichtbarer Layout-Schritt in Richtung des erstellten Mockups: weniger Kartenflut, klarere Führung, mehr Arbeitsmasken-Charakter.
+
+# PrintPilot Entwicklung
+
+## V189 – Dokumentmodule vereinheitlicht
+
+Ziel: Angebote, Aufträge, Rechnungen, Lieferscheine und Mahnungen sollen sich strukturell gleich anfühlen. Die Dokumentseite bleibt beim neuen Mockup-Aufbau aus V188, wird aber konsequenter nach Arbeitsbereichen getrennt.
+
+### Änderungen
+
+- sichtbarer Versionsstand auf **V189** gesetzt
+- Dokumentmodule weiter an das ruhigere Angebotslayout angeglichen
+- Tab **Basisdaten** zeigt jetzt wirklich nur den Dokumentkopf und die fachlichen Basisinformationen
+- Tab **Texte & Hinweise** ist jetzt ein eigener, sauber getrennter Arbeitsbereich
+- Texte, Einleitung, Fußtext und Zahlungsbedingungen hängen nicht mehr unter der Basisdatenmaske
+- alle Dokumentarten nutzen dieselbe Arbeitslogik:
+  - Kopf
+  - Prozessleiste
+  - Tabs
+  - Arbeitsbereich
+  - Speichern / Abschluss
+- keine Änderung an Mahnlogik
+- keine Änderung an Zahlungslogik
+- keine Änderung an Kalkulation
+- keine Änderung an gespeicherten Datenstrukturen
+- Folder-Vorlagen aus V184 bleiben erhalten
+
+### Zielbild
+
+Die Dokumentmodule folgen weiter dem Aufbau:
+
+```text
+Kopf
+↓
+Prozessleiste
+↓
+Tabs: Basisdaten | Positionen | Texte & Hinweise | Verwaltung | Vorschau
+↓
+Arbeitsbereich
+↓
+Speichern / Abschluss
+```
+
+V189 bereitet die nächste große Layout-Runde vor: Danach soll die **Kalkulation** in V190 nach demselben Prinzip strukturiert werden.
+
+# PrintPilot Entwicklung
+
+## V190 – Dokumentmodule vereinheitlicht
+
+Ziel: Angebote, Aufträge, Rechnungen, Lieferscheine und Mahnungen sollen sich strukturell gleich anfühlen. Die Dokumentseite bleibt beim neuen Mockup-Aufbau aus V188, wird aber konsequenter nach Arbeitsbereichen getrennt.
+
+### Änderungen
+
+- sichtbarer Versionsstand auf **V190** gesetzt
+- Dokumentmodule weiter an das ruhigere Angebotslayout angeglichen
+- Tab **Basisdaten** zeigt jetzt wirklich nur den Dokumentkopf und die fachlichen Basisinformationen
+- Tab **Texte & Hinweise** ist jetzt ein eigener, sauber getrennter Arbeitsbereich
+- Texte, Einleitung, Fußtext und Zahlungsbedingungen hängen nicht mehr unter der Basisdatenmaske
+- alle Dokumentarten nutzen dieselbe Arbeitslogik:
+  - Kopf
+  - Prozessleiste
+  - Tabs
+  - Arbeitsbereich
+  - Speichern / Abschluss
+- keine Änderung an Mahnlogik
+- keine Änderung an Zahlungslogik
+- keine Änderung an Kalkulation
+- keine Änderung an gespeicherten Datenstrukturen
+- Folder-Vorlagen aus V184 bleiben erhalten
+
+### Zielbild
+
+Die Dokumentmodule folgen weiter dem Aufbau:
+
+```text
+Kopf
+↓
+Prozessleiste
+↓
+Tabs: Basisdaten | Positionen | Texte & Hinweise | Verwaltung | Vorschau
+↓
+Arbeitsbereich
+↓
+Speichern / Abschluss
+```
+
+V190 bereitet die nächste große Layout-Runde vor: Danach soll die **Kalkulation** in V190 nach demselben Prinzip strukturiert werden.
+
+
+## V190 – Layout exakt am Mockup ausgerichtet
+
+- Dokumentmodule optisch deutlich stärker an das Mockup angepasst.
+- Dunkle kompakte Kopfzeile mit weißer Schrift.
+- Dunkle Sidebar auf schmalere Arbeitsnavigation reduziert.
+- Aktiver Menüpunkt cyan wie im Mockup.
+- Globale Kopfzeile bei Dokumentmodulen ausgeblendet, damit nur der Dokument-Arbeitskopf sichtbar ist.
+- Prozessleiste, Tabs und Arbeitsfläche farblich auf Mockup-Farbgebung angepasst.
+- Weißer Hauptarbeitsbereich mit ruhiger Linienführung und weniger Schatten.
+- Speichern bleibt grün und prominent.
+- Keine Änderung an Mahnlogik, Zahlungslogik, Kalkulation oder gespeicherten Datenstrukturen.
+
+# PrintPilot Entwicklung
+
+## V191 – Dokumentmodule vereinheitlicht
+
+Ziel: Angebote, Aufträge, Rechnungen, Lieferscheine und Mahnungen sollen sich strukturell gleich anfühlen. Die Dokumentseite bleibt beim neuen Mockup-Aufbau aus V188, wird aber konsequenter nach Arbeitsbereichen getrennt.
+
+### Änderungen
+
+- sichtbarer Versionsstand auf **V191** gesetzt
+- Dokumentmodule weiter an das ruhigere Angebotslayout angeglichen
+- Tab **Basisdaten** zeigt jetzt wirklich nur den Dokumentkopf und die fachlichen Basisinformationen
+- Tab **Texte & Hinweise** ist jetzt ein eigener, sauber getrennter Arbeitsbereich
+- Texte, Einleitung, Fußtext und Zahlungsbedingungen hängen nicht mehr unter der Basisdatenmaske
+- alle Dokumentarten nutzen dieselbe Arbeitslogik:
+  - Kopf
+  - Prozessleiste
+  - Tabs
+  - Arbeitsbereich
+  - Speichern / Abschluss
+- keine Änderung an Mahnlogik
+- keine Änderung an Zahlungslogik
+- keine Änderung an Kalkulation
+- keine Änderung an gespeicherten Datenstrukturen
+- Folder-Vorlagen aus V184 bleiben erhalten
+
+### Zielbild
+
+Die Dokumentmodule folgen weiter dem Aufbau:
+
+```text
+Kopf
+↓
+Prozessleiste
+↓
+Tabs: Basisdaten | Positionen | Texte & Hinweise | Verwaltung | Vorschau
+↓
+Arbeitsbereich
+↓
+Speichern / Abschluss
+```
+
+V191 bereitet die nächste große Layout-Runde vor: Danach soll die **Kalkulation** in V191 nach demselben Prinzip strukturiert werden.
+
+
+## V191 – Layout exakt am Mockup ausgerichtet
+
+- Dokumentmodule optisch deutlich stärker an das Mockup angepasst.
+- Dunkle kompakte Kopfzeile mit weißer Schrift.
+- Dunkle Sidebar auf schmalere Arbeitsnavigation reduziert.
+- Aktiver Menüpunkt cyan wie im Mockup.
+- Globale Kopfzeile bei Dokumentmodulen ausgeblendet, damit nur der Dokument-Arbeitskopf sichtbar ist.
+- Prozessleiste, Tabs und Arbeitsfläche farblich auf Mockup-Farbgebung angepasst.
+- Weißer Hauptarbeitsbereich mit ruhiger Linienführung und weniger Schatten.
+- Speichern bleibt grün und prominent.
+- Keine Änderung an Mahnlogik, Zahlungslogik, Kalkulation oder gespeicherten Datenstrukturen.
+
+## V191 – Kalkulation auf Mockup-Layout umgebaut
+
+- Kalkulation nutzt jetzt dieselbe Grundlogik wie die Dokumentmodule.
+- Neuer dunkler Kalkulationskopf mit Produkt, Menge, Format, Maschine und Preis.
+- Neue kompakte Prozessleiste: Produkt → Material → Druck → Weiterverarbeitung → Ergebnis.
+- Neue Tabs für die Kalkulation: Basisdaten, Produktion, Kosten, Ergebnis und Vorschau.
+- Die bisherigen Kalkulationsschritte werden tabbezogen fokussiert, damit nicht mehr alle Bereiche gleichzeitig sichtbar sind.
+- Keine Änderung an Berechnungslogik, Mahnlogik, Zahlungslogik oder gespeicherten Datenstrukturen.
+
+# PrintPilot Entwicklung
+
+## V192 – Dokumentmodule vereinheitlicht
+
+Ziel: Angebote, Aufträge, Rechnungen, Lieferscheine und Mahnungen sollen sich strukturell gleich anfühlen. Die Dokumentseite bleibt beim neuen Mockup-Aufbau aus V188, wird aber konsequenter nach Arbeitsbereichen getrennt.
+
+### Änderungen
+
+- sichtbarer Versionsstand auf **V192** gesetzt
+- Dokumentmodule weiter an das ruhigere Angebotslayout angeglichen
+- Tab **Basisdaten** zeigt jetzt wirklich nur den Dokumentkopf und die fachlichen Basisinformationen
+- Tab **Texte & Hinweise** ist jetzt ein eigener, sauber getrennter Arbeitsbereich
+- Texte, Einleitung, Fußtext und Zahlungsbedingungen hängen nicht mehr unter der Basisdatenmaske
+- alle Dokumentarten nutzen dieselbe Arbeitslogik:
+  - Kopf
+  - Prozessleiste
+  - Tabs
+  - Arbeitsbereich
+  - Speichern / Abschluss
+- keine Änderung an Mahnlogik
+- keine Änderung an Zahlungslogik
+- keine Änderung an Kalkulation
+- keine Änderung an gespeicherten Datenstrukturen
+- Folder-Vorlagen aus V184 bleiben erhalten
+
+### Zielbild
+
+Die Dokumentmodule folgen weiter dem Aufbau:
+
+```text
+Kopf
+↓
+Prozessleiste
+↓
+Tabs: Basisdaten | Positionen | Texte & Hinweise | Verwaltung | Vorschau
+↓
+Arbeitsbereich
+↓
+Speichern / Abschluss
+```
+
+V192 bereitet die nächste große Layout-Runde vor: Danach soll die **Kalkulation** in V192 nach demselben Prinzip strukturiert werden.
+
+
+## V192 – Layout exakt am Mockup ausgerichtet
+
+- Dokumentmodule optisch deutlich stärker an das Mockup angepasst.
+- Dunkle kompakte Kopfzeile mit weißer Schrift.
+- Dunkle Sidebar auf schmalere Arbeitsnavigation reduziert.
+- Aktiver Menüpunkt cyan wie im Mockup.
+- Globale Kopfzeile bei Dokumentmodulen ausgeblendet, damit nur der Dokument-Arbeitskopf sichtbar ist.
+- Prozessleiste, Tabs und Arbeitsfläche farblich auf Mockup-Farbgebung angepasst.
+- Weißer Hauptarbeitsbereich mit ruhiger Linienführung und weniger Schatten.
+- Speichern bleibt grün und prominent.
+- Keine Änderung an Mahnlogik, Zahlungslogik, Kalkulation oder gespeicherten Datenstrukturen.
+
+## V192 – Kalkulation auf Mockup-Layout umgebaut
+
+- Kalkulation nutzt jetzt dieselbe Grundlogik wie die Dokumentmodule.
+- Neuer dunkler Kalkulationskopf mit Produkt, Menge, Format, Maschine und Preis.
+- Neue kompakte Prozessleiste: Produkt → Material → Druck → Weiterverarbeitung → Ergebnis.
+- Neue Tabs für die Kalkulation: Basisdaten, Produktion, Kosten, Ergebnis und Vorschau.
+- Die bisherigen Kalkulationsschritte werden tabbezogen fokussiert, damit nicht mehr alle Bereiche gleichzeitig sichtbar sind.
+- Keine Änderung an Berechnungslogik, Mahnlogik, Zahlungslogik oder gespeicherten Datenstrukturen.
+
+
+## V192 – Klare Eingabemasken ohne Ausklappbereiche
+
+- sichtbarer Versionsstand auf V192 gesetzt
+- Ausklappbereiche in den Arbeitsmasken entfernt
+- Tabs zeigen jetzt jeweils eine klare, offene Eingabemaske
+- ehemalige Akkordeon-Überschriften bleiben als ruhige Abschnittsüberschriften erhalten
+- Aufklappen/Einklappen-Bedienelemente entfernt
+- Ziel: pro Tab ein klarer Arbeitsbereich ohne verschachtelte Klappkarten
+- keine Änderung an Mahnlogik, Zahlungslogik oder Kalkulationsberechnung
+
+# PrintPilot Entwicklung
+
+## V192 – Dokumentmodule vereinheitlicht
+
+Ziel: Angebote, Aufträge, Rechnungen, Lieferscheine und Mahnungen sollen sich strukturell gleich anfühlen. Die Dokumentseite bleibt beim neuen Mockup-Aufbau aus V188, wird aber konsequenter nach Arbeitsbereichen getrennt.
+
+### Änderungen
+
+- sichtbarer Versionsstand auf **V192** gesetzt
+- Dokumentmodule weiter an das ruhigere Angebotslayout angeglichen
+- Tab **Basisdaten** zeigt jetzt wirklich nur den Dokumentkopf und die fachlichen Basisinformationen
+- Tab **Texte & Hinweise** ist jetzt ein eigener, sauber getrennter Arbeitsbereich
+- Texte, Einleitung, Fußtext und Zahlungsbedingungen hängen nicht mehr unter der Basisdatenmaske
+- alle Dokumentarten nutzen dieselbe Arbeitslogik:
+  - Kopf
+  - Prozessleiste
+  - Tabs
+  - Arbeitsbereich
+  - Speichern / Abschluss
+- keine Änderung an Mahnlogik
+- keine Änderung an Zahlungslogik
+- keine Änderung an Kalkulation
+- keine Änderung an gespeicherten Datenstrukturen
+- Folder-Vorlagen aus V184 bleiben erhalten
+
+### Zielbild
+
+Die Dokumentmodule folgen weiter dem Aufbau:
+
+```text
+Kopf
+↓
+Prozessleiste
+↓
+Tabs: Basisdaten | Positionen | Texte & Hinweise | Verwaltung | Vorschau
+↓
+Arbeitsbereich
+↓
+Speichern / Abschluss
+```
+
+V192 bereitet die nächste große Layout-Runde vor: Danach soll die **Kalkulation** in V192 nach demselben Prinzip strukturiert werden.
+
+
+## V192 – Layout exakt am Mockup ausgerichtet
+
+- Dokumentmodule optisch deutlich stärker an das Mockup angepasst.
+- Dunkle kompakte Kopfzeile mit weißer Schrift.
+- Dunkle Sidebar auf schmalere Arbeitsnavigation reduziert.
+- Aktiver Menüpunkt cyan wie im Mockup.
+- Globale Kopfzeile bei Dokumentmodulen ausgeblendet, damit nur der Dokument-Arbeitskopf sichtbar ist.
+- Prozessleiste, Tabs und Arbeitsfläche farblich auf Mockup-Farbgebung angepasst.
+- Weißer Hauptarbeitsbereich mit ruhiger Linienführung und weniger Schatten.
+- Speichern bleibt grün und prominent.
+- Keine Änderung an Mahnlogik, Zahlungslogik, Kalkulation oder gespeicherten Datenstrukturen.
+
+## V192 – Kalkulation auf Mockup-Layout umgebaut
+
+- Kalkulation nutzt jetzt dieselbe Grundlogik wie die Dokumentmodule.
+- Neuer dunkler Kalkulationskopf mit Produkt, Menge, Format, Maschine und Preis.
+- Neue kompakte Prozessleiste: Produkt → Material → Druck → Weiterverarbeitung → Ergebnis.
+- Neue Tabs für die Kalkulation: Basisdaten, Produktion, Kosten, Ergebnis und Vorschau.
+- Die bisherigen Kalkulationsschritte werden tabbezogen fokussiert, damit nicht mehr alle Bereiche gleichzeitig sichtbar sind.
+- Keine Änderung an Berechnungslogik, Mahnlogik, Zahlungslogik oder gespeicherten Datenstrukturen.
+
+
+## V192 – Klare Eingabemasken ohne Ausklappbereiche
+
+- sichtbarer Versionsstand auf V192 gesetzt
+- Ausklappbereiche in den Arbeitsmasken entfernt
+- Tabs zeigen jetzt jeweils eine klare, offene Eingabemaske
+- ehemalige Akkordeon-Überschriften bleiben als ruhige Abschnittsüberschriften erhalten
+- Aufklappen/Einklappen-Bedienelemente entfernt
+- Ziel: pro Tab ein klarer Arbeitsbereich ohne verschachtelte Klappkarten
+- keine Änderung an Mahnlogik, Zahlungslogik oder Kalkulationsberechnung
+
+# ENTWICKLUNG V193
+
+## V193 – Linke Navigation im Mockup-Stil
+
+Ziel war, die linke Navigation so zu gestalten wie im Mockup: ruhiger, kompakter und mit klarerer Hierarchie.
+
+### Änderungen
+
+- linke Sidebar optisch stärker an das Mockup angeglichen
+- aktive Navigation jetzt klarer in **Cyan** hervorgehoben
+- farbige Balken/Akzentstreifen in der Navigation entfernt
+- Navigation in Bereiche gegliedert:
+  - **Workflow**
+  - **Stammdaten**
+  - **System**
+- Buttons kompakter und ruhiger gestaltet
+- Beschriftung klarer und weniger verspielt
+- untere Versionsbox in der Sidebar vereinfacht
+
+### Unverändert
+
+- keine Änderung an Mahnlogik
+- keine Änderung an Zahlungslogik
+- keine Änderung an Kalkulationslogik
+- keine Änderung an Datenstrukturen
+
+### Einbau
+
+- `src/App.tsx` ersetzen
+- `docs/ENTWICKLUNG.md` ersetzen
+
+# ENTWICKLUNG V194
+
+## V194 – Formularfelder vereinheitlicht
+
+Ziel war, die Eingabemasken ruhiger und professioneller wirken zu lassen, ohne die Fachlogik zu verändern.
+
+### Änderungen
+
+- sichtbarer Versionsstand auf **V194**
+- Eingabefelder, Dropdowns und Textareas optisch vereinheitlicht
+- Fokuszustand mit Cyan-Akzent ergänzt
+- Zahlenfelder werden rechtsbündiger dargestellt
+- Formularfelder wirken jetzt stärker wie eine durchgehende Arbeitsmaske
+- ruhigerer Hintergrund für Eingaben
+- Hilfsklassen für spätere Formular-Panels vorbereitet:
+  - `form-panel`
+  - `form-section-title`
+  - `form-help`
+
+### Unverändert
+
+- keine Änderung an Mahnlogik
+- keine Änderung an Zahlungslogik
+- keine Änderung an Kalkulationsberechnung
+- keine Änderung an gespeicherten Datenstrukturen
+- keine Änderung an Dokumentketten
+
+### Einbau
+
+- `src/App.tsx` ersetzen
+- `docs/ENTWICKLUNG.md` ersetzen
+
+# ENTWICKLUNG V197
+
+## V197 – Kalkulation als echte Produktionsmaske
+
+Ziel war, die Kalkulation nicht nur optisch vorzubereiten, sondern sichtbar in Richtung klassischer Druckerei-Kalkulationssoftware umzubauen: kompakt, technisch, klar und mit Eingabe links sowie Ergebnis/Vorschau rechts.
+
+### Änderungen
+
+- sichtbarer Versionsstand auf **V197**
+- Kalkulations-Arbeitsbereich nutzt jetzt die Produktionsmasken-Struktur
+- Hauptbereich der Kalkulation wurde zweispaltig ausgerichtet:
+  - links: kompakte Eingabemaske
+  - rechts: Ergebnis-/Vorschaupanel
+- Eingabefelder in der Kalkulation sind kompakter:
+  - geringere Feldhöhe
+  - weniger Rundung
+  - technische Maskenwirkung
+- große farbige Karten wurden in der Kalkulation beruhigt
+- Abschnittsbereiche wirken stärker wie klassische Eingabegruppen
+- „Jetzt wichtig“ ist kompakter und weniger kartenartig
+- rechtes Ergebnispanel bleibt auf großen Bildschirmen sichtbar/sticky
+- keine Änderung an der eigentlichen Berechnungslogik
+
+### Zielbild
+
+```text
+Kalkulation
+├─ Kopf
+├─ Tabs
+├─ Produktionsmaske
+│  ├─ links: Produkt / Material / Druck / Weiterverarbeitung
+│  └─ rechts: Nutzen / Kosten / Ergebnis
+└─ Abschluss
+```
+
+### Unverändert
+
+- keine Änderung an Mahnlogik
+- keine Änderung an Zahlungslogik
+- keine Änderung an gespeicherten Datenstrukturen
+- keine Änderung an den Rechenformeln
+
+### Einbau
+
+- `src/App.tsx` ersetzen
+- `docs/ENTWICKLUNG.md` ersetzen
+
+
+# ENTWICKLUNG V199
+
+## V199 – Vollständige Kalkulations-Eingabemaske
+
+Ziel war, die Kalkulation nicht nur mit Kunde/Produkt zu starten, sondern als vollständige Eingabemaske aufzubauen.
+
+### Grundsatz
+
+Die Kalkulation wird jetzt von oben nach unten erfasst:
+
+1. Kunde
+2. Produkt
+3. Umfang / Seiten / Format / Farbigkeit
+4. Papier / Material
+5. Druck / Maschine
+6. Weiterverarbeitung
+7. Verpackung
+8. Versand / Lieferung
+9. Zuschläge / Kalkulation
+
+Rechte Ergebnis-/Vorschauflächen bleiben weiterhin ausgeblendet. Übersicht und Auswertung sollen später sauber in einem eigenen Tab folgen.
+
+### Änderungen
+
+- sichtbarer Versionsstand auf **V199**
+- Tab **Eingabemaske** enthält jetzt die vollständige Kalkulationsmaske
+- Papier/Material ist direkt in der Maske enthalten
+- Druck/Maschine ist direkt in der Maske enthalten
+- Weiterverarbeitung ist direkt in der Maske enthalten
+- Verpackung wurde ergänzt
+- Versand/Lieferung wurde ergänzt
+- Zuschläge/Kalkulation sind direkt unten in der Maske sichtbar
+- weiterhin keine rechte Ablenkung
+- keine neuen Ausklappbereiche
+- keine Kartenflut, sondern kompakte Produktionsgruppen
+
+### Neue Eingabefelder
+
+- Kunde
+- Ansprechpartner
+- Projekt/Betreff
+- Verpackungsart
+- Pakete/Kartons
+- Stück je Paket
+- Verpackungskosten
+- Lieferart
+- Liefertermin
+- Versandkosten
+
+### Unverändert
+
+- keine Änderung an Mahnlogik
+- keine Änderung an Zahlungslogik
+- keine Änderung an Dokumentlogik
+- keine Änderung an bestehenden Rechenformeln
+
+Hinweis: Verpackungs- und Versandkosten sind in dieser Version als Eingabebereich vorbereitet. Die Einrechnung in die Kalkulation sollte als nächster fachlicher Schritt sauber ergänzt werden.
+
+### Einbau
+
+- `src/App.tsx` ersetzen
+- `docs/ENTWICKLUNG.md` ersetzen

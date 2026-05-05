@@ -170,8 +170,11 @@ export function MachinesPage() {
               </thead>
 
               <tbody>
-                {machineRows.map((machine) => (
-                  <tr key={machine.name}>
+                {machineRows.map((machine, index) => (
+                  <tr
+                    key={machine.name}
+                    className={index === 0 ? "data-table-row-selected" : undefined}
+                  >
                     <td>{machine.name}</td>
                     <td>{machine.type}</td>
                     <td>{machine.colorMode}</td>

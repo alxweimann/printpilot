@@ -155,8 +155,11 @@ export function InvoicesPage() {
               </thead>
 
               <tbody>
-                {invoiceRows.map((invoice) => (
-                  <tr key={invoice.number}>
+                {invoiceRows.map((invoice, index) => (
+                  <tr
+                    key={invoice.number}
+                    className={index === 0 ? "data-table-row-selected" : undefined}
+                  >
                     <td>{invoice.number}</td>
                     <td>{invoice.customer}</td>
                     <td>{invoice.subject}</td>

@@ -120,8 +120,11 @@ export function FinishingPage() {
               </thead>
 
               <tbody>
-                {finishingRows.map((operation) => (
-                  <tr key={operation.name}>
+                {finishingRows.map((operation, index) => (
+                  <tr
+                    key={operation.name}
+                    className={index === 0 ? "data-table-row-selected" : undefined}
+                  >
                     <td>{operation.name}</td>
                     <td>{operation.category}</td>
                     <td>{operation.pricing}</td>

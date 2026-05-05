@@ -151,8 +151,11 @@ export function CustomersPage() {
               </thead>
 
               <tbody>
-                {customerRows.map((customer) => (
-                  <tr key={customer.name}>
+                {customerRows.map((customer, index) => (
+                  <tr
+                    key={customer.name}
+                    className={index === 0 ? "data-table-row-selected" : undefined}
+                  >
                     <td>{customer.name}</td>
                     <td>{customer.city}</td>
                     <td>{customer.phone}</td>

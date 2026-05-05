@@ -119,8 +119,11 @@ export function ServicesPage() {
               </thead>
 
               <tbody>
-                {serviceRows.map((service) => (
-                  <tr key={service.name}>
+                {serviceRows.map((service, index) => (
+                  <tr
+                    key={service.name}
+                    className={index === 0 ? "data-table-row-selected" : undefined}
+                  >
                     <td>{service.name}</td>
                     <td>{service.group}</td>
                     <td>{service.unit}</td>

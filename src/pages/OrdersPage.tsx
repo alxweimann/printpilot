@@ -144,8 +144,11 @@ export function OrdersPage() {
               </thead>
 
               <tbody>
-                {orderRows.map((order) => (
-                  <tr key={order.number}>
+                {orderRows.map((order, index) => (
+                  <tr
+                    key={order.number}
+                    className={index === 0 ? "data-table-row-selected" : undefined}
+                  >
                     <td>{order.number}</td>
                     <td>{order.customer}</td>
                     <td>{order.product}</td>

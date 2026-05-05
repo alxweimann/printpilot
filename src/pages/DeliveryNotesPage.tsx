@@ -155,8 +155,11 @@ export function DeliveryNotesPage() {
               </thead>
 
               <tbody>
-                {deliveryRows.map((deliveryNote) => (
-                  <tr key={deliveryNote.number}>
+                {deliveryRows.map((deliveryNote, index) => (
+                  <tr
+                    key={deliveryNote.number}
+                    className={index === 0 ? "data-table-row-selected" : undefined}
+                  >
                     <td>{deliveryNote.number}</td>
                     <td>{deliveryNote.customer}</td>
                     <td>{deliveryNote.order}</td>

@@ -136,8 +136,11 @@ export function QuotesPage() {
               </thead>
 
               <tbody>
-                {quoteRows.map((quote) => (
-                  <tr key={quote.number}>
+                {quoteRows.map((quote, index) => (
+                  <tr
+                    key={quote.number}
+                    className={index === 0 ? "data-table-row-selected" : undefined}
+                  >
                     <td>{quote.number}</td>
                     <td>{quote.customer}</td>
                     <td>{quote.subject}</td>

@@ -170,8 +170,11 @@ export function MaterialPage() {
               </thead>
 
               <tbody>
-                {materialRows.map((material) => (
-                  <tr key={material.name}>
+                {materialRows.map((material, index) => (
+                  <tr
+                    key={material.name}
+                    className={index === 0 ? "data-table-row-selected" : undefined}
+                  >
                     <td>{material.name}</td>
                     <td>{material.type}</td>
                     <td>{material.format}</td>

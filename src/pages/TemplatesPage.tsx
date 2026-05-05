@@ -177,8 +177,11 @@ export function TemplatesPage() {
               </thead>
 
               <tbody>
-                {templateRows.map((template) => (
-                  <tr key={template.name}>
+                {templateRows.map((template, index) => (
+                  <tr
+                    key={template.name}
+                    className={index === 0 ? "data-table-row-selected" : undefined}
+                  >
                     <td>{template.name}</td>
                     <td>{template.type}</td>
                     <td>{template.area}</td>

@@ -155,8 +155,11 @@ export function RemindersPage() {
               </thead>
 
               <tbody>
-                {reminderRows.map((reminder) => (
-                  <tr key={reminder.number}>
+                {reminderRows.map((reminder, index) => (
+                  <tr
+                    key={reminder.number}
+                    className={index === 0 ? "data-table-row-selected" : undefined}
+                  >
                     <td>{reminder.number}</td>
                     <td>{reminder.customer}</td>
                     <td>{reminder.invoice}</td>

@@ -124,6 +124,7 @@ export function MachinesPage() {
   const module = getModuleConfig("machines");
   const [activeTab, setActiveTab] = useState<MachineTab>("Liste");
   const machineRows = machineRowsByTab[activeTab];
+  const selectedMachine = machineRows[0];
 
   function handleTabChange(tab: string) {
     if (isMachineTab(tab)) {
@@ -192,16 +193,16 @@ export function MachinesPage() {
 
             <FieldGrid>
               <Field label="Maschinennummer">
-                <Input placeholder="wird später automatisch vergeben" disabled />
+                <Input value="MS-0001" readOnly />
               </Field>
 
               <Field label="Bezeichnung">
-                <Input placeholder="z. B. Xerox Iridesse" />
+                <Input value={selectedMachine.name} readOnly />
               </Field>
 
               <Field label="Maschinentyp">
                 <Select
-                  value={getMachineType(activeTab)}
+                  value={selectedMachine.type === "Digitaldruck Farbe" || selectedMachine.type === "Digitaldruck Schwarz" || selectedMachine.type === "Großformat" ? selectedMachine.type : getMachineType(activeTab)}
                   onChange={(event) => handleTabChange(event.target.value)}
                 >
                   <option value="" disabled>

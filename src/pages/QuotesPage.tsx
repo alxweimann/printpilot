@@ -90,6 +90,7 @@ export function QuotesPage() {
   const module = getModuleConfig("quotes");
   const [activeTab, setActiveTab] = useState<QuoteTab>("Entwurf");
   const quoteRows = quoteRowsByTab[activeTab];
+  const selectedQuote = quoteRows[0];
 
   function handleTabChange(tab: string) {
     if (isQuoteTab(tab)) {
@@ -158,11 +159,11 @@ export function QuotesPage() {
 
             <FieldGrid>
               <Field label="Angebotsnummer">
-                <Input placeholder="wird später automatisch vergeben" disabled />
+                <Input value={selectedQuote.number} readOnly />
               </Field>
 
               <Field label="Kunde">
-                <Input placeholder="Kunde auswählen" />
+                <Input value={selectedQuote.customer} readOnly />
               </Field>
 
               <Field label="Angebotsdatum">
@@ -170,7 +171,7 @@ export function QuotesPage() {
               </Field>
 
               <Field label="Betreff">
-                <Input placeholder="z. B. Angebot Broschüre A4" />
+                <Input value={selectedQuote.subject} readOnly />
               </Field>
 
               <Field label="Gültig bis">

@@ -105,6 +105,7 @@ export function CustomersPage() {
   const module = getModuleConfig("customers");
   const [activeTab, setActiveTab] = useState<CustomerTab>("Liste");
   const customerRows = customerRowsByTab[activeTab];
+  const selectedCustomer = customerRows[0];
 
   function handleTabChange(tab: string) {
     if (isCustomerTab(tab)) {
@@ -173,11 +174,11 @@ export function CustomersPage() {
 
             <FieldGrid>
               <Field label="Kundennummer">
-                <Input placeholder="wird später automatisch vergeben" disabled />
+                <Input value="KD-0001" readOnly />
               </Field>
 
               <Field label="Firma">
-                <Input placeholder="z. B. Sonnendruck GmbH" />
+                <Input value={selectedCustomer.name} readOnly />
               </Field>
 
               <Field label="Kundentyp">
@@ -201,7 +202,7 @@ export function CustomersPage() {
               </Field>
 
               <Field label="Ort">
-                <Input placeholder="z. B. Wiesloch" />
+                <Input value={selectedCustomer.city} readOnly />
               </Field>
             </FieldGrid>
 
@@ -213,7 +214,7 @@ export function CustomersPage() {
               </Field>
 
               <Field label="Telefon">
-                <Input placeholder="Telefonnummer" />
+                <Input value={selectedCustomer.phone} readOnly />
               </Field>
 
               <Field label="E-Mail">

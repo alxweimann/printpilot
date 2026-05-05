@@ -109,6 +109,7 @@ export function RemindersPage() {
   const module = getModuleConfig("reminders");
   const [activeTab, setActiveTab] = useState<ReminderTab>("Liste");
   const reminderRows = reminderRowsByTab[activeTab];
+  const selectedReminder = reminderRows[0];
 
   function handleTabChange(tab: string) {
     if (isReminderTab(tab)) {
@@ -177,19 +178,19 @@ export function RemindersPage() {
 
             <FieldGrid>
               <Field label="Mahnnummer">
-                <Input placeholder="wird später automatisch vergeben" disabled />
+                <Input value={selectedReminder.number} readOnly />
               </Field>
 
               <Field label="Quelle">
-                <Input placeholder="später aus Rechnung übernehmen" disabled />
+                <Input value={selectedReminder.invoice} readOnly />
               </Field>
 
               <Field label="Kunde">
-                <Input placeholder="Kunde auswählen" />
+                <Input value={selectedReminder.customer} readOnly />
               </Field>
 
               <Field label="Rechnung">
-                <Input placeholder="Rechnungsbezug" disabled />
+                <Input value={selectedReminder.invoice} readOnly />
               </Field>
 
               <Field label="Mahndatum">

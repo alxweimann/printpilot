@@ -74,6 +74,7 @@ export function FinishingPage() {
   const module = getModuleConfig("finishing");
   const [activeTab, setActiveTab] = useState<FinishingTab>("Liste");
   const finishingRows = finishingRowsByTab[activeTab];
+  const selectedOperation = finishingRows[0];
 
   function handleTabChange(tab: string) {
     if (isFinishingTab(tab)) {
@@ -142,16 +143,16 @@ export function FinishingPage() {
 
             <FieldGrid>
               <Field label="Prozessnummer">
-                <Input placeholder="wird später automatisch vergeben" disabled />
+                <Input value="WV-0001" readOnly />
               </Field>
 
               <Field label="Bezeichnung">
-                <Input placeholder="z. B. Schneiden" />
+                <Input value={selectedOperation.name} readOnly />
               </Field>
 
               <Field label="Kategorie">
                 <Select
-                  value={getFinishingCategory(activeTab)}
+                  value={selectedOperation.category}
                   onChange={(event) => handleTabChange(event.target.value)}
                 >
                   <option value="" disabled>
@@ -166,7 +167,7 @@ export function FinishingPage() {
               </Field>
 
               <Field label="Einheit">
-                <Select defaultValue="">
+                <Select value={selectedOperation.pricing} onChange={() => undefined}>
                   <option value="" disabled>
                     Einheit wählen
                   </option>

@@ -131,6 +131,7 @@ export function TemplatesPage() {
   const module = getModuleConfig("templates");
   const [activeTab, setActiveTab] = useState<TemplateTab>("Produkte");
   const templateRows = templateRowsByTab[activeTab];
+  const selectedTemplate = templateRows[0];
 
   function handleTabChange(tab: string) {
     if (isTemplateTab(tab)) {
@@ -199,16 +200,16 @@ export function TemplatesPage() {
 
             <FieldGrid>
               <Field label="Vorlagennummer">
-                <Input placeholder="wird später automatisch vergeben" disabled />
+                <Input value="VT-0001" readOnly />
               </Field>
 
               <Field label="Bezeichnung">
-                <Input placeholder="z. B. Broschüre A4 Standard" />
+                <Input value={selectedTemplate.name} readOnly />
               </Field>
 
               <Field label="Vorlagentyp">
                 <Select
-                  value={getTemplateType(activeTab)}
+                  value={selectedTemplate.type}
                   onChange={(event) => {
                     const value = event.target.value;
 
@@ -254,7 +255,7 @@ export function TemplatesPage() {
 
               <Field label="Status">
                 <Select
-                  value={getTemplateStatus(activeTab)}
+                  value={selectedTemplate.status}
                   onChange={(event) => {
                     if (event.target.value === "Entwurf") {
                       handleTabChange("Entwurf");

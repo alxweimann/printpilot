@@ -124,6 +124,7 @@ export function MaterialPage() {
   const module = getModuleConfig("material");
   const [activeTab, setActiveTab] = useState<MaterialTab>("Liste");
   const materialRows = materialRowsByTab[activeTab];
+  const selectedMaterial = materialRows[0];
 
   function handleTabChange(tab: string) {
     if (isMaterialTab(tab)) {
@@ -192,16 +193,16 @@ export function MaterialPage() {
 
             <FieldGrid>
               <Field label="Materialnummer">
-                <Input placeholder="wird später automatisch vergeben" disabled />
+                <Input value="MA-0001" readOnly />
               </Field>
 
               <Field label="Bezeichnung">
-                <Input placeholder="z. B. 135 g/m² Bilderdruck matt" />
+                <Input value={selectedMaterial.name} readOnly />
               </Field>
 
               <Field label="Materialtyp">
                 <Select
-                  value={getMaterialType(activeTab)}
+                  value={selectedMaterial.type === "Papier" || selectedMaterial.type === "Verpackung" || selectedMaterial.type === "Verbrauchsmaterial" ? selectedMaterial.type : getMaterialType(activeTab)}
                   onChange={(event) => handleTabChange(event.target.value)}
                 >
                   <option value="" disabled>

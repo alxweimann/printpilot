@@ -73,6 +73,7 @@ export function ServicesPage() {
   const module = getModuleConfig("services");
   const [activeTab, setActiveTab] = useState<ServiceTab>("Liste");
   const serviceRows = serviceRowsByTab[activeTab];
+  const selectedService = serviceRows[0];
 
   function handleTabChange(tab: string) {
     if (isServiceTab(tab)) {
@@ -141,16 +142,16 @@ export function ServicesPage() {
 
             <FieldGrid>
               <Field label="Leistungsnummer">
-                <Input placeholder="wird später automatisch vergeben" disabled />
+                <Input value="LS-0001" readOnly />
               </Field>
 
               <Field label="Bezeichnung">
-                <Input placeholder="z. B. Datenprüfung" />
+                <Input value={selectedService.name} readOnly />
               </Field>
 
               <Field label="Leistungsgruppe">
                 <Select
-                  value={getServiceGroup(activeTab)}
+                  value={selectedService.group}
                   onChange={(event) => handleTabChange(event.target.value)}
                 >
                   <option value="" disabled>
@@ -165,7 +166,7 @@ export function ServicesPage() {
               </Field>
 
               <Field label="Einheit">
-                <Select defaultValue="">
+                <Select value={selectedService.unit} onChange={() => undefined}>
                   <option value="" disabled>
                     Einheit wählen
                   </option>

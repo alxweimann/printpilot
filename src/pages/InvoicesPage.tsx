@@ -109,6 +109,7 @@ export function InvoicesPage() {
   const module = getModuleConfig("invoices");
   const [activeTab, setActiveTab] = useState<InvoiceTab>("Liste");
   const invoiceRows = invoiceRowsByTab[activeTab];
+  const selectedInvoice = invoiceRows[0];
 
   function handleTabChange(tab: string) {
     if (isInvoiceTab(tab)) {
@@ -177,15 +178,15 @@ export function InvoicesPage() {
 
             <FieldGrid>
               <Field label="Rechnungsnummer">
-                <Input placeholder="wird später automatisch vergeben" disabled />
+                <Input value={selectedInvoice.number} readOnly />
               </Field>
 
               <Field label="Quelle">
-                <Input placeholder="später aus Auftrag übernehmen" disabled />
+                <Input value={selectedInvoice.subject} readOnly />
               </Field>
 
               <Field label="Kunde">
-                <Input placeholder="Kunde auswählen" />
+                <Input value={selectedInvoice.customer} readOnly />
               </Field>
 
               <Field label="Rechnungsdatum">

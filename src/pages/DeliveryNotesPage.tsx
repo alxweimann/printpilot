@@ -109,6 +109,7 @@ export function DeliveryNotesPage() {
   const module = getModuleConfig("delivery-notes");
   const [activeTab, setActiveTab] = useState<DeliveryTab>("Liste");
   const deliveryRows = deliveryRowsByTab[activeTab];
+  const selectedDeliveryNote = deliveryRows[0];
 
   function handleTabChange(tab: string) {
     if (isDeliveryTab(tab)) {
@@ -177,15 +178,15 @@ export function DeliveryNotesPage() {
 
             <FieldGrid>
               <Field label="Lieferscheinnummer">
-                <Input placeholder="wird später automatisch vergeben" disabled />
+                <Input value={selectedDeliveryNote.number} readOnly />
               </Field>
 
               <Field label="Quelle">
-                <Input placeholder="später aus Auftrag übernehmen" disabled />
+                <Input value={selectedDeliveryNote.order} readOnly />
               </Field>
 
               <Field label="Kunde">
-                <Input placeholder="Kunde auswählen" />
+                <Input value={selectedDeliveryNote.customer} readOnly />
               </Field>
 
               <Field label="Lieferdatum">
@@ -221,7 +222,7 @@ export function DeliveryNotesPage() {
 
             <FieldGrid>
               <Field label="Firma / Name">
-                <Input placeholder="Empfänger" />
+                <Input value={selectedDeliveryNote.customer} readOnly />
               </Field>
 
               <Field label="Straße">

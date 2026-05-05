@@ -98,6 +98,7 @@ export function OrdersPage() {
   const module = getModuleConfig("orders");
   const [activeTab, setActiveTab] = useState<OrderTab>("Liste");
   const orderRows = orderRowsByTab[activeTab];
+  const selectedOrder = orderRows[0];
 
   function handleTabChange(tab: string) {
     if (isOrderTab(tab)) {
@@ -166,7 +167,7 @@ export function OrdersPage() {
 
             <FieldGrid>
               <Field label="Auftragsnummer">
-                <Input placeholder="wird später automatisch vergeben" disabled />
+                <Input value={selectedOrder.number} readOnly />
               </Field>
 
               <Field label="Quelle">
@@ -174,11 +175,11 @@ export function OrdersPage() {
               </Field>
 
               <Field label="Kunde">
-                <Input placeholder="Kunde auswählen" />
+                <Input value={selectedOrder.customer} readOnly />
               </Field>
 
               <Field label="Produkt">
-                <Input placeholder="z. B. Broschüre A4" />
+                <Input value={selectedOrder.product} readOnly />
               </Field>
 
               <Field label="Auftragsdatum">

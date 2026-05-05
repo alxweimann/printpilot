@@ -17,7 +17,7 @@ Der Fokus liegt zuerst auf:
 - Master-Detail-Darstellung mit echter lokaler Auswahl
 - kontrollierte Formular-Drafts ohne Persistenz
 - kompakter Edit-Mode über ein einzelnes randloses Schloss in der Button-Leiste
-- geschützte Einstellungen mit demselben Schloss-Prinzip
+- Dirty-State für lokale Entwürfe
 
 Es gilt weiterhin:
 
@@ -65,22 +65,6 @@ src/styles/globals.css
 src/ui/
 ```
 
-## UI-Komponenten
-
-Wiederverwendbare Komponenten:
-
-```text
-src/ui/Button.tsx
-src/ui/Input.tsx
-src/ui/Select.tsx
-src/ui/Field.tsx
-src/ui/FieldGrid.tsx
-src/ui/SectionHeader.tsx
-src/ui/Badge.tsx
-src/ui/Table.tsx
-src/ui/WorkspaceHeader.tsx
-```
-
 ## Bearbeitbare Formular-Drafts
 
 Die Master-Detail-Seiten und die Einstellungen verwenden kontrollierte lokale Drafts.
@@ -97,10 +81,52 @@ Zweck:
 - Formularfelder kontrolliert editierbar machen
 - Änderungen lokal halten
 - Änderungen verwerfen über `resetDraft`
+- Dirty-State über `isDirty`
 - keine Speicherung
 - keine Persistenz
 - keine API
 - keine echte Datenbank
+
+Beispielprinzip:
+
+```ts
+const { draft, isDirty, updateDraftField, resetDraft } =
+  useEditableDraft(selectedItem);
+```
+
+## Dirty-State
+
+Der Hook `useEditableDraft` erkennt jetzt, ob der lokale Draft vom Ursprungsdatensatz abweicht.
+
+Prinzip:
+
+```text
+isDirty = false
+- keine lokalen Änderungen
+- keine Warnung
+- Standardaktion bleibt normal
+
+isDirty = true
+- lokale Änderungen vorhanden
+- dezenter Hinweis "Ungespeicherte Änderungen"
+- Verwerfen setzt den Draft zurück
+```
+
+Aktuell umgesetzt in:
+
+```text
+src/pages/QuotesPage.tsx
+```
+
+Verhalten in Angebote:
+
+- Änderungen an editierbaren Angebotsfeldern setzen `isDirty` auf `true`
+- unten erscheint `Ungespeicherte Änderungen`
+- Button `Änderungen verwerfen` setzt Draft zurück
+- Hauptaktion wechselt von `Angebot ausgeben` zu `Änderungen speichern`
+- Auswahlwechsel setzt neuen Draft
+- Tabwechsel setzt neuen Draft
+- echte Speicherung ist noch nicht angeschlossen
 
 ## Edit-Mode über einzelnes randloses Schloss
 
@@ -138,34 +164,14 @@ src/pages/TemplatesPage.tsx
 src/pages/SettingsPage.tsx
 ```
 
-## Einstellungen
-
-Datei:
-
-```text
-src/pages/SettingsPage.tsx
-```
-
-Die Einstellungen sind keine Master-Detail-Seite, verwenden aber ebenfalls:
-
-```ts
-useEditableDraft(initialSettingsDraft)
-```
-
-Umgesetzt:
-
-- Tabs für Allgemein, Nummernkreise, Firma, Design und System
-- standardmäßig gesperrte Einstellungsfelder
-- randloses Schloss unten zum Öffnen und Sperren
-- Änderungen verwerfen setzt lokale Änderungen zurück
-- Tabwechsel sperrt die Bearbeitung automatisch wieder
-
 ## Aktueller Stand
 
 Umgesetzt:
 
 - zentrale Auswahl über `useMasterDetailSelection`
 - lokaler Bearbeitungs-Draft über `useEditableDraft`
+- Dirty-State im Draft-Hook
+- Dirty-State zuerst in Angebote sichtbar
 - editierbare Stammdatenfelder pro Modul
 - Einstellungen mit lokalem Draft
 - readOnly-Felder für Nummern, Kundenreferenzen oder systemische Referenzen
@@ -183,9 +189,9 @@ Der Draft ist nur lokale UI-Vorbereitung.
 
 ## Nächste sinnvolle Schritte
 
-1. Schloss später als wiederverwendbare UI-Komponente auslagern
-2. Dirty-State vorbereiten
-3. Speichern-Button optisch auf geänderte Drafts reagieren lassen
-4. geänderte Felder visuell markieren
+1. Dirty-State auf alle Draft-Seiten übertragen
+2. Speichern-Button optisch finalisieren
+3. geänderte Felder visuell markieren
+4. Schloss später als wiederverwendbare UI-Komponente auslagern
 5. lokale Datenstruktur planen
 6. später Persistenz / Store / API planen

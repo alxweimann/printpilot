@@ -169,7 +169,7 @@ export function QuotesPage() {
     initialTab: "Entwurf",
   });
 
-  const { draft, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft } =
     useEditableDraft(selectedQuote);
 
   function handleTabChange(tab: string) {
@@ -435,6 +435,20 @@ export function QuotesPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
+              {isDirty && (
+                <span
+                  style={{
+                    alignSelf: "center",
+                    color: "var(--color-text-muted)",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    marginRight: "auto",
+                  }}
+                >
+                  Ungespeicherte Änderungen
+                </span>
+              )}
+
               <button
                 type="button"
                 aria-label={
@@ -472,11 +486,15 @@ export function QuotesPage() {
                 </span>
               </button>
 
-              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+              <Button onClick={handleResetDraft}>
+                {isDirty ? "Änderungen verwerfen" : "Keine Änderungen"}
+              </Button>
 
               <Button>Vorschau prüfen</Button>
 
-              <Button variant="primary">Angebot ausgeben</Button>
+              <Button variant="primary">
+                {isDirty ? "Änderungen speichern" : "Angebot ausgeben"}
+              </Button>
             </div>
           </section>
         </div>

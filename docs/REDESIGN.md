@@ -14,6 +14,7 @@ Der Fokus liegt zuerst auf:
 - einheitliche Arbeitsmasken
 - statische Designzustände
 - einheitliche Tabellen- und Statusdarstellung
+- Master-Detail-Darstellung mit statischer Synchronisation
 - keine Fachlogik, solange das Designsystem noch nicht stabil ist
 
 ## Grundprinzipien
@@ -160,7 +161,7 @@ Einstellungen          Hellgrau
 
 # Master-Detail-Layout
 
-Die zweigeteilte Arbeitsansicht verwendet jetzt neutrale Klassen:
+Die zweigeteilte Arbeitsansicht verwendet neutrale Klassen:
 
 ```text
 master-detail-layout
@@ -201,6 +202,8 @@ Die Tabs ändern aktuell nur statisch:
 - WorkspaceHeader-Titel
 - WorkspaceHeader-Status
 - teilweise ein Dropdown in der rechten Maske
+- ausgewählte erste Tabellenzeile
+- sichtbare Beispielwerte in der Detailmaske
 
 ## PageTabs
 
@@ -346,8 +349,92 @@ Wichtig:
 ```text
 Noch keine echte Auswahl-Logik
 Noch keine Datenbindung
-Noch keine Detailübernahme
+Noch keine echte Detailübernahme
 Nur Design-Vorbereitung
+```
+
+---
+
+# Statische Detail-Synchronisation
+
+## Ziel
+
+Die rechte Detailmaske soll optisch zur links markierten ersten Tabellenzeile passen.
+
+Beispiel:
+
+```text
+Links ausgewählt:
+AG-2026-001 / Sonnendruck GmbH / Broschüre A4
+
+Rechts sichtbar:
+Angebotsnummer: AG-2026-001
+Kunde: Sonnendruck GmbH
+Betreff: Broschüre A4
+Status: Entwurf
+```
+
+## Umgesetzte Seiten
+
+Die statische Synchronisation wurde in diesen Seiten vorbereitet:
+
+```text
+src/pages/QuotesPage.tsx
+src/pages/OrdersPage.tsx
+src/pages/InvoicesPage.tsx
+src/pages/DeliveryNotesPage.tsx
+src/pages/RemindersPage.tsx
+src/pages/CustomersPage.tsx
+src/pages/MaterialPage.tsx
+src/pages/MachinesPage.tsx
+src/pages/FinishingPage.tsx
+src/pages/ServicesPage.tsx
+src/pages/TemplatesPage.tsx
+```
+
+## Technischer Stand
+
+Je Seite wird aktuell die erste sichtbare Tabellenzeile als statischer Beispiel-Datensatz verwendet.
+
+Beispielprinzip:
+
+```text
+const selectedQuote = quoteRows[0];
+```
+
+Dann werden passende Werte in der rechten Maske angezeigt:
+
+```text
+Nummer
+Kunde / Bezeichnung
+Betreff / Produkt / Typ
+Status / Kategorie
+```
+
+## Wichtig
+
+Diese Synchronisation ist noch keine echte Auswahl-Logik.
+
+Aktuell gilt:
+
+```text
+Tabwechsel ändert die sichtbaren Beispielwerte
+erste sichtbare Zeile ist immer ausgewählt
+Detailmaske zeigt Werte der ersten sichtbaren Zeile
+keine Speicherung
+keine echte Auswahl per Klick
+keine Datenbank
+keine Persistenz
+```
+
+Später kann daraus echte Logik entstehen:
+
+```text
+selectedId
+onRowClick
+Datensatz aus Array / Store laden
+Detailformular mit echtem Datensatz füllen
+Änderungen speichern
 ```
 
 ---
@@ -489,6 +576,7 @@ Aktueller Zustand:
 - Footer mit Entwurf speichern, Vorschau prüfen, Angebot ausgeben
 - statische Tab-Zustände
 - statisch ausgewählte erste Tabellenzeile
+- statisch synchronisierte Detailmaske
 
 ## Aufträge
 
@@ -509,6 +597,7 @@ Aktueller Zustand:
 - Footer mit Entwurf speichern und Auftrag vorbereiten
 - statische Tab-Zustände
 - statisch ausgewählte erste Tabellenzeile
+- statisch synchronisierte Detailmaske
 
 ## Rechnungen
 
@@ -530,6 +619,7 @@ Aktueller Zustand:
 - Footer mit Entwurf speichern, Vorschau prüfen, Rechnung ausgeben
 - statische Tab-Zustände
 - statisch ausgewählte erste Tabellenzeile
+- statisch synchronisierte Detailmaske
 
 ## Lieferscheine
 
@@ -551,6 +641,7 @@ Aktueller Zustand:
 - Footer mit Entwurf speichern, Vorschau prüfen, Lieferschein ausgeben
 - statische Tab-Zustände
 - statisch ausgewählte erste Tabellenzeile
+- statisch synchronisierte Detailmaske
 
 ## Mahnungen
 
@@ -571,6 +662,7 @@ Aktueller Zustand:
 - Footer mit Entwurf speichern, Vorschau prüfen, Mahnung ausgeben
 - statische Tab-Zustände
 - statisch ausgewählte erste Tabellenzeile
+- statisch synchronisierte Detailmaske
 
 ## Kunden
 
@@ -591,6 +683,7 @@ Aktueller Zustand:
 - Footer mit Änderungen verwerfen und Kunde speichern
 - statische Tab-Zustände
 - statisch ausgewählte erste Tabellenzeile
+- statisch synchronisierte Detailmaske
 
 ## Material
 
@@ -611,6 +704,7 @@ Aktueller Zustand:
 - Footer mit Änderungen verwerfen und Material speichern
 - statische Tab-Zustände
 - statisch ausgewählte erste Tabellenzeile
+- statisch synchronisierte Detailmaske
 
 ## Maschinen
 
@@ -631,6 +725,7 @@ Aktueller Zustand:
 - Footer mit Änderungen verwerfen und Maschine speichern
 - statische Tab-Zustände
 - statisch ausgewählte erste Tabellenzeile
+- statisch synchronisierte Detailmaske
 
 ## Weiterverarbeitung
 
@@ -651,6 +746,7 @@ Aktueller Zustand:
 - Footer mit Änderungen verwerfen und Prozess speichern
 - statische Tab-Zustände
 - statisch ausgewählte erste Tabellenzeile
+- statisch synchronisierte Detailmaske
 
 ## Leistungen
 
@@ -671,6 +767,7 @@ Aktueller Zustand:
 - Footer mit Änderungen verwerfen und Leistung speichern
 - statische Tab-Zustände
 - statisch ausgewählte erste Tabellenzeile
+- statisch synchronisierte Detailmaske
 
 ## Vorlagen
 
@@ -691,6 +788,7 @@ Aktueller Zustand:
 - Footer mit Änderungen verwerfen und Vorlage speichern
 - statische Tab-Zustände
 - statisch ausgewählte erste Tabellenzeile
+- statisch synchronisierte Detailmaske
 
 ## Einstellungen
 
@@ -807,11 +905,11 @@ src/ui/WorkspaceHeader.tsx
 
 ## Kurzfristig
 
-1. Detailmasken mit statisch ausgewählter Tabellenzeile synchronisieren
-2. gemeinsame Master-Detail-Komponente prüfen
-3. echte Auswahl-Logik planen
-4. Tabellen-/Listenkomponenten weiter verbessern
-5. leere Listen-Zustände vorbereiten
+1. echte Auswahl-Logik mit `selectedId` pro Modul vorbereiten
+2. Tabellenzeilen per Klick auswählbar machen
+3. gemeinsame Master-Detail-Komponente prüfen
+4. leere Listen-Zustände vorbereiten
+5. Formularfelder zwischen readOnly und editierbar sauber unterscheiden
 
 ## Danach
 

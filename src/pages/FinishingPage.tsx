@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -11,8 +12,74 @@ import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
+const finishingTabs = ["Liste", "Standard", "Falzen", "Bindung", "Veredelung", "Handarbeit"] as const;
+
+type FinishingTab = (typeof finishingTabs)[number];
+
+const finishingRowsByTab = {
+  Liste: [
+    { name: "Schneiden", category: "Standard", pricing: "pro Auftrag", status: "Aktiv", badgeVariant: "success" as const },
+    { name: "Falzen", category: "Falzen", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
+    { name: "Rückendrahtheftung", category: "Bindung", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
+  ],
+  Standard: [
+    { name: "Schneiden", category: "Standard", pricing: "pro Auftrag", status: "Aktiv", badgeVariant: "success" as const },
+    { name: "Rillen", category: "Standard", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
+  ],
+  Falzen: [
+    { name: "Falzen", category: "Falzen", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
+  ],
+  Bindung: [
+    { name: "Rückendrahtheftung", category: "Bindung", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
+    { name: "Klebebindung", category: "Bindung", pricing: "pro Auftrag", status: "Aktiv", badgeVariant: undefined },
+  ],
+  Veredelung: [
+    { name: "Stanzen", category: "Veredelung", pricing: "pro Auftrag", status: "Aktiv", badgeVariant: undefined },
+  ],
+  Handarbeit: [
+    { name: "Konfektionieren", category: "Handarbeit", pricing: "pro Stunde", status: "Aktiv", badgeVariant: undefined },
+  ],
+};
+
+function getFinishingTitle(tab: FinishingTab) {
+  switch (tab) {
+    case "Liste":
+      return "Prozess verwalten";
+    case "Standard":
+      return "Standardprozess verwalten";
+    case "Falzen":
+      return "Falzprozess verwalten";
+    case "Bindung":
+      return "Bindung verwalten";
+    case "Veredelung":
+      return "Veredelung verwalten";
+    case "Handarbeit":
+      return "Handarbeit verwalten";
+  }
+}
+
+function getFinishingCategory(tab: FinishingTab) {
+  if (tab === "Liste") {
+    return "";
+  }
+
+  return tab;
+}
+
+function isFinishingTab(tab: string): tab is FinishingTab {
+  return finishingTabs.includes(tab as FinishingTab);
+}
+
 export function FinishingPage() {
   const module = getModuleConfig("finishing");
+  const [activeTab, setActiveTab] = useState<FinishingTab>("Liste");
+  const finishingRows = finishingRowsByTab[activeTab];
+
+  function handleTabChange(tab: string) {
+    if (isFinishingTab(tab)) {
+      setActiveTab(tab);
+    }
+  }
 
   return (
     <div className="page">
@@ -22,12 +89,16 @@ export function FinishingPage() {
         actionLabel={module.actionLabel}
       />
 
-      <PageTabs tabs={module.tabs ?? []} activeTab="Liste" />
+      <PageTabs
+        tabs={[...finishingTabs]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <section className="calculation-sheet">
         <WorkspaceHeader
           kicker="Weiterverarbeitungsmaske"
-          title="Prozess verwalten"
+          title={getFinishingTitle(activeTab)}
           statusValue="Aktiv"
         />
 
@@ -49,32 +120,16 @@ export function FinishingPage() {
               </thead>
 
               <tbody>
-                <tr>
-                  <td>Schneiden</td>
-                  <td>Standard</td>
-                  <td>pro Auftrag</td>
-                  <td>
-                    <Badge variant="success">Aktiv</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Falzen</td>
-                  <td>Weiterverarbeitung</td>
-                  <td>pro Stück</td>
-                  <td>
-                    <Badge>Aktiv</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Rückendrahtheftung</td>
-                  <td>Bindung</td>
-                  <td>pro Stück</td>
-                  <td>
-                    <Badge>Aktiv</Badge>
-                  </td>
-                </tr>
+                {finishingRows.map((operation) => (
+                  <tr key={operation.name}>
+                    <td>{operation.name}</td>
+                    <td>{operation.category}</td>
+                    <td>{operation.pricing}</td>
+                    <td>
+                      <Badge variant={operation.badgeVariant}>{operation.status}</Badge>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </DataTable>
           </section>
@@ -92,7 +147,10 @@ export function FinishingPage() {
               </Field>
 
               <Field label="Kategorie">
-                <Select defaultValue="">
+                <Select
+                  value={getFinishingCategory(activeTab)}
+                  onChange={(event) => handleTabChange(event.target.value)}
+                >
                   <option value="" disabled>
                     Kategorie wählen
                   </option>

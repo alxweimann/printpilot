@@ -1,15 +1,26 @@
 import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
+
 import { PageHeader } from "../layout/PageHeader";
+
 import { PageTabs } from "../layout/PageTabs";
+
 import { Badge } from "../ui/Badge";
+
 import { Button } from "../ui/Button";
 import { Field } from "../ui/Field";
+
 import { FieldGrid } from "../ui/FieldGrid";
+
 import { Input } from "../ui/Input";
+
 import { SectionHeader } from "../ui/SectionHeader";
+
 import { Select } from "../ui/Select";
+
 import { DataTable, TableToolbar } from "../ui/Table";
+
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 const quoteTabs = ["Entwurf", "Offen", "Angenommen", "Abgelehnt"] as const;
@@ -19,6 +30,7 @@ type QuoteTab = (typeof quoteTabs)[number];
 const quoteRowsByTab = {
   Entwurf: [
     {
+      id: "quote-ag-2026-001",
       number: "AG-2026-001",
       customer: "Sonnendruck GmbH",
       subject: "Broschüre A4",
@@ -26,6 +38,7 @@ const quoteRowsByTab = {
       badgeVariant: "success" as const,
     },
     {
+      id: "quote-ag-2026-004",
       number: "AG-2026-004",
       customer: "Agentur Beispiel",
       subject: "Visitenkarten",
@@ -35,6 +48,7 @@ const quoteRowsByTab = {
   ],
   Offen: [
     {
+      id: "quote-ag-2026-002",
       number: "AG-2026-002",
       customer: "Musterkunde GmbH",
       subject: "Flyer A5",
@@ -42,6 +56,7 @@ const quoteRowsByTab = {
       badgeVariant: undefined,
     },
     {
+      id: "quote-ag-2026-005",
       number: "AG-2026-005",
       customer: "Druckpartner Süd",
       subject: "Plakat A2",
@@ -51,6 +66,7 @@ const quoteRowsByTab = {
   ],
   Angenommen: [
     {
+      id: "quote-ag-2026-006",
       number: "AG-2026-006",
       customer: "Beispiel AG",
       subject: "Folder DIN lang",
@@ -60,6 +76,7 @@ const quoteRowsByTab = {
   ],
   Abgelehnt: [
     {
+      id: "quote-ag-2026-007",
       number: "AG-2026-007",
       customer: "Testkunde KG",
       subject: "Einladungskarten",
@@ -73,10 +90,13 @@ function getQuoteTitle(tab: QuoteTab) {
   switch (tab) {
     case "Entwurf":
       return "Angebot erstellen";
+
     case "Offen":
       return "Offenes Angebot prüfen";
+
     case "Angenommen":
       return "Angenommenes Angebot";
+
     case "Abgelehnt":
       return "Abgelehntes Angebot";
   }
@@ -88,14 +108,27 @@ function isQuoteTab(tab: string): tab is QuoteTab {
 
 export function QuotesPage() {
   const module = getModuleConfig("quotes");
+
   const [activeTab, setActiveTab] = useState<QuoteTab>("Entwurf");
+  const [selectedId, setSelectedId] = useState(
+    quoteRowsByTab.Entwurf[0]?.id ?? "",
+  );
+
   const quoteRows = quoteRowsByTab[activeTab];
-  const selectedQuote = quoteRows[0];
+  const selectedQuote =
+    quoteRows.find((quote) => quote.id === selectedId) ?? quoteRows[0];
 
   function handleTabChange(tab: string) {
     if (isQuoteTab(tab)) {
+      const nextRows = quoteRowsByTab[tab];
+
       setActiveTab(tab);
+      setSelectedId(nextRows[0]?.id ?? "");
     }
+  }
+
+  function handleQuoteSelect(quoteId: string) {
+    setSelectedId(quoteId);
   }
 
   return (
@@ -123,6 +156,7 @@ export function QuotesPage() {
           <section className="workspace-panel master-list-panel">
             <TableToolbar>
               <Input className="search-input" placeholder="Angebote suchen..." />
+
               <Button>Filter</Button>
             </TableToolbar>
 
@@ -130,26 +164,41 @@ export function QuotesPage() {
               <thead>
                 <tr>
                   <th>Angebot</th>
+
                   <th>Kunde</th>
+
                   <th>Betreff</th>
+
                   <th>Status</th>
                 </tr>
               </thead>
 
               <tbody>
-                {quoteRows.map((quote, index) => (
-                  <tr
-                    key={quote.number}
-                    className={index === 0 ? "data-table-row-selected" : undefined}
-                  >
-                    <td>{quote.number}</td>
-                    <td>{quote.customer}</td>
-                    <td>{quote.subject}</td>
-                    <td>
-                      <Badge variant={quote.badgeVariant}>{quote.status}</Badge>
-                    </td>
-                  </tr>
-                ))}
+                {quoteRows.map((quote) => {
+                  const isSelected = quote.id === selectedQuote?.id;
+
+                  return (
+                    <tr
+                      key={quote.id}
+                      className={
+                        isSelected ? "data-table-row-selected" : undefined
+                      }
+                      onClick={() => handleQuoteSelect(quote.id)}
+                    >
+                      <td>{quote.number}</td>
+
+                      <td>{quote.customer}</td>
+
+                      <td>{quote.subject}</td>
+
+                      <td>
+                        <Badge variant={quote.badgeVariant}>
+                          {quote.status}
+                        </Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </DataTable>
           </section>
@@ -159,11 +208,11 @@ export function QuotesPage() {
 
             <FieldGrid>
               <Field label="Angebotsnummer">
-                <Input value={selectedQuote.number} readOnly />
+                <Input value={selectedQuote?.number ?? ""} readOnly />
               </Field>
 
               <Field label="Kunde">
-                <Input value={selectedQuote.customer} readOnly />
+                <Input value={selectedQuote?.customer ?? ""} readOnly />
               </Field>
 
               <Field label="Angebotsdatum">
@@ -171,7 +220,7 @@ export function QuotesPage() {
               </Field>
 
               <Field label="Betreff">
-                <Input value={selectedQuote.subject} readOnly />
+                <Input value={selectedQuote?.subject ?? ""} readOnly />
               </Field>
 
               <Field label="Gültig bis">
@@ -197,9 +246,13 @@ export function QuotesPage() {
                 <thead>
                   <tr>
                     <th>Pos.</th>
+
                     <th>Bezeichnung</th>
+
                     <th>Menge</th>
+
                     <th>Einheit</th>
+
                     <th>Netto</th>
                   </tr>
                 </thead>
@@ -207,22 +260,31 @@ export function QuotesPage() {
                 <tbody>
                   <tr>
                     <td>1</td>
+
                     <td>Druckprodukt aus Kalkulation übernehmen</td>
+
                     <td>—</td>
+
                     <td>Stk.</td>
+
                     <td>—</td>
                   </tr>
 
                   <tr>
                     <td>2</td>
+
                     <td>Optionale Zusatzleistung</td>
+
                     <td>—</td>
+
                     <td>pauschal</td>
+
                     <td>—</td>
                   </tr>
 
                   <tr className="data-table-summary-row">
                     <td colSpan={4}>Zwischensumme netto</td>
+
                     <td>—</td>
                   </tr>
                 </tbody>
@@ -237,8 +299,11 @@ export function QuotesPage() {
                   <option value="" disabled>
                     Bedingungen wählen
                   </option>
+
                   <option>Zahlbar sofort ohne Abzug</option>
+
                   <option>14 Tage netto</option>
+
                   <option>30 Tage netto</option>
                 </Select>
               </Field>
@@ -248,8 +313,11 @@ export function QuotesPage() {
                   <option value="" disabled>
                     Lieferung wählen
                   </option>
+
                   <option>Abholung</option>
+
                   <option>Lieferung inklusive</option>
+
                   <option>Versand nach Aufwand</option>
                 </Select>
               </Field>
@@ -259,8 +327,11 @@ export function QuotesPage() {
                   <option value="" disabled>
                     Vorlage wählen
                   </option>
+
                   <option>Standardangebot</option>
+
                   <option>Kurzangebot</option>
+
                   <option>Technisches Angebot</option>
                 </Select>
               </Field>
@@ -268,7 +339,9 @@ export function QuotesPage() {
 
             <div className="calculation-footer">
               <Button>Entwurf speichern</Button>
+
               <Button>Vorschau prüfen</Button>
+
               <Button variant="primary">Angebot ausgeben</Button>
             </div>
           </section>

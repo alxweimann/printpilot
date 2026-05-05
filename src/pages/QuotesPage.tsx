@@ -1,5 +1,6 @@
 import { getModuleConfig } from "../app/moduleConfig";
 
+import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 
 import { PageHeader } from "../layout/PageHeader";
@@ -27,7 +28,21 @@ const quoteTabs = ["Entwurf", "Offen", "Angenommen", "Abgelehnt"] as const;
 
 type QuoteTab = (typeof quoteTabs)[number];
 
-const quoteRowsByTab = {
+type QuoteRow = {
+  id: string;
+  number: string;
+  customer: string;
+  subject: string;
+  status: QuoteTab;
+  quoteDate: string;
+  validUntil: string;
+  paymentTerms: string;
+  deliveryTerms: string;
+  template: string;
+  badgeVariant?: "success";
+};
+
+const quoteRowsByTab: Record<QuoteTab, QuoteRow[]> = {
   Entwurf: [
     {
       id: "quote-ag-2026-001",
@@ -35,7 +50,12 @@ const quoteRowsByTab = {
       customer: "Sonnendruck GmbH",
       subject: "Broschüre A4",
       status: "Entwurf",
-      badgeVariant: "success" as const,
+      quoteDate: "2026-05-05",
+      validUntil: "2026-05-19",
+      paymentTerms: "14 Tage netto",
+      deliveryTerms: "Abholung",
+      template: "Standardangebot",
+      badgeVariant: "success",
     },
     {
       id: "quote-ag-2026-004",
@@ -43,6 +63,11 @@ const quoteRowsByTab = {
       customer: "Agentur Beispiel",
       subject: "Visitenkarten",
       status: "Entwurf",
+      quoteDate: "2026-05-04",
+      validUntil: "2026-05-18",
+      paymentTerms: "Zahlbar sofort ohne Abzug",
+      deliveryTerms: "Versand nach Aufwand",
+      template: "Kurzangebot",
       badgeVariant: undefined,
     },
   ],
@@ -53,6 +78,11 @@ const quoteRowsByTab = {
       customer: "Musterkunde GmbH",
       subject: "Flyer A5",
       status: "Offen",
+      quoteDate: "2026-05-03",
+      validUntil: "2026-05-17",
+      paymentTerms: "14 Tage netto",
+      deliveryTerms: "Lieferung inklusive",
+      template: "Standardangebot",
       badgeVariant: undefined,
     },
     {
@@ -61,6 +91,11 @@ const quoteRowsByTab = {
       customer: "Druckpartner Süd",
       subject: "Plakat A2",
       status: "Offen",
+      quoteDate: "2026-05-02",
+      validUntil: "2026-05-16",
+      paymentTerms: "30 Tage netto",
+      deliveryTerms: "Versand nach Aufwand",
+      template: "Technisches Angebot",
       badgeVariant: undefined,
     },
   ],
@@ -71,7 +106,12 @@ const quoteRowsByTab = {
       customer: "Beispiel AG",
       subject: "Folder DIN lang",
       status: "Angenommen",
-      badgeVariant: "success" as const,
+      quoteDate: "2026-04-29",
+      validUntil: "2026-05-13",
+      paymentTerms: "14 Tage netto",
+      deliveryTerms: "Lieferung inklusive",
+      template: "Standardangebot",
+      badgeVariant: "success",
     },
   ],
   Abgelehnt: [
@@ -81,6 +121,11 @@ const quoteRowsByTab = {
       customer: "Testkunde KG",
       subject: "Einladungskarten",
       status: "Abgelehnt",
+      quoteDate: "2026-04-25",
+      validUntil: "2026-05-09",
+      paymentTerms: "Zahlbar sofort ohne Abzug",
+      deliveryTerms: "Abholung",
+      template: "Kurzangebot",
       badgeVariant: undefined,
     },
   ],
@@ -119,6 +164,9 @@ export function QuotesPage() {
     rowsByTab: quoteRowsByTab,
     initialTab: "Entwurf",
   });
+
+  const { draft, updateDraftField, resetDraft } =
+    useEditableDraft(selectedQuote);
 
   function handleTabChange(tab: string) {
     if (isQuoteTab(tab)) {
@@ -207,23 +255,40 @@ export function QuotesPage() {
 
             <FieldGrid>
               <Field label="Angebotsnummer">
-                <Input value={selectedQuote?.number ?? ""} readOnly />
+                <Input value={draft?.number ?? ""} readOnly />
               </Field>
 
               <Field label="Kunde">
-                <Input value={selectedQuote?.customer ?? ""} readOnly />
+                <Input value={draft?.customer ?? ""} readOnly />
               </Field>
 
               <Field label="Angebotsdatum">
-                <Input type="date" />
+                <Input
+                  type="date"
+                  value={draft?.quoteDate ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("quoteDate", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="Betreff">
-                <Input value={selectedQuote?.subject ?? ""} readOnly />
+                <Input
+                  value={draft?.subject ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("subject", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="Gültig bis">
-                <Input type="date" />
+                <Input
+                  type="date"
+                  value={draft?.validUntil ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("validUntil", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="Status">
@@ -294,7 +359,12 @@ export function QuotesPage() {
 
             <FieldGrid>
               <Field label="Zahlungsbedingungen">
-                <Select defaultValue="">
+                <Select
+                  value={draft?.paymentTerms ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("paymentTerms", event.target.value)
+                  }
+                >
                   <option value="" disabled>
                     Bedingungen wählen
                   </option>
@@ -308,7 +378,12 @@ export function QuotesPage() {
               </Field>
 
               <Field label="Lieferbedingungen">
-                <Select defaultValue="">
+                <Select
+                  value={draft?.deliveryTerms ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("deliveryTerms", event.target.value)
+                  }
+                >
                   <option value="" disabled>
                     Lieferung wählen
                   </option>
@@ -322,7 +397,12 @@ export function QuotesPage() {
               </Field>
 
               <Field label="Angebotsvorlage">
-                <Select defaultValue="">
+                <Select
+                  value={draft?.template ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("template", event.target.value)
+                  }
+                >
                   <option value="" disabled>
                     Vorlage wählen
                   </option>
@@ -337,7 +417,7 @@ export function QuotesPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
-              <Button>Entwurf speichern</Button>
+              <Button onClick={resetDraft}>Änderungen verwerfen</Button>
 
               <Button>Vorschau prüfen</Button>
 

@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -11,8 +12,131 @@ import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
+const templateTabs = ["Produkte", "Dokumente", "Textbausteine", "Layouts", "Entwurf"] as const;
+
+type TemplateTab = (typeof templateTabs)[number];
+
+const templateRowsByTab = {
+  Produkte: [
+    {
+      name: "Broschüre A4 Standard",
+      type: "Produkt",
+      area: "Kalkulation",
+      status: "Aktiv",
+      badgeVariant: "success" as const,
+    },
+    {
+      name: "Flyer A5 Standard",
+      type: "Produkt",
+      area: "Kalkulation",
+      status: "Aktiv",
+      badgeVariant: undefined,
+    },
+  ],
+  Dokumente: [
+    {
+      name: "Standardangebot",
+      type: "Dokument",
+      area: "Angebote",
+      status: "Aktiv",
+      badgeVariant: "success" as const,
+    },
+    {
+      name: "Rechnung Standard",
+      type: "Dokument",
+      area: "Rechnungen",
+      status: "Aktiv",
+      badgeVariant: undefined,
+    },
+  ],
+  Textbausteine: [
+    {
+      name: "Zahlungsbedingungen Standard",
+      type: "Textbaustein",
+      area: "Angebote",
+      status: "Aktiv",
+      badgeVariant: "success" as const,
+    },
+    {
+      name: "Lieferhinweis Standard",
+      type: "Textbaustein",
+      area: "Lieferscheine",
+      status: "Aktiv",
+      badgeVariant: undefined,
+    },
+  ],
+  Layouts: [
+    {
+      name: "Dokumentlayout Standard",
+      type: "Layout",
+      area: "Dokumente",
+      status: "Aktiv",
+      badgeVariant: "success" as const,
+    },
+  ],
+  Entwurf: [
+    {
+      name: "Rechnung Modern",
+      type: "Dokument",
+      area: "Rechnungen",
+      status: "Entwurf",
+      badgeVariant: undefined,
+    },
+  ],
+};
+
+function getTemplateTitle(tab: TemplateTab) {
+  switch (tab) {
+    case "Produkte":
+      return "Produktvorlage verwalten";
+    case "Dokumente":
+      return "Dokumentvorlage verwalten";
+    case "Textbausteine":
+      return "Textbaustein verwalten";
+    case "Layouts":
+      return "Layoutvorlage verwalten";
+    case "Entwurf":
+      return "Vorlagenentwurf bearbeiten";
+  }
+}
+
+function getTemplateStatus(tab: TemplateTab) {
+  if (tab === "Entwurf") {
+    return "Entwurf";
+  }
+
+  return "Aktiv";
+}
+
+function getTemplateType(tab: TemplateTab) {
+  switch (tab) {
+    case "Produkte":
+      return "Produkt";
+    case "Dokumente":
+      return "Dokument";
+    case "Textbausteine":
+      return "Textbaustein";
+    case "Layouts":
+      return "Layout";
+    case "Entwurf":
+      return "";
+  }
+}
+
+function isTemplateTab(tab: string): tab is TemplateTab {
+  return templateTabs.includes(tab as TemplateTab);
+}
+
 export function TemplatesPage() {
   const module = getModuleConfig("templates");
+  const [activeTab, setActiveTab] = useState<TemplateTab>("Produkte");
+  const templateRows = templateRowsByTab[activeTab];
+
+  function handleTabChange(tab: string) {
+    if (isTemplateTab(tab)) {
+      setActiveTab(tab);
+    }
+  }
 
   return (
     <div className="page">
@@ -22,13 +146,17 @@ export function TemplatesPage() {
         actionLabel={module.actionLabel}
       />
 
-      <PageTabs tabs={module.tabs ?? []} activeTab="Produkte" />
+      <PageTabs
+        tabs={[...templateTabs]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <section className="calculation-sheet">
         <WorkspaceHeader
           kicker="Vorlagenmaske"
-          title="Vorlage verwalten"
-          statusValue="Aktiv"
+          title={getTemplateTitle(activeTab)}
+          statusValue={getTemplateStatus(activeTab)}
         />
 
         <div className="master-detail-layout">
@@ -49,32 +177,16 @@ export function TemplatesPage() {
               </thead>
 
               <tbody>
-                <tr>
-                  <td>Broschüre A4 Standard</td>
-                  <td>Produkt</td>
-                  <td>Kalkulation</td>
-                  <td>
-                    <Badge variant="success">Aktiv</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Standardangebot</td>
-                  <td>Dokument</td>
-                  <td>Angebote</td>
-                  <td>
-                    <Badge>Aktiv</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Rechnung Standard</td>
-                  <td>Dokument</td>
-                  <td>Rechnungen</td>
-                  <td>
-                    <Badge>Entwurf</Badge>
-                  </td>
-                </tr>
+                {templateRows.map((template) => (
+                  <tr key={template.name}>
+                    <td>{template.name}</td>
+                    <td>{template.type}</td>
+                    <td>{template.area}</td>
+                    <td>
+                      <Badge variant={template.badgeVariant}>{template.status}</Badge>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </DataTable>
           </section>
@@ -92,7 +204,28 @@ export function TemplatesPage() {
               </Field>
 
               <Field label="Vorlagentyp">
-                <Select defaultValue="">
+                <Select
+                  value={getTemplateType(activeTab)}
+                  onChange={(event) => {
+                    const value = event.target.value;
+
+                    if (value === "Produkt") {
+                      handleTabChange("Produkte");
+                    }
+
+                    if (value === "Dokument") {
+                      handleTabChange("Dokumente");
+                    }
+
+                    if (value === "Textbaustein") {
+                      handleTabChange("Textbausteine");
+                    }
+
+                    if (value === "Layout") {
+                      handleTabChange("Layouts");
+                    }
+                  }}
+                >
                   <option value="" disabled>
                     Typ wählen
                   </option>
@@ -117,10 +250,16 @@ export function TemplatesPage() {
               </Field>
 
               <Field label="Status">
-                <Select defaultValue="Aktiv">
+                <Select
+                  value={getTemplateStatus(activeTab)}
+                  onChange={(event) => {
+                    if (event.target.value === "Entwurf") {
+                      handleTabChange("Entwurf");
+                    }
+                  }}
+                >
                   <option>Aktiv</option>
                   <option>Entwurf</option>
-                  <option>Gesperrt</option>
                 </Select>
               </Field>
 

@@ -1,7 +1,13 @@
+import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
+
+import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
+
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
+
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Field } from "../ui/Field";
@@ -16,7 +22,21 @@ const orderTabs = ["Liste", "Vorbereitung", "Produktion", "Abgeschlossen"] as co
 
 type OrderTab = (typeof orderTabs)[number];
 
-const orderRowsByTab = {
+type OrderRow = {
+  id: string;
+  number: string;
+  customer: string;
+  product: string;
+  status: string;
+  machine: string;
+  priority: string;
+  handoff: string;
+  approval: string;
+  dueDate: string;
+  badgeVariant?: "success";
+};
+
+const orderRowsByTab: Record<OrderTab, OrderRow[]> = {
   Liste: [
     {
       id: "order-au-2026-001",
@@ -24,7 +44,12 @@ const orderRowsByTab = {
       customer: "Sonnendruck GmbH",
       product: "Broschüre A4",
       status: "Vorbereitung",
-      badgeVariant: "success" as const,
+      machine: "Xerox Iridesse",
+      priority: "Normal",
+      handoff: "Prüfen",
+      approval: "Ausstehend",
+      dueDate: "2026-05-12",
+      badgeVariant: "success",
     },
     {
       id: "order-au-2026-002",
@@ -32,6 +57,11 @@ const orderRowsByTab = {
       customer: "Musterkunde GmbH",
       product: "Flyer A5",
       status: "Produktion",
+      machine: "Xerox Iridesse",
+      priority: "Hoch",
+      handoff: "Freigegeben",
+      approval: "Erteilt",
+      dueDate: "2026-05-09",
       badgeVariant: undefined,
     },
     {
@@ -40,6 +70,11 @@ const orderRowsByTab = {
       customer: "Beispiel AG",
       product: "Folder DIN lang",
       status: "Offen",
+      machine: "Canon VP140",
+      priority: "Normal",
+      handoff: "Fehlt",
+      approval: "Ausstehend",
+      dueDate: "2026-05-15",
       badgeVariant: undefined,
     },
   ],
@@ -50,7 +85,12 @@ const orderRowsByTab = {
       customer: "Sonnendruck GmbH",
       product: "Broschüre A4",
       status: "Vorbereitung",
-      badgeVariant: "success" as const,
+      machine: "Xerox Iridesse",
+      priority: "Normal",
+      handoff: "Prüfen",
+      approval: "Ausstehend",
+      dueDate: "2026-05-12",
+      badgeVariant: "success",
     },
   ],
   Produktion: [
@@ -60,6 +100,11 @@ const orderRowsByTab = {
       customer: "Musterkunde GmbH",
       product: "Flyer A5",
       status: "Produktion",
+      machine: "Xerox Iridesse",
+      priority: "Hoch",
+      handoff: "Freigegeben",
+      approval: "Erteilt",
+      dueDate: "2026-05-09",
       badgeVariant: undefined,
     },
   ],
@@ -70,7 +115,12 @@ const orderRowsByTab = {
       customer: "Druckpartner Süd",
       product: "Plakat A2",
       status: "Abgeschlossen",
-      badgeVariant: "success" as const,
+      machine: "Roland TrueVis VG3 540",
+      priority: "Normal",
+      handoff: "Freigegeben",
+      approval: "Erteilt",
+      dueDate: "2026-04-30",
+      badgeVariant: "success",
     },
   ],
 };
@@ -103,6 +153,8 @@ function isOrderTab(tab: string): tab is OrderTab {
 export function OrdersPage() {
   const module = getModuleConfig("orders");
 
+  const [isEditing, setIsEditing] = useState(false);
+
   const {
     activeTab,
     rows: orderRows,
@@ -114,14 +166,27 @@ export function OrdersPage() {
     initialTab: "Liste",
   });
 
+  const { draft, updateDraftField, resetDraft } = useEditableDraft(selectedOrder);
+
   function handleTabChange(tab: string) {
     if (isOrderTab(tab)) {
       setActiveTab(tab);
+      setIsEditing(false);
     }
   }
 
   function handleOrderSelect(orderId: string) {
     selectItem(orderId);
+    setIsEditing(false);
+  }
+
+  function handleResetDraft() {
+    resetDraft();
+    setIsEditing(false);
+  }
+
+  function handleToggleEditing() {
+    setIsEditing((currentValue) => !currentValue);
   }
 
   return (
@@ -194,19 +259,40 @@ export function OrdersPage() {
 
             <FieldGrid>
               <Field label="Auftragsnummer">
-                <Input value={selectedOrder?.number ?? ""} readOnly />
+                <Input value={draft?.number ?? ""} readOnly />
               </Field>
 
               <Field label="Kunde">
-                <Input value={selectedOrder?.customer ?? ""} readOnly />
+                <Input value={draft?.customer ?? ""} readOnly />
               </Field>
 
               <Field label="Produkt">
-                <Input value={selectedOrder?.product ?? ""} readOnly />
+                <Input
+                  value={draft?.product ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("product", event.target.value)
+                  }
+                />
+              </Field>
+
+              <Field label="Liefertermin">
+                <Input
+                  type="date"
+                  value={draft?.dueDate ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("dueDate", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="Status">
-                <Select value={activeTab} onChange={(event) => handleTabChange(event.target.value)}>
+                <Select
+                  value={activeTab}
+                  disabled={!isEditing}
+                  onChange={(event) => handleTabChange(event.target.value)}
+                >
                   {orderTabs.map((tab) => (
                     <option key={tab}>{tab}</option>
                   ))}
@@ -218,7 +304,12 @@ export function OrdersPage() {
 
             <FieldGrid>
               <Field label="Maschine">
-                <Select defaultValue="">
+                <Select
+                  value={draft?.machine ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("machine", event.target.value)
+                  }
+                >
                   <option value="" disabled>
                     Maschine wählen
                   </option>
@@ -230,7 +321,13 @@ export function OrdersPage() {
               </Field>
 
               <Field label="Priorität">
-                <Select defaultValue="Normal">
+                <Select
+                  value={draft?.priority ?? ""}
+                  disabled={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("priority", event.target.value)
+                  }
+                >
                   <option>Niedrig</option>
                   <option>Normal</option>
                   <option>Hoch</option>
@@ -239,7 +336,12 @@ export function OrdersPage() {
               </Field>
 
               <Field label="Übergabe">
-                <Select defaultValue="">
+                <Select
+                  value={draft?.handoff ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("handoff", event.target.value)
+                  }
+                >
                   <option value="" disabled>
                     Status wählen
                   </option>
@@ -250,7 +352,12 @@ export function OrdersPage() {
               </Field>
 
               <Field label="Freigabe">
-                <Select defaultValue="">
+                <Select
+                  value={draft?.approval ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("approval", event.target.value)
+                  }
+                >
                   <option value="" disabled>
                     Freigabe wählen
                   </option>
@@ -262,7 +369,44 @@ export function OrdersPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
-              <Button>Entwurf speichern</Button>
+              <button
+                type="button"
+                aria-label={
+                  isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"
+                }
+                title={isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"}
+                onClick={handleToggleEditing}
+                style={{
+                  alignItems: "center",
+                  alignSelf: "center",
+                  background: "transparent",
+                  border: 0,
+                  boxShadow: "none",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  fontSize: "1.55rem",
+                  height: "2.5rem",
+                  justifyContent: "center",
+                  lineHeight: 1,
+                  padding: 0,
+                  width: "1.65rem",
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  style={{
+                    alignItems: "center",
+                    display: "inline-flex",
+                    height: "100%",
+                    justifyContent: "center",
+                    transform: "translateY(-4px)",
+                  }}
+                >
+                  {isEditing ? "🔓" : "🔒"}
+                </span>
+              </button>
+
+              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
               <Button variant="primary">Auftrag vorbereiten</Button>
             </div>
           </section>

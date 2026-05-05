@@ -1,7 +1,13 @@
+import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
+
+import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
+
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
+
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Field } from "../ui/Field";
@@ -16,33 +22,136 @@ const invoiceTabs = ["Liste", "Entwurf", "Offen", "Bezahlt", "Überfällig"] as 
 
 type InvoiceTab = (typeof invoiceTabs)[number];
 
-const invoiceRowsByTab = {
+type InvoiceRow = {
+  id: string;
+  number: string;
+  customer: string;
+  subject: string;
+  status: string;
+  paymentTerms: string;
+  paymentType: string;
+  template: string;
+  invoiceDate: string;
+  dueDate: string;
+  badgeVariant?: "success";
+};
+
+const invoiceRowsByTab: Record<InvoiceTab, InvoiceRow[]> = {
   Liste: [
-    { id: "invoice-re-2026-001", number: "RE-2026-001", customer: "Sonnendruck GmbH", subject: "Broschüre A4", status: "Entwurf", badgeVariant: "success" as const },
-    { id: "invoice-re-2026-002", number: "RE-2026-002", customer: "Musterkunde GmbH", subject: "Flyer A5", status: "Offen", badgeVariant: undefined },
-    { id: "invoice-re-2026-003", number: "RE-2026-003", customer: "Beispiel AG", subject: "Folder DIN lang", status: "Bezahlt", badgeVariant: "success" as const },
+    {
+      id: "invoice-re-2026-001",
+      number: "RE-2026-001",
+      customer: "Sonnendruck GmbH",
+      subject: "Broschüre A4",
+      status: "Entwurf",
+      paymentTerms: "14 Tage netto",
+      paymentType: "Überweisung",
+      template: "Standardrechnung",
+      invoiceDate: "2026-05-05",
+      dueDate: "2026-05-19",
+      badgeVariant: "success",
+    },
+    {
+      id: "invoice-re-2026-002",
+      number: "RE-2026-002",
+      customer: "Musterkunde GmbH",
+      subject: "Flyer A5",
+      status: "Offen",
+      paymentTerms: "14 Tage netto",
+      paymentType: "Überweisung",
+      template: "Standardrechnung",
+      invoiceDate: "2026-05-03",
+      dueDate: "2026-05-17",
+      badgeVariant: undefined,
+    },
+    {
+      id: "invoice-re-2026-003",
+      number: "RE-2026-003",
+      customer: "Beispiel AG",
+      subject: "Folder DIN lang",
+      status: "Bezahlt",
+      paymentTerms: "30 Tage netto",
+      paymentType: "Überweisung",
+      template: "Kurzrechnung",
+      invoiceDate: "2026-04-22",
+      dueDate: "2026-05-22",
+      badgeVariant: "success",
+    },
   ],
   Entwurf: [
-    { id: "invoice-re-2026-001", number: "RE-2026-001", customer: "Sonnendruck GmbH", subject: "Broschüre A4", status: "Entwurf", badgeVariant: "success" as const },
+    {
+      id: "invoice-re-2026-001",
+      number: "RE-2026-001",
+      customer: "Sonnendruck GmbH",
+      subject: "Broschüre A4",
+      status: "Entwurf",
+      paymentTerms: "14 Tage netto",
+      paymentType: "Überweisung",
+      template: "Standardrechnung",
+      invoiceDate: "2026-05-05",
+      dueDate: "2026-05-19",
+      badgeVariant: "success",
+    },
   ],
   Offen: [
-    { id: "invoice-re-2026-002", number: "RE-2026-002", customer: "Musterkunde GmbH", subject: "Flyer A5", status: "Offen", badgeVariant: undefined },
+    {
+      id: "invoice-re-2026-002",
+      number: "RE-2026-002",
+      customer: "Musterkunde GmbH",
+      subject: "Flyer A5",
+      status: "Offen",
+      paymentTerms: "14 Tage netto",
+      paymentType: "Überweisung",
+      template: "Standardrechnung",
+      invoiceDate: "2026-05-03",
+      dueDate: "2026-05-17",
+      badgeVariant: undefined,
+    },
   ],
   Bezahlt: [
-    { id: "invoice-re-2026-003", number: "RE-2026-003", customer: "Beispiel AG", subject: "Folder DIN lang", status: "Bezahlt", badgeVariant: "success" as const },
+    {
+      id: "invoice-re-2026-003",
+      number: "RE-2026-003",
+      customer: "Beispiel AG",
+      subject: "Folder DIN lang",
+      status: "Bezahlt",
+      paymentTerms: "30 Tage netto",
+      paymentType: "Überweisung",
+      template: "Kurzrechnung",
+      invoiceDate: "2026-04-22",
+      dueDate: "2026-05-22",
+      badgeVariant: "success",
+    },
   ],
   Überfällig: [
-    { id: "invoice-re-2026-009", number: "RE-2026-009", customer: "Testkunde KG", subject: "Plakat A1", status: "Überfällig", badgeVariant: undefined },
+    {
+      id: "invoice-re-2026-009",
+      number: "RE-2026-009",
+      customer: "Testkunde KG",
+      subject: "Plakat A1",
+      status: "Überfällig",
+      paymentTerms: "Sofort ohne Abzug",
+      paymentType: "Überweisung",
+      template: "Standardrechnung",
+      invoiceDate: "2026-04-01",
+      dueDate: "2026-04-15",
+      badgeVariant: undefined,
+    },
   ],
 };
 
 function getInvoiceTitle(tab: InvoiceTab) {
   switch (tab) {
-    case "Liste": return "Rechnung vorbereiten";
-    case "Entwurf": return "Rechnungsentwurf bearbeiten";
-    case "Offen": return "Offene Rechnung prüfen";
-    case "Bezahlt": return "Bezahlte Rechnung";
-    case "Überfällig": return "Überfällige Rechnung";
+    case "Liste":
+      return "Rechnung vorbereiten";
+    case "Entwurf":
+      return "Rechnungsentwurf bearbeiten";
+    case "Offen":
+      return "Offene Rechnung prüfen";
+    case "Bezahlt":
+      return "Bezahlte Rechnung";
+    case "Überfällig":
+      return "Überfällige Rechnung";
   }
 }
 
@@ -61,6 +170,8 @@ function isInvoiceTab(tab: string): tab is InvoiceTab {
 export function InvoicesPage() {
   const module = getModuleConfig("invoices");
 
+  const [isEditing, setIsEditing] = useState(false);
+
   const {
     activeTab,
     rows: invoiceRows,
@@ -72,24 +183,50 @@ export function InvoicesPage() {
     initialTab: "Liste",
   });
 
+  const { draft, updateDraftField, resetDraft } =
+    useEditableDraft(selectedInvoice);
+
   function handleTabChange(tab: string) {
     if (isInvoiceTab(tab)) {
       setActiveTab(tab);
+      setIsEditing(false);
     }
   }
 
   function handleInvoiceSelect(invoiceId: string) {
     selectItem(invoiceId);
+    setIsEditing(false);
+  }
+
+  function handleResetDraft() {
+    resetDraft();
+    setIsEditing(false);
+  }
+
+  function handleToggleEditing() {
+    setIsEditing((currentValue) => !currentValue);
   }
 
   return (
     <div className="page">
-      <PageHeader title={module.title} description={module.description} actionLabel={module.actionLabel} />
+      <PageHeader
+        title={module.title}
+        description={module.description}
+        actionLabel={module.actionLabel}
+      />
 
-      <PageTabs tabs={[...invoiceTabs]} activeTab={activeTab} onTabChange={handleTabChange} />
+      <PageTabs
+        tabs={[...invoiceTabs]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <section className="calculation-sheet">
-        <WorkspaceHeader kicker="Rechnungsmaske" title={getInvoiceTitle(activeTab)} statusValue={getInvoiceStatus(activeTab)} />
+        <WorkspaceHeader
+          kicker="Rechnungsmaske"
+          title={getInvoiceTitle(activeTab)}
+          statusValue={getInvoiceStatus(activeTab)}
+        />
 
         <div className="master-detail-layout">
           <section className="workspace-panel master-list-panel">
@@ -115,14 +252,18 @@ export function InvoicesPage() {
                   return (
                     <tr
                       key={invoice.id}
-                      className={isSelected ? "data-table-row-selected" : undefined}
+                      className={
+                        isSelected ? "data-table-row-selected" : undefined
+                      }
                       onClick={() => handleInvoiceSelect(invoice.id)}
                     >
                       <td>{invoice.number}</td>
                       <td>{invoice.customer}</td>
                       <td>{invoice.subject}</td>
                       <td>
-                        <Badge variant={invoice.badgeVariant}>{invoice.status}</Badge>
+                        <Badge variant={invoice.badgeVariant}>
+                          {invoice.status}
+                        </Badge>
                       </td>
                     </tr>
                   );
@@ -136,19 +277,51 @@ export function InvoicesPage() {
 
             <FieldGrid>
               <Field label="Rechnungsnummer">
-                <Input value={selectedInvoice?.number ?? ""} readOnly />
+                <Input value={draft?.number ?? ""} readOnly />
               </Field>
 
               <Field label="Kunde">
-                <Input value={selectedInvoice?.customer ?? ""} readOnly />
+                <Input value={draft?.customer ?? ""} readOnly />
               </Field>
 
               <Field label="Betreff">
-                <Input value={selectedInvoice?.subject ?? ""} readOnly />
+                <Input
+                  value={draft?.subject ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("subject", event.target.value)
+                  }
+                />
+              </Field>
+
+              <Field label="Rechnungsdatum">
+                <Input
+                  type="date"
+                  value={draft?.invoiceDate ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("invoiceDate", event.target.value)
+                  }
+                />
+              </Field>
+
+              <Field label="Fällig am">
+                <Input
+                  type="date"
+                  value={draft?.dueDate ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("dueDate", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="Status">
-                <Select value={activeTab} onChange={(event) => handleTabChange(event.target.value)}>
+                <Select
+                  value={activeTab}
+                  disabled={!isEditing}
+                  onChange={(event) => handleTabChange(event.target.value)}
+                >
                   {invoiceTabs.map((tab) => (
                     <option key={tab}>{tab}</option>
                   ))}
@@ -191,8 +364,15 @@ export function InvoicesPage() {
 
             <FieldGrid>
               <Field label="Bedingungen">
-                <Select defaultValue="">
-                  <option value="" disabled>Bedingungen wählen</option>
+                <Select
+                  value={draft?.paymentTerms ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("paymentTerms", event.target.value)
+                  }
+                >
+                  <option value="" disabled>
+                    Bedingungen wählen
+                  </option>
                   <option>Zahlbar sofort ohne Abzug</option>
                   <option>14 Tage netto</option>
                   <option>30 Tage netto</option>
@@ -200,8 +380,15 @@ export function InvoicesPage() {
               </Field>
 
               <Field label="Zahlungsart">
-                <Select defaultValue="">
-                  <option value="" disabled>Zahlungsart wählen</option>
+                <Select
+                  value={draft?.paymentType ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("paymentType", event.target.value)
+                  }
+                >
+                  <option value="" disabled>
+                    Zahlungsart wählen
+                  </option>
                   <option>Überweisung</option>
                   <option>Barzahlung</option>
                   <option>EC / Karte</option>
@@ -210,8 +397,15 @@ export function InvoicesPage() {
               </Field>
 
               <Field label="Vorlage">
-                <Select defaultValue="">
-                  <option value="" disabled>Vorlage wählen</option>
+                <Select
+                  value={draft?.template ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("template", event.target.value)
+                  }
+                >
+                  <option value="" disabled>
+                    Vorlage wählen
+                  </option>
                   <option>Standardrechnung</option>
                   <option>Kurzrechnung</option>
                   <option>Technische Rechnung</option>
@@ -220,7 +414,44 @@ export function InvoicesPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
-              <Button>Entwurf speichern</Button>
+              <button
+                type="button"
+                aria-label={
+                  isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"
+                }
+                title={isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"}
+                onClick={handleToggleEditing}
+                style={{
+                  alignItems: "center",
+                  alignSelf: "center",
+                  background: "transparent",
+                  border: 0,
+                  boxShadow: "none",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  fontSize: "1.55rem",
+                  height: "2.5rem",
+                  justifyContent: "center",
+                  lineHeight: 1,
+                  padding: 0,
+                  width: "1.65rem",
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  style={{
+                    alignItems: "center",
+                    display: "inline-flex",
+                    height: "100%",
+                    justifyContent: "center",
+                    transform: "translateY(-4px)",
+                  }}
+                >
+                  {isEditing ? "🔓" : "🔒"}
+                </span>
+              </button>
+
+              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
               <Button>Vorschau prüfen</Button>
               <Button variant="primary">Rechnung ausgeben</Button>
             </div>

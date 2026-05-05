@@ -145,13 +145,7 @@ const { draft, updateDraftField, resetDraft } =
 
 ## Edit-Mode über einzelnes randloses Schloss
 
-Die Angebotsseite hat als erstes Modul einen lokalen Edit-Mode erhalten.
-
-Datei:
-
-```text
-src/pages/QuotesPage.tsx
-```
+Alle relevanten Master-Detail-Seiten verwenden jetzt dasselbe kompakte Edit-Mode-Prinzip.
 
 Prinzip:
 
@@ -161,34 +155,16 @@ Prinzip:
 - geschlossenes Schloss öffnet die Bearbeitung
 - offenes Schloss sperrt die Bearbeitung wieder
 - kein zusätzlicher Text am Schloss
-- das Schloss ist visuell mittig zur Höhe der danebenliegenden Buttons ausgerichtet und nutzt denselben Abstand wie die übrigen Buttons
+- das Schloss ist visuell mittig zur Höhe der danebenliegenden Buttons ausgerichtet
+- das Schloss nutzt denselben Abstand wie die übrigen Buttons
 - keine Schloss-Hinweise direkt an den Feldern
 - Auswahlwechsel sperrt die Felder automatisch wieder
 - Tabwechsel sperrt die Felder automatisch wieder
 - `Änderungen verwerfen` setzt den Draft zurück und sperrt die Felder
 
-Dauerhaft gesperrt:
+## Seiten mit Draft + Edit-Mode
 
-```text
-Angebotsnummer
-Kunde
-Status
-```
-
-Im offenen Bearbeitungsmodus editierbar:
-
-```text
-Angebotsdatum
-Betreff
-Gültig bis
-Zahlungsbedingungen
-Lieferbedingungen
-Angebotsvorlage
-```
-
-## Umgesetzte Draft-Seiten
-
-Diese Seiten haben lokale editierbare Draft-Felder:
+Diese Seiten haben lokale editierbare Draft-Felder und den kompakten Schloss-Edit-Mode:
 
 ```text
 src/pages/QuotesPage.tsx
@@ -213,9 +189,9 @@ Umgesetzt:
 - editierbare Stammdatenfelder pro Modul
 - readOnly-Felder für Nummern, Kundenreferenzen oder systemische Referenzen
 - Änderungen verwerfen setzt den Draft auf den ausgewählten Datensatz zurück
-- Auswahlwechsel setzt automatisch einen neuen Draft
-- Tabwechsel setzt automatisch die erste passende Zeile und deren Draft
-- Angebote: kompakter Edit-Mode über einzelnes randloses Schloss-Icon unten
+- Auswahlwechsel setzt automatisch einen neuen Draft und sperrt die Bearbeitung
+- Tabwechsel setzt automatisch die erste passende Zeile, deren Draft und sperrt die Bearbeitung
+- kompakter Edit-Mode über einzelnes randloses Schloss-Icon unten
 
 Wichtig:
 
@@ -226,10 +202,9 @@ Der Draft ist nur lokale UI-Vorbereitung.
 
 ## Nächste sinnvolle Schritte
 
-1. kompakten Schloss-Edit-Mode auf weitere Master-Detail-Seiten übertragen
-2. Schloss später als wiederverwendbare UI-Komponente auslagern
-3. Dirty-State vorbereiten
-4. Speichern-Button optisch auf geänderte Drafts reagieren lassen
-5. geänderte Felder visuell markieren
-6. lokale Datenstruktur planen
-7. später Persistenz / Store / API planen
+1. Schloss später als wiederverwendbare UI-Komponente auslagern
+2. Dirty-State vorbereiten
+3. Speichern-Button optisch auf geänderte Drafts reagieren lassen
+4. geänderte Felder visuell markieren
+5. lokale Datenstruktur planen
+6. später Persistenz / Store / API planen

@@ -1,7 +1,13 @@
+import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
+
+import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
+
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
+
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Field } from "../ui/Field";
@@ -16,23 +22,54 @@ const customerTabs = ["Liste", "Aktiv", "Entwurf", "Gesperrt"] as const;
 
 type CustomerTab = (typeof customerTabs)[number];
 
-const customerRowsByTab = {
+type CustomerRow = {
+  id: string;
+  number: string;
+  name: string;
+  type: string;
+  street: string;
+  zip: string;
+  city: string;
+  contact: string;
+  phone: string;
+  email: string;
+  paymentTerm: string;
+  priceLevel: string;
+  status: string;
+  badgeVariant?: "success";
+};
+
+const customerRowsByTab: Record<CustomerTab, CustomerRow[]> = {
   Liste: [
     {
       id: "customer-sonnendruck",
       number: "KD-0001",
       name: "Sonnendruck GmbH",
+      type: "Geschäftskunde",
+      street: "Musterstraße 1",
+      zip: "69168",
       city: "Wiesloch",
-      phone: "—",
+      contact: "Alex Weimann",
+      phone: "06222 / 000000",
+      email: "info@sonnendruck.de",
+      paymentTerm: "14 Tage netto",
+      priceLevel: "Stammkunde",
       status: "Aktiv",
-      badgeVariant: "success" as const,
+      badgeVariant: "success",
     },
     {
       id: "customer-musterkunde",
       number: "KD-0002",
       name: "Musterkunde GmbH",
+      type: "Geschäftskunde",
+      street: "Beispielweg 12",
+      zip: "69115",
       city: "Heidelberg",
-      phone: "—",
+      contact: "Max Mustermann",
+      phone: "06221 / 123456",
+      email: "info@musterkunde.de",
+      paymentTerm: "30 Tage netto",
+      priceLevel: "Standard",
       status: "Entwurf",
       badgeVariant: undefined,
     },
@@ -40,8 +77,15 @@ const customerRowsByTab = {
       id: "customer-beispiel-ag",
       number: "KD-0003",
       name: "Beispiel AG",
+      type: "Wiederverkäufer",
+      street: "Industriestraße 8",
+      zip: "68159",
       city: "Mannheim",
-      phone: "—",
+      contact: "Sabine Beispiel",
+      phone: "0621 / 555000",
+      email: "einkauf@beispiel-ag.de",
+      paymentTerm: "14 Tage netto",
+      priceLevel: "Sonderkondition",
       status: "Aktiv",
       badgeVariant: undefined,
     },
@@ -51,17 +95,31 @@ const customerRowsByTab = {
       id: "customer-sonnendruck",
       number: "KD-0001",
       name: "Sonnendruck GmbH",
+      type: "Geschäftskunde",
+      street: "Musterstraße 1",
+      zip: "69168",
       city: "Wiesloch",
-      phone: "—",
+      contact: "Alex Weimann",
+      phone: "06222 / 000000",
+      email: "info@sonnendruck.de",
+      paymentTerm: "14 Tage netto",
+      priceLevel: "Stammkunde",
       status: "Aktiv",
-      badgeVariant: "success" as const,
+      badgeVariant: "success",
     },
     {
       id: "customer-beispiel-ag",
       number: "KD-0003",
       name: "Beispiel AG",
+      type: "Wiederverkäufer",
+      street: "Industriestraße 8",
+      zip: "68159",
       city: "Mannheim",
-      phone: "—",
+      contact: "Sabine Beispiel",
+      phone: "0621 / 555000",
+      email: "einkauf@beispiel-ag.de",
+      paymentTerm: "14 Tage netto",
+      priceLevel: "Sonderkondition",
       status: "Aktiv",
       badgeVariant: undefined,
     },
@@ -71,8 +129,15 @@ const customerRowsByTab = {
       id: "customer-musterkunde",
       number: "KD-0002",
       name: "Musterkunde GmbH",
+      type: "Geschäftskunde",
+      street: "Beispielweg 12",
+      zip: "69115",
       city: "Heidelberg",
-      phone: "—",
+      contact: "Max Mustermann",
+      phone: "06221 / 123456",
+      email: "info@musterkunde.de",
+      paymentTerm: "30 Tage netto",
+      priceLevel: "Standard",
       status: "Entwurf",
       badgeVariant: undefined,
     },
@@ -82,8 +147,15 @@ const customerRowsByTab = {
       id: "customer-testkunde",
       number: "KD-0004",
       name: "Testkunde KG",
+      type: "Geschäftskunde",
+      street: "Altbestand 4",
+      zip: "76133",
       city: "Karlsruhe",
-      phone: "—",
+      contact: "T. Kunde",
+      phone: "0721 / 111222",
+      email: "kontakt@testkunde.de",
+      paymentTerm: "Sofort ohne Abzug",
+      priceLevel: "Standard",
       status: "Gesperrt",
       badgeVariant: undefined,
     },
@@ -118,6 +190,8 @@ function isCustomerTab(tab: string): tab is CustomerTab {
 export function CustomersPage() {
   const module = getModuleConfig("customers");
 
+  const [isEditing, setIsEditing] = useState(false);
+
   const {
     activeTab,
     rows: customerRows,
@@ -129,14 +203,28 @@ export function CustomersPage() {
     initialTab: "Liste",
   });
 
+  const { draft, updateDraftField, resetDraft } =
+    useEditableDraft(selectedCustomer);
+
   function handleTabChange(tab: string) {
     if (isCustomerTab(tab)) {
       setActiveTab(tab);
+      setIsEditing(false);
     }
   }
 
   function handleCustomerSelect(customerId: string) {
     selectItem(customerId);
+    setIsEditing(false);
+  }
+
+  function handleResetDraft() {
+    resetDraft();
+    setIsEditing(false);
+  }
+
+  function handleToggleEditing() {
+    setIsEditing((currentValue) => !currentValue);
   }
 
   return (
@@ -209,15 +297,26 @@ export function CustomersPage() {
 
             <FieldGrid>
               <Field label="Kundennummer">
-                <Input value={selectedCustomer?.number ?? ""} readOnly />
+                <Input value={draft?.number ?? ""} readOnly />
               </Field>
 
               <Field label="Firma">
-                <Input value={selectedCustomer?.name ?? ""} readOnly />
+                <Input
+                  value={draft?.name ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("name", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="Kundentyp">
-                <Select defaultValue="">
+                <Select
+                  value={draft?.type ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("type", event.target.value)
+                  }
+                >
                   <option value="" disabled>
                     Kundentyp wählen
                   </option>
@@ -229,15 +328,34 @@ export function CustomersPage() {
               </Field>
 
               <Field label="Straße">
-                <Input placeholder="Straße und Hausnummer" />
+                <Input
+                  value={draft?.street ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("street", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="PLZ">
-                <Input inputMode="numeric" placeholder="z. B. 69168" />
+                <Input
+                  inputMode="numeric"
+                  value={draft?.zip ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("zip", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="Ort">
-                <Input value={selectedCustomer?.city ?? ""} readOnly />
+                <Input
+                  value={draft?.city ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("city", event.target.value)
+                  }
+                />
               </Field>
             </FieldGrid>
 
@@ -245,15 +363,34 @@ export function CustomersPage() {
 
             <FieldGrid>
               <Field label="Ansprechpartner">
-                <Input placeholder="Name" />
+                <Input
+                  value={draft?.contact ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("contact", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="Telefon">
-                <Input value={selectedCustomer?.phone ?? ""} readOnly />
+                <Input
+                  value={draft?.phone ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("phone", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="E-Mail">
-                <Input type="email" placeholder="mail@example.de" />
+                <Input
+                  type="email"
+                  value={draft?.email ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("email", event.target.value)
+                  }
+                />
               </Field>
             </FieldGrid>
 
@@ -261,7 +398,12 @@ export function CustomersPage() {
 
             <FieldGrid>
               <Field label="Zahlungsziel">
-                <Select defaultValue="">
+                <Select
+                  value={draft?.paymentTerm ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("paymentTerm", event.target.value)
+                  }
+                >
                   <option value="" disabled>
                     Zahlungsziel wählen
                   </option>
@@ -272,7 +414,12 @@ export function CustomersPage() {
               </Field>
 
               <Field label="Preisstufe">
-                <Select defaultValue="">
+                <Select
+                  value={draft?.priceLevel ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("priceLevel", event.target.value)
+                  }
+                >
                   <option value="" disabled>
                     Preisstufe wählen
                   </option>
@@ -283,7 +430,11 @@ export function CustomersPage() {
               </Field>
 
               <Field label="Status">
-                <Select value={activeTab} onChange={(event) => handleTabChange(event.target.value)}>
+                <Select
+                  value={activeTab}
+                  disabled={!isEditing}
+                  onChange={(event) => handleTabChange(event.target.value)}
+                >
                   {customerTabs.map((tab) => (
                     <option key={tab}>{tab}</option>
                   ))}
@@ -292,7 +443,44 @@ export function CustomersPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
-              <Button>Änderungen verwerfen</Button>
+              <button
+                type="button"
+                aria-label={
+                  isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"
+                }
+                title={isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"}
+                onClick={handleToggleEditing}
+                style={{
+                  alignItems: "center",
+                  alignSelf: "center",
+                  background: "transparent",
+                  border: 0,
+                  boxShadow: "none",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  fontSize: "1.55rem",
+                  height: "2.5rem",
+                  justifyContent: "center",
+                  lineHeight: 1,
+                  padding: 0,
+                  width: "1.65rem",
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  style={{
+                    alignItems: "center",
+                    display: "inline-flex",
+                    height: "100%",
+                    justifyContent: "center",
+                    transform: "translateY(-4px)",
+                  }}
+                >
+                  {isEditing ? "🔓" : "🔒"}
+                </span>
+              </button>
+
+              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
               <Button variant="primary">Kunde speichern</Button>
             </div>
           </section>

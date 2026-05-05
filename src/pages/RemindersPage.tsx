@@ -1,7 +1,13 @@
+import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
+
+import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
+
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
+
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Field } from "../ui/Field";
@@ -16,33 +22,128 @@ const reminderTabs = ["Liste", "Entwurf", "Offen", "Versendet", "Erledigt"] as c
 
 type ReminderTab = (typeof reminderTabs)[number];
 
-const reminderRowsByTab = {
+type ReminderRow = {
+  id: string;
+  number: string;
+  customer: string;
+  invoice: string;
+  status: string;
+  reminderLevel: string;
+  deadline: string;
+  template: string;
+  note: string;
+  badgeVariant?: "success";
+};
+
+const reminderRowsByTab: Record<ReminderTab, ReminderRow[]> = {
   Liste: [
-    { id: "reminder-ma-2026-001", number: "MA-2026-001", customer: "Sonnendruck GmbH", invoice: "RE-2026-001", status: "Entwurf", badgeVariant: "success" as const },
-    { id: "reminder-ma-2026-002", number: "MA-2026-002", customer: "Musterkunde GmbH", invoice: "RE-2026-002", status: "Offen", badgeVariant: undefined },
-    { id: "reminder-ma-2026-003", number: "MA-2026-003", customer: "Beispiel AG", invoice: "RE-2026-003", status: "Versendet", badgeVariant: undefined },
+    {
+      id: "reminder-ma-2026-001",
+      number: "MA-2026-001",
+      customer: "Sonnendruck GmbH",
+      invoice: "RE-2026-001",
+      status: "Entwurf",
+      reminderLevel: "Zahlungserinnerung",
+      deadline: "7 Tage",
+      template: "Zahlungserinnerung",
+      note: "Freundliche Erinnerung senden",
+      badgeVariant: "success",
+    },
+    {
+      id: "reminder-ma-2026-002",
+      number: "MA-2026-002",
+      customer: "Musterkunde GmbH",
+      invoice: "RE-2026-002",
+      status: "Offen",
+      reminderLevel: "1. Mahnung",
+      deadline: "10 Tage",
+      template: "Standardmahnung",
+      note: "Offene Rechnung prüfen",
+      badgeVariant: undefined,
+    },
+    {
+      id: "reminder-ma-2026-003",
+      number: "MA-2026-003",
+      customer: "Beispiel AG",
+      invoice: "RE-2026-003",
+      status: "Versendet",
+      reminderLevel: "2. Mahnung",
+      deadline: "7 Tage",
+      template: "Standardmahnung",
+      note: "Bereits versendet",
+      badgeVariant: undefined,
+    },
   ],
   Entwurf: [
-    { id: "reminder-ma-2026-001", number: "MA-2026-001", customer: "Sonnendruck GmbH", invoice: "RE-2026-001", status: "Entwurf", badgeVariant: "success" as const },
+    {
+      id: "reminder-ma-2026-001",
+      number: "MA-2026-001",
+      customer: "Sonnendruck GmbH",
+      invoice: "RE-2026-001",
+      status: "Entwurf",
+      reminderLevel: "Zahlungserinnerung",
+      deadline: "7 Tage",
+      template: "Zahlungserinnerung",
+      note: "Freundliche Erinnerung senden",
+      badgeVariant: "success",
+    },
   ],
   Offen: [
-    { id: "reminder-ma-2026-002", number: "MA-2026-002", customer: "Musterkunde GmbH", invoice: "RE-2026-002", status: "Offen", badgeVariant: undefined },
+    {
+      id: "reminder-ma-2026-002",
+      number: "MA-2026-002",
+      customer: "Musterkunde GmbH",
+      invoice: "RE-2026-002",
+      status: "Offen",
+      reminderLevel: "1. Mahnung",
+      deadline: "10 Tage",
+      template: "Standardmahnung",
+      note: "Offene Rechnung prüfen",
+      badgeVariant: undefined,
+    },
   ],
   Versendet: [
-    { id: "reminder-ma-2026-003", number: "MA-2026-003", customer: "Beispiel AG", invoice: "RE-2026-003", status: "Versendet", badgeVariant: undefined },
+    {
+      id: "reminder-ma-2026-003",
+      number: "MA-2026-003",
+      customer: "Beispiel AG",
+      invoice: "RE-2026-003",
+      status: "Versendet",
+      reminderLevel: "2. Mahnung",
+      deadline: "7 Tage",
+      template: "Standardmahnung",
+      note: "Bereits versendet",
+      badgeVariant: undefined,
+    },
   ],
   Erledigt: [
-    { id: "reminder-ma-2026-008", number: "MA-2026-008", customer: "Druckpartner Süd", invoice: "RE-2026-008", status: "Erledigt", badgeVariant: "success" as const },
+    {
+      id: "reminder-ma-2026-008",
+      number: "MA-2026-008",
+      customer: "Druckpartner Süd",
+      invoice: "RE-2026-008",
+      status: "Erledigt",
+      reminderLevel: "Letzte Mahnung",
+      deadline: "14 Tage",
+      template: "Letzte Mahnung",
+      note: "Erledigt",
+      badgeVariant: "success",
+    },
   ],
 };
 
 function getReminderTitle(tab: ReminderTab) {
   switch (tab) {
-    case "Liste": return "Mahnung vorbereiten";
-    case "Entwurf": return "Mahnungsentwurf bearbeiten";
-    case "Offen": return "Offene Mahnung prüfen";
-    case "Versendet": return "Versendete Mahnung prüfen";
-    case "Erledigt": return "Erledigte Mahnung";
+    case "Liste":
+      return "Mahnung vorbereiten";
+    case "Entwurf":
+      return "Mahnungsentwurf bearbeiten";
+    case "Offen":
+      return "Offene Mahnung prüfen";
+    case "Versendet":
+      return "Versendete Mahnung prüfen";
+    case "Erledigt":
+      return "Erledigte Mahnung";
   }
 }
 
@@ -61,6 +162,8 @@ function isReminderTab(tab: string): tab is ReminderTab {
 export function RemindersPage() {
   const module = getModuleConfig("reminders");
 
+  const [isEditing, setIsEditing] = useState(false);
+
   const {
     activeTab,
     rows: reminderRows,
@@ -72,24 +175,50 @@ export function RemindersPage() {
     initialTab: "Liste",
   });
 
+  const { draft, updateDraftField, resetDraft } =
+    useEditableDraft(selectedReminder);
+
   function handleTabChange(tab: string) {
     if (isReminderTab(tab)) {
       setActiveTab(tab);
+      setIsEditing(false);
     }
   }
 
   function handleReminderSelect(reminderId: string) {
     selectItem(reminderId);
+    setIsEditing(false);
+  }
+
+  function handleResetDraft() {
+    resetDraft();
+    setIsEditing(false);
+  }
+
+  function handleToggleEditing() {
+    setIsEditing((currentValue) => !currentValue);
   }
 
   return (
     <div className="page">
-      <PageHeader title={module.title} description={module.description} actionLabel={module.actionLabel} />
+      <PageHeader
+        title={module.title}
+        description={module.description}
+        actionLabel={module.actionLabel}
+      />
 
-      <PageTabs tabs={[...reminderTabs]} activeTab={activeTab} onTabChange={handleTabChange} />
+      <PageTabs
+        tabs={[...reminderTabs]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <section className="calculation-sheet">
-        <WorkspaceHeader kicker="Mahnmaske" title={getReminderTitle(activeTab)} statusValue={getReminderStatus(activeTab)} />
+        <WorkspaceHeader
+          kicker="Mahnmaske"
+          title={getReminderTitle(activeTab)}
+          statusValue={getReminderStatus(activeTab)}
+        />
 
         <div className="master-detail-layout">
           <section className="workspace-panel master-list-panel">
@@ -115,14 +244,18 @@ export function RemindersPage() {
                   return (
                     <tr
                       key={reminder.id}
-                      className={isSelected ? "data-table-row-selected" : undefined}
+                      className={
+                        isSelected ? "data-table-row-selected" : undefined
+                      }
                       onClick={() => handleReminderSelect(reminder.id)}
                     >
                       <td>{reminder.number}</td>
                       <td>{reminder.customer}</td>
                       <td>{reminder.invoice}</td>
                       <td>
-                        <Badge variant={reminder.badgeVariant}>{reminder.status}</Badge>
+                        <Badge variant={reminder.badgeVariant}>
+                          {reminder.status}
+                        </Badge>
                       </td>
                     </tr>
                   );
@@ -136,19 +269,23 @@ export function RemindersPage() {
 
             <FieldGrid>
               <Field label="Mahnung">
-                <Input value={selectedReminder?.number ?? ""} readOnly />
+                <Input value={draft?.number ?? ""} readOnly />
               </Field>
 
               <Field label="Kunde">
-                <Input value={selectedReminder?.customer ?? ""} readOnly />
+                <Input value={draft?.customer ?? ""} readOnly />
               </Field>
 
               <Field label="Rechnung">
-                <Input value={selectedReminder?.invoice ?? ""} readOnly />
+                <Input value={draft?.invoice ?? ""} readOnly />
               </Field>
 
               <Field label="Status">
-                <Select value={activeTab} onChange={(event) => handleTabChange(event.target.value)}>
+                <Select
+                  value={activeTab}
+                  disabled={!isEditing}
+                  onChange={(event) => handleTabChange(event.target.value)}
+                >
                   {reminderTabs.map((tab) => (
                     <option key={tab}>{tab}</option>
                   ))}
@@ -160,8 +297,15 @@ export function RemindersPage() {
 
             <FieldGrid>
               <Field label="Mahnstufe">
-                <Select defaultValue="">
-                  <option value="" disabled>Mahnstufe wählen</option>
+                <Select
+                  value={draft?.reminderLevel ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("reminderLevel", event.target.value)
+                  }
+                >
+                  <option value="" disabled>
+                    Mahnstufe wählen
+                  </option>
                   <option>Zahlungserinnerung</option>
                   <option>1. Mahnung</option>
                   <option>2. Mahnung</option>
@@ -170,12 +314,29 @@ export function RemindersPage() {
               </Field>
 
               <Field label="Frist">
-                <Select defaultValue="">
-                  <option value="" disabled>Frist wählen</option>
+                <Select
+                  value={draft?.deadline ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("deadline", event.target.value)
+                  }
+                >
+                  <option value="" disabled>
+                    Frist wählen
+                  </option>
                   <option>7 Tage</option>
                   <option>10 Tage</option>
                   <option>14 Tage</option>
                 </Select>
+              </Field>
+
+              <Field label="Notiz">
+                <Input
+                  value={draft?.note ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("note", event.target.value)
+                  }
+                />
               </Field>
             </FieldGrid>
 
@@ -183,8 +344,15 @@ export function RemindersPage() {
 
             <FieldGrid>
               <Field label="Vorlage">
-                <Select defaultValue="">
-                  <option value="" disabled>Vorlage wählen</option>
+                <Select
+                  value={draft?.template ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("template", event.target.value)
+                  }
+                >
+                  <option value="" disabled>
+                    Vorlage wählen
+                  </option>
                   <option>Zahlungserinnerung</option>
                   <option>Standardmahnung</option>
                   <option>Letzte Mahnung</option>
@@ -193,7 +361,44 @@ export function RemindersPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
-              <Button>Entwurf speichern</Button>
+              <button
+                type="button"
+                aria-label={
+                  isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"
+                }
+                title={isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"}
+                onClick={handleToggleEditing}
+                style={{
+                  alignItems: "center",
+                  alignSelf: "center",
+                  background: "transparent",
+                  border: 0,
+                  boxShadow: "none",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  fontSize: "1.55rem",
+                  height: "2.5rem",
+                  justifyContent: "center",
+                  lineHeight: 1,
+                  padding: 0,
+                  width: "1.65rem",
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  style={{
+                    alignItems: "center",
+                    display: "inline-flex",
+                    height: "100%",
+                    justifyContent: "center",
+                    transform: "translateY(-4px)",
+                  }}
+                >
+                  {isEditing ? "🔓" : "🔒"}
+                </span>
+              </button>
+
+              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
               <Button>Vorschau prüfen</Button>
               <Button variant="primary">Mahnung ausgeben</Button>
             </div>

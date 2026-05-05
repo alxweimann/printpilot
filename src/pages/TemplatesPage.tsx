@@ -1,7 +1,13 @@
+import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
+
+import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
+
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
+
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Field } from "../ui/Field";
@@ -16,34 +22,131 @@ const templateTabs = ["Produkte", "Dokumente", "Textbausteine", "Layouts", "Entw
 
 type TemplateTab = (typeof templateTabs)[number];
 
-const templateRowsByTab = {
+type TemplateRow = {
+  id: string;
+  name: string;
+  type: string;
+  area: string;
+  status: string;
+  isDefault: string;
+  productType: string;
+  outputLayout: string;
+  badgeVariant?: "success";
+};
+
+const templateRowsByTab: Record<TemplateTab, TemplateRow[]> = {
   Produkte: [
-    { id: "template-broschuere-a4-standard", name: "Broschüre A4 Standard", type: "Produkt", area: "Kalkulation", status: "Aktiv", badgeVariant: "success" as const },
-    { id: "template-flyer-a5-standard", name: "Flyer A5 Standard", type: "Produkt", area: "Kalkulation", status: "Aktiv", badgeVariant: undefined },
+    {
+      id: "template-broschuere-a4-standard",
+      name: "Broschüre A4 Standard",
+      type: "Produkt",
+      area: "Kalkulation",
+      status: "Aktiv",
+      isDefault: "Ja",
+      productType: "Broschüre",
+      outputLayout: "Standard",
+      badgeVariant: "success",
+    },
+    {
+      id: "template-flyer-a5-standard",
+      name: "Flyer A5 Standard",
+      type: "Produkt",
+      area: "Kalkulation",
+      status: "Aktiv",
+      isDefault: "Nein",
+      productType: "Flyer",
+      outputLayout: "Kurzform",
+      badgeVariant: undefined,
+    },
   ],
   Dokumente: [
-    { id: "template-standardangebot", name: "Standardangebot", type: "Dokument", area: "Angebote", status: "Aktiv", badgeVariant: "success" as const },
-    { id: "template-rechnung-standard", name: "Rechnung Standard", type: "Dokument", area: "Rechnungen", status: "Aktiv", badgeVariant: undefined },
+    {
+      id: "template-standardangebot",
+      name: "Standardangebot",
+      type: "Dokument",
+      area: "Angebote",
+      status: "Aktiv",
+      isDefault: "Ja",
+      productType: "Freies Produkt",
+      outputLayout: "Standard",
+      badgeVariant: "success",
+    },
+    {
+      id: "template-rechnung-standard",
+      name: "Rechnung Standard",
+      type: "Dokument",
+      area: "Rechnungen",
+      status: "Aktiv",
+      isDefault: "Ja",
+      productType: "Freies Produkt",
+      outputLayout: "Standard",
+      badgeVariant: undefined,
+    },
   ],
   Textbausteine: [
-    { id: "template-zahlungsbedingungen-standard", name: "Zahlungsbedingungen Standard", type: "Textbaustein", area: "Angebote", status: "Aktiv", badgeVariant: "success" as const },
-    { id: "template-lieferhinweis-standard", name: "Lieferhinweis Standard", type: "Textbaustein", area: "Lieferscheine", status: "Aktiv", badgeVariant: undefined },
+    {
+      id: "template-zahlungsbedingungen-standard",
+      name: "Zahlungsbedingungen Standard",
+      type: "Textbaustein",
+      area: "Angebote",
+      status: "Aktiv",
+      isDefault: "Ja",
+      productType: "Freies Produkt",
+      outputLayout: "Standard",
+      badgeVariant: "success",
+    },
+    {
+      id: "template-lieferhinweis-standard",
+      name: "Lieferhinweis Standard",
+      type: "Textbaustein",
+      area: "Lieferscheine",
+      status: "Aktiv",
+      isDefault: "Nein",
+      productType: "Freies Produkt",
+      outputLayout: "Kurzform",
+      badgeVariant: undefined,
+    },
   ],
   Layouts: [
-    { id: "template-dokumentlayout-standard", name: "Dokumentlayout Standard", type: "Layout", area: "Dokumente", status: "Aktiv", badgeVariant: "success" as const },
+    {
+      id: "template-dokumentlayout-standard",
+      name: "Dokumentlayout Standard",
+      type: "Layout",
+      area: "Dokumente",
+      status: "Aktiv",
+      isDefault: "Ja",
+      productType: "Freies Produkt",
+      outputLayout: "Standard",
+      badgeVariant: "success",
+    },
   ],
   Entwurf: [
-    { id: "template-rechnung-modern", name: "Rechnung Modern", type: "Dokument", area: "Rechnungen", status: "Entwurf", badgeVariant: undefined },
+    {
+      id: "template-rechnung-modern",
+      name: "Rechnung Modern",
+      type: "Dokument",
+      area: "Rechnungen",
+      status: "Entwurf",
+      isDefault: "Nein",
+      productType: "Freies Produkt",
+      outputLayout: "Standard",
+      badgeVariant: undefined,
+    },
   ],
 };
 
 function getTemplateTitle(tab: TemplateTab) {
   switch (tab) {
-    case "Produkte": return "Produktvorlage verwalten";
-    case "Dokumente": return "Dokumentvorlage verwalten";
-    case "Textbausteine": return "Textbaustein verwalten";
-    case "Layouts": return "Layoutvorlage verwalten";
-    case "Entwurf": return "Vorlagenentwurf bearbeiten";
+    case "Produkte":
+      return "Produktvorlage verwalten";
+    case "Dokumente":
+      return "Dokumentvorlage verwalten";
+    case "Textbausteine":
+      return "Textbaustein verwalten";
+    case "Layouts":
+      return "Layoutvorlage verwalten";
+    case "Entwurf":
+      return "Vorlagenentwurf bearbeiten";
   }
 }
 
@@ -55,22 +158,14 @@ function getTemplateStatus(tab: TemplateTab) {
   return "Aktiv";
 }
 
-function getTemplateType(tab: TemplateTab) {
-  switch (tab) {
-    case "Produkte": return "Produkt";
-    case "Dokumente": return "Dokument";
-    case "Textbausteine": return "Textbaustein";
-    case "Layouts": return "Layout";
-    case "Entwurf": return "";
-  }
-}
-
 function isTemplateTab(tab: string): tab is TemplateTab {
   return templateTabs.includes(tab as TemplateTab);
 }
 
 export function TemplatesPage() {
   const module = getModuleConfig("templates");
+
+  const [isEditing, setIsEditing] = useState(false);
 
   const {
     activeTab,
@@ -83,24 +178,50 @@ export function TemplatesPage() {
     initialTab: "Produkte",
   });
 
+  const { draft, updateDraftField, resetDraft } =
+    useEditableDraft(selectedTemplate);
+
   function handleTabChange(tab: string) {
     if (isTemplateTab(tab)) {
       setActiveTab(tab);
+      setIsEditing(false);
     }
   }
 
   function handleTemplateSelect(templateId: string) {
     selectItem(templateId);
+    setIsEditing(false);
+  }
+
+  function handleResetDraft() {
+    resetDraft();
+    setIsEditing(false);
+  }
+
+  function handleToggleEditing() {
+    setIsEditing((currentValue) => !currentValue);
   }
 
   return (
     <div className="page">
-      <PageHeader title={module.title} description={module.description} actionLabel={module.actionLabel} />
+      <PageHeader
+        title={module.title}
+        description={module.description}
+        actionLabel={module.actionLabel}
+      />
 
-      <PageTabs tabs={[...templateTabs]} activeTab={activeTab} onTabChange={handleTabChange} />
+      <PageTabs
+        tabs={[...templateTabs]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <section className="calculation-sheet">
-        <WorkspaceHeader kicker="Vorlagenmaske" title={getTemplateTitle(activeTab)} statusValue={getTemplateStatus(activeTab)} />
+        <WorkspaceHeader
+          kicker="Vorlagenmaske"
+          title={getTemplateTitle(activeTab)}
+          statusValue={getTemplateStatus(activeTab)}
+        />
 
         <div className="master-detail-layout">
           <section className="workspace-panel master-list-panel">
@@ -126,14 +247,18 @@ export function TemplatesPage() {
                   return (
                     <tr
                       key={template.id}
-                      className={isSelected ? "data-table-row-selected" : undefined}
+                      className={
+                        isSelected ? "data-table-row-selected" : undefined
+                      }
                       onClick={() => handleTemplateSelect(template.id)}
                     >
                       <td>{template.name}</td>
                       <td>{template.type}</td>
                       <td>{template.area}</td>
                       <td>
-                        <Badge variant={template.badgeVariant}>{template.status}</Badge>
+                        <Badge variant={template.badgeVariant}>
+                          {template.status}
+                        </Badge>
                       </td>
                     </tr>
                   );
@@ -147,33 +272,25 @@ export function TemplatesPage() {
 
             <FieldGrid>
               <Field label="Vorlage">
-                <Input value={selectedTemplate?.name ?? ""} readOnly />
+                <Input
+                  value={draft?.name ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("name", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="Typ">
                 <Select
-                  value={getTemplateType(activeTab) || selectedTemplate?.type || ""}
-                  onChange={(event) => {
-                    const value = event.target.value;
-
-                    if (value === "Produkt") {
-                      handleTabChange("Produkte");
-                    }
-
-                    if (value === "Dokument") {
-                      handleTabChange("Dokumente");
-                    }
-
-                    if (value === "Textbaustein") {
-                      handleTabChange("Textbausteine");
-                    }
-
-                    if (value === "Layout") {
-                      handleTabChange("Layouts");
-                    }
-                  }}
+                  value={draft?.type ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("type", event.target.value)
+                  }
                 >
-                  <option value="" disabled>Typ wählen</option>
+                  <option value="" disabled>
+                    Typ wählen
+                  </option>
                   <option>Produkt</option>
                   <option>Dokument</option>
                   <option>Textbaustein</option>
@@ -182,8 +299,15 @@ export function TemplatesPage() {
               </Field>
 
               <Field label="Bereich">
-                <Select defaultValue={selectedTemplate?.area ?? ""}>
-                  <option value="" disabled>Bereich wählen</option>
+                <Select
+                  value={draft?.area ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("area", event.target.value)
+                  }
+                >
+                  <option value="" disabled>
+                    Bereich wählen
+                  </option>
                   <option>Kalkulation</option>
                   <option>Angebote</option>
                   <option>Aufträge</option>
@@ -195,12 +319,11 @@ export function TemplatesPage() {
 
               <Field label="Status">
                 <Select
-                  value={selectedTemplate?.status ?? "Aktiv"}
-                  onChange={(event) => {
-                    if (event.target.value === "Entwurf") {
-                      handleTabChange("Entwurf");
-                    }
-                  }}
+                  value={draft?.status ?? ""}
+                  disabled={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("status", event.target.value)
+                  }
                 >
                   <option>Aktiv</option>
                   <option>Entwurf</option>
@@ -208,7 +331,13 @@ export function TemplatesPage() {
               </Field>
 
               <Field label="Standard">
-                <Select defaultValue="Nein">
+                <Select
+                  value={draft?.isDefault ?? ""}
+                  disabled={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("isDefault", event.target.value)
+                  }
+                >
                   <option>Nein</option>
                   <option>Ja</option>
                 </Select>
@@ -219,8 +348,15 @@ export function TemplatesPage() {
 
             <FieldGrid>
               <Field label="Produktart">
-                <Select defaultValue="">
-                  <option value="" disabled>Produktart wählen</option>
+                <Select
+                  value={draft?.productType ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("productType", event.target.value)
+                  }
+                >
+                  <option value="" disabled>
+                    Produktart wählen
+                  </option>
                   <option>Broschüre</option>
                   <option>Flyer</option>
                   <option>Folder</option>
@@ -230,8 +366,15 @@ export function TemplatesPage() {
               </Field>
 
               <Field label="Ausgabe">
-                <Select defaultValue="">
-                  <option value="" disabled>Layout wählen</option>
+                <Select
+                  value={draft?.outputLayout ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("outputLayout", event.target.value)
+                  }
+                >
+                  <option value="" disabled>
+                    Layout wählen
+                  </option>
                   <option>Standard</option>
                   <option>Kurzform</option>
                   <option>Technisch</option>
@@ -240,7 +383,44 @@ export function TemplatesPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
-              <Button>Änderungen verwerfen</Button>
+              <button
+                type="button"
+                aria-label={
+                  isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"
+                }
+                title={isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"}
+                onClick={handleToggleEditing}
+                style={{
+                  alignItems: "center",
+                  alignSelf: "center",
+                  background: "transparent",
+                  border: 0,
+                  boxShadow: "none",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  fontSize: "1.55rem",
+                  height: "2.5rem",
+                  justifyContent: "center",
+                  lineHeight: 1,
+                  padding: 0,
+                  width: "1.65rem",
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  style={{
+                    alignItems: "center",
+                    display: "inline-flex",
+                    height: "100%",
+                    justifyContent: "center",
+                    transform: "translateY(-4px)",
+                  }}
+                >
+                  {isEditing ? "🔓" : "🔒"}
+                </span>
+              </button>
+
+              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
               <Button variant="primary">Vorlage speichern</Button>
             </div>
           </section>

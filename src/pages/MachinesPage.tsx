@@ -1,7 +1,13 @@
+import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
+
+import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
+
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
+
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { Field } from "../ui/Field";
@@ -22,15 +28,36 @@ const machineTabs = [
 
 type MachineTab = (typeof machineTabs)[number];
 
-const machineRowsByTab = {
+type MachineRow = {
+  id: string;
+  name: string;
+  type: string;
+  colorMode: string;
+  status: string;
+  hourlyRate: string;
+  colorClickCost: string;
+  blackClickCost: string;
+  duplex: string;
+  usage: string;
+  note: string;
+  badgeVariant?: "success";
+};
+
+const machineRowsByTab: Record<MachineTab, MachineRow[]> = {
   Liste: [
     {
       id: "machine-xerox-iridesse",
       name: "Xerox Iridesse",
       type: "Digitaldruck Farbe",
-      colorMode: "4/4 + Sonderfarben",
+      colorMode: "4/4-farbig",
       status: "Aktiv",
-      badgeVariant: "success" as const,
+      hourlyRate: "120,00 €",
+      colorClickCost: "0,033 €",
+      blackClickCost: "0,008 €",
+      duplex: "Ja",
+      usage: "Bevorzugt",
+      note: "Standardmaschine für Farbdruck",
+      badgeVariant: "success",
     },
     {
       id: "machine-xerox-nuvera",
@@ -38,6 +65,12 @@ const machineRowsByTab = {
       type: "Digitaldruck Schwarz",
       colorMode: "1/1 schwarz",
       status: "Aktiv",
+      hourlyRate: "95,00 €",
+      colorClickCost: "0,000 €",
+      blackClickCost: "0,008 €",
+      duplex: "Ja",
+      usage: "Standard",
+      note: "Schwarzweiß-Produktion",
       badgeVariant: undefined,
     },
     {
@@ -46,6 +79,12 @@ const machineRowsByTab = {
       type: "Großformat",
       colorMode: "CMYK",
       status: "Aktiv",
+      hourlyRate: "85,00 €",
+      colorClickCost: "0,000 €",
+      blackClickCost: "0,000 €",
+      duplex: "Nein",
+      usage: "Standard",
+      note: "Großformatdruck",
       badgeVariant: undefined,
     },
   ],
@@ -54,9 +93,15 @@ const machineRowsByTab = {
       id: "machine-xerox-iridesse",
       name: "Xerox Iridesse",
       type: "Digitaldruck Farbe",
-      colorMode: "4/4 + Sonderfarben",
+      colorMode: "4/4-farbig",
       status: "Aktiv",
-      badgeVariant: "success" as const,
+      hourlyRate: "120,00 €",
+      colorClickCost: "0,033 €",
+      blackClickCost: "0,008 €",
+      duplex: "Ja",
+      usage: "Bevorzugt",
+      note: "Standardmaschine für Farbdruck",
+      badgeVariant: "success",
     },
   ],
   "Digitaldruck Schwarz": [
@@ -66,6 +111,12 @@ const machineRowsByTab = {
       type: "Digitaldruck Schwarz",
       colorMode: "1/1 schwarz",
       status: "Aktiv",
+      hourlyRate: "95,00 €",
+      colorClickCost: "0,000 €",
+      blackClickCost: "0,008 €",
+      duplex: "Ja",
+      usage: "Standard",
+      note: "Schwarzweiß-Produktion",
       badgeVariant: undefined,
     },
     {
@@ -74,6 +125,12 @@ const machineRowsByTab = {
       type: "Digitaldruck Schwarz",
       colorMode: "1/1 schwarz",
       status: "Aktiv",
+      hourlyRate: "95,00 €",
+      colorClickCost: "0,000 €",
+      blackClickCost: "0,008 €",
+      duplex: "Ja",
+      usage: "Standard",
+      note: "Schwarzweiß-Produktion",
       badgeVariant: undefined,
     },
   ],
@@ -84,6 +141,12 @@ const machineRowsByTab = {
       type: "Großformat",
       colorMode: "CMYK",
       status: "Aktiv",
+      hourlyRate: "85,00 €",
+      colorClickCost: "0,000 €",
+      blackClickCost: "0,000 €",
+      duplex: "Nein",
+      usage: "Standard",
+      note: "Großformatdruck",
       badgeVariant: undefined,
     },
   ],
@@ -92,8 +155,14 @@ const machineRowsByTab = {
       id: "machine-xerox-iridesse-sonderfarben",
       name: "Xerox Iridesse Sonderfarben",
       type: "Digitaldruck Farbe",
-      colorMode: "4/4 + Sonderfarben",
+      colorMode: "Sonderfarben",
       status: "Wartung",
+      hourlyRate: "120,00 €",
+      colorClickCost: "0,033 €",
+      blackClickCost: "0,008 €",
+      duplex: "Ja",
+      usage: "Nur Spezialfälle",
+      note: "Wartungsstatus prüfen",
       badgeVariant: undefined,
     },
   ],
@@ -122,20 +191,14 @@ function getMachineStatus(tab: MachineTab) {
   return "Aktiv";
 }
 
-function getMachineType(tab: MachineTab) {
-  if (tab === "Liste" || tab === "Wartung") {
-    return "";
-  }
-
-  return tab;
-}
-
 function isMachineTab(tab: string): tab is MachineTab {
   return machineTabs.includes(tab as MachineTab);
 }
 
 export function MachinesPage() {
   const module = getModuleConfig("machines");
+
+  const [isEditing, setIsEditing] = useState(false);
 
   const {
     activeTab,
@@ -148,14 +211,28 @@ export function MachinesPage() {
     initialTab: "Liste",
   });
 
+  const { draft, updateDraftField, resetDraft } =
+    useEditableDraft(selectedMachine);
+
   function handleTabChange(tab: string) {
     if (isMachineTab(tab)) {
       setActiveTab(tab);
+      setIsEditing(false);
     }
   }
 
   function handleMachineSelect(machineId: string) {
     selectItem(machineId);
+    setIsEditing(false);
+  }
+
+  function handleResetDraft() {
+    resetDraft();
+    setIsEditing(false);
+  }
+
+  function handleToggleEditing() {
+    setIsEditing((currentValue) => !currentValue);
   }
 
   return (
@@ -228,13 +305,21 @@ export function MachinesPage() {
 
             <FieldGrid>
               <Field label="Maschine">
-                <Input value={selectedMachine?.name ?? ""} readOnly />
+                <Input
+                  value={draft?.name ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("name", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="Typ">
                 <Select
-                  value={getMachineType(activeTab) || selectedMachine?.type || ""}
-                  onChange={(event) => handleTabChange(event.target.value)}
+                  value={draft?.type ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("type", event.target.value)
+                  }
                 >
                   <option value="" disabled>
                     Typ wählen
@@ -246,7 +331,12 @@ export function MachinesPage() {
               </Field>
 
               <Field label="Farbigkeit">
-                <Select defaultValue={selectedMachine?.colorMode ?? ""}>
+                <Select
+                  value={draft?.colorMode ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("colorMode", event.target.value)
+                  }
+                >
                   <option value="" disabled>
                     Farbigkeit wählen
                   </option>
@@ -261,12 +351,11 @@ export function MachinesPage() {
 
               <Field label="Status">
                 <Select
-                  value={selectedMachine?.status ?? "Aktiv"}
-                  onChange={(event) => {
-                    if (event.target.value === "Wartung") {
-                      handleTabChange("Wartung");
-                    }
-                  }}
+                  value={draft?.status ?? ""}
+                  disabled={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("status", event.target.value)
+                  }
                 >
                   <option>Aktiv</option>
                   <option>Wartung</option>
@@ -278,19 +367,42 @@ export function MachinesPage() {
 
             <FieldGrid>
               <Field label="Stundensatz">
-                <Input placeholder="0,00 €" />
+                <Input
+                  value={draft?.hourlyRate ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("hourlyRate", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="Klickkosten Farbe">
-                <Input placeholder="0,000 €" />
+                <Input
+                  value={draft?.colorClickCost ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("colorClickCost", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="Klickkosten Schwarz">
-                <Input placeholder="0,000 €" />
+                <Input
+                  value={draft?.blackClickCost ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("blackClickCost", event.target.value)
+                  }
+                />
               </Field>
 
               <Field label="Duplex">
-                <Select defaultValue="">
+                <Select
+                  value={draft?.duplex ?? ""}
+                  onChange={(event) =>
+                    updateDraftField("duplex", event.target.value)
+                  }
+                >
                   <option value="" disabled>
                     Duplex wählen
                   </option>
@@ -304,7 +416,13 @@ export function MachinesPage() {
 
             <FieldGrid>
               <Field label="Einsatz">
-                <Select defaultValue="Standard">
+                <Select
+                  value={draft?.usage ?? ""}
+                  disabled={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("usage", event.target.value)
+                  }
+                >
                   <option>Standard</option>
                   <option>Bevorzugt</option>
                   <option>Nur Spezialfälle</option>
@@ -312,12 +430,55 @@ export function MachinesPage() {
               </Field>
 
               <Field label="Notiz">
-                <Input placeholder="Interne Notiz" />
+                <Input
+                  value={draft?.note ?? ""}
+                  readOnly={!isEditing}
+                  onChange={(event) =>
+                    updateDraftField("note", event.target.value)
+                  }
+                />
               </Field>
             </FieldGrid>
 
             <div className="calculation-footer">
-              <Button>Änderungen verwerfen</Button>
+              <button
+                type="button"
+                aria-label={
+                  isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"
+                }
+                title={isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"}
+                onClick={handleToggleEditing}
+                style={{
+                  alignItems: "center",
+                  alignSelf: "center",
+                  background: "transparent",
+                  border: 0,
+                  boxShadow: "none",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  fontSize: "1.55rem",
+                  height: "2.5rem",
+                  justifyContent: "center",
+                  lineHeight: 1,
+                  padding: 0,
+                  width: "1.65rem",
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  style={{
+                    alignItems: "center",
+                    display: "inline-flex",
+                    height: "100%",
+                    justifyContent: "center",
+                    transform: "translateY(-4px)",
+                  }}
+                >
+                  {isEditing ? "🔓" : "🔒"}
+                </span>
+              </button>
+
+              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
               <Button variant="primary">Maschine speichern</Button>
             </div>
           </section>

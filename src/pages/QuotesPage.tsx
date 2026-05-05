@@ -1,6 +1,6 @@
-import { useState } from "react";
-
 import { getModuleConfig } from "../app/moduleConfig";
+
+import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 
 import { PageHeader } from "../layout/PageHeader";
 
@@ -109,26 +109,25 @@ function isQuoteTab(tab: string): tab is QuoteTab {
 export function QuotesPage() {
   const module = getModuleConfig("quotes");
 
-  const [activeTab, setActiveTab] = useState<QuoteTab>("Entwurf");
-  const [selectedId, setSelectedId] = useState(
-    quoteRowsByTab.Entwurf[0]?.id ?? "",
-  );
-
-  const quoteRows = quoteRowsByTab[activeTab];
-  const selectedQuote =
-    quoteRows.find((quote) => quote.id === selectedId) ?? quoteRows[0];
+  const {
+    activeTab,
+    rows: quoteRows,
+    selectedItem: selectedQuote,
+    setActiveTab,
+    selectItem,
+  } = useMasterDetailSelection({
+    rowsByTab: quoteRowsByTab,
+    initialTab: "Entwurf",
+  });
 
   function handleTabChange(tab: string) {
     if (isQuoteTab(tab)) {
-      const nextRows = quoteRowsByTab[tab];
-
       setActiveTab(tab);
-      setSelectedId(nextRows[0]?.id ?? "");
     }
   }
 
   function handleQuoteSelect(quoteId: string) {
-    setSelectedId(quoteId);
+    selectItem(quoteId);
   }
 
   return (

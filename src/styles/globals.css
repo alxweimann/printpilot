@@ -736,6 +736,11 @@ button {
   color: var(--color-text);
 }
 
+.data-table th:first-child,
+.data-table td:first-child {
+  padding-left: 18px;
+}
+
 .data-table tbody tr:hover {
   background: color-mix(in srgb, var(--module-accent) 5%, var(--color-surface-muted));
   box-shadow: inset 3px 0 0 color-mix(in srgb, var(--module-accent) 72%, transparent);
@@ -747,7 +752,7 @@ button {
 
 .data-table-row-selected {
   background: color-mix(in srgb, var(--module-accent) 8%, white);
-  box-shadow: inset 3px 0 0 var(--module-accent);
+  box-shadow: inset 4px 0 0 var(--module-accent);
 }
 
 .data-table-row-selected td {

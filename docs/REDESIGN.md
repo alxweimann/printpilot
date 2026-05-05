@@ -12,6 +12,7 @@ Der Fokus liegt zuerst auf:
 - kompakte technische Eingabemasken
 - klare Modulstruktur
 - einheitliche Arbeitsmasken
+- statische Designzustände
 - keine Fachlogik, solange das Designsystem noch nicht stabil ist
 
 ## Grundprinzipien
@@ -86,6 +87,7 @@ moduleConfig.ts      Titel, Beschreibung, Tabs, Buttontexte, Modulfarben
 navigation.ts        Navigation aus Modulkonfiguration
 AppShell.tsx         Sidebar + Arbeitsbereich
 Sidebar.tsx          Hauptnavigation
+PageTabs.tsx         Tab-Leiste mit optionalem onTabChange
 ```
 
 ## UI-Komponenten
@@ -150,22 +152,6 @@ Vorlagen               Grau
 Einstellungen          Hellgrau
 ```
 
-## Sidebar
-
-Die Sidebar zeigt:
-
-- aktive Seite mit Modulfarbe
-- Hover-Effekt mit jeweiliger Modulfarbe
-- Prozessgruppen
-- einheitliche Navigationsstruktur
-
-Designentscheidung:
-
-```text
-Aktive Seite = Modulfarbe sichtbar
-Mouseover = Modulfarbe als Vorschau sichtbar
-```
-
 ---
 
 # Master-Detail-Refactoring
@@ -181,20 +167,7 @@ quotes-editor-panel
 quotes-position-table
 ```
 
-Diese Klassen wurden später in vielen Modulen verwendet:
-
-- Angebote
-- Kunden
-- Aufträge
-- Rechnungen
-- Lieferscheine
-- Mahnungen
-- Material
-- Maschinen
-- Weiterverarbeitung
-- Leistungen
-- Vorlagen
-- Einstellungen
+Diese Klassen wurden später in vielen Modulen verwendet.
 
 ## Refactoring-Entscheidung
 
@@ -224,38 +197,352 @@ Vorteile:
 
 ---
 
-# Routing-Stand
+# Tab-System
 
-Aktiv im Router:
+## Ziel
+
+Die Tabs der Module sollen nicht nur optische Dekoration sein, sondern bereits als echte statische Designzustände funktionieren.
+
+Wichtig:
 
 ```text
-dashboard
-calculation
-quotes
-orders
-invoices
-delivery-notes
-reminders
-customers
-material
-machines
-finishing
-services
-templates
-settings
+Keine echte Datenlogik
+Keine Speicherung
+Keine Filterlogik im Backend
+Keine Persistenz
 ```
+
+Die Tabs ändern aktuell nur statisch:
+
+- sichtbare Tabellenzeilen
+- WorkspaceHeader-Titel
+- WorkspaceHeader-Status
+- teilweise ein Dropdown in der rechten Maske
+
+## PageTabs
 
 Datei:
 
 ```text
-src/app/AppRouter.tsx
+src/layout/PageTabs.tsx
 ```
+
+`PageTabs` unterstützt jetzt optional:
+
+```ts
+onTabChange?: (tab: string) => void
+```
+
+Dadurch bleiben bestehende Seiten kompatibel, aber einzelne Module können Tabs lokal steuern.
+
+## Umgesetzte statische Tab-Zustände
+
+### Angebote
+
+Datei:
+
+```text
+src/pages/QuotesPage.tsx
+```
+
+Tabs:
+
+```text
+Entwurf
+Offen
+Angenommen
+Abgelehnt
+```
+
+Verhalten:
+
+- Tabelle wechselt je nach Angebotsstatus
+- WorkspaceHeader-Titel wechselt
+- WorkspaceHeader-Status wechselt
+- Status-Dropdown rechts wechselt den Tab mit
+
+### Aufträge
+
+Datei:
+
+```text
+src/pages/OrdersPage.tsx
+```
+
+Tabs:
+
+```text
+Liste
+Vorbereitung
+Produktion
+Abgeschlossen
+```
+
+Verhalten:
+
+- Tabelle wechselt je nach Auftragsstatus
+- WorkspaceHeader-Titel wechselt
+- WorkspaceHeader-Status wechselt
+- Produktionsstatus-Dropdown rechts wechselt den Tab mit
+
+### Rechnungen
+
+Datei:
+
+```text
+src/pages/InvoicesPage.tsx
+```
+
+Tabs:
+
+```text
+Liste
+Entwurf
+Offen
+Bezahlt
+Überfällig
+```
+
+Verhalten:
+
+- Tabelle wechselt je nach Rechnungsstatus
+- WorkspaceHeader-Titel wechselt
+- WorkspaceHeader-Status wechselt
+- Status-Dropdown rechts wechselt den Tab mit
+
+### Lieferscheine
+
+Datei:
+
+```text
+src/pages/DeliveryNotesPage.tsx
+```
+
+Tabs:
+
+```text
+Liste
+Entwurf
+Versandbereit
+Geliefert
+Abgeschlossen
+```
+
+Verhalten:
+
+- Tabelle wechselt je nach Lieferscheinstatus
+- WorkspaceHeader-Titel wechselt
+- WorkspaceHeader-Status wechselt
+- Status-Dropdown rechts wechselt den Tab mit
+
+### Mahnungen
+
+Datei:
+
+```text
+src/pages/RemindersPage.tsx
+```
+
+Tabs:
+
+```text
+Liste
+Entwurf
+Offen
+Versendet
+Erledigt
+```
+
+Verhalten:
+
+- Tabelle wechselt je nach Mahnstatus
+- WorkspaceHeader-Titel wechselt
+- WorkspaceHeader-Status wechselt
+- Status-Dropdown rechts wechselt den Tab mit
+
+### Kunden
+
+Datei:
+
+```text
+src/pages/CustomersPage.tsx
+```
+
+Tabs:
+
+```text
+Liste
+Aktiv
+Entwurf
+Gesperrt
+```
+
+Verhalten:
+
+- Tabelle wechselt je nach Kundenstatus
+- WorkspaceHeader-Titel wechselt
+- WorkspaceHeader-Status wechselt
+- Status-Dropdown rechts wechselt den Tab mit
+
+### Material
+
+Datei:
+
+```text
+src/pages/MaterialPage.tsx
+```
+
+Tabs:
+
+```text
+Liste
+Papier
+Verpackung
+Verbrauchsmaterial
+Gesperrt
+```
+
+Verhalten:
+
+- Tabelle wechselt je nach Materialtyp
+- WorkspaceHeader-Titel wechselt
+- WorkspaceHeader-Status wechselt
+- Materialtyp-Dropdown rechts wechselt den Tab mit
+- Status-Dropdown kann auf Gesperrt wechseln
+
+### Maschinen
+
+Datei:
+
+```text
+src/pages/MachinesPage.tsx
+```
+
+Tabs:
+
+```text
+Liste
+Digitaldruck Farbe
+Digitaldruck Schwarz
+Großformat
+Wartung
+```
+
+Verhalten:
+
+- Tabelle wechselt je nach Maschinentyp
+- WorkspaceHeader-Titel wechselt
+- WorkspaceHeader-Status wechselt
+- Maschinentyp-Dropdown rechts wechselt den Tab mit
+- Status-Dropdown kann auf Wartung wechseln
+
+### Weiterverarbeitung
+
+Datei:
+
+```text
+src/pages/FinishingPage.tsx
+```
+
+Tabs:
+
+```text
+Liste
+Standard
+Falzen
+Bindung
+Veredelung
+Handarbeit
+```
+
+Verhalten:
+
+- Tabelle wechselt je nach Prozesskategorie
+- WorkspaceHeader-Titel wechselt
+- WorkspaceHeader-Status bleibt Aktiv
+- Kategorie-Dropdown rechts wechselt den Tab mit
+
+### Leistungen
+
+Datei:
+
+```text
+src/pages/ServicesPage.tsx
+```
+
+Tabs:
+
+```text
+Liste
+Vorstufe
+Satz / Layout
+Produktion
+Zuschlag
+Sonstiges
+```
+
+Verhalten:
+
+- Tabelle wechselt je nach Leistungsgruppe
+- WorkspaceHeader-Titel wechselt
+- WorkspaceHeader-Status bleibt Aktiv
+- Leistungsgruppe-Dropdown rechts wechselt den Tab mit
+
+### Vorlagen
+
+Datei:
+
+```text
+src/pages/TemplatesPage.tsx
+```
+
+Tabs:
+
+```text
+Produkte
+Dokumente
+Textbausteine
+Layouts
+Entwurf
+```
+
+Verhalten:
+
+- Tabelle wechselt je nach Vorlagentyp
+- WorkspaceHeader-Titel wechselt
+- WorkspaceHeader-Status wechselt
+- Vorlagentyp-Dropdown rechts wechselt den Tab mit
+- Status-Dropdown kann auf Entwurf wechseln
+
+### Einstellungen
+
+Datei:
+
+```text
+src/pages/SettingsPage.tsx
+```
+
+Tabs:
+
+```text
+Allgemein
+Nummernkreise
+Firma
+Design
+System
+```
+
+Verhalten:
+
+- Tabs sind klickbar
+- linke Bereichsliste wechselt synchron mit
+- rechte Maske zeigt nur den aktiven Bereich
+- WorkspaceHeader-Titel wechselt
+- WorkspaceHeader-Status bleibt Lokal
 
 ---
 
-# Aktueller Designstand der Module
-
-## Dashboard
+# Dashboard
 
 Datei:
 
@@ -298,6 +585,39 @@ Wichtig:
 - keine Datenlogik
 - keine echte Auswertung
 - keine Persistenz
+
+---
+
+# Routing-Stand
+
+Aktiv im Router:
+
+```text
+dashboard
+calculation
+quotes
+orders
+invoices
+delivery-notes
+reminders
+customers
+material
+machines
+finishing
+services
+templates
+settings
+```
+
+Datei:
+
+```text
+src/app/AppRouter.tsx
+```
+
+---
+
+# Aktueller Designstand der Module
 
 ## Kalkulation
 
@@ -357,13 +677,7 @@ Aktueller Zustand:
 - Zwischensumme netto als Designplatzhalter
 - Konditionen & Ausgabe
 - Footer mit Entwurf speichern, Vorschau prüfen, Angebot ausgeben
-
-Wichtig:
-
-- keine Angebotslogik
-- keine Speicherung
-- keine PDF-Ausgabe
-- keine Berechnung
+- statische Tab-Zustände
 
 ## Aufträge
 
@@ -382,12 +696,7 @@ Aktueller Zustand:
 - Produktion
 - Übergabe
 - Footer mit Entwurf speichern und Auftrag vorbereiten
-
-Wichtig:
-
-- keine Auftragslogik
-- keine Übergabe aus Angebot
-- keine Produktionssteuerung
+- statische Tab-Zustände
 
 ## Rechnungen
 
@@ -407,12 +716,7 @@ Aktueller Zustand:
 - Rechnungssumme netto als Designplatzhalter
 - Zahlung & Ausgabe
 - Footer mit Entwurf speichern, Vorschau prüfen, Rechnung ausgeben
-
-Wichtig:
-
-- keine Rechnungslogik
-- keine Zahlungserfassung
-- keine PDF-Ausgabe
+- statische Tab-Zustände
 
 ## Lieferscheine
 
@@ -432,12 +736,7 @@ Aktueller Zustand:
 - Positionen
 - Ausgabe
 - Footer mit Entwurf speichern, Vorschau prüfen, Lieferschein ausgeben
-
-Wichtig:
-
-- keine Lieferlogik
-- keine Auftragsübernahme
-- keine Ausgabe
+- statische Tab-Zustände
 
 ## Mahnungen
 
@@ -456,13 +755,7 @@ Aktueller Zustand:
 - Mahninformationen
 - Ausgabe
 - Footer mit Entwurf speichern, Vorschau prüfen, Mahnung ausgeben
-
-Wichtig:
-
-- keine Mahnlogik
-- keine Rechnungsauswertung
-- keine Fristenberechnung
-- keine Ausgabe
+- statische Tab-Zustände
 
 ## Kunden
 
@@ -481,12 +774,7 @@ Aktueller Zustand:
 - Kontakt
 - Konditionen
 - Footer mit Änderungen verwerfen und Kunde speichern
-
-Wichtig:
-
-- keine Speicherung
-- keine Kundendatenbank
-- keine Kontaktlogik
+- statische Tab-Zustände
 
 ## Material
 
@@ -505,12 +793,7 @@ Aktueller Zustand:
 - Preise
 - Lager
 - Footer mit Änderungen verwerfen und Material speichern
-
-Wichtig:
-
-- keine Lagerlogik
-- keine Preisberechnung
-- keine Materialdatenbank
+- statische Tab-Zustände
 
 ## Maschinen
 
@@ -529,12 +812,7 @@ Aktueller Zustand:
 - Kostenparameter
 - Hinweise
 - Footer mit Änderungen verwerfen und Maschine speichern
-
-Wichtig:
-
-- keine Maschinenlogik
-- keine Klickpreisberechnung
-- keine Produktionsdaten
+- statische Tab-Zustände
 
 ## Weiterverarbeitung
 
@@ -553,12 +831,7 @@ Aktueller Zustand:
 - Kostenparameter
 - Hinweise
 - Footer mit Änderungen verwerfen und Prozess speichern
-
-Wichtig:
-
-- keine Preislogik
-- keine Prozessberechnung
-- keine Kalkulationsintegration
+- statische Tab-Zustände
 
 ## Leistungen
 
@@ -577,12 +850,7 @@ Aktueller Zustand:
 - Preise
 - Beschreibung
 - Footer mit Änderungen verwerfen und Leistung speichern
-
-Wichtig:
-
-- keine Leistungslogik
-- keine Preisberechnung
-- keine Angebotsintegration
+- statische Tab-Zustände
 
 ## Vorlagen
 
@@ -601,12 +869,7 @@ Aktueller Zustand:
 - Produktparameter
 - Ausgabe
 - Footer mit Änderungen verwerfen und Vorlage speichern
-
-Wichtig:
-
-- keine Vorlagenlogik
-- keine Dokumenterzeugung
-- keine Produktübernahme
+- statische Tab-Zustände
 
 ## Einstellungen
 
@@ -621,17 +884,9 @@ Aktueller Zustand:
 - Einstellungsbereiche links
 - Einstellungsmaske rechts
 - WorkspaceHeader
-- Allgemein
-- Nummernkreise
-- Firma
-- Design
+- Bereichsabhängige Inhalte
 - Footer mit Änderungen verwerfen und Einstellungen speichern
-
-Wichtig:
-
-- keine Speicherung
-- keine Systemlogik
-- keine Persistenz
+- statische Tab-Zustände
 
 ---
 
@@ -646,6 +901,7 @@ sidebar-item
 page
 page-header
 page-tabs
+page-tab
 workspace-panel
 calculation-sheet
 calculation-sheet-header
@@ -723,11 +979,11 @@ src/ui/WorkspaceHeader.tsx
 
 ## Kurzfristig
 
-1. Dashboard visuell final prüfen
-2. Dashboard eventuell um Status-/Hinweisbereich ergänzen
+1. Tab-System visuell final prüfen
+2. Tabellen-/Listenkomponenten verbessern
 3. gemeinsame Master-Detail-Komponente prüfen
-4. Tabellen-/Listenkomponenten verbessern
-5. Tabs als echte Designzustände vorbereiten
+4. Status-Badges farblich differenzieren
+5. Tabellenzeilen anklickbar vorbereiten
 
 ## Danach
 

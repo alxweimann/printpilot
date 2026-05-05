@@ -723,6 +723,12 @@ button {
   text-transform: uppercase;
 }
 
+.data-table tbody tr {
+  transition:
+    background-color 140ms ease,
+    box-shadow 140ms ease;
+}
+
 .data-table td {
   height: 42px;
   border-bottom: 1px solid #edf0f5;
@@ -730,7 +736,12 @@ button {
 }
 
 .data-table tbody tr:hover {
-  background: var(--color-surface-muted);
+  background: color-mix(in srgb, var(--module-accent) 5%, var(--color-surface-muted));
+  box-shadow: inset 3px 0 0 color-mix(in srgb, var(--module-accent) 72%, transparent);
+}
+
+.data-table tbody tr:active {
+  background: color-mix(in srgb, var(--module-accent) 8%, white);
 }
 
 .data-table-summary-row td {

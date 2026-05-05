@@ -13,6 +13,7 @@ Der Fokus liegt zuerst auf:
 - klare Modulstruktur
 - einheitliche Arbeitsmasken
 - statische Designzustände
+- einheitliche Tabellen- und Statusdarstellung
 - keine Fachlogik, solange das Designsystem noch nicht stabil ist
 
 ## Grundprinzipien
@@ -88,6 +89,7 @@ navigation.ts        Navigation aus Modulkonfiguration
 AppShell.tsx         Sidebar + Arbeitsbereich
 Sidebar.tsx          Hauptnavigation
 PageTabs.tsx         Tab-Leiste mit optionalem onTabChange
+Badge.tsx            semantische Status-Badges
 ```
 
 ## UI-Komponenten
@@ -125,6 +127,8 @@ Die Modulfarbe steuert:
 - Input-Fokus
 - WorkspaceHeader-Akzent
 - Dashboard-Akzente
+- Tabellen-Hover
+- ausgewählte Tabellenzeile
 
 Verwendete CSS-Variablen:
 
@@ -154,26 +158,9 @@ Einstellungen          Hellgrau
 
 ---
 
-# Master-Detail-Refactoring
+# Master-Detail-Layout
 
-## Ausgangspunkt
-
-Die zweigeteilte Arbeitsansicht wurde zuerst in der Angebotsseite entwickelt und hieß deshalb technisch:
-
-```text
-quotes-layout
-quotes-list-panel
-quotes-editor-panel
-quotes-position-table
-```
-
-Diese Klassen wurden später in vielen Modulen verwendet.
-
-## Refactoring-Entscheidung
-
-Da die Klassen nicht mehr nur für Angebote verwendet wurden, wurden sie neutralisiert.
-
-Neue Klassen:
+Die zweigeteilte Arbeitsansicht verwendet jetzt neutrale Klassen:
 
 ```text
 master-detail-layout
@@ -182,11 +169,7 @@ master-editor-panel
 master-position-table
 ```
 
-Die alten `quotes-*` CSS-Aliase wurden zuerst parallel unterstützt und danach entfernt.
-
-## Ergebnis
-
-Alle Arbeitsseiten verwenden jetzt neutrale Master-Detail-Klassen.
+Die alten `quotes-*` CSS-Aliase wurden entfernt.
 
 Vorteile:
 
@@ -227,7 +210,7 @@ Datei:
 src/layout/PageTabs.tsx
 ```
 
-`PageTabs` unterstützt jetzt optional:
+`PageTabs` unterstützt optional:
 
 ```ts
 onTabChange?: (tab: string) => void
@@ -237,308 +220,135 @@ Dadurch bleiben bestehende Seiten kompatibel, aber einzelne Module können Tabs 
 
 ## Umgesetzte statische Tab-Zustände
 
-### Angebote
+```text
+Angebote
+Aufträge
+Rechnungen
+Lieferscheine
+Mahnungen
+Kunden
+Material
+Maschinen
+Weiterverarbeitung
+Leistungen
+Vorlagen
+Einstellungen
+```
+
+---
+
+# Status-Badges
+
+## Ziel
+
+Status-Badges sollen über das gesamte System automatisch semantisch farbig wirken.
+
+Dateien:
+
+```text
+src/ui/Badge.tsx
+src/styles/globals.css
+```
+
+## Automatische Status-Erkennung
+
+`Badge.tsx` erkennt den Statustext und ordnet automatisch eine Variante zu.
+
+Beispiele:
+
+```text
+Entwurf / Vorbereitung / Prüfung  → grau
+Aktiv / Bezahlt / Erledigt        → grün
+Offen / Lokal                     → blau
+Produktion / Weiterverarbeitung   → violett
+Versandbereit / Wartung / Stufe   → orange
+Abgelehnt / Überfällig / Gesperrt → rot
+```
+
+## Badge-Klassen
+
+```text
+badge
+badge-muted
+badge-success
+badge-info
+badge-warning
+badge-danger
+badge-purple
+```
+
+Vorteil:
+
+- Statusfarben müssen nicht auf jeder Seite einzeln gepflegt werden
+- vorhandene Badges profitieren automatisch
+- spätere Statuslogik kann zentral erweitert werden
+
+---
+
+# Tabellen-Design
+
+## Ziel
+
+Tabellen sollen stärker wie klickbare Arbeitslisten wirken.
 
 Datei:
+
+```text
+src/styles/globals.css
+```
+
+## Umgesetzte Tabellen-Verbesserungen
+
+```text
+stärkerer Tabellen-Hover
+linker Modulfarb-Akzent beim Hover
+dezenter Active-Zustand
+cursor: pointer für Tabellenzeilen
+mehr Abstand in der ersten Spalte
+sauberer Abstand zwischen Farbbalken und Text
+```
+
+## Ausgewählte Tabellenzeile
+
+Vorbereitete Klasse:
+
+```text
+data-table-row-selected
+```
+
+Wirkung:
+
+- dezenter Hintergrund in Modulfarbe
+- linker Farbakzent
+- etwas stärkere Schrift
+- erster Spalteninhalt mit sauberem Abstand
+
+## Statische Selected Rows
+
+Die erste sichtbare Zeile ist aktuell statisch als ausgewählt markiert in:
 
 ```text
 src/pages/QuotesPage.tsx
-```
-
-Tabs:
-
-```text
-Entwurf
-Offen
-Angenommen
-Abgelehnt
-```
-
-Verhalten:
-
-- Tabelle wechselt je nach Angebotsstatus
-- WorkspaceHeader-Titel wechselt
-- WorkspaceHeader-Status wechselt
-- Status-Dropdown rechts wechselt den Tab mit
-
-### Aufträge
-
-Datei:
-
-```text
 src/pages/OrdersPage.tsx
-```
-
-Tabs:
-
-```text
-Liste
-Vorbereitung
-Produktion
-Abgeschlossen
-```
-
-Verhalten:
-
-- Tabelle wechselt je nach Auftragsstatus
-- WorkspaceHeader-Titel wechselt
-- WorkspaceHeader-Status wechselt
-- Produktionsstatus-Dropdown rechts wechselt den Tab mit
-
-### Rechnungen
-
-Datei:
-
-```text
 src/pages/InvoicesPage.tsx
-```
-
-Tabs:
-
-```text
-Liste
-Entwurf
-Offen
-Bezahlt
-Überfällig
-```
-
-Verhalten:
-
-- Tabelle wechselt je nach Rechnungsstatus
-- WorkspaceHeader-Titel wechselt
-- WorkspaceHeader-Status wechselt
-- Status-Dropdown rechts wechselt den Tab mit
-
-### Lieferscheine
-
-Datei:
-
-```text
 src/pages/DeliveryNotesPage.tsx
-```
-
-Tabs:
-
-```text
-Liste
-Entwurf
-Versandbereit
-Geliefert
-Abgeschlossen
-```
-
-Verhalten:
-
-- Tabelle wechselt je nach Lieferscheinstatus
-- WorkspaceHeader-Titel wechselt
-- WorkspaceHeader-Status wechselt
-- Status-Dropdown rechts wechselt den Tab mit
-
-### Mahnungen
-
-Datei:
-
-```text
 src/pages/RemindersPage.tsx
-```
-
-Tabs:
-
-```text
-Liste
-Entwurf
-Offen
-Versendet
-Erledigt
-```
-
-Verhalten:
-
-- Tabelle wechselt je nach Mahnstatus
-- WorkspaceHeader-Titel wechselt
-- WorkspaceHeader-Status wechselt
-- Status-Dropdown rechts wechselt den Tab mit
-
-### Kunden
-
-Datei:
-
-```text
 src/pages/CustomersPage.tsx
-```
-
-Tabs:
-
-```text
-Liste
-Aktiv
-Entwurf
-Gesperrt
-```
-
-Verhalten:
-
-- Tabelle wechselt je nach Kundenstatus
-- WorkspaceHeader-Titel wechselt
-- WorkspaceHeader-Status wechselt
-- Status-Dropdown rechts wechselt den Tab mit
-
-### Material
-
-Datei:
-
-```text
 src/pages/MaterialPage.tsx
-```
-
-Tabs:
-
-```text
-Liste
-Papier
-Verpackung
-Verbrauchsmaterial
-Gesperrt
-```
-
-Verhalten:
-
-- Tabelle wechselt je nach Materialtyp
-- WorkspaceHeader-Titel wechselt
-- WorkspaceHeader-Status wechselt
-- Materialtyp-Dropdown rechts wechselt den Tab mit
-- Status-Dropdown kann auf Gesperrt wechseln
-
-### Maschinen
-
-Datei:
-
-```text
 src/pages/MachinesPage.tsx
-```
-
-Tabs:
-
-```text
-Liste
-Digitaldruck Farbe
-Digitaldruck Schwarz
-Großformat
-Wartung
-```
-
-Verhalten:
-
-- Tabelle wechselt je nach Maschinentyp
-- WorkspaceHeader-Titel wechselt
-- WorkspaceHeader-Status wechselt
-- Maschinentyp-Dropdown rechts wechselt den Tab mit
-- Status-Dropdown kann auf Wartung wechseln
-
-### Weiterverarbeitung
-
-Datei:
-
-```text
 src/pages/FinishingPage.tsx
-```
-
-Tabs:
-
-```text
-Liste
-Standard
-Falzen
-Bindung
-Veredelung
-Handarbeit
-```
-
-Verhalten:
-
-- Tabelle wechselt je nach Prozesskategorie
-- WorkspaceHeader-Titel wechselt
-- WorkspaceHeader-Status bleibt Aktiv
-- Kategorie-Dropdown rechts wechselt den Tab mit
-
-### Leistungen
-
-Datei:
-
-```text
 src/pages/ServicesPage.tsx
-```
-
-Tabs:
-
-```text
-Liste
-Vorstufe
-Satz / Layout
-Produktion
-Zuschlag
-Sonstiges
-```
-
-Verhalten:
-
-- Tabelle wechselt je nach Leistungsgruppe
-- WorkspaceHeader-Titel wechselt
-- WorkspaceHeader-Status bleibt Aktiv
-- Leistungsgruppe-Dropdown rechts wechselt den Tab mit
-
-### Vorlagen
-
-Datei:
-
-```text
 src/pages/TemplatesPage.tsx
 ```
 
-Tabs:
+Wichtig:
 
 ```text
-Produkte
-Dokumente
-Textbausteine
-Layouts
-Entwurf
+Noch keine echte Auswahl-Logik
+Noch keine Datenbindung
+Noch keine Detailübernahme
+Nur Design-Vorbereitung
 ```
-
-Verhalten:
-
-- Tabelle wechselt je nach Vorlagentyp
-- WorkspaceHeader-Titel wechselt
-- WorkspaceHeader-Status wechselt
-- Vorlagentyp-Dropdown rechts wechselt den Tab mit
-- Status-Dropdown kann auf Entwurf wechseln
-
-### Einstellungen
-
-Datei:
-
-```text
-src/pages/SettingsPage.tsx
-```
-
-Tabs:
-
-```text
-Allgemein
-Nummernkreise
-Firma
-Design
-System
-```
-
-Verhalten:
-
-- Tabs sind klickbar
-- linke Bereichsliste wechselt synchron mit
-- rechte Maske zeigt nur den aktiven Bereich
-- WorkspaceHeader-Titel wechselt
-- WorkspaceHeader-Status bleibt Lokal
 
 ---
 
@@ -678,6 +488,7 @@ Aktueller Zustand:
 - Konditionen & Ausgabe
 - Footer mit Entwurf speichern, Vorschau prüfen, Angebot ausgeben
 - statische Tab-Zustände
+- statisch ausgewählte erste Tabellenzeile
 
 ## Aufträge
 
@@ -697,6 +508,7 @@ Aktueller Zustand:
 - Übergabe
 - Footer mit Entwurf speichern und Auftrag vorbereiten
 - statische Tab-Zustände
+- statisch ausgewählte erste Tabellenzeile
 
 ## Rechnungen
 
@@ -717,6 +529,7 @@ Aktueller Zustand:
 - Zahlung & Ausgabe
 - Footer mit Entwurf speichern, Vorschau prüfen, Rechnung ausgeben
 - statische Tab-Zustände
+- statisch ausgewählte erste Tabellenzeile
 
 ## Lieferscheine
 
@@ -737,6 +550,7 @@ Aktueller Zustand:
 - Ausgabe
 - Footer mit Entwurf speichern, Vorschau prüfen, Lieferschein ausgeben
 - statische Tab-Zustände
+- statisch ausgewählte erste Tabellenzeile
 
 ## Mahnungen
 
@@ -756,6 +570,7 @@ Aktueller Zustand:
 - Ausgabe
 - Footer mit Entwurf speichern, Vorschau prüfen, Mahnung ausgeben
 - statische Tab-Zustände
+- statisch ausgewählte erste Tabellenzeile
 
 ## Kunden
 
@@ -775,6 +590,7 @@ Aktueller Zustand:
 - Konditionen
 - Footer mit Änderungen verwerfen und Kunde speichern
 - statische Tab-Zustände
+- statisch ausgewählte erste Tabellenzeile
 
 ## Material
 
@@ -794,6 +610,7 @@ Aktueller Zustand:
 - Lager
 - Footer mit Änderungen verwerfen und Material speichern
 - statische Tab-Zustände
+- statisch ausgewählte erste Tabellenzeile
 
 ## Maschinen
 
@@ -813,6 +630,7 @@ Aktueller Zustand:
 - Hinweise
 - Footer mit Änderungen verwerfen und Maschine speichern
 - statische Tab-Zustände
+- statisch ausgewählte erste Tabellenzeile
 
 ## Weiterverarbeitung
 
@@ -832,6 +650,7 @@ Aktueller Zustand:
 - Hinweise
 - Footer mit Änderungen verwerfen und Prozess speichern
 - statische Tab-Zustände
+- statisch ausgewählte erste Tabellenzeile
 
 ## Leistungen
 
@@ -851,6 +670,7 @@ Aktueller Zustand:
 - Beschreibung
 - Footer mit Änderungen verwerfen und Leistung speichern
 - statische Tab-Zustände
+- statisch ausgewählte erste Tabellenzeile
 
 ## Vorlagen
 
@@ -870,6 +690,7 @@ Aktueller Zustand:
 - Ausgabe
 - Footer mit Änderungen verwerfen und Vorlage speichern
 - statische Tab-Zustände
+- statisch ausgewählte erste Tabellenzeile
 
 ## Einstellungen
 
@@ -921,7 +742,14 @@ dashboard-action-list
 dashboard-action-item
 data-table
 data-table-summary-row
+data-table-row-selected
 badge
+badge-muted
+badge-success
+badge-info
+badge-warning
+badge-danger
+badge-purple
 settings-nav-list
 settings-nav-item
 empty-state
@@ -979,11 +807,11 @@ src/ui/WorkspaceHeader.tsx
 
 ## Kurzfristig
 
-1. Tab-System visuell final prüfen
-2. Tabellen-/Listenkomponenten verbessern
-3. gemeinsame Master-Detail-Komponente prüfen
-4. Status-Badges farblich differenzieren
-5. Tabellenzeilen anklickbar vorbereiten
+1. Detailmasken mit statisch ausgewählter Tabellenzeile synchronisieren
+2. gemeinsame Master-Detail-Komponente prüfen
+3. echte Auswahl-Logik planen
+4. Tabellen-/Listenkomponenten weiter verbessern
+5. leere Listen-Zustände vorbereiten
 
 ## Danach
 

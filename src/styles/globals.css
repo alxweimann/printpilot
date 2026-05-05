@@ -724,6 +724,7 @@ button {
 }
 
 .data-table tbody tr {
+  cursor: pointer;
   transition:
     background-color 140ms ease,
     box-shadow 140ms ease;
@@ -742,6 +743,15 @@ button {
 
 .data-table tbody tr:active {
   background: color-mix(in srgb, var(--module-accent) 8%, white);
+}
+
+.data-table-row-selected {
+  background: color-mix(in srgb, var(--module-accent) 8%, white);
+  box-shadow: inset 3px 0 0 var(--module-accent);
+}
+
+.data-table-row-selected td {
+  font-weight: 650;
 }
 
 .data-table-summary-row td {

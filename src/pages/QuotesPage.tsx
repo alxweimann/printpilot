@@ -1,3 +1,5 @@
+import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
 
 import { useEditableDraft } from "../hooks/useEditableDraft";
@@ -154,6 +156,8 @@ function isQuoteTab(tab: string): tab is QuoteTab {
 export function QuotesPage() {
   const module = getModuleConfig("quotes");
 
+  const [isEditing, setIsEditing] = useState(false);
+
   const {
     activeTab,
     rows: quoteRows,
@@ -171,11 +175,22 @@ export function QuotesPage() {
   function handleTabChange(tab: string) {
     if (isQuoteTab(tab)) {
       setActiveTab(tab);
+      setIsEditing(false);
     }
   }
 
   function handleQuoteSelect(quoteId: string) {
     selectItem(quoteId);
+    setIsEditing(false);
+  }
+
+  function handleResetDraft() {
+    resetDraft();
+    setIsEditing(false);
+  }
+
+  function handleToggleEditing() {
+    setIsEditing((currentValue) => !currentValue);
   }
 
   return (
@@ -266,6 +281,7 @@ export function QuotesPage() {
                 <Input
                   type="date"
                   value={draft?.quoteDate ?? ""}
+                  readOnly={!isEditing}
                   onChange={(event) =>
                     updateDraftField("quoteDate", event.target.value)
                   }
@@ -275,6 +291,7 @@ export function QuotesPage() {
               <Field label="Betreff">
                 <Input
                   value={draft?.subject ?? ""}
+                  readOnly={!isEditing}
                   onChange={(event) =>
                     updateDraftField("subject", event.target.value)
                   }
@@ -285,6 +302,7 @@ export function QuotesPage() {
                 <Input
                   type="date"
                   value={draft?.validUntil ?? ""}
+                  readOnly={!isEditing}
                   onChange={(event) =>
                     updateDraftField("validUntil", event.target.value)
                   }
@@ -292,10 +310,7 @@ export function QuotesPage() {
               </Field>
 
               <Field label="Status">
-                <Select
-                  value={activeTab}
-                  onChange={(event) => handleTabChange(event.target.value)}
-                >
+                <Select value={activeTab} disabled>
                   {quoteTabs.map((tab) => (
                     <option key={tab}>{tab}</option>
                   ))}
@@ -361,6 +376,7 @@ export function QuotesPage() {
               <Field label="Zahlungsbedingungen">
                 <Select
                   value={draft?.paymentTerms ?? ""}
+                  disabled={!isEditing}
                   onChange={(event) =>
                     updateDraftField("paymentTerms", event.target.value)
                   }
@@ -380,6 +396,7 @@ export function QuotesPage() {
               <Field label="Lieferbedingungen">
                 <Select
                   value={draft?.deliveryTerms ?? ""}
+                  disabled={!isEditing}
                   onChange={(event) =>
                     updateDraftField("deliveryTerms", event.target.value)
                   }
@@ -399,6 +416,7 @@ export function QuotesPage() {
               <Field label="Angebotsvorlage">
                 <Select
                   value={draft?.template ?? ""}
+                  disabled={!isEditing}
                   onChange={(event) =>
                     updateDraftField("template", event.target.value)
                   }
@@ -417,7 +435,44 @@ export function QuotesPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
-              <Button onClick={resetDraft}>Änderungen verwerfen</Button>
+              <button
+                type="button"
+                aria-label={
+                  isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"
+                }
+                title={isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"}
+                onClick={handleToggleEditing}
+                style={{
+                  alignItems: "center",
+                  alignSelf: "center",
+                  background: "transparent",
+                  border: 0,
+                  boxShadow: "none",
+                  cursor: "pointer",
+                  display: "inline-flex",
+                  fontSize: "1.55rem",
+                  height: "2.5rem",
+                  justifyContent: "center",
+                  lineHeight: 1,
+                  padding: 0,
+                  width: "1.65rem",
+                }}
+              >
+                <span
+                  aria-hidden="true"
+                  style={{
+                    alignItems: "center",
+                    display: "inline-flex",
+                    height: "100%",
+                    justifyContent: "center",
+                    transform: "translateY(-4px)",
+                  }}
+                >
+                  {isEditing ? "🔓" : "🔒"}
+                </span>
+              </button>
+
+              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
 
               <Button>Vorschau prüfen</Button>
 

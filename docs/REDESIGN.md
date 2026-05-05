@@ -16,6 +16,7 @@ Der Fokus liegt zuerst auf:
 - einheitliche Tabellen- und Statusdarstellung
 - Master-Detail-Darstellung mit echter lokaler Auswahl
 - kontrollierte Formular-Drafts ohne Persistenz
+- kompakter Edit-Mode über ein einzelnes randloses Schloss in der Button-Leiste
 
 Es gilt weiterhin:
 
@@ -115,7 +116,7 @@ const {
 
 ## Bearbeitbare Formular-Drafts
 
-Als nächster Schritt wurde ein lokaler Formular-Draft vorbereitet.
+Die Master-Detail-Seiten verwenden kontrollierte lokale Drafts.
 
 Datei:
 
@@ -142,7 +143,9 @@ const { draft, updateDraftField, resetDraft } =
   useEditableDraft(selectedItem);
 ```
 
-## Aktueller Stand: Angebote
+## Edit-Mode über einzelnes randloses Schloss
+
+Die Angebotsseite hat als erstes Modul einen lokalen Edit-Mode erhalten.
 
 Datei:
 
@@ -150,18 +153,69 @@ Datei:
 src/pages/QuotesPage.tsx
 ```
 
+Prinzip:
+
+- Standardzustand: Bearbeitung ist gesperrt
+- unten in der Button-Leiste gibt es nur ein Schloss-Icon
+- das Schloss hat keine Umrandung und keine Button-Fläche
+- geschlossenes Schloss öffnet die Bearbeitung
+- offenes Schloss sperrt die Bearbeitung wieder
+- kein zusätzlicher Text am Schloss
+- das Schloss ist visuell mittig zur Höhe der danebenliegenden Buttons ausgerichtet und nutzt denselben Abstand wie die übrigen Buttons
+- keine Schloss-Hinweise direkt an den Feldern
+- Auswahlwechsel sperrt die Felder automatisch wieder
+- Tabwechsel sperrt die Felder automatisch wieder
+- `Änderungen verwerfen` setzt den Draft zurück und sperrt die Felder
+
+Dauerhaft gesperrt:
+
+```text
+Angebotsnummer
+Kunde
+Status
+```
+
+Im offenen Bearbeitungsmodus editierbar:
+
+```text
+Angebotsdatum
+Betreff
+Gültig bis
+Zahlungsbedingungen
+Lieferbedingungen
+Angebotsvorlage
+```
+
+## Umgesetzte Draft-Seiten
+
+Diese Seiten haben lokale editierbare Draft-Felder:
+
+```text
+src/pages/QuotesPage.tsx
+src/pages/CustomersPage.tsx
+src/pages/OrdersPage.tsx
+src/pages/MaterialPage.tsx
+src/pages/MachinesPage.tsx
+src/pages/DeliveryNotesPage.tsx
+src/pages/InvoicesPage.tsx
+src/pages/RemindersPage.tsx
+src/pages/FinishingPage.tsx
+src/pages/ServicesPage.tsx
+src/pages/TemplatesPage.tsx
+```
+
+## Aktueller Stand
+
 Umgesetzt:
 
 - zentrale Auswahl über `useMasterDetailSelection`
 - lokaler Bearbeitungs-Draft über `useEditableDraft`
-- Angebotsdatum editierbar
-- Betreff editierbar
-- Gültig-bis-Datum editierbar
-- Zahlungsbedingungen editierbar
-- Lieferbedingungen editierbar
-- Angebotsvorlage editierbar
-- Angebotsnummer und Kunde bleiben readOnly
+- editierbare Stammdatenfelder pro Modul
+- readOnly-Felder für Nummern, Kundenreferenzen oder systemische Referenzen
 - Änderungen verwerfen setzt den Draft auf den ausgewählten Datensatz zurück
+- Auswahlwechsel setzt automatisch einen neuen Draft
+- Tabwechsel setzt automatisch die erste passende Zeile und deren Draft
+- Angebote: kompakter Edit-Mode über einzelnes randloses Schloss-Icon unten
 
 Wichtig:
 
@@ -172,9 +226,10 @@ Der Draft ist nur lokale UI-Vorbereitung.
 
 ## Nächste sinnvolle Schritte
 
-1. `useEditableDraft` nach erfolgreichem Test auf weitere Master-Detail-Seiten übertragen
-2. einheitliche Unterscheidung zwischen readOnly-Stammdaten und editierbaren Formularfeldern festlegen
+1. kompakten Schloss-Edit-Mode auf weitere Master-Detail-Seiten übertragen
+2. Schloss später als wiederverwendbare UI-Komponente auslagern
 3. Dirty-State vorbereiten
 4. Speichern-Button optisch auf geänderte Drafts reagieren lassen
-5. lokale Datenstruktur planen
-6. später Persistenz / Store / API planen
+5. geänderte Felder visuell markieren
+6. lokale Datenstruktur planen
+7. später Persistenz / Store / API planen

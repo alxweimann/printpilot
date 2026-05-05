@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -11,8 +12,73 @@ import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
+const serviceTabs = ["Liste", "Vorstufe", "Satz / Layout", "Produktion", "Zuschlag", "Sonstiges"] as const;
+
+type ServiceTab = (typeof serviceTabs)[number];
+
+const serviceRowsByTab = {
+  Liste: [
+    { name: "Datenprüfung", group: "Vorstufe", unit: "pauschal", status: "Aktiv", badgeVariant: "success" as const },
+    { name: "Grafische Anpassung", group: "Satz / Layout", unit: "pro Stunde", status: "Aktiv", badgeVariant: undefined },
+    { name: "Expresszuschlag", group: "Zuschlag", unit: "pauschal", status: "Aktiv", badgeVariant: undefined },
+  ],
+  Vorstufe: [
+    { name: "Datenprüfung", group: "Vorstufe", unit: "pauschal", status: "Aktiv", badgeVariant: "success" as const },
+    { name: "PDF-Korrektur", group: "Vorstufe", unit: "pro Stunde", status: "Aktiv", badgeVariant: undefined },
+  ],
+  "Satz / Layout": [
+    { name: "Grafische Anpassung", group: "Satz / Layout", unit: "pro Stunde", status: "Aktiv", badgeVariant: undefined },
+  ],
+  Produktion: [
+    { name: "Produktionspauschale", group: "Produktion", unit: "pro Auftrag", status: "Aktiv", badgeVariant: undefined },
+  ],
+  Zuschlag: [
+    { name: "Expresszuschlag", group: "Zuschlag", unit: "pauschal", status: "Aktiv", badgeVariant: undefined },
+  ],
+  Sonstiges: [
+    { name: "Sonderleistung", group: "Sonstiges", unit: "pauschal", status: "Entwurf", badgeVariant: undefined },
+  ],
+};
+
+function getServiceTitle(tab: ServiceTab) {
+  switch (tab) {
+    case "Liste":
+      return "Leistung verwalten";
+    case "Vorstufe":
+      return "Vorstufenleistung verwalten";
+    case "Satz / Layout":
+      return "Satz- und Layoutleistung verwalten";
+    case "Produktion":
+      return "Produktionsleistung verwalten";
+    case "Zuschlag":
+      return "Zuschlag verwalten";
+    case "Sonstiges":
+      return "Sonstige Leistung verwalten";
+  }
+}
+
+function getServiceGroup(tab: ServiceTab) {
+  if (tab === "Liste") {
+    return "";
+  }
+
+  return tab;
+}
+
+function isServiceTab(tab: string): tab is ServiceTab {
+  return serviceTabs.includes(tab as ServiceTab);
+}
+
 export function ServicesPage() {
   const module = getModuleConfig("services");
+  const [activeTab, setActiveTab] = useState<ServiceTab>("Liste");
+  const serviceRows = serviceRowsByTab[activeTab];
+
+  function handleTabChange(tab: string) {
+    if (isServiceTab(tab)) {
+      setActiveTab(tab);
+    }
+  }
 
   return (
     <div className="page">
@@ -22,12 +88,16 @@ export function ServicesPage() {
         actionLabel={module.actionLabel}
       />
 
-      <PageTabs tabs={module.tabs ?? []} activeTab="Liste" />
+      <PageTabs
+        tabs={[...serviceTabs]}
+        activeTab={activeTab}
+        onTabChange={handleTabChange}
+      />
 
       <section className="calculation-sheet">
         <WorkspaceHeader
           kicker="Leistungsmaske"
-          title="Leistung verwalten"
+          title={getServiceTitle(activeTab)}
           statusValue="Aktiv"
         />
 
@@ -49,32 +119,16 @@ export function ServicesPage() {
               </thead>
 
               <tbody>
-                <tr>
-                  <td>Datenprüfung</td>
-                  <td>Vorstufe</td>
-                  <td>pauschal</td>
-                  <td>
-                    <Badge variant="success">Aktiv</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Grafische Anpassung</td>
-                  <td>Satz / Layout</td>
-                  <td>pro Stunde</td>
-                  <td>
-                    <Badge>Aktiv</Badge>
-                  </td>
-                </tr>
-
-                <tr>
-                  <td>Expresszuschlag</td>
-                  <td>Zuschlag</td>
-                  <td>pauschal</td>
-                  <td>
-                    <Badge>Aktiv</Badge>
-                  </td>
-                </tr>
+                {serviceRows.map((service) => (
+                  <tr key={service.name}>
+                    <td>{service.name}</td>
+                    <td>{service.group}</td>
+                    <td>{service.unit}</td>
+                    <td>
+                      <Badge variant={service.badgeVariant}>{service.status}</Badge>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </DataTable>
           </section>
@@ -92,7 +146,10 @@ export function ServicesPage() {
               </Field>
 
               <Field label="Leistungsgruppe">
-                <Select defaultValue="">
+                <Select
+                  value={getServiceGroup(activeTab)}
+                  onChange={(event) => handleTabChange(event.target.value)}
+                >
                   <option value="" disabled>
                     Gruppe wählen
                   </option>

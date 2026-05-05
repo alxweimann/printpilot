@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -12,13 +13,20 @@ import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
-const materialTabs = ["Liste", "Papier", "Verpackung", "Verbrauchsmaterial", "Gesperrt"] as const;
+const materialTabs = [
+  "Liste",
+  "Papier",
+  "Verpackung",
+  "Verbrauchsmaterial",
+  "Gesperrt",
+] as const;
 
 type MaterialTab = (typeof materialTabs)[number];
 
 const materialRowsByTab = {
   Liste: [
     {
+      id: "material-135-bilderdruck-matt",
       name: "135 g/m² Bilderdruck matt",
       type: "Papier",
       format: "SRA3",
@@ -26,6 +34,7 @@ const materialRowsByTab = {
       badgeVariant: "success" as const,
     },
     {
+      id: "material-300-bilderdruck-matt",
       name: "300 g/m² Bilderdruck matt",
       type: "Papier",
       format: "SRA3",
@@ -33,6 +42,7 @@ const materialRowsByTab = {
       badgeVariant: undefined,
     },
     {
+      id: "material-versandkarton-a4",
       name: "Versandkarton A4",
       type: "Verpackung",
       format: "A4",
@@ -42,6 +52,7 @@ const materialRowsByTab = {
   ],
   Papier: [
     {
+      id: "material-135-bilderdruck-matt",
       name: "135 g/m² Bilderdruck matt",
       type: "Papier",
       format: "SRA3",
@@ -49,6 +60,7 @@ const materialRowsByTab = {
       badgeVariant: "success" as const,
     },
     {
+      id: "material-300-bilderdruck-matt",
       name: "300 g/m² Bilderdruck matt",
       type: "Papier",
       format: "SRA3",
@@ -58,6 +70,7 @@ const materialRowsByTab = {
   ],
   Verpackung: [
     {
+      id: "material-versandkarton-a4",
       name: "Versandkarton A4",
       type: "Verpackung",
       format: "A4",
@@ -67,6 +80,7 @@ const materialRowsByTab = {
   ],
   Verbrauchsmaterial: [
     {
+      id: "material-toner-klickkosten-reserve",
       name: "Toner / Klickkosten Reserve",
       type: "Verbrauchsmaterial",
       format: "—",
@@ -76,6 +90,7 @@ const materialRowsByTab = {
   ],
   Gesperrt: [
     {
+      id: "material-altes-sonderpapier",
       name: "Altes Sonderpapier",
       type: "Papier",
       format: "A3",
@@ -122,14 +137,28 @@ function isMaterialTab(tab: string): tab is MaterialTab {
 
 export function MaterialPage() {
   const module = getModuleConfig("material");
+
   const [activeTab, setActiveTab] = useState<MaterialTab>("Liste");
+  const [selectedId, setSelectedId] = useState(
+    materialRowsByTab.Liste[0]?.id ?? "",
+  );
+
   const materialRows = materialRowsByTab[activeTab];
-  const selectedMaterial = materialRows[0];
+  const selectedMaterial =
+    materialRows.find((material) => material.id === selectedId) ??
+    materialRows[0];
 
   function handleTabChange(tab: string) {
     if (isMaterialTab(tab)) {
+      const nextRows = materialRowsByTab[tab];
+
       setActiveTab(tab);
+      setSelectedId(nextRows[0]?.id ?? "");
     }
+  }
+
+  function handleMaterialSelect(materialId: string) {
+    setSelectedId(materialId);
   }
 
   return (
@@ -171,19 +200,28 @@ export function MaterialPage() {
               </thead>
 
               <tbody>
-                {materialRows.map((material, index) => (
-                  <tr
-                    key={material.name}
-                    className={index === 0 ? "data-table-row-selected" : undefined}
-                  >
-                    <td>{material.name}</td>
-                    <td>{material.type}</td>
-                    <td>{material.format}</td>
-                    <td>
-                      <Badge variant={material.badgeVariant}>{material.status}</Badge>
-                    </td>
-                  </tr>
-                ))}
+                {materialRows.map((material) => {
+                  const isSelected = material.id === selectedMaterial?.id;
+
+                  return (
+                    <tr
+                      key={material.id}
+                      className={
+                        isSelected ? "data-table-row-selected" : undefined
+                      }
+                      onClick={() => handleMaterialSelect(material.id)}
+                    >
+                      <td>{material.name}</td>
+                      <td>{material.type}</td>
+                      <td>{material.format}</td>
+                      <td>
+                        <Badge variant={material.badgeVariant}>
+                          {material.status}
+                        </Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </DataTable>
           </section>
@@ -192,17 +230,13 @@ export function MaterialPage() {
             <SectionHeader>Materialdaten</SectionHeader>
 
             <FieldGrid>
-              <Field label="Materialnummer">
-                <Input value="MA-0001" readOnly />
+              <Field label="Materialname">
+                <Input value={selectedMaterial?.name ?? ""} readOnly />
               </Field>
 
-              <Field label="Bezeichnung">
-                <Input value={selectedMaterial.name} readOnly />
-              </Field>
-
-              <Field label="Materialtyp">
+              <Field label="Typ">
                 <Select
-                  value={selectedMaterial.type === "Papier" || selectedMaterial.type === "Verpackung" || selectedMaterial.type === "Verbrauchsmaterial" ? selectedMaterial.type : getMaterialType(activeTab)}
+                  value={getMaterialType(activeTab) || selectedMaterial?.type || ""}
                   onChange={(event) => handleTabChange(event.target.value)}
                 >
                   <option value="" disabled>
@@ -214,12 +248,8 @@ export function MaterialPage() {
                 </Select>
               </Field>
 
-              <Field label="Grammatur">
-                <Input inputMode="decimal" placeholder="z. B. 135" />
-              </Field>
-
               <Field label="Format">
-                <Select defaultValue="">
+                <Select defaultValue={selectedMaterial?.format ?? ""}>
                   <option value="" disabled>
                     Format wählen
                   </option>
@@ -245,33 +275,21 @@ export function MaterialPage() {
             <SectionHeader>Preise</SectionHeader>
 
             <FieldGrid>
-              <Field label="Preis pro Ries">
-                <Input inputMode="decimal" placeholder="z. B. 42,50" />
+              <Field label="Preis je Ries">
+                <Input placeholder="0,00 €" />
               </Field>
 
-              <Field label="Bögen pro Ries">
+              <Field label="Bogen je Ries">
                 <Input inputMode="numeric" placeholder="500" />
               </Field>
 
-              <Field label="Preis pro Bogen">
-                <Input placeholder="später berechnet" disabled />
-              </Field>
-            </FieldGrid>
-
-            <SectionHeader>Lager</SectionHeader>
-
-            <FieldGrid>
-              <Field label="Bestand">
-                <Input inputMode="numeric" placeholder="z. B. 2500" />
-              </Field>
-
-              <Field label="Mindestbestand">
-                <Input inputMode="numeric" placeholder="z. B. 500" />
+              <Field label="Lagerbestand">
+                <Input inputMode="numeric" placeholder="0" />
               </Field>
 
               <Field label="Status">
                 <Select
-                  value={getMaterialStatus(activeTab)}
+                  value={selectedMaterial?.status ?? "Aktiv"}
                   onChange={(event) => {
                     if (event.target.value === "Gesperrt") {
                       handleTabChange("Gesperrt");
@@ -281,6 +299,18 @@ export function MaterialPage() {
                   <option>Aktiv</option>
                   <option>Gesperrt</option>
                 </Select>
+              </Field>
+            </FieldGrid>
+
+            <SectionHeader>Lager</SectionHeader>
+
+            <FieldGrid>
+              <Field label="Mindestbestand">
+                <Input inputMode="numeric" placeholder="0" />
+              </Field>
+
+              <Field label="Lagerort">
+                <Input placeholder="z. B. Papierlager" />
               </Field>
             </FieldGrid>
 

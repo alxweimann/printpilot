@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -19,6 +20,7 @@ type OrderTab = (typeof orderTabs)[number];
 const orderRowsByTab = {
   Liste: [
     {
+      id: "order-au-2026-001",
       number: "AU-2026-001",
       customer: "Sonnendruck GmbH",
       product: "Broschüre A4",
@@ -26,6 +28,7 @@ const orderRowsByTab = {
       badgeVariant: "success" as const,
     },
     {
+      id: "order-au-2026-002",
       number: "AU-2026-002",
       customer: "Musterkunde GmbH",
       product: "Flyer A5",
@@ -33,6 +36,7 @@ const orderRowsByTab = {
       badgeVariant: undefined,
     },
     {
+      id: "order-au-2026-003",
       number: "AU-2026-003",
       customer: "Beispiel AG",
       product: "Folder DIN lang",
@@ -42,6 +46,7 @@ const orderRowsByTab = {
   ],
   Vorbereitung: [
     {
+      id: "order-au-2026-001",
       number: "AU-2026-001",
       customer: "Sonnendruck GmbH",
       product: "Broschüre A4",
@@ -51,6 +56,7 @@ const orderRowsByTab = {
   ],
   Produktion: [
     {
+      id: "order-au-2026-002",
       number: "AU-2026-002",
       customer: "Musterkunde GmbH",
       product: "Flyer A5",
@@ -60,6 +66,7 @@ const orderRowsByTab = {
   ],
   Abgeschlossen: [
     {
+      id: "order-au-2026-008",
       number: "AU-2026-008",
       customer: "Druckpartner Süd",
       product: "Plakat A2",
@@ -96,14 +103,27 @@ function isOrderTab(tab: string): tab is OrderTab {
 
 export function OrdersPage() {
   const module = getModuleConfig("orders");
+
   const [activeTab, setActiveTab] = useState<OrderTab>("Liste");
+  const [selectedId, setSelectedId] = useState(
+    orderRowsByTab.Liste[0]?.id ?? "",
+  );
+
   const orderRows = orderRowsByTab[activeTab];
-  const selectedOrder = orderRows[0];
+  const selectedOrder =
+    orderRows.find((order) => order.id === selectedId) ?? orderRows[0];
 
   function handleTabChange(tab: string) {
     if (isOrderTab(tab)) {
+      const nextRows = orderRowsByTab[tab];
+
       setActiveTab(tab);
+      setSelectedId(nextRows[0]?.id ?? "");
     }
+  }
+
+  function handleOrderSelect(orderId: string) {
+    setSelectedId(orderId);
   }
 
   return (
@@ -145,19 +165,28 @@ export function OrdersPage() {
               </thead>
 
               <tbody>
-                {orderRows.map((order, index) => (
-                  <tr
-                    key={order.number}
-                    className={index === 0 ? "data-table-row-selected" : undefined}
-                  >
-                    <td>{order.number}</td>
-                    <td>{order.customer}</td>
-                    <td>{order.product}</td>
-                    <td>
-                      <Badge variant={order.badgeVariant}>{order.status}</Badge>
-                    </td>
-                  </tr>
-                ))}
+                {orderRows.map((order) => {
+                  const isSelected = order.id === selectedOrder?.id;
+
+                  return (
+                    <tr
+                      key={order.id}
+                      className={
+                        isSelected ? "data-table-row-selected" : undefined
+                      }
+                      onClick={() => handleOrderSelect(order.id)}
+                    >
+                      <td>{order.number}</td>
+                      <td>{order.customer}</td>
+                      <td>{order.product}</td>
+                      <td>
+                        <Badge variant={order.badgeVariant}>
+                          {order.status}
+                        </Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </DataTable>
           </section>
@@ -167,41 +196,29 @@ export function OrdersPage() {
 
             <FieldGrid>
               <Field label="Auftragsnummer">
-                <Input value={selectedOrder.number} readOnly />
-              </Field>
-
-              <Field label="Quelle">
-                <Input placeholder="später aus Angebot übernehmen" disabled />
+                <Input value={selectedOrder?.number ?? ""} readOnly />
               </Field>
 
               <Field label="Kunde">
-                <Input value={selectedOrder.customer} readOnly />
+                <Input value={selectedOrder?.customer ?? ""} readOnly />
               </Field>
 
               <Field label="Produkt">
-                <Input value={selectedOrder.product} readOnly />
+                <Input value={selectedOrder?.product ?? ""} readOnly />
               </Field>
 
-              <Field label="Auftragsdatum">
-                <Input type="date" />
-              </Field>
-
-              <Field label="Liefertermin">
-                <Input type="date" />
+              <Field label="Status">
+                <Select value={activeTab} onChange={(event) => handleTabChange(event.target.value)}>
+                  {orderTabs.map((tab) => (
+                    <option key={tab}>{tab}</option>
+                  ))}
+                </Select>
               </Field>
             </FieldGrid>
 
             <SectionHeader>Produktion</SectionHeader>
 
             <FieldGrid>
-              <Field label="Produktionsstatus">
-                <Select value={getOrderStatus(activeTab)} onChange={(event) => handleTabChange(event.target.value)}>
-                  <option>Vorbereitung</option>
-                  <option>Produktion</option>
-                  <option>Abgeschlossen</option>
-                </Select>
-              </Field>
-
               <Field label="Maschine">
                 <Select defaultValue="">
                   <option value="" disabled>
@@ -222,12 +239,8 @@ export function OrdersPage() {
                   <option>Eilt</option>
                 </Select>
               </Field>
-            </FieldGrid>
 
-            <SectionHeader>Übergabe</SectionHeader>
-
-            <FieldGrid>
-              <Field label="Druckdatenstatus">
+              <Field label="Übergabe">
                 <Select defaultValue="">
                   <option value="" disabled>
                     Status wählen
@@ -247,10 +260,6 @@ export function OrdersPage() {
                   <option>Erteilt</option>
                   <option>Korrektur erforderlich</option>
                 </Select>
-              </Field>
-
-              <Field label="Interne Notiz">
-                <Input placeholder="Optional" />
               </Field>
             </FieldGrid>
 

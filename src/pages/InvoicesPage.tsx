@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -18,78 +19,31 @@ type InvoiceTab = (typeof invoiceTabs)[number];
 
 const invoiceRowsByTab = {
   Liste: [
-    {
-      number: "RE-2026-001",
-      customer: "Sonnendruck GmbH",
-      subject: "Broschüre A4",
-      status: "Entwurf",
-      badgeVariant: "success" as const,
-    },
-    {
-      number: "RE-2026-002",
-      customer: "Musterkunde GmbH",
-      subject: "Flyer A5",
-      status: "Offen",
-      badgeVariant: undefined,
-    },
-    {
-      number: "RE-2026-003",
-      customer: "Beispiel AG",
-      subject: "Folder DIN lang",
-      status: "Bezahlt",
-      badgeVariant: "success" as const,
-    },
+    { id: "invoice-re-2026-001", number: "RE-2026-001", customer: "Sonnendruck GmbH", subject: "Broschüre A4", status: "Entwurf", badgeVariant: "success" as const },
+    { id: "invoice-re-2026-002", number: "RE-2026-002", customer: "Musterkunde GmbH", subject: "Flyer A5", status: "Offen", badgeVariant: undefined },
+    { id: "invoice-re-2026-003", number: "RE-2026-003", customer: "Beispiel AG", subject: "Folder DIN lang", status: "Bezahlt", badgeVariant: "success" as const },
   ],
   Entwurf: [
-    {
-      number: "RE-2026-001",
-      customer: "Sonnendruck GmbH",
-      subject: "Broschüre A4",
-      status: "Entwurf",
-      badgeVariant: "success" as const,
-    },
+    { id: "invoice-re-2026-001", number: "RE-2026-001", customer: "Sonnendruck GmbH", subject: "Broschüre A4", status: "Entwurf", badgeVariant: "success" as const },
   ],
   Offen: [
-    {
-      number: "RE-2026-002",
-      customer: "Musterkunde GmbH",
-      subject: "Flyer A5",
-      status: "Offen",
-      badgeVariant: undefined,
-    },
+    { id: "invoice-re-2026-002", number: "RE-2026-002", customer: "Musterkunde GmbH", subject: "Flyer A5", status: "Offen", badgeVariant: undefined },
   ],
   Bezahlt: [
-    {
-      number: "RE-2026-003",
-      customer: "Beispiel AG",
-      subject: "Folder DIN lang",
-      status: "Bezahlt",
-      badgeVariant: "success" as const,
-    },
+    { id: "invoice-re-2026-003", number: "RE-2026-003", customer: "Beispiel AG", subject: "Folder DIN lang", status: "Bezahlt", badgeVariant: "success" as const },
   ],
   Überfällig: [
-    {
-      number: "RE-2026-009",
-      customer: "Testkunde KG",
-      subject: "Plakat A1",
-      status: "Überfällig",
-      badgeVariant: undefined,
-    },
+    { id: "invoice-re-2026-009", number: "RE-2026-009", customer: "Testkunde KG", subject: "Plakat A1", status: "Überfällig", badgeVariant: undefined },
   ],
 };
 
 function getInvoiceTitle(tab: InvoiceTab) {
   switch (tab) {
-    case "Liste":
-      return "Rechnung vorbereiten";
-    case "Entwurf":
-      return "Rechnungsentwurf bearbeiten";
-    case "Offen":
-      return "Offene Rechnung prüfen";
-    case "Bezahlt":
-      return "Bezahlte Rechnung";
-    case "Überfällig":
-      return "Überfällige Rechnung";
+    case "Liste": return "Rechnung vorbereiten";
+    case "Entwurf": return "Rechnungsentwurf bearbeiten";
+    case "Offen": return "Offene Rechnung prüfen";
+    case "Bezahlt": return "Bezahlte Rechnung";
+    case "Überfällig": return "Überfällige Rechnung";
   }
 }
 
@@ -107,36 +61,37 @@ function isInvoiceTab(tab: string): tab is InvoiceTab {
 
 export function InvoicesPage() {
   const module = getModuleConfig("invoices");
+
   const [activeTab, setActiveTab] = useState<InvoiceTab>("Liste");
+  const [selectedId, setSelectedId] = useState(
+    invoiceRowsByTab.Liste[0]?.id ?? "",
+  );
+
   const invoiceRows = invoiceRowsByTab[activeTab];
-  const selectedInvoice = invoiceRows[0];
+  const selectedInvoice =
+    invoiceRows.find((invoice) => invoice.id === selectedId) ?? invoiceRows[0];
 
   function handleTabChange(tab: string) {
     if (isInvoiceTab(tab)) {
+      const nextRows = invoiceRowsByTab[tab];
+
       setActiveTab(tab);
+      setSelectedId(nextRows[0]?.id ?? "");
     }
+  }
+
+  function handleInvoiceSelect(invoiceId: string) {
+    setSelectedId(invoiceId);
   }
 
   return (
     <div className="page">
-      <PageHeader
-        title={module.title}
-        description={module.description}
-        actionLabel={module.actionLabel}
-      />
+      <PageHeader title={module.title} description={module.description} actionLabel={module.actionLabel} />
 
-      <PageTabs
-        tabs={[...invoiceTabs]}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
+      <PageTabs tabs={[...invoiceTabs]} activeTab={activeTab} onTabChange={handleTabChange} />
 
       <section className="calculation-sheet">
-        <WorkspaceHeader
-          kicker="Rechnungsmaske"
-          title={getInvoiceTitle(activeTab)}
-          statusValue={getInvoiceStatus(activeTab)}
-        />
+        <WorkspaceHeader kicker="Rechnungsmaske" title={getInvoiceTitle(activeTab)} statusValue={getInvoiceStatus(activeTab)} />
 
         <div className="master-detail-layout">
           <section className="workspace-panel master-list-panel">
@@ -156,19 +111,24 @@ export function InvoicesPage() {
               </thead>
 
               <tbody>
-                {invoiceRows.map((invoice, index) => (
-                  <tr
-                    key={invoice.number}
-                    className={index === 0 ? "data-table-row-selected" : undefined}
-                  >
-                    <td>{invoice.number}</td>
-                    <td>{invoice.customer}</td>
-                    <td>{invoice.subject}</td>
-                    <td>
-                      <Badge variant={invoice.badgeVariant}>{invoice.status}</Badge>
-                    </td>
-                  </tr>
-                ))}
+                {invoiceRows.map((invoice) => {
+                  const isSelected = invoice.id === selectedInvoice?.id;
+
+                  return (
+                    <tr
+                      key={invoice.id}
+                      className={isSelected ? "data-table-row-selected" : undefined}
+                      onClick={() => handleInvoiceSelect(invoice.id)}
+                    >
+                      <td>{invoice.number}</td>
+                      <td>{invoice.customer}</td>
+                      <td>{invoice.subject}</td>
+                      <td>
+                        <Badge variant={invoice.badgeVariant}>{invoice.status}</Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </DataTable>
           </section>
@@ -178,82 +138,63 @@ export function InvoicesPage() {
 
             <FieldGrid>
               <Field label="Rechnungsnummer">
-                <Input value={selectedInvoice.number} readOnly />
-              </Field>
-
-              <Field label="Quelle">
-                <Input value={selectedInvoice.subject} readOnly />
+                <Input value={selectedInvoice?.number ?? ""} readOnly />
               </Field>
 
               <Field label="Kunde">
-                <Input value={selectedInvoice.customer} readOnly />
+                <Input value={selectedInvoice?.customer ?? ""} readOnly />
               </Field>
 
-              <Field label="Rechnungsdatum">
-                <Input type="date" />
-              </Field>
-
-              <Field label="Fällig am">
-                <Input type="date" />
+              <Field label="Betreff">
+                <Input value={selectedInvoice?.subject ?? ""} readOnly />
               </Field>
 
               <Field label="Status">
-                <Select
-                  value={getInvoiceStatus(activeTab)}
-                  onChange={(event) => handleTabChange(event.target.value)}
-                >
-                  <option>Entwurf</option>
-                  <option>Offen</option>
-                  <option>Bezahlt</option>
-                  <option>Überfällig</option>
+                <Select value={activeTab} onChange={(event) => handleTabChange(event.target.value)}>
+                  {invoiceTabs.map((tab) => (
+                    <option key={tab}>{tab}</option>
+                  ))}
                 </Select>
               </Field>
             </FieldGrid>
 
             <SectionHeader>Positionen</SectionHeader>
 
-            <div className="master-position-table">
-              <DataTable>
-                <thead>
-                  <tr>
-                    <th>Pos.</th>
-                    <th>Bezeichnung</th>
-                    <th>Menge</th>
-                    <th>Netto</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Leistung aus Auftrag übernehmen</td>
-                    <td>—</td>
-                    <td>—</td>
-                  </tr>
-
-                  <tr>
-                    <td>2</td>
-                    <td>Optionale Zusatzposition</td>
-                    <td>—</td>
-                    <td>—</td>
-                  </tr>
-
-                  <tr className="data-table-summary-row">
-                    <td colSpan={3}>Rechnungssumme netto</td>
-                    <td>—</td>
-                  </tr>
-                </tbody>
-              </DataTable>
-            </div>
+            <DataTable>
+              <thead>
+                <tr>
+                  <th>Pos.</th>
+                  <th>Bezeichnung</th>
+                  <th>Menge</th>
+                  <th>Netto</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Leistung aus Auftrag übernehmen</td>
+                  <td>—</td>
+                  <td>—</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Optionale Zusatzposition</td>
+                  <td>—</td>
+                  <td>—</td>
+                </tr>
+                <tr className="data-table-summary-row">
+                  <td colSpan={3}>Rechnungssumme netto</td>
+                  <td>—</td>
+                </tr>
+              </tbody>
+            </DataTable>
 
             <SectionHeader>Zahlung & Ausgabe</SectionHeader>
 
             <FieldGrid>
-              <Field label="Zahlungsbedingungen">
+              <Field label="Bedingungen">
                 <Select defaultValue="">
-                  <option value="" disabled>
-                    Bedingungen wählen
-                  </option>
+                  <option value="" disabled>Bedingungen wählen</option>
                   <option>Zahlbar sofort ohne Abzug</option>
                   <option>14 Tage netto</option>
                   <option>30 Tage netto</option>
@@ -262,9 +203,7 @@ export function InvoicesPage() {
 
               <Field label="Zahlungsart">
                 <Select defaultValue="">
-                  <option value="" disabled>
-                    Zahlungsart wählen
-                  </option>
+                  <option value="" disabled>Zahlungsart wählen</option>
                   <option>Überweisung</option>
                   <option>Barzahlung</option>
                   <option>EC / Karte</option>
@@ -272,11 +211,9 @@ export function InvoicesPage() {
                 </Select>
               </Field>
 
-              <Field label="Rechnungsvorlage">
+              <Field label="Vorlage">
                 <Select defaultValue="">
-                  <option value="" disabled>
-                    Vorlage wählen
-                  </option>
+                  <option value="" disabled>Vorlage wählen</option>
                   <option>Standardrechnung</option>
                   <option>Kurzrechnung</option>
                   <option>Technische Rechnung</option>

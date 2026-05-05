@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -12,13 +13,20 @@ import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
-const machineTabs = ["Liste", "Digitaldruck Farbe", "Digitaldruck Schwarz", "Großformat", "Wartung"] as const;
+const machineTabs = [
+  "Liste",
+  "Digitaldruck Farbe",
+  "Digitaldruck Schwarz",
+  "Großformat",
+  "Wartung",
+] as const;
 
 type MachineTab = (typeof machineTabs)[number];
 
 const machineRowsByTab = {
   Liste: [
     {
+      id: "machine-xerox-iridesse",
       name: "Xerox Iridesse",
       type: "Digitaldruck Farbe",
       colorMode: "4/4 + Sonderfarben",
@@ -26,6 +34,7 @@ const machineRowsByTab = {
       badgeVariant: "success" as const,
     },
     {
+      id: "machine-xerox-nuvera",
       name: "Xerox Nuvera",
       type: "Digitaldruck Schwarz",
       colorMode: "1/1 schwarz",
@@ -33,6 +42,7 @@ const machineRowsByTab = {
       badgeVariant: undefined,
     },
     {
+      id: "machine-roland-truevis-vg3-540",
       name: "Roland TrueVis VG3 540",
       type: "Großformat",
       colorMode: "CMYK",
@@ -42,6 +52,7 @@ const machineRowsByTab = {
   ],
   "Digitaldruck Farbe": [
     {
+      id: "machine-xerox-iridesse",
       name: "Xerox Iridesse",
       type: "Digitaldruck Farbe",
       colorMode: "4/4 + Sonderfarben",
@@ -51,6 +62,7 @@ const machineRowsByTab = {
   ],
   "Digitaldruck Schwarz": [
     {
+      id: "machine-xerox-nuvera",
       name: "Xerox Nuvera",
       type: "Digitaldruck Schwarz",
       colorMode: "1/1 schwarz",
@@ -58,6 +70,7 @@ const machineRowsByTab = {
       badgeVariant: undefined,
     },
     {
+      id: "machine-canon-vp140",
       name: "Canon VP140",
       type: "Digitaldruck Schwarz",
       colorMode: "1/1 schwarz",
@@ -67,6 +80,7 @@ const machineRowsByTab = {
   ],
   Großformat: [
     {
+      id: "machine-roland-truevis-vg3-540",
       name: "Roland TrueVis VG3 540",
       type: "Großformat",
       colorMode: "CMYK",
@@ -76,6 +90,7 @@ const machineRowsByTab = {
   ],
   Wartung: [
     {
+      id: "machine-xerox-iridesse-sonderfarben",
       name: "Xerox Iridesse Sonderfarben",
       type: "Digitaldruck Farbe",
       colorMode: "4/4 + Sonderfarben",
@@ -122,14 +137,27 @@ function isMachineTab(tab: string): tab is MachineTab {
 
 export function MachinesPage() {
   const module = getModuleConfig("machines");
+
   const [activeTab, setActiveTab] = useState<MachineTab>("Liste");
+  const [selectedId, setSelectedId] = useState(
+    machineRowsByTab.Liste[0]?.id ?? "",
+  );
+
   const machineRows = machineRowsByTab[activeTab];
-  const selectedMachine = machineRows[0];
+  const selectedMachine =
+    machineRows.find((machine) => machine.id === selectedId) ?? machineRows[0];
 
   function handleTabChange(tab: string) {
     if (isMachineTab(tab)) {
+      const nextRows = machineRowsByTab[tab];
+
       setActiveTab(tab);
+      setSelectedId(nextRows[0]?.id ?? "");
     }
+  }
+
+  function handleMachineSelect(machineId: string) {
+    setSelectedId(machineId);
   }
 
   return (
@@ -171,19 +199,28 @@ export function MachinesPage() {
               </thead>
 
               <tbody>
-                {machineRows.map((machine, index) => (
-                  <tr
-                    key={machine.name}
-                    className={index === 0 ? "data-table-row-selected" : undefined}
-                  >
-                    <td>{machine.name}</td>
-                    <td>{machine.type}</td>
-                    <td>{machine.colorMode}</td>
-                    <td>
-                      <Badge variant={machine.badgeVariant}>{machine.status}</Badge>
-                    </td>
-                  </tr>
-                ))}
+                {machineRows.map((machine) => {
+                  const isSelected = machine.id === selectedMachine?.id;
+
+                  return (
+                    <tr
+                      key={machine.id}
+                      className={
+                        isSelected ? "data-table-row-selected" : undefined
+                      }
+                      onClick={() => handleMachineSelect(machine.id)}
+                    >
+                      <td>{machine.name}</td>
+                      <td>{machine.type}</td>
+                      <td>{machine.colorMode}</td>
+                      <td>
+                        <Badge variant={machine.badgeVariant}>
+                          {machine.status}
+                        </Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </DataTable>
           </section>
@@ -192,17 +229,13 @@ export function MachinesPage() {
             <SectionHeader>Maschinendaten</SectionHeader>
 
             <FieldGrid>
-              <Field label="Maschinennummer">
-                <Input value="MS-0001" readOnly />
+              <Field label="Maschine">
+                <Input value={selectedMachine?.name ?? ""} readOnly />
               </Field>
 
-              <Field label="Bezeichnung">
-                <Input value={selectedMachine.name} readOnly />
-              </Field>
-
-              <Field label="Maschinentyp">
+              <Field label="Typ">
                 <Select
-                  value={selectedMachine.type === "Digitaldruck Farbe" || selectedMachine.type === "Digitaldruck Schwarz" || selectedMachine.type === "Großformat" ? selectedMachine.type : getMachineType(activeTab)}
+                  value={getMachineType(activeTab) || selectedMachine?.type || ""}
                   onChange={(event) => handleTabChange(event.target.value)}
                 >
                   <option value="" disabled>
@@ -215,7 +248,7 @@ export function MachinesPage() {
               </Field>
 
               <Field label="Farbigkeit">
-                <Select defaultValue="">
+                <Select defaultValue={selectedMachine?.colorMode ?? ""}>
                   <option value="" disabled>
                     Farbigkeit wählen
                   </option>
@@ -224,16 +257,13 @@ export function MachinesPage() {
                   <option>1/1 schwarz</option>
                   <option>1/0 schwarz</option>
                   <option>Sonderfarben</option>
+                  <option>CMYK</option>
                 </Select>
-              </Field>
-
-              <Field label="Max. Format">
-                <Input placeholder="z. B. SRA3" />
               </Field>
 
               <Field label="Status">
                 <Select
-                  value={getMachineStatus(activeTab)}
+                  value={selectedMachine?.status ?? "Aktiv"}
                   onChange={(event) => {
                     if (event.target.value === "Wartung") {
                       handleTabChange("Wartung");
@@ -249,24 +279,16 @@ export function MachinesPage() {
             <SectionHeader>Kostenparameter</SectionHeader>
 
             <FieldGrid>
-              <Field label="Klickpreis schwarz">
-                <Input inputMode="decimal" placeholder="z. B. 0,008" />
-              </Field>
-
-              <Field label="Klickpreis farbig">
-                <Input inputMode="decimal" placeholder="z. B. 0,033" />
-              </Field>
-
               <Field label="Stundensatz">
-                <Input inputMode="decimal" placeholder="z. B. 85,00" />
+                <Input placeholder="0,00 €" />
               </Field>
 
-              <Field label="Rüstzeit Standard">
-                <Input inputMode="decimal" placeholder="Minuten" />
+              <Field label="Klickkosten Farbe">
+                <Input placeholder="0,000 €" />
               </Field>
 
-              <Field label="Produktivität">
-                <Input inputMode="numeric" placeholder="Bögen / Stunde" />
+              <Field label="Klickkosten Schwarz">
+                <Input placeholder="0,000 €" />
               </Field>
 
               <Field label="Duplex">
@@ -283,20 +305,16 @@ export function MachinesPage() {
             <SectionHeader>Hinweise</SectionHeader>
 
             <FieldGrid>
-              <Field label="Einsatzbereich">
-                <Input placeholder="z. B. Broschüren, Flyer, Kleinauflagen" />
-              </Field>
-
-              <Field label="Bemerkung">
-                <Input placeholder="Optional" />
-              </Field>
-
-              <Field label="Priorität">
+              <Field label="Einsatz">
                 <Select defaultValue="Standard">
                   <option>Standard</option>
                   <option>Bevorzugt</option>
                   <option>Nur Spezialfälle</option>
                 </Select>
+              </Field>
+
+              <Field label="Notiz">
+                <Input placeholder="Interne Notiz" />
               </Field>
             </FieldGrid>
 

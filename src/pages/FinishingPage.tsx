@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -18,43 +19,37 @@ type FinishingTab = (typeof finishingTabs)[number];
 
 const finishingRowsByTab = {
   Liste: [
-    { name: "Schneiden", category: "Standard", pricing: "pro Auftrag", status: "Aktiv", badgeVariant: "success" as const },
-    { name: "Falzen", category: "Falzen", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
-    { name: "Rückendrahtheftung", category: "Bindung", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
+    { id: "finishing-schneiden", name: "Schneiden", category: "Standard", pricing: "pro Auftrag", status: "Aktiv", badgeVariant: "success" as const },
+    { id: "finishing-falzen", name: "Falzen", category: "Falzen", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
+    { id: "finishing-rueckendrahtheftung", name: "Rückendrahtheftung", category: "Bindung", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
   ],
   Standard: [
-    { name: "Schneiden", category: "Standard", pricing: "pro Auftrag", status: "Aktiv", badgeVariant: "success" as const },
-    { name: "Rillen", category: "Standard", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
+    { id: "finishing-schneiden", name: "Schneiden", category: "Standard", pricing: "pro Auftrag", status: "Aktiv", badgeVariant: "success" as const },
+    { id: "finishing-rillen", name: "Rillen", category: "Standard", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
   ],
   Falzen: [
-    { name: "Falzen", category: "Falzen", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
+    { id: "finishing-falzen", name: "Falzen", category: "Falzen", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
   ],
   Bindung: [
-    { name: "Rückendrahtheftung", category: "Bindung", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
-    { name: "Klebebindung", category: "Bindung", pricing: "pro Auftrag", status: "Aktiv", badgeVariant: undefined },
+    { id: "finishing-rueckendrahtheftung", name: "Rückendrahtheftung", category: "Bindung", pricing: "pro Stück", status: "Aktiv", badgeVariant: undefined },
+    { id: "finishing-klebebindung", name: "Klebebindung", category: "Bindung", pricing: "pro Auftrag", status: "Aktiv", badgeVariant: undefined },
   ],
   Veredelung: [
-    { name: "Stanzen", category: "Veredelung", pricing: "pro Auftrag", status: "Aktiv", badgeVariant: undefined },
+    { id: "finishing-stanzen", name: "Stanzen", category: "Veredelung", pricing: "pro Auftrag", status: "Aktiv", badgeVariant: undefined },
   ],
   Handarbeit: [
-    { name: "Konfektionieren", category: "Handarbeit", pricing: "pro Stunde", status: "Aktiv", badgeVariant: undefined },
+    { id: "finishing-konfektionieren", name: "Konfektionieren", category: "Handarbeit", pricing: "pro Stunde", status: "Aktiv", badgeVariant: undefined },
   ],
 };
 
 function getFinishingTitle(tab: FinishingTab) {
   switch (tab) {
-    case "Liste":
-      return "Prozess verwalten";
-    case "Standard":
-      return "Standardprozess verwalten";
-    case "Falzen":
-      return "Falzprozess verwalten";
-    case "Bindung":
-      return "Bindung verwalten";
-    case "Veredelung":
-      return "Veredelung verwalten";
-    case "Handarbeit":
-      return "Handarbeit verwalten";
+    case "Liste": return "Prozess verwalten";
+    case "Standard": return "Standardprozess verwalten";
+    case "Falzen": return "Falzprozess verwalten";
+    case "Bindung": return "Bindung verwalten";
+    case "Veredelung": return "Veredelung verwalten";
+    case "Handarbeit": return "Handarbeit verwalten";
   }
 }
 
@@ -72,36 +67,38 @@ function isFinishingTab(tab: string): tab is FinishingTab {
 
 export function FinishingPage() {
   const module = getModuleConfig("finishing");
+
   const [activeTab, setActiveTab] = useState<FinishingTab>("Liste");
+  const [selectedId, setSelectedId] = useState(
+    finishingRowsByTab.Liste[0]?.id ?? "",
+  );
+
   const finishingRows = finishingRowsByTab[activeTab];
-  const selectedOperation = finishingRows[0];
+  const selectedOperation =
+    finishingRows.find((operation) => operation.id === selectedId) ??
+    finishingRows[0];
 
   function handleTabChange(tab: string) {
     if (isFinishingTab(tab)) {
+      const nextRows = finishingRowsByTab[tab];
+
       setActiveTab(tab);
+      setSelectedId(nextRows[0]?.id ?? "");
     }
+  }
+
+  function handleOperationSelect(operationId: string) {
+    setSelectedId(operationId);
   }
 
   return (
     <div className="page">
-      <PageHeader
-        title={module.title}
-        description={module.description}
-        actionLabel={module.actionLabel}
-      />
+      <PageHeader title={module.title} description={module.description} actionLabel={module.actionLabel} />
 
-      <PageTabs
-        tabs={[...finishingTabs]}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
+      <PageTabs tabs={[...finishingTabs]} activeTab={activeTab} onTabChange={handleTabChange} />
 
       <section className="calculation-sheet">
-        <WorkspaceHeader
-          kicker="Weiterverarbeitungsmaske"
-          title={getFinishingTitle(activeTab)}
-          statusValue="Aktiv"
-        />
+        <WorkspaceHeader kicker="Weiterverarbeitung" title={getFinishingTitle(activeTab)} statusValue={getFinishingCategory(activeTab) || "Aktiv"} />
 
         <div className="master-detail-layout">
           <section className="workspace-panel master-list-panel">
@@ -121,19 +118,24 @@ export function FinishingPage() {
               </thead>
 
               <tbody>
-                {finishingRows.map((operation, index) => (
-                  <tr
-                    key={operation.name}
-                    className={index === 0 ? "data-table-row-selected" : undefined}
-                  >
-                    <td>{operation.name}</td>
-                    <td>{operation.category}</td>
-                    <td>{operation.pricing}</td>
-                    <td>
-                      <Badge variant={operation.badgeVariant}>{operation.status}</Badge>
-                    </td>
-                  </tr>
-                ))}
+                {finishingRows.map((operation) => {
+                  const isSelected = operation.id === selectedOperation?.id;
+
+                  return (
+                    <tr
+                      key={operation.id}
+                      className={isSelected ? "data-table-row-selected" : undefined}
+                      onClick={() => handleOperationSelect(operation.id)}
+                    >
+                      <td>{operation.name}</td>
+                      <td>{operation.category}</td>
+                      <td>{operation.pricing}</td>
+                      <td>
+                        <Badge variant={operation.badgeVariant}>{operation.status}</Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </DataTable>
           </section>
@@ -142,22 +144,13 @@ export function FinishingPage() {
             <SectionHeader>Prozessdaten</SectionHeader>
 
             <FieldGrid>
-              <Field label="Prozessnummer">
-                <Input value="WV-0001" readOnly />
-              </Field>
-
-              <Field label="Bezeichnung">
-                <Input value={selectedOperation.name} readOnly />
+              <Field label="Prozess">
+                <Input value={selectedOperation?.name ?? ""} readOnly />
               </Field>
 
               <Field label="Kategorie">
-                <Select
-                  value={selectedOperation.category}
-                  onChange={(event) => handleTabChange(event.target.value)}
-                >
-                  <option value="" disabled>
-                    Kategorie wählen
-                  </option>
+                <Select value={getFinishingCategory(activeTab) || selectedOperation?.category || ""} onChange={(event) => handleTabChange(event.target.value)}>
+                  <option value="" disabled>Kategorie wählen</option>
                   <option>Standard</option>
                   <option>Falzen</option>
                   <option>Bindung</option>
@@ -167,10 +160,8 @@ export function FinishingPage() {
               </Field>
 
               <Field label="Einheit">
-                <Select value={selectedOperation.pricing} onChange={() => undefined}>
-                  <option value="" disabled>
-                    Einheit wählen
-                  </option>
+                <Select defaultValue={selectedOperation?.pricing ?? ""}>
+                  <option value="" disabled>Einheit wählen</option>
                   <option>pro Auftrag</option>
                   <option>pro Stück</option>
                   <option>pro 100 Stück</option>
@@ -179,16 +170,15 @@ export function FinishingPage() {
               </Field>
 
               <Field label="Status">
-                <Select defaultValue="Aktiv">
+                <Select defaultValue={selectedOperation?.status ?? "Aktiv"}>
                   <option>Aktiv</option>
                   <option>Entwurf</option>
                   <option>Gesperrt</option>
                 </Select>
               </Field>
 
-              <Field label="Priorität">
-                <Select defaultValue="Standard">
-                  <option>Standard</option>
+              <Field label="Standard">
+                <Select defaultValue="Häufig">
                   <option>Häufig</option>
                   <option>Spezialfall</option>
                 </Select>
@@ -198,28 +188,12 @@ export function FinishingPage() {
             <SectionHeader>Kostenparameter</SectionHeader>
 
             <FieldGrid>
-              <Field label="Grundpreis">
-                <Input inputMode="decimal" placeholder="z. B. 12,50" />
-              </Field>
-
-              <Field label="Einzelpreis">
-                <Input inputMode="decimal" placeholder="z. B. 0,025" />
-              </Field>
-
               <Field label="Rüstzeit">
-                <Input inputMode="decimal" placeholder="Minuten" />
+                <Input placeholder="Minuten" />
               </Field>
 
               <Field label="Stundensatz">
-                <Input inputMode="decimal" placeholder="z. B. 65,00" />
-              </Field>
-
-              <Field label="Mindestmenge">
-                <Input inputMode="numeric" placeholder="Optional" />
-              </Field>
-
-              <Field label="Ausschuss">
-                <Input inputMode="decimal" placeholder="z. B. 2 %" />
+                <Input placeholder="0,00 €" />
               </Field>
             </FieldGrid>
 
@@ -227,15 +201,7 @@ export function FinishingPage() {
 
             <FieldGrid>
               <Field label="Beschreibung">
-                <Input placeholder="z. B. Endschnitt, Zwischenschnitt, Planschnitt" />
-              </Field>
-
-              <Field label="Maschinenbezug">
-                <Input placeholder="Optional" />
-              </Field>
-
-              <Field label="Interne Notiz">
-                <Input placeholder="Optional" />
+                <Input placeholder="Interne Beschreibung" />
               </Field>
             </FieldGrid>
 

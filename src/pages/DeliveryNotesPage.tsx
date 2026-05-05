@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -18,78 +19,31 @@ type DeliveryTab = (typeof deliveryTabs)[number];
 
 const deliveryRowsByTab = {
   Liste: [
-    {
-      number: "LS-2026-001",
-      customer: "Sonnendruck GmbH",
-      order: "AU-2026-001",
-      status: "Entwurf",
-      badgeVariant: "success" as const,
-    },
-    {
-      number: "LS-2026-002",
-      customer: "Musterkunde GmbH",
-      order: "AU-2026-002",
-      status: "Versandbereit",
-      badgeVariant: undefined,
-    },
-    {
-      number: "LS-2026-003",
-      customer: "Beispiel AG",
-      order: "AU-2026-003",
-      status: "Geliefert",
-      badgeVariant: "success" as const,
-    },
+    { id: "delivery-ls-2026-001", number: "LS-2026-001", customer: "Sonnendruck GmbH", order: "AU-2026-001", status: "Entwurf", badgeVariant: "success" as const },
+    { id: "delivery-ls-2026-002", number: "LS-2026-002", customer: "Musterkunde GmbH", order: "AU-2026-002", status: "Versandbereit", badgeVariant: undefined },
+    { id: "delivery-ls-2026-003", number: "LS-2026-003", customer: "Beispiel AG", order: "AU-2026-003", status: "Geliefert", badgeVariant: "success" as const },
   ],
   Entwurf: [
-    {
-      number: "LS-2026-001",
-      customer: "Sonnendruck GmbH",
-      order: "AU-2026-001",
-      status: "Entwurf",
-      badgeVariant: "success" as const,
-    },
+    { id: "delivery-ls-2026-001", number: "LS-2026-001", customer: "Sonnendruck GmbH", order: "AU-2026-001", status: "Entwurf", badgeVariant: "success" as const },
   ],
   Versandbereit: [
-    {
-      number: "LS-2026-002",
-      customer: "Musterkunde GmbH",
-      order: "AU-2026-002",
-      status: "Versandbereit",
-      badgeVariant: undefined,
-    },
+    { id: "delivery-ls-2026-002", number: "LS-2026-002", customer: "Musterkunde GmbH", order: "AU-2026-002", status: "Versandbereit", badgeVariant: undefined },
   ],
   Geliefert: [
-    {
-      number: "LS-2026-003",
-      customer: "Beispiel AG",
-      order: "AU-2026-003",
-      status: "Geliefert",
-      badgeVariant: "success" as const,
-    },
+    { id: "delivery-ls-2026-003", number: "LS-2026-003", customer: "Beispiel AG", order: "AU-2026-003", status: "Geliefert", badgeVariant: "success" as const },
   ],
   Abgeschlossen: [
-    {
-      number: "LS-2026-008",
-      customer: "Druckpartner Süd",
-      order: "AU-2026-008",
-      status: "Abgeschlossen",
-      badgeVariant: "success" as const,
-    },
+    { id: "delivery-ls-2026-008", number: "LS-2026-008", customer: "Druckpartner Süd", order: "AU-2026-008", status: "Abgeschlossen", badgeVariant: "success" as const },
   ],
 };
 
 function getDeliveryTitle(tab: DeliveryTab) {
   switch (tab) {
-    case "Liste":
-      return "Lieferschein vorbereiten";
-    case "Entwurf":
-      return "Lieferscheinentwurf bearbeiten";
-    case "Versandbereit":
-      return "Versandbereiten Lieferschein prüfen";
-    case "Geliefert":
-      return "Gelieferten Lieferschein prüfen";
-    case "Abgeschlossen":
-      return "Abgeschlossenen Lieferschein";
+    case "Liste": return "Lieferschein vorbereiten";
+    case "Entwurf": return "Lieferscheinentwurf bearbeiten";
+    case "Versandbereit": return "Versandbereiten Lieferschein prüfen";
+    case "Geliefert": return "Gelieferten Lieferschein prüfen";
+    case "Abgeschlossen": return "Abgeschlossenen Lieferschein";
   }
 }
 
@@ -107,36 +61,38 @@ function isDeliveryTab(tab: string): tab is DeliveryTab {
 
 export function DeliveryNotesPage() {
   const module = getModuleConfig("delivery-notes");
+
   const [activeTab, setActiveTab] = useState<DeliveryTab>("Liste");
+  const [selectedId, setSelectedId] = useState(
+    deliveryRowsByTab.Liste[0]?.id ?? "",
+  );
+
   const deliveryRows = deliveryRowsByTab[activeTab];
-  const selectedDeliveryNote = deliveryRows[0];
+  const selectedDeliveryNote =
+    deliveryRows.find((deliveryNote) => deliveryNote.id === selectedId) ??
+    deliveryRows[0];
 
   function handleTabChange(tab: string) {
     if (isDeliveryTab(tab)) {
+      const nextRows = deliveryRowsByTab[tab];
+
       setActiveTab(tab);
+      setSelectedId(nextRows[0]?.id ?? "");
     }
+  }
+
+  function handleDeliveryNoteSelect(deliveryNoteId: string) {
+    setSelectedId(deliveryNoteId);
   }
 
   return (
     <div className="page">
-      <PageHeader
-        title={module.title}
-        description={module.description}
-        actionLabel={module.actionLabel}
-      />
+      <PageHeader title={module.title} description={module.description} actionLabel={module.actionLabel} />
 
-      <PageTabs
-        tabs={[...deliveryTabs]}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
+      <PageTabs tabs={[...deliveryTabs]} activeTab={activeTab} onTabChange={handleTabChange} />
 
       <section className="calculation-sheet">
-        <WorkspaceHeader
-          kicker="Lieferscheinmaske"
-          title={getDeliveryTitle(activeTab)}
-          statusValue={getDeliveryStatus(activeTab)}
-        />
+        <WorkspaceHeader kicker="Lieferscheinmaske" title={getDeliveryTitle(activeTab)} statusValue={getDeliveryStatus(activeTab)} />
 
         <div className="master-detail-layout">
           <section className="workspace-panel master-list-panel">
@@ -156,19 +112,24 @@ export function DeliveryNotesPage() {
               </thead>
 
               <tbody>
-                {deliveryRows.map((deliveryNote, index) => (
-                  <tr
-                    key={deliveryNote.number}
-                    className={index === 0 ? "data-table-row-selected" : undefined}
-                  >
-                    <td>{deliveryNote.number}</td>
-                    <td>{deliveryNote.customer}</td>
-                    <td>{deliveryNote.order}</td>
-                    <td>
-                      <Badge variant={deliveryNote.badgeVariant}>{deliveryNote.status}</Badge>
-                    </td>
-                  </tr>
-                ))}
+                {deliveryRows.map((deliveryNote) => {
+                  const isSelected = deliveryNote.id === selectedDeliveryNote?.id;
+
+                  return (
+                    <tr
+                      key={deliveryNote.id}
+                      className={isSelected ? "data-table-row-selected" : undefined}
+                      onClick={() => handleDeliveryNoteSelect(deliveryNote.id)}
+                    >
+                      <td>{deliveryNote.number}</td>
+                      <td>{deliveryNote.customer}</td>
+                      <td>{deliveryNote.order}</td>
+                      <td>
+                        <Badge variant={deliveryNote.badgeVariant}>{deliveryNote.status}</Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </DataTable>
           </section>
@@ -178,26 +139,20 @@ export function DeliveryNotesPage() {
 
             <FieldGrid>
               <Field label="Lieferscheinnummer">
-                <Input value={selectedDeliveryNote.number} readOnly />
-              </Field>
-
-              <Field label="Quelle">
-                <Input value={selectedDeliveryNote.order} readOnly />
+                <Input value={selectedDeliveryNote?.number ?? ""} readOnly />
               </Field>
 
               <Field label="Kunde">
-                <Input value={selectedDeliveryNote.customer} readOnly />
+                <Input value={selectedDeliveryNote?.customer ?? ""} readOnly />
               </Field>
 
-              <Field label="Lieferdatum">
-                <Input type="date" />
+              <Field label="Auftrag">
+                <Input value={selectedDeliveryNote?.order ?? ""} readOnly />
               </Field>
 
               <Field label="Versandart">
                 <Select defaultValue="">
-                  <option value="" disabled>
-                    Versandart wählen
-                  </option>
+                  <option value="" disabled>Versandart wählen</option>
                   <option>Abholung</option>
                   <option>Auslieferung</option>
                   <option>Paketdienst</option>
@@ -206,14 +161,10 @@ export function DeliveryNotesPage() {
               </Field>
 
               <Field label="Status">
-                <Select
-                  value={getDeliveryStatus(activeTab)}
-                  onChange={(event) => handleTabChange(event.target.value)}
-                >
-                  <option>Entwurf</option>
-                  <option>Versandbereit</option>
-                  <option>Geliefert</option>
-                  <option>Abgeschlossen</option>
+                <Select value={activeTab} onChange={(event) => handleTabChange(event.target.value)}>
+                  {deliveryTabs.map((tab) => (
+                    <option key={tab}>{tab}</option>
+                  ))}
                 </Select>
               </Field>
             </FieldGrid>
@@ -221,70 +172,52 @@ export function DeliveryNotesPage() {
             <SectionHeader>Lieferadresse</SectionHeader>
 
             <FieldGrid>
-              <Field label="Firma / Name">
-                <Input value={selectedDeliveryNote.customer} readOnly />
+              <Field label="Empfänger">
+                <Input value={selectedDeliveryNote?.customer ?? ""} readOnly />
               </Field>
 
-              <Field label="Straße">
-                <Input placeholder="Straße und Hausnummer" />
-              </Field>
-
-              <Field label="PLZ / Ort">
-                <Input placeholder="PLZ und Ort" />
+              <Field label="Adresse">
+                <Input placeholder="Lieferadresse" />
               </Field>
             </FieldGrid>
 
             <SectionHeader>Positionen</SectionHeader>
 
-            <div className="master-position-table">
-              <DataTable>
-                <thead>
-                  <tr>
-                    <th>Pos.</th>
-                    <th>Bezeichnung</th>
-                    <th>Menge</th>
-                    <th>Einheit</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr>
-                    <td>1</td>
-                    <td>Produkt aus Auftrag übernehmen</td>
-                    <td>—</td>
-                    <td>Stk.</td>
-                  </tr>
-
-                  <tr>
-                    <td>2</td>
-                    <td>Verpackungseinheit</td>
-                    <td>—</td>
-                    <td>Karton</td>
-                  </tr>
-                </tbody>
-              </DataTable>
-            </div>
+            <DataTable>
+              <thead>
+                <tr>
+                  <th>Pos.</th>
+                  <th>Bezeichnung</th>
+                  <th>Menge</th>
+                  <th>Einheit</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>1</td>
+                  <td>Produkt aus Auftrag übernehmen</td>
+                  <td>—</td>
+                  <td>Stk.</td>
+                </tr>
+                <tr>
+                  <td>2</td>
+                  <td>Verpackungseinheit</td>
+                  <td>—</td>
+                  <td>Karton</td>
+                </tr>
+              </tbody>
+            </DataTable>
 
             <SectionHeader>Ausgabe</SectionHeader>
 
             <FieldGrid>
-              <Field label="Lieferscheinvorlage">
+              <Field label="Vorlage">
                 <Select defaultValue="">
-                  <option value="" disabled>
-                    Vorlage wählen
-                  </option>
+                  <option value="" disabled>Vorlage wählen</option>
                   <option>Standardlieferschein</option>
                   <option>Neutraler Lieferschein</option>
                   <option>Technischer Lieferschein</option>
                 </Select>
-              </Field>
-
-              <Field label="Packhinweis">
-                <Input placeholder="Optional" />
-              </Field>
-
-              <Field label="Interne Notiz">
-                <Input placeholder="Optional" />
               </Field>
             </FieldGrid>
 

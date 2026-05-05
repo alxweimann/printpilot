@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -18,42 +19,36 @@ type ServiceTab = (typeof serviceTabs)[number];
 
 const serviceRowsByTab = {
   Liste: [
-    { name: "Datenprüfung", group: "Vorstufe", unit: "pauschal", status: "Aktiv", badgeVariant: "success" as const },
-    { name: "Grafische Anpassung", group: "Satz / Layout", unit: "pro Stunde", status: "Aktiv", badgeVariant: undefined },
-    { name: "Expresszuschlag", group: "Zuschlag", unit: "pauschal", status: "Aktiv", badgeVariant: undefined },
+    { id: "service-datenpruefung", name: "Datenprüfung", group: "Vorstufe", unit: "pauschal", status: "Aktiv", badgeVariant: "success" as const },
+    { id: "service-grafische-anpassung", name: "Grafische Anpassung", group: "Satz / Layout", unit: "pro Stunde", status: "Aktiv", badgeVariant: undefined },
+    { id: "service-expresszuschlag", name: "Expresszuschlag", group: "Zuschlag", unit: "pauschal", status: "Aktiv", badgeVariant: undefined },
   ],
   Vorstufe: [
-    { name: "Datenprüfung", group: "Vorstufe", unit: "pauschal", status: "Aktiv", badgeVariant: "success" as const },
-    { name: "PDF-Korrektur", group: "Vorstufe", unit: "pro Stunde", status: "Aktiv", badgeVariant: undefined },
+    { id: "service-datenpruefung", name: "Datenprüfung", group: "Vorstufe", unit: "pauschal", status: "Aktiv", badgeVariant: "success" as const },
+    { id: "service-pdf-korrektur", name: "PDF-Korrektur", group: "Vorstufe", unit: "pro Stunde", status: "Aktiv", badgeVariant: undefined },
   ],
   "Satz / Layout": [
-    { name: "Grafische Anpassung", group: "Satz / Layout", unit: "pro Stunde", status: "Aktiv", badgeVariant: undefined },
+    { id: "service-grafische-anpassung", name: "Grafische Anpassung", group: "Satz / Layout", unit: "pro Stunde", status: "Aktiv", badgeVariant: undefined },
   ],
   Produktion: [
-    { name: "Produktionspauschale", group: "Produktion", unit: "pro Auftrag", status: "Aktiv", badgeVariant: undefined },
+    { id: "service-produktionspauschale", name: "Produktionspauschale", group: "Produktion", unit: "pro Auftrag", status: "Aktiv", badgeVariant: undefined },
   ],
   Zuschlag: [
-    { name: "Expresszuschlag", group: "Zuschlag", unit: "pauschal", status: "Aktiv", badgeVariant: undefined },
+    { id: "service-expresszuschlag", name: "Expresszuschlag", group: "Zuschlag", unit: "pauschal", status: "Aktiv", badgeVariant: undefined },
   ],
   Sonstiges: [
-    { name: "Sonderleistung", group: "Sonstiges", unit: "pauschal", status: "Entwurf", badgeVariant: undefined },
+    { id: "service-sonderleistung", name: "Sonderleistung", group: "Sonstiges", unit: "pauschal", status: "Entwurf", badgeVariant: undefined },
   ],
 };
 
 function getServiceTitle(tab: ServiceTab) {
   switch (tab) {
-    case "Liste":
-      return "Leistung verwalten";
-    case "Vorstufe":
-      return "Vorstufenleistung verwalten";
-    case "Satz / Layout":
-      return "Satz- und Layoutleistung verwalten";
-    case "Produktion":
-      return "Produktionsleistung verwalten";
-    case "Zuschlag":
-      return "Zuschlag verwalten";
-    case "Sonstiges":
-      return "Sonstige Leistung verwalten";
+    case "Liste": return "Leistung verwalten";
+    case "Vorstufe": return "Vorstufenleistung verwalten";
+    case "Satz / Layout": return "Satz- und Layoutleistung verwalten";
+    case "Produktion": return "Produktionsleistung verwalten";
+    case "Zuschlag": return "Zuschlag verwalten";
+    case "Sonstiges": return "Sonstige Leistung verwalten";
   }
 }
 
@@ -71,36 +66,38 @@ function isServiceTab(tab: string): tab is ServiceTab {
 
 export function ServicesPage() {
   const module = getModuleConfig("services");
+
   const [activeTab, setActiveTab] = useState<ServiceTab>("Liste");
+  const [selectedId, setSelectedId] = useState(
+    serviceRowsByTab.Liste[0]?.id ?? "",
+  );
+
   const serviceRows = serviceRowsByTab[activeTab];
-  const selectedService = serviceRows[0];
+  const selectedService =
+    serviceRows.find((service) => service.id === selectedId) ??
+    serviceRows[0];
 
   function handleTabChange(tab: string) {
     if (isServiceTab(tab)) {
+      const nextRows = serviceRowsByTab[tab];
+
       setActiveTab(tab);
+      setSelectedId(nextRows[0]?.id ?? "");
     }
+  }
+
+  function handleServiceSelect(serviceId: string) {
+    setSelectedId(serviceId);
   }
 
   return (
     <div className="page">
-      <PageHeader
-        title={module.title}
-        description={module.description}
-        actionLabel={module.actionLabel}
-      />
+      <PageHeader title={module.title} description={module.description} actionLabel={module.actionLabel} />
 
-      <PageTabs
-        tabs={[...serviceTabs]}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
+      <PageTabs tabs={[...serviceTabs]} activeTab={activeTab} onTabChange={handleTabChange} />
 
       <section className="calculation-sheet">
-        <WorkspaceHeader
-          kicker="Leistungsmaske"
-          title={getServiceTitle(activeTab)}
-          statusValue="Aktiv"
-        />
+        <WorkspaceHeader kicker="Leistungsmaske" title={getServiceTitle(activeTab)} statusValue={getServiceGroup(activeTab) || "Aktiv"} />
 
         <div className="master-detail-layout">
           <section className="workspace-panel master-list-panel">
@@ -120,19 +117,24 @@ export function ServicesPage() {
               </thead>
 
               <tbody>
-                {serviceRows.map((service, index) => (
-                  <tr
-                    key={service.name}
-                    className={index === 0 ? "data-table-row-selected" : undefined}
-                  >
-                    <td>{service.name}</td>
-                    <td>{service.group}</td>
-                    <td>{service.unit}</td>
-                    <td>
-                      <Badge variant={service.badgeVariant}>{service.status}</Badge>
-                    </td>
-                  </tr>
-                ))}
+                {serviceRows.map((service) => {
+                  const isSelected = service.id === selectedService?.id;
+
+                  return (
+                    <tr
+                      key={service.id}
+                      className={isSelected ? "data-table-row-selected" : undefined}
+                      onClick={() => handleServiceSelect(service.id)}
+                    >
+                      <td>{service.name}</td>
+                      <td>{service.group}</td>
+                      <td>{service.unit}</td>
+                      <td>
+                        <Badge variant={service.badgeVariant}>{service.status}</Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </DataTable>
           </section>
@@ -141,22 +143,13 @@ export function ServicesPage() {
             <SectionHeader>Leistungsdaten</SectionHeader>
 
             <FieldGrid>
-              <Field label="Leistungsnummer">
-                <Input value="LS-0001" readOnly />
+              <Field label="Leistung">
+                <Input value={selectedService?.name ?? ""} readOnly />
               </Field>
 
-              <Field label="Bezeichnung">
-                <Input value={selectedService.name} readOnly />
-              </Field>
-
-              <Field label="Leistungsgruppe">
-                <Select
-                  value={selectedService.group}
-                  onChange={(event) => handleTabChange(event.target.value)}
-                >
-                  <option value="" disabled>
-                    Gruppe wählen
-                  </option>
+              <Field label="Gruppe">
+                <Select value={getServiceGroup(activeTab) || selectedService?.group || ""} onChange={(event) => handleTabChange(event.target.value)}>
+                  <option value="" disabled>Gruppe wählen</option>
                   <option>Vorstufe</option>
                   <option>Satz / Layout</option>
                   <option>Produktion</option>
@@ -166,10 +159,8 @@ export function ServicesPage() {
               </Field>
 
               <Field label="Einheit">
-                <Select value={selectedService.unit} onChange={() => undefined}>
-                  <option value="" disabled>
-                    Einheit wählen
-                  </option>
+                <Select defaultValue={selectedService?.unit ?? ""}>
+                  <option value="" disabled>Einheit wählen</option>
                   <option>pauschal</option>
                   <option>pro Stunde</option>
                   <option>pro Stück</option>
@@ -178,17 +169,17 @@ export function ServicesPage() {
               </Field>
 
               <Field label="Status">
-                <Select defaultValue="Aktiv">
+                <Select defaultValue={selectedService?.status ?? "Aktiv"}>
                   <option>Aktiv</option>
                   <option>Entwurf</option>
                   <option>Gesperrt</option>
                 </Select>
               </Field>
 
-              <Field label="In Angebot anzeigen">
-                <Select defaultValue="Ja">
-                  <option>Ja</option>
+              <Field label="Optional">
+                <Select defaultValue="Nein">
                   <option>Nein</option>
+                  <option>Ja</option>
                   <option>Optional</option>
                 </Select>
               </Field>
@@ -197,32 +188,12 @@ export function ServicesPage() {
             <SectionHeader>Preise</SectionHeader>
 
             <FieldGrid>
-              <Field label="Standardpreis">
-                <Input inputMode="decimal" placeholder="z. B. 25,00" />
+              <Field label="Preis">
+                <Input placeholder="0,00 €" />
               </Field>
 
-              <Field label="Mindestpreis">
-                <Input inputMode="decimal" placeholder="Optional" />
-              </Field>
-
-              <Field label="Kostenbasis">
-                <Input inputMode="decimal" placeholder="interner Kostenwert" />
-              </Field>
-            </FieldGrid>
-
-            <SectionHeader>Beschreibung</SectionHeader>
-
-            <FieldGrid>
-              <Field label="Kurztext">
-                <Input placeholder="Text für Angebot / Rechnung" />
-              </Field>
-
-              <Field label="Interne Notiz">
-                <Input placeholder="Optional" />
-              </Field>
-
-              <Field label="Sortierung">
-                <Input inputMode="numeric" placeholder="z. B. 10" />
+              <Field label="Beschreibung">
+                <Input placeholder="Beschreibung" />
               </Field>
             </FieldGrid>
 

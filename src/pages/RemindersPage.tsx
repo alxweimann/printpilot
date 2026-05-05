@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -18,78 +19,31 @@ type ReminderTab = (typeof reminderTabs)[number];
 
 const reminderRowsByTab = {
   Liste: [
-    {
-      number: "MA-2026-001",
-      customer: "Sonnendruck GmbH",
-      invoice: "RE-2026-001",
-      status: "Entwurf",
-      badgeVariant: "success" as const,
-    },
-    {
-      number: "MA-2026-002",
-      customer: "Musterkunde GmbH",
-      invoice: "RE-2026-002",
-      status: "Offen",
-      badgeVariant: undefined,
-    },
-    {
-      number: "MA-2026-003",
-      customer: "Beispiel AG",
-      invoice: "RE-2026-003",
-      status: "Versendet",
-      badgeVariant: undefined,
-    },
+    { id: "reminder-ma-2026-001", number: "MA-2026-001", customer: "Sonnendruck GmbH", invoice: "RE-2026-001", status: "Entwurf", badgeVariant: "success" as const },
+    { id: "reminder-ma-2026-002", number: "MA-2026-002", customer: "Musterkunde GmbH", invoice: "RE-2026-002", status: "Offen", badgeVariant: undefined },
+    { id: "reminder-ma-2026-003", number: "MA-2026-003", customer: "Beispiel AG", invoice: "RE-2026-003", status: "Versendet", badgeVariant: undefined },
   ],
   Entwurf: [
-    {
-      number: "MA-2026-001",
-      customer: "Sonnendruck GmbH",
-      invoice: "RE-2026-001",
-      status: "Entwurf",
-      badgeVariant: "success" as const,
-    },
+    { id: "reminder-ma-2026-001", number: "MA-2026-001", customer: "Sonnendruck GmbH", invoice: "RE-2026-001", status: "Entwurf", badgeVariant: "success" as const },
   ],
   Offen: [
-    {
-      number: "MA-2026-002",
-      customer: "Musterkunde GmbH",
-      invoice: "RE-2026-002",
-      status: "Offen",
-      badgeVariant: undefined,
-    },
+    { id: "reminder-ma-2026-002", number: "MA-2026-002", customer: "Musterkunde GmbH", invoice: "RE-2026-002", status: "Offen", badgeVariant: undefined },
   ],
   Versendet: [
-    {
-      number: "MA-2026-003",
-      customer: "Beispiel AG",
-      invoice: "RE-2026-003",
-      status: "Versendet",
-      badgeVariant: undefined,
-    },
+    { id: "reminder-ma-2026-003", number: "MA-2026-003", customer: "Beispiel AG", invoice: "RE-2026-003", status: "Versendet", badgeVariant: undefined },
   ],
   Erledigt: [
-    {
-      number: "MA-2026-008",
-      customer: "Druckpartner Süd",
-      invoice: "RE-2026-008",
-      status: "Erledigt",
-      badgeVariant: "success" as const,
-    },
+    { id: "reminder-ma-2026-008", number: "MA-2026-008", customer: "Druckpartner Süd", invoice: "RE-2026-008", status: "Erledigt", badgeVariant: "success" as const },
   ],
 };
 
 function getReminderTitle(tab: ReminderTab) {
   switch (tab) {
-    case "Liste":
-      return "Mahnung vorbereiten";
-    case "Entwurf":
-      return "Mahnungsentwurf bearbeiten";
-    case "Offen":
-      return "Offene Mahnung prüfen";
-    case "Versendet":
-      return "Versendete Mahnung prüfen";
-    case "Erledigt":
-      return "Erledigte Mahnung";
+    case "Liste": return "Mahnung vorbereiten";
+    case "Entwurf": return "Mahnungsentwurf bearbeiten";
+    case "Offen": return "Offene Mahnung prüfen";
+    case "Versendet": return "Versendete Mahnung prüfen";
+    case "Erledigt": return "Erledigte Mahnung";
   }
 }
 
@@ -107,36 +61,38 @@ function isReminderTab(tab: string): tab is ReminderTab {
 
 export function RemindersPage() {
   const module = getModuleConfig("reminders");
+
   const [activeTab, setActiveTab] = useState<ReminderTab>("Liste");
+  const [selectedId, setSelectedId] = useState(
+    reminderRowsByTab.Liste[0]?.id ?? "",
+  );
+
   const reminderRows = reminderRowsByTab[activeTab];
-  const selectedReminder = reminderRows[0];
+  const selectedReminder =
+    reminderRows.find((reminder) => reminder.id === selectedId) ??
+    reminderRows[0];
 
   function handleTabChange(tab: string) {
     if (isReminderTab(tab)) {
+      const nextRows = reminderRowsByTab[tab];
+
       setActiveTab(tab);
+      setSelectedId(nextRows[0]?.id ?? "");
     }
+  }
+
+  function handleReminderSelect(reminderId: string) {
+    setSelectedId(reminderId);
   }
 
   return (
     <div className="page">
-      <PageHeader
-        title={module.title}
-        description={module.description}
-        actionLabel={module.actionLabel}
-      />
+      <PageHeader title={module.title} description={module.description} actionLabel={module.actionLabel} />
 
-      <PageTabs
-        tabs={[...reminderTabs]}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
+      <PageTabs tabs={[...reminderTabs]} activeTab={activeTab} onTabChange={handleTabChange} />
 
       <section className="calculation-sheet">
-        <WorkspaceHeader
-          kicker="Mahnmaske"
-          title={getReminderTitle(activeTab)}
-          statusValue={getReminderStatus(activeTab)}
-        />
+        <WorkspaceHeader kicker="Mahnmaske" title={getReminderTitle(activeTab)} statusValue={getReminderStatus(activeTab)} />
 
         <div className="master-detail-layout">
           <section className="workspace-panel master-list-panel">
@@ -156,19 +112,24 @@ export function RemindersPage() {
               </thead>
 
               <tbody>
-                {reminderRows.map((reminder, index) => (
-                  <tr
-                    key={reminder.number}
-                    className={index === 0 ? "data-table-row-selected" : undefined}
-                  >
-                    <td>{reminder.number}</td>
-                    <td>{reminder.customer}</td>
-                    <td>{reminder.invoice}</td>
-                    <td>
-                      <Badge variant={reminder.badgeVariant}>{reminder.status}</Badge>
-                    </td>
-                  </tr>
-                ))}
+                {reminderRows.map((reminder) => {
+                  const isSelected = reminder.id === selectedReminder?.id;
+
+                  return (
+                    <tr
+                      key={reminder.id}
+                      className={isSelected ? "data-table-row-selected" : undefined}
+                      onClick={() => handleReminderSelect(reminder.id)}
+                    >
+                      <td>{reminder.number}</td>
+                      <td>{reminder.customer}</td>
+                      <td>{reminder.invoice}</td>
+                      <td>
+                        <Badge variant={reminder.badgeVariant}>{reminder.status}</Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </DataTable>
           </section>
@@ -177,35 +138,23 @@ export function RemindersPage() {
             <SectionHeader>Mahnkopf</SectionHeader>
 
             <FieldGrid>
-              <Field label="Mahnnummer">
-                <Input value={selectedReminder.number} readOnly />
-              </Field>
-
-              <Field label="Quelle">
-                <Input value={selectedReminder.invoice} readOnly />
+              <Field label="Mahnung">
+                <Input value={selectedReminder?.number ?? ""} readOnly />
               </Field>
 
               <Field label="Kunde">
-                <Input value={selectedReminder.customer} readOnly />
+                <Input value={selectedReminder?.customer ?? ""} readOnly />
               </Field>
 
               <Field label="Rechnung">
-                <Input value={selectedReminder.invoice} readOnly />
-              </Field>
-
-              <Field label="Mahndatum">
-                <Input type="date" />
+                <Input value={selectedReminder?.invoice ?? ""} readOnly />
               </Field>
 
               <Field label="Status">
-                <Select
-                  value={getReminderStatus(activeTab)}
-                  onChange={(event) => handleTabChange(event.target.value)}
-                >
-                  <option>Entwurf</option>
-                  <option>Offen</option>
-                  <option>Versendet</option>
-                  <option>Erledigt</option>
+                <Select value={activeTab} onChange={(event) => handleTabChange(event.target.value)}>
+                  {reminderTabs.map((tab) => (
+                    <option key={tab}>{tab}</option>
+                  ))}
                 </Select>
               </Field>
             </FieldGrid>
@@ -215,9 +164,7 @@ export function RemindersPage() {
             <FieldGrid>
               <Field label="Mahnstufe">
                 <Select defaultValue="">
-                  <option value="" disabled>
-                    Mahnstufe wählen
-                  </option>
+                  <option value="" disabled>Mahnstufe wählen</option>
                   <option>Zahlungserinnerung</option>
                   <option>1. Mahnung</option>
                   <option>2. Mahnung</option>
@@ -225,42 +172,26 @@ export function RemindersPage() {
                 </Select>
               </Field>
 
-              <Field label="Fällig seit">
-                <Input placeholder="später aus Rechnung" disabled />
-              </Field>
-
-              <Field label="Offener Betrag">
-                <Input placeholder="später aus Rechnung" disabled />
+              <Field label="Frist">
+                <Select defaultValue="">
+                  <option value="" disabled>Frist wählen</option>
+                  <option>7 Tage</option>
+                  <option>10 Tage</option>
+                  <option>14 Tage</option>
+                </Select>
               </Field>
             </FieldGrid>
 
             <SectionHeader>Ausgabe</SectionHeader>
 
             <FieldGrid>
-              <Field label="Mahnvorlage">
+              <Field label="Vorlage">
                 <Select defaultValue="">
-                  <option value="" disabled>
-                    Vorlage wählen
-                  </option>
+                  <option value="" disabled>Vorlage wählen</option>
                   <option>Zahlungserinnerung</option>
                   <option>Standardmahnung</option>
                   <option>Letzte Mahnung</option>
                 </Select>
-              </Field>
-
-              <Field label="Frist">
-                <Select defaultValue="">
-                  <option value="" disabled>
-                    Frist wählen
-                  </option>
-                  <option>7 Tage</option>
-                  <option>10 Tage</option>
-                  <option>14 Tage</option>
-                </Select>
-              </Field>
-
-              <Field label="Interne Notiz">
-                <Input placeholder="Optional" />
               </Field>
             </FieldGrid>
 

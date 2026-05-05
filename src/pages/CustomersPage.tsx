@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -19,6 +20,8 @@ type CustomerTab = (typeof customerTabs)[number];
 const customerRowsByTab = {
   Liste: [
     {
+      id: "customer-sonnendruck",
+      number: "KD-0001",
       name: "Sonnendruck GmbH",
       city: "Wiesloch",
       phone: "—",
@@ -26,6 +29,8 @@ const customerRowsByTab = {
       badgeVariant: "success" as const,
     },
     {
+      id: "customer-musterkunde",
+      number: "KD-0002",
       name: "Musterkunde GmbH",
       city: "Heidelberg",
       phone: "—",
@@ -33,6 +38,8 @@ const customerRowsByTab = {
       badgeVariant: undefined,
     },
     {
+      id: "customer-beispiel-ag",
+      number: "KD-0003",
       name: "Beispiel AG",
       city: "Mannheim",
       phone: "—",
@@ -42,6 +49,8 @@ const customerRowsByTab = {
   ],
   Aktiv: [
     {
+      id: "customer-sonnendruck",
+      number: "KD-0001",
       name: "Sonnendruck GmbH",
       city: "Wiesloch",
       phone: "—",
@@ -49,6 +58,8 @@ const customerRowsByTab = {
       badgeVariant: "success" as const,
     },
     {
+      id: "customer-beispiel-ag",
+      number: "KD-0003",
       name: "Beispiel AG",
       city: "Mannheim",
       phone: "—",
@@ -58,6 +69,8 @@ const customerRowsByTab = {
   ],
   Entwurf: [
     {
+      id: "customer-musterkunde",
+      number: "KD-0002",
       name: "Musterkunde GmbH",
       city: "Heidelberg",
       phone: "—",
@@ -67,6 +80,8 @@ const customerRowsByTab = {
   ],
   Gesperrt: [
     {
+      id: "customer-testkunde",
+      number: "KD-0004",
       name: "Testkunde KG",
       city: "Karlsruhe",
       phone: "—",
@@ -103,14 +118,28 @@ function isCustomerTab(tab: string): tab is CustomerTab {
 
 export function CustomersPage() {
   const module = getModuleConfig("customers");
+
   const [activeTab, setActiveTab] = useState<CustomerTab>("Liste");
+  const [selectedId, setSelectedId] = useState(
+    customerRowsByTab.Liste[0]?.id ?? "",
+  );
+
   const customerRows = customerRowsByTab[activeTab];
-  const selectedCustomer = customerRows[0];
+  const selectedCustomer =
+    customerRows.find((customer) => customer.id === selectedId) ??
+    customerRows[0];
 
   function handleTabChange(tab: string) {
     if (isCustomerTab(tab)) {
+      const nextRows = customerRowsByTab[tab];
+
       setActiveTab(tab);
+      setSelectedId(nextRows[0]?.id ?? "");
     }
+  }
+
+  function handleCustomerSelect(customerId: string) {
+    setSelectedId(customerId);
   }
 
   return (
@@ -152,19 +181,28 @@ export function CustomersPage() {
               </thead>
 
               <tbody>
-                {customerRows.map((customer, index) => (
-                  <tr
-                    key={customer.name}
-                    className={index === 0 ? "data-table-row-selected" : undefined}
-                  >
-                    <td>{customer.name}</td>
-                    <td>{customer.city}</td>
-                    <td>{customer.phone}</td>
-                    <td>
-                      <Badge variant={customer.badgeVariant}>{customer.status}</Badge>
-                    </td>
-                  </tr>
-                ))}
+                {customerRows.map((customer) => {
+                  const isSelected = customer.id === selectedCustomer?.id;
+
+                  return (
+                    <tr
+                      key={customer.id}
+                      className={
+                        isSelected ? "data-table-row-selected" : undefined
+                      }
+                      onClick={() => handleCustomerSelect(customer.id)}
+                    >
+                      <td>{customer.name}</td>
+                      <td>{customer.city}</td>
+                      <td>{customer.phone}</td>
+                      <td>
+                        <Badge variant={customer.badgeVariant}>
+                          {customer.status}
+                        </Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </DataTable>
           </section>
@@ -174,11 +212,11 @@ export function CustomersPage() {
 
             <FieldGrid>
               <Field label="Kundennummer">
-                <Input value="KD-0001" readOnly />
+                <Input value={selectedCustomer?.number ?? ""} readOnly />
               </Field>
 
               <Field label="Firma">
-                <Input value={selectedCustomer.name} readOnly />
+                <Input value={selectedCustomer?.name ?? ""} readOnly />
               </Field>
 
               <Field label="Kundentyp">
@@ -202,7 +240,7 @@ export function CustomersPage() {
               </Field>
 
               <Field label="Ort">
-                <Input value={selectedCustomer.city} readOnly />
+                <Input value={selectedCustomer?.city ?? ""} readOnly />
               </Field>
             </FieldGrid>
 
@@ -214,7 +252,7 @@ export function CustomersPage() {
               </Field>
 
               <Field label="Telefon">
-                <Input value={selectedCustomer.phone} readOnly />
+                <Input value={selectedCustomer?.phone ?? ""} readOnly />
               </Field>
 
               <Field label="E-Mail">
@@ -248,13 +286,10 @@ export function CustomersPage() {
               </Field>
 
               <Field label="Status">
-                <Select
-                  value={getCustomerStatus(activeTab)}
-                  onChange={(event) => handleTabChange(event.target.value)}
-                >
-                  <option>Aktiv</option>
-                  <option>Entwurf</option>
-                  <option>Gesperrt</option>
+                <Select value={activeTab} onChange={(event) => handleTabChange(event.target.value)}>
+                  {customerTabs.map((tab) => (
+                    <option key={tab}>{tab}</option>
+                  ))}
                 </Select>
               </Field>
             </FieldGrid>

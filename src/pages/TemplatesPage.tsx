@@ -1,4 +1,5 @@
 import { useState } from "react";
+
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -18,85 +19,32 @@ type TemplateTab = (typeof templateTabs)[number];
 
 const templateRowsByTab = {
   Produkte: [
-    {
-      name: "Broschüre A4 Standard",
-      type: "Produkt",
-      area: "Kalkulation",
-      status: "Aktiv",
-      badgeVariant: "success" as const,
-    },
-    {
-      name: "Flyer A5 Standard",
-      type: "Produkt",
-      area: "Kalkulation",
-      status: "Aktiv",
-      badgeVariant: undefined,
-    },
+    { id: "template-broschuere-a4-standard", name: "Broschüre A4 Standard", type: "Produkt", area: "Kalkulation", status: "Aktiv", badgeVariant: "success" as const },
+    { id: "template-flyer-a5-standard", name: "Flyer A5 Standard", type: "Produkt", area: "Kalkulation", status: "Aktiv", badgeVariant: undefined },
   ],
   Dokumente: [
-    {
-      name: "Standardangebot",
-      type: "Dokument",
-      area: "Angebote",
-      status: "Aktiv",
-      badgeVariant: "success" as const,
-    },
-    {
-      name: "Rechnung Standard",
-      type: "Dokument",
-      area: "Rechnungen",
-      status: "Aktiv",
-      badgeVariant: undefined,
-    },
+    { id: "template-standardangebot", name: "Standardangebot", type: "Dokument", area: "Angebote", status: "Aktiv", badgeVariant: "success" as const },
+    { id: "template-rechnung-standard", name: "Rechnung Standard", type: "Dokument", area: "Rechnungen", status: "Aktiv", badgeVariant: undefined },
   ],
   Textbausteine: [
-    {
-      name: "Zahlungsbedingungen Standard",
-      type: "Textbaustein",
-      area: "Angebote",
-      status: "Aktiv",
-      badgeVariant: "success" as const,
-    },
-    {
-      name: "Lieferhinweis Standard",
-      type: "Textbaustein",
-      area: "Lieferscheine",
-      status: "Aktiv",
-      badgeVariant: undefined,
-    },
+    { id: "template-zahlungsbedingungen-standard", name: "Zahlungsbedingungen Standard", type: "Textbaustein", area: "Angebote", status: "Aktiv", badgeVariant: "success" as const },
+    { id: "template-lieferhinweis-standard", name: "Lieferhinweis Standard", type: "Textbaustein", area: "Lieferscheine", status: "Aktiv", badgeVariant: undefined },
   ],
   Layouts: [
-    {
-      name: "Dokumentlayout Standard",
-      type: "Layout",
-      area: "Dokumente",
-      status: "Aktiv",
-      badgeVariant: "success" as const,
-    },
+    { id: "template-dokumentlayout-standard", name: "Dokumentlayout Standard", type: "Layout", area: "Dokumente", status: "Aktiv", badgeVariant: "success" as const },
   ],
   Entwurf: [
-    {
-      name: "Rechnung Modern",
-      type: "Dokument",
-      area: "Rechnungen",
-      status: "Entwurf",
-      badgeVariant: undefined,
-    },
+    { id: "template-rechnung-modern", name: "Rechnung Modern", type: "Dokument", area: "Rechnungen", status: "Entwurf", badgeVariant: undefined },
   ],
 };
 
 function getTemplateTitle(tab: TemplateTab) {
   switch (tab) {
-    case "Produkte":
-      return "Produktvorlage verwalten";
-    case "Dokumente":
-      return "Dokumentvorlage verwalten";
-    case "Textbausteine":
-      return "Textbaustein verwalten";
-    case "Layouts":
-      return "Layoutvorlage verwalten";
-    case "Entwurf":
-      return "Vorlagenentwurf bearbeiten";
+    case "Produkte": return "Produktvorlage verwalten";
+    case "Dokumente": return "Dokumentvorlage verwalten";
+    case "Textbausteine": return "Textbaustein verwalten";
+    case "Layouts": return "Layoutvorlage verwalten";
+    case "Entwurf": return "Vorlagenentwurf bearbeiten";
   }
 }
 
@@ -110,16 +58,11 @@ function getTemplateStatus(tab: TemplateTab) {
 
 function getTemplateType(tab: TemplateTab) {
   switch (tab) {
-    case "Produkte":
-      return "Produkt";
-    case "Dokumente":
-      return "Dokument";
-    case "Textbausteine":
-      return "Textbaustein";
-    case "Layouts":
-      return "Layout";
-    case "Entwurf":
-      return "";
+    case "Produkte": return "Produkt";
+    case "Dokumente": return "Dokument";
+    case "Textbausteine": return "Textbaustein";
+    case "Layouts": return "Layout";
+    case "Entwurf": return "";
   }
 }
 
@@ -129,36 +72,38 @@ function isTemplateTab(tab: string): tab is TemplateTab {
 
 export function TemplatesPage() {
   const module = getModuleConfig("templates");
+
   const [activeTab, setActiveTab] = useState<TemplateTab>("Produkte");
+  const [selectedId, setSelectedId] = useState(
+    templateRowsByTab.Produkte[0]?.id ?? "",
+  );
+
   const templateRows = templateRowsByTab[activeTab];
-  const selectedTemplate = templateRows[0];
+  const selectedTemplate =
+    templateRows.find((template) => template.id === selectedId) ??
+    templateRows[0];
 
   function handleTabChange(tab: string) {
     if (isTemplateTab(tab)) {
+      const nextRows = templateRowsByTab[tab];
+
       setActiveTab(tab);
+      setSelectedId(nextRows[0]?.id ?? "");
     }
+  }
+
+  function handleTemplateSelect(templateId: string) {
+    setSelectedId(templateId);
   }
 
   return (
     <div className="page">
-      <PageHeader
-        title={module.title}
-        description={module.description}
-        actionLabel={module.actionLabel}
-      />
+      <PageHeader title={module.title} description={module.description} actionLabel={module.actionLabel} />
 
-      <PageTabs
-        tabs={[...templateTabs]}
-        activeTab={activeTab}
-        onTabChange={handleTabChange}
-      />
+      <PageTabs tabs={[...templateTabs]} activeTab={activeTab} onTabChange={handleTabChange} />
 
       <section className="calculation-sheet">
-        <WorkspaceHeader
-          kicker="Vorlagenmaske"
-          title={getTemplateTitle(activeTab)}
-          statusValue={getTemplateStatus(activeTab)}
-        />
+        <WorkspaceHeader kicker="Vorlagenmaske" title={getTemplateTitle(activeTab)} statusValue={getTemplateStatus(activeTab)} />
 
         <div className="master-detail-layout">
           <section className="workspace-panel master-list-panel">
@@ -178,19 +123,24 @@ export function TemplatesPage() {
               </thead>
 
               <tbody>
-                {templateRows.map((template, index) => (
-                  <tr
-                    key={template.name}
-                    className={index === 0 ? "data-table-row-selected" : undefined}
-                  >
-                    <td>{template.name}</td>
-                    <td>{template.type}</td>
-                    <td>{template.area}</td>
-                    <td>
-                      <Badge variant={template.badgeVariant}>{template.status}</Badge>
-                    </td>
-                  </tr>
-                ))}
+                {templateRows.map((template) => {
+                  const isSelected = template.id === selectedTemplate?.id;
+
+                  return (
+                    <tr
+                      key={template.id}
+                      className={isSelected ? "data-table-row-selected" : undefined}
+                      onClick={() => handleTemplateSelect(template.id)}
+                    >
+                      <td>{template.name}</td>
+                      <td>{template.type}</td>
+                      <td>{template.area}</td>
+                      <td>
+                        <Badge variant={template.badgeVariant}>{template.status}</Badge>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </DataTable>
           </section>
@@ -199,17 +149,13 @@ export function TemplatesPage() {
             <SectionHeader>Vorlagendaten</SectionHeader>
 
             <FieldGrid>
-              <Field label="Vorlagennummer">
-                <Input value="VT-0001" readOnly />
+              <Field label="Vorlage">
+                <Input value={selectedTemplate?.name ?? ""} readOnly />
               </Field>
 
-              <Field label="Bezeichnung">
-                <Input value={selectedTemplate.name} readOnly />
-              </Field>
-
-              <Field label="Vorlagentyp">
+              <Field label="Typ">
                 <Select
-                  value={selectedTemplate.type}
+                  value={getTemplateType(activeTab) || selectedTemplate?.type || ""}
                   onChange={(event) => {
                     const value = event.target.value;
 
@@ -230,9 +176,7 @@ export function TemplatesPage() {
                     }
                   }}
                 >
-                  <option value="" disabled>
-                    Typ wählen
-                  </option>
+                  <option value="" disabled>Typ wählen</option>
                   <option>Produkt</option>
                   <option>Dokument</option>
                   <option>Textbaustein</option>
@@ -241,21 +185,20 @@ export function TemplatesPage() {
               </Field>
 
               <Field label="Bereich">
-                <Select defaultValue="">
-                  <option value="" disabled>
-                    Bereich wählen
-                  </option>
+                <Select defaultValue={selectedTemplate?.area ?? ""}>
+                  <option value="" disabled>Bereich wählen</option>
                   <option>Kalkulation</option>
                   <option>Angebote</option>
                   <option>Aufträge</option>
                   <option>Rechnungen</option>
                   <option>Lieferscheine</option>
+                  <option>Dokumente</option>
                 </Select>
               </Field>
 
               <Field label="Status">
                 <Select
-                  value={selectedTemplate.status}
+                  value={selectedTemplate?.status ?? "Aktiv"}
                   onChange={(event) => {
                     if (event.target.value === "Entwurf") {
                       handleTabChange("Entwurf");
@@ -280,9 +223,7 @@ export function TemplatesPage() {
             <FieldGrid>
               <Field label="Produktart">
                 <Select defaultValue="">
-                  <option value="" disabled>
-                    Produktart wählen
-                  </option>
+                  <option value="" disabled>Produktart wählen</option>
                   <option>Broschüre</option>
                   <option>Flyer</option>
                   <option>Folder</option>
@@ -291,47 +232,13 @@ export function TemplatesPage() {
                 </Select>
               </Field>
 
-              <Field label="Format">
-                <Input placeholder="z. B. A4" />
-              </Field>
-
-              <Field label="Standardumfang">
-                <Input inputMode="numeric" placeholder="z. B. 32 Seiten" />
-              </Field>
-
-              <Field label="Papier Inhalt">
-                <Input placeholder="Optional" />
-              </Field>
-
-              <Field label="Papier Umschlag">
-                <Input placeholder="Optional" />
-              </Field>
-
-              <Field label="Weiterverarbeitung">
-                <Input placeholder="Optional" />
-              </Field>
-            </FieldGrid>
-
-            <SectionHeader>Ausgabe</SectionHeader>
-
-            <FieldGrid>
-              <Field label="Dokumentlayout">
+              <Field label="Ausgabe">
                 <Select defaultValue="">
-                  <option value="" disabled>
-                    Layout wählen
-                  </option>
+                  <option value="" disabled>Layout wählen</option>
                   <option>Standard</option>
                   <option>Kurzform</option>
                   <option>Technisch</option>
                 </Select>
-              </Field>
-
-              <Field label="Textbaustein">
-                <Input placeholder="Optional" />
-              </Field>
-
-              <Field label="Interne Notiz">
-                <Input placeholder="Optional" />
               </Field>
             </FieldGrid>
 

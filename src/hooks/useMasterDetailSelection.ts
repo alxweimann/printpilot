@@ -4,7 +4,10 @@ type MasterDetailItem = {
   id: string;
 };
 
-type UseMasterDetailSelectionOptions<TTab extends string, TItem extends MasterDetailItem> = {
+type UseMasterDetailSelectionOptions<
+  TTab extends string,
+  TItem extends MasterDetailItem,
+> = {
   rowsByTab: Record<TTab, TItem[]>;
   initialTab: TTab;
 };

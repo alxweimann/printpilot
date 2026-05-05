@@ -1,6 +1,5 @@
-import { useState } from "react";
-
 import { getModuleConfig } from "../app/moduleConfig";
+import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
@@ -73,27 +72,25 @@ function isTemplateTab(tab: string): tab is TemplateTab {
 export function TemplatesPage() {
   const module = getModuleConfig("templates");
 
-  const [activeTab, setActiveTab] = useState<TemplateTab>("Produkte");
-  const [selectedId, setSelectedId] = useState(
-    templateRowsByTab.Produkte[0]?.id ?? "",
-  );
-
-  const templateRows = templateRowsByTab[activeTab];
-  const selectedTemplate =
-    templateRows.find((template) => template.id === selectedId) ??
-    templateRows[0];
+  const {
+    activeTab,
+    rows: templateRows,
+    selectedItem: selectedTemplate,
+    setActiveTab,
+    selectItem,
+  } = useMasterDetailSelection({
+    rowsByTab: templateRowsByTab,
+    initialTab: "Produkte",
+  });
 
   function handleTabChange(tab: string) {
     if (isTemplateTab(tab)) {
-      const nextRows = templateRowsByTab[tab];
-
       setActiveTab(tab);
-      setSelectedId(nextRows[0]?.id ?? "");
     }
   }
 
   function handleTemplateSelect(templateId: string) {
-    setSelectedId(templateId);
+    selectItem(templateId);
   }
 
   return (

@@ -1,6 +1,5 @@
-import { useState } from "react";
-
 import { getModuleConfig } from "../app/moduleConfig";
+import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
@@ -68,27 +67,25 @@ function isFinishingTab(tab: string): tab is FinishingTab {
 export function FinishingPage() {
   const module = getModuleConfig("finishing");
 
-  const [activeTab, setActiveTab] = useState<FinishingTab>("Liste");
-  const [selectedId, setSelectedId] = useState(
-    finishingRowsByTab.Liste[0]?.id ?? "",
-  );
-
-  const finishingRows = finishingRowsByTab[activeTab];
-  const selectedOperation =
-    finishingRows.find((operation) => operation.id === selectedId) ??
-    finishingRows[0];
+  const {
+    activeTab,
+    rows: finishingRows,
+    selectedItem: selectedOperation,
+    setActiveTab,
+    selectItem,
+  } = useMasterDetailSelection({
+    rowsByTab: finishingRowsByTab,
+    initialTab: "Liste",
+  });
 
   function handleTabChange(tab: string) {
     if (isFinishingTab(tab)) {
-      const nextRows = finishingRowsByTab[tab];
-
       setActiveTab(tab);
-      setSelectedId(nextRows[0]?.id ?? "");
     }
   }
 
   function handleOperationSelect(operationId: string) {
-    setSelectedId(operationId);
+    selectItem(operationId);
   }
 
   return (

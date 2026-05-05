@@ -1,6 +1,5 @@
-import { useState } from "react";
-
 import { getModuleConfig } from "../app/moduleConfig";
+import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
@@ -67,27 +66,25 @@ function isServiceTab(tab: string): tab is ServiceTab {
 export function ServicesPage() {
   const module = getModuleConfig("services");
 
-  const [activeTab, setActiveTab] = useState<ServiceTab>("Liste");
-  const [selectedId, setSelectedId] = useState(
-    serviceRowsByTab.Liste[0]?.id ?? "",
-  );
-
-  const serviceRows = serviceRowsByTab[activeTab];
-  const selectedService =
-    serviceRows.find((service) => service.id === selectedId) ??
-    serviceRows[0];
+  const {
+    activeTab,
+    rows: serviceRows,
+    selectedItem: selectedService,
+    setActiveTab,
+    selectItem,
+  } = useMasterDetailSelection({
+    rowsByTab: serviceRowsByTab,
+    initialTab: "Liste",
+  });
 
   function handleTabChange(tab: string) {
     if (isServiceTab(tab)) {
-      const nextRows = serviceRowsByTab[tab];
-
       setActiveTab(tab);
-      setSelectedId(nextRows[0]?.id ?? "");
     }
   }
 
   function handleServiceSelect(serviceId: string) {
-    setSelectedId(serviceId);
+    selectItem(serviceId);
   }
 
   return (

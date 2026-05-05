@@ -1,6 +1,5 @@
-import { useState } from "react";
-
 import { getModuleConfig } from "../app/moduleConfig";
+import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
@@ -119,27 +118,25 @@ function isCustomerTab(tab: string): tab is CustomerTab {
 export function CustomersPage() {
   const module = getModuleConfig("customers");
 
-  const [activeTab, setActiveTab] = useState<CustomerTab>("Liste");
-  const [selectedId, setSelectedId] = useState(
-    customerRowsByTab.Liste[0]?.id ?? "",
-  );
-
-  const customerRows = customerRowsByTab[activeTab];
-  const selectedCustomer =
-    customerRows.find((customer) => customer.id === selectedId) ??
-    customerRows[0];
+  const {
+    activeTab,
+    rows: customerRows,
+    selectedItem: selectedCustomer,
+    setActiveTab,
+    selectItem,
+  } = useMasterDetailSelection({
+    rowsByTab: customerRowsByTab,
+    initialTab: "Liste",
+  });
 
   function handleTabChange(tab: string) {
     if (isCustomerTab(tab)) {
-      const nextRows = customerRowsByTab[tab];
-
       setActiveTab(tab);
-      setSelectedId(nextRows[0]?.id ?? "");
     }
   }
 
   function handleCustomerSelect(customerId: string) {
-    setSelectedId(customerId);
+    selectItem(customerId);
   }
 
   return (

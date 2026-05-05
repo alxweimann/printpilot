@@ -1,6 +1,5 @@
-import { useState } from "react";
-
 import { getModuleConfig } from "../app/moduleConfig";
+import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
@@ -138,27 +137,25 @@ function isMaterialTab(tab: string): tab is MaterialTab {
 export function MaterialPage() {
   const module = getModuleConfig("material");
 
-  const [activeTab, setActiveTab] = useState<MaterialTab>("Liste");
-  const [selectedId, setSelectedId] = useState(
-    materialRowsByTab.Liste[0]?.id ?? "",
-  );
-
-  const materialRows = materialRowsByTab[activeTab];
-  const selectedMaterial =
-    materialRows.find((material) => material.id === selectedId) ??
-    materialRows[0];
+  const {
+    activeTab,
+    rows: materialRows,
+    selectedItem: selectedMaterial,
+    setActiveTab,
+    selectItem,
+  } = useMasterDetailSelection({
+    rowsByTab: materialRowsByTab,
+    initialTab: "Liste",
+  });
 
   function handleTabChange(tab: string) {
     if (isMaterialTab(tab)) {
-      const nextRows = materialRowsByTab[tab];
-
       setActiveTab(tab);
-      setSelectedId(nextRows[0]?.id ?? "");
     }
   }
 
   function handleMaterialSelect(materialId: string) {
-    setSelectedId(materialId);
+    selectItem(materialId);
   }
 
   return (

@@ -1,6 +1,5 @@
-import { useState } from "react";
-
 import { getModuleConfig } from "../app/moduleConfig";
+import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
@@ -62,27 +61,25 @@ function isDeliveryTab(tab: string): tab is DeliveryTab {
 export function DeliveryNotesPage() {
   const module = getModuleConfig("delivery-notes");
 
-  const [activeTab, setActiveTab] = useState<DeliveryTab>("Liste");
-  const [selectedId, setSelectedId] = useState(
-    deliveryRowsByTab.Liste[0]?.id ?? "",
-  );
-
-  const deliveryRows = deliveryRowsByTab[activeTab];
-  const selectedDeliveryNote =
-    deliveryRows.find((deliveryNote) => deliveryNote.id === selectedId) ??
-    deliveryRows[0];
+  const {
+    activeTab,
+    rows: deliveryRows,
+    selectedItem: selectedDeliveryNote,
+    setActiveTab,
+    selectItem,
+  } = useMasterDetailSelection({
+    rowsByTab: deliveryRowsByTab,
+    initialTab: "Liste",
+  });
 
   function handleTabChange(tab: string) {
     if (isDeliveryTab(tab)) {
-      const nextRows = deliveryRowsByTab[tab];
-
       setActiveTab(tab);
-      setSelectedId(nextRows[0]?.id ?? "");
     }
   }
 
   function handleDeliveryNoteSelect(deliveryNoteId: string) {
-    setSelectedId(deliveryNoteId);
+    selectItem(deliveryNoteId);
   }
 
   return (

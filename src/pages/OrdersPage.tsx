@@ -1,6 +1,5 @@
-import { useState } from "react";
-
 import { getModuleConfig } from "../app/moduleConfig";
+import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
@@ -104,26 +103,25 @@ function isOrderTab(tab: string): tab is OrderTab {
 export function OrdersPage() {
   const module = getModuleConfig("orders");
 
-  const [activeTab, setActiveTab] = useState<OrderTab>("Liste");
-  const [selectedId, setSelectedId] = useState(
-    orderRowsByTab.Liste[0]?.id ?? "",
-  );
-
-  const orderRows = orderRowsByTab[activeTab];
-  const selectedOrder =
-    orderRows.find((order) => order.id === selectedId) ?? orderRows[0];
+  const {
+    activeTab,
+    rows: orderRows,
+    selectedItem: selectedOrder,
+    setActiveTab,
+    selectItem,
+  } = useMasterDetailSelection({
+    rowsByTab: orderRowsByTab,
+    initialTab: "Liste",
+  });
 
   function handleTabChange(tab: string) {
     if (isOrderTab(tab)) {
-      const nextRows = orderRowsByTab[tab];
-
       setActiveTab(tab);
-      setSelectedId(nextRows[0]?.id ?? "");
     }
   }
 
   function handleOrderSelect(orderId: string) {
-    setSelectedId(orderId);
+    selectItem(orderId);
   }
 
   return (

@@ -1,6 +1,5 @@
-import { useState } from "react";
-
 import { getModuleConfig } from "../app/moduleConfig";
+import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
@@ -62,26 +61,25 @@ function isInvoiceTab(tab: string): tab is InvoiceTab {
 export function InvoicesPage() {
   const module = getModuleConfig("invoices");
 
-  const [activeTab, setActiveTab] = useState<InvoiceTab>("Liste");
-  const [selectedId, setSelectedId] = useState(
-    invoiceRowsByTab.Liste[0]?.id ?? "",
-  );
-
-  const invoiceRows = invoiceRowsByTab[activeTab];
-  const selectedInvoice =
-    invoiceRows.find((invoice) => invoice.id === selectedId) ?? invoiceRows[0];
+  const {
+    activeTab,
+    rows: invoiceRows,
+    selectedItem: selectedInvoice,
+    setActiveTab,
+    selectItem,
+  } = useMasterDetailSelection({
+    rowsByTab: invoiceRowsByTab,
+    initialTab: "Liste",
+  });
 
   function handleTabChange(tab: string) {
     if (isInvoiceTab(tab)) {
-      const nextRows = invoiceRowsByTab[tab];
-
       setActiveTab(tab);
-      setSelectedId(nextRows[0]?.id ?? "");
     }
   }
 
   function handleInvoiceSelect(invoiceId: string) {
-    setSelectedId(invoiceId);
+    selectItem(invoiceId);
   }
 
   return (

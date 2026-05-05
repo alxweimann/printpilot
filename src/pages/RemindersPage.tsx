@@ -1,6 +1,5 @@
-import { useState } from "react";
-
 import { getModuleConfig } from "../app/moduleConfig";
+import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
@@ -62,27 +61,25 @@ function isReminderTab(tab: string): tab is ReminderTab {
 export function RemindersPage() {
   const module = getModuleConfig("reminders");
 
-  const [activeTab, setActiveTab] = useState<ReminderTab>("Liste");
-  const [selectedId, setSelectedId] = useState(
-    reminderRowsByTab.Liste[0]?.id ?? "",
-  );
-
-  const reminderRows = reminderRowsByTab[activeTab];
-  const selectedReminder =
-    reminderRows.find((reminder) => reminder.id === selectedId) ??
-    reminderRows[0];
+  const {
+    activeTab,
+    rows: reminderRows,
+    selectedItem: selectedReminder,
+    setActiveTab,
+    selectItem,
+  } = useMasterDetailSelection({
+    rowsByTab: reminderRowsByTab,
+    initialTab: "Liste",
+  });
 
   function handleTabChange(tab: string) {
     if (isReminderTab(tab)) {
-      const nextRows = reminderRowsByTab[tab];
-
       setActiveTab(tab);
-      setSelectedId(nextRows[0]?.id ?? "");
     }
   }
 
   function handleReminderSelect(reminderId: string) {
-    setSelectedId(reminderId);
+    selectItem(reminderId);
   }
 
   return (

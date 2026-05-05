@@ -1,6 +1,5 @@
-import { useState } from "react";
-
 import { getModuleConfig } from "../app/moduleConfig";
+import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
@@ -138,26 +137,25 @@ function isMachineTab(tab: string): tab is MachineTab {
 export function MachinesPage() {
   const module = getModuleConfig("machines");
 
-  const [activeTab, setActiveTab] = useState<MachineTab>("Liste");
-  const [selectedId, setSelectedId] = useState(
-    machineRowsByTab.Liste[0]?.id ?? "",
-  );
-
-  const machineRows = machineRowsByTab[activeTab];
-  const selectedMachine =
-    machineRows.find((machine) => machine.id === selectedId) ?? machineRows[0];
+  const {
+    activeTab,
+    rows: machineRows,
+    selectedItem: selectedMachine,
+    setActiveTab,
+    selectItem,
+  } = useMasterDetailSelection({
+    rowsByTab: machineRowsByTab,
+    initialTab: "Liste",
+  });
 
   function handleTabChange(tab: string) {
     if (isMachineTab(tab)) {
-      const nextRows = machineRowsByTab[tab];
-
       setActiveTab(tab);
-      setSelectedId(nextRows[0]?.id ?? "");
     }
   }
 
   function handleMachineSelect(machineId: string) {
-    setSelectedId(machineId);
+    selectItem(machineId);
   }
 
   return (

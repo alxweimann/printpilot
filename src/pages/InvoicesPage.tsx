@@ -183,7 +183,7 @@ export function InvoicesPage() {
     initialTab: "Liste",
   });
 
-  const { draft, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft } =
     useEditableDraft(selectedInvoice);
 
   function handleTabChange(tab: string) {
@@ -414,6 +414,20 @@ export function InvoicesPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
+              {isDirty && (
+                <span
+                  style={{
+                    alignSelf: "center",
+                    color: "var(--color-text-muted)",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    marginRight: "auto",
+                  }}
+                >
+                  Ungespeicherte Änderungen
+                </span>
+              )}
+
               <button
                 type="button"
                 aria-label={
@@ -453,7 +467,9 @@ export function InvoicesPage() {
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
               <Button>Vorschau prüfen</Button>
-              <Button variant="primary">Rechnung ausgeben</Button>
+              <Button variant="primary">
+                {isDirty ? "Änderungen speichern" : "Rechnung ausgeben"}
+              </Button>
             </div>
           </section>
         </div>

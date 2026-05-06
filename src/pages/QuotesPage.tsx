@@ -486,9 +486,7 @@ export function QuotesPage() {
                 </span>
               </button>
 
-              <Button onClick={handleResetDraft}>
-                {isDirty ? "Änderungen verwerfen" : "Keine Änderungen"}
-              </Button>
+              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
 
               <Button>Vorschau prüfen</Button>
 

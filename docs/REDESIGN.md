@@ -17,7 +17,7 @@ Der Fokus liegt zuerst auf:
 - Master-Detail-Darstellung mit echter lokaler Auswahl
 - kontrollierte Formular-Drafts ohne Persistenz
 - kompakter Edit-Mode über ein einzelnes randloses Schloss in der Button-Leiste
-- Dirty-State für lokale Entwürfe
+- Dirty-State für lokale Entwürfe auf allen relevanten Seiten
 
 Es gilt weiterhin:
 
@@ -96,37 +96,29 @@ const { draft, isDirty, updateDraftField, resetDraft } =
 
 ## Dirty-State
 
-Der Hook `useEditableDraft` erkennt jetzt, ob der lokale Draft vom Ursprungsdatensatz abweicht.
+Der Hook `useEditableDraft` erkennt, ob der lokale Draft vom Ursprungsdatensatz abweicht.
 
 Prinzip:
 
 ```text
 isDirty = false
 - keine lokalen Änderungen
-- keine Warnung
-- Standardaktion bleibt normal
+- kein Hinweis
+- Hauptaktion bleibt die normale Modulaktion
 
 isDirty = true
 - lokale Änderungen vorhanden
 - dezenter Hinweis "Ungespeicherte Änderungen"
+- Hauptaktion wechselt zu "Änderungen speichern"
 - Verwerfen setzt den Draft zurück
 ```
 
-Aktuell umgesetzt in:
+Wichtig:
 
 ```text
-src/pages/QuotesPage.tsx
+Das Schloss speichert nicht automatisch.
+Speichern bleibt eine bewusste Aktion.
 ```
-
-Verhalten in Angebote:
-
-- Änderungen an editierbaren Angebotsfeldern setzen `isDirty` auf `true`
-- unten erscheint `Ungespeicherte Änderungen`
-- Button `Änderungen verwerfen` setzt Draft zurück
-- Hauptaktion wechselt von `Angebot ausgeben` zu `Änderungen speichern`
-- Auswahlwechsel setzt neuen Draft
-- Tabwechsel setzt neuen Draft
-- echte Speicherung ist noch nicht angeschlossen
 
 ## Edit-Mode über einzelnes randloses Schloss
 
@@ -145,9 +137,9 @@ Prinzip:
 - keine Schloss-Hinweise direkt an den Feldern
 - `Änderungen verwerfen` setzt den Draft zurück und sperrt die Felder
 
-## Seiten mit Draft + Edit-Mode
+## Seiten mit Draft + Edit-Mode + Dirty-State
 
-Diese Seiten haben lokale editierbare Draft-Felder und den kompakten Schloss-Edit-Mode:
+Diese Seiten haben lokale editierbare Draft-Felder, den kompakten Schloss-Edit-Mode und Dirty-State:
 
 ```text
 src/pages/QuotesPage.tsx
@@ -171,7 +163,7 @@ Umgesetzt:
 - zentrale Auswahl über `useMasterDetailSelection`
 - lokaler Bearbeitungs-Draft über `useEditableDraft`
 - Dirty-State im Draft-Hook
-- Dirty-State zuerst in Angebote sichtbar
+- Dirty-State auf allen relevanten Draft-Seiten sichtbar
 - editierbare Stammdatenfelder pro Modul
 - Einstellungen mit lokalem Draft
 - readOnly-Felder für Nummern, Kundenreferenzen oder systemische Referenzen
@@ -189,9 +181,8 @@ Der Draft ist nur lokale UI-Vorbereitung.
 
 ## Nächste sinnvolle Schritte
 
-1. Dirty-State auf alle Draft-Seiten übertragen
-2. Speichern-Button optisch finalisieren
-3. geänderte Felder visuell markieren
-4. Schloss später als wiederverwendbare UI-Komponente auslagern
-5. lokale Datenstruktur planen
-6. später Persistenz / Store / API planen
+1. Speichern-Button optisch finalisieren
+2. geänderte Felder visuell markieren
+3. Schloss später als wiederverwendbare UI-Komponente auslagern
+4. lokale Datenstruktur planen
+5. später Persistenz / Store / API planen

@@ -211,7 +211,7 @@ export function MachinesPage() {
     initialTab: "Liste",
   });
 
-  const { draft, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft } =
     useEditableDraft(selectedMachine);
 
   function handleTabChange(tab: string) {
@@ -441,6 +441,20 @@ export function MachinesPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
+              {isDirty && (
+                <span
+                  style={{
+                    alignSelf: "center",
+                    color: "var(--color-text-muted)",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    marginRight: "auto",
+                  }}
+                >
+                  Ungespeicherte Änderungen
+                </span>
+              )}
+
               <button
                 type="button"
                 aria-label={
@@ -479,7 +493,9 @@ export function MachinesPage() {
               </button>
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-              <Button variant="primary">Maschine speichern</Button>
+              <Button variant="primary">
+                {isDirty ? "Änderungen speichern" : "Maschine speichern"}
+              </Button>
             </div>
           </section>
         </div>

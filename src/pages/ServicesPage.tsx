@@ -200,7 +200,7 @@ export function ServicesPage() {
     initialTab: "Liste",
   });
 
-  const { draft, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft } =
     useEditableDraft(selectedService);
 
   function handleTabChange(tab: string) {
@@ -392,6 +392,20 @@ export function ServicesPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
+              {isDirty && (
+                <span
+                  style={{
+                    alignSelf: "center",
+                    color: "var(--color-text-muted)",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    marginRight: "auto",
+                  }}
+                >
+                  Ungespeicherte Änderungen
+                </span>
+              )}
+
               <button
                 type="button"
                 aria-label={
@@ -430,7 +444,9 @@ export function ServicesPage() {
               </button>
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-              <Button variant="primary">Leistung speichern</Button>
+              <Button variant="primary">
+                {isDirty ? "Änderungen speichern" : "Leistung speichern"}
+              </Button>
             </div>
           </section>
         </div>

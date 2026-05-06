@@ -222,7 +222,7 @@ export function FinishingPage() {
     initialTab: "Liste",
   });
 
-  const { draft, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft } =
     useEditableDraft(selectedOperation);
 
   function handleTabChange(tab: string) {
@@ -427,6 +427,20 @@ export function FinishingPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
+              {isDirty && (
+                <span
+                  style={{
+                    alignSelf: "center",
+                    color: "var(--color-text-muted)",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    marginRight: "auto",
+                  }}
+                >
+                  Ungespeicherte Änderungen
+                </span>
+              )}
+
               <button
                 type="button"
                 aria-label={
@@ -465,7 +479,9 @@ export function FinishingPage() {
               </button>
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-              <Button variant="primary">Prozess speichern</Button>
+              <Button variant="primary">
+                {isDirty ? "Änderungen speichern" : "Prozess speichern"}
+              </Button>
             </div>
           </section>
         </div>

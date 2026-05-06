@@ -166,7 +166,7 @@ export function OrdersPage() {
     initialTab: "Liste",
   });
 
-  const { draft, updateDraftField, resetDraft } = useEditableDraft(selectedOrder);
+  const { draft, isDirty, updateDraftField, resetDraft } = useEditableDraft(selectedOrder);
 
   function handleTabChange(tab: string) {
     if (isOrderTab(tab)) {
@@ -369,6 +369,20 @@ export function OrdersPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
+              {isDirty && (
+                <span
+                  style={{
+                    alignSelf: "center",
+                    color: "var(--color-text-muted)",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    marginRight: "auto",
+                  }}
+                >
+                  Ungespeicherte Änderungen
+                </span>
+              )}
+
               <button
                 type="button"
                 aria-label={
@@ -407,7 +421,9 @@ export function OrdersPage() {
               </button>
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-              <Button variant="primary">Auftrag vorbereiten</Button>
+              <Button variant="primary">
+                {isDirty ? "Änderungen speichern" : "Auftrag vorbereiten"}
+              </Button>
             </div>
           </section>
         </div>

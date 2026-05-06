@@ -175,7 +175,7 @@ export function RemindersPage() {
     initialTab: "Liste",
   });
 
-  const { draft, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft } =
     useEditableDraft(selectedReminder);
 
   function handleTabChange(tab: string) {
@@ -361,6 +361,20 @@ export function RemindersPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
+              {isDirty && (
+                <span
+                  style={{
+                    alignSelf: "center",
+                    color: "var(--color-text-muted)",
+                    fontSize: "0.8rem",
+                    fontWeight: 600,
+                    marginRight: "auto",
+                  }}
+                >
+                  Ungespeicherte Änderungen
+                </span>
+              )}
+
               <button
                 type="button"
                 aria-label={
@@ -400,7 +414,9 @@ export function RemindersPage() {
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
               <Button>Vorschau prüfen</Button>
-              <Button variant="primary">Mahnung ausgeben</Button>
+              <Button variant="primary">
+                {isDirty ? "Änderungen speichern" : "Mahnung ausgeben"}
+              </Button>
             </div>
           </section>
         </div>

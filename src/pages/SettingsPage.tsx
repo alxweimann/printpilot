@@ -103,7 +103,7 @@ export function SettingsPage() {
   const [activeTab, setActiveTab] = useState<SettingsTab>("Allgemein");
   const [isEditing, setIsEditing] = useState(false);
 
-  const { draft, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft } =
     useEditableDraft(initialSettingsDraft);
 
   function handleTabChange(tab: string) {

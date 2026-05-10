@@ -1,6 +1,12 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { getModuleConfig } from "../app/moduleConfig";
+import {
+  type PrintPilotQuote,
+  type PrintPilotQuoteStatus,
+  groupPrintPilotQuotesByStatus,
+} from "../data/printPilotStore";
+import { usePrintPilotStore } from "../store/PrintPilotStore";
 
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
@@ -19,9 +25,9 @@ import { Field } from "../ui/Field";
 import { FieldGrid } from "../ui/FieldGrid";
 
 import { Input } from "../ui/Input";
+import { SaveActionButton } from "../ui/SaveActionButton";
 
 import { SectionHeader } from "../ui/SectionHeader";
-import { SaveActionButton } from "../ui/SaveActionButton";
 
 import { Select } from "../ui/Select";
 
@@ -31,110 +37,7 @@ import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 const quoteTabs = ["Entwurf", "Offen", "Angenommen", "Abgelehnt"] as const;
 
-type QuoteTab = (typeof quoteTabs)[number];
-
-type QuoteRow = {
-  id: string;
-  number: string;
-  customer: string;
-  subject: string;
-  status: QuoteTab;
-  quoteDate: string;
-  validUntil: string;
-  paymentTerms: string;
-  deliveryTerms: string;
-  template: string;
-  badgeVariant?: "success";
-};
-
-const quoteRowsByTab: Record<QuoteTab, QuoteRow[]> = {
-  Entwurf: [
-    {
-      id: "quote-ag-2026-001",
-      number: "AG-2026-001",
-      customer: "Sonnendruck GmbH",
-      subject: "Broschüre A4",
-      status: "Entwurf",
-      quoteDate: "2026-05-05",
-      validUntil: "2026-05-19",
-      paymentTerms: "14 Tage netto",
-      deliveryTerms: "Abholung",
-      template: "Standardangebot",
-      badgeVariant: "success",
-    },
-    {
-      id: "quote-ag-2026-004",
-      number: "AG-2026-004",
-      customer: "Agentur Beispiel",
-      subject: "Visitenkarten",
-      status: "Entwurf",
-      quoteDate: "2026-05-04",
-      validUntil: "2026-05-18",
-      paymentTerms: "Zahlbar sofort ohne Abzug",
-      deliveryTerms: "Versand nach Aufwand",
-      template: "Kurzangebot",
-      badgeVariant: undefined,
-    },
-  ],
-  Offen: [
-    {
-      id: "quote-ag-2026-002",
-      number: "AG-2026-002",
-      customer: "Musterkunde GmbH",
-      subject: "Flyer A5",
-      status: "Offen",
-      quoteDate: "2026-05-03",
-      validUntil: "2026-05-17",
-      paymentTerms: "14 Tage netto",
-      deliveryTerms: "Lieferung inklusive",
-      template: "Standardangebot",
-      badgeVariant: undefined,
-    },
-    {
-      id: "quote-ag-2026-005",
-      number: "AG-2026-005",
-      customer: "Druckpartner Süd",
-      subject: "Plakat A2",
-      status: "Offen",
-      quoteDate: "2026-05-02",
-      validUntil: "2026-05-16",
-      paymentTerms: "30 Tage netto",
-      deliveryTerms: "Versand nach Aufwand",
-      template: "Technisches Angebot",
-      badgeVariant: undefined,
-    },
-  ],
-  Angenommen: [
-    {
-      id: "quote-ag-2026-006",
-      number: "AG-2026-006",
-      customer: "Beispiel AG",
-      subject: "Folder DIN lang",
-      status: "Angenommen",
-      quoteDate: "2026-04-29",
-      validUntil: "2026-05-13",
-      paymentTerms: "14 Tage netto",
-      deliveryTerms: "Lieferung inklusive",
-      template: "Standardangebot",
-      badgeVariant: "success",
-    },
-  ],
-  Abgelehnt: [
-    {
-      id: "quote-ag-2026-007",
-      number: "AG-2026-007",
-      customer: "Testkunde KG",
-      subject: "Einladungskarten",
-      status: "Abgelehnt",
-      quoteDate: "2026-04-25",
-      validUntil: "2026-05-09",
-      paymentTerms: "Zahlbar sofort ohne Abzug",
-      deliveryTerms: "Abholung",
-      template: "Kurzangebot",
-      badgeVariant: undefined,
-    },
-  ],
-};
+type QuoteTab = PrintPilotQuoteStatus;
 
 function getQuoteTitle(tab: QuoteTab) {
   switch (tab) {
@@ -158,8 +61,13 @@ function isQuoteTab(tab: string): tab is QuoteTab {
 
 export function QuotesPage() {
   const module = getModuleConfig("quotes");
+  const { quotes, updateQuote } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+
+  const quoteRowsByTab = useMemo(() => {
+    return groupPrintPilotQuotesByStatus(quotes);
+  }, [quotes]);
 
   const {
     activeTab,
@@ -172,7 +80,7 @@ export function QuotesPage() {
     initialTab: "Entwurf",
   });
 
-  const { draft, isDirty, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
     useEditableDraft(selectedQuote);
 
   function handleTabChange(tab: string) {
@@ -194,6 +102,16 @@ export function QuotesPage() {
 
   function handleToggleEditing() {
     setIsEditing((currentValue) => !currentValue);
+  }
+
+  function handleSaveDraft() {
+    if (!draft) {
+      return;
+    }
+
+    updateQuote(draft as PrintPilotQuote);
+    saveDraft();
+    setIsEditing(false);
   }
 
   return (
@@ -252,7 +170,7 @@ export function QuotesPage() {
                     >
                       <td>{quote.number}</td>
 
-                      <td>{quote.customer}</td>
+                      <td>{quote.customerName}</td>
 
                       <td>{quote.subject}</td>
 
@@ -277,7 +195,7 @@ export function QuotesPage() {
               </Field>
 
               <Field label="Kunde">
-                <Input value={draft?.customer ?? ""} readOnly />
+                <Input value={draft?.customerName ?? ""} readOnly />
               </Field>
 
               <Field label="Angebotsdatum">
@@ -441,11 +359,8 @@ export function QuotesPage() {
               <DirtyStateNotice isDirty={isDirty} />
 
               <EditLockToggle
-
                 isEditing={isEditing}
-
                 onToggle={handleToggleEditing}
-
               />
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
@@ -453,15 +368,10 @@ export function QuotesPage() {
               <Button>Vorschau prüfen</Button>
 
               <SaveActionButton
-
-
-                              isDirty={isDirty}
-
-
-                              defaultLabel="Angebot ausgeben"
-
-
-                            />
+                isDirty={isDirty}
+                defaultLabel="Angebot ausgeben"
+                onClick={handleSaveDraft}
+              />
             </div>
           </section>
         </div>

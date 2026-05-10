@@ -90,7 +90,9 @@ function isBackupData(value: unknown): value is PrintPilotBackupData {
   );
 }
 
-export function isPrintPilotBackupFile(value: unknown): value is PrintPilotBackupFile {
+export function isPrintPilotBackupFile(
+  value: unknown,
+): value is PrintPilotBackupFile {
   if (!value || typeof value !== "object") {
     return false;
   }

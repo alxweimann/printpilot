@@ -15,18 +15,25 @@ export type PrintPilotCustomer = {
   priceLevel: string;
 };
 
+export type PrintPilotQuoteStatus =
+  | "Entwurf"
+  | "Offen"
+  | "Angenommen"
+  | "Abgelehnt";
+
 export type PrintPilotQuote = {
   id: PrintPilotId;
   number: string;
   customerId: PrintPilotId | null;
   customerName: string;
   subject: string;
-  status: string;
+  status: PrintPilotQuoteStatus;
   quoteDate: string;
   validUntil: string;
   paymentTerms: string;
   deliveryTerms: string;
   template: string;
+  badgeVariant?: "success";
 };
 
 export type PrintPilotOrder = {
@@ -173,10 +180,93 @@ export const initialPrintPilotSettings: PrintPilotSettings = {
   debugMode: "Aus",
 };
 
+export const initialPrintPilotQuotes: PrintPilotQuote[] = [
+  {
+    id: "quote-ag-2026-001",
+    number: "AG-2026-001",
+    customerId: "customer-sonnendruck",
+    customerName: "Sonnendruck GmbH",
+    subject: "Broschüre A4",
+    status: "Entwurf",
+    quoteDate: "2026-05-05",
+    validUntil: "2026-05-19",
+    paymentTerms: "14 Tage netto",
+    deliveryTerms: "Abholung",
+    template: "Standardangebot",
+    badgeVariant: "success",
+  },
+  {
+    id: "quote-ag-2026-004",
+    number: "AG-2026-004",
+    customerId: "customer-agentur-beispiel",
+    customerName: "Agentur Beispiel",
+    subject: "Visitenkarten",
+    status: "Entwurf",
+    quoteDate: "2026-05-04",
+    validUntil: "2026-05-18",
+    paymentTerms: "Zahlbar sofort ohne Abzug",
+    deliveryTerms: "Versand nach Aufwand",
+    template: "Kurzangebot",
+  },
+  {
+    id: "quote-ag-2026-002",
+    number: "AG-2026-002",
+    customerId: "customer-musterkunde",
+    customerName: "Musterkunde GmbH",
+    subject: "Flyer A5",
+    status: "Offen",
+    quoteDate: "2026-05-03",
+    validUntil: "2026-05-17",
+    paymentTerms: "14 Tage netto",
+    deliveryTerms: "Lieferung inklusive",
+    template: "Standardangebot",
+  },
+  {
+    id: "quote-ag-2026-005",
+    number: "AG-2026-005",
+    customerId: "customer-druckpartner-sued",
+    customerName: "Druckpartner Süd",
+    subject: "Plakat A2",
+    status: "Offen",
+    quoteDate: "2026-05-02",
+    validUntil: "2026-05-16",
+    paymentTerms: "30 Tage netto",
+    deliveryTerms: "Versand nach Aufwand",
+    template: "Technisches Angebot",
+  },
+  {
+    id: "quote-ag-2026-006",
+    number: "AG-2026-006",
+    customerId: "customer-beispiel-ag",
+    customerName: "Beispiel AG",
+    subject: "Folder DIN lang",
+    status: "Angenommen",
+    quoteDate: "2026-04-29",
+    validUntil: "2026-05-13",
+    paymentTerms: "14 Tage netto",
+    deliveryTerms: "Lieferung inklusive",
+    template: "Standardangebot",
+    badgeVariant: "success",
+  },
+  {
+    id: "quote-ag-2026-007",
+    number: "AG-2026-007",
+    customerId: "customer-testkunde-kg",
+    customerName: "Testkunde KG",
+    subject: "Einladungskarten",
+    status: "Abgelehnt",
+    quoteDate: "2026-04-25",
+    validUntil: "2026-05-09",
+    paymentTerms: "Zahlbar sofort ohne Abzug",
+    deliveryTerms: "Abholung",
+    template: "Kurzangebot",
+  },
+];
+
 export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
   return {
     customers: [],
-    quotes: [],
+    quotes: initialPrintPilotQuotes,
     orders: [],
     materials: [],
     machines: [],
@@ -199,5 +289,16 @@ export function createPrintPilotStoreSnapshot(
       ...emptyStore.settings,
       ...(overrides.settings ?? {}),
     },
+  };
+}
+
+export function groupPrintPilotQuotesByStatus(
+  quotes: PrintPilotQuote[],
+): Record<PrintPilotQuoteStatus, PrintPilotQuote[]> {
+  return {
+    Entwurf: quotes.filter((quote) => quote.status === "Entwurf"),
+    Offen: quotes.filter((quote) => quote.status === "Offen"),
+    Angenommen: quotes.filter((quote) => quote.status === "Angenommen"),
+    Abgelehnt: quotes.filter((quote) => quote.status === "Abgelehnt"),
   };
 }

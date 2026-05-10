@@ -1,14 +1,9 @@
-export type PrintPilotBackupData = {
-  customers: unknown[];
-  quotes: unknown[];
-  orders: unknown[];
-  materials: unknown[];
-  machines: unknown[];
-  services: unknown[];
-  finishing: unknown[];
-  templates: unknown[];
-  settings: Record<string, unknown>;
-};
+import {
+  type PrintPilotStoreData,
+  createEmptyPrintPilotStoreData,
+} from "./printPilotStore";
+
+export type PrintPilotBackupData = PrintPilotStoreData;
 
 export type PrintPilotBackupFile = {
   app: "PrintPilot";
@@ -34,17 +29,7 @@ export type PrintPilotBackupSummary = {
 export const PRINTPILOT_BACKUP_VERSION = "0.1.0";
 
 export function createEmptyBackupData(): PrintPilotBackupData {
-  return {
-    customers: [],
-    quotes: [],
-    orders: [],
-    materials: [],
-    machines: [],
-    services: [],
-    finishing: [],
-    templates: [],
-    settings: {},
-  };
+  return createEmptyPrintPilotStoreData();
 }
 
 export function createPrintPilotBackup(

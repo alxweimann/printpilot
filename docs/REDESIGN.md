@@ -13,14 +13,13 @@ Der Fokus liegt zuerst auf:
 - klare Modulstruktur
 - einheitliche Arbeitsmasken
 - statische Designzustände
-- einheitliche Tabellen- und Statusdarstellung
 - Master-Detail-Darstellung mit echter lokaler Auswahl
 - kontrollierte Formular-Drafts ohne Persistenz
 - kompakter Edit-Mode über ein einzelnes randloses Schloss in der Button-Leiste
-- Dirty-State für lokale Entwürfe auf allen relevanten Seiten
+- Dirty-State für lokale Entwürfe
 - Save-Simulation ohne echte Persistenz
 - Datensicherung als JSON-Export und abgesicherte Import-Prüfung
-- wiederverwendbare UI-Komponenten für Edit-State, Dirty-State und Hauptaktion
+- zentrale lokale Datenstruktur als Vorbereitung für Store / Persistenz
 
 Es gilt weiterhin:
 
@@ -49,6 +48,52 @@ restart-designsystem
 8. erst dann nächster Schritt
 ```
 
+## Lokaler Datenstore
+
+Datei:
+
+```text
+src/data/printPilotStore.ts
+```
+
+Der Store ist aktuell noch kein React-State und noch keine echte Persistenz. Er definiert zuerst nur die zentrale Datenstruktur für PrintPilot.
+
+Vorbereitete Bereiche:
+
+```text
+customers
+quotes
+orders
+materials
+machines
+services
+finishing
+templates
+settings
+```
+
+Zentrale Typen:
+
+```text
+PrintPilotStoreData
+PrintPilotCustomer
+PrintPilotQuote
+PrintPilotOrder
+PrintPilotMaterial
+PrintPilotMachine
+PrintPilotService
+PrintPilotFinishingProcess
+PrintPilotTemplate
+PrintPilotSettings
+```
+
+Hilfsfunktionen:
+
+```text
+createEmptyPrintPilotStoreData()
+createPrintPilotStoreSnapshot()
+```
+
 ## Backup-Dateiformat
 
 Datei:
@@ -57,9 +102,19 @@ Datei:
 src/data/backup.ts
 ```
 
-Das Backup ist als JSON-Datei geplant.
+Das Backup verwendet jetzt die zentrale Store-Struktur aus:
 
-Struktur:
+```text
+src/data/printPilotStore.ts
+```
+
+Das bedeutet:
+
+```text
+PrintPilotBackupData = PrintPilotStoreData
+```
+
+Die Backup-Struktur bleibt:
 
 ```json
 {
@@ -84,28 +139,18 @@ Aktuell umgesetzt:
 
 ```text
 Backup erstellen
-- erzeugt eine JSON-Datei
-- enthält aktuell leere Datenbereiche plus Einstellungen-Draft
-- lädt die Datei im Browser herunter
-
 Backup auswählen
-- liest eine JSON-Datei ein
-- prüft, ob es eine gültige PrintPilot-Backup-Datei ist
-- zeigt Status, Version, Erstellzeit und enthaltene Datenbereiche
-- merkt das geprüfte Backup lokal als ausgewählt
-
+Backup validieren
+Backup-Zusammenfassung anzeigen
 Auswahl zurücksetzen
-- entfernt die aktuelle Backup-Auswahl
-
 Alles ersetzen vorbereiten
-- ist als abgesicherte Aktion vorbereitet
-- ersetzt noch keine Daten
-- zeigt nur, welches Backup verwendet würde
 ```
 
 Noch nicht umgesetzt:
 
 ```text
+echter globaler Store
+echte Datenpersistenz
 echter Datenimport
 Daten ersetzen
 Daten ergänzen
@@ -140,6 +185,25 @@ Auswahl zurücksetzen
 Alles ersetzen vorbereiten
 ```
 
+## UI-Komponenten
+
+Wiederverwendbare Komponenten:
+
+```text
+src/ui/Button.tsx
+src/ui/Input.tsx
+src/ui/Select.tsx
+src/ui/Field.tsx
+src/ui/FieldGrid.tsx
+src/ui/SectionHeader.tsx
+src/ui/Badge.tsx
+src/ui/Table.tsx
+src/ui/WorkspaceHeader.tsx
+src/ui/EditLockToggle.tsx
+src/ui/DirtyStateNotice.tsx
+src/ui/SaveActionButton.tsx
+```
+
 ## Aktueller Stand
 
 Umgesetzt:
@@ -157,12 +221,14 @@ Umgesetzt:
 - Backup-Dateiprüfung beim Import
 - Backup-Auswahlstatus
 - abgesicherte Import-Vorbereitung ohne echten Datenersatz
+- zentrale Store-Datentypen und leeres Store-Snapshot
 
 Wichtig:
 
 ```text
 Die normalen Moduländerungen sind noch nicht echt persistent.
-Das Backup enthält aktuell nur die vorbereitete Struktur und Einstellungen.
+Die Seiten verwenden noch überwiegend lokale Mock-Daten.
+Der Store ist zuerst nur die saubere Zielstruktur.
 ```
 
 ## Nicht aktiv
@@ -175,7 +241,8 @@ Die Einzelfeld-Markierung wird später kontrolliert nur auf einer Seite getestet
 
 ## Nächste sinnvolle Schritte
 
-1. lokalen Datenstore planen
-2. Backup-Import mit "Alles ersetzen" erst nach Datenstore anschließen
-3. später Daten ergänzen / Daten ersetzen getrennt anbieten
-4. später Persistenz / Store / API planen
+1. Settings-Draft an `initialPrintPilotSettings` anbinden
+2. erste Seite kontrolliert auf Store-Datenstruktur umstellen
+3. danach Store-State als Hook vorbereiten
+4. Backup mit echtem Store-Snapshot verbinden
+5. später Persistenz / LocalStorage / API planen

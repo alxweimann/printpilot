@@ -18,7 +18,7 @@ Der Fokus liegt zuerst auf:
 - kontrollierte Formular-Drafts ohne Persistenz
 - kompakter Edit-Mode über ein einzelnes randloses Schloss in der Button-Leiste
 - Dirty-State für lokale Entwürfe auf allen relevanten Seiten
-- wiederverwendbare UI-Komponenten für Edit-State und Dirty-State
+- wiederverwendbare UI-Komponenten für Edit-State, Dirty-State und Hauptaktion
 
 Es gilt weiterhin:
 
@@ -82,6 +82,7 @@ src/ui/Table.tsx
 src/ui/WorkspaceHeader.tsx
 src/ui/EditLockToggle.tsx
 src/ui/DirtyStateNotice.tsx
+src/ui/SaveActionButton.tsx
 ```
 
 ## Bearbeitbare Formular-Drafts
@@ -123,19 +124,31 @@ Die Anzeige liegt zentral in:
 src/ui/DirtyStateNotice.tsx
 ```
 
+## Hauptaktion / Speichern-Button
+
+Die Hauptaktion in der Footer-Leiste liegt zentral in:
+
+```text
+src/ui/SaveActionButton.tsx
+```
+
 Prinzip:
+
+```ts
+<SaveActionButton
+  isDirty={isDirty}
+  defaultLabel="Angebot ausgeben"
+/>
+```
+
+Verhalten:
 
 ```text
 isDirty = false
-- keine lokalen Änderungen
-- kein Hinweis
-- Hauptaktion bleibt die normale Modulaktion
+- zeigt die normale Modulaktion, z. B. "Angebot ausgeben"
 
 isDirty = true
-- lokale Änderungen vorhanden
-- dezenter Hinweis "Ungespeicherte Änderungen"
-- Hauptaktion wechselt zu "Änderungen speichern"
-- Verwerfen setzt den Draft zurück
+- zeigt "Änderungen speichern"
 ```
 
 Wichtig:
@@ -143,6 +156,8 @@ Wichtig:
 ```text
 Das Schloss speichert nicht automatisch.
 Speichern bleibt eine bewusste Aktion.
+Der Button speichert noch nicht echt.
+Er ist aktuell eine UI-/State-Vorbereitung.
 ```
 
 ## Edit-Mode über einzelnes randloses Schloss
@@ -154,19 +169,6 @@ Die Schloss-Komponente liegt zentral in:
 ```text
 src/ui/EditLockToggle.tsx
 ```
-
-Prinzip:
-
-- Standardzustand: Bearbeitung ist gesperrt
-- unten in der Button-Leiste gibt es nur ein Schloss-Icon
-- das Schloss hat keine Umrandung und keine Button-Fläche
-- geschlossenes Schloss öffnet die Bearbeitung
-- offenes Schloss sperrt die Bearbeitung wieder
-- kein zusätzlicher Text am Schloss
-- das Schloss ist visuell mittig zur Höhe der danebenliegenden Buttons ausgerichtet
-- das Schloss nutzt denselben Abstand wie die übrigen Buttons
-- keine Schloss-Hinweise direkt an den Feldern
-- `Änderungen verwerfen` setzt den Draft zurück und sperrt die Felder
 
 ## Seiten mit Draft + Edit-Mode + Dirty-State
 
@@ -197,6 +199,7 @@ Umgesetzt:
 - Dirty-State auf allen relevanten Draft-Seiten sichtbar
 - `DirtyStateNotice` als zentrale UI-Komponente
 - `EditLockToggle` als zentrale UI-Komponente
+- `SaveActionButton` als zentrale UI-Komponente
 - editierbare Stammdatenfelder pro Modul
 - Einstellungen mit lokalem Draft
 - readOnly-Felder für Nummern, Kundenreferenzen oder systemische Referenzen
@@ -214,7 +217,6 @@ Der Draft ist nur lokale UI-Vorbereitung.
 
 ## Nächste sinnvolle Schritte
 
-1. Speichern-Button optisch finalisieren
-2. geänderte Felder visuell markieren
-3. lokale Datenstruktur planen
-4. später Persistenz / Store / API planen
+1. geänderte Felder visuell markieren
+2. lokale Datenstruktur planen
+3. später Persistenz / Store / API planen

@@ -13,6 +13,7 @@ import { Field } from "../ui/Field";
 import { FieldGrid } from "../ui/FieldGrid";
 import { Input } from "../ui/Input";
 import { SectionHeader } from "../ui/SectionHeader";
+import { SaveActionButton } from "../ui/SaveActionButton";
 import { Select } from "../ui/Select";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
@@ -445,7 +446,16 @@ export function SettingsPage() {
 
             <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
 
-            <Button variant="primary">Einstellungen speichern</Button>
+            <SaveActionButton
+
+
+                            isDirty={isDirty}
+
+
+                            defaultLabel="Einstellungen speichern"
+
+
+                          />
           </div>
         </section>
       </section>

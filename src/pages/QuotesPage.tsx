@@ -21,6 +21,7 @@ import { FieldGrid } from "../ui/FieldGrid";
 import { Input } from "../ui/Input";
 
 import { SectionHeader } from "../ui/SectionHeader";
+import { SaveActionButton } from "../ui/SaveActionButton";
 
 import { Select } from "../ui/Select";
 
@@ -451,9 +452,16 @@ export function QuotesPage() {
 
               <Button>Vorschau prüfen</Button>
 
-              <Button variant="primary">
-                {isDirty ? "Änderungen speichern" : "Angebot ausgeben"}
-              </Button>
+              <SaveActionButton
+
+
+                              isDirty={isDirty}
+
+
+                              defaultLabel="Angebot ausgeben"
+
+
+                            />
             </div>
           </section>
         </div>

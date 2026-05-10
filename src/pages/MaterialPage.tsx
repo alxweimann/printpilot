@@ -16,6 +16,7 @@ import { Field } from "../ui/Field";
 import { FieldGrid } from "../ui/FieldGrid";
 import { Input } from "../ui/Input";
 import { SectionHeader } from "../ui/SectionHeader";
+import { SaveActionButton } from "../ui/SaveActionButton";
 import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
@@ -454,9 +455,13 @@ export function MaterialPage() {
               />
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-              <Button variant="primary">
-                {isDirty ? "Änderungen speichern" : "Material speichern"}
-              </Button>
+              <SaveActionButton
+
+                              isDirty={isDirty}
+
+                              defaultLabel="Material speichern"
+
+                            />
             </div>
           </section>
         </div>

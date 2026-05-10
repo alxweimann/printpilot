@@ -16,6 +16,7 @@ import { Field } from "../ui/Field";
 import { FieldGrid } from "../ui/FieldGrid";
 import { Input } from "../ui/Input";
 import { SectionHeader } from "../ui/SectionHeader";
+import { SaveActionButton } from "../ui/SaveActionButton";
 import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
@@ -382,9 +383,13 @@ export function OrdersPage() {
               />
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-              <Button variant="primary">
-                {isDirty ? "Änderungen speichern" : "Auftrag vorbereiten"}
-              </Button>
+              <SaveActionButton
+
+                              isDirty={isDirty}
+
+                              defaultLabel="Auftrag vorbereiten"
+
+                            />
             </div>
           </section>
         </div>

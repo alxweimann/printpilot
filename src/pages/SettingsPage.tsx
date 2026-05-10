@@ -1,6 +1,11 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 
 import { getModuleConfig } from "../app/moduleConfig";
+import {
+  createPrintPilotBackup,
+  downloadPrintPilotBackup,
+  readPrintPilotBackupFile,
+} from "../data/backup";
 import { useEditableDraft } from "../hooks/useEditableDraft";
 
 import { PageHeader } from "../layout/PageHeader";
@@ -12,8 +17,8 @@ import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
 import { FieldGrid } from "../ui/FieldGrid";
 import { Input } from "../ui/Input";
-import { SectionHeader } from "../ui/SectionHeader";
 import { SaveActionButton } from "../ui/SaveActionButton";
+import { SectionHeader } from "../ui/SectionHeader";
 import { Select } from "../ui/Select";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
@@ -23,6 +28,7 @@ const settingsTabs = [
   "Firma",
   "Design",
   "System",
+  "Datensicherung",
 ] as const;
 
 type SettingsTab = (typeof settingsTabs)[number];
@@ -97,7 +103,23 @@ function getSettingsTitle(tab: SettingsTab) {
 
     case "System":
       return "Systemeinstellungen prüfen";
+
+    case "Datensicherung":
+      return "Datensicherung verwalten";
   }
+}
+
+function formatBackupDate(value: string) {
+  const date = new Date(value);
+
+  if (Number.isNaN(date.getTime())) {
+    return value;
+  }
+
+  return date.toLocaleString("de-DE", {
+    dateStyle: "medium",
+    timeStyle: "short",
+  });
 }
 
 export function SettingsPage() {
@@ -105,8 +127,12 @@ export function SettingsPage() {
 
   const [activeTab, setActiveTab] = useState<SettingsTab>("Allgemein");
   const [isEditing, setIsEditing] = useState(false);
+  const [backupMessage, setBackupMessage] = useState(
+    "Noch keine Sicherung erstellt oder geprüft.",
+  );
+  const backupInputRef = useRef<HTMLInputElement | null>(null);
 
-  const { draft, isDirty, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
     useEditableDraft(initialSettingsDraft);
 
   function handleTabChange(tab: string) {
@@ -123,6 +149,59 @@ export function SettingsPage() {
 
   function handleToggleEditing() {
     setIsEditing((currentValue) => !currentValue);
+  }
+
+  function handleCreateBackup() {
+    const backup = createPrintPilotBackup({
+      customers: [],
+      quotes: [],
+      orders: [],
+      materials: [],
+      machines: [],
+      services: [],
+      finishing: [],
+      templates: [],
+      settings: draft ?? {},
+    });
+
+    downloadPrintPilotBackup(backup);
+    setBackupMessage(
+      `Backup erstellt: ${formatBackupDate(backup.createdAt)} · Version ${
+        backup.version
+      }`,
+    );
+  }
+
+  function handleImportBackupClick() {
+    backupInputRef.current?.click();
+  }
+
+  async function handleBackupFileChange(
+    event: React.ChangeEvent<HTMLInputElement>,
+  ) {
+    const file = event.target.files?.[0];
+
+    if (!file) {
+      return;
+    }
+
+    try {
+      const backup = await readPrintPilotBackupFile(file);
+      setBackupMessage(
+        `Backup geprüft: ${formatBackupDate(backup.createdAt)} · Version ${
+          backup.version
+        } · Import ist vorbereitet, ersetzt aber noch keine Daten.`,
+      );
+    } catch (error) {
+      const message =
+        error instanceof Error
+          ? error.message
+          : "Die Backup-Datei konnte nicht gelesen werden.";
+
+      setBackupMessage(message);
+    } finally {
+      event.target.value = "";
+    }
   }
 
   return (
@@ -431,32 +510,65 @@ export function SettingsPage() {
             </>
           )}
 
-          <div className="calculation-footer">
+          {activeTab === "Datensicherung" && (
+            <>
+              <SectionHeader>Backup & Wiederherstellung</SectionHeader>
 
+              <FieldGrid>
+                <Field label="Backup-Format">
+                  <Input value="PrintPilot JSON Backup · Version 0.1.0" readOnly />
+                </Field>
 
-            <DirtyStateNotice isDirty={isDirty} />
+                <Field label="Sicherungsumfang">
+                  <Input
+                    value="Kunden, Angebote, Aufträge, Material, Maschinen, Leistungen, Weiterverarbeitung, Vorlagen, Einstellungen"
+                    readOnly
+                  />
+                </Field>
 
-            <EditLockToggle
+                <Field label="Letzter Status">
+                  <Input value={backupMessage} readOnly />
+                </Field>
+              </FieldGrid>
 
-              isEditing={isEditing}
+              <SectionHeader>Aktionen</SectionHeader>
 
-              onToggle={handleToggleEditing}
+              <div className="calculation-footer">
+                <Button onClick={handleCreateBackup}>Backup erstellen</Button>
 
-            />
+                <Button onClick={handleImportBackupClick}>
+                  Backup prüfen/importieren
+                </Button>
 
-            <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+                <input
+                  ref={backupInputRef}
+                  type="file"
+                  accept="application/json,.json"
+                  onChange={handleBackupFileChange}
+                  style={{ display: "none" }}
+                />
+              </div>
+            </>
+          )}
 
-            <SaveActionButton
+          {activeTab !== "Datensicherung" && (
+            <div className="calculation-footer">
+              <DirtyStateNotice isDirty={isDirty} />
 
+              <EditLockToggle
+                isEditing={isEditing}
+                onToggle={handleToggleEditing}
+              />
 
-                            isDirty={isDirty}
+              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
 
-
-                            defaultLabel="Einstellungen speichern"
-
-
-                          />
-          </div>
+              <SaveActionButton
+                isDirty={isDirty}
+                defaultLabel="Einstellungen speichern"
+                onClick={saveDraft}
+              />
+            </div>
+          )}
         </section>
       </section>
     </div>

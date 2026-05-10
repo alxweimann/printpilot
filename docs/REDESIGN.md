@@ -18,6 +18,8 @@ Der Fokus liegt zuerst auf:
 - kontrollierte Formular-Drafts ohne Persistenz
 - kompakter Edit-Mode über ein einzelnes randloses Schloss in der Button-Leiste
 - Dirty-State für lokale Entwürfe auf allen relevanten Seiten
+- Save-Simulation ohne echte Persistenz
+- Datensicherung als JSON-Export und Import-Prüfung
 - wiederverwendbare UI-Komponenten für Edit-State, Dirty-State und Hauptaktion
 
 Es gilt weiterhin:
@@ -47,23 +49,84 @@ restart-designsystem
 8. erst dann nächster Schritt
 ```
 
-## Architekturstand
+## Backup-Dateiformat
+
+Datei:
 
 ```text
-src/main.tsx
-src/app/App.tsx
-src/app/AppRouter.tsx
-src/app/moduleConfig.ts
-src/app/navigation.ts
-src/hooks/useMasterDetailSelection.ts
-src/hooks/useEditableDraft.ts
-src/layout/AppShell.tsx
-src/layout/Sidebar.tsx
-src/layout/PageHeader.tsx
-src/layout/PageTabs.tsx
-src/pages/
-src/styles/globals.css
-src/ui/
+src/data/backup.ts
+```
+
+Das Backup ist als JSON-Datei geplant.
+
+Struktur:
+
+```json
+{
+  "app": "PrintPilot",
+  "version": "0.1.0",
+  "createdAt": "2026-05-10T15:30:00.000Z",
+  "data": {
+    "customers": [],
+    "quotes": [],
+    "orders": [],
+    "materials": [],
+    "machines": [],
+    "services": [],
+    "finishing": [],
+    "templates": [],
+    "settings": {}
+  }
+}
+```
+
+Aktuell umgesetzt:
+
+```text
+Backup erstellen
+- erzeugt eine JSON-Datei
+- enthält aktuell leere Datenbereiche plus Einstellungen-Draft
+- lädt die Datei im Browser herunter
+
+Backup prüfen/importieren
+- liest eine JSON-Datei ein
+- prüft, ob es eine gültige PrintPilot-Backup-Datei ist
+- zeigt Status, Version und Erstellzeit
+- ersetzt noch keine Daten
+```
+
+Noch nicht umgesetzt:
+
+```text
+echter Datenimport
+Daten ersetzen
+Daten ergänzen
+automatische Backups
+LocalStorage / Datenbank / API
+```
+
+## Einstellungen
+
+Datei:
+
+```text
+src/pages/SettingsPage.tsx
+```
+
+Neuer Tab:
+
+```text
+Datensicherung
+```
+
+Enthalten:
+
+```text
+Backup-Format
+Sicherungsumfang
+Letzter Status
+Backup erstellen
+Backup prüfen/importieren
 ```
 
 ## UI-Komponenten
@@ -101,93 +164,12 @@ Zweck:
 - Formularfelder kontrolliert editierbar machen
 - Änderungen lokal halten
 - Änderungen verwerfen über `resetDraft`
+- simuliertes Speichern über `saveDraft`
 - Dirty-State über `isDirty`
-- keine Speicherung
+- keine echte Speicherung
 - keine Persistenz
 - keine API
 - keine echte Datenbank
-
-Beispielprinzip:
-
-```ts
-const { draft, isDirty, updateDraftField, resetDraft } =
-  useEditableDraft(selectedItem);
-```
-
-## Dirty-State
-
-Der Hook `useEditableDraft` erkennt, ob der lokale Draft vom Ursprungsdatensatz abweicht.
-
-Die Anzeige liegt zentral in:
-
-```text
-src/ui/DirtyStateNotice.tsx
-```
-
-## Hauptaktion / Speichern-Button
-
-Die Hauptaktion in der Footer-Leiste liegt zentral in:
-
-```text
-src/ui/SaveActionButton.tsx
-```
-
-Prinzip:
-
-```ts
-<SaveActionButton
-  isDirty={isDirty}
-  defaultLabel="Angebot ausgeben"
-/>
-```
-
-Verhalten:
-
-```text
-isDirty = false
-- zeigt die normale Modulaktion, z. B. "Angebot ausgeben"
-
-isDirty = true
-- zeigt "Änderungen speichern"
-```
-
-Wichtig:
-
-```text
-Das Schloss speichert nicht automatisch.
-Speichern bleibt eine bewusste Aktion.
-Der Button speichert noch nicht echt.
-Er ist aktuell eine UI-/State-Vorbereitung.
-```
-
-## Edit-Mode über einzelnes randloses Schloss
-
-Alle relevanten Master-Detail-Seiten und die Einstellungen verwenden dasselbe kompakte Edit-Mode-Prinzip.
-
-Die Schloss-Komponente liegt zentral in:
-
-```text
-src/ui/EditLockToggle.tsx
-```
-
-## Seiten mit Draft + Edit-Mode + Dirty-State
-
-Diese Seiten haben lokale editierbare Draft-Felder, den kompakten Schloss-Edit-Mode und Dirty-State:
-
-```text
-src/pages/QuotesPage.tsx
-src/pages/CustomersPage.tsx
-src/pages/OrdersPage.tsx
-src/pages/MaterialPage.tsx
-src/pages/MachinesPage.tsx
-src/pages/DeliveryNotesPage.tsx
-src/pages/InvoicesPage.tsx
-src/pages/RemindersPage.tsx
-src/pages/FinishingPage.tsx
-src/pages/ServicesPage.tsx
-src/pages/TemplatesPage.tsx
-src/pages/SettingsPage.tsx
-```
 
 ## Aktueller Stand
 
@@ -196,27 +178,33 @@ Umgesetzt:
 - zentrale Auswahl über `useMasterDetailSelection`
 - lokaler Bearbeitungs-Draft über `useEditableDraft`
 - Dirty-State im Draft-Hook
-- Dirty-State auf allen relevanten Draft-Seiten sichtbar
+- Save-Simulation
 - `DirtyStateNotice` als zentrale UI-Komponente
 - `EditLockToggle` als zentrale UI-Komponente
 - `SaveActionButton` als zentrale UI-Komponente
-- editierbare Stammdatenfelder pro Modul
-- Einstellungen mit lokalem Draft
-- readOnly-Felder für Nummern, Kundenreferenzen oder systemische Referenzen
-- Änderungen verwerfen setzt den Draft auf den ausgewählten Datensatz oder die Einstellungen zurück
-- Auswahlwechsel setzt automatisch einen neuen Draft und sperrt die Bearbeitung
-- Tabwechsel setzt automatisch die erste passende Zeile, deren Draft und sperrt die Bearbeitung
 - kompakter Edit-Mode über einzelnes randloses Schloss-Icon unten
+- Backup-Grundstruktur
+- Backup-Export als JSON
+- Backup-Dateiprüfung beim Import
 
 Wichtig:
 
 ```text
-Die Änderungen sind noch nicht gespeichert.
-Der Draft ist nur lokale UI-Vorbereitung.
+Die normalen Moduländerungen sind noch nicht echt persistent.
+Das Backup enthält aktuell nur die vorbereitete Struktur und Einstellungen.
 ```
+
+## Nicht aktiv
+
+```text
+DirtyFieldMarker / visuelle Einzelfeld-Markierung
+```
+
+Die Einzelfeld-Markierung wird später kontrolliert nur auf einer Seite getestet.
 
 ## Nächste sinnvolle Schritte
 
-1. geänderte Felder visuell markieren
-2. lokale Datenstruktur planen
-3. später Persistenz / Store / API planen
+1. Backup-Import-Dialog fachlich planen
+2. lokale Datenstruktur für echte Datensätze vorbereiten
+3. später Backup-Import mit "Alles ersetzen" anschließen
+4. später Persistenz / Store / API planen

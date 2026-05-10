@@ -9,8 +9,8 @@ import {
   getPrintPilotBackupSummary,
   readPrintPilotBackupFile,
 } from "../data/backup";
-import { initialPrintPilotSettings } from "../data/printPilotStore";
 import { useEditableDraft } from "../hooks/useEditableDraft";
+import { usePrintPilotStore } from "../store/PrintPilotStore";
 
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -94,6 +94,12 @@ function formatBackupSummary(summary: PrintPilotBackupSummary) {
 
 export function SettingsPage() {
   const module = getModuleConfig("settings");
+  const {
+    settings,
+    updateSettings,
+    getBackupData,
+    replaceStoreData,
+  } = usePrintPilotStore();
 
   const [activeTab, setActiveTab] = useState<SettingsTab>("Allgemein");
   const [isEditing, setIsEditing] = useState(false);
@@ -104,15 +110,17 @@ export function SettingsPage() {
     useState<PrintPilotBackupFile | null>(null);
   const [selectedBackupSummary, setSelectedBackupSummary] =
     useState<PrintPilotBackupSummary | null>(null);
+  const [isReplaceArmed, setIsReplaceArmed] = useState(false);
   const backupInputRef = useRef<HTMLInputElement | null>(null);
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
-    useEditableDraft(initialPrintPilotSettings);
+    useEditableDraft(settings);
 
   function handleTabChange(tab: string) {
     if (isSettingsTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
+      setIsReplaceArmed(false);
     }
   }
 
@@ -125,25 +133,23 @@ export function SettingsPage() {
     setIsEditing((currentValue) => !currentValue);
   }
 
+  function handleSaveSettings() {
+    if (!draft) {
+      return;
+    }
+
+    updateSettings(draft);
+    saveDraft(draft);
+    setIsEditing(false);
+  }
+
   function handleCreateBackup() {
-    const backup = createPrintPilotBackup({
-      customers: [],
-      quotes: [],
-      orders: [],
-      materials: [],
-      machines: [],
-      services: [],
-      finishing: [],
-      templates: [],
-      settings: draft ?? {},
-    });
+    const backup = createPrintPilotBackup(getBackupData());
+    const summary = getPrintPilotBackupSummary(backup);
 
     downloadPrintPilotBackup(backup);
-    setBackupMessage(
-      `Backup erstellt: ${formatBackupDate(backup.createdAt)} · Version ${
-        backup.version
-      }`,
-    );
+    setBackupMessage(`Backup erstellt: ${formatBackupSummary(summary)}`);
+    setIsReplaceArmed(false);
   }
 
   function handleImportBackupClick() {
@@ -153,17 +159,48 @@ export function SettingsPage() {
   function handleClearSelectedBackup() {
     setSelectedBackup(null);
     setSelectedBackupSummary(null);
+    setIsReplaceArmed(false);
     setBackupMessage("Backup-Auswahl zurückgesetzt.");
   }
 
   function handlePrepareReplaceAll() {
     if (!selectedBackup || !selectedBackupSummary) {
       setBackupMessage("Bitte zuerst eine gültige Backup-Datei auswählen.");
+      setIsReplaceArmed(false);
       return;
     }
 
+    setIsReplaceArmed(true);
     setBackupMessage(
-      `Alles ersetzen ist vorbereitet, aber noch nicht aktiv. Ausgewähltes Backup: ${formatBackupSummary(
+      `Alles ersetzen ist vorbereitet. Vor dem Import wird automatisch ein Sicherheitsbackup des aktuellen Standes heruntergeladen. Ausgewähltes Backup: ${formatBackupSummary(
+        selectedBackupSummary,
+      )}`,
+    );
+  }
+
+  function handleExecuteReplaceAll() {
+    if (!selectedBackup || !selectedBackupSummary) {
+      setBackupMessage("Bitte zuerst eine gültige Backup-Datei auswählen.");
+      setIsReplaceArmed(false);
+      return;
+    }
+
+    const shouldReplace = window.confirm(
+      "Alle aktuellen lokalen PrintPilot-Daten werden durch das ausgewählte Backup ersetzt. Vorher wird automatisch ein Sicherheitsbackup heruntergeladen. Fortfahren?",
+    );
+
+    if (!shouldReplace) {
+      setBackupMessage("Import abgebrochen. Es wurden keine Daten ersetzt.");
+      return;
+    }
+
+    const safetyBackup = createPrintPilotBackup(getBackupData());
+    downloadPrintPilotBackup(safetyBackup);
+
+    replaceStoreData(selectedBackup.data);
+    setIsReplaceArmed(false);
+    setBackupMessage(
+      `Backup importiert. Aktueller Stand wurde vorher als Sicherheitsbackup exportiert. Importiertes Backup: ${formatBackupSummary(
         selectedBackupSummary,
       )}`,
     );
@@ -184,6 +221,7 @@ export function SettingsPage() {
 
       setSelectedBackup(backup);
       setSelectedBackupSummary(summary);
+      setIsReplaceArmed(false);
       setBackupMessage(
         `Backup geprüft: ${formatBackupSummary(
           summary,
@@ -197,6 +235,7 @@ export function SettingsPage() {
 
       setSelectedBackup(null);
       setSelectedBackupSummary(null);
+      setIsReplaceArmed(false);
       setBackupMessage(message);
     } finally {
       event.target.value = "";
@@ -558,6 +597,12 @@ export function SettingsPage() {
                   Alles ersetzen vorbereiten
                 </Button>
 
+                {isReplaceArmed && (
+                  <Button variant="primary" onClick={handleExecuteReplaceAll}>
+                    Import jetzt ausführen
+                  </Button>
+                )}
+
                 <input
                   ref={backupInputRef}
                   type="file"
@@ -583,7 +628,7 @@ export function SettingsPage() {
               <SaveActionButton
                 isDirty={isDirty}
                 defaultLabel="Einstellungen speichern"
-                onClick={saveDraft}
+                onClick={handleSaveSettings}
               />
             </div>
           )}

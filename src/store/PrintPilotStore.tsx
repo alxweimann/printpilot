@@ -1,6 +1,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   type ReactNode,
@@ -13,6 +14,8 @@ import {
   createPrintPilotStoreSnapshot,
 } from "../data/printPilotStore";
 
+const PRINTPILOT_LOCAL_STORAGE_KEY = "printpilot-store-v1";
+
 type PrintPilotStoreContextValue = {
   data: PrintPilotStoreData;
   quotes: PrintPilotQuote[];
@@ -20,6 +23,7 @@ type PrintPilotStoreContextValue = {
   updateQuote: (quote: PrintPilotQuote) => void;
   updateSettings: (settings: PrintPilotSettings) => void;
   replaceStoreData: (data: PrintPilotStoreData) => void;
+  resetStoreData: () => void;
   getBackupData: () => PrintPilotStoreData;
 };
 
@@ -30,12 +34,61 @@ type PrintPilotStoreProviderProps = {
   children: ReactNode;
 };
 
+function isValidStoreData(value: unknown): value is PrintPilotStoreData {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const candidate = value as Partial<PrintPilotStoreData>;
+
+  return (
+    Array.isArray(candidate.customers) &&
+    Array.isArray(candidate.quotes) &&
+    Array.isArray(candidate.orders) &&
+    Array.isArray(candidate.materials) &&
+    Array.isArray(candidate.machines) &&
+    Array.isArray(candidate.services) &&
+    Array.isArray(candidate.finishing) &&
+    Array.isArray(candidate.templates) &&
+    typeof candidate.settings === "object" &&
+    candidate.settings !== null &&
+    !Array.isArray(candidate.settings)
+  );
+}
+
+function readStoredData() {
+  try {
+    const storedValue = window.localStorage.getItem(
+      PRINTPILOT_LOCAL_STORAGE_KEY,
+    );
+
+    if (!storedValue) {
+      return createPrintPilotStoreSnapshot();
+    }
+
+    const parsedValue = JSON.parse(storedValue) as unknown;
+
+    if (!isValidStoreData(parsedValue)) {
+      return createPrintPilotStoreSnapshot();
+    }
+
+    return createPrintPilotStoreSnapshot(parsedValue);
+  } catch {
+    return createPrintPilotStoreSnapshot();
+  }
+}
+
 export function PrintPilotStoreProvider({
   children,
 }: PrintPilotStoreProviderProps) {
-  const [data, setData] = useState<PrintPilotStoreData>(() =>
-    createPrintPilotStoreSnapshot(),
-  );
+  const [data, setData] = useState<PrintPilotStoreData>(() => readStoredData());
+
+  useEffect(() => {
+    window.localStorage.setItem(
+      PRINTPILOT_LOCAL_STORAGE_KEY,
+      JSON.stringify(data),
+    );
+  }, [data]);
 
   function updateQuote(updatedQuote: PrintPilotQuote) {
     setData((currentData) => ({
@@ -54,7 +107,12 @@ export function PrintPilotStoreProvider({
   }
 
   function replaceStoreData(nextData: PrintPilotStoreData) {
-    setData(nextData);
+    setData(createPrintPilotStoreSnapshot(nextData));
+  }
+
+  function resetStoreData() {
+    window.localStorage.removeItem(PRINTPILOT_LOCAL_STORAGE_KEY);
+    setData(createPrintPilotStoreSnapshot());
   }
 
   function getBackupData() {
@@ -69,6 +127,7 @@ export function PrintPilotStoreProvider({
       updateQuote,
       updateSettings,
       replaceStoreData,
+      resetStoreData,
       getBackupData,
     }),
     [data],

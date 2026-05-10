@@ -112,6 +112,7 @@ export type PrintPilotTemplate = {
 };
 
 export type PrintPilotSettings = {
+  id: PrintPilotId;
   mode: string;
   startModule: string;
   defaultCalculationModule: string;
@@ -148,6 +149,7 @@ export type PrintPilotStoreData = {
 };
 
 export const initialPrintPilotSettings: PrintPilotSettings = {
+  id: "settings-local",
   mode: "Lokal",
   startModule: "Dashboard",
   defaultCalculationModule: "Kalkulation",

@@ -20,6 +20,7 @@ Der Fokus liegt zuerst auf:
 - Save-Simulation ohne echte Persistenz
 - Datensicherung als JSON-Export und abgesicherte Import-Prüfung
 - zentrale lokale Datenstruktur als Vorbereitung für Store / Persistenz
+- zentrale Standard-Einstellungen über `initialPrintPilotSettings`
 
 Es gilt weiterhin:
 
@@ -94,6 +95,35 @@ createEmptyPrintPilotStoreData()
 createPrintPilotStoreSnapshot()
 ```
 
+## Zentrale Einstellungen
+
+Die Standard-Einstellungen liegen jetzt zentral in:
+
+```text
+src/data/printPilotStore.ts
+```
+
+Export:
+
+```ts
+initialPrintPilotSettings
+```
+
+Die `SettingsPage.tsx` nutzt diese zentrale Struktur jetzt direkt:
+
+```ts
+useEditableDraft(initialPrintPilotSettings)
+```
+
+Damit sind die Standardwerte nicht mehr doppelt in der Seite gepflegt.
+
+Wichtig:
+
+```text
+PrintPilotSettings enthält aktuell eine id.
+Diese id wird für useEditableDraft benötigt.
+```
+
 ## Backup-Dateiformat
 
 Datei:
@@ -102,7 +132,7 @@ Datei:
 src/data/backup.ts
 ```
 
-Das Backup verwendet jetzt die zentrale Store-Struktur aus:
+Das Backup verwendet die zentrale Store-Struktur aus:
 
 ```text
 src/data/printPilotStore.ts
@@ -112,27 +142,6 @@ Das bedeutet:
 
 ```text
 PrintPilotBackupData = PrintPilotStoreData
-```
-
-Die Backup-Struktur bleibt:
-
-```json
-{
-  "app": "PrintPilot",
-  "version": "0.1.0",
-  "createdAt": "2026-05-10T15:30:00.000Z",
-  "data": {
-    "customers": [],
-    "quotes": [],
-    "orders": [],
-    "materials": [],
-    "machines": [],
-    "services": [],
-    "finishing": [],
-    "templates": [],
-    "settings": {}
-  }
-}
 ```
 
 Aktuell umgesetzt:
@@ -166,13 +175,18 @@ Datei:
 src/pages/SettingsPage.tsx
 ```
 
-Tab:
+Tabs:
 
 ```text
+Allgemein
+Nummernkreise
+Firma
+Design
+System
 Datensicherung
 ```
 
-Enthalten:
+Der Tab `Datensicherung` enthält:
 
 ```text
 Backup-Format
@@ -222,6 +236,7 @@ Umgesetzt:
 - Backup-Auswahlstatus
 - abgesicherte Import-Vorbereitung ohne echten Datenersatz
 - zentrale Store-Datentypen und leeres Store-Snapshot
+- zentrale Standard-Einstellungen über `initialPrintPilotSettings`
 
 Wichtig:
 
@@ -241,8 +256,7 @@ Die Einzelfeld-Markierung wird später kontrolliert nur auf einer Seite getestet
 
 ## Nächste sinnvolle Schritte
 
-1. Settings-Draft an `initialPrintPilotSettings` anbinden
-2. erste Seite kontrolliert auf Store-Datenstruktur umstellen
-3. danach Store-State als Hook vorbereiten
-4. Backup mit echtem Store-Snapshot verbinden
-5. später Persistenz / LocalStorage / API planen
+1. erste Seite kontrolliert auf Store-Datenstruktur umstellen
+2. Store-State als Hook vorbereiten
+3. Backup mit echtem Store-Snapshot verbinden
+4. später Persistenz / LocalStorage / API planen

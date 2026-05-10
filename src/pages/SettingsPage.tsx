@@ -9,6 +9,7 @@ import {
   getPrintPilotBackupSummary,
   readPrintPilotBackupFile,
 } from "../data/backup";
+import { initialPrintPilotSettings } from "../data/printPilotStore";
 import { useEditableDraft } from "../hooks/useEditableDraft";
 
 import { PageHeader } from "../layout/PageHeader";
@@ -35,56 +36,6 @@ const settingsTabs = [
 ] as const;
 
 type SettingsTab = (typeof settingsTabs)[number];
-
-type SettingsDraft = {
-  id: string;
-  mode: string;
-  startModule: string;
-  defaultCalculationModule: string;
-  quotePrefix: string;
-  quoteNextNumber: string;
-  orderPrefix: string;
-  orderNextNumber: string;
-  invoicePrefix: string;
-  invoiceNextNumber: string;
-  companyName: string;
-  companyStreet: string;
-  companyZip: string;
-  companyCity: string;
-  companyPhone: string;
-  companyEmail: string;
-  density: string;
-  appearance: string;
-  moduleColors: string;
-  backupMode: string;
-  apiStatus: string;
-  debugMode: string;
-};
-
-const initialSettingsDraft: SettingsDraft = {
-  id: "settings-local",
-  mode: "Lokal",
-  startModule: "Dashboard",
-  defaultCalculationModule: "Kalkulation",
-  quotePrefix: "AG",
-  quoteNextNumber: "2026-001",
-  orderPrefix: "AU",
-  orderNextNumber: "2026-001",
-  invoicePrefix: "RE",
-  invoiceNextNumber: "2026-001",
-  companyName: "Sonnendruck GmbH",
-  companyStreet: "",
-  companyZip: "",
-  companyCity: "",
-  companyPhone: "",
-  companyEmail: "",
-  density: "Kompakt",
-  appearance: "Hell später",
-  moduleColors: "Einheitlich später",
-  backupMode: "Manuell",
-  apiStatus: "Nicht aktiv",
-  debugMode: "Aus",
-};
 
 function isSettingsTab(tab: string): tab is SettingsTab {
   return settingsTabs.includes(tab as SettingsTab);
@@ -156,7 +107,7 @@ export function SettingsPage() {
   const backupInputRef = useRef<HTMLInputElement | null>(null);
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
-    useEditableDraft(initialSettingsDraft);
+    useEditableDraft(initialPrintPilotSettings);
 
   function handleTabChange(tab: string) {
     if (isSettingsTab(tab)) {

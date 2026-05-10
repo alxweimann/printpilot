@@ -2,8 +2,11 @@ import { useRef, useState } from "react";
 
 import { getModuleConfig } from "../app/moduleConfig";
 import {
+  type PrintPilotBackupFile,
+  type PrintPilotBackupSummary,
   createPrintPilotBackup,
   downloadPrintPilotBackup,
+  getPrintPilotBackupSummary,
   readPrintPilotBackupFile,
 } from "../data/backup";
 import { useEditableDraft } from "../hooks/useEditableDraft";
@@ -122,6 +125,22 @@ function formatBackupDate(value: string) {
   });
 }
 
+function formatBackupSummary(summary: PrintPilotBackupSummary) {
+  return [
+    `Version ${summary.version}`,
+    formatBackupDate(summary.createdAt),
+    `${summary.customers} Kunden`,
+    `${summary.quotes} Angebote`,
+    `${summary.orders} Aufträge`,
+    `${summary.materials} Materialien`,
+    `${summary.machines} Maschinen`,
+    `${summary.services} Leistungen`,
+    `${summary.finishing} Weiterverarbeitungen`,
+    `${summary.templates} Vorlagen`,
+    summary.hasSettings ? "Einstellungen enthalten" : "Keine Einstellungen",
+  ].join(" · ");
+}
+
 export function SettingsPage() {
   const module = getModuleConfig("settings");
 
@@ -130,6 +149,10 @@ export function SettingsPage() {
   const [backupMessage, setBackupMessage] = useState(
     "Noch keine Sicherung erstellt oder geprüft.",
   );
+  const [selectedBackup, setSelectedBackup] =
+    useState<PrintPilotBackupFile | null>(null);
+  const [selectedBackupSummary, setSelectedBackupSummary] =
+    useState<PrintPilotBackupSummary | null>(null);
   const backupInputRef = useRef<HTMLInputElement | null>(null);
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
@@ -176,6 +199,25 @@ export function SettingsPage() {
     backupInputRef.current?.click();
   }
 
+  function handleClearSelectedBackup() {
+    setSelectedBackup(null);
+    setSelectedBackupSummary(null);
+    setBackupMessage("Backup-Auswahl zurückgesetzt.");
+  }
+
+  function handlePrepareReplaceAll() {
+    if (!selectedBackup || !selectedBackupSummary) {
+      setBackupMessage("Bitte zuerst eine gültige Backup-Datei auswählen.");
+      return;
+    }
+
+    setBackupMessage(
+      `Alles ersetzen ist vorbereitet, aber noch nicht aktiv. Ausgewähltes Backup: ${formatBackupSummary(
+        selectedBackupSummary,
+      )}`,
+    );
+  }
+
   async function handleBackupFileChange(
     event: React.ChangeEvent<HTMLInputElement>,
   ) {
@@ -187,10 +229,14 @@ export function SettingsPage() {
 
     try {
       const backup = await readPrintPilotBackupFile(file);
+      const summary = getPrintPilotBackupSummary(backup);
+
+      setSelectedBackup(backup);
+      setSelectedBackupSummary(summary);
       setBackupMessage(
-        `Backup geprüft: ${formatBackupDate(backup.createdAt)} · Version ${
-          backup.version
-        } · Import ist vorbereitet, ersetzt aber noch keine Daten.`,
+        `Backup geprüft: ${formatBackupSummary(
+          summary,
+        )}. Import ist vorbereitet, ersetzt aber noch keine Daten.`,
       );
     } catch (error) {
       const message =
@@ -198,6 +244,8 @@ export function SettingsPage() {
           ? error.message
           : "Die Backup-Datei konnte nicht gelesen werden.";
 
+      setSelectedBackup(null);
+      setSelectedBackupSummary(null);
       setBackupMessage(message);
     } finally {
       event.target.value = "";
@@ -529,6 +577,17 @@ export function SettingsPage() {
                 <Field label="Letzter Status">
                   <Input value={backupMessage} readOnly />
                 </Field>
+
+                <Field label="Ausgewähltes Backup">
+                  <Input
+                    value={
+                      selectedBackupSummary
+                        ? formatBackupSummary(selectedBackupSummary)
+                        : "Kein Backup ausgewählt"
+                    }
+                    readOnly
+                  />
+                </Field>
               </FieldGrid>
 
               <SectionHeader>Aktionen</SectionHeader>
@@ -537,7 +596,15 @@ export function SettingsPage() {
                 <Button onClick={handleCreateBackup}>Backup erstellen</Button>
 
                 <Button onClick={handleImportBackupClick}>
-                  Backup prüfen/importieren
+                  Backup auswählen
+                </Button>
+
+                <Button onClick={handleClearSelectedBackup}>
+                  Auswahl zurücksetzen
+                </Button>
+
+                <Button onClick={handlePrepareReplaceAll}>
+                  Alles ersetzen vorbereiten
                 </Button>
 
                 <input

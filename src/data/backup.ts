@@ -17,6 +17,20 @@ export type PrintPilotBackupFile = {
   data: PrintPilotBackupData;
 };
 
+export type PrintPilotBackupSummary = {
+  version: string;
+  createdAt: string;
+  customers: number;
+  quotes: number;
+  orders: number;
+  materials: number;
+  machines: number;
+  services: number;
+  finishing: number;
+  templates: number;
+  hasSettings: boolean;
+};
+
 export const PRINTPILOT_BACKUP_VERSION = "0.1.0";
 
 export function createEmptyBackupData(): PrintPilotBackupData {
@@ -69,6 +83,28 @@ export function downloadPrintPilotBackup(backup: PrintPilotBackupFile) {
   URL.revokeObjectURL(url);
 }
 
+function isBackupData(value: unknown): value is PrintPilotBackupData {
+  if (!value || typeof value !== "object") {
+    return false;
+  }
+
+  const candidate = value as Partial<PrintPilotBackupData>;
+
+  return (
+    Array.isArray(candidate.customers) &&
+    Array.isArray(candidate.quotes) &&
+    Array.isArray(candidate.orders) &&
+    Array.isArray(candidate.materials) &&
+    Array.isArray(candidate.machines) &&
+    Array.isArray(candidate.services) &&
+    Array.isArray(candidate.finishing) &&
+    Array.isArray(candidate.templates) &&
+    typeof candidate.settings === "object" &&
+    candidate.settings !== null &&
+    !Array.isArray(candidate.settings)
+  );
+}
+
 export function isPrintPilotBackupFile(value: unknown): value is PrintPilotBackupFile {
   if (!value || typeof value !== "object") {
     return false;
@@ -80,9 +116,26 @@ export function isPrintPilotBackupFile(value: unknown): value is PrintPilotBacku
     candidate.app === "PrintPilot" &&
     typeof candidate.version === "string" &&
     typeof candidate.createdAt === "string" &&
-    typeof candidate.data === "object" &&
-    candidate.data !== null
+    isBackupData(candidate.data)
   );
+}
+
+export function getPrintPilotBackupSummary(
+  backup: PrintPilotBackupFile,
+): PrintPilotBackupSummary {
+  return {
+    version: backup.version,
+    createdAt: backup.createdAt,
+    customers: backup.data.customers.length,
+    quotes: backup.data.quotes.length,
+    orders: backup.data.orders.length,
+    materials: backup.data.materials.length,
+    machines: backup.data.machines.length,
+    services: backup.data.services.length,
+    finishing: backup.data.finishing.length,
+    templates: backup.data.templates.length,
+    hasSettings: Object.keys(backup.data.settings).length > 0,
+  };
 }
 
 export async function readPrintPilotBackupFile(file: File) {

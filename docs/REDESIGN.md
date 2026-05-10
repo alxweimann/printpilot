@@ -19,7 +19,7 @@ Der Fokus liegt zuerst auf:
 - kompakter Edit-Mode über ein einzelnes randloses Schloss in der Button-Leiste
 - Dirty-State für lokale Entwürfe auf allen relevanten Seiten
 - Save-Simulation ohne echte Persistenz
-- Datensicherung als JSON-Export und Import-Prüfung
+- Datensicherung als JSON-Export und abgesicherte Import-Prüfung
 - wiederverwendbare UI-Komponenten für Edit-State, Dirty-State und Hauptaktion
 
 Es gilt weiterhin:
@@ -88,11 +88,19 @@ Backup erstellen
 - enthält aktuell leere Datenbereiche plus Einstellungen-Draft
 - lädt die Datei im Browser herunter
 
-Backup prüfen/importieren
+Backup auswählen
 - liest eine JSON-Datei ein
 - prüft, ob es eine gültige PrintPilot-Backup-Datei ist
-- zeigt Status, Version und Erstellzeit
+- zeigt Status, Version, Erstellzeit und enthaltene Datenbereiche
+- merkt das geprüfte Backup lokal als ausgewählt
+
+Auswahl zurücksetzen
+- entfernt die aktuelle Backup-Auswahl
+
+Alles ersetzen vorbereiten
+- ist als abgesicherte Aktion vorbereitet
 - ersetzt noch keine Daten
+- zeigt nur, welches Backup verwendet würde
 ```
 
 Noch nicht umgesetzt:
@@ -113,7 +121,7 @@ Datei:
 src/pages/SettingsPage.tsx
 ```
 
-Neuer Tab:
+Tab:
 
 ```text
 Datensicherung
@@ -125,51 +133,12 @@ Enthalten:
 Backup-Format
 Sicherungsumfang
 Letzter Status
+Ausgewähltes Backup
 Backup erstellen
-Backup prüfen/importieren
+Backup auswählen
+Auswahl zurücksetzen
+Alles ersetzen vorbereiten
 ```
-
-## UI-Komponenten
-
-Wiederverwendbare Komponenten:
-
-```text
-src/ui/Button.tsx
-src/ui/Input.tsx
-src/ui/Select.tsx
-src/ui/Field.tsx
-src/ui/FieldGrid.tsx
-src/ui/SectionHeader.tsx
-src/ui/Badge.tsx
-src/ui/Table.tsx
-src/ui/WorkspaceHeader.tsx
-src/ui/EditLockToggle.tsx
-src/ui/DirtyStateNotice.tsx
-src/ui/SaveActionButton.tsx
-```
-
-## Bearbeitbare Formular-Drafts
-
-Die Master-Detail-Seiten und die Einstellungen verwenden kontrollierte lokale Drafts.
-
-Datei:
-
-```text
-src/hooks/useEditableDraft.ts
-```
-
-Zweck:
-
-- ausgewählten Datensatz oder Einstellungszustand in einen lokalen Draft übernehmen
-- Formularfelder kontrolliert editierbar machen
-- Änderungen lokal halten
-- Änderungen verwerfen über `resetDraft`
-- simuliertes Speichern über `saveDraft`
-- Dirty-State über `isDirty`
-- keine echte Speicherung
-- keine Persistenz
-- keine API
-- keine echte Datenbank
 
 ## Aktueller Stand
 
@@ -186,6 +155,8 @@ Umgesetzt:
 - Backup-Grundstruktur
 - Backup-Export als JSON
 - Backup-Dateiprüfung beim Import
+- Backup-Auswahlstatus
+- abgesicherte Import-Vorbereitung ohne echten Datenersatz
 
 Wichtig:
 
@@ -204,7 +175,7 @@ Die Einzelfeld-Markierung wird später kontrolliert nur auf einer Seite getestet
 
 ## Nächste sinnvolle Schritte
 
-1. Backup-Import-Dialog fachlich planen
-2. lokale Datenstruktur für echte Datensätze vorbereiten
-3. später Backup-Import mit "Alles ersetzen" anschließen
+1. lokalen Datenstore planen
+2. Backup-Import mit "Alles ersetzen" erst nach Datenstore anschließen
+3. später Daten ergänzen / Daten ersetzen getrennt anbieten
 4. später Persistenz / Store / API planen

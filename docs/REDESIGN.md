@@ -18,6 +18,7 @@ Der Fokus liegt zuerst auf:
 - kontrollierte Formular-Drafts ohne Persistenz
 - kompakter Edit-Mode über ein einzelnes randloses Schloss in der Button-Leiste
 - Dirty-State für lokale Entwürfe auf allen relevanten Seiten
+- wiederverwendbare UI-Komponenten für Edit-State und Dirty-State
 
 Es gilt weiterhin:
 
@@ -65,6 +66,24 @@ src/styles/globals.css
 src/ui/
 ```
 
+## UI-Komponenten
+
+Wiederverwendbare Komponenten:
+
+```text
+src/ui/Button.tsx
+src/ui/Input.tsx
+src/ui/Select.tsx
+src/ui/Field.tsx
+src/ui/FieldGrid.tsx
+src/ui/SectionHeader.tsx
+src/ui/Badge.tsx
+src/ui/Table.tsx
+src/ui/WorkspaceHeader.tsx
+src/ui/EditLockToggle.tsx
+src/ui/DirtyStateNotice.tsx
+```
+
 ## Bearbeitbare Formular-Drafts
 
 Die Master-Detail-Seiten und die Einstellungen verwenden kontrollierte lokale Drafts.
@@ -98,6 +117,12 @@ const { draft, isDirty, updateDraftField, resetDraft } =
 
 Der Hook `useEditableDraft` erkennt, ob der lokale Draft vom Ursprungsdatensatz abweicht.
 
+Die Anzeige liegt zentral in:
+
+```text
+src/ui/DirtyStateNotice.tsx
+```
+
 Prinzip:
 
 ```text
@@ -123,6 +148,12 @@ Speichern bleibt eine bewusste Aktion.
 ## Edit-Mode über einzelnes randloses Schloss
 
 Alle relevanten Master-Detail-Seiten und die Einstellungen verwenden dasselbe kompakte Edit-Mode-Prinzip.
+
+Die Schloss-Komponente liegt zentral in:
+
+```text
+src/ui/EditLockToggle.tsx
+```
 
 Prinzip:
 
@@ -164,6 +195,8 @@ Umgesetzt:
 - lokaler Bearbeitungs-Draft über `useEditableDraft`
 - Dirty-State im Draft-Hook
 - Dirty-State auf allen relevanten Draft-Seiten sichtbar
+- `DirtyStateNotice` als zentrale UI-Komponente
+- `EditLockToggle` als zentrale UI-Komponente
 - editierbare Stammdatenfelder pro Modul
 - Einstellungen mit lokalem Draft
 - readOnly-Felder für Nummern, Kundenreferenzen oder systemische Referenzen
@@ -183,6 +216,5 @@ Der Draft ist nur lokale UI-Vorbereitung.
 
 1. Speichern-Button optisch finalisieren
 2. geänderte Felder visuell markieren
-3. Schloss später als wiederverwendbare UI-Komponente auslagern
-4. lokale Datenstruktur planen
-5. später Persistenz / Store / API planen
+3. lokale Datenstruktur planen
+4. später Persistenz / Store / API planen

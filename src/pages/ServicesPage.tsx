@@ -10,6 +10,8 @@ import { PageTabs } from "../layout/PageTabs";
 
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { DirtyStateNotice } from "../ui/DirtyStateNotice";
+import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
 import { FieldGrid } from "../ui/FieldGrid";
 import { Input } from "../ui/Input";
@@ -392,56 +394,15 @@ export function ServicesPage() {
             </FieldGrid>
 
             <div className="calculation-footer">
-              {isDirty && (
-                <span
-                  style={{
-                    alignSelf: "center",
-                    color: "var(--color-text-muted)",
-                    fontSize: "0.8rem",
-                    fontWeight: 600,
-                    marginRight: "auto",
-                  }}
-                >
-                  Ungespeicherte Änderungen
-                </span>
-              )}
+              <DirtyStateNotice isDirty={isDirty} />
 
-              <button
-                type="button"
-                aria-label={
-                  isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"
-                }
-                title={isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"}
-                onClick={handleToggleEditing}
-                style={{
-                  alignItems: "center",
-                  alignSelf: "center",
-                  background: "transparent",
-                  border: 0,
-                  boxShadow: "none",
-                  cursor: "pointer",
-                  display: "inline-flex",
-                  fontSize: "1.55rem",
-                  height: "2.5rem",
-                  justifyContent: "center",
-                  lineHeight: 1,
-                  padding: 0,
-                  width: "1.65rem",
-                }}
-              >
-                <span
-                  aria-hidden="true"
-                  style={{
-                    alignItems: "center",
-                    display: "inline-flex",
-                    height: "100%",
-                    justifyContent: "center",
-                    transform: "translateY(-4px)",
-                  }}
-                >
-                  {isEditing ? "🔓" : "🔒"}
-                </span>
-              </button>
+              <EditLockToggle
+
+                isEditing={isEditing}
+
+                onToggle={handleToggleEditing}
+
+              />
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
               <Button variant="primary">

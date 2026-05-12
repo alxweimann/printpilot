@@ -12,6 +12,7 @@ import {
   type PrintPilotFinishingProcess,
   type PrintPilotMachine,
   type PrintPilotMaterial,
+  type PrintPilotOrder,
   type PrintPilotQuote,
   type PrintPilotService,
   type PrintPilotSettings,
@@ -26,6 +27,7 @@ type PrintPilotStoreContextValue = {
   data: PrintPilotStoreData;
   customers: PrintPilotCustomer[];
   quotes: PrintPilotQuote[];
+  orders: PrintPilotOrder[];
   materials: PrintPilotMaterial[];
   machines: PrintPilotMachine[];
   services: PrintPilotService[];
@@ -36,6 +38,7 @@ type PrintPilotStoreContextValue = {
   updateFinishingProcess: (process: PrintPilotFinishingProcess) => void;
   updateMachine: (machine: PrintPilotMachine) => void;
   updateMaterial: (material: PrintPilotMaterial) => void;
+  updateOrder: (order: PrintPilotOrder) => void;
   updateQuote: (quote: PrintPilotQuote) => void;
   updateService: (service: PrintPilotService) => void;
   updateSettings: (settings: PrintPilotSettings) => void;
@@ -144,6 +147,15 @@ export function PrintPilotStoreProvider({
     }));
   }
 
+  function updateOrder(updatedOrder: PrintPilotOrder) {
+    setData((currentData) => ({
+      ...currentData,
+      orders: currentData.orders.map((order) =>
+        order.id === updatedOrder.id ? updatedOrder : order,
+      ),
+    }));
+  }
+
   function updateQuote(updatedQuote: PrintPilotQuote) {
     setData((currentData) => ({
       ...currentData,
@@ -196,6 +208,7 @@ export function PrintPilotStoreProvider({
       data,
       customers: data.customers,
       quotes: data.quotes,
+      orders: data.orders,
       materials: data.materials,
       machines: data.machines,
       services: data.services,
@@ -206,6 +219,7 @@ export function PrintPilotStoreProvider({
       updateFinishingProcess,
       updateMachine,
       updateMaterial,
+      updateOrder,
       updateQuote,
       updateService,
       updateSettings,

@@ -80,6 +80,13 @@ export type PrintPilotMachine = {
   badgeVariant?: "success";
 };
 
+export type PrintPilotOrderStatus =
+  | "Neu"
+  | "In Produktion"
+  | "Wartet"
+  | "Fertig"
+  | "Archiv";
+
 export type PrintPilotOrder = {
   id: PrintPilotId;
   number: string;
@@ -87,12 +94,13 @@ export type PrintPilotOrder = {
   customerId: PrintPilotId | null;
   customerName: string;
   product: string;
-  status: string;
+  status: PrintPilotOrderStatus;
   dueDate: string;
   machine: string;
   priority: string;
   handoff: string;
   approval: string;
+  badgeVariant?: "success";
 };
 
 export type PrintPilotServiceStatus = "Aktiv" | "Optional" | "Archiv";
@@ -699,11 +707,86 @@ export const initialPrintPilotTemplates: PrintPilotTemplate[] = [
   },
 ];
 
+export const initialPrintPilotOrders: PrintPilotOrder[] = [
+  {
+    id: "order-au-2026-001",
+    number: "AU-2026-001",
+    quoteId: "quote-ag-2026-001",
+    customerId: "customer-sonnendruck",
+    customerName: "Sonnendruck GmbH",
+    product: "Broschüre A4",
+    status: "Neu",
+    dueDate: "2026-05-20",
+    machine: "Xerox Iridesse 1",
+    priority: "Normal",
+    handoff: "Druckdaten prüfen",
+    approval: "Freigabe offen",
+  },
+  {
+    id: "order-au-2026-002",
+    number: "AU-2026-002",
+    quoteId: "quote-ag-2026-002",
+    customerId: "customer-musterkunde",
+    customerName: "Musterkunde GmbH",
+    product: "Flyer A5",
+    status: "In Produktion",
+    dueDate: "2026-05-16",
+    machine: "Xerox Iridesse Sonderfarben",
+    priority: "Hoch",
+    handoff: "In Druck",
+    approval: "Freigegeben",
+    badgeVariant: "success",
+  },
+  {
+    id: "order-au-2026-003",
+    number: "AU-2026-003",
+    quoteId: null,
+    customerId: "customer-agentur-beispiel",
+    customerName: "Agentur Beispiel",
+    product: "Visitenkarten",
+    status: "Wartet",
+    dueDate: "2026-05-22",
+    machine: "Xerox Iridesse 1",
+    priority: "Normal",
+    handoff: "Wartet auf Daten",
+    approval: "Kundenfreigabe fehlt",
+  },
+  {
+    id: "order-au-2026-004",
+    number: "AU-2026-004",
+    quoteId: null,
+    customerId: "customer-sonnendruck",
+    customerName: "Sonnendruck GmbH",
+    product: "Folder DIN lang",
+    status: "Fertig",
+    dueDate: "2026-05-10",
+    machine: "Xerox Nuvera",
+    priority: "Normal",
+    handoff: "Abholbereit",
+    approval: "Freigegeben",
+    badgeVariant: "success",
+  },
+  {
+    id: "order-au-2026-005",
+    number: "AU-2026-005",
+    quoteId: null,
+    customerId: "customer-testkunde-kg",
+    customerName: "Testkunde KG",
+    product: "Altes Kartenprojekt",
+    status: "Archiv",
+    dueDate: "2026-04-20",
+    machine: "Canon VP140",
+    priority: "Niedrig",
+    handoff: "Abgeschlossen",
+    approval: "Archiv",
+  },
+];
+
 export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
   return {
     customers: initialPrintPilotCustomers,
     quotes: initialPrintPilotQuotes,
-    orders: [],
+    orders: initialPrintPilotOrders,
     materials: initialPrintPilotMaterials,
     machines: initialPrintPilotMachines,
     services: initialPrintPilotServices,
@@ -729,6 +812,10 @@ export function createPrintPilotStoreSnapshot(
       overrides.quotes && overrides.quotes.length > 0
         ? overrides.quotes
         : emptyStore.quotes,
+    orders:
+      overrides.orders && overrides.orders.length > 0
+        ? overrides.orders
+        : emptyStore.orders,
     materials:
       overrides.materials && overrides.materials.length > 0
         ? overrides.materials
@@ -814,6 +901,18 @@ export function groupPrintPilotTemplatesByStatus(
     Aktiv: templates.filter((template) => template.status === "Aktiv"),
     Entwurf: templates.filter((template) => template.status === "Entwurf"),
     Archiv: templates.filter((template) => template.status === "Archiv"),
+  };
+}
+
+export function groupPrintPilotOrdersByStatus(
+  orders: PrintPilotOrder[],
+): Record<PrintPilotOrderStatus, PrintPilotOrder[]> {
+  return {
+    Neu: orders.filter((order) => order.status === "Neu"),
+    "In Produktion": orders.filter((order) => order.status === "In Produktion"),
+    Wartet: orders.filter((order) => order.status === "Wartet"),
+    Fertig: orders.filter((order) => order.status === "Fertig"),
+    Archiv: orders.filter((order) => order.status === "Archiv"),
   };
 }
 

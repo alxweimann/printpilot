@@ -7,8 +7,8 @@ export function EditLockToggle({ isEditing, onToggle }: EditLockToggleProps) {
   return (
     <button
       type="button"
-      aria-label={isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"}
-      title={isEditing ? "Bearbeitung sperren" : "Bearbeitung öffnen"}
+      aria-label={isEditing ? "Bearbeitung sperren" : "Bearbeitung oeffnen"}
+      title={isEditing ? "Bearbeitung sperren" : "Bearbeitung oeffnen"}
       onClick={onToggle}
       style={{
         alignItems: "center",
@@ -36,7 +36,7 @@ export function EditLockToggle({ isEditing, onToggle }: EditLockToggleProps) {
           transform: "translateY(-4px)",
         }}
       >
-        {isEditing ? "🔓" : "🔒"}
+        {isEditing ? "\uD83D\uDD13" : "\uD83D\uDD12"}
       </span>
     </button>
   );

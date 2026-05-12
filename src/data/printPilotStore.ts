@@ -1,10 +1,13 @@
 export type PrintPilotId = string;
 
+export type PrintPilotCustomerStatus = "Aktiv" | "Interessent" | "Inaktiv";
+
 export type PrintPilotCustomer = {
   id: PrintPilotId;
   number: string;
   name: string;
   type: string;
+  status: PrintPilotCustomerStatus;
   street: string;
   zip: string;
   city: string;
@@ -13,6 +16,7 @@ export type PrintPilotCustomer = {
   email: string;
   paymentTerm: string;
   priceLevel: string;
+  badgeVariant?: "success";
 };
 
 export type PrintPilotQuoteStatus =
@@ -180,6 +184,71 @@ export const initialPrintPilotSettings: PrintPilotSettings = {
   debugMode: "Aus",
 };
 
+export const initialPrintPilotCustomers: PrintPilotCustomer[] = [
+  {
+    id: "customer-sonnendruck",
+    number: "KD-1001",
+    name: "Sonnendruck GmbH",
+    type: "Geschäftskunde",
+    status: "Aktiv",
+    street: "Musterstraße 12",
+    zip: "69115",
+    city: "Heidelberg",
+    contact: "Alex Weimann",
+    phone: "06221 000000",
+    email: "info@sonnendruck.de",
+    paymentTerm: "14 Tage netto",
+    priceLevel: "Standard",
+    badgeVariant: "success",
+  },
+  {
+    id: "customer-musterkunde",
+    number: "KD-1002",
+    name: "Musterkunde GmbH",
+    type: "Geschäftskunde",
+    status: "Aktiv",
+    street: "Beispielweg 4",
+    zip: "68159",
+    city: "Mannheim",
+    contact: "Max Mustermann",
+    phone: "0621 000000",
+    email: "kontakt@musterkunde.de",
+    paymentTerm: "30 Tage netto",
+    priceLevel: "A-Kunde",
+    badgeVariant: "success",
+  },
+  {
+    id: "customer-agentur-beispiel",
+    number: "KD-1003",
+    name: "Agentur Beispiel",
+    type: "Agentur",
+    status: "Interessent",
+    street: "Designallee 8",
+    zip: "69120",
+    city: "Heidelberg",
+    contact: "Mia Beispiel",
+    phone: "06221 111111",
+    email: "hello@agentur-beispiel.de",
+    paymentTerm: "Zahlbar sofort",
+    priceLevel: "Agentur",
+  },
+  {
+    id: "customer-testkunde-kg",
+    number: "KD-1004",
+    name: "Testkunde KG",
+    type: "Privatkunde",
+    status: "Inaktiv",
+    street: "Testgasse 1",
+    zip: "69126",
+    city: "Heidelberg",
+    contact: "Tina Test",
+    phone: "06221 222222",
+    email: "test@testkunde.de",
+    paymentTerm: "Vorkasse",
+    priceLevel: "Standard",
+  },
+];
+
 export const initialPrintPilotQuotes: PrintPilotQuote[] = [
   {
     id: "quote-ag-2026-001",
@@ -222,23 +291,10 @@ export const initialPrintPilotQuotes: PrintPilotQuote[] = [
     template: "Standardangebot",
   },
   {
-    id: "quote-ag-2026-005",
-    number: "AG-2026-005",
-    customerId: "customer-druckpartner-sued",
-    customerName: "Druckpartner Süd",
-    subject: "Plakat A2",
-    status: "Offen",
-    quoteDate: "2026-05-02",
-    validUntil: "2026-05-16",
-    paymentTerms: "30 Tage netto",
-    deliveryTerms: "Versand nach Aufwand",
-    template: "Technisches Angebot",
-  },
-  {
     id: "quote-ag-2026-006",
     number: "AG-2026-006",
-    customerId: "customer-beispiel-ag",
-    customerName: "Beispiel AG",
+    customerId: "customer-sonnendruck",
+    customerName: "Sonnendruck GmbH",
     subject: "Folder DIN lang",
     status: "Angenommen",
     quoteDate: "2026-04-29",
@@ -265,7 +321,7 @@ export const initialPrintPilotQuotes: PrintPilotQuote[] = [
 
 export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
   return {
-    customers: [],
+    customers: initialPrintPilotCustomers,
     quotes: initialPrintPilotQuotes,
     orders: [],
     materials: [],
@@ -289,6 +345,16 @@ export function createPrintPilotStoreSnapshot(
       ...emptyStore.settings,
       ...(overrides.settings ?? {}),
     },
+  };
+}
+
+export function groupPrintPilotCustomersByStatus(
+  customers: PrintPilotCustomer[],
+): Record<PrintPilotCustomerStatus, PrintPilotCustomer[]> {
+  return {
+    Aktiv: customers.filter((customer) => customer.status === "Aktiv"),
+    Interessent: customers.filter((customer) => customer.status === "Interessent"),
+    Inaktiv: customers.filter((customer) => customer.status === "Inaktiv"),
   };
 }
 

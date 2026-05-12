@@ -8,6 +8,7 @@ import {
 } from "react";
 
 import {
+  type PrintPilotCustomer,
   type PrintPilotQuote,
   type PrintPilotSettings,
   type PrintPilotStoreData,
@@ -18,8 +19,10 @@ const PRINTPILOT_LOCAL_STORAGE_KEY = "printpilot-store-v1";
 
 type PrintPilotStoreContextValue = {
   data: PrintPilotStoreData;
+  customers: PrintPilotCustomer[];
   quotes: PrintPilotQuote[];
   settings: PrintPilotSettings;
+  updateCustomer: (customer: PrintPilotCustomer) => void;
   updateQuote: (quote: PrintPilotQuote) => void;
   updateSettings: (settings: PrintPilotSettings) => void;
   replaceStoreData: (data: PrintPilotStoreData) => void;
@@ -90,6 +93,15 @@ export function PrintPilotStoreProvider({
     );
   }, [data]);
 
+  function updateCustomer(updatedCustomer: PrintPilotCustomer) {
+    setData((currentData) => ({
+      ...currentData,
+      customers: currentData.customers.map((customer) =>
+        customer.id === updatedCustomer.id ? updatedCustomer : customer,
+      ),
+    }));
+  }
+
   function updateQuote(updatedQuote: PrintPilotQuote) {
     setData((currentData) => ({
       ...currentData,
@@ -122,8 +134,10 @@ export function PrintPilotStoreProvider({
   const value = useMemo<PrintPilotStoreContextValue>(
     () => ({
       data,
+      customers: data.customers,
       quotes: data.quotes,
       settings: data.settings,
+      updateCustomer,
       updateQuote,
       updateSettings,
       replaceStoreData,

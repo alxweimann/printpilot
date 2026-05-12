@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { getModuleConfig } from "../app/moduleConfig";
-
+import {
+  type PrintPilotService,
+  type PrintPilotServiceStatus,
+  groupPrintPilotServicesByStatus,
+} from "../data/printPilotStore";
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
+import { usePrintPilotStore } from "../store/PrintPilotStore";
 
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -15,172 +20,27 @@ import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
 import { FieldGrid } from "../ui/FieldGrid";
 import { Input } from "../ui/Input";
-import { SectionHeader } from "../ui/SectionHeader";
 import { SaveActionButton } from "../ui/SaveActionButton";
+import { SectionHeader } from "../ui/SectionHeader";
 import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
-const serviceTabs = [
-  "Liste",
-  "Vorstufe",
-  "Satz / Layout",
-  "Produktion",
-  "Zuschlag",
-  "Sonstiges",
-] as const;
+const serviceTabs = ["Aktiv", "Optional", "Archiv"] as const;
 
-type ServiceTab = (typeof serviceTabs)[number];
-
-type ServiceRow = {
-  id: string;
-  name: string;
-  group: string;
-  unit: string;
-  status: string;
-  optional: string;
-  price: string;
-  description: string;
-  badgeVariant?: "success";
-};
-
-const serviceRowsByTab: Record<ServiceTab, ServiceRow[]> = {
-  Liste: [
-    {
-      id: "service-datenpruefung",
-      name: "Datenprüfung",
-      group: "Vorstufe",
-      unit: "pauschal",
-      status: "Aktiv",
-      optional: "Nein",
-      price: "15,00 €",
-      description: "Technische Datenprüfung",
-      badgeVariant: "success",
-    },
-    {
-      id: "service-grafische-anpassung",
-      name: "Grafische Anpassung",
-      group: "Satz / Layout",
-      unit: "pro Stunde",
-      status: "Aktiv",
-      optional: "Optional",
-      price: "75,00 €",
-      description: "Gestalterische Anpassungen",
-      badgeVariant: undefined,
-    },
-    {
-      id: "service-expresszuschlag",
-      name: "Expresszuschlag",
-      group: "Zuschlag",
-      unit: "pauschal",
-      status: "Aktiv",
-      optional: "Ja",
-      price: "25,00 €",
-      description: "Eilzuschlag",
-      badgeVariant: undefined,
-    },
-  ],
-  Vorstufe: [
-    {
-      id: "service-datenpruefung",
-      name: "Datenprüfung",
-      group: "Vorstufe",
-      unit: "pauschal",
-      status: "Aktiv",
-      optional: "Nein",
-      price: "15,00 €",
-      description: "Technische Datenprüfung",
-      badgeVariant: "success",
-    },
-    {
-      id: "service-pdf-korrektur",
-      name: "PDF-Korrektur",
-      group: "Vorstufe",
-      unit: "pro Stunde",
-      status: "Aktiv",
-      optional: "Optional",
-      price: "75,00 €",
-      description: "PDF-Anpassung",
-      badgeVariant: undefined,
-    },
-  ],
-  "Satz / Layout": [
-    {
-      id: "service-grafische-anpassung",
-      name: "Grafische Anpassung",
-      group: "Satz / Layout",
-      unit: "pro Stunde",
-      status: "Aktiv",
-      optional: "Optional",
-      price: "75,00 €",
-      description: "Gestalterische Anpassungen",
-      badgeVariant: undefined,
-    },
-  ],
-  Produktion: [
-    {
-      id: "service-produktionspauschale",
-      name: "Produktionspauschale",
-      group: "Produktion",
-      unit: "pro Auftrag",
-      status: "Aktiv",
-      optional: "Nein",
-      price: "20,00 €",
-      description: "Produktionsgrundpauschale",
-      badgeVariant: undefined,
-    },
-  ],
-  Zuschlag: [
-    {
-      id: "service-expresszuschlag",
-      name: "Expresszuschlag",
-      group: "Zuschlag",
-      unit: "pauschal",
-      status: "Aktiv",
-      optional: "Ja",
-      price: "25,00 €",
-      description: "Eilzuschlag",
-      badgeVariant: undefined,
-    },
-  ],
-  Sonstiges: [
-    {
-      id: "service-sonderleistung",
-      name: "Sonderleistung",
-      group: "Sonstiges",
-      unit: "pauschal",
-      status: "Entwurf",
-      optional: "Optional",
-      price: "0,00 €",
-      description: "Freie Sonderleistung",
-      badgeVariant: undefined,
-    },
-  ],
-};
+type ServiceTab = PrintPilotServiceStatus;
 
 function getServiceTitle(tab: ServiceTab) {
   switch (tab) {
-    case "Liste":
-      return "Leistung verwalten";
-    case "Vorstufe":
-      return "Vorstufenleistung verwalten";
-    case "Satz / Layout":
-      return "Satz- und Layoutleistung verwalten";
-    case "Produktion":
-      return "Produktionsleistung verwalten";
-    case "Zuschlag":
-      return "Zuschlag verwalten";
-    case "Sonstiges":
-      return "Sonstige Leistung verwalten";
-  }
-}
+    case "Aktiv":
+      return "Aktive Leistung bearbeiten";
 
-function getServiceGroup(tab: ServiceTab) {
-  if (tab === "Liste") {
-    return "Aktiv";
-  }
+    case "Optional":
+      return "Optionale Leistung bearbeiten";
 
-  return tab;
+    case "Archiv":
+      return "Archivierte Leistung prüfen";
+  }
 }
 
 function isServiceTab(tab: string): tab is ServiceTab {
@@ -189,8 +49,13 @@ function isServiceTab(tab: string): tab is ServiceTab {
 
 export function ServicesPage() {
   const module = getModuleConfig("services");
+  const { services, updateService } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+
+  const serviceRowsByTab = useMemo(() => {
+    return groupPrintPilotServicesByStatus(services);
+  }, [services]);
 
   const {
     activeTab,
@@ -200,11 +65,13 @@ export function ServicesPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: serviceRowsByTab,
-    initialTab: "Liste",
+    initialTab: "Aktiv",
   });
 
-  const { draft, isDirty, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
     useEditableDraft(selectedService);
+
+  const canEdit = isEditing && Boolean(draft);
 
   function handleTabChange(tab: string) {
     if (isServiceTab(tab)) {
@@ -227,6 +94,18 @@ export function ServicesPage() {
     setIsEditing((currentValue) => !currentValue);
   }
 
+  function handleSaveDraft() {
+    if (!draft) {
+      return;
+    }
+
+    const savedService = draft as PrintPilotService;
+
+    updateService(savedService);
+    saveDraft(savedService);
+    setIsEditing(false);
+  }
+
   return (
     <div className="page">
       <PageHeader
@@ -243,24 +122,30 @@ export function ServicesPage() {
 
       <section className="calculation-sheet">
         <WorkspaceHeader
-          kicker="Leistungsmaske"
+          kicker="Leistungen"
           title={getServiceTitle(activeTab)}
-          statusValue={getServiceGroup(activeTab)}
+          statusValue={isEditing ? "Bearbeitung offen" : activeTab}
         />
 
         <div className="master-detail-layout">
           <section className="workspace-panel master-list-panel">
             <TableToolbar>
-              <Input className="search-input" placeholder="Leistungen suchen..." />
+              <Input
+                className="search-input"
+                placeholder="Leistungen suchen..."
+              />
+
               <Button>Filter</Button>
             </TableToolbar>
 
             <DataTable>
               <thead>
                 <tr>
-                  <th>Leistung</th>
+                  <th>Leistungsnr.</th>
+                  <th>Name</th>
                   <th>Gruppe</th>
                   <th>Einheit</th>
+                  <th>Preis</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -277,9 +162,11 @@ export function ServicesPage() {
                       }
                       onClick={() => handleServiceSelect(service.id)}
                     >
+                      <td>{service.number}</td>
                       <td>{service.name}</td>
                       <td>{service.group}</td>
                       <td>{service.unit}</td>
+                      <td>{service.price}</td>
                       <td>
                         <Badge variant={service.badgeVariant}>
                           {service.status}
@@ -296,10 +183,14 @@ export function ServicesPage() {
             <SectionHeader>Leistungsdaten</SectionHeader>
 
             <FieldGrid>
-              <Field label="Leistung">
+              <Field label="Leistungsnummer">
+                <Input value={draft?.number ?? ""} readOnly />
+              </Field>
+
+              <Field label="Name">
                 <Input
                   value={draft?.name ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("name", event.target.value)
                   }
@@ -309,74 +200,74 @@ export function ServicesPage() {
               <Field label="Gruppe">
                 <Select
                   value={draft?.group ?? ""}
+                  disabled={!canEdit}
                   onChange={(event) =>
                     updateDraftField("group", event.target.value)
                   }
                 >
-                  <option value="" disabled>
-                    Gruppe wählen
-                  </option>
-                  <option>Vorstufe</option>
-                  <option>Satz / Layout</option>
+                  <option>Druckvorstufe</option>
+                  <option>Proof</option>
                   <option>Produktion</option>
-                  <option>Zuschlag</option>
-                  <option>Sonstiges</option>
+                  <option>Weiterverarbeitung</option>
+                  <option>Logistik</option>
+                  <option>Archiv</option>
                 </Select>
               </Field>
 
               <Field label="Einheit">
                 <Select
                   value={draft?.unit ?? ""}
+                  disabled={!canEdit}
                   onChange={(event) =>
                     updateDraftField("unit", event.target.value)
                   }
                 >
-                  <option value="" disabled>
-                    Einheit wählen
-                  </option>
                   <option>pauschal</option>
-                  <option>pro Stunde</option>
-                  <option>pro Stück</option>
-                  <option>pro Auftrag</option>
+                  <option>Stück</option>
+                  <option>Minute</option>
+                  <option>Stunde</option>
+                  <option>laufender Meter</option>
                 </Select>
               </Field>
 
               <Field label="Status">
                 <Select
                   value={draft?.status ?? ""}
-                  disabled={!isEditing}
+                  disabled={!canEdit}
                   onChange={(event) =>
-                    updateDraftField("status", event.target.value)
+                    updateDraftField(
+                      "status",
+                      event.target.value as PrintPilotServiceStatus,
+                    )
                   }
                 >
-                  <option>Aktiv</option>
-                  <option>Entwurf</option>
-                  <option>Gesperrt</option>
+                  {serviceTabs.map((tab) => (
+                    <option key={tab}>{tab}</option>
+                  ))}
                 </Select>
               </Field>
 
               <Field label="Optional">
                 <Select
                   value={draft?.optional ?? ""}
-                  disabled={!isEditing}
+                  disabled={!canEdit}
                   onChange={(event) =>
                     updateDraftField("optional", event.target.value)
                   }
                 >
-                  <option>Nein</option>
                   <option>Ja</option>
-                  <option>Optional</option>
+                  <option>Nein</option>
                 </Select>
               </Field>
             </FieldGrid>
 
-            <SectionHeader>Preise</SectionHeader>
+            <SectionHeader>Kalkulation</SectionHeader>
 
             <FieldGrid>
               <Field label="Preis">
                 <Input
                   value={draft?.price ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("price", event.target.value)
                   }
@@ -386,7 +277,7 @@ export function ServicesPage() {
               <Field label="Beschreibung">
                 <Input
                   value={draft?.description ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("description", event.target.value)
                   }
@@ -398,21 +289,17 @@ export function ServicesPage() {
               <DirtyStateNotice isDirty={isDirty} />
 
               <EditLockToggle
-
                 isEditing={isEditing}
-
                 onToggle={handleToggleEditing}
-
               />
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+
               <SaveActionButton
-
-                              isDirty={isDirty}
-
-                              defaultLabel="Leistung speichern"
-
-                            />
+                isDirty={isDirty}
+                defaultLabel="Leistung speichern"
+                onClick={handleSaveDraft}
+              />
             </div>
           </section>
         </div>

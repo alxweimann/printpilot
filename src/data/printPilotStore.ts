@@ -95,16 +95,19 @@ export type PrintPilotOrder = {
   approval: string;
 };
 
+export type PrintPilotServiceStatus = "Aktiv" | "Optional" | "Archiv";
+
 export type PrintPilotService = {
   id: PrintPilotId;
   number: string;
   name: string;
   group: string;
   unit: string;
-  status: string;
+  status: PrintPilotServiceStatus;
   optional: string;
   price: string;
   description: string;
+  badgeVariant?: "success";
 };
 
 export type PrintPilotFinishingProcess = {
@@ -466,6 +469,66 @@ export const initialPrintPilotMachines: PrintPilotMachine[] = [
   },
 ];
 
+export const initialPrintPilotServices: PrintPilotService[] = [
+  {
+    id: "service-data-check",
+    number: "LS-1001",
+    name: "Datencheck Standard",
+    group: "Druckvorstufe",
+    unit: "pauschal",
+    status: "Aktiv",
+    optional: "Nein",
+    price: "12,50",
+    description: "Standardprüfung von PDF-Druckdaten vor Produktion",
+    badgeVariant: "success",
+  },
+  {
+    id: "service-layout-small",
+    number: "LS-1002",
+    name: "Layoutanpassung klein",
+    group: "Druckvorstufe",
+    unit: "pauschal",
+    status: "Aktiv",
+    optional: "Ja",
+    price: "25,00",
+    description: "Kleine Layoutkorrekturen oder Format-/Beschnittanpassung",
+    badgeVariant: "success",
+  },
+  {
+    id: "service-proof",
+    number: "LS-1003",
+    name: "Digitalproof",
+    group: "Proof",
+    unit: "Stück",
+    status: "Optional",
+    optional: "Ja",
+    price: "18,00",
+    description: "Optionaler Proof vor Produktionsfreigabe",
+  },
+  {
+    id: "service-express",
+    number: "LS-1004",
+    name: "Expresszuschlag",
+    group: "Produktion",
+    unit: "pauschal",
+    status: "Optional",
+    optional: "Ja",
+    price: "35,00",
+    description: "Zuschlag für bevorzugte Produktion nach Absprache",
+  },
+  {
+    id: "service-old-handling",
+    number: "LS-1005",
+    name: "Alte Handlingpauschale",
+    group: "Archiv",
+    unit: "pauschal",
+    status: "Archiv",
+    optional: "Nein",
+    price: "10,00",
+    description: "Archivierte Leistung, nicht mehr aktiv im Standardangebot",
+  },
+];
+
 export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
   return {
     customers: initialPrintPilotCustomers,
@@ -473,7 +536,7 @@ export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
     orders: [],
     materials: initialPrintPilotMaterials,
     machines: initialPrintPilotMachines,
-    services: [],
+    services: initialPrintPilotServices,
     finishing: [],
     templates: [],
     settings: initialPrintPilotSettings,
@@ -504,6 +567,10 @@ export function createPrintPilotStoreSnapshot(
       overrides.machines && overrides.machines.length > 0
         ? overrides.machines
         : emptyStore.machines,
+    services:
+      overrides.services && overrides.services.length > 0
+        ? overrides.services
+        : emptyStore.services,
     settings: {
       ...emptyStore.settings,
       ...(overrides.settings ?? {}),
@@ -539,6 +606,16 @@ export function groupPrintPilotMaterialsByStatus(
     Knapp: materials.filter((material) => material.status === "Knapp"),
     Bestellen: materials.filter((material) => material.status === "Bestellen"),
     Archiv: materials.filter((material) => material.status === "Archiv"),
+  };
+}
+
+export function groupPrintPilotServicesByStatus(
+  services: PrintPilotService[],
+): Record<PrintPilotServiceStatus, PrintPilotService[]> {
+  return {
+    Aktiv: services.filter((service) => service.status === "Aktiv"),
+    Optional: services.filter((service) => service.status === "Optional"),
+    Archiv: services.filter((service) => service.status === "Archiv"),
   };
 }
 

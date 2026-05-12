@@ -12,6 +12,7 @@ import {
   type PrintPilotMachine,
   type PrintPilotMaterial,
   type PrintPilotQuote,
+  type PrintPilotService,
   type PrintPilotSettings,
   type PrintPilotStoreData,
   createPrintPilotStoreSnapshot,
@@ -25,11 +26,13 @@ type PrintPilotStoreContextValue = {
   quotes: PrintPilotQuote[];
   materials: PrintPilotMaterial[];
   machines: PrintPilotMachine[];
+  services: PrintPilotService[];
   settings: PrintPilotSettings;
   updateCustomer: (customer: PrintPilotCustomer) => void;
   updateMachine: (machine: PrintPilotMachine) => void;
   updateMaterial: (material: PrintPilotMaterial) => void;
   updateQuote: (quote: PrintPilotQuote) => void;
+  updateService: (service: PrintPilotService) => void;
   updateSettings: (settings: PrintPilotSettings) => void;
   replaceStoreData: (data: PrintPilotStoreData) => void;
   resetStoreData: () => void;
@@ -135,6 +138,15 @@ export function PrintPilotStoreProvider({
     }));
   }
 
+  function updateService(updatedService: PrintPilotService) {
+    setData((currentData) => ({
+      ...currentData,
+      services: currentData.services.map((service) =>
+        service.id === updatedService.id ? updatedService : service,
+      ),
+    }));
+  }
+
   function updateSettings(updatedSettings: PrintPilotSettings) {
     setData((currentData) => ({
       ...currentData,
@@ -162,11 +174,13 @@ export function PrintPilotStoreProvider({
       quotes: data.quotes,
       materials: data.materials,
       machines: data.machines,
+      services: data.services,
       settings: data.settings,
       updateCustomer,
       updateMachine,
       updateMaterial,
       updateQuote,
+      updateService,
       updateSettings,
       replaceStoreData,
       resetStoreData,

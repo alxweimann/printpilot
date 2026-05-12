@@ -16,6 +16,7 @@ import {
   type PrintPilotService,
   type PrintPilotSettings,
   type PrintPilotStoreData,
+  type PrintPilotTemplate,
   createPrintPilotStoreSnapshot,
 } from "../data/printPilotStore";
 
@@ -29,6 +30,7 @@ type PrintPilotStoreContextValue = {
   machines: PrintPilotMachine[];
   services: PrintPilotService[];
   finishing: PrintPilotFinishingProcess[];
+  templates: PrintPilotTemplate[];
   settings: PrintPilotSettings;
   updateCustomer: (customer: PrintPilotCustomer) => void;
   updateFinishingProcess: (process: PrintPilotFinishingProcess) => void;
@@ -37,6 +39,7 @@ type PrintPilotStoreContextValue = {
   updateQuote: (quote: PrintPilotQuote) => void;
   updateService: (service: PrintPilotService) => void;
   updateSettings: (settings: PrintPilotSettings) => void;
+  updateTemplate: (template: PrintPilotTemplate) => void;
   replaceStoreData: (data: PrintPilotStoreData) => void;
   resetStoreData: () => void;
   getBackupData: () => PrintPilotStoreData;
@@ -166,6 +169,15 @@ export function PrintPilotStoreProvider({
     }));
   }
 
+  function updateTemplate(updatedTemplate: PrintPilotTemplate) {
+    setData((currentData) => ({
+      ...currentData,
+      templates: currentData.templates.map((template) =>
+        template.id === updatedTemplate.id ? updatedTemplate : template,
+      ),
+    }));
+  }
+
   function replaceStoreData(nextData: PrintPilotStoreData) {
     setData(createPrintPilotStoreSnapshot(nextData));
   }
@@ -188,6 +200,7 @@ export function PrintPilotStoreProvider({
       machines: data.machines,
       services: data.services,
       finishing: data.finishing,
+      templates: data.templates,
       settings: data.settings,
       updateCustomer,
       updateFinishingProcess,
@@ -196,6 +209,7 @@ export function PrintPilotStoreProvider({
       updateQuote,
       updateService,
       updateSettings,
+      updateTemplate,
       replaceStoreData,
       resetStoreData,
       getBackupData,

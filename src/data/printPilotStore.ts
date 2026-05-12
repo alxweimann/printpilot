@@ -126,16 +126,19 @@ export type PrintPilotFinishingProcess = {
   badgeVariant?: "success";
 };
 
+export type PrintPilotTemplateStatus = "Aktiv" | "Entwurf" | "Archiv";
+
 export type PrintPilotTemplate = {
   id: PrintPilotId;
   number: string;
   name: string;
   type: string;
   area: string;
-  status: string;
+  status: PrintPilotTemplateStatus;
   isDefault: string;
   productType: string;
   outputLayout: string;
+  badgeVariant?: "success";
 };
 
 export type PrintPilotSettings = {
@@ -623,6 +626,79 @@ export const initialPrintPilotFinishing: PrintPilotFinishingProcess[] = [
   },
 ];
 
+export const initialPrintPilotTemplates: PrintPilotTemplate[] = [
+  {
+    id: "template-standard-quote",
+    number: "VL-1001",
+    name: "Standardangebot",
+    type: "Angebot",
+    area: "Verkauf",
+    status: "Aktiv",
+    isDefault: "Ja",
+    productType: "Digitaldruck",
+    outputLayout: "Klassisch mit Positionstabelle",
+    badgeVariant: "success",
+  },
+  {
+    id: "template-short-quote",
+    number: "VL-1002",
+    name: "Kurzangebot",
+    type: "Angebot",
+    area: "Verkauf",
+    status: "Aktiv",
+    isDefault: "Nein",
+    productType: "Kleinauftrag",
+    outputLayout: "Kompakt",
+    badgeVariant: "success",
+  },
+  {
+    id: "template-technical-quote",
+    number: "VL-1003",
+    name: "Technisches Angebot",
+    type: "Angebot",
+    area: "Verkauf",
+    status: "Entwurf",
+    isDefault: "Nein",
+    productType: "Sonderproduktion",
+    outputLayout: "Technisch mit Parametern",
+  },
+  {
+    id: "template-delivery-note",
+    number: "VL-1004",
+    name: "Standard-Lieferschein",
+    type: "Lieferschein",
+    area: "Ausgabe",
+    status: "Aktiv",
+    isDefault: "Ja",
+    productType: "Alle",
+    outputLayout: "Lieferschein mit Empfängerblock",
+    badgeVariant: "success",
+  },
+  {
+    id: "template-invoice",
+    number: "VL-1005",
+    name: "Standard-Rechnung",
+    type: "Rechnung",
+    area: "Faktura",
+    status: "Aktiv",
+    isDefault: "Ja",
+    productType: "Alle",
+    outputLayout: "Rechnung mit Summenblock",
+    badgeVariant: "success",
+  },
+  {
+    id: "template-old-layout",
+    number: "VL-1006",
+    name: "Altes Angebotslayout",
+    type: "Angebot",
+    area: "Archiv",
+    status: "Archiv",
+    isDefault: "Nein",
+    productType: "Archiv",
+    outputLayout: "Nicht mehr verwenden",
+  },
+];
+
 export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
   return {
     customers: initialPrintPilotCustomers,
@@ -632,7 +708,7 @@ export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
     machines: initialPrintPilotMachines,
     services: initialPrintPilotServices,
     finishing: initialPrintPilotFinishing,
-    templates: [],
+    templates: initialPrintPilotTemplates,
     settings: initialPrintPilotSettings,
   };
 }
@@ -669,6 +745,10 @@ export function createPrintPilotStoreSnapshot(
       overrides.finishing && overrides.finishing.length > 0
         ? overrides.finishing
         : emptyStore.finishing,
+    templates:
+      overrides.templates && overrides.templates.length > 0
+        ? overrides.templates
+        : emptyStore.templates,
     settings: {
       ...emptyStore.settings,
       ...(overrides.settings ?? {}),
@@ -724,6 +804,16 @@ export function groupPrintPilotFinishingByStatus(
     Aktiv: finishing.filter((process) => process.status === "Aktiv"),
     Optional: finishing.filter((process) => process.status === "Optional"),
     Archiv: finishing.filter((process) => process.status === "Archiv"),
+  };
+}
+
+export function groupPrintPilotTemplatesByStatus(
+  templates: PrintPilotTemplate[],
+): Record<PrintPilotTemplateStatus, PrintPilotTemplate[]> {
+  return {
+    Aktiv: templates.filter((template) => template.status === "Aktiv"),
+    Entwurf: templates.filter((template) => template.status === "Entwurf"),
+    Archiv: templates.filter((template) => template.status === "Archiv"),
   };
 }
 

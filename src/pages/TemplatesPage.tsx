@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { getModuleConfig } from "../app/moduleConfig";
-
+import {
+  type PrintPilotTemplate,
+  type PrintPilotTemplateStatus,
+  groupPrintPilotTemplatesByStatus,
+} from "../data/printPilotStore";
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
+import { usePrintPilotStore } from "../store/PrintPilotStore";
 
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -15,150 +20,27 @@ import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
 import { FieldGrid } from "../ui/FieldGrid";
 import { Input } from "../ui/Input";
-import { SectionHeader } from "../ui/SectionHeader";
 import { SaveActionButton } from "../ui/SaveActionButton";
+import { SectionHeader } from "../ui/SectionHeader";
 import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
-const templateTabs = ["Produkte", "Dokumente", "Textbausteine", "Layouts", "Entwurf"] as const;
+const templateTabs = ["Aktiv", "Entwurf", "Archiv"] as const;
 
-type TemplateTab = (typeof templateTabs)[number];
-
-type TemplateRow = {
-  id: string;
-  name: string;
-  type: string;
-  area: string;
-  status: string;
-  isDefault: string;
-  productType: string;
-  outputLayout: string;
-  badgeVariant?: "success";
-};
-
-const templateRowsByTab: Record<TemplateTab, TemplateRow[]> = {
-  Produkte: [
-    {
-      id: "template-broschuere-a4-standard",
-      name: "Broschüre A4 Standard",
-      type: "Produkt",
-      area: "Kalkulation",
-      status: "Aktiv",
-      isDefault: "Ja",
-      productType: "Broschüre",
-      outputLayout: "Standard",
-      badgeVariant: "success",
-    },
-    {
-      id: "template-flyer-a5-standard",
-      name: "Flyer A5 Standard",
-      type: "Produkt",
-      area: "Kalkulation",
-      status: "Aktiv",
-      isDefault: "Nein",
-      productType: "Flyer",
-      outputLayout: "Kurzform",
-      badgeVariant: undefined,
-    },
-  ],
-  Dokumente: [
-    {
-      id: "template-standardangebot",
-      name: "Standardangebot",
-      type: "Dokument",
-      area: "Angebote",
-      status: "Aktiv",
-      isDefault: "Ja",
-      productType: "Freies Produkt",
-      outputLayout: "Standard",
-      badgeVariant: "success",
-    },
-    {
-      id: "template-rechnung-standard",
-      name: "Rechnung Standard",
-      type: "Dokument",
-      area: "Rechnungen",
-      status: "Aktiv",
-      isDefault: "Ja",
-      productType: "Freies Produkt",
-      outputLayout: "Standard",
-      badgeVariant: undefined,
-    },
-  ],
-  Textbausteine: [
-    {
-      id: "template-zahlungsbedingungen-standard",
-      name: "Zahlungsbedingungen Standard",
-      type: "Textbaustein",
-      area: "Angebote",
-      status: "Aktiv",
-      isDefault: "Ja",
-      productType: "Freies Produkt",
-      outputLayout: "Standard",
-      badgeVariant: "success",
-    },
-    {
-      id: "template-lieferhinweis-standard",
-      name: "Lieferhinweis Standard",
-      type: "Textbaustein",
-      area: "Lieferscheine",
-      status: "Aktiv",
-      isDefault: "Nein",
-      productType: "Freies Produkt",
-      outputLayout: "Kurzform",
-      badgeVariant: undefined,
-    },
-  ],
-  Layouts: [
-    {
-      id: "template-dokumentlayout-standard",
-      name: "Dokumentlayout Standard",
-      type: "Layout",
-      area: "Dokumente",
-      status: "Aktiv",
-      isDefault: "Ja",
-      productType: "Freies Produkt",
-      outputLayout: "Standard",
-      badgeVariant: "success",
-    },
-  ],
-  Entwurf: [
-    {
-      id: "template-rechnung-modern",
-      name: "Rechnung Modern",
-      type: "Dokument",
-      area: "Rechnungen",
-      status: "Entwurf",
-      isDefault: "Nein",
-      productType: "Freies Produkt",
-      outputLayout: "Standard",
-      badgeVariant: undefined,
-    },
-  ],
-};
+type TemplateTab = PrintPilotTemplateStatus;
 
 function getTemplateTitle(tab: TemplateTab) {
   switch (tab) {
-    case "Produkte":
-      return "Produktvorlage verwalten";
-    case "Dokumente":
-      return "Dokumentvorlage verwalten";
-    case "Textbausteine":
-      return "Textbaustein verwalten";
-    case "Layouts":
-      return "Layoutvorlage verwalten";
+    case "Aktiv":
+      return "Aktive Vorlage bearbeiten";
+
     case "Entwurf":
       return "Vorlagenentwurf bearbeiten";
-  }
-}
 
-function getTemplateStatus(tab: TemplateTab) {
-  if (tab === "Entwurf") {
-    return "Entwurf";
+    case "Archiv":
+      return "Archivierte Vorlage prüfen";
   }
-
-  return "Aktiv";
 }
 
 function isTemplateTab(tab: string): tab is TemplateTab {
@@ -167,8 +49,13 @@ function isTemplateTab(tab: string): tab is TemplateTab {
 
 export function TemplatesPage() {
   const module = getModuleConfig("templates");
+  const { templates, updateTemplate } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+
+  const templateRowsByTab = useMemo(() => {
+    return groupPrintPilotTemplatesByStatus(templates);
+  }, [templates]);
 
   const {
     activeTab,
@@ -178,11 +65,13 @@ export function TemplatesPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: templateRowsByTab,
-    initialTab: "Produkte",
+    initialTab: "Aktiv",
   });
 
-  const { draft, isDirty, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
     useEditableDraft(selectedTemplate);
+
+  const canEdit = isEditing && Boolean(draft);
 
   function handleTabChange(tab: string) {
     if (isTemplateTab(tab)) {
@@ -205,6 +94,18 @@ export function TemplatesPage() {
     setIsEditing((currentValue) => !currentValue);
   }
 
+  function handleSaveDraft() {
+    if (!draft) {
+      return;
+    }
+
+    const savedTemplate = draft as PrintPilotTemplate;
+
+    updateTemplate(savedTemplate);
+    saveDraft(savedTemplate);
+    setIsEditing(false);
+  }
+
   return (
     <div className="page">
       <PageHeader
@@ -221,24 +122,27 @@ export function TemplatesPage() {
 
       <section className="calculation-sheet">
         <WorkspaceHeader
-          kicker="Vorlagenmaske"
+          kicker="Vorlagen"
           title={getTemplateTitle(activeTab)}
-          statusValue={getTemplateStatus(activeTab)}
+          statusValue={isEditing ? "Bearbeitung offen" : activeTab}
         />
 
         <div className="master-detail-layout">
           <section className="workspace-panel master-list-panel">
             <TableToolbar>
               <Input className="search-input" placeholder="Vorlagen suchen..." />
+
               <Button>Filter</Button>
             </TableToolbar>
 
             <DataTable>
               <thead>
                 <tr>
-                  <th>Vorlage</th>
+                  <th>Vorlagennr.</th>
+                  <th>Name</th>
                   <th>Typ</th>
                   <th>Bereich</th>
+                  <th>Standard</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -255,9 +159,11 @@ export function TemplatesPage() {
                       }
                       onClick={() => handleTemplateSelect(template.id)}
                     >
+                      <td>{template.number}</td>
                       <td>{template.name}</td>
                       <td>{template.type}</td>
                       <td>{template.area}</td>
+                      <td>{template.isDefault}</td>
                       <td>
                         <Badge variant={template.badgeVariant}>
                           {template.status}
@@ -274,10 +180,14 @@ export function TemplatesPage() {
             <SectionHeader>Vorlagendaten</SectionHeader>
 
             <FieldGrid>
-              <Field label="Vorlage">
+              <Field label="Vorlagennummer">
+                <Input value={draft?.number ?? ""} readOnly />
+              </Field>
+
+              <Field label="Name">
                 <Input
                   value={draft?.name ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("name", event.target.value)
                   }
@@ -287,101 +197,87 @@ export function TemplatesPage() {
               <Field label="Typ">
                 <Select
                   value={draft?.type ?? ""}
+                  disabled={!canEdit}
                   onChange={(event) =>
                     updateDraftField("type", event.target.value)
                   }
                 >
-                  <option value="" disabled>
-                    Typ wählen
-                  </option>
-                  <option>Produkt</option>
-                  <option>Dokument</option>
-                  <option>Textbaustein</option>
-                  <option>Layout</option>
+                  <option>Angebot</option>
+                  <option>Auftrag</option>
+                  <option>Lieferschein</option>
+                  <option>Rechnung</option>
+                  <option>Kalkulation</option>
                 </Select>
               </Field>
 
               <Field label="Bereich">
                 <Select
                   value={draft?.area ?? ""}
+                  disabled={!canEdit}
                   onChange={(event) =>
                     updateDraftField("area", event.target.value)
                   }
                 >
-                  <option value="" disabled>
-                    Bereich wählen
-                  </option>
-                  <option>Kalkulation</option>
-                  <option>Angebote</option>
-                  <option>Aufträge</option>
-                  <option>Rechnungen</option>
-                  <option>Lieferscheine</option>
-                  <option>Dokumente</option>
+                  <option>Verkauf</option>
+                  <option>Produktion</option>
+                  <option>Ausgabe</option>
+                  <option>Faktura</option>
+                  <option>Archiv</option>
                 </Select>
               </Field>
 
               <Field label="Status">
                 <Select
                   value={draft?.status ?? ""}
-                  disabled={!isEditing}
+                  disabled={!canEdit}
                   onChange={(event) =>
-                    updateDraftField("status", event.target.value)
+                    updateDraftField(
+                      "status",
+                      event.target.value as PrintPilotTemplateStatus,
+                    )
                   }
                 >
-                  <option>Aktiv</option>
-                  <option>Entwurf</option>
+                  {templateTabs.map((tab) => (
+                    <option key={tab}>{tab}</option>
+                  ))}
                 </Select>
               </Field>
 
-              <Field label="Standard">
+              <Field label="Standardvorlage">
                 <Select
                   value={draft?.isDefault ?? ""}
-                  disabled={!isEditing}
+                  disabled={!canEdit}
                   onChange={(event) =>
                     updateDraftField("isDefault", event.target.value)
                   }
                 >
-                  <option>Nein</option>
                   <option>Ja</option>
+                  <option>Nein</option>
                 </Select>
               </Field>
             </FieldGrid>
 
-            <SectionHeader>Produktparameter</SectionHeader>
+            <SectionHeader>Ausgabe</SectionHeader>
 
             <FieldGrid>
-              <Field label="Produktart">
-                <Select
+              <Field label="Produkttyp">
+                <Input
                   value={draft?.productType ?? ""}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("productType", event.target.value)
                   }
-                >
-                  <option value="" disabled>
-                    Produktart wählen
-                  </option>
-                  <option>Broschüre</option>
-                  <option>Flyer</option>
-                  <option>Folder</option>
-                  <option>Plakat</option>
-                  <option>Freies Produkt</option>
-                </Select>
+                />
               </Field>
 
-              <Field label="Ausgabe">
-                <Select
+              <Field label="Layout">
+                <Input
                   value={draft?.outputLayout ?? ""}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("outputLayout", event.target.value)
                   }
-                >
-                  <option value="" disabled>
-                    Layout wählen
-                  </option>
-                  <option>Standard</option>
-                  <option>Kurzform</option>
-                  <option>Technisch</option>
-                </Select>
+                />
               </Field>
             </FieldGrid>
 
@@ -389,21 +285,17 @@ export function TemplatesPage() {
               <DirtyStateNotice isDirty={isDirty} />
 
               <EditLockToggle
-
                 isEditing={isEditing}
-
                 onToggle={handleToggleEditing}
-
               />
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+
               <SaveActionButton
-
-                              isDirty={isDirty}
-
-                              defaultLabel="Vorlage speichern"
-
-                            />
+                isDirty={isDirty}
+                defaultLabel="Vorlage speichern"
+                onClick={handleSaveDraft}
+              />
             </div>
           </section>
         </div>

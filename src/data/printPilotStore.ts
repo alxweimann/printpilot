@@ -62,6 +62,24 @@ export type PrintPilotMaterial = {
   badgeVariant?: "success";
 };
 
+export type PrintPilotMachineStatus = "Aktiv" | "Wartung" | "Archiv";
+
+export type PrintPilotMachine = {
+  id: PrintPilotId;
+  number: string;
+  name: string;
+  type: string;
+  colorMode: string;
+  status: PrintPilotMachineStatus;
+  hourlyRate: string;
+  colorClickCost: string;
+  blackClickCost: string;
+  duplex: string;
+  usage: string;
+  note: string;
+  badgeVariant?: "success";
+};
+
 export type PrintPilotOrder = {
   id: PrintPilotId;
   number: string;
@@ -75,21 +93,6 @@ export type PrintPilotOrder = {
   priority: string;
   handoff: string;
   approval: string;
-};
-
-export type PrintPilotMachine = {
-  id: PrintPilotId;
-  number: string;
-  name: string;
-  type: string;
-  colorMode: string;
-  status: string;
-  hourlyRate: string;
-  colorClickCost: string;
-  blackClickCost: string;
-  duplex: string;
-  usage: string;
-  note: string;
 };
 
 export type PrintPilotService = {
@@ -386,13 +389,90 @@ export const initialPrintPilotMaterials: PrintPilotMaterial[] = [
   },
 ];
 
+export const initialPrintPilotMachines: PrintPilotMachine[] = [
+  {
+    id: "machine-xerox-iridesse-1",
+    number: "DM-1001",
+    name: "Xerox Iridesse 1",
+    type: "Digitaldruck",
+    colorMode: "4/4 CMYK",
+    status: "Aktiv",
+    hourlyRate: "95,00",
+    colorClickCost: "0,033",
+    blackClickCost: "0,008",
+    duplex: "Ja",
+    usage: "Hauptmaschine Farbdruck",
+    note: "SRA3, hohe Qualität, Standard-Farbdruck",
+    badgeVariant: "success",
+  },
+  {
+    id: "machine-xerox-iridesse-special",
+    number: "DM-1002",
+    name: "Xerox Iridesse Sonderfarben",
+    type: "Digitaldruck",
+    colorMode: "CMYK + Sonderfarben",
+    status: "Aktiv",
+    hourlyRate: "105,00",
+    colorClickCost: "0,033",
+    blackClickCost: "0,008",
+    duplex: "Ja",
+    usage: "Sonderfarben / Premiumjobs",
+    note: "Gold, Silber, Weiß oder Pink je nach Setup",
+    badgeVariant: "success",
+  },
+  {
+    id: "machine-xerox-nuvera",
+    number: "DM-1003",
+    name: "Xerox Nuvera",
+    type: "Schwarzweißdruck",
+    colorMode: "1/1 Schwarz",
+    status: "Aktiv",
+    hourlyRate: "75,00",
+    colorClickCost: "0,000",
+    blackClickCost: "0,008",
+    duplex: "Ja",
+    usage: "Schwarzweiß-Produktionen",
+    note: "Hohe Leistung für 1/1 Jobs",
+    badgeVariant: "success",
+  },
+  {
+    id: "machine-canon-vp140",
+    number: "DM-1004",
+    name: "Canon VP140",
+    type: "Schwarzweißdruck",
+    colorMode: "1/1 Schwarz",
+    status: "Wartung",
+    hourlyRate: "75,00",
+    colorClickCost: "0,000",
+    blackClickCost: "0,008",
+    duplex: "Ja",
+    usage: "Backup Schwarzweiß",
+    note: "Für 1/1 Produktionen und Ausweichjobs",
+  },
+  {
+    id: "machine-roland-vg3-540",
+    number: "DM-1005",
+    name: "Roland TrueVis VG3 540",
+    type: "Großformat",
+    colorMode: "CMYK",
+    status: "Aktiv",
+    hourlyRate: "85,00",
+    colorClickCost: "0,000",
+    blackClickCost: "0,000",
+    duplex: "Nein",
+    usage: "Plotter / Großformat / Folie",
+    note: "Rollenmaterial, Banner, Folien, Magnetfolie",
+    badgeVariant: "success",
+  },
+];
+
 export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
   return {
     customers: initialPrintPilotCustomers,
     quotes: initialPrintPilotQuotes,
     orders: [],
     materials: initialPrintPilotMaterials,
-    machines: [],
+    machines: initialPrintPilotMachines,
     services: [],
     finishing: [],
     templates: [],
@@ -420,6 +500,10 @@ export function createPrintPilotStoreSnapshot(
       overrides.materials && overrides.materials.length > 0
         ? overrides.materials
         : emptyStore.materials,
+    machines:
+      overrides.machines && overrides.machines.length > 0
+        ? overrides.machines
+        : emptyStore.machines,
     settings: {
       ...emptyStore.settings,
       ...(overrides.settings ?? {}),
@@ -434,6 +518,16 @@ export function groupPrintPilotCustomersByStatus(
     Aktiv: customers.filter((customer) => customer.status === "Aktiv"),
     Interessent: customers.filter((customer) => customer.status === "Interessent"),
     Inaktiv: customers.filter((customer) => customer.status === "Inaktiv"),
+  };
+}
+
+export function groupPrintPilotMachinesByStatus(
+  machines: PrintPilotMachine[],
+): Record<PrintPilotMachineStatus, PrintPilotMachine[]> {
+  return {
+    Aktiv: machines.filter((machine) => machine.status === "Aktiv"),
+    Wartung: machines.filter((machine) => machine.status === "Wartung"),
+    Archiv: machines.filter((machine) => machine.status === "Archiv"),
   };
 }
 

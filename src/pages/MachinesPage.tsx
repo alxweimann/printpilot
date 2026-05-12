@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { getModuleConfig } from "../app/moduleConfig";
-
+import {
+  type PrintPilotMachine,
+  type PrintPilotMachineStatus,
+  groupPrintPilotMachinesByStatus,
+} from "../data/printPilotStore";
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
+import { usePrintPilotStore } from "../store/PrintPilotStore";
 
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -15,183 +20,27 @@ import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
 import { FieldGrid } from "../ui/FieldGrid";
 import { Input } from "../ui/Input";
-import { SectionHeader } from "../ui/SectionHeader";
 import { SaveActionButton } from "../ui/SaveActionButton";
+import { SectionHeader } from "../ui/SectionHeader";
 import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
-const machineTabs = [
-  "Liste",
-  "Digitaldruck Farbe",
-  "Digitaldruck Schwarz",
-  "Großformat",
-  "Wartung",
-] as const;
+const machineTabs = ["Aktiv", "Wartung", "Archiv"] as const;
 
-type MachineTab = (typeof machineTabs)[number];
-
-type MachineRow = {
-  id: string;
-  name: string;
-  type: string;
-  colorMode: string;
-  status: string;
-  hourlyRate: string;
-  colorClickCost: string;
-  blackClickCost: string;
-  duplex: string;
-  usage: string;
-  note: string;
-  badgeVariant?: "success";
-};
-
-const machineRowsByTab: Record<MachineTab, MachineRow[]> = {
-  Liste: [
-    {
-      id: "machine-xerox-iridesse",
-      name: "Xerox Iridesse",
-      type: "Digitaldruck Farbe",
-      colorMode: "4/4-farbig",
-      status: "Aktiv",
-      hourlyRate: "120,00 €",
-      colorClickCost: "0,033 €",
-      blackClickCost: "0,008 €",
-      duplex: "Ja",
-      usage: "Bevorzugt",
-      note: "Standardmaschine für Farbdruck",
-      badgeVariant: "success",
-    },
-    {
-      id: "machine-xerox-nuvera",
-      name: "Xerox Nuvera",
-      type: "Digitaldruck Schwarz",
-      colorMode: "1/1 schwarz",
-      status: "Aktiv",
-      hourlyRate: "95,00 €",
-      colorClickCost: "0,000 €",
-      blackClickCost: "0,008 €",
-      duplex: "Ja",
-      usage: "Standard",
-      note: "Schwarzweiß-Produktion",
-      badgeVariant: undefined,
-    },
-    {
-      id: "machine-roland-truevis-vg3-540",
-      name: "Roland TrueVis VG3 540",
-      type: "Großformat",
-      colorMode: "CMYK",
-      status: "Aktiv",
-      hourlyRate: "85,00 €",
-      colorClickCost: "0,000 €",
-      blackClickCost: "0,000 €",
-      duplex: "Nein",
-      usage: "Standard",
-      note: "Großformatdruck",
-      badgeVariant: undefined,
-    },
-  ],
-  "Digitaldruck Farbe": [
-    {
-      id: "machine-xerox-iridesse",
-      name: "Xerox Iridesse",
-      type: "Digitaldruck Farbe",
-      colorMode: "4/4-farbig",
-      status: "Aktiv",
-      hourlyRate: "120,00 €",
-      colorClickCost: "0,033 €",
-      blackClickCost: "0,008 €",
-      duplex: "Ja",
-      usage: "Bevorzugt",
-      note: "Standardmaschine für Farbdruck",
-      badgeVariant: "success",
-    },
-  ],
-  "Digitaldruck Schwarz": [
-    {
-      id: "machine-xerox-nuvera",
-      name: "Xerox Nuvera",
-      type: "Digitaldruck Schwarz",
-      colorMode: "1/1 schwarz",
-      status: "Aktiv",
-      hourlyRate: "95,00 €",
-      colorClickCost: "0,000 €",
-      blackClickCost: "0,008 €",
-      duplex: "Ja",
-      usage: "Standard",
-      note: "Schwarzweiß-Produktion",
-      badgeVariant: undefined,
-    },
-    {
-      id: "machine-canon-vp140",
-      name: "Canon VP140",
-      type: "Digitaldruck Schwarz",
-      colorMode: "1/1 schwarz",
-      status: "Aktiv",
-      hourlyRate: "95,00 €",
-      colorClickCost: "0,000 €",
-      blackClickCost: "0,008 €",
-      duplex: "Ja",
-      usage: "Standard",
-      note: "Schwarzweiß-Produktion",
-      badgeVariant: undefined,
-    },
-  ],
-  Großformat: [
-    {
-      id: "machine-roland-truevis-vg3-540",
-      name: "Roland TrueVis VG3 540",
-      type: "Großformat",
-      colorMode: "CMYK",
-      status: "Aktiv",
-      hourlyRate: "85,00 €",
-      colorClickCost: "0,000 €",
-      blackClickCost: "0,000 €",
-      duplex: "Nein",
-      usage: "Standard",
-      note: "Großformatdruck",
-      badgeVariant: undefined,
-    },
-  ],
-  Wartung: [
-    {
-      id: "machine-xerox-iridesse-sonderfarben",
-      name: "Xerox Iridesse Sonderfarben",
-      type: "Digitaldruck Farbe",
-      colorMode: "Sonderfarben",
-      status: "Wartung",
-      hourlyRate: "120,00 €",
-      colorClickCost: "0,033 €",
-      blackClickCost: "0,008 €",
-      duplex: "Ja",
-      usage: "Nur Spezialfälle",
-      note: "Wartungsstatus prüfen",
-      badgeVariant: undefined,
-    },
-  ],
-};
+type MachineTab = PrintPilotMachineStatus;
 
 function getMachineTitle(tab: MachineTab) {
   switch (tab) {
-    case "Liste":
-      return "Maschine verwalten";
-    case "Digitaldruck Farbe":
-      return "Farbdruckmaschine verwalten";
-    case "Digitaldruck Schwarz":
-      return "Schwarzweißmaschine verwalten";
-    case "Großformat":
-      return "Großformatmaschine verwalten";
+    case "Aktiv":
+      return "Aktive Maschine bearbeiten";
+
     case "Wartung":
       return "Maschine in Wartung prüfen";
-  }
-}
 
-function getMachineStatus(tab: MachineTab) {
-  if (tab === "Wartung") {
-    return "Wartung";
+    case "Archiv":
+      return "Archivierte Maschine prüfen";
   }
-
-  return "Aktiv";
 }
 
 function isMachineTab(tab: string): tab is MachineTab {
@@ -200,8 +49,13 @@ function isMachineTab(tab: string): tab is MachineTab {
 
 export function MachinesPage() {
   const module = getModuleConfig("machines");
+  const { machines, updateMachine } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+
+  const machineRowsByTab = useMemo(() => {
+    return groupPrintPilotMachinesByStatus(machines);
+  }, [machines]);
 
   const {
     activeTab,
@@ -211,11 +65,13 @@ export function MachinesPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: machineRowsByTab,
-    initialTab: "Liste",
+    initialTab: "Aktiv",
   });
 
-  const { draft, isDirty, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
     useEditableDraft(selectedMachine);
+
+  const canEdit = isEditing && Boolean(draft);
 
   function handleTabChange(tab: string) {
     if (isMachineTab(tab)) {
@@ -238,6 +94,18 @@ export function MachinesPage() {
     setIsEditing((currentValue) => !currentValue);
   }
 
+  function handleSaveDraft() {
+    if (!draft) {
+      return;
+    }
+
+    const savedMachine = draft as PrintPilotMachine;
+
+    updateMachine(savedMachine);
+    saveDraft(savedMachine);
+    setIsEditing(false);
+  }
+
   return (
     <div className="page">
       <PageHeader
@@ -254,24 +122,26 @@ export function MachinesPage() {
 
       <section className="calculation-sheet">
         <WorkspaceHeader
-          kicker="Maschinenmaske"
+          kicker="Druckmaschinen"
           title={getMachineTitle(activeTab)}
-          statusValue={getMachineStatus(activeTab)}
+          statusValue={isEditing ? "Bearbeitung offen" : activeTab}
         />
 
         <div className="master-detail-layout">
           <section className="workspace-panel master-list-panel">
             <TableToolbar>
               <Input className="search-input" placeholder="Maschinen suchen..." />
+
               <Button>Filter</Button>
             </TableToolbar>
 
             <DataTable>
               <thead>
                 <tr>
-                  <th>Maschine</th>
+                  <th>Maschinennr.</th>
+                  <th>Name</th>
                   <th>Typ</th>
-                  <th>Farbigkeit</th>
+                  <th>Farbmodus</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -288,6 +158,7 @@ export function MachinesPage() {
                       }
                       onClick={() => handleMachineSelect(machine.id)}
                     >
+                      <td>{machine.number}</td>
                       <td>{machine.name}</td>
                       <td>{machine.type}</td>
                       <td>{machine.colorMode}</td>
@@ -307,72 +178,83 @@ export function MachinesPage() {
             <SectionHeader>Maschinendaten</SectionHeader>
 
             <FieldGrid>
-              <Field label="Maschine">
+              <Field label="Maschinennummer">
+                <Input value={draft?.number ?? ""} readOnly />
+              </Field>
+
+              <Field label="Name">
                 <Input
                   value={draft?.name ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("name", event.target.value)
                   }
                 />
               </Field>
 
-              <Field label="Typ">
+              <Field label="Maschinentyp">
                 <Select
                   value={draft?.type ?? ""}
+                  disabled={!canEdit}
                   onChange={(event) =>
                     updateDraftField("type", event.target.value)
                   }
                 >
-                  <option value="" disabled>
-                    Typ wählen
-                  </option>
-                  <option>Digitaldruck Farbe</option>
-                  <option>Digitaldruck Schwarz</option>
+                  <option>Digitaldruck</option>
+                  <option>Schwarzweißdruck</option>
                   <option>Großformat</option>
+                  <option>Weiterverarbeitung</option>
                 </Select>
               </Field>
 
-              <Field label="Farbigkeit">
-                <Select
+              <Field label="Farbmodus">
+                <Input
                   value={draft?.colorMode ?? ""}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("colorMode", event.target.value)
                   }
-                >
-                  <option value="" disabled>
-                    Farbigkeit wählen
-                  </option>
-                  <option>4/4-farbig</option>
-                  <option>4/0-farbig</option>
-                  <option>1/1 schwarz</option>
-                  <option>1/0 schwarz</option>
-                  <option>Sonderfarben</option>
-                  <option>CMYK</option>
-                </Select>
+                />
               </Field>
 
               <Field label="Status">
                 <Select
                   value={draft?.status ?? ""}
-                  disabled={!isEditing}
+                  disabled={!canEdit}
                   onChange={(event) =>
-                    updateDraftField("status", event.target.value)
+                    updateDraftField(
+                      "status",
+                      event.target.value as PrintPilotMachineStatus,
+                    )
                   }
                 >
-                  <option>Aktiv</option>
-                  <option>Wartung</option>
+                  {machineTabs.map((tab) => (
+                    <option key={tab}>{tab}</option>
+                  ))}
+                </Select>
+              </Field>
+
+              <Field label="Duplex">
+                <Select
+                  value={draft?.duplex ?? ""}
+                  disabled={!canEdit}
+                  onChange={(event) =>
+                    updateDraftField("duplex", event.target.value)
+                  }
+                >
+                  <option>Ja</option>
+                  <option>Nein</option>
                 </Select>
               </Field>
             </FieldGrid>
 
-            <SectionHeader>Kostenparameter</SectionHeader>
+            <SectionHeader>Kalkulationswerte</SectionHeader>
 
             <FieldGrid>
               <Field label="Stundensatz">
                 <Input
                   value={draft?.hourlyRate ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("hourlyRate", event.target.value)
                   }
@@ -382,7 +264,7 @@ export function MachinesPage() {
               <Field label="Klickkosten Farbe">
                 <Input
                   value={draft?.colorClickCost ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("colorClickCost", event.target.value)
                   }
@@ -392,50 +274,27 @@ export function MachinesPage() {
               <Field label="Klickkosten Schwarz">
                 <Input
                   value={draft?.blackClickCost ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("blackClickCost", event.target.value)
                   }
                 />
               </Field>
 
-              <Field label="Duplex">
-                <Select
-                  value={draft?.duplex ?? ""}
-                  onChange={(event) =>
-                    updateDraftField("duplex", event.target.value)
-                  }
-                >
-                  <option value="" disabled>
-                    Duplex wählen
-                  </option>
-                  <option>Ja</option>
-                  <option>Nein</option>
-                </Select>
-              </Field>
-            </FieldGrid>
-
-            <SectionHeader>Hinweise</SectionHeader>
-
-            <FieldGrid>
-              <Field label="Einsatz">
-                <Select
+              <Field label="Einsatzbereich">
+                <Input
                   value={draft?.usage ?? ""}
-                  disabled={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("usage", event.target.value)
                   }
-                >
-                  <option>Standard</option>
-                  <option>Bevorzugt</option>
-                  <option>Nur Spezialfälle</option>
-                </Select>
+                />
               </Field>
 
               <Field label="Notiz">
                 <Input
                   value={draft?.note ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("note", event.target.value)
                   }
@@ -447,21 +306,17 @@ export function MachinesPage() {
               <DirtyStateNotice isDirty={isDirty} />
 
               <EditLockToggle
-
                 isEditing={isEditing}
-
                 onToggle={handleToggleEditing}
-
               />
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+
               <SaveActionButton
-
-                              isDirty={isDirty}
-
-                              defaultLabel="Maschine speichern"
-
-                            />
+                isDirty={isDirty}
+                defaultLabel="Maschine speichern"
+                onClick={handleSaveDraft}
+              />
             </div>
           </section>
         </div>

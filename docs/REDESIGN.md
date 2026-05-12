@@ -8,21 +8,41 @@ PrintPilot befindet sich auf dem Branch:
 restart-designsystem
 ```
 
-Der aktuelle Fokus liegt auf:
+Der aktuelle Stand ist ein stabiler Store-/Persistenz-Zwischenstand.
 
-- stabilem Designsystem
-- sauberem App-Layout
-- zentralem Store
-- kontrollierten Formular-Drafts
-- Dirty-State
-- Schloss-Edit-Mode
-- echter lokaler Speicherung im Browser
-- Backup-Export aus dem aktuellen Store-Zustand
+Alle wichtigen Grundbereiche sind inzwischen an den App-weiten Store angebunden und werden lokal im Browser persistiert.
+
+Persistente Bereiche:
+
+```text
+Angebote
+Aufträge
+Kunden
+Material
+Maschinen
+Leistungen / Services
+Weiterverarbeitung / Finishing
+Vorlagen / Templates
+Einstellungen
+```
+
+Zusätzlich umgesetzt:
+
+```text
+Backup-Export aus aktuellem Store
+Backup-Import "Alles ersetzen"
+Sicherheitsbackup vor Import
+localStorage-Persistenz
+Store-Migrationen für nachträglich ergänzte Datenbereiche
+```
 
 Wichtig:
 
 ```text
-Keine Fachlogik weiter ausbauen, bevor Store, Backup und Grunddatenfluss sauber stabil sind.
+Noch keine echte Datenbank.
+Noch keine API.
+Noch kein Mehrplatzbetrieb.
+Noch keine echte Kalkulationslogik.
 ```
 
 ---
@@ -52,40 +72,13 @@ Gesamtpaket immer ganz zuletzt.
 
 ---
 
-## Architekturstand
+## App-Struktur
 
-Wichtige Dateien und Bereiche:
+Der StoreProvider sitzt in:
 
 ```text
 src/main.tsx
-src/app/App.tsx
-src/app/AppRouter.tsx
-src/app/moduleConfig.ts
-src/app/navigation.ts
-
-src/store/PrintPilotStore.tsx
-
-src/data/printPilotStore.ts
-src/data/backup.ts
-
-src/hooks/useMasterDetailSelection.ts
-src/hooks/useEditableDraft.ts
-
-src/layout/AppShell.tsx
-src/layout/Sidebar.tsx
-src/layout/PageHeader.tsx
-src/layout/PageTabs.tsx
-
-src/pages/
-src/ui/
-src/styles/
 ```
-
----
-
-## App-Struktur
-
-Der `PrintPilotStoreProvider` wird in `src/main.tsx` um die App gelegt.
 
 Prinzip:
 
@@ -100,11 +93,10 @@ Prinzip:
 Wichtig:
 
 ```text
-App.tsx darf nicht vereinfacht werden.
-AppShell, Navigation und AppRouter bleiben in der bestehenden App-Struktur.
+App.tsx bleibt für Shell, Navigation und Routing zuständig.
+App.tsx nicht vereinfachen.
+AppShell nicht entfernen.
 ```
-
-Der StoreProvider sitzt bewusst außen in `main.tsx`, damit Navigation, Layout und Tabs nicht beschädigt werden.
 
 ---
 
@@ -121,31 +113,38 @@ Der Store enthält aktuell:
 ```text
 PrintPilotStoreProvider
 usePrintPilotStore()
+
 data
+
+customers
 quotes
+orders
+materials
+machines
+services
+finishing
+templates
 settings
+
+updateCustomer()
 updateQuote()
+updateOrder()
+updateMaterial()
+updateMachine()
+updateService()
+updateFinishingProcess()
+updateTemplate()
 updateSettings()
+
 replaceStoreData()
 resetStoreData()
 getBackupData()
 ```
 
-Der Store speichert den aktuellen Zustand zusätzlich in:
+Persistenz-Key:
 
 ```text
 localStorage["printpilot-store-v1"]
-```
-
-Dadurch bleiben aktuell gespeicherte Daten auch nach einem Browser-Reload erhalten.
-
-Wichtig:
-
-```text
-Das ist lokale Browser-Persistenz.
-Noch keine Datenbank.
-Noch keine API.
-Noch kein Mehrplatzbetrieb.
 ```
 
 ---
@@ -158,7 +157,13 @@ Datei:
 src/data/printPilotStore.ts
 ```
 
-Vorbereitete Store-Bereiche:
+Zentrale Hauptstruktur:
+
+```ts
+PrintPilotStoreData
+```
+
+Enthält:
 
 ```text
 customers
@@ -172,80 +177,101 @@ templates
 settings
 ```
 
-Zentrale Typen:
+Aktuelle Initialdaten:
 
 ```text
-PrintPilotStoreData
-PrintPilotCustomer
-PrintPilotQuote
-PrintPilotQuoteStatus
-PrintPilotOrder
-PrintPilotMaterial
-PrintPilotMachine
-PrintPilotService
-PrintPilotFinishingProcess
-PrintPilotTemplate
-PrintPilotSettings
+initialPrintPilotCustomers
+initialPrintPilotQuotes
+initialPrintPilotOrders
+initialPrintPilotMaterials
+initialPrintPilotMachines
+initialPrintPilotServices
+initialPrintPilotFinishing
+initialPrintPilotTemplates
+initialPrintPilotSettings
 ```
 
-Wichtige Exporte:
+Aktuelle Gruppierungsfunktionen:
 
 ```text
-initialPrintPilotQuotes
-initialPrintPilotSettings
-createEmptyPrintPilotStoreData()
-createPrintPilotStoreSnapshot()
+groupPrintPilotCustomersByStatus()
 groupPrintPilotQuotesByStatus()
+groupPrintPilotOrdersByStatus()
+groupPrintPilotMaterialsByStatus()
+groupPrintPilotMachinesByStatus()
+groupPrintPilotServicesByStatus()
+groupPrintPilotFinishingByStatus()
+groupPrintPilotTemplatesByStatus()
 ```
 
 ---
 
-## Angebote
+## localStorage-Migration
 
-Datei:
-
-```text
-src/pages/QuotesPage.tsx
-```
-
-Die Angebotsseite ist die erste Seite, die an den echten App-weiten Store angebunden ist.
-
-Sie nutzt:
+Die Funktion:
 
 ```ts
-const { quotes, updateQuote } = usePrintPilotStore();
+createPrintPilotStoreSnapshot()
 ```
 
-Beim Klick auf `Änderungen speichern` passiert:
+füllt nachträglich ergänzte Datenbereiche automatisch mit Initialdaten, wenn im bestehenden localStorage alte leere Bereiche vorhanden sind.
 
-```ts
-const savedQuote = draft as PrintPilotQuote;
-
-updateQuote(savedQuote);
-saveDraft(savedQuote);
-setIsEditing(false);
-```
-
-Dadurch gilt aktuell:
+Beispiel:
 
 ```text
-Angebot ändern
-Änderungen speichern
-Tab wechseln
-zurückwechseln
-Änderung bleibt erhalten
-Seite wechseln
-zurück zu Angebote
-Änderung bleibt erhalten
-Browser neu laden
-Änderung bleibt erhalten
+Alter Store enthält keine machines
+→ initialPrintPilotMachines werden ergänzt
+```
+
+Das Prinzip gilt für:
+
+```text
+customers
+quotes
+orders
+materials
+machines
+services
+finishing
+templates
+settings
 ```
 
 Wichtig:
 
 ```text
-Das gilt aktuell für Angebote.
-Weitere Seiten verwenden noch überwiegend lokale Mock-/Draft-Strukturen.
+Bestehende gespeicherte Daten sollen erhalten bleiben.
+Neue Bereiche werden ergänzt.
+```
+
+---
+
+## Edit- und Save-Workflow
+
+Alle angebundenen Seiten folgen demselben Prinzip:
+
+```text
+1. Datensatz auswählen
+2. Schloss öffnen
+3. Felder bearbeiten
+4. Änderungen speichern
+5. updateX() schreibt in Store
+6. saveDraft() setzt Dirty-State zurück
+7. Store wird automatisch in localStorage geschrieben
+```
+
+Beispiel:
+
+```ts
+updateQuote(savedQuote);
+saveDraft(savedQuote);
+```
+
+Oder:
+
+```ts
+updateCustomer(savedCustomer);
+saveDraft(savedCustomer);
 ```
 
 ---
@@ -258,7 +284,13 @@ Datei:
 src/ui/SaveActionButton.tsx
 ```
 
-Wichtigster Fix:
+Wichtig:
+
+```text
+Der Button muss onClick ausführen.
+```
+
+Prinzip:
 
 ```tsx
 <Button variant="primary" onClick={onClick}>
@@ -266,122 +298,214 @@ Wichtigster Fix:
 </Button>
 ```
 
-Der Button muss `onClick` weitergeben. Sonst wird `handleSaveDraft()` nicht ausgeführt und es wird nichts gespeichert.
-
-Verhalten:
-
-```text
-isDirty = false
-- zeigt normale Modulaktion, z. B. "Angebot ausgeben"
-
-isDirty = true
-- zeigt "Änderungen speichern"
-- Klick führt onClick aus
-```
+Ohne `onClick` werden Änderungen nicht gespeichert.
 
 ---
 
-## Editable Draft Hook
+## EditLockToggle
 
 Datei:
-
-```text
-src/hooks/useEditableDraft.ts
-```
-
-Der Hook liefert aktuell:
-
-```text
-draft
-isDirty
-updateDraftField()
-resetDraft()
-saveDraft()
-```
-
-Wichtig:
-
-```text
-saveDraft(nextSavedSource?)
-```
-
-Damit kann nach dem Store-Update exakt der gespeicherte Datensatz als neuer gespeicherter Stand gesetzt werden.
-
-Prinzip:
-
-```ts
-updateQuote(savedQuote);
-saveDraft(savedQuote);
-```
-
-Der Draft wird nur bei einem Wechsel der Datensatz-ID zurückgesetzt, nicht bei jeder neuen Objekt-Referenz.
-
----
-
-## Dirty-State
-
-Dirty-State bedeutet:
-
-```text
-Der aktuelle Draft weicht vom gespeicherten Stand ab.
-```
-
-Komponente:
-
-```text
-src/ui/DirtyStateNotice.tsx
-```
-
-Verhalten:
-
-```text
-keine Änderung
-- kein Hinweis
-
-Änderung vorhanden
-- Hinweis "Ungespeicherte Änderungen"
-- Hauptbutton wird "Änderungen speichern"
-```
-
----
-
-## Schloss-Edit-Mode
-
-Komponente:
 
 ```text
 src/ui/EditLockToggle.tsx
 ```
 
-Prinzip:
+Das Schloss öffnet/sperrt den Bearbeitungsmodus.
+
+Aktueller robuster Stand:
 
 ```text
-geschlossenes Schloss
-- Bearbeitung gesperrt
-
-offenes Schloss
-- Bearbeitung erlaubt
+Icons über Unicode-Escapes
+aria/title ohne problematische Umlaute
 ```
 
-Wichtig:
+Grund:
 
 ```text
-Das Schloss speichert nicht automatisch.
-Speichern bleibt eine bewusste Aktion über den Speichern-Button.
-```
-
-Das Schloss ist:
-
-```text
-randlos
-ohne Button-Fläche
-unten in der Button-Leiste
-optisch auf Button-Höhe ausgerichtet
+Windows-Encoding hatte Emoji/Umlaute beschädigt.
 ```
 
 ---
 
-## Einstellungen
+## Angebundene Seiten
+
+### Angebote
+
+Datei:
+
+```text
+src/pages/QuotesPage.tsx
+```
+
+Store:
+
+```ts
+const { quotes, updateQuote } = usePrintPilotStore();
+```
+
+Backup-Bereich:
+
+```text
+data.quotes
+```
+
+---
+
+### Aufträge
+
+Datei:
+
+```text
+src/pages/OrdersPage.tsx
+```
+
+Store:
+
+```ts
+const { orders, updateOrder } = usePrintPilotStore();
+```
+
+Backup-Bereich:
+
+```text
+data.orders
+```
+
+---
+
+### Kunden
+
+Datei:
+
+```text
+src/pages/CustomersPage.tsx
+```
+
+Store:
+
+```ts
+const { customers, updateCustomer } = usePrintPilotStore();
+```
+
+Backup-Bereich:
+
+```text
+data.customers
+```
+
+---
+
+### Material
+
+Datei:
+
+```text
+src/pages/MaterialPage.tsx
+```
+
+Store:
+
+```ts
+const { materials, updateMaterial } = usePrintPilotStore();
+```
+
+Backup-Bereich:
+
+```text
+data.materials
+```
+
+---
+
+### Maschinen
+
+Datei:
+
+```text
+src/pages/MachinesPage.tsx
+```
+
+Store:
+
+```ts
+const { machines, updateMachine } = usePrintPilotStore();
+```
+
+Backup-Bereich:
+
+```text
+data.machines
+```
+
+---
+
+### Leistungen / Services
+
+Datei:
+
+```text
+src/pages/ServicesPage.tsx
+```
+
+Store:
+
+```ts
+const { services, updateService } = usePrintPilotStore();
+```
+
+Backup-Bereich:
+
+```text
+data.services
+```
+
+---
+
+### Weiterverarbeitung / Finishing
+
+Datei:
+
+```text
+src/pages/FinishingPage.tsx
+```
+
+Store:
+
+```ts
+const { finishing, updateFinishingProcess } = usePrintPilotStore();
+```
+
+Backup-Bereich:
+
+```text
+data.finishing
+```
+
+---
+
+### Vorlagen / Templates
+
+Datei:
+
+```text
+src/pages/TemplatesPage.tsx
+```
+
+Store:
+
+```ts
+const { templates, updateTemplate } = usePrintPilotStore();
+```
+
+Backup-Bereich:
+
+```text
+data.templates
+```
+
+---
+
+### Einstellungen
 
 Datei:
 
@@ -389,35 +513,17 @@ Datei:
 src/pages/SettingsPage.tsx
 ```
 
-Die Einstellungen nutzen den Store für:
+Store:
 
-```text
-settings
-updateSettings()
-getBackupData()
+```ts
+const { settings, updateSettings, getBackupData, replaceStoreData } =
+  usePrintPilotStore();
 ```
 
-Die Standard-Einstellungen liegen zentral in:
+Backup-Bereich:
 
 ```text
-src/data/printPilotStore.ts
-```
-
-Export:
-
-```text
-initialPrintPilotSettings
-```
-
-Tabs:
-
-```text
-Allgemein
-Nummernkreise
-Firma
-Design
-System
-Datensicherung
+data.settings
 ```
 
 ---
@@ -432,114 +538,40 @@ src/data/backup.ts
 
 Backup-Datenstruktur:
 
-```text
+```ts
 PrintPilotBackupData = PrintPilotStoreData
 ```
 
-Der Backup-Export nutzt jetzt den echten App-Store.
-
-In `SettingsPage.tsx`:
+Backup-Export nutzt:
 
 ```ts
-const { settings, updateSettings, getBackupData } = usePrintPilotStore();
+getBackupData()
 ```
 
-Beim Export:
+Backup-Import nutzt:
 
 ```ts
-const backup = createPrintPilotBackup(getBackupData());
+replaceStoreData(selectedBackup.data)
 ```
 
-Dadurch enthält die JSON-Sicherung den aktuellen Store-Zustand, inklusive geänderter Angebote.
-
-Backup-Struktur:
-
-```json
-{
-  "app": "PrintPilot",
-  "version": "0.1.0",
-  "createdAt": "...",
-  "data": {
-    "customers": [],
-    "quotes": [],
-    "orders": [],
-    "materials": [],
-    "machines": [],
-    "services": [],
-    "finishing": [],
-    "templates": [],
-    "settings": {}
-  }
-}
-```
-
-Wichtiger Bereich in der Backup-Datei:
+Ablauf Import:
 
 ```text
-data.quotes
-```
-
-Dort liegen die Angebote.
-
----
-
-## Backup-Workflow
-
-Aktuell umgesetzt:
-
-```text
-Backup erstellen
-- erzeugt JSON-Datei aus aktuellem Store
-
 Backup auswählen
-- liest JSON-Datei ein
-- validiert PrintPilot-Backup-Format
-- zeigt Zusammenfassung
-
-Auswahl zurücksetzen
-- entfernt die aktuelle Backup-Auswahl
-
+Backup prüfen
 Alles ersetzen vorbereiten
-- nur vorbereitet
-- ersetzt noch keine Daten
-```
-
-Noch nicht umgesetzt:
-
-```text
-echter Backup-Import
-Alles ersetzen
-Daten ergänzen
-automatische Backups
-Server-Sicherung
-```
-
----
-
-## UI-Komponenten
-
-Aktuelle zentrale UI-Komponenten:
-
-```text
-src/ui/Button.tsx
-src/ui/Input.tsx
-src/ui/Select.tsx
-src/ui/Field.tsx
-src/ui/FieldGrid.tsx
-src/ui/SectionHeader.tsx
-src/ui/Badge.tsx
-src/ui/Table.tsx
-src/ui/WorkspaceHeader.tsx
-src/ui/EditLockToggle.tsx
-src/ui/DirtyStateNotice.tsx
-src/ui/SaveActionButton.tsx
+Import jetzt ausführen
+Sicherheitsbackup wird heruntergeladen
+Browser-Bestätigung
+Store wird ersetzt
+localStorage wird aktualisiert
 ```
 
 ---
 
 ## Nicht aktiv
 
-Die visuelle Einzelfeld-Markierung ist aktuell bewusst nicht aktiv.
+Die visuelle Einzelfeld-Markierung ist weiterhin bewusst nicht aktiv.
 
 Nicht aktiv:
 
@@ -550,57 +582,61 @@ DirtyFieldMarker
 Grund:
 
 ```text
-Der automatische Rollout hatte JSX-Verschachtelungsfehler erzeugt.
-Die Funktion wird später kontrolliert pro Seite eingebaut.
+Früherer Rollout hat JSX-Verschachtelungsfehler erzeugt.
 ```
 
-Nächster Versuch nur:
+Wiedereinführung später nur kontrolliert:
 
 ```text
 eine Seite
 ein Feldblock
-Build testen
+Build-Test
 dann weiter
 ```
 
 ---
 
-## Aktuell stabil
+## Aktuell stabile Grundlage
 
-Aktuell stabil und gepusht:
+Aktuell stabil:
 
 ```text
-StoreProvider in main.tsx
-AppShell bleibt intakt
-Navigation funktioniert
-Tabs funktionieren
-SaveActionButton führt onClick aus
-Angebotsänderungen werden in Store geschrieben
-Store persistiert in localStorage
-Angebotsänderungen bleiben nach Reload erhalten
-Backup exportiert aktuellen Store
-data.quotes enthält geänderte Angebote
+AppShell und Navigation
+Tabs
+StoreProvider
+localStorage-Persistenz
+Backup-Export
+Backup-Import "Alles ersetzen"
+Edit-Lock
+Dirty-State
+SaveActionButton
+alle Grundmodule im Store
 ```
 
 ---
 
 ## Nächste sinnvolle Schritte
 
+Jetzt kann mit Modulverknüpfungen begonnen werden.
+
 Empfohlene Reihenfolge:
 
 ```text
-1. Backup-Import "Alles ersetzen" erst vorbereiten, aber sehr vorsichtig
-2. Settings vollständig an updateSettings testen
-3. weitere Seite an Store anbinden, z. B. CustomersPage
-4. danach OrdersPage oder MaterialPage
-5. Backup-Import an replaceStoreData anschließen
-6. später LocalStorage-Verwaltung / Reset / Migration
-7. später echte Persistenz über Datenbank oder API planen
+1. Doku final prüfen
+2. Angebot → Auftrag vorbereiten
+3. Kunde → Angebot/Auftrag verknüpfen
+4. Material → Kalkulation vorbereiten
+5. Maschinen → Kalkulation vorbereiten
+6. Leistungen → Angebot/Kalkulation vorbereiten
+7. Weiterverarbeitung → Kalkulation vorbereiten
+8. Vorlagen → Angebotsausgabe vorbereiten
 ```
 
 Wichtig:
 
 ```text
-Ab jetzt keine Massenänderungen über alle Seiten.
-Jede Store-Anbindung seitenweise und mit Build-Test.
+Keine Massenänderungen.
+Immer nur eine Verknüpfung.
+Immer Build testen.
+Immer pushen.
 ```

@@ -1,4 +1,4 @@
-# Backup-Konzept
+# PrintPilot Backup
 
 ## Datei
 
@@ -6,9 +6,21 @@
 src/data/backup.ts
 ```
 
-## Format
+## Datenbasis
 
-Backup-Dateien sind JSON-Dateien mit folgender Grundstruktur:
+Backups basieren auf:
+
+```ts
+PrintPilotStoreData
+```
+
+Das bedeutet:
+
+```text
+Backup = kompletter aktueller App-Store
+```
+
+## Backup-Struktur
 
 ```json
 {
@@ -31,48 +43,75 @@ Backup-Dateien sind JSON-Dateien mit folgender Grundstruktur:
 
 ## Export
 
-Der Export wird in den Einstellungen unter `Datensicherung` ausgelöst.
+In den Einstellungen:
 
-Quelle:
-
-```ts
-getBackupData()
+```text
+Einstellungen
+Datensicherung
+Backup erstellen
 ```
 
-Dadurch wird der aktuelle Store exportiert.
+Technisch:
+
+```ts
+createPrintPilotBackup(getBackupData())
+```
 
 ## Import
 
-Aktuell umgesetzt:
+Aktueller Import-Modus:
 
 ```text
-Datei auswählen
-Datei lesen
-Format validieren
-Zusammenfassung anzeigen
-Auswahl zurücksetzen
-Alles ersetzen vorbereiten
+Alles ersetzen
 ```
 
-Noch nicht umgesetzt:
+Ablauf:
 
 ```text
-Daten wirklich ersetzen
+Backup auswählen
+Backup wird gelesen
+Backup wird validiert
+Zusammenfassung wird angezeigt
+Alles ersetzen vorbereiten
+Import jetzt ausführen
+Sicherheitsbackup wird automatisch exportiert
+Browser-Bestätigung
+replaceStoreData(selectedBackup.data)
+```
+
+## Sicherheitsbackup
+
+Vor dem eigentlichen Ersetzen wird automatisch ein Backup des aktuellen Stands heruntergeladen.
+
+Grund:
+
+```text
+Daten können danach wieder eingespielt werden.
+```
+
+## Backup prüfen
+
+In einer exportierten JSON-Datei können die Bereiche geprüft werden:
+
+```text
+data.customers
+data.quotes
+data.orders
+data.materials
+data.machines
+data.services
+data.finishing
+data.templates
+data.settings
+```
+
+## Noch nicht umgesetzt
+
+```text
 Daten ergänzen
 Konfliktprüfung
-Vorheriges Backup automatisch erstellen
-```
-
-## Sicherheitsregel
-
-Vor einem echten Import sollte später immer automatisch ein Sicherheitsbackup erstellt werden.
-
-Prinzip:
-
-```text
-Backup vor Import erstellen
-Import validieren
-Nutzer bestätigt "Alles ersetzen"
-Store ersetzen
-localStorage aktualisieren
+Teilimport einzelner Bereiche
+Backup-Vergleich
+Automatische periodische Backups
+Serverbackup
 ```

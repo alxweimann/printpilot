@@ -1,18 +1,34 @@
-# Store- und Speicherstand
+# PrintPilot Store
 
 ## Zweck
 
-Dieses Dokument beschreibt den aktuellen Speichermechanismus in PrintPilot.
+Dieses Dokument beschreibt den aktuellen App-weiten Store von PrintPilot.
 
-## StoreProvider
-
-Datei:
+## Datei
 
 ```text
 src/store/PrintPilotStore.tsx
 ```
 
-Der StoreProvider hält den App-Zustand zentral und schreibt ihn zusätzlich in `localStorage`.
+## Provider
+
+```text
+PrintPilotStoreProvider
+```
+
+Der Provider wird in `src/main.tsx` um die App gelegt.
+
+## Hook
+
+```text
+usePrintPilotStore()
+```
+
+Der Hook stellt Store-Daten und Update-Funktionen bereit.
+
+## Persistenz
+
+Der Store wird automatisch in `localStorage` geschrieben.
 
 Key:
 
@@ -20,61 +36,90 @@ Key:
 printpilot-store-v1
 ```
 
-## Aktuelles Speicherverhalten
+## Store-Daten
 
-Bei Angeboten:
-
-```text
-Feld ändern
-Änderungen speichern klicken
-updateQuote(savedQuote)
-saveDraft(savedQuote)
-localStorage wird aktualisiert
-```
-
-Dadurch bleiben geänderte Angebote erhalten bei:
+Aktuelle Bereiche:
 
 ```text
-Tabwechsel
-Seitenwechsel
-Browser-Reload
+customers
+quotes
+orders
+materials
+machines
+services
+finishing
+templates
+settings
 ```
 
-## Grenzen
-
-Noch nicht vorhanden:
+## Update-Funktionen
 
 ```text
-Datenbank
-Server-Sync
-Mehrplatzfähigkeit
-Benutzerverwaltung
-Konfliktlösung
-Migrationen
+updateCustomer(customer)
+updateQuote(quote)
+updateOrder(order)
+updateMaterial(material)
+updateMachine(machine)
+updateService(service)
+updateFinishingProcess(process)
+updateTemplate(template)
+updateSettings(settings)
 ```
 
-## LocalStorage zurücksetzen
+## Backup-Funktionen
 
-Für Tests kann der lokale Speicher in der Browser-Konsole gelöscht werden:
+```text
+getBackupData()
+replaceStoreData(data)
+resetStoreData()
+```
+
+## Initialdaten
+
+Initialdaten liegen in:
+
+```text
+src/data/printPilotStore.ts
+```
+
+Enthalten:
+
+```text
+initialPrintPilotCustomers
+initialPrintPilotQuotes
+initialPrintPilotOrders
+initialPrintPilotMaterials
+initialPrintPilotMachines
+initialPrintPilotServices
+initialPrintPilotFinishing
+initialPrintPilotTemplates
+initialPrintPilotSettings
+```
+
+## Migrationen
+
+Wenn ein bestehender localStorage-Store ältere Bereiche nicht enthält oder leere Bereiche hat, ergänzt `createPrintPilotStoreSnapshot()` Initialdaten für neue Bereiche.
+
+Beispiel:
+
+```text
+machines ist leer
+→ initialPrintPilotMachines wird ergänzt
+```
+
+## Test-Hinweis
+
+localStorage kann in der Browser-Konsole zurückgesetzt werden:
 
 ```js
 localStorage.removeItem("printpilot-store-v1");
 ```
 
-Danach die Seite neu laden.
+Danach Seite neu laden.
 
-## Backup
-
-Der Backup-Export nutzt:
-
-```ts
-getBackupData()
-```
-
-und erzeugt daraus eine PrintPilot-JSON-Datei.
-
-Geänderte Angebote befinden sich in:
+Achtung:
 
 ```text
-data.quotes
+Dabei gehen lokal gespeicherte Testdaten verloren.
+Vorher Backup erstellen, wenn Daten erhalten bleiben sollen.
 ```

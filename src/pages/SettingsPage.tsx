@@ -198,6 +198,7 @@ export function SettingsPage() {
     downloadPrintPilotBackup(safetyBackup);
 
     replaceStoreData(selectedBackup.data);
+    saveDraft(selectedBackup.data.settings);
     setIsReplaceArmed(false);
     setBackupMessage(
       `Backup importiert. Aktueller Stand wurde vorher als Sicherheitsbackup exportiert. Importiertes Backup: ${formatBackupSummary(

@@ -110,17 +110,20 @@ export type PrintPilotService = {
   badgeVariant?: "success";
 };
 
+export type PrintPilotFinishingStatus = "Aktiv" | "Optional" | "Archiv";
+
 export type PrintPilotFinishingProcess = {
   id: PrintPilotId;
   number: string;
   name: string;
   category: string;
   pricing: string;
-  status: string;
+  status: PrintPilotFinishingStatus;
   standardUsage: string;
   setupTime: string;
   hourlyRate: string;
   description: string;
+  badgeVariant?: "success";
 };
 
 export type PrintPilotTemplate = {
@@ -529,6 +532,97 @@ export const initialPrintPilotServices: PrintPilotService[] = [
   },
 ];
 
+export const initialPrintPilotFinishing: PrintPilotFinishingProcess[] = [
+  {
+    id: "finishing-cutting",
+    number: "WV-1001",
+    name: "Schneiden",
+    category: "Schneiden",
+    pricing: "Rüstzeit + Zeit",
+    status: "Aktiv",
+    standardUsage: "Standard bei fast allen Druckprodukten",
+    setupTime: "10",
+    hourlyRate: "65,00",
+    description: "Planschnitt / Endformat schneiden",
+    badgeVariant: "success",
+  },
+  {
+    id: "finishing-folding",
+    number: "WV-1002",
+    name: "Falzen",
+    category: "Falzen",
+    pricing: "Rüstzeit + Stück",
+    status: "Aktiv",
+    standardUsage: "Flyer, Folder, Einleger",
+    setupTime: "15",
+    hourlyRate: "70,00",
+    description: "Standardfalzarten für Digitaldruckprodukte",
+    badgeVariant: "success",
+  },
+  {
+    id: "finishing-creasing",
+    number: "WV-1003",
+    name: "Rillen",
+    category: "Rillen",
+    pricing: "Rüstzeit + Stück",
+    status: "Aktiv",
+    standardUsage: "Karton, Umschläge, Klappkarten",
+    setupTime: "15",
+    hourlyRate: "70,00",
+    description: "Rillen vor dem Falzen bei stärkeren Materialien",
+    badgeVariant: "success",
+  },
+  {
+    id: "finishing-saddle-stitching",
+    number: "WV-1004",
+    name: "Rückendrahtheftung",
+    category: "Heften",
+    pricing: "Rüstzeit + Stück",
+    status: "Aktiv",
+    standardUsage: "Broschüren",
+    setupTime: "20",
+    hourlyRate: "75,00",
+    description: "Broschürenheftung mit zwei Klammern",
+    badgeVariant: "success",
+  },
+  {
+    id: "finishing-perfect-binding",
+    number: "WV-1005",
+    name: "Klebebindung",
+    category: "Binden",
+    pricing: "Rüstzeit + Stück",
+    status: "Optional",
+    standardUsage: "Bücher, umfangreiche Broschüren",
+    setupTime: "30",
+    hourlyRate: "85,00",
+    description: "Klebebindung nach technischer Prüfung",
+  },
+  {
+    id: "finishing-handwork",
+    number: "WV-1006",
+    name: "Handarbeit",
+    category: "Manuell",
+    pricing: "Zeit",
+    status: "Optional",
+    standardUsage: "Sonderarbeiten",
+    setupTime: "0",
+    hourlyRate: "45,00",
+    description: "Manuelle Tätigkeiten, Verpacken, Sortieren, Sonderkonfektionierung",
+  },
+  {
+    id: "finishing-old-diecut",
+    number: "WV-1007",
+    name: "Archivierte Stanzung",
+    category: "Stanzen",
+    pricing: "Archiv",
+    status: "Archiv",
+    standardUsage: "Nicht mehr aktiv",
+    setupTime: "0",
+    hourlyRate: "0,00",
+    description: "Archivierter Weiterverarbeitungsprozess",
+  },
+];
+
 export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
   return {
     customers: initialPrintPilotCustomers,
@@ -537,7 +631,7 @@ export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
     materials: initialPrintPilotMaterials,
     machines: initialPrintPilotMachines,
     services: initialPrintPilotServices,
-    finishing: [],
+    finishing: initialPrintPilotFinishing,
     templates: [],
     settings: initialPrintPilotSettings,
   };
@@ -571,6 +665,10 @@ export function createPrintPilotStoreSnapshot(
       overrides.services && overrides.services.length > 0
         ? overrides.services
         : emptyStore.services,
+    finishing:
+      overrides.finishing && overrides.finishing.length > 0
+        ? overrides.finishing
+        : emptyStore.finishing,
     settings: {
       ...emptyStore.settings,
       ...(overrides.settings ?? {}),
@@ -616,6 +714,16 @@ export function groupPrintPilotServicesByStatus(
     Aktiv: services.filter((service) => service.status === "Aktiv"),
     Optional: services.filter((service) => service.status === "Optional"),
     Archiv: services.filter((service) => service.status === "Archiv"),
+  };
+}
+
+export function groupPrintPilotFinishingByStatus(
+  finishing: PrintPilotFinishingProcess[],
+): Record<PrintPilotFinishingStatus, PrintPilotFinishingProcess[]> {
+  return {
+    Aktiv: finishing.filter((process) => process.status === "Aktiv"),
+    Optional: finishing.filter((process) => process.status === "Optional"),
+    Archiv: finishing.filter((process) => process.status === "Archiv"),
   };
 }
 

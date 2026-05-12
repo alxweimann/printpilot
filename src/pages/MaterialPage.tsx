@@ -1,9 +1,14 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { getModuleConfig } from "../app/moduleConfig";
-
+import {
+  type PrintPilotMaterial,
+  type PrintPilotMaterialStatus,
+  groupPrintPilotMaterialsByStatus,
+} from "../data/printPilotStore";
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
+import { usePrintPilotStore } from "../store/PrintPilotStore";
 
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -15,183 +20,30 @@ import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
 import { FieldGrid } from "../ui/FieldGrid";
 import { Input } from "../ui/Input";
-import { SectionHeader } from "../ui/SectionHeader";
 import { SaveActionButton } from "../ui/SaveActionButton";
+import { SectionHeader } from "../ui/SectionHeader";
 import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
-const materialTabs = [
-  "Liste",
-  "Papier",
-  "Verpackung",
-  "Verbrauchsmaterial",
-  "Gesperrt",
-] as const;
+const materialTabs = ["Auf Lager", "Knapp", "Bestellen", "Archiv"] as const;
 
-type MaterialTab = (typeof materialTabs)[number];
-
-type MaterialRow = {
-  id: string;
-  name: string;
-  type: string;
-  format: string;
-  grain: string;
-  pricePerReam: string;
-  sheetsPerReam: string;
-  stock: string;
-  minimumStock: string;
-  storageLocation: string;
-  status: string;
-  badgeVariant?: "success";
-};
-
-const materialRowsByTab: Record<MaterialTab, MaterialRow[]> = {
-  Liste: [
-    {
-      id: "material-135-bilderdruck-matt",
-      name: "135 g/m² Bilderdruck matt",
-      type: "Papier",
-      format: "SRA3",
-      grain: "Schmalbahn",
-      pricePerReam: "42,50 €",
-      sheetsPerReam: "500",
-      stock: "18",
-      minimumStock: "5",
-      storageLocation: "Papierlager",
-      status: "Aktiv",
-      badgeVariant: "success",
-    },
-    {
-      id: "material-300-bilderdruck-matt",
-      name: "300 g/m² Bilderdruck matt",
-      type: "Papier",
-      format: "SRA3",
-      grain: "Breitbahn",
-      pricePerReam: "86,00 €",
-      sheetsPerReam: "500",
-      stock: "8",
-      minimumStock: "4",
-      storageLocation: "Papierlager",
-      status: "Aktiv",
-      badgeVariant: undefined,
-    },
-    {
-      id: "material-versandkarton-a4",
-      name: "Versandkarton A4",
-      type: "Verpackung",
-      format: "A4",
-      grain: "Keine Angabe",
-      pricePerReam: "0,38 €",
-      sheetsPerReam: "1",
-      stock: "250",
-      minimumStock: "50",
-      storageLocation: "Versand",
-      status: "Entwurf",
-      badgeVariant: undefined,
-    },
-  ],
-  Papier: [
-    {
-      id: "material-135-bilderdruck-matt",
-      name: "135 g/m² Bilderdruck matt",
-      type: "Papier",
-      format: "SRA3",
-      grain: "Schmalbahn",
-      pricePerReam: "42,50 €",
-      sheetsPerReam: "500",
-      stock: "18",
-      minimumStock: "5",
-      storageLocation: "Papierlager",
-      status: "Aktiv",
-      badgeVariant: "success",
-    },
-    {
-      id: "material-300-bilderdruck-matt",
-      name: "300 g/m² Bilderdruck matt",
-      type: "Papier",
-      format: "SRA3",
-      grain: "Breitbahn",
-      pricePerReam: "86,00 €",
-      sheetsPerReam: "500",
-      stock: "8",
-      minimumStock: "4",
-      storageLocation: "Papierlager",
-      status: "Aktiv",
-      badgeVariant: undefined,
-    },
-  ],
-  Verpackung: [
-    {
-      id: "material-versandkarton-a4",
-      name: "Versandkarton A4",
-      type: "Verpackung",
-      format: "A4",
-      grain: "Keine Angabe",
-      pricePerReam: "0,38 €",
-      sheetsPerReam: "1",
-      stock: "250",
-      minimumStock: "50",
-      storageLocation: "Versand",
-      status: "Entwurf",
-      badgeVariant: undefined,
-    },
-  ],
-  Verbrauchsmaterial: [
-    {
-      id: "material-toner-klickkosten-reserve",
-      name: "Toner / Klickkosten Reserve",
-      type: "Verbrauchsmaterial",
-      format: "—",
-      grain: "Keine Angabe",
-      pricePerReam: "0,00 €",
-      sheetsPerReam: "1",
-      stock: "1",
-      minimumStock: "1",
-      storageLocation: "Maschinenraum",
-      status: "Aktiv",
-      badgeVariant: undefined,
-    },
-  ],
-  Gesperrt: [
-    {
-      id: "material-altes-sonderpapier",
-      name: "Altes Sonderpapier",
-      type: "Papier",
-      format: "A3",
-      grain: "Keine Angabe",
-      pricePerReam: "0,00 €",
-      sheetsPerReam: "500",
-      stock: "2",
-      minimumStock: "0",
-      storageLocation: "Altbestand",
-      status: "Gesperrt",
-      badgeVariant: undefined,
-    },
-  ],
-};
+type MaterialTab = PrintPilotMaterialStatus;
 
 function getMaterialTitle(tab: MaterialTab) {
   switch (tab) {
-    case "Liste":
-      return "Material verwalten";
-    case "Papier":
-      return "Papiermaterial verwalten";
-    case "Verpackung":
-      return "Verpackung verwalten";
-    case "Verbrauchsmaterial":
-      return "Verbrauchsmaterial verwalten";
-    case "Gesperrt":
-      return "Gesperrtes Material prüfen";
-  }
-}
+    case "Auf Lager":
+      return "Materialbestand bearbeiten";
 
-function getMaterialStatus(tab: MaterialTab) {
-  if (tab === "Gesperrt") {
-    return "Gesperrt";
-  }
+    case "Knapp":
+      return "Knappe Materialien prüfen";
 
-  return "Aktiv";
+    case "Bestellen":
+      return "Materialbestellung vorbereiten";
+
+    case "Archiv":
+      return "Archiviertes Material prüfen";
+  }
 }
 
 function isMaterialTab(tab: string): tab is MaterialTab {
@@ -200,8 +52,13 @@ function isMaterialTab(tab: string): tab is MaterialTab {
 
 export function MaterialPage() {
   const module = getModuleConfig("material");
+  const { materials, updateMaterial } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+
+  const materialRowsByTab = useMemo(() => {
+    return groupPrintPilotMaterialsByStatus(materials);
+  }, [materials]);
 
   const {
     activeTab,
@@ -211,11 +68,13 @@ export function MaterialPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: materialRowsByTab,
-    initialTab: "Liste",
+    initialTab: "Auf Lager",
   });
 
-  const { draft, isDirty, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
     useEditableDraft(selectedMaterial);
+
+  const canEdit = isEditing && Boolean(draft);
 
   function handleTabChange(tab: string) {
     if (isMaterialTab(tab)) {
@@ -238,6 +97,18 @@ export function MaterialPage() {
     setIsEditing((currentValue) => !currentValue);
   }
 
+  function handleSaveDraft() {
+    if (!draft) {
+      return;
+    }
+
+    const savedMaterial = draft as PrintPilotMaterial;
+
+    updateMaterial(savedMaterial);
+    saveDraft(savedMaterial);
+    setIsEditing(false);
+  }
+
   return (
     <div className="page">
       <PageHeader
@@ -254,24 +125,26 @@ export function MaterialPage() {
 
       <section className="calculation-sheet">
         <WorkspaceHeader
-          kicker="Materialmaske"
+          kicker="Materialverwaltung"
           title={getMaterialTitle(activeTab)}
-          statusValue={getMaterialStatus(activeTab)}
+          statusValue={isEditing ? "Bearbeitung offen" : activeTab}
         />
 
         <div className="master-detail-layout">
           <section className="workspace-panel master-list-panel">
             <TableToolbar>
               <Input className="search-input" placeholder="Material suchen..." />
+
               <Button>Filter</Button>
             </TableToolbar>
 
             <DataTable>
               <thead>
                 <tr>
-                  <th>Material</th>
-                  <th>Typ</th>
+                  <th>Materialnr.</th>
+                  <th>Name</th>
                   <th>Format</th>
+                  <th>Bestand</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -288,9 +161,10 @@ export function MaterialPage() {
                       }
                       onClick={() => handleMaterialSelect(material.id)}
                     >
+                      <td>{material.number}</td>
                       <td>{material.name}</td>
-                      <td>{material.type}</td>
                       <td>{material.format}</td>
+                      <td>{material.stock}</td>
                       <td>
                         <Badge variant={material.badgeVariant}>
                           {material.status}
@@ -307,125 +181,116 @@ export function MaterialPage() {
             <SectionHeader>Materialdaten</SectionHeader>
 
             <FieldGrid>
-              <Field label="Materialname">
+              <Field label="Materialnummer">
+                <Input value={draft?.number ?? ""} readOnly />
+              </Field>
+
+              <Field label="Name">
                 <Input
                   value={draft?.name ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("name", event.target.value)
                   }
                 />
               </Field>
 
-              <Field label="Typ">
+              <Field label="Materialtyp">
                 <Select
                   value={draft?.type ?? ""}
+                  disabled={!canEdit}
                   onChange={(event) =>
                     updateDraftField("type", event.target.value)
                   }
                 >
-                  <option value="" disabled>
-                    Typ wählen
-                  </option>
-                  <option>Papier</option>
-                  <option>Verpackung</option>
-                  <option>Verbrauchsmaterial</option>
+                  <option>Bilderdruck matt</option>
+                  <option>Bilderdruck glänzend</option>
+                  <option>Offset</option>
+                  <option>Naturpapier</option>
+                  <option>Karton</option>
+                  <option>Folie</option>
                 </Select>
               </Field>
 
               <Field label="Format">
-                <Select
+                <Input
                   value={draft?.format ?? ""}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("format", event.target.value)
                   }
-                >
-                  <option value="" disabled>
-                    Format wählen
-                  </option>
-                  <option>SRA3</option>
-                  <option>A3</option>
-                  <option>A4</option>
-                  <option>Freies Format</option>
-                  <option>—</option>
-                </Select>
+                />
               </Field>
 
               <Field label="Laufrichtung">
                 <Select
                   value={draft?.grain ?? ""}
+                  disabled={!canEdit}
                   onChange={(event) =>
                     updateDraftField("grain", event.target.value)
                   }
                 >
-                  <option value="" disabled>
-                    Laufrichtung wählen
-                  </option>
-                  <option>Schmalbahn</option>
                   <option>Breitbahn</option>
-                  <option>Keine Angabe</option>
+                  <option>Schmalbahn</option>
+                  <option>Unbekannt</option>
+                </Select>
+              </Field>
+
+              <Field label="Status">
+                <Select
+                  value={draft?.status ?? ""}
+                  disabled={!canEdit}
+                  onChange={(event) =>
+                    updateDraftField(
+                      "status",
+                      event.target.value as PrintPilotMaterialStatus,
+                    )
+                  }
+                >
+                  {materialTabs.map((tab) => (
+                    <option key={tab}>{tab}</option>
+                  ))}
                 </Select>
               </Field>
             </FieldGrid>
 
-            <SectionHeader>Preise</SectionHeader>
+            <SectionHeader>Bestand & Preise</SectionHeader>
 
             <FieldGrid>
-              <Field label="Preis je Ries">
+              <Field label="Preis pro Ries">
                 <Input
                   value={draft?.pricePerReam ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("pricePerReam", event.target.value)
                   }
                 />
               </Field>
 
-              <Field label="Bogen je Ries">
+              <Field label="Bogen pro Ries">
                 <Input
-                  inputMode="numeric"
                   value={draft?.sheetsPerReam ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("sheetsPerReam", event.target.value)
                   }
                 />
               </Field>
 
-              <Field label="Lagerbestand">
+              <Field label="Bestand">
                 <Input
-                  inputMode="numeric"
                   value={draft?.stock ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("stock", event.target.value)
                   }
                 />
               </Field>
 
-              <Field label="Status">
-                <Select
-                  value={draft?.status ?? ""}
-                  disabled={!isEditing}
-                  onChange={(event) =>
-                    updateDraftField("status", event.target.value)
-                  }
-                >
-                  <option>Aktiv</option>
-                  <option>Entwurf</option>
-                  <option>Gesperrt</option>
-                </Select>
-              </Field>
-            </FieldGrid>
-
-            <SectionHeader>Lager</SectionHeader>
-
-            <FieldGrid>
               <Field label="Mindestbestand">
                 <Input
-                  inputMode="numeric"
                   value={draft?.minimumStock ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("minimumStock", event.target.value)
                   }
@@ -435,7 +300,7 @@ export function MaterialPage() {
               <Field label="Lagerort">
                 <Input
                   value={draft?.storageLocation ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("storageLocation", event.target.value)
                   }
@@ -447,21 +312,17 @@ export function MaterialPage() {
               <DirtyStateNotice isDirty={isDirty} />
 
               <EditLockToggle
-
                 isEditing={isEditing}
-
                 onToggle={handleToggleEditing}
-
               />
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+
               <SaveActionButton
-
-                              isDirty={isDirty}
-
-                              defaultLabel="Material speichern"
-
-                            />
+                isDirty={isDirty}
+                defaultLabel="Material speichern"
+                onClick={handleSaveDraft}
+              />
             </div>
           </section>
         </div>

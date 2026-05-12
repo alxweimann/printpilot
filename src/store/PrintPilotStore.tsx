@@ -9,6 +9,7 @@ import {
 
 import {
   type PrintPilotCustomer,
+  type PrintPilotMaterial,
   type PrintPilotQuote,
   type PrintPilotSettings,
   type PrintPilotStoreData,
@@ -21,8 +22,10 @@ type PrintPilotStoreContextValue = {
   data: PrintPilotStoreData;
   customers: PrintPilotCustomer[];
   quotes: PrintPilotQuote[];
+  materials: PrintPilotMaterial[];
   settings: PrintPilotSettings;
   updateCustomer: (customer: PrintPilotCustomer) => void;
+  updateMaterial: (material: PrintPilotMaterial) => void;
   updateQuote: (quote: PrintPilotQuote) => void;
   updateSettings: (settings: PrintPilotSettings) => void;
   replaceStoreData: (data: PrintPilotStoreData) => void;
@@ -102,6 +105,15 @@ export function PrintPilotStoreProvider({
     }));
   }
 
+  function updateMaterial(updatedMaterial: PrintPilotMaterial) {
+    setData((currentData) => ({
+      ...currentData,
+      materials: currentData.materials.map((material) =>
+        material.id === updatedMaterial.id ? updatedMaterial : material,
+      ),
+    }));
+  }
+
   function updateQuote(updatedQuote: PrintPilotQuote) {
     setData((currentData) => ({
       ...currentData,
@@ -136,8 +148,10 @@ export function PrintPilotStoreProvider({
       data,
       customers: data.customers,
       quotes: data.quotes,
+      materials: data.materials,
       settings: data.settings,
       updateCustomer,
+      updateMaterial,
       updateQuote,
       updateSettings,
       replaceStoreData,

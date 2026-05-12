@@ -40,6 +40,28 @@ export type PrintPilotQuote = {
   badgeVariant?: "success";
 };
 
+export type PrintPilotMaterialStatus =
+  | "Auf Lager"
+  | "Knapp"
+  | "Bestellen"
+  | "Archiv";
+
+export type PrintPilotMaterial = {
+  id: PrintPilotId;
+  number: string;
+  name: string;
+  type: string;
+  format: string;
+  grain: string;
+  pricePerReam: string;
+  sheetsPerReam: string;
+  stock: string;
+  status: PrintPilotMaterialStatus;
+  minimumStock: string;
+  storageLocation: string;
+  badgeVariant?: "success";
+};
+
 export type PrintPilotOrder = {
   id: PrintPilotId;
   number: string;
@@ -53,21 +75,6 @@ export type PrintPilotOrder = {
   priority: string;
   handoff: string;
   approval: string;
-};
-
-export type PrintPilotMaterial = {
-  id: PrintPilotId;
-  number: string;
-  name: string;
-  type: string;
-  format: string;
-  grain: string;
-  pricePerReam: string;
-  sheetsPerReam: string;
-  stock: string;
-  status: string;
-  minimumStock: string;
-  storageLocation: string;
 };
 
 export type PrintPilotMachine = {
@@ -319,12 +326,72 @@ export const initialPrintPilotQuotes: PrintPilotQuote[] = [
   },
 ];
 
+export const initialPrintPilotMaterials: PrintPilotMaterial[] = [
+  {
+    id: "material-sra3-250-gm2",
+    number: "MA-1001",
+    name: "SRA3 Bilderdruck matt 250 g/m²",
+    type: "Bilderdruck matt",
+    format: "SRA3",
+    grain: "Breitbahn",
+    pricePerReam: "38,50",
+    sheetsPerReam: "500",
+    stock: "2400",
+    status: "Auf Lager",
+    minimumStock: "1000",
+    storageLocation: "Regal A1",
+    badgeVariant: "success",
+  },
+  {
+    id: "material-sra3-170-gm2",
+    number: "MA-1002",
+    name: "SRA3 Bilderdruck glänzend 170 g/m²",
+    type: "Bilderdruck glänzend",
+    format: "SRA3",
+    grain: "Schmalbahn",
+    pricePerReam: "29,90",
+    sheetsPerReam: "500",
+    stock: "850",
+    status: "Knapp",
+    minimumStock: "1000",
+    storageLocation: "Regal A2",
+  },
+  {
+    id: "material-sra3-offset-120-gm2",
+    number: "MA-1003",
+    name: "SRA3 Offset 120 g/m²",
+    type: "Offset",
+    format: "SRA3",
+    grain: "Breitbahn",
+    pricePerReam: "21,40",
+    sheetsPerReam: "500",
+    stock: "300",
+    status: "Bestellen",
+    minimumStock: "750",
+    storageLocation: "Regal B1",
+  },
+  {
+    id: "material-a3-briefbogen-90-gm2",
+    number: "MA-1004",
+    name: "A3 Naturpapier 90 g/m²",
+    type: "Naturpapier",
+    format: "A3",
+    grain: "Schmalbahn",
+    pricePerReam: "18,20",
+    sheetsPerReam: "500",
+    stock: "0",
+    status: "Archiv",
+    minimumStock: "500",
+    storageLocation: "Archiv",
+  },
+];
+
 export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
   return {
     customers: initialPrintPilotCustomers,
     quotes: initialPrintPilotQuotes,
     orders: [],
-    materials: [],
+    materials: initialPrintPilotMaterials,
     machines: [],
     services: [],
     finishing: [],
@@ -341,6 +408,18 @@ export function createPrintPilotStoreSnapshot(
   return {
     ...emptyStore,
     ...overrides,
+    customers:
+      overrides.customers && overrides.customers.length > 0
+        ? overrides.customers
+        : emptyStore.customers,
+    quotes:
+      overrides.quotes && overrides.quotes.length > 0
+        ? overrides.quotes
+        : emptyStore.quotes,
+    materials:
+      overrides.materials && overrides.materials.length > 0
+        ? overrides.materials
+        : emptyStore.materials,
     settings: {
       ...emptyStore.settings,
       ...(overrides.settings ?? {}),
@@ -355,6 +434,17 @@ export function groupPrintPilotCustomersByStatus(
     Aktiv: customers.filter((customer) => customer.status === "Aktiv"),
     Interessent: customers.filter((customer) => customer.status === "Interessent"),
     Inaktiv: customers.filter((customer) => customer.status === "Inaktiv"),
+  };
+}
+
+export function groupPrintPilotMaterialsByStatus(
+  materials: PrintPilotMaterial[],
+): Record<PrintPilotMaterialStatus, PrintPilotMaterial[]> {
+  return {
+    "Auf Lager": materials.filter((material) => material.status === "Auf Lager"),
+    Knapp: materials.filter((material) => material.status === "Knapp"),
+    Bestellen: materials.filter((material) => material.status === "Bestellen"),
+    Archiv: materials.filter((material) => material.status === "Archiv"),
   };
 }
 

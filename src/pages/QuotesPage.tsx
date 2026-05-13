@@ -4,6 +4,7 @@ import { getModuleConfig } from "../app/moduleConfig";
 import {
   type PrintPilotQuote,
   type PrintPilotQuoteStatus,
+  createPrintPilotOrderFromQuote,
   groupPrintPilotQuotesByStatus,
 } from "../data/printPilotStore";
 import { useEditableDraft } from "../hooks/useEditableDraft";
@@ -16,6 +17,7 @@ import { PageTabs } from "../layout/PageTabs";
 
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -62,9 +64,12 @@ function isQuoteTab(tab: string): tab is QuoteTab {
 
 export function QuotesPage() {
   const module = getModuleConfig("quotes");
-  const { quotes, updateQuote } = usePrintPilotStore();
+  const { addOrder, orders, quotes, updateQuote } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isCreateOrderDialogOpen, setIsCreateOrderDialogOpen] = useState(false);
+  const [isDuplicateOrderDialogOpen, setIsDuplicateOrderDialogOpen] =
+    useState(false);
 
   const quoteRowsByTab = useMemo(() => {
     return {
@@ -88,26 +93,76 @@ export function QuotesPage() {
     useEditableDraft(selectedQuote);
 
   const canEdit = isEditing && Boolean(draft);
+  const existingOrderForSelectedQuote = selectedQuote
+    ? orders.find((order) => order.quoteId === selectedQuote.id)
+    : undefined;
 
   function handleTabChange(tab: string) {
     if (isQuoteTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
+      setIsCreateOrderDialogOpen(false);
+      setIsDuplicateOrderDialogOpen(false);
     }
   }
 
   function handleQuoteSelect(quoteId: string) {
     selectItem(quoteId);
     setIsEditing(false);
+    setIsCreateOrderDialogOpen(false);
+    setIsDuplicateOrderDialogOpen(false);
+    setIsDuplicateOrderDialogOpen(false);
   }
 
   function handleResetDraft() {
     resetDraft();
     setIsEditing(false);
+    setIsCreateOrderDialogOpen(false);
   }
 
   function handleToggleEditing() {
     setIsEditing((currentValue) => !currentValue);
+  }
+
+  function handleOpenCreateOrderDialog() {
+    if (!selectedQuote) {
+      return;
+    }
+
+    if (existingOrderForSelectedQuote) {
+      setIsDuplicateOrderDialogOpen(true);
+      return;
+    }
+
+    setIsCreateOrderDialogOpen(true);
+  }
+
+  function handleCancelCreateOrderDialog() {
+    setIsCreateOrderDialogOpen(false);
+  }
+
+  function handleCancelDuplicateOrderDialog() {
+    setIsDuplicateOrderDialogOpen(false);
+  }
+
+  function createOrderFromSelectedQuote() {
+    if (!selectedQuote) {
+      return;
+    }
+
+    const newOrder = createPrintPilotOrderFromQuote(selectedQuote, orders);
+
+    addOrder(newOrder);
+  }
+
+  function handleCreateOrderFromQuote() {
+    createOrderFromSelectedQuote();
+    setIsCreateOrderDialogOpen(false);
+  }
+
+  function handleCreateAdditionalOrderFromQuote() {
+    createOrderFromSelectedQuote();
+    setIsDuplicateOrderDialogOpen(false);
   }
 
   function handleSaveDraft() {
@@ -311,6 +366,13 @@ export function QuotesPage() {
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
 
+              <Button
+                variant="primary"
+                onClick={handleOpenCreateOrderDialog}
+              >
+                Auftrag erstellen
+              </Button>
+
               <SaveActionButton
                 isDirty={isDirty}
                 defaultLabel="Angebot speichern"
@@ -320,6 +382,78 @@ export function QuotesPage() {
           </section>
         </div>
       </section>
+
+      <ConfirmDialog
+        open={isCreateOrderDialogOpen && Boolean(selectedQuote)}
+        title="Angebot in Auftrag umwandeln?"
+        description={
+          <>
+            Aus dem ausgewählten Angebot wird ein neuer Auftrag erzeugt. Das
+            Angebot bleibt unverändert erhalten.
+          </>
+        }
+        details={
+          selectedQuote ? (
+            <>
+              <span>
+                <strong>Angebot:</strong> {selectedQuote.number}
+              </span>
+              <span>
+                <strong>Kunde:</strong> {selectedQuote.customerName}
+              </span>
+              <span>
+                <strong>Produkt:</strong> {selectedQuote.subject}
+              </span>
+              <span>
+                <strong>Status neuer Auftrag:</strong> Neu
+              </span>
+            </>
+          ) : null
+        }
+        variant="default"
+        cancelLabel="Abbrechen"
+        confirmLabel="Auftrag erstellen"
+        onCancel={handleCancelCreateOrderDialog}
+        onConfirm={handleCreateOrderFromQuote}
+      />
+
+      <ConfirmDialog
+        open={isDuplicateOrderDialogOpen && Boolean(selectedQuote)}
+        title="Auftrag existiert bereits"
+        description={
+          <>
+            Für dieses Angebot existiert bereits ein Auftrag. Du kannst
+            trotzdem bewusst einen weiteren Auftrag aus diesem Angebot erstellen.
+          </>
+        }
+        details={
+          selectedQuote ? (
+            <>
+              <span>
+                <strong>Angebot:</strong> {selectedQuote.number}
+              </span>
+              <span>
+                <strong>Kunde:</strong> {selectedQuote.customerName}
+              </span>
+              <span>
+                <strong>Produkt:</strong> {selectedQuote.subject}
+              </span>
+              {existingOrderForSelectedQuote && (
+                <span>
+                  <strong>Vorhandener Auftrag:</strong>{" "}
+                  {existingOrderForSelectedQuote.number}
+                </span>
+              )}
+            </>
+          ) : null
+        }
+        variant="warning"
+        cancelLabel="Abbrechen"
+        confirmLabel="Weiteren Auftrag erstellen"
+        onCancel={handleCancelDuplicateOrderDialog}
+        onConfirm={handleCreateAdditionalOrderFromQuote}
+      />
+
     </div>
   );
 }

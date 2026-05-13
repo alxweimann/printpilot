@@ -151,6 +151,84 @@ Abgelehnt
 
 `Alle Angebote` zeigt alle Angebote unabhängig vom Status.
 
+## Geplanter Workflow: Dokumenten-/Ausgabesystem
+
+Die Auftragstasche wird Teil eines größeren Dokumenten- und Ausgabesystems.
+
+Geplante Dokumenttypen:
+
+```text
+Angebot
+Kalkulation
+Auftragstasche
+Lieferschein
+Rechnung
+Mahnung
+Etiketten
+Versand-/Kartonaufkleber
+Produktionsschein
+```
+
+Grundfunktionen:
+
+```text
+Vorschau anzeigen
+PDF erstellen
+drucken
+optional per E-Mail senden
+```
+
+## Auftragstasche
+
+Die Auftragstasche gehört zu einem konkreten Auftrag und soll später als eigener Ausgabe-/Vorschau-Bereich innerhalb der Auftragsbearbeitung erscheinen.
+
+Geplante Struktur:
+
+```text
+Auftragsdaten
+Produktion
+Auftragstasche
+```
+
+Mögliche Empfänger:
+
+```text
+Druckvorstufe
+Digitaldruck
+Großformat
+Weiterverarbeitung
+Versand / Auslieferung
+Büro / Abrechnung
+```
+
+## Etiketten / Kartonaufkleber
+
+Etiketten sollen für Kartons, Produktion und Versand genutzt werden.
+
+Typische Inhalte:
+
+```text
+Auftragsnummer
+Kunde
+Produkt
+Lieferdatum
+Karton 1 von 3
+Abteilung / Zielbereich
+Priorität
+Barcode oder QR-Code
+Hinweise wie Eilt / Abholung / Versand / Teillieferung
+```
+
+Geplante Funktionen:
+
+```text
+Etikettengröße wählen
+Anzahl Etiketten eingeben
+Kartonanzahl automatisch erzeugen
+PDF zum Drucken
+Thermoetiketten oder A4-Bogen
+```
+
 ## Nächster Workflow-Schritt
 
 Empfohlen:
@@ -159,7 +237,15 @@ Empfohlen:
 Angebot → Auftrag vorbereiten
 ```
 
-Ziel:
+Danach:
+
+```text
+Dokumenten-/Ausgabesystem vorbereiten
+Auftragstasche als erste Druckausgabe
+Etiketten / Kartonaufkleber
+```
+
+Ziel für Angebot → Auftrag:
 
 ```text
 Angenommenes Angebot auswählen

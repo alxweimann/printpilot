@@ -49,6 +49,9 @@ API
 Mehrplatzbetrieb
 echte Kalkulationslogik
 Angebot → Auftrag als produktiver Workflow
+Dokumenten-/Ausgabesystem
+Auftragstasche
+Etiketten / Kartonaufkleber
 Dashboard-Plantafel
 ```
 
@@ -542,9 +545,12 @@ Empfohlene Reihenfolge:
 1. Doku prüfen und pushen
 2. Auftragslogik weiter stabilisieren, falls nötig
 3. Angebot → Auftrag vorbereiten
-4. Dashboard-Plantafel aus orders vorbereiten
-5. Material / Maschinen / Leistungen für Kalkulation verknüpfen
-6. Vorlagen für Angebotsausgabe vorbereiten
+4. Dokumenten-/Ausgabesystem vorbereiten
+5. Auftragstasche als erste Druckausgabe vorbereiten
+6. Etiketten / Kartonaufkleber vorbereiten
+7. Dashboard-Plantafel aus orders vorbereiten
+8. Material / Maschinen / Leistungen für Kalkulation verknüpfen
+9. Vorlagen für Angebotsausgabe vorbereiten
 ```
 
 Grundregel:

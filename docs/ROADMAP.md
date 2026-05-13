@@ -28,7 +28,7 @@ Auftrags-Freigabe-/Produktionslogik
 
 ## Nächster Meilenstein
 
-Modulverknüpfungen.
+Modulverknüpfungen und produktionsnahe Workflows.
 
 ## Empfohlene Reihenfolge
 
@@ -66,7 +66,116 @@ priority = Normal
 
 ---
 
-### 2. Dashboard-Plantafel
+### 2. Dokumenten-/Ausgabesystem vorbereiten
+
+Ziel:
+
+```text
+Druckbare und versendbare Dokumente aus Store-Daten erzeugen.
+```
+
+Geplante Dokumenttypen:
+
+```text
+Angebot
+Kalkulation
+Auftragstasche
+Lieferschein
+Rechnung
+Mahnung
+Etiketten
+Versand-/Kartonaufkleber
+Produktionsschein
+```
+
+Grundfunktionen:
+
+```text
+Vorlage
+Vorschau
+Drucken
+PDF erstellen
+optional per E-Mail senden
+```
+
+---
+
+### 3. Auftragstasche als erste Druckausgabe
+
+Ziel:
+
+```text
+Aus einem Auftrag eine interne Produktionsunterlage erzeugen.
+```
+
+Mögliche Ausgabe:
+
+```text
+Vorschau
+PDF
+Druck
+E-Mail an Abteilung
+```
+
+Mögliche Abteilungen:
+
+```text
+Druckvorstufe
+Digitaldruck
+Großformat
+Weiterverarbeitung
+Versand / Auslieferung
+Büro / Abrechnung
+```
+
+Benötigte Daten später:
+
+```text
+Auflage
+Format
+Material
+Farbigkeit
+Weiterverarbeitung
+Lieferart
+interne Notiz
+Abteilungshinweis
+```
+
+---
+
+### 4. Etiketten / Kartonaufkleber
+
+Ziel:
+
+```text
+Karton-, Produktions- und Versandetiketten aus Auftragsdaten erzeugen.
+```
+
+Mögliche Inhalte:
+
+```text
+Auftragsnummer
+Kunde
+Produkt
+Lieferdatum
+Karton 1 von 3
+Abteilung
+Priorität
+Barcode / QR-Code
+```
+
+Geplante Funktionen:
+
+```text
+Etikettengröße wählen
+Kartonanzahl eintragen
+PDF zum Drucken
+Thermoetiketten oder A4-Bogen
+```
+
+---
+
+### 5. Dashboard-Plantafel
 
 Ziel:
 
@@ -108,7 +217,7 @@ Tagesstatus
 
 ---
 
-### 3. Kunde zu Angebot / Auftrag
+### 6. Kunde zu Angebot / Auftrag
 
 Ziel:
 
@@ -129,7 +238,7 @@ email
 
 ---
 
-### 4. Material in Kalkulation
+### 7. Material in Kalkulation
 
 Ziel:
 
@@ -150,7 +259,7 @@ minimumStock
 
 ---
 
-### 5. Maschinen in Kalkulation
+### 8. Maschinen in Kalkulation
 
 Ziel:
 
@@ -170,7 +279,7 @@ colorMode
 
 ---
 
-### 6. Leistungen und Weiterverarbeitung in Kalkulation
+### 9. Leistungen und Weiterverarbeitung in Kalkulation
 
 Ziel:
 
@@ -187,7 +296,7 @@ finishing
 
 ---
 
-### 7. Vorlagen in Ausgabe
+### 10. Vorlagen in Ausgabe
 
 Ziel:
 

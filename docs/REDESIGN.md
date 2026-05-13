@@ -8,9 +8,9 @@ PrintPilot befindet sich auf dem Branch:
 restart-designsystem
 ```
 
-Der aktuelle Stand ist ein stabiler Store-/Persistenz-Zwischenstand.
+Der aktuelle Stand ist ein stabiler Store-, Persistenz-, UI- und Workflow-Zwischenstand.
 
-Alle wichtigen Grundbereiche sind inzwischen an den App-weiten Store angebunden und werden lokal im Browser persistiert.
+Alle wichtigen Grundbereiche sind an den App-weiten Store angebunden und werden lokal im Browser persistiert.
 
 Persistente Bereiche:
 
@@ -34,15 +34,22 @@ Backup-Import "Alles ersetzen"
 Sicherheitsbackup vor Import
 localStorage-Persistenz
 Store-Migrationen für nachträglich ergänzte Datenbereiche
+zentrale Status-Farblogik
+zentrale ConfirmDialog-Komponente
+Übersichtstab "Alle Angebote"
+Übersichtstab "Alle Aufträge"
+Auftragslogik für Freigabe / Produktion / Übergabe
 ```
 
-Wichtig:
+Noch nicht umgesetzt:
 
 ```text
-Noch keine echte Datenbank.
-Noch keine API.
-Noch kein Mehrplatzbetrieb.
-Noch keine echte Kalkulationslogik.
+echte Datenbank
+API
+Mehrplatzbetrieb
+echte Kalkulationslogik
+Angebot → Auftrag als produktiver Workflow
+Dashboard-Plantafel
 ```
 
 ---
@@ -206,329 +213,255 @@ groupPrintPilotTemplatesByStatus()
 
 ---
 
-## localStorage-Migration
-
-Die Funktion:
-
-```ts
-createPrintPilotStoreSnapshot()
-```
-
-füllt nachträglich ergänzte Datenbereiche automatisch mit Initialdaten, wenn im bestehenden localStorage alte leere Bereiche vorhanden sind.
-
-Beispiel:
-
-```text
-Alter Store enthält keine machines
-→ initialPrintPilotMachines werden ergänzt
-```
-
-Das Prinzip gilt für:
-
-```text
-customers
-quotes
-orders
-materials
-machines
-services
-finishing
-templates
-settings
-```
-
-Wichtig:
-
-```text
-Bestehende gespeicherte Daten sollen erhalten bleiben.
-Neue Bereiche werden ergänzt.
-```
-
----
-
-## Edit- und Save-Workflow
-
-Alle angebundenen Seiten folgen demselben Prinzip:
-
-```text
-1. Datensatz auswählen
-2. Schloss öffnen
-3. Felder bearbeiten
-4. Änderungen speichern
-5. updateX() schreibt in Store
-6. saveDraft() setzt Dirty-State zurück
-7. Store wird automatisch in localStorage geschrieben
-```
-
-Beispiel:
-
-```ts
-updateQuote(savedQuote);
-saveDraft(savedQuote);
-```
-
-Oder:
-
-```ts
-updateCustomer(savedCustomer);
-saveDraft(savedCustomer);
-```
-
----
-
-## SaveActionButton
-
-Datei:
-
-```text
-src/ui/SaveActionButton.tsx
-```
-
-Wichtig:
-
-```text
-Der Button muss onClick ausführen.
-```
-
-Prinzip:
-
-```tsx
-<Button variant="primary" onClick={onClick}>
-  {isDirty ? dirtyLabel : defaultLabel}
-</Button>
-```
-
-Ohne `onClick` werden Änderungen nicht gespeichert.
-
----
-
-## EditLockToggle
-
-Datei:
-
-```text
-src/ui/EditLockToggle.tsx
-```
-
-Das Schloss öffnet/sperrt den Bearbeitungsmodus.
-
-Aktueller robuster Stand:
-
-```text
-Icons über Unicode-Escapes
-aria/title ohne problematische Umlaute
-```
-
-Grund:
-
-```text
-Windows-Encoding hatte Emoji/Umlaute beschädigt.
-```
-
----
-
-## Angebundene Seiten
+## Übersichtstabs
 
 ### Angebote
 
-Datei:
+Die Angebotsseite hat jetzt:
 
 ```text
-src/pages/QuotesPage.tsx
+Alle Angebote
+Entwurf
+Offen
+Angenommen
+Abgelehnt
 ```
 
-Store:
+`Alle Angebote` zeigt alle Angebote unabhängig vom Status.
 
-```ts
-const { quotes, updateQuote } = usePrintPilotStore();
-```
-
-Backup-Bereich:
+Nach Statusänderungen wird wieder auf:
 
 ```text
-data.quotes
+Alle Angebote
 ```
+
+gewechselt, damit der Datensatz sichtbar bleibt.
 
 ---
 
 ### Aufträge
 
-Datei:
+Die Auftragsseite hat jetzt:
 
 ```text
-src/pages/OrdersPage.tsx
+Alle Aufträge
+Neu
+In Produktion
+Wartet
+Fertig
+Archiv
 ```
 
-Store:
+`Alle Aufträge` zeigt alle Aufträge unabhängig vom Status.
 
-```ts
-const { orders, updateOrder } = usePrintPilotStore();
-```
+Nach Statusänderungen bleibt die Übersicht stabil und der Datensatz bleibt sichtbar.
 
-Backup-Bereich:
+---
+
+## ConfirmDialog-Standard
+
+Neue zentrale Komponente:
 
 ```text
-data.orders
+src/ui/ConfirmDialog.tsx
+```
+
+Ziel:
+
+```text
+alle Warnungen und kritischen Bestätigungen einheitlich als modales Popup
+keine Browser-Popups
+keine uneinheitlichen Inline-Warnungen
+```
+
+Unterstützte Varianten:
+
+```text
+default
+warning
+danger
+```
+
+Aktuell eingesetzt bei:
+
+```text
+Aufträge: Produktion / Druck ohne gültige Freigabe
+Einstellungen: Backup-Import "Alles ersetzen"
+```
+
+Zukünftig verwenden für:
+
+```text
+Änderungen verwerfen
+lokalen Store zurücksetzen
+Auftrag löschen
+Angebot in Auftrag umwandeln
+Materialbestand kritisch
+kritische Kalkulationswarnungen
 ```
 
 ---
 
-### Kunden
+## Status-Badge-Farblogik
 
-Datei:
+Neue zentrale Datei:
 
 ```text
-src/pages/CustomersPage.tsx
+src/data/statusBadges.ts
 ```
 
-Store:
+Neue Hilfsfunktion:
 
 ```ts
-const { customers, updateCustomer } = usePrintPilotStore();
+getPrintPilotStatusBadgeVariant(status)
 ```
 
-Backup-Bereich:
+Die Badge-Komponente unterstützt:
 
 ```text
-data.customers
+success
+warning
+danger
+neutral
+```
+
+Farbgruppen:
+
+```text
+Grün / success:
+Aktiv
+Auf Lager
+Angenommen
+Fertig
+Freigabe erteilt
+
+Orange / warning:
+Offen
+Optional
+Entwurf
+Wartet
+Wartung
+Knapp
+In Produktion
+Korrektur angefordert
+
+Rot / danger:
+Abgelehnt
+Bestellen
+Freigabe ausstehend
+Daten unvollständig
+
+Grau / neutral:
+Archiv
+Inaktiv
+Interessent
+Nicht erforderlich
+unbekannte Statuswerte
+```
+
+Umgestellt:
+
+```text
+Angebote
+Aufträge
+Kunden
+Material
+Maschinen
+Leistungen / Services
+Weiterverarbeitung / Finishing
+Vorlagen / Templates
 ```
 
 ---
 
-### Material
+## Auftragslogik
 
-Datei:
+### Ziel
 
-```text
-src/pages/MaterialPage.tsx
-```
+Aufträge sollen fachlich sauberer geführt werden.
 
-Store:
-
-```ts
-const { materials, updateMaterial } = usePrintPilotStore();
-```
-
-Backup-Bereich:
+Umgesetzt:
 
 ```text
-data.materials
+Maschine als Dropdown aus Maschinen-Store
+Freigabe als Dropdown
+Übergabe als Dropdown
+Priorität als Dropdown
+Status als Dropdown
+Freigabe-Badge farblich
+ConfirmDialog bei kritischer Produktionslogik
 ```
 
----
+### Freigabe
 
-### Maschinen
-
-Datei:
+Optionen:
 
 ```text
-src/pages/MachinesPage.tsx
+Freigabe ausstehend
+Freigabe erteilt
+Korrektur angefordert
+Daten unvollständig
+Nicht erforderlich
 ```
 
-Store:
-
-```ts
-const { machines, updateMachine } = usePrintPilotStore();
-```
-
-Backup-Bereich:
+Gültig ohne Warnung:
 
 ```text
-data.machines
+Freigabe erteilt
+Nicht erforderlich
 ```
 
----
-
-### Leistungen / Services
-
-Datei:
+Blockierend:
 
 ```text
-src/pages/ServicesPage.tsx
+Freigabe ausstehend
+Korrektur angefordert
+Daten unvollständig
 ```
 
-Store:
+### Übergabe
 
-```ts
-const { services, updateService } = usePrintPilotStore();
-```
-
-Backup-Bereich:
+Optionen:
 
 ```text
-data.services
+Druckdaten prüfen
+Wartet auf Daten
+In Druck
+In Weiterverarbeitung
+Abholbereit
+Versendet
+Abgeschlossen
 ```
 
----
+### Produktionsrelevante Zustände
 
-### Weiterverarbeitung / Finishing
-
-Datei:
+Eine Warnung erscheint, wenn:
 
 ```text
-src/pages/FinishingPage.tsx
+Status = In Produktion
+oder Übergabe = In Druck
+oder Übergabe = In Weiterverarbeitung
 ```
 
-Store:
-
-```ts
-const { finishing, updateFinishingProcess } = usePrintPilotStore();
-```
-
-Backup-Bereich:
+und gleichzeitig:
 
 ```text
-data.finishing
+Freigabe ist nicht gültig
 ```
 
----
-
-### Vorlagen / Templates
-
-Datei:
+Wenn `Übergabe` auf `In Druck` oder `In Weiterverarbeitung` gesetzt wird, wird der Auftragsstatus automatisch auf:
 
 ```text
-src/pages/TemplatesPage.tsx
+In Produktion
 ```
 
-Store:
-
-```ts
-const { templates, updateTemplate } = usePrintPilotStore();
-```
-
-Backup-Bereich:
-
-```text
-data.templates
-```
-
----
-
-### Einstellungen
-
-Datei:
-
-```text
-src/pages/SettingsPage.tsx
-```
-
-Store:
-
-```ts
-const { settings, updateSettings, getBackupData, replaceStoreData } =
-  usePrintPilotStore();
-```
-
-Backup-Bereich:
-
-```text
-data.settings
-```
+gesetzt.
 
 ---
 
 ## Backup
+
+Backup bleibt Store-basiert.
 
 Datei:
 
@@ -554,18 +487,23 @@ Backup-Import nutzt:
 replaceStoreData(selectedBackup.data)
 ```
 
-Ablauf Import:
+Der Import "Alles ersetzen" nutzt jetzt `ConfirmDialog`.
 
-```text
-Backup auswählen
-Backup prüfen
-Alles ersetzen vorbereiten
-Import jetzt ausführen
-Sicherheitsbackup wird heruntergeladen
-Browser-Bestätigung
-Store wird ersetzt
-localStorage wird aktualisiert
+---
+
+## localStorage-Migration
+
+Die Funktion:
+
+```ts
+createPrintPilotStoreSnapshot()
 ```
+
+füllt nachträglich ergänzte Datenbereiche automatisch mit Initialdaten, wenn im bestehenden localStorage alte leere Bereiche vorhanden sind.
+
+Bestehende gespeicherte Daten sollen erhalten bleiben.
+
+Neue Bereiche werden ergänzt.
 
 ---
 
@@ -596,47 +534,24 @@ dann weiter
 
 ---
 
-## Aktuell stabile Grundlage
-
-Aktuell stabil:
-
-```text
-AppShell und Navigation
-Tabs
-StoreProvider
-localStorage-Persistenz
-Backup-Export
-Backup-Import "Alles ersetzen"
-Edit-Lock
-Dirty-State
-SaveActionButton
-alle Grundmodule im Store
-```
-
----
-
 ## Nächste sinnvolle Schritte
-
-Jetzt kann mit Modulverknüpfungen begonnen werden.
 
 Empfohlene Reihenfolge:
 
 ```text
-1. Doku final prüfen
-2. Angebot → Auftrag vorbereiten
-3. Kunde → Angebot/Auftrag verknüpfen
-4. Material → Kalkulation vorbereiten
-5. Maschinen → Kalkulation vorbereiten
-6. Leistungen → Angebot/Kalkulation vorbereiten
-7. Weiterverarbeitung → Kalkulation vorbereiten
-8. Vorlagen → Angebotsausgabe vorbereiten
+1. Doku prüfen und pushen
+2. Auftragslogik weiter stabilisieren, falls nötig
+3. Angebot → Auftrag vorbereiten
+4. Dashboard-Plantafel aus orders vorbereiten
+5. Material / Maschinen / Leistungen für Kalkulation verknüpfen
+6. Vorlagen für Angebotsausgabe vorbereiten
 ```
 
-Wichtig:
+Grundregel:
 
 ```text
+Eine Verknüpfung pro Schritt.
 Keine Massenänderungen.
-Immer nur eine Verknüpfung.
 Immer Build testen.
 Immer pushen.
 ```

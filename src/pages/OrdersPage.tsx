@@ -13,7 +13,6 @@ import {
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { usePrintPilotStore } from "../store/PrintPilotStore";
-import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
 
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -342,11 +341,11 @@ export function OrdersPage() {
                       }
                       onClick={() => handleOrderSelect(order.id)}
                     >
-                      <td>{order.number}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>{order.number}</td>
                       <td>{order.customerName}</td>
                       <td>{order.product}</td>
-                      <td>{order.dueDate}</td>
-                      <td>
+                      <td style={{ whiteSpace: "nowrap" }}>{order.dueDate}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>
                         <Badge
                           variant={getPrintPilotApprovalBadgeVariant(
                             order.approval,
@@ -355,8 +354,8 @@ export function OrdersPage() {
                           {order.approval}
                         </Badge>
                       </td>
-                      <td>
-                        <Badge variant={getPrintPilotStatusBadgeVariant(order.status)}>
+                      <td style={{ whiteSpace: "nowrap" }}>
+                        <Badge variant={order.badgeVariant}>
                           {order.status}
                         </Badge>
                       </td>

@@ -103,24 +103,12 @@ function needsProductionApprovalWarning(
   );
 }
 
-function getProductionApprovalWarning(order: PrintPilotOrder) {
-  return [
-    "WARNUNG: Auftrag ohne gültige Freigabe.",
-    "",
-    `Auftrag: ${order.number}`,
-    `Produkt: ${order.product}`,
-    `Freigabe: ${order.approval}`,
-    "",
-    "Bitte Warnung in der Maske bestätigen, bevor gespeichert wird.",
-  ].join("\n");
-}
-
 export function OrdersPage() {
   const module = getModuleConfig("orders");
   const { machines, orders, updateOrder } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [productionOverrideConfirmed, setProductionOverrideConfirmed] =
+  const [productionOverrideRequested, setProductionOverrideRequested] =
     useState(false);
 
   const orderRowsByTab = useMemo(() => {
@@ -146,34 +134,27 @@ export function OrdersPage() {
 
   const canEdit = isEditing && Boolean(draft);
   const draftOrder = draft as PrintPilotOrder | undefined;
-  const requiresProductionApprovalWarning =
-    Boolean(draftOrder) &&
-    needsProductionApprovalWarning(
-      draftOrder?.status ?? "Neu",
-      draftOrder?.approval ?? "Freigabe ausstehend",
-    ) &&
-    !productionOverrideConfirmed;
+  const shouldShowProductionApprovalModal =
+    productionOverrideRequested && Boolean(draftOrder);
 
   function handleTabChange(tab: string) {
     if (isOrderTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
-      setProductionOverrideConfirmed(false);
+      setProductionOverrideRequested(false);
     }
   }
 
   function handleOrderSelect(orderId: string) {
     selectItem(orderId);
     setIsEditing(false);
-
-      setProductionOverrideConfirmed(false);
+    setProductionOverrideRequested(false);
   }
 
   function handleResetDraft() {
     resetDraft();
     setIsEditing(false);
-
-      setProductionOverrideConfirmed(false);
+    setProductionOverrideRequested(false);
   }
 
   function handleToggleEditing() {
@@ -181,20 +162,58 @@ export function OrdersPage() {
   }
 
   function handleStatusChange(nextStatus: PrintPilotOrderStatus) {
+    updateDraftField("status", nextStatus);
+
+    if (!draftOrder) {
+      return;
+    }
+
+    if (needsProductionApprovalWarning(nextStatus, draftOrder.approval)) {
+      setProductionOverrideRequested(true);
+      return;
+    }
+
+    setProductionOverrideRequested(false);
+  }
+
+  function saveOrder(savedOrder: PrintPilotOrder) {
+    updateOrder(savedOrder);
+    saveDraft(savedOrder);
+    setIsEditing(false);
+    setProductionOverrideRequested(false);
+
+    if (activeTab !== "Alle Aufträge") {
+      setActiveTab("Alle Aufträge");
+    }
+
+    window.setTimeout(() => {
+      selectItem(savedOrder.id);
+    }, 0);
+  }
+
+  function handleSaveDraft() {
     if (!draft) {
       return;
     }
 
-    const currentDraft = draft as PrintPilotOrder;
+    const savedOrder = draft as PrintPilotOrder;
 
-    if (needsProductionApprovalWarning(nextStatus, currentDraft.approval)) {
-      setPendingProductionStatus(nextStatus);
+    if (
+      needsProductionApprovalWarning(savedOrder.status, savedOrder.approval)
+    ) {
+      setProductionOverrideRequested(true);
       return;
     }
 
+    saveOrder(savedOrder);
+  }
 
-      setProductionOverrideConfirmed(false);
-    updateDraftField("status", nextStatus);
+  function handleCancelProductionStatus() {
+    if (selectedOrder) {
+      updateDraftField("status", selectedOrder.status);
+    }
+
+    setProductionOverrideRequested(false);
   }
 
   function handleConfirmProductionStatus() {
@@ -207,52 +226,7 @@ export function OrdersPage() {
       status: "In Produktion",
     };
 
-    updateOrder(savedOrder);
-    saveDraft(savedOrder);
-    setIsEditing(false);
-    setProductionOverrideConfirmed(false);
-
-    if (activeTab !== "Alle Aufträge") {
-      setActiveTab("Alle Aufträge");
-    }
-
-    window.setTimeout(() => {
-      selectItem(savedOrder.id);
-    }, 0);
-  }
-
-  function handleCancelProductionStatus() {
-
-      setProductionOverrideConfirmed(false);
-  }
-
-  function handleSaveDraft() {
-    if (!draft) {
-      return;
-    }
-
-    const savedOrder = draft as PrintPilotOrder;
-
-    if (
-      needsProductionApprovalWarning(savedOrder.status, savedOrder.approval) &&
-      !productionOverrideConfirmed
-    ) {
-      window.alert(getProductionApprovalWarning(savedOrder));
-      return;
-    }
-
-    updateOrder(savedOrder);
-    saveDraft(savedOrder);
-    setIsEditing(false);
-    setProductionOverrideConfirmed(false);
-
-    if (activeTab !== "Alle Aufträge") {
-      setActiveTab("Alle Aufträge");
-    }
-
-    window.setTimeout(() => {
-      selectItem(savedOrder.id);
-    }, 0);
+    saveOrder(savedOrder);
   }
 
   return (
@@ -313,7 +287,11 @@ export function OrdersPage() {
                       <td>{order.product}</td>
                       <td>{order.dueDate}</td>
                       <td>
-                        <Badge variant={getPrintPilotApprovalBadgeVariant(order.approval)}>
+                        <Badge
+                          variant={getPrintPilotApprovalBadgeVariant(
+                            order.approval,
+                          )}
+                        >
                           {order.approval}
                         </Badge>
                       </td>
@@ -362,61 +340,20 @@ export function OrdersPage() {
                   value={draft?.status ?? ""}
                   disabled={!canEdit}
                   onChange={(event) =>
-                    handleStatusChange(event.currentTarget.value as PrintPilotOrderStatus)
-                  }
-                  onInput={(event) =>
-                    handleStatusChange(event.currentTarget.value as PrintPilotOrderStatus)
+                    handleStatusChange(
+                      event.currentTarget.value as PrintPilotOrderStatus,
+                    )
                   }
                 >
-                  {orderTabs.map((tab) => (
-                    <option key={tab}>{tab}</option>
-                  ))}
+                  {orderTabs
+                    .filter((tab): tab is PrintPilotOrderStatus =>
+                      tab !== "Alle Aufträge",
+                    )
+                    .map((tab) => (
+                      <option key={tab}>{tab}</option>
+                    ))}
                 </Select>
               </Field>
-
-              {requiresProductionApprovalWarning && draftOrder && (
-                <div
-                  style={{
-                    background: "rgba(220, 38, 38, 0.08)",
-                    border: "1px solid rgba(220, 38, 38, 0.24)",
-                    borderRadius: "0.85rem",
-                    color: "rgb(153, 27, 27)",
-                    display: "grid",
-                    gap: "0.45rem",
-                    gridColumn: "1 / -1",
-                    padding: "0.7rem 0.85rem",
-                  }}
-                >
-                  <div
-                    style={{
-                      alignItems: "center",
-                      display: "flex",
-                      flexWrap: "wrap",
-                      gap: "0.5rem",
-                      justifyContent: "space-between",
-                    }}
-                  >
-                    <span>
-                      <strong>Freigabe fehlt.</strong> Status:{" "}
-                      <strong>In Produktion</strong>, Freigabe:{" "}
-                      <strong>{draftOrder.approval}</strong>
-                    </span>
-
-                    <div style={{ display: "flex", gap: "0.5rem" }}>
-                      <Button onClick={handleCancelProductionStatus}>
-                        Zurücksetzen
-                      </Button>
-
-                      <Button
-                        variant="primary"
-                        onClick={handleConfirmProductionStatus}
-                      >
-                        Trotzdem speichern
-                      </Button>
-                    </div>
-                  </div>
-                </div>
-              )}
 
               <Field label="Fällig am">
                 <Input
@@ -503,7 +440,6 @@ export function OrdersPage() {
               </Field>
             </FieldGrid>
 
-
             <div className="calculation-footer">
               <DirtyStateNotice isDirty={isDirty} />
 
@@ -523,6 +459,95 @@ export function OrdersPage() {
           </section>
         </div>
       </section>
+
+      {shouldShowProductionApprovalModal && draftOrder && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          aria-labelledby="production-approval-modal-title"
+          style={{
+            alignItems: "center",
+            background: "rgba(15, 23, 42, 0.42)",
+            bottom: 0,
+            display: "flex",
+            justifyContent: "center",
+            left: 0,
+            padding: "1.5rem",
+            position: "fixed",
+            right: 0,
+            top: 0,
+            zIndex: 80,
+          }}
+        >
+          <div
+            style={{
+              background: "white",
+              border: "1px solid rgba(220, 38, 38, 0.22)",
+              borderRadius: "1.25rem",
+              boxShadow: "0 24px 60px rgba(15, 23, 42, 0.22)",
+              display: "grid",
+              gap: "1rem",
+              maxWidth: "34rem",
+              padding: "1.25rem",
+              width: "100%",
+            }}
+          >
+            <div style={{ display: "grid", gap: "0.35rem" }}>
+              <strong
+                id="production-approval-modal-title"
+                style={{
+                  color: "rgb(153, 27, 27)",
+                  fontSize: "1.05rem",
+                }}
+              >
+                Auftrag ohne gültige Freigabe
+              </strong>
+
+              <span style={{ color: "rgb(71, 85, 105)", lineHeight: 1.5 }}>
+                Der Auftrag soll auf <strong>In Produktion</strong> gesetzt
+                werden, obwohl die Freigabe aktuell{" "}
+                <strong>{draftOrder.approval}</strong> ist.
+              </span>
+            </div>
+
+            <div
+              style={{
+                background: "rgba(220, 38, 38, 0.08)",
+                border: "1px solid rgba(220, 38, 38, 0.18)",
+                borderRadius: "0.9rem",
+                color: "rgb(127, 29, 29)",
+                display: "grid",
+                gap: "0.25rem",
+                padding: "0.85rem",
+              }}
+            >
+              <span>
+                <strong>Auftrag:</strong> {draftOrder.number}
+              </span>
+              <span>
+                <strong>Produkt:</strong> {draftOrder.product}
+              </span>
+              <span>
+                <strong>Kunde:</strong> {draftOrder.customerName}
+              </span>
+            </div>
+
+            <div
+              style={{
+                display: "flex",
+                gap: "0.75rem",
+                justifyContent: "flex-end",
+              }}
+            >
+              <Button onClick={handleCancelProductionStatus}>Abbrechen</Button>
+
+              <Button variant="primary" onClick={handleConfirmProductionStatus}>
+                Trotzdem speichern
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

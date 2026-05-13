@@ -6,52 +6,52 @@ import {
   type PrintPilotQuoteStatus,
   groupPrintPilotQuotesByStatus,
 } from "../data/printPilotStore";
-import { usePrintPilotStore } from "../store/PrintPilotStore";
-
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
+import { usePrintPilotStore } from "../store/PrintPilotStore";
 
 import { PageHeader } from "../layout/PageHeader";
-
 import { PageTabs } from "../layout/PageTabs";
 
 import { Badge } from "../ui/Badge";
-
 import { Button } from "../ui/Button";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
-
 import { FieldGrid } from "../ui/FieldGrid";
-
 import { Input } from "../ui/Input";
 import { SaveActionButton } from "../ui/SaveActionButton";
-
 import { SectionHeader } from "../ui/SectionHeader";
-
 import { Select } from "../ui/Select";
-
 import { DataTable, TableToolbar } from "../ui/Table";
-
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
-const quoteTabs = ["Entwurf", "Offen", "Angenommen", "Abgelehnt"] as const;
+const quoteTabs = [
+  "Alle Angebote",
+  "Entwurf",
+  "Offen",
+  "Angenommen",
+  "Abgelehnt",
+] as const;
 
-type QuoteTab = PrintPilotQuoteStatus;
+type QuoteTab = "Alle Angebote" | PrintPilotQuoteStatus;
 
 function getQuoteTitle(tab: QuoteTab) {
   switch (tab) {
+    case "Alle Angebote":
+      return "Angebotsübersicht";
+
     case "Entwurf":
-      return "Angebot erstellen";
+      return "Angebotsentwurf bearbeiten";
 
     case "Offen":
-      return "Offenes Angebot prüfen";
+      return "Offenes Angebot bearbeiten";
 
     case "Angenommen":
-      return "Angenommenes Angebot";
+      return "Angenommenes Angebot prüfen";
 
     case "Abgelehnt":
-      return "Abgelehntes Angebot";
+      return "Abgelehntes Angebot prüfen";
   }
 }
 
@@ -66,7 +66,10 @@ export function QuotesPage() {
   const [isEditing, setIsEditing] = useState(false);
 
   const quoteRowsByTab = useMemo(() => {
-    return groupPrintPilotQuotesByStatus(quotes);
+    return {
+      "Alle Angebote": quotes,
+      ...groupPrintPilotQuotesByStatus(quotes),
+    };
   }, [quotes]);
 
   const {
@@ -77,11 +80,13 @@ export function QuotesPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: quoteRowsByTab,
-    initialTab: "Entwurf",
+    initialTab: "Alle Angebote",
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
     useEditableDraft(selectedQuote);
+
+  const canEdit = isEditing && Boolean(draft);
 
   function handleTabChange(tab: string) {
     if (isQuoteTab(tab)) {
@@ -109,9 +114,19 @@ export function QuotesPage() {
       return;
     }
 
-    updateQuote(draft as PrintPilotQuote);
-    saveDraft();
+    const savedQuote = draft as PrintPilotQuote;
+
+    updateQuote(savedQuote);
+    saveDraft(savedQuote);
     setIsEditing(false);
+
+    if (activeTab !== "Alle Angebote") {
+      setActiveTab("Alle Angebote");
+    }
+
+    window.setTimeout(() => {
+      selectItem(savedQuote.id);
+    }, 0);
   }
 
   return (
@@ -130,9 +145,9 @@ export function QuotesPage() {
 
       <section className="calculation-sheet">
         <WorkspaceHeader
-          kicker="Angebotsmaske"
+          kicker="Angebote"
           title={getQuoteTitle(activeTab)}
-          statusValue={activeTab}
+          statusValue={isEditing ? "Bearbeitung offen" : activeTab}
         />
 
         <div className="master-detail-layout">
@@ -147,11 +162,9 @@ export function QuotesPage() {
               <thead>
                 <tr>
                   <th>Angebot</th>
-
                   <th>Kunde</th>
-
                   <th>Betreff</th>
-
+                  <th>Datum</th>
                   <th>Status</th>
                 </tr>
               </thead>
@@ -169,11 +182,9 @@ export function QuotesPage() {
                       onClick={() => handleQuoteSelect(quote.id)}
                     >
                       <td>{quote.number}</td>
-
                       <td>{quote.customerName}</td>
-
                       <td>{quote.subject}</td>
-
+                      <td>{quote.quoteDate}</td>
                       <td>
                         <Badge variant={quote.badgeVariant}>
                           {quote.status}
@@ -195,16 +206,11 @@ export function QuotesPage() {
               </Field>
 
               <Field label="Kunde">
-                <Input value={draft?.customerName ?? ""} readOnly />
-              </Field>
-
-              <Field label="Angebotsdatum">
                 <Input
-                  type="date"
-                  value={draft?.quoteDate ?? ""}
-                  readOnly={!isEditing}
+                  value={draft?.customerName ?? ""}
+                  readOnly={!canEdit}
                   onChange={(event) =>
-                    updateDraftField("quoteDate", event.target.value)
+                    updateDraftField("customerName", event.target.value)
                   }
                 />
               </Field>
@@ -212,9 +218,38 @@ export function QuotesPage() {
               <Field label="Betreff">
                 <Input
                   value={draft?.subject ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("subject", event.target.value)
+                  }
+                />
+              </Field>
+
+              <Field label="Status">
+                <Select
+                  value={draft?.status ?? ""}
+                  disabled={!canEdit}
+                  onChange={(event) =>
+                    updateDraftField(
+                      "status",
+                      event.target.value as PrintPilotQuoteStatus,
+                    )
+                  }
+                >
+                  <option>Entwurf</option>
+                  <option>Offen</option>
+                  <option>Angenommen</option>
+                  <option>Abgelehnt</option>
+                </Select>
+              </Field>
+
+              <Field label="Angebotsdatum">
+                <Input
+                  type="date"
+                  value={draft?.quoteDate ?? ""}
+                  readOnly={!canEdit}
+                  onChange={(event) =>
+                    updateDraftField("quoteDate", event.target.value)
                   }
                 />
               </Field>
@@ -223,135 +258,45 @@ export function QuotesPage() {
                 <Input
                   type="date"
                   value={draft?.validUntil ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("validUntil", event.target.value)
                   }
                 />
               </Field>
-
-              <Field label="Status">
-                <Select value={activeTab} disabled>
-                  {quoteTabs.map((tab) => (
-                    <option key={tab}>{tab}</option>
-                  ))}
-                </Select>
-              </Field>
             </FieldGrid>
 
-            <SectionHeader>Positionen</SectionHeader>
-
-            <div className="master-position-table">
-              <DataTable>
-                <thead>
-                  <tr>
-                    <th>Pos.</th>
-
-                    <th>Bezeichnung</th>
-
-                    <th>Menge</th>
-
-                    <th>Einheit</th>
-
-                    <th>Netto</th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  <tr>
-                    <td>1</td>
-
-                    <td>Druckprodukt aus Kalkulation übernehmen</td>
-
-                    <td>—</td>
-
-                    <td>Stk.</td>
-
-                    <td>—</td>
-                  </tr>
-
-                  <tr>
-                    <td>2</td>
-
-                    <td>Optionale Zusatzleistung</td>
-
-                    <td>—</td>
-
-                    <td>pauschal</td>
-
-                    <td>—</td>
-                  </tr>
-
-                  <tr className="data-table-summary-row">
-                    <td colSpan={4}>Zwischensumme netto</td>
-
-                    <td>—</td>
-                  </tr>
-                </tbody>
-              </DataTable>
-            </div>
-
-            <SectionHeader>Konditionen & Ausgabe</SectionHeader>
+            <SectionHeader>Konditionen</SectionHeader>
 
             <FieldGrid>
               <Field label="Zahlungsbedingungen">
-                <Select
+                <Input
                   value={draft?.paymentTerms ?? ""}
-                  disabled={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("paymentTerms", event.target.value)
                   }
-                >
-                  <option value="" disabled>
-                    Bedingungen wählen
-                  </option>
-
-                  <option>Zahlbar sofort ohne Abzug</option>
-
-                  <option>14 Tage netto</option>
-
-                  <option>30 Tage netto</option>
-                </Select>
+                />
               </Field>
 
               <Field label="Lieferbedingungen">
-                <Select
+                <Input
                   value={draft?.deliveryTerms ?? ""}
-                  disabled={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("deliveryTerms", event.target.value)
                   }
-                >
-                  <option value="" disabled>
-                    Lieferung wählen
-                  </option>
-
-                  <option>Abholung</option>
-
-                  <option>Lieferung inklusive</option>
-
-                  <option>Versand nach Aufwand</option>
-                </Select>
+                />
               </Field>
 
-              <Field label="Angebotsvorlage">
-                <Select
+              <Field label="Vorlage">
+                <Input
                   value={draft?.template ?? ""}
-                  disabled={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("template", event.target.value)
                   }
-                >
-                  <option value="" disabled>
-                    Vorlage wählen
-                  </option>
-
-                  <option>Standardangebot</option>
-
-                  <option>Kurzangebot</option>
-
-                  <option>Technisches Angebot</option>
-                </Select>
+                />
               </Field>
             </FieldGrid>
 
@@ -365,11 +310,9 @@ export function QuotesPage() {
 
               <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
 
-              <Button>Vorschau prüfen</Button>
-
               <SaveActionButton
                 isDirty={isDirty}
-                defaultLabel="Angebot ausgeben"
+                defaultLabel="Angebot speichern"
                 onClick={handleSaveDraft}
               />
             </div>

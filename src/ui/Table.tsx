@@ -1,10 +1,12 @@
 import type { ReactNode } from "react";
 
-type DataTableProps = {
+import "./table.css";
+
+type TableToolbarProps = {
   children: ReactNode;
 };
 
-type TableToolbarProps = {
+type DataTableProps = {
   children: ReactNode;
 };
 

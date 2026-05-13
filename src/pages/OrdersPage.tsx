@@ -19,6 +19,7 @@ import { PageTabs } from "../layout/PageTabs";
 
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -92,14 +93,25 @@ function isOrderTab(tab: string): tab is OrderTab {
   return orderTabs.includes(tab as OrderTab);
 }
 
-function needsProductionApprovalWarning(
-  nextStatus: PrintPilotOrderStatus,
-  approval: PrintPilotApprovalStatus,
+function hasValidApproval(approval: PrintPilotApprovalStatus) {
+  return approval === "Freigabe erteilt" || approval === "Nicht erforderlich";
+}
+
+function isProductionLikeState(
+  status: PrintPilotOrderStatus,
+  handoff: PrintPilotHandoffStatus,
 ) {
   return (
-    nextStatus === "In Produktion" &&
-    approval !== "Freigabe erteilt" &&
-    approval !== "Nicht erforderlich"
+    status === "In Produktion" ||
+    handoff === "In Druck" ||
+    handoff === "In Weiterverarbeitung"
+  );
+}
+
+function needsProductionApprovalWarning(order: PrintPilotOrder) {
+  return (
+    isProductionLikeState(order.status, order.handoff) &&
+    !hasValidApproval(order.approval)
   );
 }
 
@@ -108,7 +120,7 @@ export function OrdersPage() {
   const { machines, orders, updateOrder } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
-  const [productionOverrideRequested, setProductionOverrideRequested] =
+  const [isProductionApprovalDialogOpen, setIsProductionApprovalDialogOpen] =
     useState(false);
 
   const orderRowsByTab = useMemo(() => {
@@ -134,27 +146,34 @@ export function OrdersPage() {
 
   const canEdit = isEditing && Boolean(draft);
   const draftOrder = draft as PrintPilotOrder | undefined;
-  const shouldShowProductionApprovalModal =
-    productionOverrideRequested && Boolean(draftOrder);
+
+  function openApprovalDialogIfNeeded(nextOrder: PrintPilotOrder) {
+    if (needsProductionApprovalWarning(nextOrder)) {
+      setIsProductionApprovalDialogOpen(true);
+      return;
+    }
+
+    setIsProductionApprovalDialogOpen(false);
+  }
 
   function handleTabChange(tab: string) {
     if (isOrderTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
-      setProductionOverrideRequested(false);
+      setIsProductionApprovalDialogOpen(false);
     }
   }
 
   function handleOrderSelect(orderId: string) {
     selectItem(orderId);
     setIsEditing(false);
-    setProductionOverrideRequested(false);
+    setIsProductionApprovalDialogOpen(false);
   }
 
   function handleResetDraft() {
     resetDraft();
     setIsEditing(false);
-    setProductionOverrideRequested(false);
+    setIsProductionApprovalDialogOpen(false);
   }
 
   function handleToggleEditing() {
@@ -162,25 +181,63 @@ export function OrdersPage() {
   }
 
   function handleStatusChange(nextStatus: PrintPilotOrderStatus) {
-    updateDraftField("status", nextStatus);
-
     if (!draftOrder) {
       return;
     }
 
-    if (needsProductionApprovalWarning(nextStatus, draftOrder.approval)) {
-      setProductionOverrideRequested(true);
+    const nextOrder: PrintPilotOrder = {
+      ...draftOrder,
+      status: nextStatus,
+    };
+
+    updateDraftField("status", nextStatus);
+    openApprovalDialogIfNeeded(nextOrder);
+  }
+
+  function handleHandoffChange(nextHandoff: PrintPilotHandoffStatus) {
+    if (!draftOrder) {
       return;
     }
 
-    setProductionOverrideRequested(false);
+    const nextStatus =
+      nextHandoff === "In Druck" || nextHandoff === "In Weiterverarbeitung"
+        ? "In Produktion"
+        : draftOrder.status;
+
+    const nextOrder: PrintPilotOrder = {
+      ...draftOrder,
+      handoff: nextHandoff,
+      status: nextStatus,
+    };
+
+    updateDraftField("handoff", nextHandoff);
+
+    if (nextStatus !== draftOrder.status) {
+      updateDraftField("status", nextStatus);
+    }
+
+    openApprovalDialogIfNeeded(nextOrder);
+  }
+
+  function handleApprovalChange(nextApproval: PrintPilotApprovalStatus) {
+    if (!draftOrder) {
+      return;
+    }
+
+    const nextOrder: PrintPilotOrder = {
+      ...draftOrder,
+      approval: nextApproval,
+    };
+
+    updateDraftField("approval", nextApproval);
+    openApprovalDialogIfNeeded(nextOrder);
   }
 
   function saveOrder(savedOrder: PrintPilotOrder) {
     updateOrder(savedOrder);
     saveDraft(savedOrder);
     setIsEditing(false);
-    setProductionOverrideRequested(false);
+    setIsProductionApprovalDialogOpen(false);
 
     if (activeTab !== "Alle Aufträge") {
       setActiveTab("Alle Aufträge");
@@ -198,31 +255,33 @@ export function OrdersPage() {
 
     const savedOrder = draft as PrintPilotOrder;
 
-    if (
-      needsProductionApprovalWarning(savedOrder.status, savedOrder.approval)
-    ) {
-      setProductionOverrideRequested(true);
+    if (needsProductionApprovalWarning(savedOrder)) {
+      setIsProductionApprovalDialogOpen(true);
       return;
     }
 
     saveOrder(savedOrder);
   }
 
-  function handleCancelProductionStatus() {
+  function handleCancelProductionApprovalDialog() {
     if (selectedOrder) {
       updateDraftField("status", selectedOrder.status);
+      updateDraftField("handoff", selectedOrder.handoff);
+      updateDraftField("approval", selectedOrder.approval);
     }
 
-    setProductionOverrideRequested(false);
+    setIsProductionApprovalDialogOpen(false);
   }
 
-  function handleConfirmProductionStatus() {
+  function handleConfirmProductionApprovalDialog() {
     if (!draft) {
       return;
     }
 
+    const currentDraft = draft as PrintPilotOrder;
+
     const savedOrder: PrintPilotOrder = {
-      ...(draft as PrintPilotOrder),
+      ...currentDraft,
       status: "In Produktion",
     };
 
@@ -410,9 +469,8 @@ export function OrdersPage() {
                   value={draft?.handoff ?? ""}
                   disabled={!canEdit}
                   onChange={(event) =>
-                    updateDraftField(
-                      "handoff",
-                      event.target.value as PrintPilotHandoffStatus,
+                    handleHandoffChange(
+                      event.currentTarget.value as PrintPilotHandoffStatus,
                     )
                   }
                 >
@@ -427,9 +485,8 @@ export function OrdersPage() {
                   value={draft?.approval ?? ""}
                   disabled={!canEdit}
                   onChange={(event) =>
-                    updateDraftField(
-                      "approval",
-                      event.target.value as PrintPilotApprovalStatus,
+                    handleApprovalChange(
+                      event.currentTarget.value as PrintPilotApprovalStatus,
                     )
                   }
                 >
@@ -460,94 +517,38 @@ export function OrdersPage() {
         </div>
       </section>
 
-      {shouldShowProductionApprovalModal && draftOrder && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-labelledby="production-approval-modal-title"
-          style={{
-            alignItems: "center",
-            background: "rgba(15, 23, 42, 0.42)",
-            bottom: 0,
-            display: "flex",
-            justifyContent: "center",
-            left: 0,
-            padding: "1.5rem",
-            position: "fixed",
-            right: 0,
-            top: 0,
-            zIndex: 80,
-          }}
-        >
-          <div
-            style={{
-              background: "white",
-              border: "1px solid rgba(220, 38, 38, 0.22)",
-              borderRadius: "1.25rem",
-              boxShadow: "0 24px 60px rgba(15, 23, 42, 0.22)",
-              display: "grid",
-              gap: "1rem",
-              maxWidth: "34rem",
-              padding: "1.25rem",
-              width: "100%",
-            }}
-          >
-            <div style={{ display: "grid", gap: "0.35rem" }}>
-              <strong
-                id="production-approval-modal-title"
-                style={{
-                  color: "rgb(153, 27, 27)",
-                  fontSize: "1.05rem",
-                }}
-              >
-                Auftrag ohne gültige Freigabe
-              </strong>
-
-              <span style={{ color: "rgb(71, 85, 105)", lineHeight: 1.5 }}>
-                Der Auftrag soll auf <strong>In Produktion</strong> gesetzt
-                werden, obwohl die Freigabe aktuell{" "}
-                <strong>{draftOrder.approval}</strong> ist.
-              </span>
-            </div>
-
-            <div
-              style={{
-                background: "rgba(220, 38, 38, 0.08)",
-                border: "1px solid rgba(220, 38, 38, 0.18)",
-                borderRadius: "0.9rem",
-                color: "rgb(127, 29, 29)",
-                display: "grid",
-                gap: "0.25rem",
-                padding: "0.85rem",
-              }}
-            >
-              <span>
-                <strong>Auftrag:</strong> {draftOrder.number}
-              </span>
-              <span>
-                <strong>Produkt:</strong> {draftOrder.product}
-              </span>
-              <span>
-                <strong>Kunde:</strong> {draftOrder.customerName}
-              </span>
-            </div>
-
-            <div
-              style={{
-                display: "flex",
-                gap: "0.75rem",
-                justifyContent: "flex-end",
-              }}
-            >
-              <Button onClick={handleCancelProductionStatus}>Abbrechen</Button>
-
-              <Button variant="primary" onClick={handleConfirmProductionStatus}>
-                Trotzdem speichern
-              </Button>
-            </div>
-          </div>
-        </div>
-      )}
+      <ConfirmDialog
+        open={isProductionApprovalDialogOpen && Boolean(draftOrder)}
+        title="Auftrag ohne gültige Freigabe"
+        description={
+          <>
+            Dieser Auftrag ist produktionsrelevant oder soll in Produktion
+            gehen, obwohl die Freigabe aktuell{" "}
+            <strong>{draftOrder?.approval}</strong> ist.
+          </>
+        }
+        details={
+          <>
+            <span>
+              <strong>Auftrag:</strong> {draftOrder?.number}
+            </span>
+            <span>
+              <strong>Produkt:</strong> {draftOrder?.product}
+            </span>
+            <span>
+              <strong>Kunde:</strong> {draftOrder?.customerName}
+            </span>
+            <span>
+              <strong>Übergabe:</strong> {draftOrder?.handoff}
+            </span>
+          </>
+        }
+        variant="danger"
+        cancelLabel="Abbrechen"
+        confirmLabel="Trotzdem speichern"
+        onCancel={handleCancelProductionApprovalDialog}
+        onConfirm={handleConfirmProductionApprovalDialog}
+      />
     </div>
   );
 }

@@ -782,6 +782,43 @@ export const initialPrintPilotOrders: PrintPilotOrder[] = [
   },
 ];
 
+function getNextOrderNumber(orders: PrintPilotOrder[]) {
+  const year = new Date().getFullYear();
+  const numbersForYear = orders
+    .map((order) => order.number)
+    .filter((number) => number.startsWith(`AU-${year}-`))
+    .map((number) => Number(number.replace(`AU-${year}-`, "")))
+    .filter((number) => Number.isFinite(number));
+
+  const nextNumber =
+    numbersForYear.length > 0 ? Math.max(...numbersForYear) + 1 : 1;
+
+  return `AU-${year}-${String(nextNumber).padStart(3, "0")}`;
+}
+
+export function createPrintPilotOrderFromQuote(
+  quote: PrintPilotQuote,
+  existingOrders: PrintPilotOrder[],
+): PrintPilotOrder {
+  const number = getNextOrderNumber(existingOrders);
+
+  return {
+    id: `order-${number.toLowerCase()}`,
+    number,
+    quoteId: quote.id,
+    customerId: quote.customerId,
+    customerName: quote.customerName,
+    product: quote.subject,
+    status: "Neu",
+    dueDate: quote.validUntil,
+    machineId: null,
+    priority: "Normal",
+    handoff: "Druckdaten prüfen",
+    approval: "Freigabe ausstehend",
+  };
+}
+
+
 export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
   return {
     customers: initialPrintPilotCustomers,
@@ -902,6 +939,26 @@ export function groupPrintPilotTemplatesByStatus(
     Entwurf: templates.filter((template) => template.status === "Entwurf"),
     Archiv: templates.filter((template) => template.status === "Archiv"),
   };
+}
+
+
+export function getPrintPilotApprovalBadgeVariant(
+  approval: PrintPilotApprovalStatus,
+): "success" | "warning" | "danger" | "neutral" {
+  switch (approval) {
+    case "Freigabe erteilt":
+      return "success";
+
+    case "Freigabe ausstehend":
+    case "Daten unvollständig":
+      return "danger";
+
+    case "Korrektur angefordert":
+      return "warning";
+
+    case "Nicht erforderlich":
+      return "neutral";
+  }
 }
 
 export function groupPrintPilotOrdersByStatus(

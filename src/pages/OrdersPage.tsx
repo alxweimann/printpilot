@@ -377,34 +377,43 @@ export function OrdersPage() {
               {requiresProductionApprovalWarning && draftOrder && (
                 <div
                   style={{
-                    background: "rgba(220, 38, 38, 0.1)",
-                    border: "1px solid rgba(220, 38, 38, 0.35)",
-                    borderRadius: "1rem",
+                    background: "rgba(220, 38, 38, 0.08)",
+                    border: "1px solid rgba(220, 38, 38, 0.24)",
+                    borderRadius: "0.85rem",
                     color: "rgb(153, 27, 27)",
                     display: "grid",
-                    gap: "0.65rem",
+                    gap: "0.45rem",
                     gridColumn: "1 / -1",
-                    padding: "1rem",
+                    padding: "0.7rem 0.85rem",
                   }}
                 >
-                  <strong>Freigabe fehlt: Produktion ist blockiert</strong>
+                  <div
+                    style={{
+                      alignItems: "center",
+                      display: "flex",
+                      flexWrap: "wrap",
+                      gap: "0.5rem",
+                      justifyContent: "space-between",
+                    }}
+                  >
+                    <span>
+                      <strong>Freigabe fehlt.</strong> Status:{" "}
+                      <strong>In Produktion</strong>, Freigabe:{" "}
+                      <strong>{draftOrder.approval}</strong>
+                    </span>
 
-                  <span>
-                    Status ist <strong>In Produktion</strong>, aber Freigabe ist{" "}
-                    <strong>{draftOrder.approval}</strong>.
-                  </span>
+                    <div style={{ display: "flex", gap: "0.5rem" }}>
+                      <Button onClick={handleCancelProductionStatus}>
+                        Zurücksetzen
+                      </Button>
 
-                  <div style={{ display: "flex", gap: "0.75rem" }}>
-                    <Button onClick={handleCancelProductionStatus}>
-                      Status zurücksetzen
-                    </Button>
-
-                    <Button
-                      variant="primary"
-                      onClick={handleConfirmProductionStatus}
-                    >
-                      Trotz Warnung speichern
-                    </Button>
+                      <Button
+                        variant="primary"
+                        onClick={handleConfirmProductionStatus}
+                      >
+                        Trotzdem speichern
+                      </Button>
+                    </div>
                   </div>
                 </div>
               )}

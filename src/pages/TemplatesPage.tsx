@@ -9,6 +9,7 @@ import {
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { usePrintPilotStore } from "../store/PrintPilotStore";
+import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
 
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -165,7 +166,7 @@ export function TemplatesPage() {
                       <td>{template.area}</td>
                       <td>{template.isDefault}</td>
                       <td>
-                        <Badge variant={template.badgeVariant}>
+                        <Badge variant={getPrintPilotStatusBadgeVariant(template.status)}>
                           {template.status}
                         </Badge>
                       </td>

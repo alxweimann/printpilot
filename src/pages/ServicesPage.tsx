@@ -9,6 +9,7 @@ import {
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { usePrintPilotStore } from "../store/PrintPilotStore";
+import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
 
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -168,7 +169,7 @@ export function ServicesPage() {
                       <td>{service.unit}</td>
                       <td>{service.price}</td>
                       <td>
-                        <Badge variant={service.badgeVariant}>
+                        <Badge variant={getPrintPilotStatusBadgeVariant(service.status)}>
                           {service.status}
                         </Badge>
                       </td>

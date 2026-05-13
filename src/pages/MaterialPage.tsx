@@ -9,6 +9,7 @@ import {
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { usePrintPilotStore } from "../store/PrintPilotStore";
+import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
 
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -166,7 +167,7 @@ export function MaterialPage() {
                       <td>{material.format}</td>
                       <td>{material.stock}</td>
                       <td>
-                        <Badge variant={material.badgeVariant}>
+                        <Badge variant={getPrintPilotStatusBadgeVariant(material.status)}>
                           {material.status}
                         </Badge>
                       </td>

@@ -9,6 +9,7 @@ import {
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { usePrintPilotStore } from "../store/PrintPilotStore";
+import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
 
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -186,7 +187,7 @@ export function QuotesPage() {
                       <td>{quote.subject}</td>
                       <td>{quote.quoteDate}</td>
                       <td>
-                        <Badge variant={quote.badgeVariant}>
+                        <Badge variant={getPrintPilotStatusBadgeVariant(quote.status)}>
                           {quote.status}
                         </Badge>
                       </td>

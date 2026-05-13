@@ -1,88 +1,39 @@
 import type { ReactNode } from "react";
 
-type BadgeVariant = "muted" | "success" | "info" | "warning" | "danger" | "purple";
+export type BadgeVariant = "success" | "warning" | "danger" | "neutral";
 
 type BadgeProps = {
   children: ReactNode;
   variant?: BadgeVariant;
 };
 
-function getTextFromChildren(children: ReactNode) {
-  if (typeof children === "string") {
-    return children;
-  }
+const badgeStyles: Record<BadgeVariant, React.CSSProperties> = {
+  success: {
+    background: "rgba(22, 163, 74, 0.12)",
+    borderColor: "rgba(22, 163, 74, 0.28)",
+    color: "rgb(21, 128, 61)",
+  },
+  warning: {
+    background: "rgba(245, 158, 11, 0.14)",
+    borderColor: "rgba(245, 158, 11, 0.32)",
+    color: "rgb(180, 83, 9)",
+  },
+  danger: {
+    background: "rgba(220, 38, 38, 0.12)",
+    borderColor: "rgba(220, 38, 38, 0.3)",
+    color: "rgb(185, 28, 28)",
+  },
+  neutral: {
+    background: "rgba(100, 116, 139, 0.12)",
+    borderColor: "rgba(100, 116, 139, 0.24)",
+    color: "rgb(71, 85, 105)",
+  },
+};
 
-  if (typeof children === "number") {
-    return String(children);
-  }
-
-  return "";
-}
-
-function getVariantFromStatus(status: string): BadgeVariant {
-  const normalizedStatus = status.trim().toLowerCase();
-
-  if (
-    normalizedStatus.includes("aktiv") ||
-    normalizedStatus.includes("angenommen") ||
-    normalizedStatus.includes("bezahlt") ||
-    normalizedStatus.includes("erledigt") ||
-    normalizedStatus.includes("abgeschlossen") ||
-    normalizedStatus.includes("geliefert") ||
-    normalizedStatus.includes("freigegeben")
-  ) {
-    return "success";
-  }
-
-  if (
-    normalizedStatus.includes("offen") ||
-    normalizedStatus.includes("liste") ||
-    normalizedStatus.includes("lokal")
-  ) {
-    return "info";
-  }
-
-  if (
-    normalizedStatus.includes("entwurf") ||
-    normalizedStatus.includes("vorbereitung") ||
-    normalizedStatus.includes("in prüfung") ||
-    normalizedStatus.includes("prüfen")
-  ) {
-    return "muted";
-  }
-
-  if (
-    normalizedStatus.includes("produktion") ||
-    normalizedStatus.includes("weiterverarbeitung")
-  ) {
-    return "purple";
-  }
-
-  if (
-    normalizedStatus.includes("versandbereit") ||
-    normalizedStatus.includes("wartung") ||
-    normalizedStatus.includes("stufe") ||
-    normalizedStatus.includes("versendet")
-  ) {
-    return "warning";
-  }
-
-  if (
-    normalizedStatus.includes("abgelehnt") ||
-    normalizedStatus.includes("überfällig") ||
-    normalizedStatus.includes("gesperrt") ||
-    normalizedStatus.includes("fehlt") ||
-    normalizedStatus.includes("korrektur")
-  ) {
-    return "danger";
-  }
-
-  return "muted";
-}
-
-export function Badge({ children, variant }: BadgeProps) {
-  const statusText = getTextFromChildren(children);
-  const resolvedVariant = variant ?? getVariantFromStatus(statusText);
-
-  return <span className={`badge badge-${resolvedVariant}`}>{children}</span>;
+export function Badge({ children, variant = "neutral" }: BadgeProps) {
+  return (
+    <span className={`badge badge-${variant}`} style={badgeStyles[variant]}>
+      {children}
+    </span>
+  );
 }

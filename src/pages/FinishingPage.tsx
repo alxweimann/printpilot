@@ -9,6 +9,7 @@ import {
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { usePrintPilotStore } from "../store/PrintPilotStore";
+import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
 
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -166,7 +167,7 @@ export function FinishingPage() {
                       <td>{process.category}</td>
                       <td>{process.pricing}</td>
                       <td>
-                        <Badge variant={process.badgeVariant}>
+                        <Badge variant={getPrintPilotStatusBadgeVariant(process.status)}>
                           {process.status}
                         </Badge>
                       </td>

@@ -16,6 +16,7 @@ import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
 
 import { Button } from "../ui/Button";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -111,6 +112,7 @@ export function SettingsPage() {
   const [selectedBackupSummary, setSelectedBackupSummary] =
     useState<PrintPilotBackupSummary | null>(null);
   const [isReplaceArmed, setIsReplaceArmed] = useState(false);
+  const [isReplaceConfirmOpen, setIsReplaceConfirmOpen] = useState(false);
   const backupInputRef = useRef<HTMLInputElement | null>(null);
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
@@ -121,6 +123,7 @@ export function SettingsPage() {
       setActiveTab(tab);
       setIsEditing(false);
       setIsReplaceArmed(false);
+      setIsReplaceConfirmOpen(false);
     }
   }
 
@@ -160,6 +163,7 @@ export function SettingsPage() {
     setSelectedBackup(null);
     setSelectedBackupSummary(null);
     setIsReplaceArmed(false);
+    setIsReplaceConfirmOpen(false);
     setBackupMessage("Backup-Auswahl zurückgesetzt.");
   }
 
@@ -185,12 +189,19 @@ export function SettingsPage() {
       return;
     }
 
-    const shouldReplace = window.confirm(
-      "Alle aktuellen lokalen PrintPilot-Daten werden durch das ausgewählte Backup ersetzt. Vorher wird automatisch ein Sicherheitsbackup heruntergeladen. Fortfahren?",
-    );
+    setIsReplaceConfirmOpen(true);
+  }
 
-    if (!shouldReplace) {
-      setBackupMessage("Import abgebrochen. Es wurden keine Daten ersetzt.");
+  function handleCancelReplaceAll() {
+    setIsReplaceConfirmOpen(false);
+    setBackupMessage("Import abgebrochen. Es wurden keine Daten ersetzt.");
+  }
+
+  function handleConfirmReplaceAll() {
+    if (!selectedBackup || !selectedBackupSummary) {
+      setIsReplaceConfirmOpen(false);
+      setBackupMessage("Bitte zuerst eine gültige Backup-Datei auswählen.");
+      setIsReplaceArmed(false);
       return;
     }
 
@@ -200,6 +211,7 @@ export function SettingsPage() {
     replaceStoreData(selectedBackup.data);
     saveDraft(selectedBackup.data.settings);
     setIsReplaceArmed(false);
+    setIsReplaceConfirmOpen(false);
     setBackupMessage(
       `Backup importiert. Aktueller Stand wurde vorher als Sicherheitsbackup exportiert. Importiertes Backup: ${formatBackupSummary(
         selectedBackupSummary,
@@ -635,6 +647,42 @@ export function SettingsPage() {
           )}
         </section>
       </section>
+
+      <ConfirmDialog
+        open={isReplaceConfirmOpen}
+        title="Backup wirklich einspielen?"
+        description={
+          <>
+            Alle aktuellen lokalen PrintPilot-Daten werden durch das ausgewählte
+            Backup ersetzt. Vorher wird automatisch ein Sicherheitsbackup des
+            aktuellen Standes heruntergeladen.
+          </>
+        }
+        details={
+          selectedBackupSummary ? (
+            <>
+              <span>
+                <strong>Backup:</strong> Version {selectedBackupSummary.version}
+              </span>
+              <span>
+                <strong>Erstellt:</strong>{" "}
+                {formatBackupDate(selectedBackupSummary.createdAt)}
+              </span>
+              <span>
+                <strong>Umfang:</strong> {selectedBackupSummary.customers} Kunden
+                · {selectedBackupSummary.quotes} Angebote ·{" "}
+                {selectedBackupSummary.orders} Aufträge
+              </span>
+            </>
+          ) : null
+        }
+        variant="danger"
+        cancelLabel="Abbrechen"
+        confirmLabel="Alles ersetzen"
+        onCancel={handleCancelReplaceAll}
+        onConfirm={handleConfirmReplaceAll}
+      />
+
     </div>
   );
 }

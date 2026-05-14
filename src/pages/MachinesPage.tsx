@@ -159,11 +159,11 @@ export function MachinesPage() {
                       }
                       onClick={() => handleMachineSelect(machine.id)}
                     >
-                      <td>{machine.number}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>{machine.number}</td>
                       <td>{machine.name}</td>
                       <td>{machine.type}</td>
-                      <td>{machine.colorMode}</td>
-                      <td>
+                      <td style={{ whiteSpace: "nowrap" }}>{machine.colorMode}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>
                         <Badge variant={getPrintPilotStatusBadgeVariant(machine.status)}>
                           {machine.status}
                         </Badge>

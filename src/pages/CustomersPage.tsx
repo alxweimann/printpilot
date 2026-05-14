@@ -158,10 +158,10 @@ export function CustomersPage() {
                       }
                       onClick={() => handleCustomerSelect(customer.id)}
                     >
-                      <td>{customer.number}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>{customer.number}</td>
                       <td>{customer.name}</td>
                       <td>{customer.city}</td>
-                      <td>
+                      <td style={{ whiteSpace: "nowrap" }}>
                         <Badge variant={getPrintPilotStatusBadgeVariant(customer.status)}>
                           {customer.status}
                         </Badge>

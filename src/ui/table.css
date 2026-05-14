@@ -1,3 +1,72 @@
+
+/* Drawer-ready table shell */
+.data-table-shell {
+  overflow: hidden;
+  border: 1px solid #d8e0e8;
+  border-radius: 1rem;
+  background: #ffffff;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.06);
+}
+
+.data-table-scroll {
+  width: 100%;
+  overflow-x: auto;
+}
+
+.table-toolbar {
+  display: flex;
+  min-width: 980px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.95rem 0.95rem 0.7rem;
+}
+
+.table-toolbar-actions {
+  display: flex;
+  flex: 1;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.table-toolbar-copy h2 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 0.95rem;
+  font-weight: 800;
+}
+
+.table-toolbar-copy p {
+  margin: 0.25rem 0 0;
+  color: #64748b;
+  font-size: 0.82rem;
+}
+
+.data-table {
+  font-size: 0.86rem;
+}
+
+.data-table th {
+  background: #f8fafc;
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.data-table tbody tr {
+  cursor: pointer;
+  transition: background-color 140ms ease;
+}
+
+.data-table tbody tr:hover td {
+  background: #f8fafc;
+}
+
+.data-table-row-selected td,
+.data-table tbody tr.data-table-row-selected:hover td {
+  background: #ecfdf5;
+}
+
 /*
  * PrintPilot Table Hard No-Wrap Fix
  *

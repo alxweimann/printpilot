@@ -162,11 +162,11 @@ export function MaterialPage() {
                       }
                       onClick={() => handleMaterialSelect(material.id)}
                     >
-                      <td>{material.number}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>{material.number}</td>
                       <td>{material.name}</td>
-                      <td>{material.format}</td>
-                      <td>{material.stock}</td>
-                      <td>
+                      <td style={{ whiteSpace: "nowrap" }}>{material.format}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>{material.stock}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>
                         <Badge variant={getPrintPilotStatusBadgeVariant(material.status)}>
                           {material.status}
                         </Badge>

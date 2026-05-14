@@ -163,12 +163,12 @@ export function ServicesPage() {
                       }
                       onClick={() => handleServiceSelect(service.id)}
                     >
-                      <td>{service.number}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>{service.number}</td>
                       <td>{service.name}</td>
                       <td>{service.group}</td>
-                      <td>{service.unit}</td>
-                      <td>{service.price}</td>
-                      <td>
+                      <td style={{ whiteSpace: "nowrap" }}>{service.unit}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>{service.price}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>
                         <Badge variant={getPrintPilotStatusBadgeVariant(service.status)}>
                           {service.status}
                         </Badge>

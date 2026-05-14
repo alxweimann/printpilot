@@ -160,12 +160,12 @@ export function TemplatesPage() {
                       }
                       onClick={() => handleTemplateSelect(template.id)}
                     >
-                      <td>{template.number}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>{template.number}</td>
                       <td>{template.name}</td>
-                      <td>{template.type}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>{template.type}</td>
                       <td>{template.area}</td>
-                      <td>{template.isDefault}</td>
-                      <td>
+                      <td style={{ whiteSpace: "nowrap" }}>{template.isDefault}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>
                         <Badge variant={getPrintPilotStatusBadgeVariant(template.status)}>
                           {template.status}
                         </Badge>

@@ -162,11 +162,11 @@ export function FinishingPage() {
                       }
                       onClick={() => handleProcessSelect(process.id)}
                     >
-                      <td>{process.number}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>{process.number}</td>
                       <td>{process.name}</td>
                       <td>{process.category}</td>
-                      <td>{process.pricing}</td>
-                      <td>
+                      <td style={{ whiteSpace: "nowrap" }}>{process.pricing}</td>
+                      <td style={{ whiteSpace: "nowrap" }}>
                         <Badge variant={getPrintPilotStatusBadgeVariant(process.status)}>
                           {process.status}
                         </Badge>

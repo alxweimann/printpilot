@@ -7,10 +7,10 @@ import {
   createPrintPilotOrderFromQuote,
   groupPrintPilotQuotesByStatus,
 } from "../data/printPilotStore";
+import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { usePrintPilotStore } from "../store/PrintPilotStore";
-import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
 
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -18,6 +18,7 @@ import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { DetailDrawer } from "../ui/DetailDrawer";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -67,6 +68,7 @@ export function QuotesPage() {
   const { addOrder, orders, quotes, updateQuote } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
   const [isCreateOrderDialogOpen, setIsCreateOrderDialogOpen] = useState(false);
   const [isDuplicateOrderDialogOpen, setIsDuplicateOrderDialogOpen] =
     useState(false);
@@ -101,6 +103,7 @@ export function QuotesPage() {
     if (isQuoteTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
+      setIsDetailDrawerOpen(false);
       setIsCreateOrderDialogOpen(false);
       setIsDuplicateOrderDialogOpen(false);
     }
@@ -109,8 +112,15 @@ export function QuotesPage() {
   function handleQuoteSelect(quoteId: string) {
     selectItem(quoteId);
     setIsEditing(false);
+    setIsDetailDrawerOpen(true);
     setIsCreateOrderDialogOpen(false);
     setIsDuplicateOrderDialogOpen(false);
+  }
+
+  function handleCloseDetailDrawer() {
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
+    setIsCreateOrderDialogOpen(false);
     setIsDuplicateOrderDialogOpen(false);
   }
 
@@ -182,6 +192,7 @@ export function QuotesPage() {
 
     window.setTimeout(() => {
       selectItem(savedQuote.id);
+      setIsDetailDrawerOpen(true);
     }, 0);
   }
 
@@ -206,54 +217,90 @@ export function QuotesPage() {
           statusValue={isEditing ? "Bearbeitung offen" : activeTab}
         />
 
-        <div className="master-detail-layout">
-          <section className="workspace-panel master-list-panel">
-            <TableToolbar>
-              <Input className="search-input" placeholder="Angebote suchen..." />
+        <section className="workspace-panel">
+          <TableToolbar>
+            <Input className="search-input" placeholder="Angebote suchen..." />
 
-              <Button>Filter</Button>
-            </TableToolbar>
+            <Button>Filter</Button>
+          </TableToolbar>
 
-            <DataTable>
-              <thead>
-                <tr>
-                  <th>Angebot</th>
-                  <th>Kunde</th>
-                  <th>Betreff</th>
-                  <th>Datum</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
+          <DataTable>
+            <thead>
+              <tr>
+                <th>Angebot</th>
+                <th>Kunde</th>
+                <th>Betreff</th>
+                <th>Datum</th>
+                <th>Status</th>
+              </tr>
+            </thead>
 
-              <tbody>
-                {quoteRows.map((quote) => {
-                  const isSelected = quote.id === selectedQuote?.id;
+            <tbody>
+              {quoteRows.map((quote) => {
+                const isSelected =
+                  isDetailDrawerOpen && quote.id === selectedQuote?.id;
 
-                  return (
-                    <tr
-                      key={quote.id}
-                      className={
-                        isSelected ? "data-table-row-selected" : undefined
-                      }
-                      onClick={() => handleQuoteSelect(quote.id)}
-                    >
-                      <td>{quote.number}</td>
-                      <td>{quote.customerName}</td>
-                      <td>{quote.subject}</td>
-                      <td>{quote.quoteDate}</td>
-                      <td>
-                        <Badge variant={getPrintPilotStatusBadgeVariant(quote.status)}>
-                          {quote.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </DataTable>
-          </section>
+                return (
+                  <tr
+                    key={quote.id}
+                    className={
+                      isSelected ? "data-table-row-selected" : undefined
+                    }
+                    onClick={() => handleQuoteSelect(quote.id)}
+                  >
+                    <td style={{ whiteSpace: "nowrap" }}>{quote.number}</td>
+                    <td>{quote.customerName}</td>
+                    <td>{quote.subject}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{quote.quoteDate}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <Badge variant={getPrintPilotStatusBadgeVariant(quote.status)}>
+                        {quote.status}
+                      </Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </DataTable>
+        </section>
+      </section>
 
-          <section className="workspace-panel master-editor-panel">
+      <DetailDrawer
+        open={isDetailDrawerOpen && Boolean(selectedQuote)}
+        eyebrow="Angebot"
+        title={draft?.number ?? selectedQuote?.number ?? "Angebot"}
+        subtitle={
+          selectedQuote
+            ? `${selectedQuote.customerName} · ${selectedQuote.subject}`
+            : undefined
+        }
+        size="xl"
+        onClose={handleCloseDetailDrawer}
+        footer={
+          <>
+            <DirtyStateNotice isDirty={isDirty} />
+
+            <EditLockToggle
+              isEditing={isEditing}
+              onToggle={handleToggleEditing}
+            />
+
+            <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+
+            <Button variant="primary" onClick={handleOpenCreateOrderDialog}>
+              Auftrag erstellen
+            </Button>
+
+            <SaveActionButton
+              isDirty={isDirty}
+              defaultLabel="Angebot speichern"
+              onClick={handleSaveDraft}
+            />
+          </>
+        }
+      >
+        <div className="detail-drawer-stack">
+          <section className="detail-drawer-panel">
             <SectionHeader>Angebotskopf</SectionHeader>
 
             <FieldGrid>
@@ -355,33 +402,9 @@ export function QuotesPage() {
                 />
               </Field>
             </FieldGrid>
-
-            <div className="calculation-footer">
-              <DirtyStateNotice isDirty={isDirty} />
-
-              <EditLockToggle
-                isEditing={isEditing}
-                onToggle={handleToggleEditing}
-              />
-
-              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-
-              <Button
-                variant="primary"
-                onClick={handleOpenCreateOrderDialog}
-              >
-                Auftrag erstellen
-              </Button>
-
-              <SaveActionButton
-                isDirty={isDirty}
-                defaultLabel="Angebot speichern"
-                onClick={handleSaveDraft}
-              />
-            </div>
           </section>
         </div>
-      </section>
+      </DetailDrawer>
 
       <ConfirmDialog
         open={isCreateOrderDialogOpen && Boolean(selectedQuote)}
@@ -453,7 +476,6 @@ export function QuotesPage() {
         onCancel={handleCancelDuplicateOrderDialog}
         onConfirm={handleCreateAdditionalOrderFromQuote}
       />
-
     </div>
   );
 }

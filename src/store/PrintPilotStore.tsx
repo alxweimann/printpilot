@@ -34,6 +34,7 @@ type PrintPilotStoreContextValue = {
   finishing: PrintPilotFinishingProcess[];
   templates: PrintPilotTemplate[];
   settings: PrintPilotSettings;
+  addOrder: (order: PrintPilotOrder) => void;
   updateCustomer: (customer: PrintPilotCustomer) => void;
   updateFinishingProcess: (process: PrintPilotFinishingProcess) => void;
   updateMachine: (machine: PrintPilotMachine) => void;
@@ -110,6 +111,13 @@ export function PrintPilotStoreProvider({
       JSON.stringify(data),
     );
   }, [data]);
+
+  function addOrder(order: PrintPilotOrder) {
+    setData((currentData) => ({
+      ...currentData,
+      orders: [order, ...currentData.orders],
+    }));
+  }
 
   function updateCustomer(updatedCustomer: PrintPilotCustomer) {
     setData((currentData) => ({
@@ -206,6 +214,7 @@ export function PrintPilotStoreProvider({
   const value = useMemo<PrintPilotStoreContextValue>(
     () => ({
       data,
+      addOrder,
       customers: data.customers,
       quotes: data.quotes,
       orders: data.orders,

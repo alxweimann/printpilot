@@ -224,7 +224,6 @@ export function InvoicesPage() {
     sortedRows: sortedInvoiceRows,
     sortConfig: invoiceSortConfig,
     requestSort: requestInvoiceSort,
-    getAriaSort: getInvoiceSortAriaValue,
   } = useSortableTable<InvoiceRow, InvoiceSortKey>({
     rows: invoiceRows,
     initialSortKey: "number",
@@ -304,54 +303,42 @@ export function InvoicesPage() {
           <DataTable>
             <thead>
               <tr>
-                <th aria-sort={getInvoiceSortAriaValue("number")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     label="Rechnung"
                     sortKey="number"
                     sortConfig={invoiceSortConfig}
                     onSort={requestInvoiceSort}
                   />
-                </th>
-                <th aria-sort={getInvoiceSortAriaValue("customer")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     label="Kunde"
                     sortKey="customer"
                     sortConfig={invoiceSortConfig}
                     onSort={requestInvoiceSort}
                   />
-                </th>
-                <th aria-sort={getInvoiceSortAriaValue("subject")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     label="Betreff"
                     sortKey="subject"
                     sortConfig={invoiceSortConfig}
                     onSort={requestInvoiceSort}
                   />
-                </th>
-                <th aria-sort={getInvoiceSortAriaValue("invoiceDate")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     label="Datum"
                     sortKey="invoiceDate"
                     sortConfig={invoiceSortConfig}
                     onSort={requestInvoiceSort}
                   />
-                </th>
-                <th aria-sort={getInvoiceSortAriaValue("dueDate")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     label="Fällig"
                     sortKey="dueDate"
                     sortConfig={invoiceSortConfig}
                     onSort={requestInvoiceSort}
                   />
-                </th>
-                <th aria-sort={getInvoiceSortAriaValue("status")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     label="Status"
                     sortKey="status"
                     sortConfig={invoiceSortConfig}
                     onSort={requestInvoiceSort}
                   />
-                </th>
               </tr>
             </thead>
 

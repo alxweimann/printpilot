@@ -139,7 +139,6 @@ export function QuotesPage() {
     sortedRows: sortedQuoteRows,
     sortConfig: quoteSortConfig,
     requestSort: handleQuoteSort,
-    getAriaSort: getQuoteSortAriaValue,
   } = useSortableTable<PrintPilotQuote, QuoteSortKey>({
     rows: quoteRows,
     getSortValue: getQuoteSortValue,
@@ -273,46 +272,36 @@ export function QuotesPage() {
           <DataTable>
             <thead>
               <tr>
-                <th aria-sort={getQuoteSortAriaValue("number")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     sortKey="number"
                     label={quoteSortLabels.number}
                     sortConfig={quoteSortConfig}
                     onSort={handleQuoteSort}
                   />
-                </th>
-                <th aria-sort={getQuoteSortAriaValue("customerName")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     sortKey="customerName"
                     label={quoteSortLabels.customerName}
                     sortConfig={quoteSortConfig}
                     onSort={handleQuoteSort}
                   />
-                </th>
-                <th aria-sort={getQuoteSortAriaValue("subject")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     sortKey="subject"
                     label={quoteSortLabels.subject}
                     sortConfig={quoteSortConfig}
                     onSort={handleQuoteSort}
                   />
-                </th>
-                <th aria-sort={getQuoteSortAriaValue("quoteDate")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     sortKey="quoteDate"
                     label={quoteSortLabels.quoteDate}
                     sortConfig={quoteSortConfig}
                     onSort={handleQuoteSort}
                   />
-                </th>
-                <th aria-sort={getQuoteSortAriaValue("status")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     sortKey="status"
                     label={quoteSortLabels.status}
                     sortConfig={quoteSortConfig}
                     onSort={handleQuoteSort}
                   />
-                </th>
               </tr>
             </thead>
 

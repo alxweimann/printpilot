@@ -6,17 +6,11 @@ type SortableTableHeaderProps<TSortKey extends string = string> = {
   className?: string;
   align?: "left" | "right" | "center";
 
-  /**
-   * Standard API for OrdersPage and QuotesPage.
-   */
   sortKey?: TSortKey;
   columnKey?: TSortKey;
   sortConfig?: SortConfig<TSortKey> | null;
   onSort?: (sortKey: TSortKey) => void;
 
-  /**
-   * Compatibility API for existing master-data/document pages.
-   */
   active?: boolean;
   direction?: SortDirection;
   onClick?: () => void;
@@ -25,26 +19,23 @@ type SortableTableHeaderProps<TSortKey extends string = string> = {
 const headerCellStyle: CSSProperties = {
   borderBottom: "0",
   boxShadow: "none",
-  textDecoration: "none",
+  cursor: "pointer",
   outline: "none",
+  textAlign: "left",
+  textDecoration: "none",
   userSelect: "none",
   WebkitUserSelect: "none",
-};
-
-const clickableHeaderCellStyle: CSSProperties = {
-  ...headerCellStyle,
-  cursor: "pointer",
 };
 
 const headerTextStyle: CSSProperties = {
   border: "0",
   borderBottom: "0",
   boxShadow: "none",
+  cursor: "inherit",
+  textAlign: "left",
   textDecoration: "none",
-  outline: "none",
   userSelect: "none",
   WebkitUserSelect: "none",
-  cursor: "inherit",
 };
 
 function getSortIndicator(direction: SortDirection | undefined, isActive: boolean) {
@@ -73,7 +64,6 @@ export function SortableTableHeader<TSortKey extends string = string>({
   direction,
   onClick,
   className = "",
-  align = "left",
 }: SortableTableHeaderProps<TSortKey>) {
   const resolvedSortKey = sortKey ?? columnKey;
 
@@ -86,16 +76,6 @@ export function SortableTableHeader<TSortKey extends string = string>({
     direction ?? (isActive && sortConfig ? sortConfig.direction : undefined);
 
   const indicator = getSortIndicator(resolvedDirection, isActive);
-
-  const alignClass =
-    align === "right"
-      ? "justify-end text-right"
-      : align === "center"
-        ? "justify-center text-center"
-        : "justify-start text-left";
-
-  const cellTextAlign: CSSProperties["textAlign"] =
-    align === "right" ? "right" : align === "center" ? "center" : "left";
 
   function handleSort() {
     if (onClick) {
@@ -129,53 +109,42 @@ export function SortableTableHeader<TSortKey extends string = string>({
             : "descending"
           : undefined
       }
-      className={["px-4 py-3", className].join(" ")}
-      style={{
-        ...(isSortable ? clickableHeaderCellStyle : headerCellStyle),
-        textAlign: cellTextAlign,
-      }}
+      className={["px-4 py-3 text-left", className].filter(Boolean).join(" ")}
+      style={headerCellStyle}
     >
       <span
+        data-sortable-header
         className={[
-          "inline-flex w-full items-center text-xs font-semibold uppercase tracking-[0.14em]",
-          alignClass,
+          "inline-flex items-center justify-start text-left text-xs font-semibold uppercase tracking-[0.14em]",
           isActive ? "text-zinc-950" : "text-zinc-500",
           isSortable ? "hover:text-zinc-800" : "",
         ].join(" ")}
         style={headerTextStyle}
       >
-        <span
-          style={{
-            ...headerTextStyle,
-            position: "relative",
-            display: "inline-flex",
-            alignItems: "center",
-          }}
-        >
-          <span style={headerTextStyle}>{label}</span>
-
-          {isSortable && (
-            <span
-              aria-hidden="true"
-              style={{
-                ...headerTextStyle,
-                position: "absolute",
-                left: "calc(100% + 10px)",
-                top: "50%",
-                transform: "translateY(-50%)",
-                display: "inline-flex",
-                width: "16px",
-                minWidth: "16px",
-                justifyContent: "center",
-                fontSize: "11px",
-                lineHeight: 1,
-                opacity: isActive ? 0.9 : 0.35,
-              }}
-            >
-              {indicator}
-            </span>
-          )}
+        <span data-sortable-header-label style={headerTextStyle}>
+          {label}
         </span>
+
+        {isSortable && (
+          <span
+            data-sortable-header-arrow
+            aria-hidden="true"
+            style={{
+              ...headerTextStyle,
+              display: "inline-flex",
+              flex: "0 0 auto",
+              fontSize: "11px",
+              justifyContent: "center",
+              lineHeight: 1,
+              marginLeft: "10px",
+              minWidth: "16px",
+              opacity: isActive ? 0.9 : 0.35,
+              width: "16px",
+            }}
+          >
+            {indicator}
+          </span>
+        )}
       </span>
     </th>
   );

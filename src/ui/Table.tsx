@@ -171,6 +171,53 @@ export function TableToolbar({
 export function TableShell({ children, className = "" }: TableShellProps) {
   return (
     <div className={["data-table-shell", className].filter(Boolean).join(" ")}>
+      <style>
+        {`
+          .data-table {
+            width: 100%;
+            border-collapse: collapse;
+          }
+
+          .data-table thead,
+          .data-table tbody,
+          .data-table tr,
+          .data-table th,
+          .data-table td {
+            text-align: left !important;
+          }
+
+          .data-table th {
+            vertical-align: middle;
+            user-select: none;
+          }
+
+          .data-table td {
+            vertical-align: middle;
+          }
+
+          .data-table th > *,
+          .data-table td > * {
+            text-align: left !important;
+          }
+
+          .data-table [data-sortable-header] {
+            display: inline-flex !important;
+            align-items: center !important;
+            justify-content: flex-start !important;
+            width: auto !important;
+            text-align: left !important;
+          }
+
+          .data-table [data-sortable-header-label] {
+            text-align: left !important;
+          }
+
+          .data-table [data-sortable-header-arrow] {
+            margin-left: 10px !important;
+            flex: 0 0 auto !important;
+          }
+        `}
+      </style>
       <div className="data-table-scroll">{children}</div>
     </div>
   );
@@ -187,7 +234,11 @@ export function TableHeadCell({
   children: ReactNode;
   className?: string;
 }) {
-  return <th className={className}>{children}</th>;
+  return (
+    <th className={["text-left", className].filter(Boolean).join(" ")}>
+      {children}
+    </th>
+  );
 }
 
 export function TableBody({ children }: { children: ReactNode }) {
@@ -223,7 +274,11 @@ export function TableCell({
   children: ReactNode;
   className?: string;
 }) {
-  return <td className={className}>{children}</td>;
+  return (
+    <td className={["text-left", className].filter(Boolean).join(" ")}>
+      {children}
+    </td>
+  );
 }
 
 export function TablePrimaryText({ children }: { children: ReactNode }) {

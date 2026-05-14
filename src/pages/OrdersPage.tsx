@@ -399,56 +399,42 @@ export function OrdersPage() {
           <DataTable>
             <thead>
               <tr>
-                <th aria-sort={getOrderSortAriaValue("number")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     sortKey="number"
                     label={orderSortLabels.number}
                     sortConfig={orderSortConfig}
                     onSort={handleOrderSort}
                   />
-                </th>
-                <th
-                  aria-sort={getOrderSortAriaValue("customerName")}
-                >
-                  <SortableTableHeader
+                <SortableTableHeader
                     sortKey="customerName"
                     label={orderSortLabels.customerName}
                     sortConfig={orderSortConfig}
                     onSort={handleOrderSort}
                   />
-                </th>
-                <th aria-sort={getOrderSortAriaValue("product")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     sortKey="product"
                     label={orderSortLabels.product}
                     sortConfig={orderSortConfig}
                     onSort={handleOrderSort}
                   />
-                </th>
-                <th aria-sort={getOrderSortAriaValue("dueDate")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     sortKey="dueDate"
                     label={orderSortLabels.dueDate}
                     sortConfig={orderSortConfig}
                     onSort={handleOrderSort}
                   />
-                </th>
-                <th aria-sort={getOrderSortAriaValue("approval")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     sortKey="approval"
                     label={orderSortLabels.approval}
                     sortConfig={orderSortConfig}
                     onSort={handleOrderSort}
                   />
-                </th>
-                <th aria-sort={getOrderSortAriaValue("status")}>
-                  <SortableTableHeader
+                <SortableTableHeader
                     sortKey="status"
                     label={orderSortLabels.status}
                     sortConfig={orderSortConfig}
                     onSort={handleOrderSort}
                   />
-                </th>
               </tr>
             </thead>
 

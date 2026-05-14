@@ -16,6 +16,7 @@ import { PageTabs } from "../layout/PageTabs";
 
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { DetailDrawer } from "../ui/DetailDrawer";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -76,6 +77,7 @@ export function FinishingPage() {
   const { finishing, updateFinishingProcess } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
 
   const finishingRowsByTab = useMemo(() => {
     return groupPrintPilotFinishingByStatus(finishing);
@@ -96,7 +98,6 @@ export function FinishingPage() {
     sortedRows: sortedFinishingRows,
     sortConfig: processSortConfig,
     requestSort: requestFinishingSort,
-    getAriaSort: getFinishingAriaSort,
   } = useSortableTable<PrintPilotFinishingProcess, FinishingSortKey>({
     rows: finishingRows,
     initialSortKey: "number",
@@ -112,12 +113,19 @@ export function FinishingPage() {
     if (isFinishingTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
+      setIsDetailDrawerOpen(false);
     }
   }
 
   function handleProcessSelect(processId: string) {
     selectItem(processId);
     setIsEditing(false);
+    setIsDetailDrawerOpen(true);
+  }
+
+  function handleCloseDetailDrawer() {
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   function handleResetDraft() {
@@ -139,6 +147,7 @@ export function FinishingPage() {
     updateFinishingProcess(savedProcess);
     saveDraft(savedProcess);
     setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   return (
@@ -162,92 +171,110 @@ export function FinishingPage() {
           statusValue={isEditing ? "Bearbeitung offen" : activeTab}
         />
 
-        <div className="master-detail-layout">
-          <section className="workspace-panel master-list-panel">
-            <TableToolbar>
-              <Input
-                className="search-input"
-                placeholder="Weiterverarbeitung suchen..."
-              />
+        <section className="workspace-panel master-list-panel">
+          <TableToolbar>
+            <Input
+              className="search-input"
+              placeholder="Weiterverarbeitung suchen..."
+            />
+            <Button>Filter</Button>
+          </TableToolbar>
 
-              <Button>Filter</Button>
-            </TableToolbar>
+          <DataTable>
+            <thead>
+              <tr>
+                <SortableTableHeader
+                  label="Nr."
+                  sortKey="number"
+                  sortConfig={processSortConfig}
+                  onSort={requestFinishingSort}
+                />
+                <SortableTableHeader
+                  label="Name"
+                  sortKey="name"
+                  sortConfig={processSortConfig}
+                  onSort={requestFinishingSort}
+                />
+                <SortableTableHeader
+                  label="Kategorie"
+                  sortKey="category"
+                  sortConfig={processSortConfig}
+                  onSort={requestFinishingSort}
+                />
+                <SortableTableHeader
+                  label="Preismodell"
+                  sortKey="pricing"
+                  sortConfig={processSortConfig}
+                  onSort={requestFinishingSort}
+                />
+                <SortableTableHeader
+                  label="Status"
+                  sortKey="status"
+                  sortConfig={processSortConfig}
+                  onSort={requestFinishingSort}
+                />
+              </tr>
+            </thead>
 
-            <DataTable>
-              <thead>
-                <tr>
-                  <th aria-sort={getFinishingAriaSort("number")}>
-                    <SortableTableHeader
-                      label="Nr."
-                      active={ processSortConfig?.key === "number" }
-                      direction={ processSortConfig?.direction }
-                      onClick={() => requestFinishingSort("number")}
-                    />
-                  </th>
-                  <th aria-sort={getFinishingAriaSort("name")}>
-                    <SortableTableHeader
-                      label="Name"
-                      active={ processSortConfig?.key === "name" }
-                      direction={ processSortConfig?.direction }
-                      onClick={() => requestFinishingSort("name")}
-                    />
-                  </th>
-                  <th aria-sort={getFinishingAriaSort("category")}>
-                    <SortableTableHeader
-                      label="Kategorie"
-                      active={ processSortConfig?.key === "category" }
-                      direction={ processSortConfig?.direction }
-                      onClick={() => requestFinishingSort("category")}
-                    />
-                  </th>
-                  <th aria-sort={getFinishingAriaSort("pricing")}>
-                    <SortableTableHeader
-                      label="Preismodell"
-                      active={ processSortConfig?.key === "pricing" }
-                      direction={ processSortConfig?.direction }
-                      onClick={() => requestFinishingSort("pricing")}
-                    />
-                  </th>
-                  <th aria-sort={getFinishingAriaSort("status")}>
-                    <SortableTableHeader
-                      label="Status"
-                      active={ processSortConfig?.key === "status" }
-                      direction={ processSortConfig?.direction }
-                      onClick={() => requestFinishingSort("status")}
-                    />
-                  </th>
-                </tr>
-              </thead>
+            <tbody>
+              {sortedFinishingRows.map((process) => {
+                const isSelected = process.id === selectedProcess?.id;
 
-              <tbody>
-                {sortedFinishingRows.map((process) => {
-                  const isSelected = process.id === selectedProcess?.id;
+                return (
+                  <tr
+                    key={process.id}
+                    className={isSelected ? "data-table-row-selected" : undefined}
+                    onClick={() => handleProcessSelect(process.id)}
+                  >
+                    <td style={{ whiteSpace: "nowrap" }}>{process.number}</td>
+                    <td>{process.name}</td>
+                    <td>{process.category}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{process.pricing}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <Badge variant={getPrintPilotStatusBadgeVariant(process.status)}>
+                        {process.status}
+                      </Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </DataTable>
+        </section>
+      </section>
 
-                  return (
-                    <tr
-                      key={process.id}
-                      className={
-                        isSelected ? "data-table-row-selected" : undefined
-                      }
-                      onClick={() => handleProcessSelect(process.id)}
-                    >
-                      <td style={{ whiteSpace: "nowrap" }}>{process.number}</td>
-                      <td>{process.name}</td>
-                      <td>{process.category}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>{process.pricing}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>
-                        <Badge variant={getPrintPilotStatusBadgeVariant(process.status)}>
-                          {process.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </DataTable>
-          </section>
+      <DetailDrawer
+        open={isDetailDrawerOpen && Boolean(selectedProcess)}
+        eyebrow="Weiterverarbeitung"
+        title={selectedProcess?.name ?? "Weiterverarbeitung"}
+        subtitle={
+          selectedProcess
+            ? `${selectedProcess.number} · ${selectedProcess.category}`
+            : undefined
+        }
+        onClose={handleCloseDetailDrawer}
+        size="xl"
+        footer={
+          <>
+            <DirtyStateNotice isDirty={isDirty} />
 
-          <section className="workspace-panel master-editor-panel">
+            <EditLockToggle
+              isEditing={isEditing}
+              onToggle={handleToggleEditing}
+            />
+
+            <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+
+            <SaveActionButton
+              isDirty={isDirty}
+              defaultLabel="Weiterverarbeitung speichern"
+              onClick={handleSaveDraft}
+            />
+          </>
+        }
+      >
+        <div className="detail-drawer-stack">
+          <section className="detail-drawer-panel">
             <SectionHeader>Prozessdaten</SectionHeader>
 
             <FieldGrid>
@@ -316,7 +343,9 @@ export function FinishingPage() {
                 </Select>
               </Field>
             </FieldGrid>
+          </section>
 
+          <section className="detail-drawer-panel">
             <SectionHeader>Kalkulationswerte</SectionHeader>
 
             <FieldGrid>
@@ -349,7 +378,13 @@ export function FinishingPage() {
                   }
                 />
               </Field>
+            </FieldGrid>
+          </section>
 
+          <section className="detail-drawer-panel">
+            <SectionHeader>Beschreibung</SectionHeader>
+
+            <FieldGrid>
               <Field label="Beschreibung">
                 <Input
                   value={draft?.description ?? ""}
@@ -360,26 +395,9 @@ export function FinishingPage() {
                 />
               </Field>
             </FieldGrid>
-
-            <div className="calculation-footer">
-              <DirtyStateNotice isDirty={isDirty} />
-
-              <EditLockToggle
-                isEditing={isEditing}
-                onToggle={handleToggleEditing}
-              />
-
-              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-
-              <SaveActionButton
-                isDirty={isDirty}
-                defaultLabel="Weiterverarbeitung speichern"
-                onClick={handleSaveDraft}
-              />
-            </div>
           </section>
         </div>
-      </section>
+      </DetailDrawer>
     </div>
   );
 }

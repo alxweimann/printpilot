@@ -1,9 +1,7 @@
-# PrintPilot Projektstand
+# Project State
 
-Stand: 14.05.2026
+- Sidebar LED-Anzeige vereinfacht: ohne Systemzeit-Label und ohne äußeren Rahmen, Datum/Uhrzeit gleich breit
 
-## Hotfix
+- Sidebar LED-Anzeige: Hintergründe/Rahmen vollständig entfernt und Ziffern größer gesetzt
 
-DetailDrawer rendert jetzt per React Portal direkt in `document.body`.
-
-Damit öffnet der Drawer zuverlässig rechts über der App und nicht mehr unten im Seitenfluss.
+- Sidebar LED-Anzeige: beide Zeilen gleich breit, Schrift größer und Glow reduziert

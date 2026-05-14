@@ -10,6 +10,7 @@ import { PageTabs } from "../layout/PageTabs";
 
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { DetailDrawer } from "../ui/DetailDrawer";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -189,6 +190,7 @@ export function RemindersPage() {
   const module = getModuleConfig("reminders");
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
 
   const {
     activeTab,
@@ -204,7 +206,6 @@ export function RemindersPage() {
   const { draft, isDirty, updateDraftField, resetDraft } =
     useEditableDraft(selectedReminder);
 
-
   const {
     sortedRows: sortedReminderRows,
     sortConfig: reminderSortConfig,
@@ -213,18 +214,26 @@ export function RemindersPage() {
     rows: reminderRows,
     initialSortKey: "number",
     getSortValue: getReminderSortValue,
-    fallbackSortValue: (reminder) => reminder.number,
+    fallbackSortValue: (reminder: ReminderRow) => reminder.number,
   });
+
   function handleTabChange(tab: string) {
     if (isReminderTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
+      setIsDetailDrawerOpen(false);
     }
   }
 
   function handleReminderSelect(reminderId: string) {
     selectItem(reminderId);
     setIsEditing(false);
+    setIsDetailDrawerOpen(true);
+  }
+
+  function handleCloseDetailDrawer() {
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   function handleResetDraft() {
@@ -234,6 +243,11 @@ export function RemindersPage() {
 
   function handleToggleEditing() {
     setIsEditing((currentValue) => !currentValue);
+  }
+
+  function handleSaveReminder() {
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   return (
@@ -257,85 +271,114 @@ export function RemindersPage() {
           statusValue={getReminderStatus(activeTab)}
         />
 
-        <div className="master-detail-layout">
-          <section className="workspace-panel master-list-panel">
-            <TableToolbar>
-              <Input className="search-input" placeholder="Mahnungen suchen..." />
-              <Button>Filter</Button>
-            </TableToolbar>
+        <section className="workspace-panel master-list-panel">
+          <TableToolbar>
+            <Input className="search-input" placeholder="Mahnungen suchen..." />
+            <Button>Filter</Button>
+          </TableToolbar>
 
-            <DataTable>
-              <thead>
-                <tr>
-                  <SortableTableHeader
-                    label="Mahnung"
-                    sortKey="number"
-                    sortConfig={reminderSortConfig}
-                    onSort={requestReminderSort}
-                  />
-                  <SortableTableHeader
-                    label="Kunde"
-                    sortKey="customer"
-                    sortConfig={reminderSortConfig}
-                    onSort={requestReminderSort}
-                  />
-                  <SortableTableHeader
-                    label="Rechnung"
-                    sortKey="invoice"
-                    sortConfig={reminderSortConfig}
-                    onSort={requestReminderSort}
-                  />
-                  <SortableTableHeader
-                    label="Stufe"
-                    sortKey="reminderLevel"
-                    sortConfig={reminderSortConfig}
-                    onSort={requestReminderSort}
-                  />
-                  <SortableTableHeader
-                    label="Frist"
-                    sortKey="deadline"
-                    sortConfig={reminderSortConfig}
-                    onSort={requestReminderSort}
-                  />
-                  <SortableTableHeader
-                    label="Status"
-                    sortKey="status"
-                    sortConfig={reminderSortConfig}
-                    onSort={requestReminderSort}
-                  />
-                </tr>
-              </thead>
+          <DataTable>
+            <thead>
+              <tr>
+                <SortableTableHeader
+                  label="Mahnung"
+                  sortKey="number"
+                  sortConfig={reminderSortConfig}
+                  onSort={requestReminderSort}
+                />
+                <SortableTableHeader
+                  label="Kunde"
+                  sortKey="customer"
+                  sortConfig={reminderSortConfig}
+                  onSort={requestReminderSort}
+                />
+                <SortableTableHeader
+                  label="Rechnung"
+                  sortKey="invoice"
+                  sortConfig={reminderSortConfig}
+                  onSort={requestReminderSort}
+                />
+                <SortableTableHeader
+                  label="Stufe"
+                  sortKey="reminderLevel"
+                  sortConfig={reminderSortConfig}
+                  onSort={requestReminderSort}
+                />
+                <SortableTableHeader
+                  label="Frist"
+                  sortKey="deadline"
+                  sortConfig={reminderSortConfig}
+                  onSort={requestReminderSort}
+                />
+                <SortableTableHeader
+                  label="Status"
+                  sortKey="status"
+                  sortConfig={reminderSortConfig}
+                  onSort={requestReminderSort}
+                />
+              </tr>
+            </thead>
 
-              <tbody>
-                {sortedReminderRows.map((reminder) => {
-                  const isSelected = reminder.id === selectedReminder?.id;
+            <tbody>
+              {sortedReminderRows.map((reminder: ReminderRow) => {
+                const isSelected = reminder.id === selectedReminder?.id;
 
-                  return (
-                    <tr
-                      key={reminder.id}
-                      className={
-                        isSelected ? "data-table-row-selected" : undefined
-                      }
-                      onClick={() => handleReminderSelect(reminder.id)}
-                    >
-                      <td>{reminder.number}</td>
-                      <td>{reminder.customer}</td>
-                      <td>{reminder.invoice}</td>
-                      <td>{reminder.reminderLevel}</td>
-                      <td>{reminder.deadline}</td>
-                      <td>
-                        <Badge variant={reminder.badgeVariant}>
-                          {reminder.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </DataTable>
-          </section>
+                return (
+                  <tr
+                    key={reminder.id}
+                    className={isSelected ? "data-table-row-selected" : undefined}
+                    onClick={() => handleReminderSelect(reminder.id)}
+                  >
+                    <td>{reminder.number}</td>
+                    <td>{reminder.customer}</td>
+                    <td>{reminder.invoice}</td>
+                    <td>{reminder.reminderLevel}</td>
+                    <td>{reminder.deadline}</td>
+                    <td>
+                      <Badge variant={reminder.badgeVariant}>
+                        {reminder.status}
+                      </Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </DataTable>
+        </section>
+      </section>
 
-          <section className="workspace-panel master-editor-panel">
+      <DetailDrawer
+        open={isDetailDrawerOpen && Boolean(selectedReminder)}
+        eyebrow="Mahnung"
+        title={selectedReminder?.number ?? "Mahnung"}
+        subtitle={
+          selectedReminder
+            ? `${selectedReminder.customer} · ${selectedReminder.invoice}`
+            : undefined
+        }
+        onClose={handleCloseDetailDrawer}
+        size="xl"
+        footer={
+          <>
+            <DirtyStateNotice isDirty={isDirty} />
+
+            <EditLockToggle
+              isEditing={isEditing}
+              onToggle={handleToggleEditing}
+            />
+
+            <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+            <Button>Vorschau prüfen</Button>
+            <SaveActionButton
+              isDirty={isDirty}
+              defaultLabel="Mahnung ausgeben"
+              onClick={handleSaveReminder}
+            />
+          </>
+        }
+      >
+        <div className="detail-drawer-stack">
+          <section className="detail-drawer-panel">
             <SectionHeader>Mahnkopf</SectionHeader>
 
             <FieldGrid>
@@ -363,13 +406,16 @@ export function RemindersPage() {
                 </Select>
               </Field>
             </FieldGrid>
+          </section>
 
+          <section className="detail-drawer-panel">
             <SectionHeader>Mahninformationen</SectionHeader>
 
             <FieldGrid>
               <Field label="Mahnstufe">
                 <Select
                   value={draft?.reminderLevel ?? ""}
+                  disabled={!isEditing}
                   onChange={(event) =>
                     updateDraftField("reminderLevel", event.target.value)
                   }
@@ -387,6 +433,7 @@ export function RemindersPage() {
               <Field label="Frist">
                 <Select
                   value={draft?.deadline ?? ""}
+                  disabled={!isEditing}
                   onChange={(event) =>
                     updateDraftField("deadline", event.target.value)
                   }
@@ -410,13 +457,16 @@ export function RemindersPage() {
                 />
               </Field>
             </FieldGrid>
+          </section>
 
+          <section className="detail-drawer-panel">
             <SectionHeader>Ausgabe</SectionHeader>
 
             <FieldGrid>
               <Field label="Vorlage">
                 <Select
                   value={draft?.template ?? ""}
+                  disabled={!isEditing}
                   onChange={(event) =>
                     updateDraftField("template", event.target.value)
                   }
@@ -430,31 +480,9 @@ export function RemindersPage() {
                 </Select>
               </Field>
             </FieldGrid>
-
-            <div className="calculation-footer">
-              <DirtyStateNotice isDirty={isDirty} />
-
-              <EditLockToggle
-
-                isEditing={isEditing}
-
-                onToggle={handleToggleEditing}
-
-              />
-
-              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-              <Button>Vorschau prüfen</Button>
-              <SaveActionButton
-
-                              isDirty={isDirty}
-
-                              defaultLabel="Mahnung ausgeben"
-
-                            />
-            </div>
           </section>
         </div>
-      </section>
+      </DetailDrawer>
     </div>
   );
 }

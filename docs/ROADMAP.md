@@ -1,378 +1,102 @@
 # PrintPilot Roadmap
 
-## Aktueller Meilenstein abgeschlossen
+## Kurzfristig
 
-Grundmodule und zentrale UI-Standards sind stabilisiert.
-
-Abgeschlossen:
+### 1. DetailDrawer-Komponente bauen
 
 ```text
-Angebote persistent
-Aufträge persistent
-Kunden persistent
-Material persistent
-Maschinen persistent
-Leistungen / Services persistent
-Weiterverarbeitung / Finishing persistent
-Vorlagen / Templates persistent
-Einstellungen persistent
-Backup Export
-Backup Import "Alles ersetzen"
-localStorage Persistenz
-Alle Angebote Übersicht
-Alle Aufträge Übersicht
-zentrale Badge-Farblogik
-zentrale ConfirmDialog-Komponente
-Auftrags-Freigabe-/Produktionslogik
+Tabelle über volle Breite
+Details rechts als Drawer
 ```
 
-## Nächster Meilenstein
-
-Modulverknüpfungen, produktionsnahe Workflows und einheitlicher Detail-Drawer-Standard.
-
-## Empfohlene Reihenfolge
-
-### 1. Angebot zu Auftrag
-
-Ziel:
+Erster Einsatz:
 
 ```text
-Aus einem angenommenen Angebot einen Auftrag vorbereiten.
+Aufträge
 ```
 
-Vorgehen:
+### 2. Aufträge auf Drawer-Layout umstellen
+
+Bestehende Logik muss erhalten bleiben:
 
 ```text
-Button / Aktion in Angebote vorbereiten
-ConfirmDialog zur Bestätigung
-Auftragsentwurf erzeugen
-Daten übernehmen
-orders aktualisieren
-nach Alle Aufträge wechseln
+Alle Aufträge
+Status-Tabs
+Freigabe-Warnung
+Übergabe-Warnung
+Maschinen-Dropdown
+Speichern
+Änderungen verwerfen
+ConfirmDialog
 ```
 
-Mögliche Datenübernahme:
+### 3. Angebote auf Drawer-Layout umstellen
+
+Bestehende Logik muss erhalten bleiben:
 
 ```text
-quoteId
-customerId
-customerName
-subject → product
-delivery terms → handoff / Hinweis später
-status = Neu
-approval = Freigabe ausstehend
-priority = Normal
+Alle Angebote
+Status-Tabs
+Auftrag erstellen
+Dublettenwarnung
+ConfirmDialog
 ```
 
----
+## Mittelfristig
 
-### 2. Dokumenten-/Ausgabesystem vorbereiten
-
-Ziel:
+### 4. Dokumenten-/Ausgabesystem vorbereiten
 
 ```text
-Druckbare und versendbare Dokumente aus Store-Daten erzeugen.
-```
-
-Geplante Dokumenttypen:
-
-```text
-Angebot
-Kalkulation
 Auftragstasche
+Etiketten / Kartonaufkleber
 Lieferschein
 Rechnung
 Mahnung
-Etiketten
-Versand-/Kartonaufkleber
-Produktionsschein
+Angebot
+Kalkulation
 ```
 
-Grundfunktionen:
-
-```text
-Vorlage
-Vorschau
-Drucken
-PDF erstellen
-optional per E-Mail senden
-```
-
----
-
-### 3. Auftragstasche als erste Druckausgabe
-
-Ziel:
-
-```text
-Aus einem Auftrag eine interne Produktionsunterlage erzeugen.
-```
-
-Mögliche Ausgabe:
+### 5. Auftragstasche als erste Druckausgabe
 
 ```text
 Vorschau
-PDF
-Druck
-E-Mail an Abteilung
+Drucklayout
+PDF später
 ```
 
-Mögliche Abteilungen:
+### 6. Etiketten / Kartonaufkleber
 
 ```text
-Druckvorstufe
-Digitaldruck
-Großformat
-Weiterverarbeitung
-Versand / Auslieferung
-Büro / Abrechnung
+Kartonetiketten aus Auftragsdaten
+Karton 1 von X
+PDF/Druck
 ```
 
-Benötigte Daten später:
+### 7. Dashboard-Plantafel
 
 ```text
-Auflage
-Format
-Material
-Farbigkeit
-Weiterverarbeitung
-Lieferart
-interne Notiz
-Abteilungshinweis
+Wochenübersicht über fällige Aufträge
 ```
 
----
-
-### 4. Etiketten / Kartonaufkleber
-
-Ziel:
+## Langfristig
 
 ```text
-Karton-, Produktions- und Versandetiketten aus Auftragsdaten erzeugen.
-```
-
-Mögliche Inhalte:
-
-```text
-Auftragsnummer
-Kunde
-Produkt
-Lieferdatum
-Karton 1 von 3
-Abteilung
-Priorität
-Barcode / QR-Code
-```
-
-Geplante Funktionen:
-
-```text
-Etikettengröße wählen
-Kartonanzahl eintragen
-PDF zum Drucken
-Thermoetiketten oder A4-Bogen
-```
-
----
-
-### 5. Dashboard-Plantafel
-
-Ziel:
-
-```text
-Wochenübersicht auf dem Dashboard
-```
-
-Grundlage:
-
-```text
-orders.dueDate
-orders.customerName
-orders.product
-orders.status
-orders.priority
-orders.machineId
-orders.approval
-orders.handoff
-```
-
-Erste Version:
-
-```text
-Montag bis Freitag / Samstag
-Auftragskarten pro Fälligkeitstag
-Farben nach Status / Freigabe
-```
-
-Später:
-
-```text
-Maschinenfilter
-Drag & Drop
-Überfällig-Markierung
-Produktionsdatum
-Lieferdatum
-Tagesstatus
-```
-
----
-
-### 6. Kunde zu Angebot / Auftrag
-
-Ziel:
-
-```text
-Kundendaten zentral nutzen.
-```
-
-Relevante Felder:
-
-```text
-customerId
-customerName
-paymentTerm
-priceLevel
-contact
-email
-```
-
----
-
-### 7. Material in Kalkulation
-
-Ziel:
-
-```text
-Materialdaten aus Store für Kalkulation nutzen.
-```
-
-Relevante Felder:
-
-```text
-format
-grain
-pricePerReam
-sheetsPerReam
-stock
-minimumStock
-```
-
----
-
-### 8. Maschinen in Kalkulation
-
-Ziel:
-
-```text
-Maschinenkosten aus Store nutzen.
-```
-
-Relevante Felder:
-
-```text
-hourlyRate
-colorClickCost
-blackClickCost
-duplex
-colorMode
-```
-
----
-
-### 9. Leistungen und Weiterverarbeitung in Kalkulation
-
-Ziel:
-
-```text
-Zusatzleistungen und Weiterverarbeitung als Kostenbausteine verwenden.
-```
-
-Bereiche:
-
-```text
-services
-finishing
-```
-
----
-
-### 10. Vorlagen in Ausgabe
-
-Ziel:
-
-```text
-Angebote, Aufträge, Lieferscheine und Rechnungen über Templates ausgeben.
-```
-
-Relevante Felder:
-
-```text
-type
-area
-isDefault
-productType
-outputLayout
-```
-
-## Grundregel
-
-```text
-Eine Verknüpfung pro Schritt.
-Keine Massenänderungen.
-Immer Build testen.
-Immer pushen.
-```
-
-
----
-
-### UI-Meilenstein: Master-Detail Drawer Standard
-
-Ziel:
-
-```text
-Tabellen über volle Breite
-Detailansicht als rechter Drawer
-einheitliches Verhalten in allen Modulen
-```
-
-Geplante Komponente:
-
-```text
-src/ui/DetailDrawer.tsx
-```
-
-Umsetzungsreihenfolge:
-
-```text
-1. DetailDrawer-Komponente bauen
-2. Aufträge auf Drawer umstellen
-3. Angebote auf Drawer umstellen
-4. Rechnungen vorbereiten
-5. Lieferscheine vorbereiten
-6. Mahnungen vorbereiten
-7. Stammdaten nachziehen
-```
-
-Gilt perspektivisch für:
-
-```text
-Angebote
-Aufträge
+Kalkulationsverknüpfungen
+Angebotsausgabe / PDF
 Rechnungen
 Lieferscheine
 Mahnungen
-Kunden
-Material
-Maschinen
-Weiterverarbeitung
-Leistungen
-Vorlagen
+Datenbank
+Mehrplatzbetrieb
+API
 ```
 
-Regel:
+## Grundregeln
 
 ```text
-Ein Modul pro Schritt.
-Nach jedem Schritt Build testen und pushen.
+ein Modul pro Schritt
+keine Massenänderungen
+immer build testen
+immer pushen
+Doku aktuell halten
 ```

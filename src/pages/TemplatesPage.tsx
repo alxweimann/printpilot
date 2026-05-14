@@ -16,6 +16,7 @@ import { PageTabs } from "../layout/PageTabs";
 
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { DetailDrawer } from "../ui/DetailDrawer";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -78,6 +79,7 @@ export function TemplatesPage() {
   const { templates, updateTemplate } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
 
   const templateRowsByTab = useMemo(() => {
     return groupPrintPilotTemplatesByStatus(templates);
@@ -98,7 +100,6 @@ export function TemplatesPage() {
     sortedRows: sortedTemplateRows,
     sortConfig: templateSortConfig,
     requestSort: requestTemplateSort,
-    getAriaSort: getTemplateAriaSort,
   } = useSortableTable<PrintPilotTemplate, TemplateSortKey>({
     rows: templateRows,
     initialSortKey: "number",
@@ -114,12 +115,19 @@ export function TemplatesPage() {
     if (isTemplateTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
+      setIsDetailDrawerOpen(false);
     }
   }
 
   function handleTemplateSelect(templateId: string) {
     selectItem(templateId);
     setIsEditing(false);
+    setIsDetailDrawerOpen(true);
+  }
+
+  function handleCloseDetailDrawer() {
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   function handleResetDraft() {
@@ -141,6 +149,7 @@ export function TemplatesPage() {
     updateTemplate(savedTemplate);
     saveDraft(savedTemplate);
     setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   return (
@@ -164,98 +173,114 @@ export function TemplatesPage() {
           statusValue={isEditing ? "Bearbeitung offen" : activeTab}
         />
 
-        <div className="master-detail-layout">
-          <section className="workspace-panel master-list-panel">
-            <TableToolbar>
-              <Input className="search-input" placeholder="Vorlagen suchen..." />
+        <section className="workspace-panel master-list-panel">
+          <TableToolbar>
+            <Input className="search-input" placeholder="Vorlagen suchen..." />
+            <Button>Filter</Button>
+          </TableToolbar>
 
-              <Button>Filter</Button>
-            </TableToolbar>
+          <DataTable>
+            <thead>
+              <tr>
+                <SortableTableHeader
+                  label="Vorlagennr."
+                  sortKey="number"
+                  sortConfig={templateSortConfig}
+                  onSort={requestTemplateSort}
+                />
+                <SortableTableHeader
+                  label="Name"
+                  sortKey="name"
+                  sortConfig={templateSortConfig}
+                  onSort={requestTemplateSort}
+                />
+                <SortableTableHeader
+                  label="Typ"
+                  sortKey="type"
+                  sortConfig={templateSortConfig}
+                  onSort={requestTemplateSort}
+                />
+                <SortableTableHeader
+                  label="Bereich"
+                  sortKey="area"
+                  sortConfig={templateSortConfig}
+                  onSort={requestTemplateSort}
+                />
+                <SortableTableHeader
+                  label="Standard"
+                  sortKey="isDefault"
+                  sortConfig={templateSortConfig}
+                  onSort={requestTemplateSort}
+                />
+                <SortableTableHeader
+                  label="Status"
+                  sortKey="status"
+                  sortConfig={templateSortConfig}
+                  onSort={requestTemplateSort}
+                />
+              </tr>
+            </thead>
 
-            <DataTable>
-              <thead>
-                <tr>
-                  <th aria-sort={getTemplateAriaSort("number")}>
-                    <SortableTableHeader
-                      label="Vorlagennr."
-                      active={ templateSortConfig?.key === "number" }
-                      direction={ templateSortConfig?.direction }
-                      onClick={() => requestTemplateSort("number")}
-                    />
-                  </th>
-                  <th aria-sort={getTemplateAriaSort("name")}>
-                    <SortableTableHeader
-                      label="Name"
-                      active={ templateSortConfig?.key === "name" }
-                      direction={ templateSortConfig?.direction }
-                      onClick={() => requestTemplateSort("name")}
-                    />
-                  </th>
-                  <th aria-sort={getTemplateAriaSort("type")}>
-                    <SortableTableHeader
-                      label="Typ"
-                      active={ templateSortConfig?.key === "type" }
-                      direction={ templateSortConfig?.direction }
-                      onClick={() => requestTemplateSort("type")}
-                    />
-                  </th>
-                  <th aria-sort={getTemplateAriaSort("area")}>
-                    <SortableTableHeader
-                      label="Bereich"
-                      active={ templateSortConfig?.key === "area" }
-                      direction={ templateSortConfig?.direction }
-                      onClick={() => requestTemplateSort("area")}
-                    />
-                  </th>
-                  <th aria-sort={getTemplateAriaSort("isDefault")}>
-                    <SortableTableHeader
-                      label="Standard"
-                      active={ templateSortConfig?.key === "isDefault" }
-                      direction={ templateSortConfig?.direction }
-                      onClick={() => requestTemplateSort("isDefault")}
-                    />
-                  </th>
-                  <th aria-sort={getTemplateAriaSort("status")}>
-                    <SortableTableHeader
-                      label="Status"
-                      active={ templateSortConfig?.key === "status" }
-                      direction={ templateSortConfig?.direction }
-                      onClick={() => requestTemplateSort("status")}
-                    />
-                  </th>
-                </tr>
-              </thead>
+            <tbody>
+              {sortedTemplateRows.map((template) => {
+                const isSelected = template.id === selectedTemplate?.id;
 
-              <tbody>
-                {sortedTemplateRows.map((template) => {
-                  const isSelected = template.id === selectedTemplate?.id;
+                return (
+                  <tr
+                    key={template.id}
+                    className={isSelected ? "data-table-row-selected" : undefined}
+                    onClick={() => handleTemplateSelect(template.id)}
+                  >
+                    <td style={{ whiteSpace: "nowrap" }}>{template.number}</td>
+                    <td>{template.name}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{template.type}</td>
+                    <td>{template.area}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{template.isDefault}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <Badge variant={getPrintPilotStatusBadgeVariant(template.status)}>
+                        {template.status}
+                      </Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </DataTable>
+        </section>
+      </section>
 
-                  return (
-                    <tr
-                      key={template.id}
-                      className={
-                        isSelected ? "data-table-row-selected" : undefined
-                      }
-                      onClick={() => handleTemplateSelect(template.id)}
-                    >
-                      <td style={{ whiteSpace: "nowrap" }}>{template.number}</td>
-                      <td>{template.name}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>{template.type}</td>
-                      <td>{template.area}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>{template.isDefault}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>
-                        <Badge variant={getPrintPilotStatusBadgeVariant(template.status)}>
-                          {template.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </DataTable>
-          </section>
+      <DetailDrawer
+        open={isDetailDrawerOpen && Boolean(selectedTemplate)}
+        eyebrow="Vorlage"
+        title={selectedTemplate?.name ?? "Vorlage"}
+        subtitle={
+          selectedTemplate
+            ? `${selectedTemplate.number} · ${selectedTemplate.type}`
+            : undefined
+        }
+        onClose={handleCloseDetailDrawer}
+        size="xl"
+        footer={
+          <>
+            <DirtyStateNotice isDirty={isDirty} />
 
-          <section className="workspace-panel master-editor-panel">
+            <EditLockToggle
+              isEditing={isEditing}
+              onToggle={handleToggleEditing}
+            />
+
+            <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+
+            <SaveActionButton
+              isDirty={isDirty}
+              defaultLabel="Vorlage speichern"
+              onClick={handleSaveDraft}
+            />
+          </>
+        }
+      >
+        <div className="detail-drawer-stack">
+          <section className="detail-drawer-panel">
             <SectionHeader>Vorlagendaten</SectionHeader>
 
             <FieldGrid>
@@ -335,7 +360,9 @@ export function TemplatesPage() {
                 </Select>
               </Field>
             </FieldGrid>
+          </section>
 
+          <section className="detail-drawer-panel">
             <SectionHeader>Ausgabe</SectionHeader>
 
             <FieldGrid>
@@ -359,26 +386,9 @@ export function TemplatesPage() {
                 />
               </Field>
             </FieldGrid>
-
-            <div className="calculation-footer">
-              <DirtyStateNotice isDirty={isDirty} />
-
-              <EditLockToggle
-                isEditing={isEditing}
-                onToggle={handleToggleEditing}
-              />
-
-              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-
-              <SaveActionButton
-                isDirty={isDirty}
-                defaultLabel="Vorlage speichern"
-                onClick={handleSaveDraft}
-              />
-            </div>
           </section>
         </div>
-      </section>
+      </DetailDrawer>
     </div>
   );
 }

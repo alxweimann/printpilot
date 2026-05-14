@@ -110,3 +110,5 @@ Etiketten / Kartonaufkleber
 - Build-Baseline stabilisiert: Store-Typen, Tab-State-Typisierung, Maschinenfeld und CSS-Modul-Imports korrigiert.
 
 - Globale Sortier-Utilities eingeführt und Auftragsliste darauf umgestellt
+
+- Angebote: Angebotsliste nutzt jetzt die globale Sortierlogik für Angebot, Kunde, Betreff, Datum und Status

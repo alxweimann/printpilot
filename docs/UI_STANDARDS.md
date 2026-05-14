@@ -37,3 +37,24 @@ Tab-Wechsel: Sortierung bleibt auf der Seite erhalten
 ```
 
 Die Auftragsliste ist der erste umgestellte Bereich. Weitere Tabellen sollen schrittweise auf dieselben Utilities nachgezogen werden.
+
+## Globale Tabellensortierung: Angebote
+
+Die Angebotsliste nutzt den zentralen Sortierstandard aus:
+
+```txt
+src/ui/useSortableTable.ts
+src/ui/SortableTableHeader.tsx
+```
+
+Sortierbare Spalten:
+
+```txt
+Angebot
+Kunde
+Betreff
+Datum
+Status
+```
+
+Die Sortierung funktioniert wie bei den Aufträgen: erster Klick aufsteigend, zweiter Klick absteigend.

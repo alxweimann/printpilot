@@ -106,3 +106,4 @@ Erledigt: ConfirmDialog über DetailDrawer gelegt
 - Erledigt: Auftragsliste in allen Tabs sortierbar gemacht
 - Erledigt: Build-Baseline vor globaler Sortierung stabilisiert
 - In Arbeit: Globale Sortierung für alle Tabellen; Aufträge nutzen bereits die zentralen Sortier-Utilities
+- Erledigt: Angebotsliste auf globale Sortierlogik umgestellt

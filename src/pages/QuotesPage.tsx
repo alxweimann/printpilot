@@ -27,7 +27,9 @@ import { Input } from "../ui/Input";
 import { SaveActionButton } from "../ui/SaveActionButton";
 import { SectionHeader } from "../ui/SectionHeader";
 import { Select } from "../ui/Select";
+import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { DataTable, TableToolbar } from "../ui/Table";
+import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 const quoteTabs = [
@@ -39,6 +41,40 @@ const quoteTabs = [
 ] as const;
 
 type QuoteTab = "Alle Angebote" | PrintPilotQuoteStatus;
+
+type QuoteSortKey =
+  | "number"
+  | "customerName"
+  | "subject"
+  | "quoteDate"
+  | "status";
+
+const quoteSortLabels: Record<QuoteSortKey, string> = {
+  number: "Angebot",
+  customerName: "Kunde",
+  subject: "Betreff",
+  quoteDate: "Datum",
+  status: "Status",
+};
+
+function getQuoteSortValue(quote: PrintPilotQuote, key: QuoteSortKey) {
+  switch (key) {
+    case "number":
+      return quote.number;
+
+    case "customerName":
+      return quote.customerName;
+
+    case "subject":
+      return quote.subject;
+
+    case "quoteDate":
+      return quote.quoteDate;
+
+    case "status":
+      return quote.status;
+  }
+}
 
 function getQuoteTitle(tab: QuoteTab) {
   switch (tab) {
@@ -98,6 +134,16 @@ export function QuotesPage() {
   const existingOrderForSelectedQuote = selectedQuote
     ? orders.find((order) => order.quoteId === selectedQuote.id)
     : undefined;
+
+  const {
+    sortedRows: sortedQuoteRows,
+    sortConfig: quoteSortConfig,
+    requestSort: handleQuoteSort,
+    getAriaSort: getQuoteSortAriaValue,
+  } = useSortableTable<PrintPilotQuote, QuoteSortKey>({
+    rows: quoteRows,
+    getSortValue: getQuoteSortValue,
+  });
 
   function handleTabChange(tab: string) {
     if (isQuoteTab(tab)) {
@@ -227,16 +273,51 @@ export function QuotesPage() {
           <DataTable>
             <thead>
               <tr>
-                <th>Angebot</th>
-                <th>Kunde</th>
-                <th>Betreff</th>
-                <th>Datum</th>
-                <th>Status</th>
+                <th aria-sort={getQuoteSortAriaValue("number")}>
+                  <SortableTableHeader
+                    sortKey="number"
+                    label={quoteSortLabels.number}
+                    sortConfig={quoteSortConfig}
+                    onSort={handleQuoteSort}
+                  />
+                </th>
+                <th aria-sort={getQuoteSortAriaValue("customerName")}>
+                  <SortableTableHeader
+                    sortKey="customerName"
+                    label={quoteSortLabels.customerName}
+                    sortConfig={quoteSortConfig}
+                    onSort={handleQuoteSort}
+                  />
+                </th>
+                <th aria-sort={getQuoteSortAriaValue("subject")}>
+                  <SortableTableHeader
+                    sortKey="subject"
+                    label={quoteSortLabels.subject}
+                    sortConfig={quoteSortConfig}
+                    onSort={handleQuoteSort}
+                  />
+                </th>
+                <th aria-sort={getQuoteSortAriaValue("quoteDate")}>
+                  <SortableTableHeader
+                    sortKey="quoteDate"
+                    label={quoteSortLabels.quoteDate}
+                    sortConfig={quoteSortConfig}
+                    onSort={handleQuoteSort}
+                  />
+                </th>
+                <th aria-sort={getQuoteSortAriaValue("status")}>
+                  <SortableTableHeader
+                    sortKey="status"
+                    label={quoteSortLabels.status}
+                    sortConfig={quoteSortConfig}
+                    onSort={handleQuoteSort}
+                  />
+                </th>
               </tr>
             </thead>
 
             <tbody>
-              {quoteRows.map((quote) => {
+              {sortedQuoteRows.map((quote) => {
                 const isSelected =
                   isDetailDrawerOpen && quote.id === selectedQuote?.id;
 

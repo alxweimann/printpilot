@@ -77,10 +77,9 @@ export function Sidebar({ activePage, onNavigate }: SidebarProps) {
       </nav>
 
       <div className="sidebar-led-clock" aria-label="Aktuelles Datum und Uhrzeit">
-        <div className="sidebar-led-label">Systemzeit</div>
         <div className="sidebar-led-display">
-          <div className="sidebar-led-date">{ledDate}</div>
-          <div className="sidebar-led-time">{ledTime}</div>
+          <div className="sidebar-led-line">{ledDate}</div>
+          <div className="sidebar-led-line">{ledTime}</div>
         </div>
       </div>
     </aside>

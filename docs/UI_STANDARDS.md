@@ -1,45 +1,59 @@
-# Ui Standards
+# UI Standards
 
-## Sidebar LED-Anzeige
+## CSS-Import Standard
 
-Die Sidebar zeigt unten Datum und Uhrzeit als reduzierte LED-Anzeige.
+Direkte Side-Effect-CSS-Imports in UI-Komponenten werden aktuell vermieden, weil der TypeScript-Build im Projekt diese Imports mit `TS2882` blockiert.
 
-Standard:
+Betroffen waren:
 
-```text
-kein zusätzliches Label wie „Systemzeit“
-kein äußerer Rahmen um die Anzeige
-Datum und Uhrzeit gleich breit
-zwei kompakte LED-Zeilen
-ruhiger dunkler Hintergrund je Zeile
+```txt
+src/ui/DetailDrawer.tsx
+src/ui/Table.tsx
 ```
 
-## Sidebar LED-Anzeige ohne Rahmen
+Die direkten Imports wurden entfernt:
 
-Die LED-Anzeige in der Sidebar besteht nur aus leuchtendem Text.
-
-Standard:
-
-```text
-kein äußerer Rahmen
-kein Hintergrundbalken je Zeile
-kein Kasten um Datum/Uhrzeit
-Datum und Uhrzeit gleich breit
-größere LED-Ziffern
-zentrierte Darstellung
+```ts
+import "./detailDrawer.css";
+import "./table.css";
 ```
 
-## Sidebar LED-Anzeige Breite und Glow
+Die Komponenten bleiben funktional erhalten. Die CSS-Dateien können als Platzhalter liegen bleiben, werden aber nicht mehr direkt importiert.
+## Sortierbare Tabellen
 
-Datum und Uhrzeit werden als gleich breite LED-Zeilen dargestellt.
+Für sortierbare Tabellen werden zentrale UI-Bausteine verwendet:
 
-Aktueller Standard:
-
-```text
-Zeilenbreite: 138px
-Schriftgröße: 16px
-Glow deutlich reduziert
-kein Rahmen
-kein Hintergrundbalken
-zentrierte Darstellung
+```txt
+src/ui/useSortableTable.ts
+src/ui/SortableTableHeader.tsx
 ```
+
+Standardverhalten:
+
+```txt
+1. Klick auf Spaltenkopf: aufsteigend sortieren
+2. Klick auf denselben Spaltenkopf: absteigend sortieren
+Tab-Wechsel: Sortierung bleibt auf der Seite erhalten
+```
+
+Die Auftragsliste ist der erste umgestellte Bereich. Weitere Tabellen sollen schrittweise auf dieselben Utilities nachgezogen werden.
+
+## Stabilisierter Tabellen-/Drawer-Standard
+
+Für alle Drawer-Seiten gilt:
+
+```tsx
+<tr>
+  <SortableTableHeader ... />
+</tr>
+```
+
+Nicht erlaubt:
+
+```tsx
+<th>
+  <SortableTableHeader ... />
+</th>
+```
+
+`DetailDrawer` wird per React Portal in `document.body` gerendert, damit Seitenlayouts und Scrollcontainer die Position nicht beeinflussen.

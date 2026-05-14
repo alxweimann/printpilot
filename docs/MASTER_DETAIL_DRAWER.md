@@ -1,35 +1,281 @@
-# Master-Detail-Drawer
+# Master-Detail Drawer Standard
 
-Stand: 14.05.2026
+## Ziel
 
-## Aktueller Standard
+PrintPilot soll perspektivisch einen einheitlichen Master-Detail-Standard bekommen.
 
-Der DetailDrawer wird per React Portal direkt an `document.body` gerendert.
+Die Tabellenansicht ist dabei die Hauptarbeitsfläche.
 
-Dadurch hängt der Drawer nicht mehr innerhalb einzelner Seitenlayouts oder Scrollcontainer und kann nicht mehr unten im normalen Dokumentfluss erscheinen.
+Beim Klick auf eine Tabellenzeile öffnet sich rechts ein Detail-Drawer.
 
-## Layout
+## Zielbild
 
-```txt
-fixed rechts
-Overlay über der App
-Drawer-Panel rechts
-Content scrollt im Drawer
-Footer bleibt unten im Drawer
+```text
+Tabelle über volle Breite
+Zeile anklicken
+Detail-Drawer öffnet rechts
+Tabelle bleibt sichtbar
+Drawer kann geschlossen werden
 ```
 
-## Bereits umgesetzt
+## Warum
 
-```txt
+Das bisherige Layout mit fester Tabelle links und festem Editor rechts macht die Tabellen unnötig schmal.
+
+Der Drawer-Ansatz ist besser für:
+
+```text
+mehr Tabellenbreite
+weniger gequetschte Spalten
+ruhigere Übersicht
+moderne Bedienung
+bessere Skalierung auf viele Datensätze
+```
+
+## Grundprinzip
+
+```text
+Liste / Tabelle = Hauptansicht
+Detail-Drawer = Bearbeiten / Prüfen / Aktionen
+```
+
+## Betroffene Module
+
+Der Standard soll perspektivisch gelten für:
+
+```text
 Angebote
 Aufträge
 Rechnungen
 Lieferscheine
 Mahnungen
+Kunden
+Material
+Maschinen
+Weiterverarbeitung
+Leistungen
+Vorlagen
 ```
 
-## Technische Regel
+## Geplante UI-Komponente
 
-`DetailDrawer` darf nicht von externen CSS-Dateien abhängen, wenn es um kritische Positionierung geht.
+```text
+src/ui/DetailDrawer.tsx
+```
 
-Kritische Styles liegen direkt in `src/ui/DetailDrawer.tsx`.
+Mögliche Props:
+
+```ts
+type DetailDrawerProps = {
+  open: boolean;
+  title: string;
+  subtitle?: string;
+  status?: string;
+  onClose: () => void;
+  children: React.ReactNode;
+};
+```
+
+## Verhalten
+
+```text
+Klick auf Tabellenzeile
+ausgewählter Datensatz wird gesetzt
+Drawer öffnet
+Bearbeitungsmodus ist zunächst gesperrt
+Schloss öffnet Bearbeitung
+Speichern aktualisiert Store
+Schließen verwirft keine gespeicherten Daten
+```
+
+## Bestehende Logik bleibt erhalten
+
+Der Drawer ersetzt nicht die fachliche Logik.
+
+Weiterhin gültig:
+
+```text
+Edit-Lock
+Dirty-State
+Speichern
+Änderungen verwerfen
+ConfirmDialog für kritische Aktionen
+Status-Badges
+localStorage-Persistenz
+```
+
+## Aufträge
+
+Bei Aufträgen bleibt bestehen:
+
+```text
+Freigabe-Dropdown
+Übergabe-Dropdown
+Maschinen-Dropdown
+Status-Dropdown
+Warnung bei Produktion ohne gültige Freigabe
+ConfirmDialog
+```
+
+Nur die Darstellung ändert sich:
+
+```text
+fester rechter Editor → rechter Drawer
+```
+
+## Angebote
+
+Bei Angeboten bleibt bestehen:
+
+```text
+Alle Angebote
+Status-Tabs
+Angebot → Auftrag
+Dublettenwarnung bei erneutem Auftrag
+ConfirmDialog
+```
+
+Nur die Darstellung ändert sich:
+
+```text
+fester rechter Editor → rechter Drawer
+```
+
+## Rechnungen / Lieferscheine / Mahnungen
+
+Für spätere Ausgabedokumente ist der Drawer besonders sinnvoll.
+
+Mögliche Aktionen im Drawer:
+
+```text
+PDF erstellen
+Drucken
+E-Mail senden
+Status ändern
+Zahlung prüfen
+Versand prüfen
+Mahnstufe prüfen
+```
+
+## Umsetzungsstand
+
+```text
+Erledigt: DetailDrawer-Komponente gebaut
+Erledigt: Angebote auf Drawer-Layout umgestellt
+Erledigt: Aufträge auf Drawer-Layout umgestellt
+Nächster Schritt: Rechnungen vorbereiten
+Danach: Lieferscheine vorbereiten
+Danach: Mahnungen vorbereiten
+Danach: Kunden / Material / Maschinen / Leistungen / Vorlagen nachziehen
+```
+
+## Wichtig
+
+```text
+Ein Modul pro Schritt.
+Keine Massenänderung.
+Nach jedem Modul Build testen.
+Nach jedem Modul pushen.
+```
+
+## Akzeptanzkriterien
+
+Für ein umgestelltes Modul gilt:
+
+```text
+Tabelle nutzt volle Breite
+Klick auf Zeile öffnet Drawer
+Drawer zeigt vollständige Details
+Bearbeiten funktioniert wie vorher
+Speichern funktioniert wie vorher
+Schließen funktioniert zuverlässig
+Statuswechsel / Warnungen funktionieren weiterhin
+```
+
+## Dialog-Ebenen / z-index
+
+Kritische Dialoge wie `ConfirmDialog` müssen immer über dem Detail-Drawer liegen.
+
+Aktueller Layer-Standard:
+
+```text
+DetailDrawer Root: z-index 1000
+DetailDrawer Panel: z-index 1001
+ConfirmDialog: z-index 3000
+```
+
+Damit bleiben Warnungen, Dublettenhinweise und kritische Speicherabfragen auch dann sichtbar und bedienbar, wenn ein Drawer geöffnet ist.
+
+## Speichern im Drawer
+
+Bei Aufträgen schließt ein erfolgreicher Speichervorgang den Detail-Drawer automatisch.
+
+Das gilt auch für den Warn-Dialog `Auftrag ohne gültige Freigabe`: Wird dort `Trotzdem speichern` bestätigt, wird der Auftrag gespeichert, der Dialog geschlossen und der Drawer eingefahren.
+
+Die Tabellenansicht bleibt anschließend die Hauptansicht.
+
+## Auftrags-Drawer Feldreihenfolge
+
+Im Bereich `Produktion` gilt die Reihenfolge:
+
+```text
+Maschine | Priorität
+Freigabe | Übergabe
+```
+
+Die Freigabe steht damit bewusst vor der Übergabe in Produktion.
+
+## Status-Badge Standard
+
+Status-Badges dürfen nicht aus einzelnen Testdaten (`badgeVariant`) abgeleitet werden, weil derselbe Status sonst unterschiedlich aussehen kann.
+
+Für Aufträge gilt die feste Zuordnung:
+
+```text
+Neu            → neutral
+In Produktion  → success
+Wartet         → warning
+Fertig         → success
+Archiv         → neutral
+```
+
+Damit sieht `In Produktion` überall gleich aus.
+
+## Sortierbare Tabellen im Master-Detail-Layout
+
+Tabellen in Master-Detail-Seiten sollen innerhalb aller Tabs sortierbar sein.
+
+Für die Auftragsübersicht ist umgesetzt:
+
+```text
+Auftrag      sortierbar
+Kunde        sortierbar
+Produkt      sortierbar
+Fällig       sortierbar
+Freigabe     sortierbar
+Status       sortierbar
+```
+
+Ein Klick auf den Spaltenkopf sortiert aufsteigend. Ein weiterer Klick auf dieselbe Spalte sortiert absteigend.
+
+Die aktive Sortierung bleibt beim Wechsel zwischen Tabs erhalten, sodass z. B. `In Produktion`, `Wartet` oder `Archiv` nach derselben Logik sortiert werden können.
+
+## Stabilisierung 14.05.2026
+
+Der Master-Detail-Drawer-Standard ist für die Kern- und Stammdatenbereiche vereinheitlicht.
+
+```text
+Angebote
+Aufträge
+Rechnungen
+Lieferscheine
+Mahnungen
+Kunden
+Material
+Maschinen
+Weiterverarbeitung
+Leistungen
+Vorlagen
+```
+
+Alle Drawer werden über den Portal-Drawer rechts geöffnet. Alte untere Editorbereiche sind auf den Drawer-Seiten entfernt.

@@ -94,6 +94,9 @@ export function SortableTableHeader<TSortKey extends string = string>({
         ? "justify-center text-center"
         : "justify-start text-left";
 
+  const cellTextAlign: CSSProperties["textAlign"] =
+    align === "right" ? "right" : align === "center" ? "center" : "left";
+
   function handleSort() {
     if (onClick) {
       onClick();
@@ -127,7 +130,10 @@ export function SortableTableHeader<TSortKey extends string = string>({
           : undefined
       }
       className={["px-4 py-3", className].join(" ")}
-      style={isSortable ? clickableHeaderCellStyle : headerCellStyle}
+      style={{
+        ...(isSortable ? clickableHeaderCellStyle : headerCellStyle),
+        textAlign: cellTextAlign,
+      }}
     >
       <span
         className={[
@@ -138,20 +144,38 @@ export function SortableTableHeader<TSortKey extends string = string>({
         ].join(" ")}
         style={headerTextStyle}
       >
-        <span style={headerTextStyle}>{label}</span>
+        <span
+          style={{
+            ...headerTextStyle,
+            position: "relative",
+            display: "inline-flex",
+            alignItems: "center",
+          }}
+        >
+          <span style={headerTextStyle}>{label}</span>
 
-        {isSortable && (
-          <span
-            aria-hidden="true"
-            className={[
-              "ml-8 inline-flex w-4 justify-center text-[11px] leading-none",
-              isActive ? "opacity-90" : "opacity-35",
-            ].join(" ")}
-            style={headerTextStyle}
-          >
-            {indicator}
-          </span>
-        )}
+          {isSortable && (
+            <span
+              aria-hidden="true"
+              style={{
+                ...headerTextStyle,
+                position: "absolute",
+                left: "calc(100% + 10px)",
+                top: "50%",
+                transform: "translateY(-50%)",
+                display: "inline-flex",
+                width: "16px",
+                minWidth: "16px",
+                justifyContent: "center",
+                fontSize: "11px",
+                lineHeight: 1,
+                opacity: isActive ? 0.9 : 0.35,
+              }}
+            >
+              {indicator}
+            </span>
+          )}
+        </span>
       </span>
     </th>
   );

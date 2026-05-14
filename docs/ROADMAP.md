@@ -4,4 +4,9 @@
 - Erledigt: Abstand zwischen Spaltentitel und Sortierpfeil vergrößert
 - Erledigt: Sortier-Header Cursor/Unterstrich optisch bereinigt
 - Erledigt: Sortier-Header ohne Button-/Role-Wrapper final bereinigt
-- Erledigt: Sortierpfeile dauerhaft sichtbar und mit größerem Textabstand gesetzt
+- Erledigt: Sortierpfeile dauerhaft sichtbar und mit größerem Textabstand gesetzt\n- Erledigt: Sortierpfeil-Abstand per Inline-Style stabilisiert\n
+- Erledigt: Sortierpfeil-Abstand auf ausgewogenen Mittelwert reduziert
+- Erledigt: Sortierpfeil-Abstand final auf 10px gesetzt
+- Erledigt: Sortierbare Tabellenüberschriften bündig zu Tabellenzellen ausgerichtet
+- Erledigt: Sortierbare Tabellenköpfe per th-text-align bündig ausgerichtet
+- Erledigt: Sortierpfeil beeinflusst die Header-Bündigkeit nicht mehr

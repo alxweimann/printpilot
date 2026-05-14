@@ -82,4 +82,76 @@ aktive Spalte absteigend: ↓
 Abstand Text zu Pfeil: großzügig, nicht direkt am Wort
 ```
 
-Der Klickbereich bleibt die gesamte Tabellenkopf-Zelle (`th`). Es gibt keinen Buttonrahmen, keine Unterstreichung und keinen Textcursor.
+Der Klickbereich bleibt die gesamte Tabellenkopf-Zelle (`th`). Es gibt keinen Buttonrahmen, keine Unterstreichung und keinen Textcursor.\n\n## Stabiler Sortierpfeil-Abstand\n\nDer Abstand zwischen Spaltenbeschriftung und Sortierpfeil wird im `SortableTableHeader` inline gesetzt, damit globale Tabellen- oder Button-Styles ihn nicht überschreiben.\n\nAktueller Standard:\n\n```text\nmargin-left: 10px\nPfeilbreite: 16px\nPfeile immer sichtbar\nkein Textcursor\nkein Buttonrahmen\nkeine Unterstreichung\n```\n
+
+## Finaler Sortierpfeil-Abstand
+
+Der Abstand zwischen Spaltenbeschriftung und Sortierpfeil ist auf einen ausgewogenen Mittelwert gesetzt.
+
+Aktueller Standard:
+
+```text
+margin-left: 10px
+Pfeilbreite: 16px
+Pfeile immer sichtbar
+kein Textcursor
+kein Buttonrahmen
+keine Unterstreichung
+```
+
+## Finaler Sortierpfeil-Abstand 10px
+
+Der Abstand zwischen Spaltenbeschriftung und Sortierpfeil ist final auf 10px gesetzt.
+
+Aktueller Standard:
+
+```text
+margin-left: 10px
+Pfeilbreite: 16px
+Pfeile immer sichtbar
+kein Textcursor
+kein Buttonrahmen
+keine Unterstreichung
+```
+
+## Bündigkeit sortierbarer Tabellenköpfe
+
+Sortierbare Tabellenköpfe müssen mit den darunterliegenden Zellinhalten bündig beginnen.
+
+Standard:
+
+```text
+Header linksbündig zur Spalte
+kein optischer Versatz durch Pfeil/Wrapper
+Pfeil steht rechts neben dem Label mit 10px Abstand
+Klickbereich bleibt die Tabellenkopf-Zelle
+```
+
+## Textausrichtung in sortierbaren Tabellenköpfen
+
+Sortierbare Tabellenköpfe setzen die Textausrichtung direkt auf der `th`-Zelle.
+
+Grund: Browser setzen `th` häufig standardmäßig auf `text-align: center`. Dadurch kann ein Header optisch mittig stehen, obwohl der innere Inhalt linksbündig definiert ist.
+
+Standard:
+
+```text
+align="left"   → th text-align: left
+align="center" → th text-align: center
+align="right"  → th text-align: right
+```
+
+## Sortierpfeil ohne optischen Versatz
+
+Der Sortierpfeil wird absolut rechts neben dem Spaltenlabel positioniert.
+
+Dadurch bleibt die Beschriftung selbst exakt an der gewünschten Spaltenausrichtung und wird nicht durch die Pfeilbreite verschoben.
+
+Standard:
+
+```text
+Label bestimmt die optische Ausrichtung
+Pfeil steht rechts neben dem Label
+Pfeil-Abstand: 10px
+Pfeil beeinflusst Label-Breite nicht
+```

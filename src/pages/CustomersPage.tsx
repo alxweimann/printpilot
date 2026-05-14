@@ -16,6 +16,7 @@ import { PageTabs } from "../layout/PageTabs";
 
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { DetailDrawer } from "../ui/DetailDrawer";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -74,6 +75,7 @@ export function CustomersPage() {
   const { customers, updateCustomer } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
 
   const customerRowsByTab = useMemo(() => {
     return groupPrintPilotCustomersByStatus(customers);
@@ -94,7 +96,6 @@ export function CustomersPage() {
     sortedRows: sortedCustomerRows,
     sortConfig: customerSortConfig,
     requestSort: requestCustomerSort,
-    getAriaSort: getCustomerAriaSort,
   } = useSortableTable<PrintPilotCustomer, CustomerSortKey>({
     rows: customerRows,
     initialSortKey: "number",
@@ -110,12 +111,19 @@ export function CustomersPage() {
     if (isCustomerTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
+      setIsDetailDrawerOpen(false);
     }
   }
 
   function handleCustomerSelect(customerId: string) {
     selectItem(customerId);
     setIsEditing(false);
+    setIsDetailDrawerOpen(true);
+  }
+
+  function handleCloseDetailDrawer() {
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   function handleResetDraft() {
@@ -137,6 +145,7 @@ export function CustomersPage() {
     updateCustomer(savedCustomer);
     saveDraft(savedCustomer);
     setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   return (
@@ -160,80 +169,100 @@ export function CustomersPage() {
           statusValue={isEditing ? "Bearbeitung offen" : activeTab}
         />
 
-        <div className="master-detail-layout">
-          <section className="workspace-panel master-list-panel">
-            <TableToolbar>
-              <Input className="search-input" placeholder="Kunden suchen..." />
+        <section className="workspace-panel master-list-panel">
+          <TableToolbar>
+            <Input className="search-input" placeholder="Kunden suchen..." />
+            <Button>Filter</Button>
+          </TableToolbar>
 
-              <Button>Filter</Button>
-            </TableToolbar>
+          <DataTable>
+            <thead>
+              <tr>
+                <SortableTableHeader
+                  label="Kundennr."
+                  sortKey="number"
+                  sortConfig={customerSortConfig}
+                  onSort={requestCustomerSort}
+                />
+                <SortableTableHeader
+                  label="Name"
+                  sortKey="name"
+                  sortConfig={customerSortConfig}
+                  onSort={requestCustomerSort}
+                />
+                <SortableTableHeader
+                  label="Ort"
+                  sortKey="city"
+                  sortConfig={customerSortConfig}
+                  onSort={requestCustomerSort}
+                />
+                <SortableTableHeader
+                  label="Status"
+                  sortKey="status"
+                  sortConfig={customerSortConfig}
+                  onSort={requestCustomerSort}
+                />
+              </tr>
+            </thead>
 
-            <DataTable>
-              <thead>
-                <tr>
-                  <th aria-sort={getCustomerAriaSort("number")}>
-                    <SortableTableHeader
-                      label="Kundennr."
-                      active={ customerSortConfig?.key === "number" }
-                      direction={ customerSortConfig?.direction }
-                      onClick={() => requestCustomerSort("number")}
-                    />
-                  </th>
-                  <th aria-sort={getCustomerAriaSort("name")}>
-                    <SortableTableHeader
-                      label="Name"
-                      active={ customerSortConfig?.key === "name" }
-                      direction={ customerSortConfig?.direction }
-                      onClick={() => requestCustomerSort("name")}
-                    />
-                  </th>
-                  <th aria-sort={getCustomerAriaSort("city")}>
-                    <SortableTableHeader
-                      label="Ort"
-                      active={ customerSortConfig?.key === "city" }
-                      direction={ customerSortConfig?.direction }
-                      onClick={() => requestCustomerSort("city")}
-                    />
-                  </th>
-                  <th aria-sort={getCustomerAriaSort("status")}>
-                    <SortableTableHeader
-                      label="Status"
-                      active={ customerSortConfig?.key === "status" }
-                      direction={ customerSortConfig?.direction }
-                      onClick={() => requestCustomerSort("status")}
-                    />
-                  </th>
-                </tr>
-              </thead>
+            <tbody>
+              {sortedCustomerRows.map((customer) => {
+                const isSelected = customer.id === selectedCustomer?.id;
 
-              <tbody>
-                {sortedCustomerRows.map((customer) => {
-                  const isSelected = customer.id === selectedCustomer?.id;
+                return (
+                  <tr
+                    key={customer.id}
+                    className={isSelected ? "data-table-row-selected" : undefined}
+                    onClick={() => handleCustomerSelect(customer.id)}
+                  >
+                    <td style={{ whiteSpace: "nowrap" }}>{customer.number}</td>
+                    <td>{customer.name}</td>
+                    <td>{customer.city}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <Badge variant={getPrintPilotStatusBadgeVariant(customer.status)}>
+                        {customer.status}
+                      </Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </DataTable>
+        </section>
+      </section>
 
-                  return (
-                    <tr
-                      key={customer.id}
-                      className={
-                        isSelected ? "data-table-row-selected" : undefined
-                      }
-                      onClick={() => handleCustomerSelect(customer.id)}
-                    >
-                      <td style={{ whiteSpace: "nowrap" }}>{customer.number}</td>
-                      <td>{customer.name}</td>
-                      <td>{customer.city}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>
-                        <Badge variant={getPrintPilotStatusBadgeVariant(customer.status)}>
-                          {customer.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </DataTable>
-          </section>
+      <DetailDrawer
+        open={isDetailDrawerOpen && Boolean(selectedCustomer)}
+        eyebrow="Kunde"
+        title={selectedCustomer?.name ?? "Kunde"}
+        subtitle={
+          selectedCustomer
+            ? `${selectedCustomer.number} · ${selectedCustomer.city}`
+            : undefined
+        }
+        onClose={handleCloseDetailDrawer}
+        size="xl"
+        footer={
+          <>
+            <DirtyStateNotice isDirty={isDirty} />
 
-          <section className="workspace-panel master-editor-panel">
+            <EditLockToggle
+              isEditing={isEditing}
+              onToggle={handleToggleEditing}
+            />
+
+            <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+
+            <SaveActionButton
+              isDirty={isDirty}
+              defaultLabel="Kunde speichern"
+              onClick={handleSaveDraft}
+            />
+          </>
+        }
+      >
+        <div className="detail-drawer-stack">
+          <section className="detail-drawer-panel">
             <SectionHeader>Kundendaten</SectionHeader>
 
             <FieldGrid>
@@ -282,7 +311,13 @@ export function CustomersPage() {
                   ))}
                 </Select>
               </Field>
+            </FieldGrid>
+          </section>
 
+          <section className="detail-drawer-panel">
+            <SectionHeader>Adresse</SectionHeader>
+
+            <FieldGrid>
               <Field label="Straße">
                 <Input
                   value={draft?.street ?? ""}
@@ -312,7 +347,13 @@ export function CustomersPage() {
                   }
                 />
               </Field>
+            </FieldGrid>
+          </section>
 
+          <section className="detail-drawer-panel">
+            <SectionHeader>Kontakt</SectionHeader>
+
+            <FieldGrid>
               <Field label="Ansprechpartner">
                 <Input
                   value={draft?.contact ?? ""}
@@ -344,7 +385,9 @@ export function CustomersPage() {
                 />
               </Field>
             </FieldGrid>
+          </section>
 
+          <section className="detail-drawer-panel">
             <SectionHeader>Konditionen</SectionHeader>
 
             <FieldGrid>
@@ -378,26 +421,9 @@ export function CustomersPage() {
                 </Select>
               </Field>
             </FieldGrid>
-
-            <div className="calculation-footer">
-              <DirtyStateNotice isDirty={isDirty} />
-
-              <EditLockToggle
-                isEditing={isEditing}
-                onToggle={handleToggleEditing}
-              />
-
-              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-
-              <SaveActionButton
-                isDirty={isDirty}
-                defaultLabel="Kunde speichern"
-                onClick={handleSaveDraft}
-              />
-            </div>
           </section>
         </div>
-      </section>
+      </DetailDrawer>
     </div>
   );
 }

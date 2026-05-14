@@ -262,3 +262,53 @@ erst kontrollierte Aktion
 keine automatische Magie
 ConfirmDialog für Umwandlung verwenden
 ```
+
+
+## Geplanter UI-Workflow: Detail-Drawer
+
+Der Master-Detail-Bereich soll perspektivisch auf einen Drawer-Standard umgestellt werden.
+
+Grundprinzip:
+
+```text
+Tabelle = Hauptarbeitsfläche
+Drawer = Details / Bearbeitung / Aktionen
+```
+
+Der Drawer soll später verwendet werden für:
+
+```text
+Angebote
+Aufträge
+Rechnungen
+Lieferscheine
+Mahnungen
+Kunden
+Material
+Maschinen
+Weiterverarbeitung
+Leistungen
+Vorlagen
+```
+
+Erste geplante Umsetzung:
+
+```text
+Aufträge
+```
+
+Danach:
+
+```text
+Angebote
+Rechnungen
+Lieferscheine
+Mahnungen
+```
+
+Wichtig:
+
+```text
+Die fachliche Logik bleibt erhalten.
+Nur die Detaildarstellung wandert vom festen rechten Bereich in einen Drawer.
+```

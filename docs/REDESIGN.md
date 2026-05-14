@@ -537,6 +537,71 @@ dann weiter
 
 ---
 
+
+
+---
+
+## Master-Detail Drawer Standard
+
+PrintPilot soll perspektivisch von festen Master-Detail-Bereichen auf einen einheitlichen Drawer-Standard umgestellt werden.
+
+Ziel:
+
+```text
+Tabellenansicht über volle Breite
+Zeile anklicken
+Details öffnen rechts als Drawer
+Tabelle bleibt Hauptansicht
+```
+
+Geplante zentrale Komponente:
+
+```text
+src/ui/DetailDrawer.tsx
+```
+
+Perspektivisch für:
+
+```text
+Angebote
+Aufträge
+Rechnungen
+Lieferscheine
+Mahnungen
+Kunden
+Material
+Maschinen
+Weiterverarbeitung
+Leistungen
+Vorlagen
+```
+
+Bestehende Logik bleibt erhalten:
+
+```text
+Edit-Lock
+Dirty-State
+Speichern
+Änderungen verwerfen
+ConfirmDialog
+Status-Badges
+Store-Persistenz
+```
+
+Erste Umstellung:
+
+```text
+Aufträge
+```
+
+Danach:
+
+```text
+Angebote
+Rechnungen / Lieferscheine / Mahnungen
+Stammdaten
+```
+
 ## Nächste sinnvolle Schritte
 
 Empfohlene Reihenfolge:

@@ -28,7 +28,7 @@ Auftrags-Freigabe-/Produktionslogik
 
 ## Nächster Meilenstein
 
-Modulverknüpfungen und produktionsnahe Workflows.
+Modulverknüpfungen, produktionsnahe Workflows und einheitlicher Detail-Drawer-Standard.
 
 ## Empfohlene Reihenfolge
 
@@ -321,4 +321,58 @@ Eine Verknüpfung pro Schritt.
 Keine Massenänderungen.
 Immer Build testen.
 Immer pushen.
+```
+
+
+---
+
+### UI-Meilenstein: Master-Detail Drawer Standard
+
+Ziel:
+
+```text
+Tabellen über volle Breite
+Detailansicht als rechter Drawer
+einheitliches Verhalten in allen Modulen
+```
+
+Geplante Komponente:
+
+```text
+src/ui/DetailDrawer.tsx
+```
+
+Umsetzungsreihenfolge:
+
+```text
+1. DetailDrawer-Komponente bauen
+2. Aufträge auf Drawer umstellen
+3. Angebote auf Drawer umstellen
+4. Rechnungen vorbereiten
+5. Lieferscheine vorbereiten
+6. Mahnungen vorbereiten
+7. Stammdaten nachziehen
+```
+
+Gilt perspektivisch für:
+
+```text
+Angebote
+Aufträge
+Rechnungen
+Lieferscheine
+Mahnungen
+Kunden
+Material
+Maschinen
+Weiterverarbeitung
+Leistungen
+Vorlagen
+```
+
+Regel:
+
+```text
+Ein Modul pro Schritt.
+Nach jedem Schritt Build testen und pushen.
 ```

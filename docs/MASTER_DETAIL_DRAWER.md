@@ -279,3 +279,31 @@ Vorlagen
 ```
 
 Alle Drawer werden über den Portal-Drawer rechts geöffnet. Alte untere Editorbereiche sind auf den Drawer-Seiten entfernt.
+
+## Modul-Akzent im Drawer
+
+Der Drawer übernimmt die Akzentfarbe des aktuellen Moduls.
+
+```text
+Angebote, Aufträge, Rechnungen, Lieferscheine, Mahnungen
+Kunden, Material, Maschinen, Weiterverarbeitung, Leistungen, Vorlagen
+```
+
+Die Farbe erscheint als dezente Kopflinie, leichter Header-Verlauf und Eyebrow-Akzent.
+
+## Innenakzente im Drawer
+
+Neben Header und Eyebrow verwenden auch Abschnittsmarkierungen und die primäre Drawer-Aktion die Modulfarbe.
+
+```text
+SectionHeader-Striche
+primärer Footer-Button
+```
+
+## SectionHeader-Akzent
+
+Die Abschnittsüberschriften im Drawer verwenden die echte `SectionHeader`-Klasse `.form-section-title` und werden auf die Modulfarbe gesetzt.
+
+## SectionHeader Inline-Akzent
+
+Die Abschnittsmarkierungen im Drawer werden direkt über `--detail-drawer-accent-color` gerendert. Dadurch übernehmen sie zuverlässig die Modulfarbe.

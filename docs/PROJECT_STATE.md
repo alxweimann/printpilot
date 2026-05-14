@@ -121,3 +121,11 @@ Kunden, Material, Maschinen, Weiterverarbeitung, Leistungen, Vorlagen und Mahnun
 alte untere Editorbereiche wurden auf diesen Seiten entfernt
 SortableTableHeader steht direkt im tr, ohne verschachtelte th-Struktur
 ```
+
+- DetailDrawer zeigt jetzt modulbezogene Akzentfarben im Header, basierend auf module.accentColor
+
+- Drawer-Innenakzente angebunden: Abschnittsstriche und primäre Footer-Aktion nutzen jetzt die Modulfarbe
+
+- SectionHeader im Drawer nutzt jetzt die tatsächliche form-section-title-Struktur für Modul-Akzentfarben
+
+- SectionHeader nutzt jetzt inline CSS-Variablen; Drawer-Abschnittsstriche übernehmen zuverlässig die Modulfarbe

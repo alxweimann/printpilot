@@ -244,6 +244,7 @@ export function MaterialPage() {
       </section>
 
       <DetailDrawer
+        accentColor={module.accentColor}
         open={isDetailDrawerOpen && Boolean(selectedMaterial)}
         eyebrow="Material"
         title={selectedMaterial?.name ?? "Material"}

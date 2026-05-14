@@ -479,6 +479,7 @@ export function OrdersPage() {
       </section>
 
       <DetailDrawer
+        accentColor={module.accentColor}
         open={isDetailDrawerOpen && Boolean(selectedOrder)}
         eyebrow="Auftrag"
         title={draft?.number ?? selectedOrder?.number ?? "Auftrag"}

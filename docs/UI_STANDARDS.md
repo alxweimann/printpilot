@@ -57,3 +57,56 @@ Nicht erlaubt:
 ```
 
 `DetailDrawer` wird per React Portal in `document.body` gerendert, damit Seitenlayouts und Scrollcontainer die Position nicht beeinflussen.
+
+## Drawer-Akzentfarben
+
+DetailDrawer verwendet die Akzentfarbe des jeweiligen Moduls.
+
+Standard:
+
+```text
+accentColor kommt aus module.accentColor
+farbige Kopflinie oben im Drawer
+dezenter Header-Wash
+Eyebrow-Text und kleiner Punkt in Modulfarbe
+keine flächige Überfärbung des Inhalts
+```
+
+## Drawer-Innenakzente
+
+Innerhalb des `DetailDrawer` werden auch die internen Akzente über die Modulfarbe gesteuert.
+
+Standard:
+
+```text
+Drawer-Kopflinie = module.accentColor
+Eyebrow = module.accentColor
+Abschnittsstriche = module.accentColor
+primärer Footer-Button = module.accentColor
+```
+
+So bleibt jeder Drawer farblich eindeutig dem aktuellen Modul zugeordnet.
+
+## SectionHeader im Drawer
+
+`SectionHeader` rendert als `.form-section-title`. Im `DetailDrawer` wird diese Klasse gezielt auf die aktuelle Modulfarbe gemappt.
+
+Standard:
+
+```text
+.form-section-title im Drawer = module.accentColor
+Abschnittsstrich = module.accentColor
+Button-Akzent = module.accentColor
+```
+
+## SectionHeader Inline-Akzent
+
+`SectionHeader` nutzt keine globale Akzentfarbe mehr aus `.form-section-title`, sondern rendert den Akzent direkt über CSS-Variablen.
+
+Standard:
+
+```text
+im Drawer: --detail-drawer-accent-color
+außerhalb: --item-accent oder Blau-Fallback
+keine feste cyan/blaue Section-Linie mehr
+```

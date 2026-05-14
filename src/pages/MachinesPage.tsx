@@ -241,6 +241,7 @@ export function MachinesPage() {
       </section>
 
       <DetailDrawer
+        accentColor={module.accentColor}
         open={isDetailDrawerOpen && Boolean(selectedMachine)}
         eyebrow="Maschine"
         title={selectedMachine?.name ?? "Maschine"}

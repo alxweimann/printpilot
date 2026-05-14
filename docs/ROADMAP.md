@@ -107,3 +107,7 @@ Erledigt: ConfirmDialog über DetailDrawer gelegt
 - Erledigt: Build-Baseline vor globaler Sortierung stabilisiert
 - In Arbeit: Globale Sortierung für alle Tabellen; Aufträge nutzen bereits die zentralen Sortier-Utilities
 - Stabilisiert: Drawer-Rollout für Stammdaten und Mahnungen auf aktuellen Portal-Drawer-Standard nachgezogen
+- Erledigt: Drawer-Akzentfarben je Modul angebunden
+- Erledigt: Drawer-Innenakzente und primäre Drawer-Aktion auf Modulfarbe umgestellt
+- Hotfix erledigt: Drawer-SectionHeader-Akzente auf Modulfarbe korrigiert
+- Hotfix erledigt: SectionHeader-Inline-Akzent für zuverlässige Drawer-Modulfarben

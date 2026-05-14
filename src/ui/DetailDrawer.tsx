@@ -12,6 +12,7 @@ type DetailDrawerProps = {
   footer?: ReactNode;
   onClose: () => void;
   size?: DetailDrawerSize;
+  accentColor?: string;
 };
 
 type DetailDrawerSectionProps = {
@@ -72,7 +73,8 @@ const headerStyle: CSSProperties = {
   flex: "0 0 auto",
   borderBottom: "1px solid #e5e7eb",
   padding: "22px 72px 20px 28px",
-  background: "#ffffff",
+  background:
+    "linear-gradient(180deg, rgba(248, 250, 252, 0.98) 0%, #ffffff 72%)",
 };
 
 const eyebrowStyle: CSSProperties = {
@@ -83,6 +85,39 @@ const eyebrowStyle: CSSProperties = {
   letterSpacing: "0.16em",
   textTransform: "uppercase",
 };
+
+const accentBarStyle: CSSProperties = {
+  position: "absolute",
+  top: 0,
+  left: 0,
+  right: 0,
+  height: "4px",
+  background: "var(--detail-drawer-accent-color)",
+  boxShadow: "0 0 18px var(--detail-drawer-accent-shadow)",
+};
+
+const accentGlowStyle: CSSProperties = {
+  position: "absolute",
+  top: 0,
+  left: 0,
+  right: 0,
+  height: "76px",
+  background:
+    "linear-gradient(180deg, var(--detail-drawer-accent-wash) 0%, rgba(255, 255, 255, 0) 100%)",
+  pointerEvents: "none",
+};
+
+const accentDotStyle: CSSProperties = {
+  display: "inline-block",
+  width: "8px",
+  height: "8px",
+  marginRight: "9px",
+  borderRadius: "999px",
+  background: "var(--detail-drawer-accent-color)",
+  boxShadow: "0 0 10px var(--detail-drawer-accent-shadow)",
+  verticalAlign: "1px",
+};
+
 
 const titleStyle: CSSProperties = {
   margin: 0,
@@ -219,13 +254,23 @@ export function DetailDrawer({
   footer,
   onClose,
   size = "lg",
+  accentColor = "#4f46e5",
 }: DetailDrawerProps) {
   if (!open || typeof document === "undefined") {
     return null;
   }
 
+  const drawerAccentStyle = {
+    "--detail-drawer-accent-color": accentColor,
+    "--detail-drawer-accent-shadow": `${accentColor}66`,
+    "--detail-drawer-accent-wash": `${accentColor}14`,
+  } as CSSProperties;
+
   const drawer = (
-    <div className="detail-drawer-root" style={rootStyle}>
+    <div
+      className="detail-drawer-root"
+      style={{ ...rootStyle, ...drawerAccentStyle }}
+    >
       <style>
         {`
           @keyframes printpilotDetailDrawerIn {
@@ -239,6 +284,69 @@ export function DetailDrawer({
               transform: translateX(0);
             }
           }
+
+          .detail-drawer .detail-drawer-panel .section-header,
+          .detail-drawer .workspace-panel .section-header {
+            border-left-color: var(--detail-drawer-accent-color) !important;
+          }
+
+          .detail-drawer .detail-drawer-panel .section-header::before,
+          .detail-drawer .workspace-panel .section-header::before {
+            background: var(--detail-drawer-accent-color) !important;
+            box-shadow: 0 0 10px var(--detail-drawer-accent-shadow) !important;
+          }
+
+          .detail-drawer .detail-drawer-panel h3,
+          .detail-drawer .workspace-panel h3 {
+            border-left-color: var(--detail-drawer-accent-color) !important;
+          }
+
+          .detail-drawer .detail-drawer-content [class*="section"] h2::before,
+          .detail-drawer .detail-drawer-content [class*="section"] h3::before,
+          .detail-drawer .detail-drawer-content [class*="Section"] h2::before,
+          .detail-drawer .detail-drawer-content [class*="Section"] h3::before {
+            background: var(--detail-drawer-accent-color) !important;
+          }
+
+          .detail-drawer .detail-drawer-content [class*="section"],
+          .detail-drawer .detail-drawer-content [class*="Section"] {
+            --item-accent: var(--detail-drawer-accent-color);
+          }
+
+          .detail-drawer .section-title,
+          .detail-drawer .section-header-title {
+            --item-accent: var(--detail-drawer-accent-color);
+          }
+
+          .detail-drawer-footer button[class*="save"],
+          .detail-drawer-footer button[class*="primary"],
+          .detail-drawer-footer button:last-child {
+            border-color: var(--detail-drawer-accent-color) !important;
+            background: var(--detail-drawer-accent-color) !important;
+            box-shadow: 0 10px 24px var(--detail-drawer-accent-shadow) !important;
+          }
+
+          .detail-drawer-footer button[class*="save"]:hover,
+          .detail-drawer-footer button[class*="primary"]:hover,
+          .detail-drawer-footer button:last-child:hover {
+            filter: brightness(0.96);
+          }
+
+
+          .detail-drawer .form-section-title {
+            border-color: var(--detail-drawer-accent-color) !important;
+          }
+
+          .detail-drawer .form-section-title::before {
+            background: var(--detail-drawer-accent-color) !important;
+            box-shadow: 0 0 10px var(--detail-drawer-accent-shadow) !important;
+          }
+
+          .detail-drawer .form-section-title::after {
+            border-color: var(--detail-drawer-accent-color) !important;
+            background: var(--detail-drawer-accent-color) !important;
+          }
+
 
           @media (max-width: 760px) {
             .detail-drawer {
@@ -277,9 +385,19 @@ export function DetailDrawer({
         }}
       >
         <header className="detail-drawer-header" style={headerStyle}>
+          <div aria-hidden="true" style={accentGlowStyle} />
+          <div aria-hidden="true" style={accentBarStyle} />
+
           <div className="detail-drawer-title-block">
             {eyebrow ? (
-              <div className="detail-drawer-eyebrow" style={eyebrowStyle}>
+              <div
+                className="detail-drawer-eyebrow"
+                style={{
+                  ...eyebrowStyle,
+                  color: "var(--detail-drawer-accent-color)",
+                }}
+              >
+                <span aria-hidden="true" style={accentDotStyle} />
                 {eyebrow}
               </div>
             ) : null}

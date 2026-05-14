@@ -253,6 +253,7 @@ export function ServicesPage() {
       </section>
 
       <DetailDrawer
+        accentColor={module.accentColor}
         open={isDetailDrawerOpen && Boolean(selectedService)}
         eyebrow="Leistung"
         title={selectedService?.name ?? "Leistung"}

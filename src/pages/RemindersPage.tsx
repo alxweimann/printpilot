@@ -348,6 +348,7 @@ export function RemindersPage() {
       </section>
 
       <DetailDrawer
+        accentColor={module.accentColor}
         open={isDetailDrawerOpen && Boolean(selectedReminder)}
         eyebrow="Mahnung"
         title={selectedReminder?.number ?? "Mahnung"}

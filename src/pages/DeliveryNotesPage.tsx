@@ -355,6 +355,7 @@ export function DeliveryNotesPage() {
       </section>
 
       <DetailDrawer
+        accentColor={module.accentColor}
         open={isDetailDrawerOpen && Boolean(selectedDeliveryNote)}
         eyebrow="Lieferschein"
         title={selectedDeliveryNote?.number ?? "Lieferschein"}

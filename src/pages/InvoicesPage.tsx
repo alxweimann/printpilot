@@ -373,6 +373,7 @@ export function InvoicesPage() {
       </section>
 
       <DetailDrawer
+        accentColor={module.accentColor}
         open={isDetailDrawerOpen && Boolean(selectedInvoice)}
         eyebrow="Rechnung"
         title={draft?.number ?? selectedInvoice?.number ?? "Rechnung"}

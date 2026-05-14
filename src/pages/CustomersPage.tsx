@@ -232,6 +232,7 @@ export function CustomersPage() {
       </section>
 
       <DetailDrawer
+        accentColor={module.accentColor}
         open={isDetailDrawerOpen && Boolean(selectedCustomer)}
         eyebrow="Kunde"
         title={selectedCustomer?.name ?? "Kunde"}

@@ -337,6 +337,7 @@ export function QuotesPage() {
       </section>
 
       <DetailDrawer
+        accentColor={module.accentColor}
         open={isDetailDrawerOpen && Boolean(selectedQuote)}
         eyebrow="Angebot"
         title={draft?.number ?? selectedQuote?.number ?? "Angebot"}

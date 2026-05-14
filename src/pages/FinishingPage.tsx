@@ -244,6 +244,7 @@ export function FinishingPage() {
       </section>
 
       <DetailDrawer
+        accentColor={module.accentColor}
         open={isDetailDrawerOpen && Boolean(selectedProcess)}
         eyebrow="Weiterverarbeitung"
         title={selectedProcess?.name ?? "Weiterverarbeitung"}

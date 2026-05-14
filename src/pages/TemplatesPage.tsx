@@ -250,6 +250,7 @@ export function TemplatesPage() {
       </section>
 
       <DetailDrawer
+        accentColor={module.accentColor}
         open={isDetailDrawerOpen && Boolean(selectedTemplate)}
         eyebrow="Vorlage"
         title={selectedTemplate?.name ?? "Vorlage"}

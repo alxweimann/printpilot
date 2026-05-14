@@ -105,5 +105,5 @@ Erledigt: ConfirmDialog über DetailDrawer gelegt
 - Erledigt: Auftragsstatus-Badges vereinheitlicht
 - Erledigt: Auftragsliste in allen Tabs sortierbar gemacht
 - Erledigt: Build-Baseline vor globaler Sortierung stabilisiert
-- In Arbeit: Globale Sortierung für alle Tabellen; Aufträge nutzen bereits die zentralen Sortier-Utilities
-- Erledigt: Angebotsliste auf globale Sortierlogik umgestellt
+- Erledigt: Globale Sortierung auf Stammdaten-/Verwaltungsseiten ausgerollt
+- Hotfix erledigt: SortableTableHeader vollständig kompatibel für Aufträge, Angebote und Stammdaten gemacht

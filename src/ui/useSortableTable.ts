@@ -2,76 +2,57 @@ import { useMemo, useState } from "react";
 
 export type SortDirection = "asc" | "desc";
 
-export type SortConfig<TKey extends string> = {
-  key: TKey;
+export type SortConfig<TSortKey extends string> = {
+  key: TSortKey;
   direction: SortDirection;
 } | null;
 
-type SortableValue = string | number | Date | null | undefined;
+export type SortValue = string | number | boolean | Date | null | undefined;
 
-type UseSortableTableOptions<TRow, TKey extends string> = {
-  rows: TRow[];
-  getSortValue: (row: TRow, key: TKey) => SortableValue;
-  initialSort?: SortConfig<TKey>;
-  locale?: string;
+type UseSortableTableOptions<TItem, TSortKey extends string> = {
+  rows: TItem[];
+  initialSortKey?: TSortKey;
+  initialDirection?: SortDirection;
+  getSortValue: (item: TItem, sortKey: TSortKey) => SortValue;
+  fallbackSortValue?: (item: TItem) => SortValue;
 };
 
-const defaultCollator = new Intl.Collator("de-DE", {
+const sortCollator = new Intl.Collator("de-DE", {
   numeric: true,
   sensitivity: "base",
 });
 
-function normalizeSortableValue(value: SortableValue) {
+function normalizeSortValue(value: SortValue) {
   if (value instanceof Date) {
-    return value.getTime();
+    return value.toISOString();
+  }
+
+  if (typeof value === "boolean") {
+    return value ? "1" : "0";
   }
 
   if (value === null || value === undefined) {
     return "";
   }
 
-  return value;
+  return String(value).trim();
 }
 
-function compareSortableValues(
-  firstValue: SortableValue,
-  secondValue: SortableValue,
-  collator: Intl.Collator,
-) {
-  const normalizedFirstValue = normalizeSortableValue(firstValue);
-  const normalizedSecondValue = normalizeSortableValue(secondValue);
-
-  if (
-    typeof normalizedFirstValue === "number" &&
-    typeof normalizedSecondValue === "number"
-  ) {
-    return normalizedFirstValue - normalizedSecondValue;
-  }
-
-  return collator.compare(
-    String(normalizedFirstValue),
-    String(normalizedSecondValue),
-  );
-}
-
-export function useSortableTable<TRow, TKey extends string>({
+export function useSortableTable<TItem, TSortKey extends string>({
   rows,
+  initialSortKey,
+  initialDirection = "asc",
   getSortValue,
-  initialSort = null,
-  locale = "de-DE",
-}: UseSortableTableOptions<TRow, TKey>) {
-  const [sortConfig, setSortConfig] = useState<SortConfig<TKey>>(initialSort);
-
-  const collator = useMemo(() => {
-    if (locale === "de-DE") {
-      return defaultCollator;
-    }
-
-    return new Intl.Collator(locale, {
-      numeric: true,
-      sensitivity: "base",
-    });
-  }, [locale]);
+  fallbackSortValue,
+}: UseSortableTableOptions<TItem, TSortKey>) {
+  const [sortConfig, setSortConfig] = useState<SortConfig<TSortKey>>(
+    initialSortKey
+      ? {
+          key: initialSortKey,
+          direction: initialDirection,
+        }
+      : null,
+  );
 
   const sortedRows = useMemo(() => {
     if (!sortConfig) {
@@ -80,18 +61,33 @@ export function useSortableTable<TRow, TKey extends string>({
 
     const directionFactor = sortConfig.direction === "asc" ? 1 : -1;
 
-    return [...rows].sort((firstRow, secondRow) => {
-      const primaryResult = compareSortableValues(
-        getSortValue(firstRow, sortConfig.key),
-        getSortValue(secondRow, sortConfig.key),
-        collator,
+    return [...rows].sort((firstItem, secondItem) => {
+      const firstValue = normalizeSortValue(
+        getSortValue(firstItem, sortConfig.key),
+      );
+      const secondValue = normalizeSortValue(
+        getSortValue(secondItem, sortConfig.key),
       );
 
-      return primaryResult * directionFactor;
-    });
-  }, [collator, getSortValue, rows, sortConfig]);
+      const primaryResult =
+        sortCollator.compare(firstValue, secondValue) * directionFactor;
 
-  function requestSort(nextSortKey: TKey) {
+      if (primaryResult !== 0) {
+        return primaryResult;
+      }
+
+      if (fallbackSortValue) {
+        return sortCollator.compare(
+          normalizeSortValue(fallbackSortValue(firstItem)),
+          normalizeSortValue(fallbackSortValue(secondItem)),
+        );
+      }
+
+      return 0;
+    });
+  }, [fallbackSortValue, getSortValue, rows, sortConfig]);
+
+  function requestSort(nextSortKey: TSortKey) {
     setSortConfig((currentConfig) => {
       if (currentConfig?.key === nextSortKey) {
         return {
@@ -107,9 +103,9 @@ export function useSortableTable<TRow, TKey extends string>({
     });
   }
 
-  function getAriaSort(sortKey: TKey): "none" | "ascending" | "descending" {
+  function getAriaSort(sortKey: TSortKey) {
     if (sortConfig?.key !== sortKey) {
-      return "none";
+      return "none" as const;
     }
 
     return sortConfig.direction === "asc" ? "ascending" : "descending";

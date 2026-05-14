@@ -19,9 +19,10 @@ import "./table.css";
 ```
 
 Die Komponenten bleiben funktional erhalten. Die CSS-Dateien können als Platzhalter liegen bleiben, werden aber nicht mehr direkt importiert.
-## Sortierbare Tabellen
 
-Für sortierbare Tabellen werden zentrale UI-Bausteine verwendet:
+## Globale Tabellensortierung
+
+Sortierbare Tabellen verwenden die zentralen Bausteine:
 
 ```txt
 src/ui/useSortableTable.ts
@@ -31,30 +32,50 @@ src/ui/SortableTableHeader.tsx
 Standardverhalten:
 
 ```txt
-1. Klick auf Spaltenkopf: aufsteigend sortieren
-2. Klick auf denselben Spaltenkopf: absteigend sortieren
-Tab-Wechsel: Sortierung bleibt auf der Seite erhalten
+1. Klick auf Spaltenkopf → aufsteigend sortieren
+2. Klick auf denselben Spaltenkopf → absteigend sortieren
+aktive Sortierung bleibt beim Tab-Wechsel innerhalb der Seite erhalten
 ```
 
-Die Auftragsliste ist der erste umgestellte Bereich. Weitere Tabellen sollen schrittweise auf dieselben Utilities nachgezogen werden.
-
-## Globale Tabellensortierung: Angebote
-
-Die Angebotsliste nutzt den zentralen Sortierstandard aus:
+Aktuell angebunden:
 
 ```txt
-src/ui/useSortableTable.ts
-src/ui/SortableTableHeader.tsx
+Aufträge
+Angebote
+Kunden
+Material
+Maschinen
+Weiterverarbeitung
+Leistungen
+Vorlagen
 ```
 
-Sortierbare Spalten:
+Neue Tabellen sollen keine eigene lokale Sortierlogik mehr erhalten, sondern diese zentralen Bausteine verwenden.
 
-```txt
-Angebot
-Kunde
-Betreff
-Datum
-Status
+## SortableTableHeader Kompatibilität
+
+`SortableTableHeader` unterstützt zwei Nutzungsarten.
+
+Standard für neue Seiten:
+
+```tsx
+<SortableTableHeader
+  label="Name"
+  sortKey="name"
+  sortConfig={sortConfig}
+  onSort={handleSort}
+/>
 ```
 
-Die Sortierung funktioniert wie bei den Aufträgen: erster Klick aufsteigend, zweiter Klick absteigend.
+Kompatibilität für bestehende Stammdaten-Seiten:
+
+```tsx
+<SortableTableHeader
+  label="Name"
+  active={sortConfig?.key === "name"}
+  direction={sortConfig?.direction}
+  onClick={() => handleSort("name")}
+/>
+```
+
+Neue Seiten sollen bevorzugt die `sortKey`/`sortConfig`/`onSort`-Variante verwenden.

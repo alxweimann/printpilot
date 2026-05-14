@@ -24,7 +24,9 @@ import { Input } from "../ui/Input";
 import { SaveActionButton } from "../ui/SaveActionButton";
 import { SectionHeader } from "../ui/SectionHeader";
 import { Select } from "../ui/Select";
+import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { DataTable, TableToolbar } from "../ui/Table";
+import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 const finishingTabs = ["Aktiv", "Optional", "Archiv"] as const;
@@ -48,6 +50,27 @@ function isFinishingTab(tab: string): tab is FinishingTab {
   return finishingTabs.includes(tab as FinishingTab);
 }
 
+
+type FinishingSortKey = "number" | "name" | "category" | "pricing" | "status";
+
+function getFinishingSortValue(
+  process: PrintPilotFinishingProcess,
+  sortKey: FinishingSortKey,
+) {
+  switch (sortKey) {
+    case "number":
+      return process.number;
+    case "name":
+      return process.name;
+    case "category":
+      return process.category;
+    case "pricing":
+      return process.pricing;
+    case "status":
+      return process.status;
+  }
+}
+
 export function FinishingPage() {
   const module = getModuleConfig("finishing");
   const { finishing, updateFinishingProcess } = usePrintPilotStore();
@@ -67,6 +90,17 @@ export function FinishingPage() {
   } = useMasterDetailSelection({
     rowsByTab: finishingRowsByTab,
     initialTab: "Aktiv" as FinishingTab,
+  });
+
+  const {
+    sortedRows: sortedFinishingRows,
+    sortConfig: processSortConfig,
+    requestSort: requestFinishingSort,
+    getAriaSort: getFinishingAriaSort,
+  } = useSortableTable<PrintPilotFinishingProcess, FinishingSortKey>({
+    rows: finishingRows,
+    initialSortKey: "number",
+    getSortValue: getFinishingSortValue,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
@@ -142,16 +176,51 @@ export function FinishingPage() {
             <DataTable>
               <thead>
                 <tr>
-                  <th>Nr.</th>
-                  <th>Name</th>
-                  <th>Kategorie</th>
-                  <th>Preismodell</th>
-                  <th>Status</th>
+                  <th aria-sort={getFinishingAriaSort("number")}>
+                    <SortableTableHeader
+                      label="Nr."
+                      active={ processSortConfig?.key === "number" }
+                      direction={ processSortConfig?.direction }
+                      onClick={() => requestFinishingSort("number")}
+                    />
+                  </th>
+                  <th aria-sort={getFinishingAriaSort("name")}>
+                    <SortableTableHeader
+                      label="Name"
+                      active={ processSortConfig?.key === "name" }
+                      direction={ processSortConfig?.direction }
+                      onClick={() => requestFinishingSort("name")}
+                    />
+                  </th>
+                  <th aria-sort={getFinishingAriaSort("category")}>
+                    <SortableTableHeader
+                      label="Kategorie"
+                      active={ processSortConfig?.key === "category" }
+                      direction={ processSortConfig?.direction }
+                      onClick={() => requestFinishingSort("category")}
+                    />
+                  </th>
+                  <th aria-sort={getFinishingAriaSort("pricing")}>
+                    <SortableTableHeader
+                      label="Preismodell"
+                      active={ processSortConfig?.key === "pricing" }
+                      direction={ processSortConfig?.direction }
+                      onClick={() => requestFinishingSort("pricing")}
+                    />
+                  </th>
+                  <th aria-sort={getFinishingAriaSort("status")}>
+                    <SortableTableHeader
+                      label="Status"
+                      active={ processSortConfig?.key === "status" }
+                      direction={ processSortConfig?.direction }
+                      onClick={() => requestFinishingSort("status")}
+                    />
+                  </th>
                 </tr>
               </thead>
 
               <tbody>
-                {finishingRows.map((process) => {
+                {sortedFinishingRows.map((process) => {
                   const isSelected = process.id === selectedProcess?.id;
 
                   return (

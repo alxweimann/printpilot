@@ -24,7 +24,9 @@ import { Input } from "../ui/Input";
 import { SaveActionButton } from "../ui/SaveActionButton";
 import { SectionHeader } from "../ui/SectionHeader";
 import { Select } from "../ui/Select";
+import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { DataTable, TableToolbar } from "../ui/Table";
+import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 const templateTabs = ["Aktiv", "Entwurf", "Archiv"] as const;
@@ -48,6 +50,29 @@ function isTemplateTab(tab: string): tab is TemplateTab {
   return templateTabs.includes(tab as TemplateTab);
 }
 
+
+type TemplateSortKey = "number" | "name" | "type" | "area" | "isDefault" | "status";
+
+function getTemplateSortValue(
+  template: PrintPilotTemplate,
+  sortKey: TemplateSortKey,
+) {
+  switch (sortKey) {
+    case "number":
+      return template.number;
+    case "name":
+      return template.name;
+    case "type":
+      return template.type;
+    case "area":
+      return template.area;
+    case "isDefault":
+      return template.isDefault;
+    case "status":
+      return template.status;
+  }
+}
+
 export function TemplatesPage() {
   const module = getModuleConfig("templates");
   const { templates, updateTemplate } = usePrintPilotStore();
@@ -67,6 +92,17 @@ export function TemplatesPage() {
   } = useMasterDetailSelection({
     rowsByTab: templateRowsByTab,
     initialTab: "Aktiv" as TemplateTab,
+  });
+
+  const {
+    sortedRows: sortedTemplateRows,
+    sortConfig: templateSortConfig,
+    requestSort: requestTemplateSort,
+    getAriaSort: getTemplateAriaSort,
+  } = useSortableTable<PrintPilotTemplate, TemplateSortKey>({
+    rows: templateRows,
+    initialSortKey: "number",
+    getSortValue: getTemplateSortValue,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
@@ -139,17 +175,59 @@ export function TemplatesPage() {
             <DataTable>
               <thead>
                 <tr>
-                  <th>Vorlagennr.</th>
-                  <th>Name</th>
-                  <th>Typ</th>
-                  <th>Bereich</th>
-                  <th>Standard</th>
-                  <th>Status</th>
+                  <th aria-sort={getTemplateAriaSort("number")}>
+                    <SortableTableHeader
+                      label="Vorlagennr."
+                      active={ templateSortConfig?.key === "number" }
+                      direction={ templateSortConfig?.direction }
+                      onClick={() => requestTemplateSort("number")}
+                    />
+                  </th>
+                  <th aria-sort={getTemplateAriaSort("name")}>
+                    <SortableTableHeader
+                      label="Name"
+                      active={ templateSortConfig?.key === "name" }
+                      direction={ templateSortConfig?.direction }
+                      onClick={() => requestTemplateSort("name")}
+                    />
+                  </th>
+                  <th aria-sort={getTemplateAriaSort("type")}>
+                    <SortableTableHeader
+                      label="Typ"
+                      active={ templateSortConfig?.key === "type" }
+                      direction={ templateSortConfig?.direction }
+                      onClick={() => requestTemplateSort("type")}
+                    />
+                  </th>
+                  <th aria-sort={getTemplateAriaSort("area")}>
+                    <SortableTableHeader
+                      label="Bereich"
+                      active={ templateSortConfig?.key === "area" }
+                      direction={ templateSortConfig?.direction }
+                      onClick={() => requestTemplateSort("area")}
+                    />
+                  </th>
+                  <th aria-sort={getTemplateAriaSort("isDefault")}>
+                    <SortableTableHeader
+                      label="Standard"
+                      active={ templateSortConfig?.key === "isDefault" }
+                      direction={ templateSortConfig?.direction }
+                      onClick={() => requestTemplateSort("isDefault")}
+                    />
+                  </th>
+                  <th aria-sort={getTemplateAriaSort("status")}>
+                    <SortableTableHeader
+                      label="Status"
+                      active={ templateSortConfig?.key === "status" }
+                      direction={ templateSortConfig?.direction }
+                      onClick={() => requestTemplateSort("status")}
+                    />
+                  </th>
                 </tr>
               </thead>
 
               <tbody>
-                {templateRows.map((template) => {
+                {sortedTemplateRows.map((template) => {
                   const isSelected = template.id === selectedTemplate?.id;
 
                   return (

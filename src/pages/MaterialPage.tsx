@@ -24,7 +24,9 @@ import { Input } from "../ui/Input";
 import { SaveActionButton } from "../ui/SaveActionButton";
 import { SectionHeader } from "../ui/SectionHeader";
 import { Select } from "../ui/Select";
+import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { DataTable, TableToolbar } from "../ui/Table";
+import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 const materialTabs = ["Auf Lager", "Knapp", "Bestellen", "Archiv"] as const;
@@ -51,6 +53,27 @@ function isMaterialTab(tab: string): tab is MaterialTab {
   return materialTabs.includes(tab as MaterialTab);
 }
 
+
+type MaterialSortKey = "number" | "name" | "format" | "stock" | "status";
+
+function getMaterialSortValue(
+  material: PrintPilotMaterial,
+  sortKey: MaterialSortKey,
+) {
+  switch (sortKey) {
+    case "number":
+      return material.number;
+    case "name":
+      return material.name;
+    case "format":
+      return material.format;
+    case "stock":
+      return material.stock;
+    case "status":
+      return material.status;
+  }
+}
+
 export function MaterialPage() {
   const module = getModuleConfig("material");
   const { materials, updateMaterial } = usePrintPilotStore();
@@ -70,6 +93,17 @@ export function MaterialPage() {
   } = useMasterDetailSelection({
     rowsByTab: materialRowsByTab,
     initialTab: "Auf Lager" as MaterialTab,
+  });
+
+  const {
+    sortedRows: sortedMaterialRows,
+    sortConfig: materialSortConfig,
+    requestSort: requestMaterialSort,
+    getAriaSort: getMaterialAriaSort,
+  } = useSortableTable<PrintPilotMaterial, MaterialSortKey>({
+    rows: materialRows,
+    initialSortKey: "number",
+    getSortValue: getMaterialSortValue,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
@@ -142,16 +176,51 @@ export function MaterialPage() {
             <DataTable>
               <thead>
                 <tr>
-                  <th>Materialnr.</th>
-                  <th>Name</th>
-                  <th>Format</th>
-                  <th>Bestand</th>
-                  <th>Status</th>
+                  <th aria-sort={getMaterialAriaSort("number")}>
+                    <SortableTableHeader
+                      label="Materialnr."
+                      active={ materialSortConfig?.key === "number" }
+                      direction={ materialSortConfig?.direction }
+                      onClick={() => requestMaterialSort("number")}
+                    />
+                  </th>
+                  <th aria-sort={getMaterialAriaSort("name")}>
+                    <SortableTableHeader
+                      label="Name"
+                      active={ materialSortConfig?.key === "name" }
+                      direction={ materialSortConfig?.direction }
+                      onClick={() => requestMaterialSort("name")}
+                    />
+                  </th>
+                  <th aria-sort={getMaterialAriaSort("format")}>
+                    <SortableTableHeader
+                      label="Format"
+                      active={ materialSortConfig?.key === "format" }
+                      direction={ materialSortConfig?.direction }
+                      onClick={() => requestMaterialSort("format")}
+                    />
+                  </th>
+                  <th aria-sort={getMaterialAriaSort("stock")}>
+                    <SortableTableHeader
+                      label="Bestand"
+                      active={ materialSortConfig?.key === "stock" }
+                      direction={ materialSortConfig?.direction }
+                      onClick={() => requestMaterialSort("stock")}
+                    />
+                  </th>
+                  <th aria-sort={getMaterialAriaSort("status")}>
+                    <SortableTableHeader
+                      label="Status"
+                      active={ materialSortConfig?.key === "status" }
+                      direction={ materialSortConfig?.direction }
+                      onClick={() => requestMaterialSort("status")}
+                    />
+                  </th>
                 </tr>
               </thead>
 
               <tbody>
-                {materialRows.map((material) => {
+                {sortedMaterialRows.map((material) => {
                   const isSelected = material.id === selectedMaterial?.id;
 
                   return (

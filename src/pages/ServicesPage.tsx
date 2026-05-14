@@ -24,7 +24,9 @@ import { Input } from "../ui/Input";
 import { SaveActionButton } from "../ui/SaveActionButton";
 import { SectionHeader } from "../ui/SectionHeader";
 import { Select } from "../ui/Select";
+import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { DataTable, TableToolbar } from "../ui/Table";
+import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 const serviceTabs = ["Aktiv", "Optional", "Archiv"] as const;
@@ -48,6 +50,29 @@ function isServiceTab(tab: string): tab is ServiceTab {
   return serviceTabs.includes(tab as ServiceTab);
 }
 
+
+type ServiceSortKey = "number" | "name" | "group" | "unit" | "price" | "status";
+
+function getServiceSortValue(
+  service: PrintPilotService,
+  sortKey: ServiceSortKey,
+) {
+  switch (sortKey) {
+    case "number":
+      return service.number;
+    case "name":
+      return service.name;
+    case "group":
+      return service.group;
+    case "unit":
+      return service.unit;
+    case "price":
+      return service.price;
+    case "status":
+      return service.status;
+  }
+}
+
 export function ServicesPage() {
   const module = getModuleConfig("services");
   const { services, updateService } = usePrintPilotStore();
@@ -67,6 +92,17 @@ export function ServicesPage() {
   } = useMasterDetailSelection({
     rowsByTab: serviceRowsByTab,
     initialTab: "Aktiv" as ServiceTab,
+  });
+
+  const {
+    sortedRows: sortedServiceRows,
+    sortConfig: serviceSortConfig,
+    requestSort: requestServiceSort,
+    getAriaSort: getServiceAriaSort,
+  } = useSortableTable<PrintPilotService, ServiceSortKey>({
+    rows: serviceRows,
+    initialSortKey: "number",
+    getSortValue: getServiceSortValue,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
@@ -142,17 +178,59 @@ export function ServicesPage() {
             <DataTable>
               <thead>
                 <tr>
-                  <th>Leistungsnr.</th>
-                  <th>Name</th>
-                  <th>Gruppe</th>
-                  <th>Einheit</th>
-                  <th>Preis</th>
-                  <th>Status</th>
+                  <th aria-sort={getServiceAriaSort("number")}>
+                    <SortableTableHeader
+                      label="Leistungsnr."
+                      active={ serviceSortConfig?.key === "number" }
+                      direction={ serviceSortConfig?.direction }
+                      onClick={() => requestServiceSort("number")}
+                    />
+                  </th>
+                  <th aria-sort={getServiceAriaSort("name")}>
+                    <SortableTableHeader
+                      label="Name"
+                      active={ serviceSortConfig?.key === "name" }
+                      direction={ serviceSortConfig?.direction }
+                      onClick={() => requestServiceSort("name")}
+                    />
+                  </th>
+                  <th aria-sort={getServiceAriaSort("group")}>
+                    <SortableTableHeader
+                      label="Gruppe"
+                      active={ serviceSortConfig?.key === "group" }
+                      direction={ serviceSortConfig?.direction }
+                      onClick={() => requestServiceSort("group")}
+                    />
+                  </th>
+                  <th aria-sort={getServiceAriaSort("unit")}>
+                    <SortableTableHeader
+                      label="Einheit"
+                      active={ serviceSortConfig?.key === "unit" }
+                      direction={ serviceSortConfig?.direction }
+                      onClick={() => requestServiceSort("unit")}
+                    />
+                  </th>
+                  <th aria-sort={getServiceAriaSort("price")}>
+                    <SortableTableHeader
+                      label="Preis"
+                      active={ serviceSortConfig?.key === "price" }
+                      direction={ serviceSortConfig?.direction }
+                      onClick={() => requestServiceSort("price")}
+                    />
+                  </th>
+                  <th aria-sort={getServiceAriaSort("status")}>
+                    <SortableTableHeader
+                      label="Status"
+                      active={ serviceSortConfig?.key === "status" }
+                      direction={ serviceSortConfig?.direction }
+                      onClick={() => requestServiceSort("status")}
+                    />
+                  </th>
                 </tr>
               </thead>
 
               <tbody>
-                {serviceRows.map((service) => {
+                {sortedServiceRows.map((service) => {
                   const isSelected = service.id === selectedService?.id;
 
                   return (

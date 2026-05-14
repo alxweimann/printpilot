@@ -24,7 +24,9 @@ import { Input } from "../ui/Input";
 import { SaveActionButton } from "../ui/SaveActionButton";
 import { SectionHeader } from "../ui/SectionHeader";
 import { Select } from "../ui/Select";
+import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { DataTable, TableToolbar } from "../ui/Table";
+import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 const customerTabs = ["Aktiv", "Interessent", "Inaktiv"] as const;
@@ -48,6 +50,25 @@ function isCustomerTab(tab: string): tab is CustomerTab {
   return customerTabs.includes(tab as CustomerTab);
 }
 
+
+type CustomerSortKey = "number" | "name" | "city" | "status";
+
+function getCustomerSortValue(
+  customer: PrintPilotCustomer,
+  sortKey: CustomerSortKey,
+) {
+  switch (sortKey) {
+    case "number":
+      return customer.number;
+    case "name":
+      return customer.name;
+    case "city":
+      return customer.city;
+    case "status":
+      return customer.status;
+  }
+}
+
 export function CustomersPage() {
   const module = getModuleConfig("customers");
   const { customers, updateCustomer } = usePrintPilotStore();
@@ -67,6 +88,17 @@ export function CustomersPage() {
   } = useMasterDetailSelection({
     rowsByTab: customerRowsByTab,
     initialTab: "Aktiv" as CustomerTab,
+  });
+
+  const {
+    sortedRows: sortedCustomerRows,
+    sortConfig: customerSortConfig,
+    requestSort: requestCustomerSort,
+    getAriaSort: getCustomerAriaSort,
+  } = useSortableTable<PrintPilotCustomer, CustomerSortKey>({
+    rows: customerRows,
+    initialSortKey: "number",
+    getSortValue: getCustomerSortValue,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
@@ -139,15 +171,43 @@ export function CustomersPage() {
             <DataTable>
               <thead>
                 <tr>
-                  <th>Kundennr.</th>
-                  <th>Name</th>
-                  <th>Ort</th>
-                  <th>Status</th>
+                  <th aria-sort={getCustomerAriaSort("number")}>
+                    <SortableTableHeader
+                      label="Kundennr."
+                      active={ customerSortConfig?.key === "number" }
+                      direction={ customerSortConfig?.direction }
+                      onClick={() => requestCustomerSort("number")}
+                    />
+                  </th>
+                  <th aria-sort={getCustomerAriaSort("name")}>
+                    <SortableTableHeader
+                      label="Name"
+                      active={ customerSortConfig?.key === "name" }
+                      direction={ customerSortConfig?.direction }
+                      onClick={() => requestCustomerSort("name")}
+                    />
+                  </th>
+                  <th aria-sort={getCustomerAriaSort("city")}>
+                    <SortableTableHeader
+                      label="Ort"
+                      active={ customerSortConfig?.key === "city" }
+                      direction={ customerSortConfig?.direction }
+                      onClick={() => requestCustomerSort("city")}
+                    />
+                  </th>
+                  <th aria-sort={getCustomerAriaSort("status")}>
+                    <SortableTableHeader
+                      label="Status"
+                      active={ customerSortConfig?.key === "status" }
+                      direction={ customerSortConfig?.direction }
+                      onClick={() => requestCustomerSort("status")}
+                    />
+                  </th>
                 </tr>
               </thead>
 
               <tbody>
-                {customerRows.map((customer) => {
+                {sortedCustomerRows.map((customer) => {
                   const isSelected = customer.id === selectedCustomer?.id;
 
                   return (

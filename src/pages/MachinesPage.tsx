@@ -24,7 +24,9 @@ import { Input } from "../ui/Input";
 import { SaveActionButton } from "../ui/SaveActionButton";
 import { SectionHeader } from "../ui/SectionHeader";
 import { Select } from "../ui/Select";
+import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { DataTable, TableToolbar } from "../ui/Table";
+import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 const machineTabs = ["Aktiv", "Wartung", "Archiv"] as const;
@@ -48,6 +50,27 @@ function isMachineTab(tab: string): tab is MachineTab {
   return machineTabs.includes(tab as MachineTab);
 }
 
+
+type MachineSortKey = "number" | "name" | "type" | "colorMode" | "status";
+
+function getMachineSortValue(
+  machine: PrintPilotMachine,
+  sortKey: MachineSortKey,
+) {
+  switch (sortKey) {
+    case "number":
+      return machine.number;
+    case "name":
+      return machine.name;
+    case "type":
+      return machine.type;
+    case "colorMode":
+      return machine.colorMode;
+    case "status":
+      return machine.status;
+  }
+}
+
 export function MachinesPage() {
   const module = getModuleConfig("machines");
   const { machines, updateMachine } = usePrintPilotStore();
@@ -67,6 +90,17 @@ export function MachinesPage() {
   } = useMasterDetailSelection({
     rowsByTab: machineRowsByTab,
     initialTab: "Aktiv" as MachineTab,
+  });
+
+  const {
+    sortedRows: sortedMachineRows,
+    sortConfig: machineSortConfig,
+    requestSort: requestMachineSort,
+    getAriaSort: getMachineAriaSort,
+  } = useSortableTable<PrintPilotMachine, MachineSortKey>({
+    rows: machineRows,
+    initialSortKey: "number",
+    getSortValue: getMachineSortValue,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
@@ -139,16 +173,51 @@ export function MachinesPage() {
             <DataTable>
               <thead>
                 <tr>
-                  <th>Maschinennr.</th>
-                  <th>Name</th>
-                  <th>Typ</th>
-                  <th>Farbmodus</th>
-                  <th>Status</th>
+                  <th aria-sort={getMachineAriaSort("number")}>
+                    <SortableTableHeader
+                      label="Maschinennr."
+                      active={ machineSortConfig?.key === "number" }
+                      direction={ machineSortConfig?.direction }
+                      onClick={() => requestMachineSort("number")}
+                    />
+                  </th>
+                  <th aria-sort={getMachineAriaSort("name")}>
+                    <SortableTableHeader
+                      label="Name"
+                      active={ machineSortConfig?.key === "name" }
+                      direction={ machineSortConfig?.direction }
+                      onClick={() => requestMachineSort("name")}
+                    />
+                  </th>
+                  <th aria-sort={getMachineAriaSort("type")}>
+                    <SortableTableHeader
+                      label="Typ"
+                      active={ machineSortConfig?.key === "type" }
+                      direction={ machineSortConfig?.direction }
+                      onClick={() => requestMachineSort("type")}
+                    />
+                  </th>
+                  <th aria-sort={getMachineAriaSort("colorMode")}>
+                    <SortableTableHeader
+                      label="Farbmodus"
+                      active={ machineSortConfig?.key === "colorMode" }
+                      direction={ machineSortConfig?.direction }
+                      onClick={() => requestMachineSort("colorMode")}
+                    />
+                  </th>
+                  <th aria-sort={getMachineAriaSort("status")}>
+                    <SortableTableHeader
+                      label="Status"
+                      active={ machineSortConfig?.key === "status" }
+                      direction={ machineSortConfig?.direction }
+                      onClick={() => requestMachineSort("status")}
+                    />
+                  </th>
                 </tr>
               </thead>
 
               <tbody>
-                {machineRows.map((machine) => {
+                {sortedMachineRows.map((machine) => {
                   const isSelected = machine.id === selectedMachine?.id;
 
                   return (

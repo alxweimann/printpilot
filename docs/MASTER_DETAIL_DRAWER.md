@@ -307,3 +307,9 @@ Die Abschnittsüberschriften im Drawer verwenden die echte `SectionHeader`-Klass
 ## SectionHeader Inline-Akzent
 
 Die Abschnittsmarkierungen im Drawer werden direkt über `--detail-drawer-accent-color` gerendert. Dadurch übernehmen sie zuverlässig die Modulfarbe.
+
+## Angebotsaktion im Drawer
+
+Der Angebotsdrawer enthält die fachliche Aktion `Auftrag erstellen`.
+
+Die Aktion erzeugt einen Auftrag nur, wenn für das Angebot noch kein Auftrag mit gleicher `quoteId` existiert. Dadurch bleibt die Kette Angebot → Auftrag eindeutig.

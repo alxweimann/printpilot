@@ -131,3 +131,14 @@ SortableTableHeader steht direkt im tr, ohne verschachtelte th-Struktur
 - SectionHeader nutzt jetzt inline CSS-Variablen; Drawer-Abschnittsstriche übernehmen zuverlässig die Modulfarbe
 
 - Sidebar-Datum und Uhrzeit nutzen jetzt denselben Cyan-Magenta-Farbverlauf wie das PP-Logo
+
+## Angebots-Workflow
+
+Der erste Fachlogik-Workflow ist angebunden:
+
+```text
+Angebot → Auftrag erzeugen
+Dubletten-Schutz über quoteId
+Angebot wird auf „Angenommen“ gesetzt
+neuer Auftrag wird mit quoteId verknüpft
+```

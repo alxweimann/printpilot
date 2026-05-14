@@ -201,24 +201,26 @@ export function QuotesPage() {
     setIsDuplicateOrderDialogOpen(false);
   }
 
-  function createOrderFromSelectedQuote() {
-    if (!selectedQuote) {
+  function handleCreateOrderFromQuote() {
+    if (!selectedQuote || existingOrderForSelectedQuote) {
+      setIsCreateOrderDialogOpen(false);
+      setIsDuplicateOrderDialogOpen(Boolean(existingOrderForSelectedQuote));
       return;
     }
 
-    const newOrder = createPrintPilotOrderFromQuote(selectedQuote, orders);
+    const acceptedQuote: PrintPilotQuote = {
+      ...selectedQuote,
+      status: "Angenommen",
+      badgeVariant: "success",
+    };
+
+    const newOrder = createPrintPilotOrderFromQuote(acceptedQuote, orders);
 
     addOrder(newOrder);
-  }
-
-  function handleCreateOrderFromQuote() {
-    createOrderFromSelectedQuote();
+    updateQuote(acceptedQuote);
+    saveDraft(acceptedQuote);
+    setIsEditing(false);
     setIsCreateOrderDialogOpen(false);
-  }
-
-  function handleCreateAdditionalOrderFromQuote() {
-    createOrderFromSelectedQuote();
-    setIsDuplicateOrderDialogOpen(false);
   }
 
   function handleSaveDraft() {
@@ -484,7 +486,8 @@ export function QuotesPage() {
         description={
           <>
             Aus dem ausgewählten Angebot wird ein neuer Auftrag erzeugt. Das
-            Angebot bleibt unverändert erhalten.
+            Angebot wird dabei auf „Angenommen“ gesetzt und eindeutig mit dem
+            neuen Auftrag verknüpft.
           </>
         }
         details={
@@ -498,6 +501,9 @@ export function QuotesPage() {
               </span>
               <span>
                 <strong>Produkt:</strong> {selectedQuote.subject}
+              </span>
+              <span>
+                <strong>Status Angebot danach:</strong> Angenommen
               </span>
               <span>
                 <strong>Status neuer Auftrag:</strong> Neu
@@ -517,8 +523,8 @@ export function QuotesPage() {
         title="Auftrag existiert bereits"
         description={
           <>
-            Für dieses Angebot existiert bereits ein Auftrag. Du kannst
-            trotzdem bewusst einen weiteren Auftrag aus diesem Angebot erstellen.
+            Für dieses Angebot existiert bereits ein Auftrag. Es wird kein
+            weiterer Auftrag erzeugt, damit keine Dublette entsteht.
           </>
         }
         details={
@@ -543,10 +549,10 @@ export function QuotesPage() {
           ) : null
         }
         variant="warning"
-        cancelLabel="Abbrechen"
-        confirmLabel="Weiteren Auftrag erstellen"
+        cancelLabel="Schließen"
+        confirmLabel="Verstanden"
         onCancel={handleCancelDuplicateOrderDialog}
-        onConfirm={handleCreateAdditionalOrderFromQuote}
+        onConfirm={handleCancelDuplicateOrderDialog}
       />
     </div>
   );

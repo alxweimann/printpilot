@@ -112,3 +112,4 @@ Erledigt: ConfirmDialog über DetailDrawer gelegt
 - Hotfix erledigt: Drawer-SectionHeader-Akzente auf Modulfarbe korrigiert
 - Hotfix erledigt: SectionHeader-Inline-Akzent für zuverlässige Drawer-Modulfarben
 - Erledigt: Sidebar-Uhr/Datum optisch an PP-Logo-Farbverlauf angepasst
+- Erledigt: Angebots-Workflow `Angebot → Auftrag erzeugen` mit Dubletten-Schutz angebunden

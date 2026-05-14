@@ -2,20 +2,22 @@
 
 Stand: 14.05.2026
 
-## Aktueller Standard
+## Ziel
 
-Der DetailDrawer wird per React Portal direkt an `document.body` gerendert.
-
-Dadurch hängt der Drawer nicht mehr innerhalb einzelner Seitenlayouts oder Scrollcontainer und kann nicht mehr unten im normalen Dokumentfluss erscheinen.
-
-## Layout
+PrintPilot verwendet für Listen und Detailansichten einen einheitlichen Master-Detail-Standard.
 
 ```txt
-fixed rechts
-Overlay über der App
-Drawer-Panel rechts
-Content scrollt im Drawer
-Footer bleibt unten im Drawer
+Liste/Tabelle bleibt volle Hauptansicht
+Klick auf eine Zeile öffnet rechts den DetailDrawer
+Detailinformationen liegen im Drawer
+Aktionen liegen im Drawer-Footer
+Tabelle bleibt währenddessen sichtbar
+```
+
+## Komponente
+
+```txt
+src/ui/DetailDrawer.tsx
 ```
 
 ## Bereits umgesetzt
@@ -25,11 +27,44 @@ Angebote
 Aufträge
 Rechnungen
 Lieferscheine
-Mahnungen
 ```
 
-## Technische Regel
+## Noch offen
 
-`DetailDrawer` darf nicht von externen CSS-Dateien abhängen, wenn es um kritische Positionierung geht.
+```txt
+Mahnungen
+Kunden
+Material
+Maschinen
+Weiterverarbeitung
+Leistungen
+Vorlagen
+```
 
-Kritische Styles liegen direkt in `src/ui/DetailDrawer.tsx`.
+## Verhalten
+
+### Öffnen
+
+```txt
+Zeile anklicken
+ausgewählter Datensatz bleibt in Tabelle markiert
+Drawer öffnet rechts
+```
+
+### Schließen
+
+```txt
+X rechts oben
+Klick außerhalb
+Speichern/Ausgeben schließt den Drawer, wenn fachlich sinnvoll
+```
+
+### Dialoge
+
+Warnungen und ConfirmDialog liegen immer über dem Drawer.
+
+## Tabellen im Drawer-Kontext
+
+Die Haupttabelle bleibt die zentrale Arbeitsfläche.
+
+Detailbereiche werden nicht dauerhaft unter oder neben die Tabelle gesetzt, sondern erscheinen ausschließlich im Drawer.

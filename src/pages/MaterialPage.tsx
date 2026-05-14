@@ -16,6 +16,7 @@ import { PageTabs } from "../layout/PageTabs";
 
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { DetailDrawer } from "../ui/DetailDrawer";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -79,6 +80,7 @@ export function MaterialPage() {
   const { materials, updateMaterial } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
 
   const materialRowsByTab = useMemo(() => {
     return groupPrintPilotMaterialsByStatus(materials);
@@ -99,7 +101,6 @@ export function MaterialPage() {
     sortedRows: sortedMaterialRows,
     sortConfig: materialSortConfig,
     requestSort: requestMaterialSort,
-    getAriaSort: getMaterialAriaSort,
   } = useSortableTable<PrintPilotMaterial, MaterialSortKey>({
     rows: materialRows,
     initialSortKey: "number",
@@ -115,12 +116,19 @@ export function MaterialPage() {
     if (isMaterialTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
+      setIsDetailDrawerOpen(false);
     }
   }
 
   function handleMaterialSelect(materialId: string) {
     selectItem(materialId);
     setIsEditing(false);
+    setIsDetailDrawerOpen(true);
+  }
+
+  function handleCloseDetailDrawer() {
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   function handleResetDraft() {
@@ -142,6 +150,7 @@ export function MaterialPage() {
     updateMaterial(savedMaterial);
     saveDraft(savedMaterial);
     setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   return (
@@ -165,89 +174,107 @@ export function MaterialPage() {
           statusValue={isEditing ? "Bearbeitung offen" : activeTab}
         />
 
-        <div className="master-detail-layout">
-          <section className="workspace-panel master-list-panel">
-            <TableToolbar>
-              <Input className="search-input" placeholder="Material suchen..." />
+        <section className="workspace-panel master-list-panel">
+          <TableToolbar>
+            <Input className="search-input" placeholder="Material suchen..." />
+            <Button>Filter</Button>
+          </TableToolbar>
 
-              <Button>Filter</Button>
-            </TableToolbar>
+          <DataTable>
+            <thead>
+              <tr>
+                <SortableTableHeader
+                  label="Materialnr."
+                  sortKey="number"
+                  sortConfig={materialSortConfig}
+                  onSort={requestMaterialSort}
+                />
+                <SortableTableHeader
+                  label="Name"
+                  sortKey="name"
+                  sortConfig={materialSortConfig}
+                  onSort={requestMaterialSort}
+                />
+                <SortableTableHeader
+                  label="Format"
+                  sortKey="format"
+                  sortConfig={materialSortConfig}
+                  onSort={requestMaterialSort}
+                />
+                <SortableTableHeader
+                  label="Bestand"
+                  sortKey="stock"
+                  sortConfig={materialSortConfig}
+                  onSort={requestMaterialSort}
+                />
+                <SortableTableHeader
+                  label="Status"
+                  sortKey="status"
+                  sortConfig={materialSortConfig}
+                  onSort={requestMaterialSort}
+                />
+              </tr>
+            </thead>
 
-            <DataTable>
-              <thead>
-                <tr>
-                  <th aria-sort={getMaterialAriaSort("number")}>
-                    <SortableTableHeader
-                      label="Materialnr."
-                      active={ materialSortConfig?.key === "number" }
-                      direction={ materialSortConfig?.direction }
-                      onClick={() => requestMaterialSort("number")}
-                    />
-                  </th>
-                  <th aria-sort={getMaterialAriaSort("name")}>
-                    <SortableTableHeader
-                      label="Name"
-                      active={ materialSortConfig?.key === "name" }
-                      direction={ materialSortConfig?.direction }
-                      onClick={() => requestMaterialSort("name")}
-                    />
-                  </th>
-                  <th aria-sort={getMaterialAriaSort("format")}>
-                    <SortableTableHeader
-                      label="Format"
-                      active={ materialSortConfig?.key === "format" }
-                      direction={ materialSortConfig?.direction }
-                      onClick={() => requestMaterialSort("format")}
-                    />
-                  </th>
-                  <th aria-sort={getMaterialAriaSort("stock")}>
-                    <SortableTableHeader
-                      label="Bestand"
-                      active={ materialSortConfig?.key === "stock" }
-                      direction={ materialSortConfig?.direction }
-                      onClick={() => requestMaterialSort("stock")}
-                    />
-                  </th>
-                  <th aria-sort={getMaterialAriaSort("status")}>
-                    <SortableTableHeader
-                      label="Status"
-                      active={ materialSortConfig?.key === "status" }
-                      direction={ materialSortConfig?.direction }
-                      onClick={() => requestMaterialSort("status")}
-                    />
-                  </th>
-                </tr>
-              </thead>
+            <tbody>
+              {sortedMaterialRows.map((material) => {
+                const isSelected = material.id === selectedMaterial?.id;
 
-              <tbody>
-                {sortedMaterialRows.map((material) => {
-                  const isSelected = material.id === selectedMaterial?.id;
+                return (
+                  <tr
+                    key={material.id}
+                    className={isSelected ? "data-table-row-selected" : undefined}
+                    onClick={() => handleMaterialSelect(material.id)}
+                  >
+                    <td style={{ whiteSpace: "nowrap" }}>{material.number}</td>
+                    <td>{material.name}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{material.format}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{material.stock}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <Badge variant={getPrintPilotStatusBadgeVariant(material.status)}>
+                        {material.status}
+                      </Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </DataTable>
+        </section>
+      </section>
 
-                  return (
-                    <tr
-                      key={material.id}
-                      className={
-                        isSelected ? "data-table-row-selected" : undefined
-                      }
-                      onClick={() => handleMaterialSelect(material.id)}
-                    >
-                      <td style={{ whiteSpace: "nowrap" }}>{material.number}</td>
-                      <td>{material.name}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>{material.format}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>{material.stock}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>
-                        <Badge variant={getPrintPilotStatusBadgeVariant(material.status)}>
-                          {material.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </DataTable>
-          </section>
+      <DetailDrawer
+        open={isDetailDrawerOpen && Boolean(selectedMaterial)}
+        eyebrow="Material"
+        title={selectedMaterial?.name ?? "Material"}
+        subtitle={
+          selectedMaterial
+            ? `${selectedMaterial.number} · ${selectedMaterial.format}`
+            : undefined
+        }
+        onClose={handleCloseDetailDrawer}
+        size="xl"
+        footer={
+          <>
+            <DirtyStateNotice isDirty={isDirty} />
 
-          <section className="workspace-panel master-editor-panel">
+            <EditLockToggle
+              isEditing={isEditing}
+              onToggle={handleToggleEditing}
+            />
+
+            <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+
+            <SaveActionButton
+              isDirty={isDirty}
+              defaultLabel="Material speichern"
+              onClick={handleSaveDraft}
+            />
+          </>
+        }
+      >
+        <div className="detail-drawer-stack">
+          <section className="detail-drawer-panel">
             <SectionHeader>Materialdaten</SectionHeader>
 
             <FieldGrid>
@@ -282,6 +309,29 @@ export function MaterialPage() {
                 </Select>
               </Field>
 
+              <Field label="Status">
+                <Select
+                  value={draft?.status ?? ""}
+                  disabled={!canEdit}
+                  onChange={(event) =>
+                    updateDraftField(
+                      "status",
+                      event.target.value as PrintPilotMaterialStatus,
+                    )
+                  }
+                >
+                  {materialTabs.map((tab) => (
+                    <option key={tab}>{tab}</option>
+                  ))}
+                </Select>
+              </Field>
+            </FieldGrid>
+          </section>
+
+          <section className="detail-drawer-panel">
+            <SectionHeader>Format & Papierlauf</SectionHeader>
+
+            <FieldGrid>
               <Field label="Format">
                 <Input
                   value={draft?.format ?? ""}
@@ -305,25 +355,10 @@ export function MaterialPage() {
                   <option>Unbekannt</option>
                 </Select>
               </Field>
-
-              <Field label="Status">
-                <Select
-                  value={draft?.status ?? ""}
-                  disabled={!canEdit}
-                  onChange={(event) =>
-                    updateDraftField(
-                      "status",
-                      event.target.value as PrintPilotMaterialStatus,
-                    )
-                  }
-                >
-                  {materialTabs.map((tab) => (
-                    <option key={tab}>{tab}</option>
-                  ))}
-                </Select>
-              </Field>
             </FieldGrid>
+          </section>
 
+          <section className="detail-drawer-panel">
             <SectionHeader>Bestand & Preise</SectionHeader>
 
             <FieldGrid>
@@ -377,26 +412,9 @@ export function MaterialPage() {
                 />
               </Field>
             </FieldGrid>
-
-            <div className="calculation-footer">
-              <DirtyStateNotice isDirty={isDirty} />
-
-              <EditLockToggle
-                isEditing={isEditing}
-                onToggle={handleToggleEditing}
-              />
-
-              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-
-              <SaveActionButton
-                isDirty={isDirty}
-                defaultLabel="Material speichern"
-                onClick={handleSaveDraft}
-              />
-            </div>
           </section>
         </div>
-      </section>
+      </DetailDrawer>
     </div>
   );
 }

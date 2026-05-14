@@ -79,3 +79,15 @@ Kompatibilität für bestehende Stammdaten-Seiten:
 ```
 
 Neue Seiten sollen bevorzugt die `sortKey`/`sortConfig`/`onSort`-Variante verwenden.
+
+## Globale Sortierung: Dokumenten-Seiten
+
+Die globale Tabellensortierung ist jetzt auch für Dokumenten-Seiten umgesetzt:
+
+```text
+Rechnungen: Rechnung, Kunde, Betreff, Datum, Fällig, Status
+Lieferscheine: Lieferschein, Kunde, Auftrag, Versand, Status
+Mahnungen: Mahnung, Kunde, Rechnung, Stufe, Frist, Status
+```
+
+Damit sind Aufträge, Angebote, Stammdaten und Dokumentenlisten auf demselben Sortierstandard.

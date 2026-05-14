@@ -19,6 +19,8 @@ import { SectionHeader } from "../ui/SectionHeader";
 import { SaveActionButton } from "../ui/SaveActionButton";
 import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
+import { SortableTableHeader } from "../ui/SortableTableHeader";
+import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 const deliveryTabs = [
@@ -43,6 +45,10 @@ type DeliveryNoteRow = {
   template: string;
   badgeVariant?: "success";
 };
+
+type DeliverySortKey = "number" | "customer" | "order" | "shippingMethod" | "status";
+
+
 
 const deliveryRowsByTab: Record<DeliveryTab, DeliveryNoteRow[]> = {
   Liste: [
@@ -168,6 +174,21 @@ function isDeliveryTab(tab: string): tab is DeliveryTab {
   return deliveryTabs.includes(tab as DeliveryTab);
 }
 
+function getDeliverySortValue(deliveryNote: DeliveryNoteRow, sortKey: DeliverySortKey) {
+  switch (sortKey) {
+    case "number":
+      return deliveryNote.number;
+    case "customer":
+      return deliveryNote.customer;
+    case "order":
+      return deliveryNote.order;
+    case "shippingMethod":
+      return deliveryNote.shippingMethod;
+    case "status":
+      return deliveryNote.status;
+  }
+}
+
 export function DeliveryNotesPage() {
   const module = getModuleConfig("delivery-notes");
 
@@ -187,6 +208,17 @@ export function DeliveryNotesPage() {
   const { draft, isDirty, updateDraftField, resetDraft } =
     useEditableDraft(selectedDeliveryNote);
 
+
+  const {
+    sortedRows: sortedDeliveryRows,
+    sortConfig: deliverySortConfig,
+    requestSort: requestDeliverySort,
+  } = useSortableTable<DeliveryNoteRow, DeliverySortKey>({
+    rows: deliveryRows,
+    initialSortKey: "number",
+    getSortValue: getDeliverySortValue,
+    fallbackSortValue: (deliveryNote) => deliveryNote.number,
+  });
   function handleTabChange(tab: string) {
     if (isDeliveryTab(tab)) {
       setActiveTab(tab);
@@ -239,15 +271,41 @@ export function DeliveryNotesPage() {
             <DataTable>
               <thead>
                 <tr>
-                  <th>Lieferschein</th>
-                  <th>Kunde</th>
-                  <th>Auftrag</th>
-                  <th>Status</th>
+                  <SortableTableHeader
+                    label="Lieferschein"
+                    sortKey="number"
+                    sortConfig={deliverySortConfig}
+                    onSort={requestDeliverySort}
+                  />
+                  <SortableTableHeader
+                    label="Kunde"
+                    sortKey="customer"
+                    sortConfig={deliverySortConfig}
+                    onSort={requestDeliverySort}
+                  />
+                  <SortableTableHeader
+                    label="Auftrag"
+                    sortKey="order"
+                    sortConfig={deliverySortConfig}
+                    onSort={requestDeliverySort}
+                  />
+                  <SortableTableHeader
+                    label="Versand"
+                    sortKey="shippingMethod"
+                    sortConfig={deliverySortConfig}
+                    onSort={requestDeliverySort}
+                  />
+                  <SortableTableHeader
+                    label="Status"
+                    sortKey="status"
+                    sortConfig={deliverySortConfig}
+                    onSort={requestDeliverySort}
+                  />
                 </tr>
               </thead>
 
               <tbody>
-                {deliveryRows.map((deliveryNote) => {
+                {sortedDeliveryRows.map((deliveryNote) => {
                   const isSelected = deliveryNote.id === selectedDeliveryNote?.id;
 
                   return (
@@ -261,6 +319,7 @@ export function DeliveryNotesPage() {
                       <td>{deliveryNote.number}</td>
                       <td>{deliveryNote.customer}</td>
                       <td>{deliveryNote.order}</td>
+                      <td>{deliveryNote.shippingMethod}</td>
                       <td>
                         <Badge variant={deliveryNote.badgeVariant}>
                           {deliveryNote.status}

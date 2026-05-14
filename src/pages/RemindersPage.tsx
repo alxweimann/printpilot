@@ -19,6 +19,8 @@ import { SectionHeader } from "../ui/SectionHeader";
 import { SaveActionButton } from "../ui/SaveActionButton";
 import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
+import { SortableTableHeader } from "../ui/SortableTableHeader";
+import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 const reminderTabs = ["Liste", "Entwurf", "Offen", "Versendet", "Erledigt"] as const;
@@ -37,6 +39,10 @@ type ReminderRow = {
   note: string;
   badgeVariant?: "success";
 };
+
+type ReminderSortKey = "number" | "customer" | "invoice" | "reminderLevel" | "deadline" | "status";
+
+
 
 const reminderRowsByTab: Record<ReminderTab, ReminderRow[]> = {
   Liste: [
@@ -162,6 +168,23 @@ function isReminderTab(tab: string): tab is ReminderTab {
   return reminderTabs.includes(tab as ReminderTab);
 }
 
+function getReminderSortValue(reminder: ReminderRow, sortKey: ReminderSortKey) {
+  switch (sortKey) {
+    case "number":
+      return reminder.number;
+    case "customer":
+      return reminder.customer;
+    case "invoice":
+      return reminder.invoice;
+    case "reminderLevel":
+      return reminder.reminderLevel;
+    case "deadline":
+      return reminder.deadline;
+    case "status":
+      return reminder.status;
+  }
+}
+
 export function RemindersPage() {
   const module = getModuleConfig("reminders");
 
@@ -181,6 +204,17 @@ export function RemindersPage() {
   const { draft, isDirty, updateDraftField, resetDraft } =
     useEditableDraft(selectedReminder);
 
+
+  const {
+    sortedRows: sortedReminderRows,
+    sortConfig: reminderSortConfig,
+    requestSort: requestReminderSort,
+  } = useSortableTable<ReminderRow, ReminderSortKey>({
+    rows: reminderRows,
+    initialSortKey: "number",
+    getSortValue: getReminderSortValue,
+    fallbackSortValue: (reminder) => reminder.number,
+  });
   function handleTabChange(tab: string) {
     if (isReminderTab(tab)) {
       setActiveTab(tab);
@@ -233,15 +267,47 @@ export function RemindersPage() {
             <DataTable>
               <thead>
                 <tr>
-                  <th>Mahnung</th>
-                  <th>Kunde</th>
-                  <th>Rechnung</th>
-                  <th>Status</th>
+                  <SortableTableHeader
+                    label="Mahnung"
+                    sortKey="number"
+                    sortConfig={reminderSortConfig}
+                    onSort={requestReminderSort}
+                  />
+                  <SortableTableHeader
+                    label="Kunde"
+                    sortKey="customer"
+                    sortConfig={reminderSortConfig}
+                    onSort={requestReminderSort}
+                  />
+                  <SortableTableHeader
+                    label="Rechnung"
+                    sortKey="invoice"
+                    sortConfig={reminderSortConfig}
+                    onSort={requestReminderSort}
+                  />
+                  <SortableTableHeader
+                    label="Stufe"
+                    sortKey="reminderLevel"
+                    sortConfig={reminderSortConfig}
+                    onSort={requestReminderSort}
+                  />
+                  <SortableTableHeader
+                    label="Frist"
+                    sortKey="deadline"
+                    sortConfig={reminderSortConfig}
+                    onSort={requestReminderSort}
+                  />
+                  <SortableTableHeader
+                    label="Status"
+                    sortKey="status"
+                    sortConfig={reminderSortConfig}
+                    onSort={requestReminderSort}
+                  />
                 </tr>
               </thead>
 
               <tbody>
-                {reminderRows.map((reminder) => {
+                {sortedReminderRows.map((reminder) => {
                   const isSelected = reminder.id === selectedReminder?.id;
 
                   return (
@@ -255,6 +321,8 @@ export function RemindersPage() {
                       <td>{reminder.number}</td>
                       <td>{reminder.customer}</td>
                       <td>{reminder.invoice}</td>
+                      <td>{reminder.reminderLevel}</td>
+                      <td>{reminder.deadline}</td>
                       <td>
                         <Badge variant={reminder.badgeVariant}>
                           {reminder.status}

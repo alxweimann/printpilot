@@ -107,3 +107,4 @@ Erledigt: ConfirmDialog über DetailDrawer gelegt
 - Erledigt: Build-Baseline vor globaler Sortierung stabilisiert
 - Erledigt: Globale Sortierung auf Stammdaten-/Verwaltungsseiten ausgerollt
 - Hotfix erledigt: SortableTableHeader vollständig kompatibel für Aufträge, Angebote und Stammdaten gemacht
+- Erledigt: Globale Sortierung für Rechnungen, Lieferscheine und Mahnungen ausgerollt

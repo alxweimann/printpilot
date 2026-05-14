@@ -112,3 +112,5 @@ Etiketten / Kartonaufkleber
 - Stammdaten-/Verwaltungsseiten nutzen die globale Sortierung: Kunden, Material, Maschinen, Weiterverarbeitung, Leistungen und Vorlagen
 
 - SortableTableHeader unterstützt jetzt beide Sortier-APIs: sortKey/sortConfig/onSort und active/direction/onClick
+
+- Dokumenten-Tabellen für Rechnungen, Lieferscheine und Mahnungen nutzen jetzt die globale Sortierlogik.

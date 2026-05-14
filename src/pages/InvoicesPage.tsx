@@ -19,6 +19,8 @@ import { SectionHeader } from "../ui/SectionHeader";
 import { SaveActionButton } from "../ui/SaveActionButton";
 import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
+import { SortableTableHeader } from "../ui/SortableTableHeader";
+import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 const invoiceTabs = ["Liste", "Entwurf", "Offen", "Bezahlt", "Überfällig"] as const;
@@ -38,6 +40,10 @@ type InvoiceRow = {
   dueDate: string;
   badgeVariant?: "success";
 };
+
+type InvoiceSortKey = "number" | "customer" | "subject" | "invoiceDate" | "dueDate" | "status";
+
+
 
 const invoiceRowsByTab: Record<InvoiceTab, InvoiceRow[]> = {
   Liste: [
@@ -170,6 +176,23 @@ function isInvoiceTab(tab: string): tab is InvoiceTab {
   return invoiceTabs.includes(tab as InvoiceTab);
 }
 
+function getInvoiceSortValue(invoice: InvoiceRow, sortKey: InvoiceSortKey) {
+  switch (sortKey) {
+    case "number":
+      return invoice.number;
+    case "customer":
+      return invoice.customer;
+    case "subject":
+      return invoice.subject;
+    case "invoiceDate":
+      return invoice.invoiceDate;
+    case "dueDate":
+      return invoice.dueDate;
+    case "status":
+      return invoice.status;
+  }
+}
+
 export function InvoicesPage() {
   const module = getModuleConfig("invoices");
 
@@ -189,6 +212,17 @@ export function InvoicesPage() {
   const { draft, isDirty, updateDraftField, resetDraft } =
     useEditableDraft(selectedInvoice);
 
+
+  const {
+    sortedRows: sortedInvoiceRows,
+    sortConfig: invoiceSortConfig,
+    requestSort: requestInvoiceSort,
+  } = useSortableTable<InvoiceRow, InvoiceSortKey>({
+    rows: invoiceRows,
+    initialSortKey: "number",
+    getSortValue: getInvoiceSortValue,
+    fallbackSortValue: (invoice) => invoice.number,
+  });
   function handleTabChange(tab: string) {
     if (isInvoiceTab(tab)) {
       setActiveTab(tab);
@@ -241,15 +275,47 @@ export function InvoicesPage() {
             <DataTable>
               <thead>
                 <tr>
-                  <th>Rechnung</th>
-                  <th>Kunde</th>
-                  <th>Betreff</th>
-                  <th>Status</th>
+                  <SortableTableHeader
+                    label="Rechnung"
+                    sortKey="number"
+                    sortConfig={invoiceSortConfig}
+                    onSort={requestInvoiceSort}
+                  />
+                  <SortableTableHeader
+                    label="Kunde"
+                    sortKey="customer"
+                    sortConfig={invoiceSortConfig}
+                    onSort={requestInvoiceSort}
+                  />
+                  <SortableTableHeader
+                    label="Betreff"
+                    sortKey="subject"
+                    sortConfig={invoiceSortConfig}
+                    onSort={requestInvoiceSort}
+                  />
+                  <SortableTableHeader
+                    label="Datum"
+                    sortKey="invoiceDate"
+                    sortConfig={invoiceSortConfig}
+                    onSort={requestInvoiceSort}
+                  />
+                  <SortableTableHeader
+                    label="Fällig"
+                    sortKey="dueDate"
+                    sortConfig={invoiceSortConfig}
+                    onSort={requestInvoiceSort}
+                  />
+                  <SortableTableHeader
+                    label="Status"
+                    sortKey="status"
+                    sortConfig={invoiceSortConfig}
+                    onSort={requestInvoiceSort}
+                  />
                 </tr>
               </thead>
 
               <tbody>
-                {invoiceRows.map((invoice) => {
+                {sortedInvoiceRows.map((invoice) => {
                   const isSelected = invoice.id === selectedInvoice?.id;
 
                   return (
@@ -263,6 +329,8 @@ export function InvoicesPage() {
                       <td>{invoice.number}</td>
                       <td>{invoice.customer}</td>
                       <td>{invoice.subject}</td>
+                      <td>{invoice.invoiceDate}</td>
+                      <td>{invoice.dueDate}</td>
                       <td>
                         <Badge variant={invoice.badgeVariant}>
                           {invoice.status}

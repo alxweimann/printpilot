@@ -9,6 +9,7 @@ import {
 
 import {
   type PrintPilotCustomer,
+  type PrintPilotDeliveryNote,
   type PrintPilotFinishingProcess,
   type PrintPilotMachine,
   type PrintPilotMaterial,
@@ -28,6 +29,7 @@ type PrintPilotStoreContextValue = {
   customers: PrintPilotCustomer[];
   quotes: PrintPilotQuote[];
   orders: PrintPilotOrder[];
+  deliveryNotes: PrintPilotDeliveryNote[];
   materials: PrintPilotMaterial[];
   machines: PrintPilotMachine[];
   services: PrintPilotService[];
@@ -35,7 +37,9 @@ type PrintPilotStoreContextValue = {
   templates: PrintPilotTemplate[];
   settings: PrintPilotSettings;
   addOrder: (order: PrintPilotOrder) => void;
+  addDeliveryNote: (deliveryNote: PrintPilotDeliveryNote) => void;
   updateCustomer: (customer: PrintPilotCustomer) => void;
+  updateDeliveryNote: (deliveryNote: PrintPilotDeliveryNote) => void;
   updateFinishingProcess: (process: PrintPilotFinishingProcess) => void;
   updateMachine: (machine: PrintPilotMachine) => void;
   updateMaterial: (material: PrintPilotMaterial) => void;
@@ -67,6 +71,7 @@ function isValidStoreData(value: unknown): value is PrintPilotStoreData {
     Array.isArray(candidate.customers) &&
     Array.isArray(candidate.quotes) &&
     Array.isArray(candidate.orders) &&
+    (candidate.deliveryNotes === undefined || Array.isArray(candidate.deliveryNotes)) &&
     Array.isArray(candidate.materials) &&
     Array.isArray(candidate.machines) &&
     Array.isArray(candidate.services) &&
@@ -116,6 +121,24 @@ export function PrintPilotStoreProvider({
     setData((currentData) => ({
       ...currentData,
       orders: [order, ...currentData.orders],
+    }));
+  }
+
+  function addDeliveryNote(deliveryNote: PrintPilotDeliveryNote) {
+    setData((currentData) => ({
+      ...currentData,
+      deliveryNotes: [deliveryNote, ...currentData.deliveryNotes],
+    }));
+  }
+
+  function updateDeliveryNote(updatedDeliveryNote: PrintPilotDeliveryNote) {
+    setData((currentData) => ({
+      ...currentData,
+      deliveryNotes: currentData.deliveryNotes.map((deliveryNote) =>
+        deliveryNote.id === updatedDeliveryNote.id
+          ? updatedDeliveryNote
+          : deliveryNote,
+      ),
     }));
   }
 
@@ -215,9 +238,11 @@ export function PrintPilotStoreProvider({
     () => ({
       data,
       addOrder,
+      addDeliveryNote,
       customers: data.customers,
       quotes: data.quotes,
       orders: data.orders,
+      deliveryNotes: data.deliveryNotes,
       materials: data.materials,
       machines: data.machines,
       services: data.services,
@@ -225,6 +250,7 @@ export function PrintPilotStoreProvider({
       templates: data.templates,
       settings: data.settings,
       updateCustomer,
+      updateDeliveryNote,
       updateFinishingProcess,
       updateMachine,
       updateMaterial,

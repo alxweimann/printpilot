@@ -125,6 +125,28 @@ export type PrintPilotOrder = {
   badgeVariant?: "success";
 };
 
+export type PrintPilotDeliveryNoteStatus =
+  | "Entwurf"
+  | "Versandbereit"
+  | "Geliefert"
+  | "Abgeschlossen";
+
+export type PrintPilotDeliveryNote = {
+  id: PrintPilotId;
+  number: string;
+  orderId: PrintPilotId;
+  orderNumber: string;
+  customerId: PrintPilotId | null;
+  customerName: string;
+  product: string;
+  status: PrintPilotDeliveryNoteStatus;
+  shippingMethod: string;
+  recipient: string;
+  address: string;
+  template: string;
+  badgeVariant?: "success";
+};
+
 export type PrintPilotServiceStatus = "Aktiv" | "Optional" | "Archiv";
 
 export type PrintPilotService = {
@@ -201,6 +223,7 @@ export type PrintPilotStoreData = {
   customers: PrintPilotCustomer[];
   quotes: PrintPilotQuote[];
   orders: PrintPilotOrder[];
+  deliveryNotes: PrintPilotDeliveryNote[];
   materials: PrintPilotMaterial[];
   machines: PrintPilotMachine[];
   services: PrintPilotService[];
@@ -806,6 +829,68 @@ export const initialPrintPilotOrders: PrintPilotOrder[] = [
   },
 ];
 
+export const initialPrintPilotDeliveryNotes: PrintPilotDeliveryNote[] = [
+  {
+    id: "delivery-ls-2026-001",
+    number: "LS-2026-001",
+    orderId: "order-au-2026-001",
+    orderNumber: "AU-2026-001",
+    customerId: "customer-sonnendruck",
+    customerName: "Sonnendruck GmbH",
+    product: "Broschüre A4",
+    status: "Entwurf",
+    shippingMethod: "Abholung",
+    recipient: "Sonnendruck GmbH",
+    address: "Musterstraße 12, 69115 Heidelberg",
+    template: "Standardlieferschein",
+    badgeVariant: "success",
+  },
+  {
+    id: "delivery-ls-2026-002",
+    number: "LS-2026-002",
+    orderId: "order-au-2026-002",
+    orderNumber: "AU-2026-002",
+    customerId: "customer-musterkunde",
+    customerName: "Musterkunde GmbH",
+    product: "Flyer A5",
+    status: "Versandbereit",
+    shippingMethod: "Auslieferung",
+    recipient: "Musterkunde GmbH",
+    address: "Beispielweg 4, 68159 Mannheim",
+    template: "Standardlieferschein",
+  },
+  {
+    id: "delivery-ls-2026-003",
+    number: "LS-2026-003",
+    orderId: "order-au-2026-003",
+    orderNumber: "AU-2026-003",
+    customerId: "customer-agentur-beispiel",
+    customerName: "Agentur Beispiel",
+    product: "Visitenkarten",
+    status: "Geliefert",
+    shippingMethod: "Paketdienst",
+    recipient: "Agentur Beispiel",
+    address: "Designallee 8, 69120 Heidelberg",
+    template: "Neutraler Lieferschein",
+    badgeVariant: "success",
+  },
+  {
+    id: "delivery-ls-2026-008",
+    number: "LS-2026-008",
+    orderId: "order-au-2026-008",
+    orderNumber: "AU-2026-008",
+    customerId: null,
+    customerName: "Druckpartner Süd",
+    product: "Technischer Auftrag",
+    status: "Abgeschlossen",
+    shippingMethod: "Spedition",
+    recipient: "Druckpartner Süd",
+    address: "Südstraße 5, 69190 Walldorf",
+    template: "Technischer Lieferschein",
+    badgeVariant: "success",
+  },
+];
+
 function getNextOrderNumber(orders: PrintPilotOrder[]) {
   const year = new Date().getFullYear();
   const numbersForYear = orders
@@ -843,11 +928,49 @@ export function createPrintPilotOrderFromQuote(
 }
 
 
+function getNextDeliveryNoteNumber(deliveryNotes: PrintPilotDeliveryNote[]) {
+  const year = new Date().getFullYear();
+  const numbersForYear = deliveryNotes
+    .map((deliveryNote) => deliveryNote.number)
+    .filter((number) => number.startsWith(`LS-${year}-`))
+    .map((number) => Number(number.replace(`LS-${year}-`, "")))
+    .filter((number) => Number.isFinite(number));
+
+  const nextNumber =
+    numbersForYear.length > 0 ? Math.max(...numbersForYear) + 1 : 1;
+
+  return `LS-${year}-${String(nextNumber).padStart(3, "0")}`;
+}
+
+export function createPrintPilotDeliveryNoteFromOrder(
+  order: PrintPilotOrder,
+  existingDeliveryNotes: PrintPilotDeliveryNote[],
+): PrintPilotDeliveryNote {
+  const number = getNextDeliveryNoteNumber(existingDeliveryNotes);
+
+  return {
+    id: `delivery-${number.toLowerCase()}`,
+    number,
+    orderId: order.id,
+    orderNumber: order.number,
+    customerId: order.customerId,
+    customerName: order.customerName,
+    product: order.product,
+    status: "Entwurf",
+    shippingMethod: "Abholung",
+    recipient: order.customerName,
+    address: "",
+    template: "Standardlieferschein",
+  };
+}
+
+
 export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
   return {
     customers: initialPrintPilotCustomers,
     quotes: initialPrintPilotQuotes,
     orders: initialPrintPilotOrders,
+    deliveryNotes: initialPrintPilotDeliveryNotes,
     materials: initialPrintPilotMaterials,
     machines: initialPrintPilotMachines,
     services: initialPrintPilotServices,
@@ -877,6 +1000,10 @@ export function createPrintPilotStoreSnapshot(
       overrides.orders && overrides.orders.length > 0
         ? overrides.orders
         : emptyStore.orders,
+    deliveryNotes:
+      overrides.deliveryNotes && overrides.deliveryNotes.length > 0
+        ? overrides.deliveryNotes
+        : emptyStore.deliveryNotes,
     materials:
       overrides.materials && overrides.materials.length > 0
         ? overrides.materials
@@ -988,6 +1115,21 @@ export function getPrintPilotApprovalBadgeVariant(
     default:
       return "neutral";
   }
+}
+
+export function groupPrintPilotDeliveryNotesByStatus(
+  deliveryNotes: PrintPilotDeliveryNote[],
+): Record<PrintPilotDeliveryNoteStatus, PrintPilotDeliveryNote[]> {
+  return {
+    Entwurf: deliveryNotes.filter((deliveryNote) => deliveryNote.status === "Entwurf"),
+    Versandbereit: deliveryNotes.filter(
+      (deliveryNote) => deliveryNote.status === "Versandbereit",
+    ),
+    Geliefert: deliveryNotes.filter((deliveryNote) => deliveryNote.status === "Geliefert"),
+    Abgeschlossen: deliveryNotes.filter(
+      (deliveryNote) => deliveryNote.status === "Abgeschlossen",
+    ),
+  };
 }
 
 export function groupPrintPilotOrdersByStatus(

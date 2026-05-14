@@ -6,6 +6,7 @@ import {
   type PrintPilotHandoffStatus,
   type PrintPilotOrder,
   type PrintPilotOrderPriority,
+  createPrintPilotDeliveryNoteFromOrder,
   type PrintPilotOrderStatus,
   getPrintPilotApprovalBadgeVariant,
   groupPrintPilotOrdersByStatus,
@@ -178,11 +179,22 @@ function getOrderSortValue(order: PrintPilotOrder, key: OrderSortKey) {
 
 export function OrdersPage() {
   const module = getModuleConfig("orders");
-  const { machines, orders, settings, updateOrder } = usePrintPilotStore();
+  const {
+    addDeliveryNote,
+    deliveryNotes,
+    machines,
+    orders,
+    settings,
+    updateOrder,
+  } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
   const [isProductionApprovalDialogOpen, setIsProductionApprovalDialogOpen] =
+    useState(false);
+  const [isCreateDeliveryNoteDialogOpen, setIsCreateDeliveryNoteDialogOpen] =
+    useState(false);
+  const [isDuplicateDeliveryNoteDialogOpen, setIsDuplicateDeliveryNoteDialogOpen] =
     useState(false);
 
   const orderRowsByTab = useMemo(() => {
@@ -208,6 +220,9 @@ export function OrdersPage() {
 
   const canEdit = isEditing && Boolean(draft);
   const draftOrder = draft as PrintPilotOrder | undefined;
+  const existingDeliveryNoteForSelectedOrder = selectedOrder
+    ? deliveryNotes.find((deliveryNote) => deliveryNote.orderId === selectedOrder.id)
+    : undefined;
 
   const {
     sortedRows: sortedOrderRows,
@@ -234,6 +249,8 @@ export function OrdersPage() {
       setIsEditing(false);
       setIsDetailDrawerOpen(false);
       setIsProductionApprovalDialogOpen(false);
+      setIsCreateDeliveryNoteDialogOpen(false);
+      setIsDuplicateDeliveryNoteDialogOpen(false);
     }
   }
 
@@ -242,18 +259,24 @@ export function OrdersPage() {
     setIsEditing(false);
     setIsDetailDrawerOpen(true);
     setIsProductionApprovalDialogOpen(false);
+    setIsCreateDeliveryNoteDialogOpen(false);
+    setIsDuplicateDeliveryNoteDialogOpen(false);
   }
 
   function handleCloseDetailDrawer() {
     setIsEditing(false);
     setIsDetailDrawerOpen(false);
     setIsProductionApprovalDialogOpen(false);
+    setIsCreateDeliveryNoteDialogOpen(false);
+    setIsDuplicateDeliveryNoteDialogOpen(false);
   }
 
   function handleResetDraft() {
     resetDraft();
     setIsEditing(false);
     setIsProductionApprovalDialogOpen(false);
+    setIsCreateDeliveryNoteDialogOpen(false);
+    setIsDuplicateDeliveryNoteDialogOpen(false);
   }
 
   function handleToggleEditing() {
@@ -342,6 +365,43 @@ export function OrdersPage() {
     }
 
     saveOrder(savedOrder);
+  }
+
+  function handleOpenCreateDeliveryNoteDialog() {
+    if (!selectedOrder) {
+      return;
+    }
+
+    if (existingDeliveryNoteForSelectedOrder) {
+      setIsDuplicateDeliveryNoteDialogOpen(true);
+      return;
+    }
+
+    setIsCreateDeliveryNoteDialogOpen(true);
+  }
+
+  function handleCancelCreateDeliveryNoteDialog() {
+    setIsCreateDeliveryNoteDialogOpen(false);
+  }
+
+  function handleCancelDuplicateDeliveryNoteDialog() {
+    setIsDuplicateDeliveryNoteDialogOpen(false);
+  }
+
+  function handleCreateDeliveryNoteFromOrder() {
+    if (!selectedOrder || existingDeliveryNoteForSelectedOrder) {
+      setIsCreateDeliveryNoteDialogOpen(false);
+      setIsDuplicateDeliveryNoteDialogOpen(Boolean(existingDeliveryNoteForSelectedOrder));
+      return;
+    }
+
+    const newDeliveryNote = createPrintPilotDeliveryNoteFromOrder(
+      selectedOrder,
+      deliveryNotes,
+    );
+
+    addDeliveryNote(newDeliveryNote);
+    setIsCreateDeliveryNoteDialogOpen(false);
   }
 
   function handleCancelProductionApprovalDialog() {
@@ -501,6 +561,10 @@ export function OrdersPage() {
 
             <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
 
+            <Button variant="primary" onClick={handleOpenCreateDeliveryNoteDialog}>
+              Lieferschein erstellen
+            </Button>
+
             <SaveActionButton
               isDirty={isDirty}
               defaultLabel="Auftrag speichern"
@@ -645,6 +709,74 @@ export function OrdersPage() {
           </section>
         </div>
       </DetailDrawer>
+
+      <ConfirmDialog
+        open={isCreateDeliveryNoteDialogOpen && Boolean(selectedOrder)}
+        title="Lieferschein aus Auftrag erstellen?"
+        description={
+          <>
+            Aus dem ausgewählten Auftrag wird ein neuer Lieferschein erzeugt.
+            Der Lieferschein wird eindeutig mit dem Auftrag verknüpft.
+          </>
+        }
+        details={
+          selectedOrder ? (
+            <>
+              <span>
+                <strong>Auftrag:</strong> {selectedOrder.number}
+              </span>
+              <span>
+                <strong>Kunde:</strong> {selectedOrder.customerName}
+              </span>
+              <span>
+                <strong>Produkt:</strong> {selectedOrder.product}
+              </span>
+              <span>
+                <strong>Status neuer Lieferschein:</strong> Entwurf
+              </span>
+            </>
+          ) : null
+        }
+        variant="default"
+        cancelLabel="Abbrechen"
+        confirmLabel="Lieferschein erstellen"
+        onCancel={handleCancelCreateDeliveryNoteDialog}
+        onConfirm={handleCreateDeliveryNoteFromOrder}
+      />
+
+      <ConfirmDialog
+        open={isDuplicateDeliveryNoteDialogOpen && Boolean(selectedOrder)}
+        title="Lieferschein existiert bereits"
+        description={
+          <>
+            Für diesen Auftrag existiert bereits ein Lieferschein. Es wird kein
+            weiterer Lieferschein erzeugt, damit keine Dublette entsteht.
+          </>
+        }
+        details={
+          selectedOrder ? (
+            <>
+              <span>
+                <strong>Auftrag:</strong> {selectedOrder.number}
+              </span>
+              <span>
+                <strong>Kunde:</strong> {selectedOrder.customerName}
+              </span>
+              {existingDeliveryNoteForSelectedOrder && (
+                <span>
+                  <strong>Vorhandener Lieferschein:</strong>{" "}
+                  {existingDeliveryNoteForSelectedOrder.number}
+                </span>
+              )}
+            </>
+          ) : null
+        }
+        variant="warning"
+        cancelLabel="Schließen"
+        confirmLabel="Verstanden"
+        onCancel={handleCancelDuplicateDeliveryNoteDialog}
+        onConfirm={handleCancelDuplicateDeliveryNoteDialog}
+      />
 
       <ConfirmDialog
         open={isProductionApprovalDialogOpen && Boolean(draftOrder)}

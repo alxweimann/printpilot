@@ -1,9 +1,15 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { getModuleConfig } from "../app/moduleConfig";
-
+import {
+  type PrintPilotDeliveryNote,
+  type PrintPilotDeliveryNoteStatus,
+  groupPrintPilotDeliveryNotesByStatus,
+} from "../data/printPilotStore";
+import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
+import { usePrintPilotStore } from "../store/PrintPilotStore";
 
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -32,122 +38,12 @@ const deliveryTabs = [
   "Abgeschlossen",
 ] as const;
 
-type DeliveryTab = (typeof deliveryTabs)[number];
-
-type DeliveryNoteRow = {
-  id: string;
-  number: string;
-  customer: string;
-  order: string;
-  status: string;
-  shippingMethod: string;
-  recipient: string;
-  address: string;
-  template: string;
-  badgeVariant?: "success";
-};
-
-const deliveryRowsByTab: Record<DeliveryTab, DeliveryNoteRow[]> = {
-  Liste: [
-    {
-      id: "delivery-ls-2026-001",
-      number: "LS-2026-001",
-      customer: "Sonnendruck GmbH",
-      order: "AU-2026-001",
-      status: "Entwurf",
-      shippingMethod: "Abholung",
-      recipient: "Sonnendruck GmbH",
-      address: "Musterstraße 1, 69168 Wiesloch",
-      template: "Standardlieferschein",
-      badgeVariant: "success",
-    },
-    {
-      id: "delivery-ls-2026-002",
-      number: "LS-2026-002",
-      customer: "Musterkunde GmbH",
-      order: "AU-2026-002",
-      status: "Versandbereit",
-      shippingMethod: "Auslieferung",
-      recipient: "Musterkunde GmbH",
-      address: "Beispielweg 12, 69115 Heidelberg",
-      template: "Standardlieferschein",
-      badgeVariant: undefined,
-    },
-    {
-      id: "delivery-ls-2026-003",
-      number: "LS-2026-003",
-      customer: "Beispiel AG",
-      order: "AU-2026-003",
-      status: "Geliefert",
-      shippingMethod: "Paketdienst",
-      recipient: "Beispiel AG",
-      address: "Industriestraße 8, 68159 Mannheim",
-      template: "Neutraler Lieferschein",
-      badgeVariant: "success",
-    },
-  ],
-  Entwurf: [
-    {
-      id: "delivery-ls-2026-001",
-      number: "LS-2026-001",
-      customer: "Sonnendruck GmbH",
-      order: "AU-2026-001",
-      status: "Entwurf",
-      shippingMethod: "Abholung",
-      recipient: "Sonnendruck GmbH",
-      address: "Musterstraße 1, 69168 Wiesloch",
-      template: "Standardlieferschein",
-      badgeVariant: "success",
-    },
-  ],
-  Versandbereit: [
-    {
-      id: "delivery-ls-2026-002",
-      number: "LS-2026-002",
-      customer: "Musterkunde GmbH",
-      order: "AU-2026-002",
-      status: "Versandbereit",
-      shippingMethod: "Auslieferung",
-      recipient: "Musterkunde GmbH",
-      address: "Beispielweg 12, 69115 Heidelberg",
-      template: "Standardlieferschein",
-      badgeVariant: undefined,
-    },
-  ],
-  Geliefert: [
-    {
-      id: "delivery-ls-2026-003",
-      number: "LS-2026-003",
-      customer: "Beispiel AG",
-      order: "AU-2026-003",
-      status: "Geliefert",
-      shippingMethod: "Paketdienst",
-      recipient: "Beispiel AG",
-      address: "Industriestraße 8, 68159 Mannheim",
-      template: "Neutraler Lieferschein",
-      badgeVariant: "success",
-    },
-  ],
-  Abgeschlossen: [
-    {
-      id: "delivery-ls-2026-008",
-      number: "LS-2026-008",
-      customer: "Druckpartner Süd",
-      order: "AU-2026-008",
-      status: "Abgeschlossen",
-      shippingMethod: "Spedition",
-      recipient: "Druckpartner Süd",
-      address: "Südstraße 5, 69190 Walldorf",
-      template: "Technischer Lieferschein",
-      badgeVariant: "success",
-    },
-  ],
-};
+type DeliveryTab = "Liste" | PrintPilotDeliveryNoteStatus;
 
 function getDeliveryTitle(tab: DeliveryTab) {
   switch (tab) {
     case "Liste":
-      return "Lieferschein vorbereiten";
+      return "Lieferscheinübersicht";
     case "Entwurf":
       return "Lieferscheinentwurf bearbeiten";
     case "Versandbereit":
@@ -161,7 +57,7 @@ function getDeliveryTitle(tab: DeliveryTab) {
 
 function getDeliveryStatus(tab: DeliveryTab) {
   if (tab === "Liste") {
-    return "Entwurf";
+    return "Alle Lieferscheine";
   }
 
   return tab;
@@ -173,24 +69,24 @@ function isDeliveryTab(tab: string): tab is DeliveryTab {
 
 type DeliverySortKey =
   | "number"
-  | "customer"
-  | "order"
+  | "customerName"
+  | "orderNumber"
   | "shippingMethod"
   | "status";
 
 function getDeliverySortValue(
-  deliveryNote: DeliveryNoteRow,
+  deliveryNote: PrintPilotDeliveryNote,
   sortKey: DeliverySortKey,
 ) {
   switch (sortKey) {
     case "number":
       return deliveryNote.number;
 
-    case "customer":
-      return deliveryNote.customer;
+    case "customerName":
+      return deliveryNote.customerName;
 
-    case "order":
-      return deliveryNote.order;
+    case "orderNumber":
+      return deliveryNote.orderNumber;
 
     case "shippingMethod":
       return deliveryNote.shippingMethod;
@@ -202,9 +98,17 @@ function getDeliverySortValue(
 
 export function DeliveryNotesPage() {
   const module = getModuleConfig("delivery-notes");
+  const { deliveryNotes, updateDeliveryNote } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
+
+  const deliveryRowsByTab = useMemo(() => {
+    return {
+      Liste: deliveryNotes,
+      ...groupPrintPilotDeliveryNotesByStatus(deliveryNotes),
+    };
+  }, [deliveryNotes]);
 
   const {
     activeTab,
@@ -217,18 +121,21 @@ export function DeliveryNotesPage() {
     initialTab: "Liste" as DeliveryTab,
   });
 
-  const { draft, isDirty, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
     useEditableDraft(selectedDeliveryNote);
+
+  const canEdit = isEditing && Boolean(draft);
 
   const {
     sortedRows: sortedDeliveryRows,
     sortConfig: deliverySortConfig,
     requestSort: requestDeliverySort,
-  } = useSortableTable<DeliveryNoteRow, DeliverySortKey>({
+  } = useSortableTable<PrintPilotDeliveryNote, DeliverySortKey>({
     rows: deliveryRows,
     initialSortKey: "number",
     getSortValue: getDeliverySortValue,
-    fallbackSortValue: (deliveryNote: DeliveryNoteRow) => deliveryNote.number,
+    fallbackSortValue: (deliveryNote: PrintPilotDeliveryNote) =>
+      deliveryNote.number,
   });
 
   function handleTabChange(tab: string) {
@@ -260,8 +167,24 @@ export function DeliveryNotesPage() {
   }
 
   function handleSaveDeliveryNote() {
+    if (!draft) {
+      return;
+    }
+
+    const savedDeliveryNote = draft as PrintPilotDeliveryNote;
+
+    updateDeliveryNote(savedDeliveryNote);
+    saveDraft(savedDeliveryNote);
     setIsEditing(false);
     setIsDetailDrawerOpen(false);
+
+    if (activeTab !== "Liste") {
+      setActiveTab("Liste");
+    }
+
+    window.setTimeout(() => {
+      selectItem(savedDeliveryNote.id);
+    }, 0);
   }
 
   return (
@@ -281,8 +204,8 @@ export function DeliveryNotesPage() {
       <section className="calculation-sheet">
         <WorkspaceHeader
           kicker="LIEFERSCHEINE"
-          title="Lieferscheinübersicht"
-          statusValue={activeTab === "Liste" ? "Alle Lieferscheine" : activeTab}
+          title={getDeliveryTitle(activeTab)}
+          statusValue={getDeliveryStatus(activeTab)}
         />
 
         <section className="workspace-panel master-list-panel">
@@ -302,13 +225,13 @@ export function DeliveryNotesPage() {
                 />
                 <SortableTableHeader
                   label="Kunde"
-                  sortKey="customer"
+                  sortKey="customerName"
                   sortConfig={deliverySortConfig}
                   onSort={requestDeliverySort}
                 />
                 <SortableTableHeader
                   label="Auftrag"
-                  sortKey="order"
+                  sortKey="orderNumber"
                   sortConfig={deliverySortConfig}
                   onSort={requestDeliverySort}
                 />
@@ -328,7 +251,7 @@ export function DeliveryNotesPage() {
             </thead>
 
             <tbody>
-              {sortedDeliveryRows.map((deliveryNote: DeliveryNoteRow) => {
+              {sortedDeliveryRows.map((deliveryNote: PrintPilotDeliveryNote) => {
                 const isSelected = deliveryNote.id === selectedDeliveryNote?.id;
 
                 return (
@@ -338,11 +261,15 @@ export function DeliveryNotesPage() {
                     onClick={() => handleDeliveryNoteSelect(deliveryNote.id)}
                   >
                     <td>{deliveryNote.number}</td>
-                    <td>{deliveryNote.customer}</td>
-                    <td>{deliveryNote.order}</td>
+                    <td>{deliveryNote.customerName}</td>
+                    <td>{deliveryNote.orderNumber}</td>
                     <td>{deliveryNote.shippingMethod}</td>
                     <td>
-                      <Badge variant={deliveryNote.badgeVariant}>
+                      <Badge
+                        variant={getPrintPilotStatusBadgeVariant(
+                          deliveryNote.status,
+                        )}
+                      >
                         {deliveryNote.status}
                       </Badge>
                     </td>
@@ -361,7 +288,7 @@ export function DeliveryNotesPage() {
         title={selectedDeliveryNote?.number ?? "Lieferschein"}
         subtitle={
           selectedDeliveryNote
-            ? `${selectedDeliveryNote.customer} · ${selectedDeliveryNote.order}`
+            ? `${selectedDeliveryNote.customerName} · ${selectedDeliveryNote.orderNumber}`
             : undefined
         }
         onClose={handleCloseDrawer}
@@ -394,17 +321,17 @@ export function DeliveryNotesPage() {
             </Field>
 
             <Field label="Kunde">
-              <Input value={draft?.customer ?? ""} readOnly />
+              <Input value={draft?.customerName ?? ""} readOnly />
             </Field>
 
             <Field label="Auftrag">
-              <Input value={draft?.order ?? ""} readOnly />
+              <Input value={draft?.orderNumber ?? ""} readOnly />
             </Field>
 
             <Field label="Versandart">
               <Select
                 value={draft?.shippingMethod ?? ""}
-                disabled={!isEditing}
+                disabled={!canEdit}
                 onChange={(event) =>
                   updateDraftField("shippingMethod", event.target.value)
                 }
@@ -422,9 +349,12 @@ export function DeliveryNotesPage() {
             <Field label="Status">
               <Select
                 value={draft?.status ?? ""}
-                disabled={!isEditing}
+                disabled={!canEdit}
                 onChange={(event) =>
-                  updateDraftField("status", event.target.value)
+                  updateDraftField(
+                    "status",
+                    event.target.value as PrintPilotDeliveryNoteStatus,
+                  )
                 }
               >
                 <option value="" disabled>
@@ -444,7 +374,7 @@ export function DeliveryNotesPage() {
             <Field label="Empfänger">
               <Input
                 value={draft?.recipient ?? ""}
-                readOnly={!isEditing}
+                readOnly={!canEdit}
                 onChange={(event) =>
                   updateDraftField("recipient", event.target.value)
                 }
@@ -454,7 +384,7 @@ export function DeliveryNotesPage() {
             <Field label="Adresse">
               <Input
                 value={draft?.address ?? ""}
-                readOnly={!isEditing}
+                readOnly={!canEdit}
                 onChange={(event) =>
                   updateDraftField("address", event.target.value)
                 }
@@ -477,7 +407,7 @@ export function DeliveryNotesPage() {
             <tbody>
               <tr>
                 <td>1</td>
-                <td>Produkt aus Auftrag übernehmen</td>
+                <td>{draft?.product ?? "Produkt aus Auftrag übernehmen"}</td>
                 <td>—</td>
                 <td>Stk.</td>
               </tr>
@@ -496,7 +426,7 @@ export function DeliveryNotesPage() {
             <Field label="Vorlage">
               <Select
                 value={draft?.template ?? ""}
-                disabled={!isEditing}
+                disabled={!canEdit}
                 onChange={(event) =>
                   updateDraftField("template", event.target.value)
                 }

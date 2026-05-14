@@ -1144,3 +1144,26 @@ button {
     0 0 9px rgba(34, 211, 238, 0.18) !important;
   white-space: nowrap !important;
 }
+
+
+/* Sidebar clock: PP logo gradient text */
+.sidebar-led-display {
+  justify-items: center !important;
+}
+
+.sidebar-led-date,
+.sidebar-led-time,
+.sidebar-led-line {
+  width: 138px !important;
+  min-width: 138px !important;
+  max-width: 138px !important;
+  background: linear-gradient(135deg, var(--color-cyan), var(--color-magenta)) !important;
+  background-clip: text !important;
+  -webkit-background-clip: text !important;
+  color: transparent !important;
+  -webkit-text-fill-color: transparent !important;
+  text-shadow: none !important;
+  filter:
+    drop-shadow(0 0 2px rgba(0, 174, 239, 0.28))
+    drop-shadow(0 0 4px rgba(236, 0, 140, 0.18)) !important;
+}

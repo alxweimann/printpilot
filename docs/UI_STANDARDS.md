@@ -110,3 +110,17 @@ im Drawer: --detail-drawer-accent-color
 außerhalb: --item-accent oder Blau-Fallback
 keine feste cyan/blaue Section-Linie mehr
 ```
+
+## Sidebar Uhr/Datum Farbverlauf
+
+Die Datums- und Uhrzeitanzeige in der Sidebar nutzt denselben Verlauf wie das PP-Logo.
+
+Standard:
+
+```text
+linear-gradient(135deg, var(--color-cyan), var(--color-magenta))
+Text mit background-clip
+kein Rahmen
+kein Balken
+reduzierter Glow über drop-shadow
+```

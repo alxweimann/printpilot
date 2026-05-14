@@ -111,3 +111,4 @@ Erledigt: ConfirmDialog über DetailDrawer gelegt
 - Erledigt: Drawer-Innenakzente und primäre Drawer-Aktion auf Modulfarbe umgestellt
 - Hotfix erledigt: Drawer-SectionHeader-Akzente auf Modulfarbe korrigiert
 - Hotfix erledigt: SectionHeader-Inline-Akzent für zuverlässige Drawer-Modulfarben
+- Erledigt: Sidebar-Uhr/Datum optisch an PP-Logo-Farbverlauf angepasst

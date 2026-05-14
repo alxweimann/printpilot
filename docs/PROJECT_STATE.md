@@ -129,3 +129,5 @@ SortableTableHeader steht direkt im tr, ohne verschachtelte th-Struktur
 - SectionHeader im Drawer nutzt jetzt die tatsächliche form-section-title-Struktur für Modul-Akzentfarben
 
 - SectionHeader nutzt jetzt inline CSS-Variablen; Drawer-Abschnittsstriche übernehmen zuverlässig die Modulfarbe
+
+- Sidebar-Datum und Uhrzeit nutzen jetzt denselben Cyan-Magenta-Farbverlauf wie das PP-Logo

@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { CSSProperties, KeyboardEvent, ReactNode } from "react";
 import type { SortConfig, SortDirection } from "./useSortableTable";
 
 type SortableTableHeaderProps<TSortKey extends string = string> = {
@@ -15,14 +15,43 @@ type SortableTableHeaderProps<TSortKey extends string = string> = {
   onSort?: (sortKey: TSortKey) => void;
 
   /**
-   * Compatibility API for existing master-data pages.
+   * Compatibility API for existing master-data/document pages.
    */
   active?: boolean;
   direction?: SortDirection;
   onClick?: () => void;
 };
 
-function getSortIndicator(direction: SortDirection | undefined) {
+const headerCellStyle: CSSProperties = {
+  borderBottom: "0",
+  boxShadow: "none",
+  textDecoration: "none",
+  outline: "none",
+  userSelect: "none",
+  WebkitUserSelect: "none",
+};
+
+const clickableHeaderCellStyle: CSSProperties = {
+  ...headerCellStyle,
+  cursor: "pointer",
+};
+
+const headerTextStyle: CSSProperties = {
+  border: "0",
+  borderBottom: "0",
+  boxShadow: "none",
+  textDecoration: "none",
+  outline: "none",
+  userSelect: "none",
+  WebkitUserSelect: "none",
+  cursor: "inherit",
+};
+
+function getSortIndicator(direction: SortDirection | undefined, isActive: boolean) {
+  if (!isActive) {
+    return "↕";
+  }
+
   if (direction === "asc") {
     return "↑";
   }
@@ -56,7 +85,7 @@ export function SortableTableHeader<TSortKey extends string = string>({
   const resolvedDirection =
     direction ?? (isActive && sortConfig ? sortConfig.direction : undefined);
 
-  const indicator = getSortIndicator(isActive ? resolvedDirection : undefined);
+  const indicator = getSortIndicator(resolvedDirection, isActive);
 
   const alignClass =
     align === "right"
@@ -65,7 +94,7 @@ export function SortableTableHeader<TSortKey extends string = string>({
         ? "justify-center text-center"
         : "justify-start text-left";
 
-  function handleClick() {
+  function handleSort() {
     if (onClick) {
       onClick();
       return;
@@ -76,41 +105,54 @@ export function SortableTableHeader<TSortKey extends string = string>({
     }
   }
 
+  function handleKeyDown(event: KeyboardEvent<HTMLTableCellElement>) {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      handleSort();
+    }
+  }
+
   const isSortable = Boolean(onClick || (onSort && resolvedSortKey));
 
   return (
-    <th className={["sortable-table-header", className].join(" ")}>
-      {isSortable ? (
-        <button
-          type="button"
-          onClick={handleClick}
-          className={[
-            "inline-flex w-full items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] transition",
-            alignClass,
-            isActive ? "text-zinc-950" : "text-zinc-500 hover:text-zinc-800",
-          ].join(" ")}
-        >
-          <span>{label}</span>
+    <th
+      tabIndex={isSortable ? 0 : undefined}
+      onClick={isSortable ? handleSort : undefined}
+      onKeyDown={isSortable ? handleKeyDown : undefined}
+      aria-sort={
+        isActive
+          ? resolvedDirection === "asc"
+            ? "ascending"
+            : "descending"
+          : undefined
+      }
+      className={["px-4 py-3", className].join(" ")}
+      style={isSortable ? clickableHeaderCellStyle : headerCellStyle}
+    >
+      <span
+        className={[
+          "inline-flex w-full items-center text-xs font-semibold uppercase tracking-[0.14em]",
+          alignClass,
+          isActive ? "text-zinc-950" : "text-zinc-500",
+          isSortable ? "hover:text-zinc-800" : "",
+        ].join(" ")}
+        style={headerTextStyle}
+      >
+        <span style={headerTextStyle}>{label}</span>
+
+        {isSortable && (
           <span
             aria-hidden="true"
             className={[
-              "text-[11px] leading-none",
-              isActive ? "opacity-100" : "opacity-40",
+              "ml-8 inline-flex w-4 justify-center text-[11px] leading-none",
+              isActive ? "opacity-90" : "opacity-35",
             ].join(" ")}
+            style={headerTextStyle}
           >
             {indicator}
           </span>
-        </button>
-      ) : (
-        <span
-          className={[
-            "inline-flex w-full items-center gap-1.5 text-xs font-semibold uppercase tracking-[0.14em] text-zinc-500",
-            alignClass,
-          ].join(" ")}
-        >
-          {label}
-        </span>
-      )}
+        )}
+      </span>
     </th>
   );
 }

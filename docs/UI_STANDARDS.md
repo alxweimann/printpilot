@@ -1,93 +1,85 @@
-# UI Standards
+# Ui Standards
 
-## CSS-Import Standard
+## Sortierpfeil-Abstand
 
-Direkte Side-Effect-CSS-Imports in UI-Komponenten werden aktuell vermieden, weil der TypeScript-Build im Projekt diese Imports mit `TS2882` blockiert.
+Sortierpfeile dürfen nicht direkt an der Spaltenbeschriftung kleben.
 
-Betroffen waren:
-
-```txt
-src/ui/DetailDrawer.tsx
-src/ui/Table.tsx
-```
-
-Die direkten Imports wurden entfernt:
-
-```ts
-import "./detailDrawer.css";
-import "./table.css";
-```
-
-Die Komponenten bleiben funktional erhalten. Die CSS-Dateien können als Platzhalter liegen bleiben, werden aber nicht mehr direkt importiert.
-
-## Globale Tabellensortierung
-
-Sortierbare Tabellen verwenden die zentralen Bausteine:
-
-```txt
-src/ui/useSortableTable.ts
-src/ui/SortableTableHeader.tsx
-```
-
-Standardverhalten:
-
-```txt
-1. Klick auf Spaltenkopf → aufsteigend sortieren
-2. Klick auf denselben Spaltenkopf → absteigend sortieren
-aktive Sortierung bleibt beim Tab-Wechsel innerhalb der Seite erhalten
-```
-
-Aktuell angebunden:
-
-```txt
-Aufträge
-Angebote
-Kunden
-Material
-Maschinen
-Weiterverarbeitung
-Leistungen
-Vorlagen
-```
-
-Neue Tabellen sollen keine eigene lokale Sortierlogik mehr erhalten, sondern diese zentralen Bausteine verwenden.
-
-## SortableTableHeader Kompatibilität
-
-`SortableTableHeader` unterstützt zwei Nutzungsarten.
-
-Standard für neue Seiten:
-
-```tsx
-<SortableTableHeader
-  label="Name"
-  sortKey="name"
-  sortConfig={sortConfig}
-  onSort={handleSort}
-/>
-```
-
-Kompatibilität für bestehende Stammdaten-Seiten:
-
-```tsx
-<SortableTableHeader
-  label="Name"
-  active={sortConfig?.key === "name"}
-  direction={sortConfig?.direction}
-  onClick={() => handleSort("name")}
-/>
-```
-
-Neue Seiten sollen bevorzugt die `sortKey`/`sortConfig`/`onSort`-Variante verwenden.
-
-## Globale Sortierung: Dokumenten-Seiten
-
-Die globale Tabellensortierung ist jetzt auch für Dokumenten-Seiten umgesetzt:
+Standard:
 
 ```text
-Rechnungen: Rechnung, Kunde, Betreff, Datum, Fällig, Status
-Lieferscheine: Lieferschein, Kunde, Auftrag, Versand, Status
-Mahnungen: Mahnung, Kunde, Rechnung, Stufe, Frist, Status
+inaktive Spalten: kein sichtbares Sortierzeichen
+aktive Spalte: Pfeil mit ruhigem Abstand rechts neben dem Text
+kein Unterstrich, kein Balken, kein Browser-Button-Look
 ```
 
-Damit sind Aufträge, Angebote, Stammdaten und Dokumentenlisten auf demselben Sortierstandard.
+## Sortierkopf ohne natives Button-Rendering
+
+Sortierbare Tabellenköpfe verwenden kein natives `<button>`-Element mehr, weil globale Browser-/Button-Styles sonst sichtbare Rahmen oder kleine Balken erzeugen können.
+
+Standard:
+
+```text
+klickbarer Tabellenkopf über neutrales Element
+Tastaturbedienung über Enter/Leertaste bleibt erhalten
+kein Buttonrahmen
+kein Buttonhintergrund
+kein Unterstrich/Balken
+```
+
+## Abstand Spaltentitel zu Sortierpfeil
+
+Der Sortierpfeil steht mit deutlichem Abstand rechts neben dem Spaltentitel.
+
+Aktueller Standard:
+
+```text
+Spaltentitel → 20 px Abstand → Sortierpfeil
+```
+
+Damit wirkt der Pfeil nicht wie ein Satzzeichen direkt am Wort.
+
+## Sortierkopf Cursor und Unterstrich
+
+Sortierbare Tabellenköpfe müssen sich wie klickbare UI-Elemente verhalten, dürfen aber nicht wie Browser-Buttons oder Textlinks aussehen.
+
+Standard:
+
+```text
+Cursor: pointer
+Textauswahl deaktiviert
+keine Unterstreichung
+keine Border/Shadow-Linie am Label
+Pfeil mit deutlichem Abstand zum Text
+```
+
+## Sortierkopf ohne Wrapper-Unterstreichung
+
+Der Klickbereich sortierbarer Tabellenköpfe liegt direkt auf der Tabellenzelle (`th`).
+
+Damit greifen keine nativen Button-, Link- oder Role-Styles mehr, die kleine Unterstriche oder Balken unter der Beschriftung erzeugen können.
+
+Standard:
+
+```text
+Klick direkt auf th
+kein button
+kein role="button" Wrapper
+keine Textauswahl
+Cursor pointer
+aria-sort auf aktiver Spalte
+```
+
+## Sichtbarkeit und Abstand der Sortierpfeile
+
+Sortierbare Tabellenköpfe zeigen den Sortierindikator immer an.
+
+Standard:
+
+```text
+inaktive Spalte: dezentes ↕
+aktive Spalte aufsteigend: ↑
+aktive Spalte absteigend: ↓
+Abstand Text zu Pfeil: großzügig, nicht direkt am Wort
+```
+
+Der Klickbereich bleibt die gesamte Tabellenkopf-Zelle (`th`). Es gibt keinen Buttonrahmen, keine Unterstreichung und keinen Textcursor.

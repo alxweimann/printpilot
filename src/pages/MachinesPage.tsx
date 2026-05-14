@@ -16,6 +16,7 @@ import { PageTabs } from "../layout/PageTabs";
 
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { DetailDrawer } from "../ui/DetailDrawer";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -76,6 +77,7 @@ export function MachinesPage() {
   const { machines, updateMachine } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
 
   const machineRowsByTab = useMemo(() => {
     return groupPrintPilotMachinesByStatus(machines);
@@ -96,7 +98,6 @@ export function MachinesPage() {
     sortedRows: sortedMachineRows,
     sortConfig: machineSortConfig,
     requestSort: requestMachineSort,
-    getAriaSort: getMachineAriaSort,
   } = useSortableTable<PrintPilotMachine, MachineSortKey>({
     rows: machineRows,
     initialSortKey: "number",
@@ -112,12 +113,19 @@ export function MachinesPage() {
     if (isMachineTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
+      setIsDetailDrawerOpen(false);
     }
   }
 
   function handleMachineSelect(machineId: string) {
     selectItem(machineId);
     setIsEditing(false);
+    setIsDetailDrawerOpen(true);
+  }
+
+  function handleCloseDetailDrawer() {
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   function handleResetDraft() {
@@ -139,6 +147,7 @@ export function MachinesPage() {
     updateMachine(savedMachine);
     saveDraft(savedMachine);
     setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   return (
@@ -162,89 +171,107 @@ export function MachinesPage() {
           statusValue={isEditing ? "Bearbeitung offen" : activeTab}
         />
 
-        <div className="master-detail-layout">
-          <section className="workspace-panel master-list-panel">
-            <TableToolbar>
-              <Input className="search-input" placeholder="Maschinen suchen..." />
+        <section className="workspace-panel master-list-panel">
+          <TableToolbar>
+            <Input className="search-input" placeholder="Maschinen suchen..." />
+            <Button>Filter</Button>
+          </TableToolbar>
 
-              <Button>Filter</Button>
-            </TableToolbar>
+          <DataTable>
+            <thead>
+              <tr>
+                <SortableTableHeader
+                  label="Maschinennr."
+                  sortKey="number"
+                  sortConfig={machineSortConfig}
+                  onSort={requestMachineSort}
+                />
+                <SortableTableHeader
+                  label="Name"
+                  sortKey="name"
+                  sortConfig={machineSortConfig}
+                  onSort={requestMachineSort}
+                />
+                <SortableTableHeader
+                  label="Typ"
+                  sortKey="type"
+                  sortConfig={machineSortConfig}
+                  onSort={requestMachineSort}
+                />
+                <SortableTableHeader
+                  label="Farbmodus"
+                  sortKey="colorMode"
+                  sortConfig={machineSortConfig}
+                  onSort={requestMachineSort}
+                />
+                <SortableTableHeader
+                  label="Status"
+                  sortKey="status"
+                  sortConfig={machineSortConfig}
+                  onSort={requestMachineSort}
+                />
+              </tr>
+            </thead>
 
-            <DataTable>
-              <thead>
-                <tr>
-                  <th aria-sort={getMachineAriaSort("number")}>
-                    <SortableTableHeader
-                      label="Maschinennr."
-                      active={ machineSortConfig?.key === "number" }
-                      direction={ machineSortConfig?.direction }
-                      onClick={() => requestMachineSort("number")}
-                    />
-                  </th>
-                  <th aria-sort={getMachineAriaSort("name")}>
-                    <SortableTableHeader
-                      label="Name"
-                      active={ machineSortConfig?.key === "name" }
-                      direction={ machineSortConfig?.direction }
-                      onClick={() => requestMachineSort("name")}
-                    />
-                  </th>
-                  <th aria-sort={getMachineAriaSort("type")}>
-                    <SortableTableHeader
-                      label="Typ"
-                      active={ machineSortConfig?.key === "type" }
-                      direction={ machineSortConfig?.direction }
-                      onClick={() => requestMachineSort("type")}
-                    />
-                  </th>
-                  <th aria-sort={getMachineAriaSort("colorMode")}>
-                    <SortableTableHeader
-                      label="Farbmodus"
-                      active={ machineSortConfig?.key === "colorMode" }
-                      direction={ machineSortConfig?.direction }
-                      onClick={() => requestMachineSort("colorMode")}
-                    />
-                  </th>
-                  <th aria-sort={getMachineAriaSort("status")}>
-                    <SortableTableHeader
-                      label="Status"
-                      active={ machineSortConfig?.key === "status" }
-                      direction={ machineSortConfig?.direction }
-                      onClick={() => requestMachineSort("status")}
-                    />
-                  </th>
-                </tr>
-              </thead>
+            <tbody>
+              {sortedMachineRows.map((machine) => {
+                const isSelected = machine.id === selectedMachine?.id;
 
-              <tbody>
-                {sortedMachineRows.map((machine) => {
-                  const isSelected = machine.id === selectedMachine?.id;
+                return (
+                  <tr
+                    key={machine.id}
+                    className={isSelected ? "data-table-row-selected" : undefined}
+                    onClick={() => handleMachineSelect(machine.id)}
+                  >
+                    <td style={{ whiteSpace: "nowrap" }}>{machine.number}</td>
+                    <td>{machine.name}</td>
+                    <td>{machine.type}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{machine.colorMode}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <Badge variant={getPrintPilotStatusBadgeVariant(machine.status)}>
+                        {machine.status}
+                      </Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </DataTable>
+        </section>
+      </section>
 
-                  return (
-                    <tr
-                      key={machine.id}
-                      className={
-                        isSelected ? "data-table-row-selected" : undefined
-                      }
-                      onClick={() => handleMachineSelect(machine.id)}
-                    >
-                      <td style={{ whiteSpace: "nowrap" }}>{machine.number}</td>
-                      <td>{machine.name}</td>
-                      <td>{machine.type}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>{machine.colorMode}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>
-                        <Badge variant={getPrintPilotStatusBadgeVariant(machine.status)}>
-                          {machine.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </DataTable>
-          </section>
+      <DetailDrawer
+        open={isDetailDrawerOpen && Boolean(selectedMachine)}
+        eyebrow="Maschine"
+        title={selectedMachine?.name ?? "Maschine"}
+        subtitle={
+          selectedMachine
+            ? `${selectedMachine.number} · ${selectedMachine.type}`
+            : undefined
+        }
+        onClose={handleCloseDetailDrawer}
+        size="xl"
+        footer={
+          <>
+            <DirtyStateNotice isDirty={isDirty} />
 
-          <section className="workspace-panel master-editor-panel">
+            <EditLockToggle
+              isEditing={isEditing}
+              onToggle={handleToggleEditing}
+            />
+
+            <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+
+            <SaveActionButton
+              isDirty={isDirty}
+              defaultLabel="Maschine speichern"
+              onClick={handleSaveDraft}
+            />
+          </>
+        }
+      >
+        <div className="detail-drawer-stack">
+          <section className="detail-drawer-panel">
             <SectionHeader>Maschinendaten</SectionHeader>
 
             <FieldGrid>
@@ -277,16 +304,6 @@ export function MachinesPage() {
                 </Select>
               </Field>
 
-              <Field label="Farbmodus">
-                <Input
-                  value={draft?.colorMode ?? ""}
-                  readOnly={!canEdit}
-                  onChange={(event) =>
-                    updateDraftField("colorMode", event.target.value)
-                  }
-                />
-              </Field>
-
               <Field label="Status">
                 <Select
                   value={draft?.status ?? ""}
@@ -303,6 +320,22 @@ export function MachinesPage() {
                   ))}
                 </Select>
               </Field>
+            </FieldGrid>
+          </section>
+
+          <section className="detail-drawer-panel">
+            <SectionHeader>Technische Daten</SectionHeader>
+
+            <FieldGrid>
+              <Field label="Farbmodus">
+                <Input
+                  value={draft?.colorMode ?? ""}
+                  readOnly={!canEdit}
+                  onChange={(event) =>
+                    updateDraftField("colorMode", event.target.value)
+                  }
+                />
+              </Field>
 
               <Field label="Duplex">
                 <Select
@@ -316,8 +349,20 @@ export function MachinesPage() {
                   <option>Nein</option>
                 </Select>
               </Field>
-            </FieldGrid>
 
+              <Field label="Einsatzbereich">
+                <Input
+                  value={draft?.usage ?? ""}
+                  readOnly={!canEdit}
+                  onChange={(event) =>
+                    updateDraftField("usage", event.target.value)
+                  }
+                />
+              </Field>
+            </FieldGrid>
+          </section>
+
+          <section className="detail-drawer-panel">
             <SectionHeader>Kalkulationswerte</SectionHeader>
 
             <FieldGrid>
@@ -350,17 +395,13 @@ export function MachinesPage() {
                   }
                 />
               </Field>
+            </FieldGrid>
+          </section>
 
-              <Field label="Einsatzbereich">
-                <Input
-                  value={draft?.usage ?? ""}
-                  readOnly={!canEdit}
-                  onChange={(event) =>
-                    updateDraftField("usage", event.target.value)
-                  }
-                />
-              </Field>
+          <section className="detail-drawer-panel">
+            <SectionHeader>Notiz</SectionHeader>
 
+            <FieldGrid>
               <Field label="Notiz">
                 <Input
                   value={draft?.note ?? ""}
@@ -371,26 +412,9 @@ export function MachinesPage() {
                 />
               </Field>
             </FieldGrid>
-
-            <div className="calculation-footer">
-              <DirtyStateNotice isDirty={isDirty} />
-
-              <EditLockToggle
-                isEditing={isEditing}
-                onToggle={handleToggleEditing}
-              />
-
-              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-
-              <SaveActionButton
-                isDirty={isDirty}
-                defaultLabel="Maschine speichern"
-                onClick={handleSaveDraft}
-              />
-            </div>
           </section>
         </div>
-      </section>
+      </DetailDrawer>
     </div>
   );
 }

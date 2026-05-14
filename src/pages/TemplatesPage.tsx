@@ -66,7 +66,7 @@ export function TemplatesPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: templateRowsByTab,
-    initialTab: "Aktiv",
+    initialTab: "Aktiv" as TemplateTab,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =

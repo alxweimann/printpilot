@@ -88,7 +88,7 @@ export function QuotesPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: quoteRowsByTab,
-    initialTab: "Alle Angebote",
+    initialTab: "Alle Angebote" as QuoteTab,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =

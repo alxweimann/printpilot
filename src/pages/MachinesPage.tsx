@@ -66,7 +66,7 @@ export function MachinesPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: machineRowsByTab,
-    initialTab: "Aktiv",
+    initialTab: "Aktiv" as MachineTab,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =

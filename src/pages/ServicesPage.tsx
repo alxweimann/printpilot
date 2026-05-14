@@ -66,7 +66,7 @@ export function ServicesPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: serviceRowsByTab,
-    initialTab: "Aktiv",
+    initialTab: "Aktiv" as ServiceTab,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =

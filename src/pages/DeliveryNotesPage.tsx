@@ -181,7 +181,7 @@ export function DeliveryNotesPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: deliveryRowsByTab,
-    initialTab: "Liste",
+    initialTab: "Liste" as DeliveryTab,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft } =

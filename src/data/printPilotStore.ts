@@ -80,6 +80,28 @@ export type PrintPilotMachine = {
   badgeVariant?: "success";
 };
 
+export type PrintPilotApprovalStatus =
+  | "Freigabe offen"
+  | "Freigegeben"
+  | "Kundenfreigabe fehlt"
+  | "Freigabe ausstehend"
+  | "Freigabe erteilt"
+  | "Korrektur angefordert"
+  | "Daten unvollständig"
+  | "Nicht erforderlich"
+  | "Archiv";
+
+export type PrintPilotHandoffStatus =
+  | "Druckdaten prüfen"
+  | "Wartet auf Daten"
+  | "In Druck"
+  | "In Weiterverarbeitung"
+  | "Abholbereit"
+  | "Versendet"
+  | "Abgeschlossen";
+
+export type PrintPilotOrderPriority = "Niedrig" | "Normal" | "Hoch" | "Express";
+
 export type PrintPilotOrderStatus =
   | "Neu"
   | "In Produktion"
@@ -97,9 +119,9 @@ export type PrintPilotOrder = {
   status: PrintPilotOrderStatus;
   dueDate: string;
   machine: string;
-  priority: string;
-  handoff: string;
-  approval: string;
+  priority: PrintPilotOrderPriority;
+  handoff: PrintPilotHandoffStatus;
+  approval: PrintPilotApprovalStatus;
   badgeVariant?: "success";
 };
 
@@ -811,7 +833,7 @@ export function createPrintPilotOrderFromQuote(
     product: quote.subject,
     status: "Neu",
     dueDate: quote.validUntil,
-    machineId: null,
+    machine: "",
     priority: "Normal",
     handoff: "Druckdaten prüfen",
     approval: "Freigabe ausstehend",
@@ -947,9 +969,12 @@ export function getPrintPilotApprovalBadgeVariant(
 ): "success" | "warning" | "danger" | "neutral" {
   switch (approval) {
     case "Freigabe erteilt":
+    case "Freigegeben":
       return "success";
 
     case "Freigabe ausstehend":
+    case "Freigabe offen":
+    case "Kundenfreigabe fehlt":
     case "Daten unvollständig":
       return "danger";
 
@@ -957,6 +982,8 @@ export function getPrintPilotApprovalBadgeVariant(
       return "warning";
 
     case "Nicht erforderlich":
+    case "Archiv":
+    default:
       return "neutral";
   }
 }

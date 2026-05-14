@@ -66,7 +66,7 @@ export function FinishingPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: finishingRowsByTab,
-    initialTab: "Aktiv",
+    initialTab: "Aktiv" as FinishingTab,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =

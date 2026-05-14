@@ -106,3 +106,5 @@ Etiketten / Kartonaufkleber
 - Auftragsstatus-Badges werden jetzt fest nach Status gemappt, damit gleiche Statuswerte gleich aussehen
 
 - Aufträge: Tabellen sind in allen Tabs per Spaltenkopf nach Auftrag, Kunde, Produkt, Fällig, Freigabe und Status sortierbar
+
+- Build-Baseline stabilisiert: Store-Typen, Tab-State-Typisierung, Maschinenfeld und CSS-Modul-Imports korrigiert.

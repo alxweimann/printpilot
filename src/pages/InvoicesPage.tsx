@@ -183,7 +183,7 @@ export function InvoicesPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: invoiceRowsByTab,
-    initialTab: "Liste",
+    initialTab: "Liste" as InvoiceTab,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft } =

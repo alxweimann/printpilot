@@ -1,111 +1,21 @@
-# PrintPilot UI Standards
+# UI Standards
 
-## ConfirmDialog
+## CSS-Import Standard
 
-Datei:
+Direkte Side-Effect-CSS-Imports in UI-Komponenten werden aktuell vermieden, weil der TypeScript-Build im Projekt diese Imports mit `TS2882` blockiert.
 
-```text
-src/ui/ConfirmDialog.tsx
-```
+Betroffen waren:
 
-Verwendung für:
-
-```text
-Warnungen
-kritische Bestätigungen
-gefährliche Aktionen
-Workflow-Entscheidungen
-```
-
-Nicht mehr verwenden:
-
-```text
-window.alert()
-window.confirm()
-uneinheitliche Inline-Warnungen
-```
-
-Varianten:
-
-```text
-default
-warning
-danger
-```
-
-## Badge-Farben
-
-Dateien:
-
-```text
-src/ui/Badge.tsx
-src/data/statusBadges.ts
-```
-
-Varianten:
-
-```text
-success
-warning
-danger
-neutral
-```
-
-Farbgruppen:
-
-```text
-success: Aktiv, Auf Lager, Angenommen, Fertig, Freigabe erteilt
-warning: Offen, Optional, Entwurf, Wartet, Wartung, Knapp, In Produktion, Korrektur angefordert
-danger: Abgelehnt, Bestellen, Freigabe ausstehend, Daten unvollständig
-neutral: Archiv, Inaktiv, Interessent, Nicht erforderlich, sonstige Werte
-```
-
-## Tabellen
-
-Dateien:
-
-```text
+```txt
+src/ui/DetailDrawer.tsx
 src/ui/Table.tsx
-src/ui/table.css
 ```
 
-Standard:
+Die direkten Imports wurden entfernt:
 
-```text
-Tabellenzellen bleiben einzeilig
-lange Inhalte werden mit … gekürzt
-Tabellen dürfen horizontal scrollen
-Zeilenhöhen bleiben ruhig
+```ts
+import "./detailDrawer.css";
+import "./table.css";
 ```
 
-## Edit-Modus
-
-```text
-Schloss geschlossen = Felder gesperrt
-Schloss offen = Bearbeitung aktiv
-Speichern schreibt in Store
-Änderungen verwerfen setzt Draft zurück
-```
-
-## Geplanter DetailDrawer-Standard
-
-```text
-Tabelle = Hauptarbeitsfläche
-Drawer = Details / Bearbeitung / Aktionen
-```
-
-Perspektivisch für:
-
-```text
-Angebote
-Aufträge
-Rechnungen
-Lieferscheine
-Mahnungen
-Kunden
-Material
-Maschinen
-Leistungen
-Weiterverarbeitung
-Vorlagen
-```
+Die Komponenten bleiben funktional erhalten. Die CSS-Dateien können als Platzhalter liegen bleiben, werden aber nicht mehr direkt importiert.

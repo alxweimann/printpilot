@@ -69,7 +69,7 @@ export function MaterialPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: materialRowsByTab,
-    initialTab: "Auf Lager",
+    initialTab: "Auf Lager" as MaterialTab,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =

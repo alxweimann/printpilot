@@ -104,3 +104,4 @@ Erledigt: ConfirmDialog über DetailDrawer gelegt
 - Erledigt: Auftrags-Drawer Feldreihenfolge Freigabe/Übergabe fachlich korrigiert
 - Erledigt: Auftragsstatus-Badges vereinheitlicht
 - Erledigt: Auftragsliste in allen Tabs sortierbar gemacht
+- Erledigt: Build-Baseline vor globaler Sortierung stabilisiert

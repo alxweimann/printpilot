@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 
-import "./detailDrawer.css";
 
 type DetailDrawerSize = "md" | "lg" | "xl";
 

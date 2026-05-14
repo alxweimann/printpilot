@@ -175,7 +175,7 @@ export function RemindersPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: reminderRowsByTab,
-    initialTab: "Liste",
+    initialTab: "Liste" as ReminderTab,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft } =

@@ -1,6 +1,5 @@
 import type { ReactNode } from "react";
 
-import "./table.css";
 
 type TableShellProps = {
   children: ReactNode;

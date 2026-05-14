@@ -289,7 +289,7 @@ export function OrdersPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: orderRowsByTab,
-    initialTab: "Alle Aufträge",
+    initialTab: "Alle Aufträge" as OrderTab,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
@@ -686,16 +686,16 @@ export function OrdersPage() {
             <FieldGrid>
               <Field label="Maschine">
                 <Select
-                  value={draft?.machineId ?? ""}
+                  value={draft?.machine ?? ""}
                   disabled={!canEdit}
                   onChange={(event) =>
-                    updateDraftField("machineId", event.target.value)
+                    updateDraftField("machine", event.target.value)
                   }
                 >
                   <option value="">Keine Maschine gewählt</option>
 
                   {machines.map((machine) => (
-                    <option key={machine.id} value={machine.id}>
+                    <option key={machine.id} value={machine.name}>
                       {machine.name}
                     </option>
                   ))}

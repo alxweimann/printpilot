@@ -66,7 +66,7 @@ export function CustomersPage() {
     selectItem,
   } = useMasterDetailSelection({
     rowsByTab: customerRowsByTab,
-    initialTab: "Aktiv",
+    initialTab: "Aktiv" as CustomerTab,
   });
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =

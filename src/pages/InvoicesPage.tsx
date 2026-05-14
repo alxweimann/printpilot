@@ -10,6 +10,7 @@ import { PageTabs } from "../layout/PageTabs";
 
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { DetailDrawer } from "../ui/DetailDrawer";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -24,15 +25,17 @@ import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 const invoiceTabs = ["Liste", "Entwurf", "Offen", "Bezahlt", "Überfällig"] as const;
+const invoiceStatusOptions = ["Entwurf", "Offen", "Bezahlt", "Überfällig"] as const;
 
 type InvoiceTab = (typeof invoiceTabs)[number];
+type InvoiceStatus = (typeof invoiceStatusOptions)[number];
 
 type InvoiceRow = {
   id: string;
   number: string;
   customer: string;
   subject: string;
-  status: string;
+  status: InvoiceStatus;
   paymentTerms: string;
   paymentType: string;
   template: string;
@@ -41,9 +44,13 @@ type InvoiceRow = {
   badgeVariant?: "success";
 };
 
-type InvoiceSortKey = "number" | "customer" | "subject" | "invoiceDate" | "dueDate" | "status";
-
-
+type InvoiceSortKey =
+  | "number"
+  | "customer"
+  | "subject"
+  | "invoiceDate"
+  | "dueDate"
+  | "status";
 
 const invoiceRowsByTab: Record<InvoiceTab, InvoiceRow[]> = {
   Liste: [
@@ -152,21 +159,21 @@ const invoiceRowsByTab: Record<InvoiceTab, InvoiceRow[]> = {
 function getInvoiceTitle(tab: InvoiceTab) {
   switch (tab) {
     case "Liste":
-      return "Rechnung vorbereiten";
+      return "Rechnungsliste";
     case "Entwurf":
-      return "Rechnungsentwurf bearbeiten";
+      return "Rechnungsentwürfe";
     case "Offen":
-      return "Offene Rechnung prüfen";
+      return "Offene Rechnungen";
     case "Bezahlt":
-      return "Bezahlte Rechnung";
+      return "Bezahlte Rechnungen";
     case "Überfällig":
-      return "Überfällige Rechnung";
+      return "Überfällige Rechnungen";
   }
 }
 
 function getInvoiceStatus(tab: InvoiceTab) {
   if (tab === "Liste") {
-    return "Entwurf";
+    return "Alle Rechnungen";
   }
 
   return tab;
@@ -197,6 +204,7 @@ export function InvoicesPage() {
   const module = getModuleConfig("invoices");
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
 
   const {
     activeTab,
@@ -209,30 +217,40 @@ export function InvoicesPage() {
     initialTab: "Liste" as InvoiceTab,
   });
 
-  const { draft, isDirty, updateDraftField, resetDraft } =
+  const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
     useEditableDraft(selectedInvoice);
-
 
   const {
     sortedRows: sortedInvoiceRows,
     sortConfig: invoiceSortConfig,
     requestSort: requestInvoiceSort,
+    getAriaSort: getInvoiceSortAriaValue,
   } = useSortableTable<InvoiceRow, InvoiceSortKey>({
     rows: invoiceRows,
     initialSortKey: "number",
     getSortValue: getInvoiceSortValue,
     fallbackSortValue: (invoice) => invoice.number,
   });
+
+  const canEdit = isEditing && Boolean(draft);
+
   function handleTabChange(tab: string) {
     if (isInvoiceTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
+      setIsDetailDrawerOpen(false);
     }
   }
 
   function handleInvoiceSelect(invoiceId: string) {
     selectItem(invoiceId);
     setIsEditing(false);
+    setIsDetailDrawerOpen(true);
+  }
+
+  function handleCloseDetailDrawer() {
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   function handleResetDraft() {
@@ -242,6 +260,18 @@ export function InvoicesPage() {
 
   function handleToggleEditing() {
     setIsEditing((currentValue) => !currentValue);
+  }
+
+  function handleSaveDraft() {
+    if (!draft) {
+      return;
+    }
+
+    const savedInvoice = draft as InvoiceRow;
+
+    saveDraft(savedInvoice);
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   return (
@@ -260,90 +290,131 @@ export function InvoicesPage() {
 
       <section className="calculation-sheet">
         <WorkspaceHeader
-          kicker="Rechnungsmaske"
+          kicker="Rechnungen"
           title={getInvoiceTitle(activeTab)}
-          statusValue={getInvoiceStatus(activeTab)}
+          statusValue={isEditing ? "Bearbeitung offen" : getInvoiceStatus(activeTab)}
         />
 
-        <div className="master-detail-layout">
-          <section className="workspace-panel master-list-panel">
-            <TableToolbar>
-              <Input className="search-input" placeholder="Rechnungen suchen..." />
-              <Button>Filter</Button>
-            </TableToolbar>
+        <section className="workspace-panel">
+          <TableToolbar>
+            <Input className="search-input" placeholder="Rechnungen suchen..." />
+            <Button>Filter</Button>
+          </TableToolbar>
 
-            <DataTable>
-              <thead>
-                <tr>
+          <DataTable>
+            <thead>
+              <tr>
+                <th aria-sort={getInvoiceSortAriaValue("number")}>
                   <SortableTableHeader
                     label="Rechnung"
                     sortKey="number"
                     sortConfig={invoiceSortConfig}
                     onSort={requestInvoiceSort}
                   />
+                </th>
+                <th aria-sort={getInvoiceSortAriaValue("customer")}>
                   <SortableTableHeader
                     label="Kunde"
                     sortKey="customer"
                     sortConfig={invoiceSortConfig}
                     onSort={requestInvoiceSort}
                   />
+                </th>
+                <th aria-sort={getInvoiceSortAriaValue("subject")}>
                   <SortableTableHeader
                     label="Betreff"
                     sortKey="subject"
                     sortConfig={invoiceSortConfig}
                     onSort={requestInvoiceSort}
                   />
+                </th>
+                <th aria-sort={getInvoiceSortAriaValue("invoiceDate")}>
                   <SortableTableHeader
                     label="Datum"
                     sortKey="invoiceDate"
                     sortConfig={invoiceSortConfig}
                     onSort={requestInvoiceSort}
                   />
+                </th>
+                <th aria-sort={getInvoiceSortAriaValue("dueDate")}>
                   <SortableTableHeader
                     label="Fällig"
                     sortKey="dueDate"
                     sortConfig={invoiceSortConfig}
                     onSort={requestInvoiceSort}
                   />
+                </th>
+                <th aria-sort={getInvoiceSortAriaValue("status")}>
                   <SortableTableHeader
                     label="Status"
                     sortKey="status"
                     sortConfig={invoiceSortConfig}
                     onSort={requestInvoiceSort}
                   />
-                </tr>
-              </thead>
+                </th>
+              </tr>
+            </thead>
 
-              <tbody>
-                {sortedInvoiceRows.map((invoice) => {
-                  const isSelected = invoice.id === selectedInvoice?.id;
+            <tbody>
+              {sortedInvoiceRows.map((invoice) => {
+                const isSelected =
+                  isDetailDrawerOpen && invoice.id === selectedInvoice?.id;
 
-                  return (
-                    <tr
-                      key={invoice.id}
-                      className={
-                        isSelected ? "data-table-row-selected" : undefined
-                      }
-                      onClick={() => handleInvoiceSelect(invoice.id)}
-                    >
-                      <td>{invoice.number}</td>
-                      <td>{invoice.customer}</td>
-                      <td>{invoice.subject}</td>
-                      <td>{invoice.invoiceDate}</td>
-                      <td>{invoice.dueDate}</td>
-                      <td>
-                        <Badge variant={invoice.badgeVariant}>
-                          {invoice.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </DataTable>
-          </section>
+                return (
+                  <tr
+                    key={invoice.id}
+                    className={isSelected ? "data-table-row-selected" : undefined}
+                    onClick={() => handleInvoiceSelect(invoice.id)}
+                  >
+                    <td style={{ whiteSpace: "nowrap" }}>{invoice.number}</td>
+                    <td>{invoice.customer}</td>
+                    <td>{invoice.subject}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{invoice.invoiceDate}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{invoice.dueDate}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <Badge variant={invoice.badgeVariant}>{invoice.status}</Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </DataTable>
+        </section>
+      </section>
 
-          <section className="workspace-panel master-editor-panel">
+      <DetailDrawer
+        open={isDetailDrawerOpen && Boolean(selectedInvoice)}
+        eyebrow="Rechnung"
+        title={draft?.number ?? selectedInvoice?.number ?? "Rechnung"}
+        subtitle={
+          selectedInvoice
+            ? `${selectedInvoice.customer} · ${selectedInvoice.subject}`
+            : undefined
+        }
+        size="xl"
+        onClose={handleCloseDetailDrawer}
+        footer={
+          <>
+            <DirtyStateNotice isDirty={isDirty} />
+
+            <EditLockToggle
+              isEditing={isEditing}
+              onToggle={handleToggleEditing}
+            />
+
+            <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+            <Button>Vorschau prüfen</Button>
+
+            <SaveActionButton
+              isDirty={isDirty}
+              defaultLabel="Rechnung ausgeben"
+              onClick={handleSaveDraft}
+            />
+          </>
+        }
+      >
+        <div className="detail-drawer-stack">
+          <section className="detail-drawer-panel">
             <SectionHeader>Rechnungskopf</SectionHeader>
 
             <FieldGrid>
@@ -358,18 +429,32 @@ export function InvoicesPage() {
               <Field label="Betreff">
                 <Input
                   value={draft?.subject ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("subject", event.target.value)
                   }
                 />
               </Field>
 
+              <Field label="Status">
+                <Select
+                  value={draft?.status ?? ""}
+                  disabled={!canEdit}
+                  onChange={(event) =>
+                    updateDraftField("status", event.target.value as InvoiceStatus)
+                  }
+                >
+                  {invoiceStatusOptions.map((status) => (
+                    <option key={status}>{status}</option>
+                  ))}
+                </Select>
+              </Field>
+
               <Field label="Rechnungsdatum">
                 <Input
                   type="date"
                   value={draft?.invoiceDate ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("invoiceDate", event.target.value)
                   }
@@ -380,26 +465,16 @@ export function InvoicesPage() {
                 <Input
                   type="date"
                   value={draft?.dueDate ?? ""}
-                  readOnly={!isEditing}
+                  readOnly={!canEdit}
                   onChange={(event) =>
                     updateDraftField("dueDate", event.target.value)
                   }
                 />
               </Field>
-
-              <Field label="Status">
-                <Select
-                  value={activeTab}
-                  disabled={!isEditing}
-                  onChange={(event) => handleTabChange(event.target.value)}
-                >
-                  {invoiceTabs.map((tab) => (
-                    <option key={tab}>{tab}</option>
-                  ))}
-                </Select>
-              </Field>
             </FieldGrid>
+          </section>
 
+          <section className="detail-drawer-panel">
             <SectionHeader>Positionen</SectionHeader>
 
             <DataTable>
@@ -430,13 +505,16 @@ export function InvoicesPage() {
                 </tr>
               </tbody>
             </DataTable>
+          </section>
 
+          <section className="detail-drawer-panel">
             <SectionHeader>Zahlung & Ausgabe</SectionHeader>
 
             <FieldGrid>
               <Field label="Bedingungen">
                 <Select
                   value={draft?.paymentTerms ?? ""}
+                  disabled={!canEdit}
                   onChange={(event) =>
                     updateDraftField("paymentTerms", event.target.value)
                   }
@@ -453,6 +531,7 @@ export function InvoicesPage() {
               <Field label="Zahlungsart">
                 <Select
                   value={draft?.paymentType ?? ""}
+                  disabled={!canEdit}
                   onChange={(event) =>
                     updateDraftField("paymentType", event.target.value)
                   }
@@ -470,6 +549,7 @@ export function InvoicesPage() {
               <Field label="Vorlage">
                 <Select
                   value={draft?.template ?? ""}
+                  disabled={!canEdit}
                   onChange={(event) =>
                     updateDraftField("template", event.target.value)
                   }
@@ -483,31 +563,9 @@ export function InvoicesPage() {
                 </Select>
               </Field>
             </FieldGrid>
-
-            <div className="calculation-footer">
-              <DirtyStateNotice isDirty={isDirty} />
-
-              <EditLockToggle
-
-                isEditing={isEditing}
-
-                onToggle={handleToggleEditing}
-
-              />
-
-              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-              <Button>Vorschau prüfen</Button>
-              <SaveActionButton
-
-                              isDirty={isDirty}
-
-                              defaultLabel="Rechnung ausgeben"
-
-                            />
-            </div>
           </section>
         </div>
-      </section>
+      </DetailDrawer>
     </div>
   );
 }

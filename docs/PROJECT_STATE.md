@@ -114,3 +114,5 @@ Etiketten / Kartonaufkleber
 - SortableTableHeader unterstützt jetzt beide Sortier-APIs: sortKey/sortConfig/onSort und active/direction/onClick
 
 - Dokumenten-Tabellen für Rechnungen, Lieferscheine und Mahnungen nutzen jetzt die globale Sortierlogik.
+
+- Rechnungen: Master-Detail-Drawer umgesetzt; Tabelle bleibt Hauptansicht, Rechnungskopf/Zahlung/Positionen liegen im Drawer

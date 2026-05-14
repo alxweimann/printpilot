@@ -104,3 +104,5 @@ Etiketten / Kartonaufkleber
 - Auftrags-Drawer: Feldreihenfolge in Produktion auf Freigabe links und Übergabe rechts angepasst
 
 - Auftragsstatus-Badges werden jetzt fest nach Status gemappt, damit gleiche Statuswerte gleich aussehen
+
+- Aufträge: Tabellen sind in allen Tabs per Spaltenkopf nach Auftrag, Kunde, Produkt, Fällig, Freigabe und Status sortierbar

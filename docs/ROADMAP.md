@@ -103,3 +103,4 @@ Erledigt: ConfirmDialog über DetailDrawer gelegt
 - Erledigt: Auftrags-Drawer schließt nach erfolgreichem Speichern inklusive Freigabe-Warnbestätigung
 - Erledigt: Auftrags-Drawer Feldreihenfolge Freigabe/Übergabe fachlich korrigiert
 - Erledigt: Auftragsstatus-Badges vereinheitlicht
+- Erledigt: Auftragsliste in allen Tabs sortierbar gemacht

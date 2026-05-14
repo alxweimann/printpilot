@@ -240,3 +240,22 @@ Archiv         → neutral
 ```
 
 Damit sieht `In Produktion` überall gleich aus.
+
+## Sortierbare Tabellen im Master-Detail-Layout
+
+Tabellen in Master-Detail-Seiten sollen innerhalb aller Tabs sortierbar sein.
+
+Für die Auftragsübersicht ist umgesetzt:
+
+```text
+Auftrag      sortierbar
+Kunde        sortierbar
+Produkt      sortierbar
+Fällig       sortierbar
+Freigabe     sortierbar
+Status       sortierbar
+```
+
+Ein Klick auf den Spaltenkopf sortiert aufsteigend. Ein weiterer Klick auf dieselbe Spalte sortiert absteigend.
+
+Die aktive Sortierung bleibt beim Wechsel zwischen Tabs erhalten, sodass z. B. `In Produktion`, `Wartet` oder `Archiv` nach derselben Logik sortiert werden können.

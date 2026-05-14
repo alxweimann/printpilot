@@ -68,6 +68,36 @@ const priorityOptions: PrintPilotOrderPriority[] = [
 
 type OrderTab = "Alle Aufträge" | PrintPilotOrderStatus;
 
+type OrderSortKey =
+  | "number"
+  | "customerName"
+  | "product"
+  | "dueDate"
+  | "approval"
+  | "status";
+
+type OrderSortDirection = "asc" | "desc";
+
+type OrderSortConfig = {
+  key: OrderSortKey;
+  direction: OrderSortDirection;
+} | null;
+
+const orderSortCollator = new Intl.Collator("de-DE", {
+  numeric: true,
+  sensitivity: "base",
+});
+
+const orderSortLabels: Record<OrderSortKey, string> = {
+  number: "Auftrag",
+  customerName: "Kunde",
+  product: "Produkt",
+  dueDate: "Fällig",
+  approval: "Freigabe",
+  status: "Status",
+};
+
+
 function getOrderTitle(tab: OrderTab) {
   switch (tab) {
     case "Alle Aufträge":
@@ -133,11 +163,113 @@ function getOrderStatusBadgeVariant(
   }
 }
 
+function getOrderSortValue(order: PrintPilotOrder, key: OrderSortKey) {
+  switch (key) {
+    case "number":
+      return order.number;
+
+    case "customerName":
+      return order.customerName;
+
+    case "product":
+      return order.product;
+
+    case "dueDate":
+      return order.dueDate;
+
+    case "approval":
+      return order.approval;
+
+    case "status":
+      return order.status;
+  }
+}
+
+function sortPrintPilotOrders(
+  rows: PrintPilotOrder[],
+  sortConfig: OrderSortConfig,
+) {
+  if (!sortConfig) {
+    return rows;
+  }
+
+  const directionFactor = sortConfig.direction === "asc" ? 1 : -1;
+
+  return [...rows].sort((firstOrder, secondOrder) => {
+    const firstValue = getOrderSortValue(firstOrder, sortConfig.key);
+    const secondValue = getOrderSortValue(secondOrder, sortConfig.key);
+    const primaryResult = orderSortCollator.compare(firstValue, secondValue);
+
+    if (primaryResult !== 0) {
+      return primaryResult * directionFactor;
+    }
+
+    return orderSortCollator.compare(firstOrder.number, secondOrder.number);
+  });
+}
+
+function getOrderSortAriaValue(
+  sortConfig: OrderSortConfig,
+  sortKey: OrderSortKey,
+): "none" | "ascending" | "descending" {
+  if (sortConfig?.key !== sortKey) {
+    return "none";
+  }
+
+  return sortConfig.direction === "asc" ? "ascending" : "descending";
+}
+
+function SortableOrderHeader({
+  sortKey,
+  sortConfig,
+  onSort,
+}: {
+  sortKey: OrderSortKey;
+  sortConfig: OrderSortConfig;
+  onSort: (sortKey: OrderSortKey) => void;
+}) {
+  const isActive = sortConfig?.key === sortKey;
+  const directionLabel = sortConfig?.direction === "asc" ? "aufsteigend" : "absteigend";
+
+  return (
+    <button
+      type="button"
+      onClick={() => onSort(sortKey)}
+      title={
+        isActive
+          ? `${orderSortLabels[sortKey]} ${directionLabel} sortiert`
+          : `Nach ${orderSortLabels[sortKey]} sortieren`
+      }
+      style={{
+        alignItems: "center",
+        background: "transparent",
+        border: 0,
+        color: "inherit",
+        cursor: "pointer",
+        display: "inline-flex",
+        font: "inherit",
+        gap: "0.35rem",
+        letterSpacing: "inherit",
+        padding: 0,
+        textTransform: "inherit",
+        whiteSpace: "nowrap",
+      }}
+    >
+      <span>{orderSortLabels[sortKey]}</span>
+      <span aria-hidden="true" style={{ fontSize: "0.7rem", opacity: isActive ? 1 : 0.45 }}>
+        {isActive ? (sortConfig.direction === "asc" ? "↑" : "↓") : "↕"}
+      </span>
+    </button>
+  );
+}
+
 export function OrdersPage() {
   const module = getModuleConfig("orders");
   const { machines, orders, updateOrder } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [orderSortConfig, setOrderSortConfig] =
+    useState<OrderSortConfig>(null);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
   const [isProductionApprovalDialogOpen, setIsProductionApprovalDialogOpen] =
     useState(false);
@@ -165,6 +297,26 @@ export function OrdersPage() {
 
   const canEdit = isEditing && Boolean(draft);
   const draftOrder = draft as PrintPilotOrder | undefined;
+
+  const sortedOrderRows = useMemo(() => {
+    return sortPrintPilotOrders(orderRows, orderSortConfig);
+  }, [orderRows, orderSortConfig]);
+
+  function handleOrderSort(nextSortKey: OrderSortKey) {
+    setOrderSortConfig((currentConfig) => {
+      if (currentConfig?.key === nextSortKey) {
+        return {
+          key: nextSortKey,
+          direction: currentConfig.direction === "asc" ? "desc" : "asc",
+        };
+      }
+
+      return {
+        key: nextSortKey,
+        direction: "asc",
+      };
+    });
+  }
 
   function openApprovalDialogIfNeeded(nextOrder: PrintPilotOrder) {
     if (needsProductionApprovalWarning(nextOrder)) {
@@ -347,17 +499,58 @@ export function OrdersPage() {
           <DataTable>
             <thead>
               <tr>
-                <th>Auftrag</th>
-                <th>Kunde</th>
-                <th>Produkt</th>
-                <th>Fällig</th>
-                <th>Freigabe</th>
-                <th>Status</th>
+                <th aria-sort={getOrderSortAriaValue(orderSortConfig, "number")}>
+                  <SortableOrderHeader
+                    sortKey="number"
+                    sortConfig={orderSortConfig}
+                    onSort={handleOrderSort}
+                  />
+                </th>
+                <th
+                  aria-sort={getOrderSortAriaValue(
+                    orderSortConfig,
+                    "customerName",
+                  )}
+                >
+                  <SortableOrderHeader
+                    sortKey="customerName"
+                    sortConfig={orderSortConfig}
+                    onSort={handleOrderSort}
+                  />
+                </th>
+                <th aria-sort={getOrderSortAriaValue(orderSortConfig, "product")}>
+                  <SortableOrderHeader
+                    sortKey="product"
+                    sortConfig={orderSortConfig}
+                    onSort={handleOrderSort}
+                  />
+                </th>
+                <th aria-sort={getOrderSortAriaValue(orderSortConfig, "dueDate")}>
+                  <SortableOrderHeader
+                    sortKey="dueDate"
+                    sortConfig={orderSortConfig}
+                    onSort={handleOrderSort}
+                  />
+                </th>
+                <th aria-sort={getOrderSortAriaValue(orderSortConfig, "approval")}>
+                  <SortableOrderHeader
+                    sortKey="approval"
+                    sortConfig={orderSortConfig}
+                    onSort={handleOrderSort}
+                  />
+                </th>
+                <th aria-sort={getOrderSortAriaValue(orderSortConfig, "status")}>
+                  <SortableOrderHeader
+                    sortKey="status"
+                    sortConfig={orderSortConfig}
+                    onSort={handleOrderSort}
+                  />
+                </th>
               </tr>
             </thead>
 
             <tbody>
-              {orderRows.map((order) => {
+              {sortedOrderRows.map((order) => {
                 const isSelected =
                   isDetailDrawerOpen && order.id === selectedOrder?.id;
 

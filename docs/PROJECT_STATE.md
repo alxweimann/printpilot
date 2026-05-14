@@ -37,7 +37,8 @@ Dublettenwarnung bei Angebot → Auftrag
 Freigabe-/Produktionslogik bei Aufträgen
 Maschine im Auftrag als Dropdown aus Maschinen-Store
 Dokumenten-/Ausgabesystem geplant
-Master-Detail-Drawer geplant
+Master-Detail-Drawer für Angebote und Aufträge umgesetzt
+ConfirmDialog liegt jetzt über geöffneten Detail-Drawern und bleibt mittig bedienbar
 ```
 
 ## Aktuelle Workflows
@@ -97,3 +98,9 @@ Dashboard-Plantafel
 Auftragstasche
 Etiketten / Kartonaufkleber
 ```
+
+- Aufträge: Speichern aus dem DetailDrawer schließt den Drawer nach erfolgreichem Speichern
+
+- Auftrags-Drawer: Feldreihenfolge in Produktion auf Freigabe links und Übergabe rechts angepasst
+
+- Auftragsstatus-Badges werden jetzt fest nach Status gemappt, damit gleiche Statuswerte gleich aussehen

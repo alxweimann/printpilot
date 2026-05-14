@@ -17,9 +17,10 @@ import { usePrintPilotStore } from "../store/PrintPilotStore";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
 
-import { Badge } from "../ui/Badge";
+import { Badge, type BadgeVariant } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
+import { DetailDrawer } from "../ui/DetailDrawer";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -115,11 +116,29 @@ function needsProductionApprovalWarning(order: PrintPilotOrder) {
   );
 }
 
+function getOrderStatusBadgeVariant(
+  status: PrintPilotOrderStatus,
+): BadgeVariant {
+  switch (status) {
+    case "In Produktion":
+    case "Fertig":
+      return "success";
+
+    case "Wartet":
+      return "warning";
+
+    case "Neu":
+    case "Archiv":
+      return "neutral";
+  }
+}
+
 export function OrdersPage() {
   const module = getModuleConfig("orders");
   const { machines, orders, updateOrder } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
   const [isProductionApprovalDialogOpen, setIsProductionApprovalDialogOpen] =
     useState(false);
 
@@ -160,6 +179,7 @@ export function OrdersPage() {
     if (isOrderTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
+      setIsDetailDrawerOpen(false);
       setIsProductionApprovalDialogOpen(false);
     }
   }
@@ -167,6 +187,13 @@ export function OrdersPage() {
   function handleOrderSelect(orderId: string) {
     selectItem(orderId);
     setIsEditing(false);
+    setIsDetailDrawerOpen(true);
+    setIsProductionApprovalDialogOpen(false);
+  }
+
+  function handleCloseDetailDrawer() {
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
     setIsProductionApprovalDialogOpen(false);
   }
 
@@ -238,6 +265,7 @@ export function OrdersPage() {
     saveDraft(savedOrder);
     setIsEditing(false);
     setIsProductionApprovalDialogOpen(false);
+    setIsDetailDrawerOpen(false);
 
     if (activeTab !== "Alle Aufträge") {
       setActiveTab("Alle Aufträge");
@@ -309,64 +337,96 @@ export function OrdersPage() {
           statusValue={isEditing ? "Bearbeitung offen" : activeTab}
         />
 
-        <div className="master-detail-layout">
-          <section className="workspace-panel master-list-panel">
-            <TableToolbar>
-              <Input className="search-input" placeholder="Aufträge suchen..." />
+        <section className="workspace-panel">
+          <TableToolbar>
+            <Input className="search-input" placeholder="Aufträge suchen..." />
 
-              <Button>Filter</Button>
-            </TableToolbar>
+            <Button>Filter</Button>
+          </TableToolbar>
 
-            <DataTable>
-              <thead>
-                <tr>
-                  <th>Auftrag</th>
-                  <th>Kunde</th>
-                  <th>Produkt</th>
-                  <th>Fällig</th>
-                  <th>Freigabe</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
+          <DataTable>
+            <thead>
+              <tr>
+                <th>Auftrag</th>
+                <th>Kunde</th>
+                <th>Produkt</th>
+                <th>Fällig</th>
+                <th>Freigabe</th>
+                <th>Status</th>
+              </tr>
+            </thead>
 
-              <tbody>
-                {orderRows.map((order) => {
-                  const isSelected = order.id === selectedOrder?.id;
+            <tbody>
+              {orderRows.map((order) => {
+                const isSelected =
+                  isDetailDrawerOpen && order.id === selectedOrder?.id;
 
-                  return (
-                    <tr
-                      key={order.id}
-                      className={
-                        isSelected ? "data-table-row-selected" : undefined
-                      }
-                      onClick={() => handleOrderSelect(order.id)}
-                    >
-                      <td style={{ whiteSpace: "nowrap" }}>{order.number}</td>
-                      <td>{order.customerName}</td>
-                      <td>{order.product}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>{order.dueDate}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>
-                        <Badge
-                          variant={getPrintPilotApprovalBadgeVariant(
-                            order.approval,
-                          )}
-                        >
-                          {order.approval}
-                        </Badge>
-                      </td>
-                      <td style={{ whiteSpace: "nowrap" }}>
-                        <Badge variant={order.badgeVariant}>
-                          {order.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </DataTable>
-          </section>
+                return (
+                  <tr
+                    key={order.id}
+                    className={
+                      isSelected ? "data-table-row-selected" : undefined
+                    }
+                    onClick={() => handleOrderSelect(order.id)}
+                  >
+                    <td style={{ whiteSpace: "nowrap" }}>{order.number}</td>
+                    <td>{order.customerName}</td>
+                    <td>{order.product}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{order.dueDate}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <Badge
+                        variant={getPrintPilotApprovalBadgeVariant(
+                          order.approval,
+                        )}
+                      >
+                        {order.approval}
+                      </Badge>
+                    </td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <Badge variant={getOrderStatusBadgeVariant(order.status)}>
+                        {order.status}
+                      </Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </DataTable>
+        </section>
+      </section>
 
-          <section className="workspace-panel master-editor-panel">
+      <DetailDrawer
+        open={isDetailDrawerOpen && Boolean(selectedOrder)}
+        eyebrow="Auftrag"
+        title={draft?.number ?? selectedOrder?.number ?? "Auftrag"}
+        subtitle={
+          selectedOrder
+            ? `${selectedOrder.customerName} · ${selectedOrder.product}`
+            : undefined
+        }
+        size="xl"
+        onClose={handleCloseDetailDrawer}
+        footer={
+          <>
+            <DirtyStateNotice isDirty={isDirty} />
+
+            <EditLockToggle
+              isEditing={isEditing}
+              onToggle={handleToggleEditing}
+            />
+
+            <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+
+            <SaveActionButton
+              isDirty={isDirty}
+              defaultLabel="Auftrag speichern"
+              onClick={handleSaveDraft}
+            />
+          </>
+        }
+      >
+        <div className="detail-drawer-stack">
+          <section className="detail-drawer-panel">
             <SectionHeader>Auftragskopf</SectionHeader>
 
             <FieldGrid>
@@ -425,7 +485,9 @@ export function OrdersPage() {
                 />
               </Field>
             </FieldGrid>
+          </section>
 
+          <section className="detail-drawer-panel">
             <SectionHeader>Produktion</SectionHeader>
 
             <FieldGrid>
@@ -464,22 +526,6 @@ export function OrdersPage() {
                 </Select>
               </Field>
 
-              <Field label="Übergabe">
-                <Select
-                  value={draft?.handoff ?? ""}
-                  disabled={!canEdit}
-                  onChange={(event) =>
-                    handleHandoffChange(
-                      event.currentTarget.value as PrintPilotHandoffStatus,
-                    )
-                  }
-                >
-                  {handoffOptions.map((handoff) => (
-                    <option key={handoff}>{handoff}</option>
-                  ))}
-                </Select>
-              </Field>
-
               <Field label="Freigabe">
                 <Select
                   value={draft?.approval ?? ""}
@@ -495,27 +541,26 @@ export function OrdersPage() {
                   ))}
                 </Select>
               </Field>
+
+              <Field label="Übergabe">
+                <Select
+                  value={draft?.handoff ?? ""}
+                  disabled={!canEdit}
+                  onChange={(event) =>
+                    handleHandoffChange(
+                      event.currentTarget.value as PrintPilotHandoffStatus,
+                    )
+                  }
+                >
+                  {handoffOptions.map((handoff) => (
+                    <option key={handoff}>{handoff}</option>
+                  ))}
+                </Select>
+              </Field>
             </FieldGrid>
-
-            <div className="calculation-footer">
-              <DirtyStateNotice isDirty={isDirty} />
-
-              <EditLockToggle
-                isEditing={isEditing}
-                onToggle={handleToggleEditing}
-              />
-
-              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-
-              <SaveActionButton
-                isDirty={isDirty}
-                defaultLabel="Auftrag speichern"
-                onClick={handleSaveDraft}
-              />
-            </div>
           </section>
         </div>
-      </section>
+      </DetailDrawer>
 
       <ConfirmDialog
         open={isProductionApprovalDialogOpen && Boolean(draftOrder)}

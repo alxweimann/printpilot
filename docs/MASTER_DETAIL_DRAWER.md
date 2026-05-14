@@ -157,20 +157,16 @@ Versand prüfen
 Mahnstufe prüfen
 ```
 
-## Umsetzungsreihenfolge
-
-Nicht alles auf einmal umbauen.
-
-Empfohlene Reihenfolge:
+## Umsetzungsstand
 
 ```text
-1. DetailDrawer-Komponente bauen
-2. Aufträge auf Drawer-Layout umstellen
-3. Angebote auf Drawer-Layout umstellen
-4. Rechnungen vorbereiten
-5. Lieferscheine vorbereiten
-6. Mahnungen vorbereiten
-7. Kunden / Material / Maschinen / Leistungen / Vorlagen nachziehen
+Erledigt: DetailDrawer-Komponente gebaut
+Erledigt: Angebote auf Drawer-Layout umgestellt
+Erledigt: Aufträge auf Drawer-Layout umgestellt
+Nächster Schritt: Rechnungen vorbereiten
+Danach: Lieferscheine vorbereiten
+Danach: Mahnungen vorbereiten
+Danach: Kunden / Material / Maschinen / Leistungen / Vorlagen nachziehen
 ```
 
 ## Wichtig
@@ -195,3 +191,52 @@ Speichern funktioniert wie vorher
 Schließen funktioniert zuverlässig
 Statuswechsel / Warnungen funktionieren weiterhin
 ```
+
+## Dialog-Ebenen / z-index
+
+Kritische Dialoge wie `ConfirmDialog` müssen immer über dem Detail-Drawer liegen.
+
+Aktueller Layer-Standard:
+
+```text
+DetailDrawer Root: z-index 1000
+DetailDrawer Panel: z-index 1001
+ConfirmDialog: z-index 3000
+```
+
+Damit bleiben Warnungen, Dublettenhinweise und kritische Speicherabfragen auch dann sichtbar und bedienbar, wenn ein Drawer geöffnet ist.
+
+## Speichern im Drawer
+
+Bei Aufträgen schließt ein erfolgreicher Speichervorgang den Detail-Drawer automatisch.
+
+Das gilt auch für den Warn-Dialog `Auftrag ohne gültige Freigabe`: Wird dort `Trotzdem speichern` bestätigt, wird der Auftrag gespeichert, der Dialog geschlossen und der Drawer eingefahren.
+
+Die Tabellenansicht bleibt anschließend die Hauptansicht.
+
+## Auftrags-Drawer Feldreihenfolge
+
+Im Bereich `Produktion` gilt die Reihenfolge:
+
+```text
+Maschine | Priorität
+Freigabe | Übergabe
+```
+
+Die Freigabe steht damit bewusst vor der Übergabe in Produktion.
+
+## Status-Badge Standard
+
+Status-Badges dürfen nicht aus einzelnen Testdaten (`badgeVariant`) abgeleitet werden, weil derselbe Status sonst unterschiedlich aussehen kann.
+
+Für Aufträge gilt die feste Zuordnung:
+
+```text
+Neu            → neutral
+In Produktion  → success
+Wartet         → warning
+Fertig         → success
+Archiv         → neutral
+```
+
+Damit sieht `In Produktion` überall gleich aus.

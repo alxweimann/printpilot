@@ -2,20 +2,14 @@
 
 ## Kurzfristig
 
-### 1. DetailDrawer-Komponente bauen
+### 1. DetailDrawer-Komponente bauen ✅
 
 ```text
 Tabelle über volle Breite
 Details rechts als Drawer
 ```
 
-Erster Einsatz:
-
-```text
-Aufträge
-```
-
-### 2. Aufträge auf Drawer-Layout umstellen
+### 2. Aufträge auf Drawer-Layout umstellen ✅
 
 Bestehende Logik muss erhalten bleiben:
 
@@ -30,7 +24,7 @@ Speichern
 ConfirmDialog
 ```
 
-### 3. Angebote auf Drawer-Layout umstellen
+### 3. Angebote auf Drawer-Layout umstellen ✅
 
 Bestehende Logik muss erhalten bleiben:
 
@@ -100,3 +94,12 @@ immer build testen
 immer pushen
 Doku aktuell halten
 ```
+
+## UI-Layer Standard
+
+```text
+Erledigt: ConfirmDialog über DetailDrawer gelegt
+```
+- Erledigt: Auftrags-Drawer schließt nach erfolgreichem Speichern inklusive Freigabe-Warnbestätigung
+- Erledigt: Auftrags-Drawer Feldreihenfolge Freigabe/Übergabe fachlich korrigiert
+- Erledigt: Auftragsstatus-Badges vereinheitlicht

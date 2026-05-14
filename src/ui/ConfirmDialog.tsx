@@ -86,7 +86,7 @@ export function ConfirmDialog({
         position: "fixed",
         right: 0,
         top: 0,
-        zIndex: 90,
+        zIndex: 3000,
       }}
     >
       <div
@@ -100,6 +100,8 @@ export function ConfirmDialog({
           maxWidth: "34rem",
           padding: "1.25rem",
           width: "100%",
+          maxHeight: "calc(100vh - 3rem)",
+          overflowY: "auto",
         }}
       >
         <div style={{ display: "grid", gap: "0.35rem" }}>

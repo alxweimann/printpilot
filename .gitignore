@@ -4,3 +4,9 @@ dist-ssr
 *.local
 _OLD_/
 .DS_Store
+
+# Local PrintPilot exchange ZIPs
+printpilot-current-ui.zip
+printpilot-current-baseline.zip
+printpilot-current-full.zip
+printpilot-*.zip

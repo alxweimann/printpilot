@@ -1,53 +1,37 @@
-# Master-Detail Drawer Standard
+# Master-Detail-Drawer
+
+Stand: 14.05.2026
 
 ## Ziel
 
-PrintPilot soll perspektivisch einen einheitlichen Master-Detail-Standard bekommen.
+PrintPilot verwendet für Listen und Detailansichten einen einheitlichen Master-Detail-Standard.
 
-Die Tabellenansicht ist dabei die Hauptarbeitsfläche.
-
-Beim Klick auf eine Tabellenzeile öffnet sich rechts ein Detail-Drawer.
-
-## Zielbild
-
-```text
-Tabelle über volle Breite
-Zeile anklicken
-Detail-Drawer öffnet rechts
-Tabelle bleibt sichtbar
-Drawer kann geschlossen werden
+```txt
+Liste/Tabelle bleibt volle Hauptansicht
+Klick auf eine Zeile öffnet rechts den DetailDrawer
+Detailinformationen liegen im Drawer
+Aktionen liegen im Drawer-Footer
+Tabelle bleibt währenddessen sichtbar
 ```
 
-## Warum
+## Komponente
 
-Das bisherige Layout mit fester Tabelle links und festem Editor rechts macht die Tabellen unnötig schmal.
-
-Der Drawer-Ansatz ist besser für:
-
-```text
-mehr Tabellenbreite
-weniger gequetschte Spalten
-ruhigere Übersicht
-moderne Bedienung
-bessere Skalierung auf viele Datensätze
+```txt
+src/ui/DetailDrawer.tsx
 ```
 
-## Grundprinzip
+## Bereits umgesetzt
 
-```text
-Liste / Tabelle = Hauptansicht
-Detail-Drawer = Bearbeiten / Prüfen / Aktionen
-```
-
-## Betroffene Module
-
-Der Standard soll perspektivisch gelten für:
-
-```text
+```txt
 Angebote
 Aufträge
 Rechnungen
 Lieferscheine
+```
+
+## Noch offen
+
+```txt
 Mahnungen
 Kunden
 Material
@@ -57,205 +41,30 @@ Leistungen
 Vorlagen
 ```
 
-## Geplante UI-Komponente
-
-```text
-src/ui/DetailDrawer.tsx
-```
-
-Mögliche Props:
-
-```ts
-type DetailDrawerProps = {
-  open: boolean;
-  title: string;
-  subtitle?: string;
-  status?: string;
-  onClose: () => void;
-  children: React.ReactNode;
-};
-```
-
 ## Verhalten
 
-```text
-Klick auf Tabellenzeile
-ausgewählter Datensatz wird gesetzt
-Drawer öffnet
-Bearbeitungsmodus ist zunächst gesperrt
-Schloss öffnet Bearbeitung
-Speichern aktualisiert Store
-Schließen verwirft keine gespeicherten Daten
+### Öffnen
+
+```txt
+Zeile anklicken
+ausgewählter Datensatz bleibt in Tabelle markiert
+Drawer öffnet rechts
 ```
 
-## Bestehende Logik bleibt erhalten
+### Schließen
 
-Der Drawer ersetzt nicht die fachliche Logik.
-
-Weiterhin gültig:
-
-```text
-Edit-Lock
-Dirty-State
-Speichern
-Änderungen verwerfen
-ConfirmDialog für kritische Aktionen
-Status-Badges
-localStorage-Persistenz
+```txt
+X rechts oben
+Klick außerhalb
+Speichern/Ausgeben schließt den Drawer, wenn fachlich sinnvoll
 ```
 
-## Aufträge
+### Dialoge
 
-Bei Aufträgen bleibt bestehen:
+Warnungen und ConfirmDialog liegen immer über dem Drawer.
 
-```text
-Freigabe-Dropdown
-Übergabe-Dropdown
-Maschinen-Dropdown
-Status-Dropdown
-Warnung bei Produktion ohne gültige Freigabe
-ConfirmDialog
-```
+## Tabellen im Drawer-Kontext
 
-Nur die Darstellung ändert sich:
+Die Haupttabelle bleibt die zentrale Arbeitsfläche.
 
-```text
-fester rechter Editor → rechter Drawer
-```
-
-## Angebote
-
-Bei Angeboten bleibt bestehen:
-
-```text
-Alle Angebote
-Status-Tabs
-Angebot → Auftrag
-Dublettenwarnung bei erneutem Auftrag
-ConfirmDialog
-```
-
-Nur die Darstellung ändert sich:
-
-```text
-fester rechter Editor → rechter Drawer
-```
-
-## Rechnungen / Lieferscheine / Mahnungen
-
-Für spätere Ausgabedokumente ist der Drawer besonders sinnvoll.
-
-Mögliche Aktionen im Drawer:
-
-```text
-PDF erstellen
-Drucken
-E-Mail senden
-Status ändern
-Zahlung prüfen
-Versand prüfen
-Mahnstufe prüfen
-```
-
-## Umsetzungsstand
-
-```text
-Erledigt: DetailDrawer-Komponente gebaut
-Erledigt: Angebote auf Drawer-Layout umgestellt
-Erledigt: Aufträge auf Drawer-Layout umgestellt
-Nächster Schritt: Rechnungen vorbereiten
-Danach: Lieferscheine vorbereiten
-Danach: Mahnungen vorbereiten
-Danach: Kunden / Material / Maschinen / Leistungen / Vorlagen nachziehen
-```
-
-## Wichtig
-
-```text
-Ein Modul pro Schritt.
-Keine Massenänderung.
-Nach jedem Modul Build testen.
-Nach jedem Modul pushen.
-```
-
-## Akzeptanzkriterien
-
-Für ein umgestelltes Modul gilt:
-
-```text
-Tabelle nutzt volle Breite
-Klick auf Zeile öffnet Drawer
-Drawer zeigt vollständige Details
-Bearbeiten funktioniert wie vorher
-Speichern funktioniert wie vorher
-Schließen funktioniert zuverlässig
-Statuswechsel / Warnungen funktionieren weiterhin
-```
-
-## Dialog-Ebenen / z-index
-
-Kritische Dialoge wie `ConfirmDialog` müssen immer über dem Detail-Drawer liegen.
-
-Aktueller Layer-Standard:
-
-```text
-DetailDrawer Root: z-index 1000
-DetailDrawer Panel: z-index 1001
-ConfirmDialog: z-index 3000
-```
-
-Damit bleiben Warnungen, Dublettenhinweise und kritische Speicherabfragen auch dann sichtbar und bedienbar, wenn ein Drawer geöffnet ist.
-
-## Speichern im Drawer
-
-Bei Aufträgen schließt ein erfolgreicher Speichervorgang den Detail-Drawer automatisch.
-
-Das gilt auch für den Warn-Dialog `Auftrag ohne gültige Freigabe`: Wird dort `Trotzdem speichern` bestätigt, wird der Auftrag gespeichert, der Dialog geschlossen und der Drawer eingefahren.
-
-Die Tabellenansicht bleibt anschließend die Hauptansicht.
-
-## Auftrags-Drawer Feldreihenfolge
-
-Im Bereich `Produktion` gilt die Reihenfolge:
-
-```text
-Maschine | Priorität
-Freigabe | Übergabe
-```
-
-Die Freigabe steht damit bewusst vor der Übergabe in Produktion.
-
-## Status-Badge Standard
-
-Status-Badges dürfen nicht aus einzelnen Testdaten (`badgeVariant`) abgeleitet werden, weil derselbe Status sonst unterschiedlich aussehen kann.
-
-Für Aufträge gilt die feste Zuordnung:
-
-```text
-Neu            → neutral
-In Produktion  → success
-Wartet         → warning
-Fertig         → success
-Archiv         → neutral
-```
-
-Damit sieht `In Produktion` überall gleich aus.
-
-## Sortierbare Tabellen im Master-Detail-Layout
-
-Tabellen in Master-Detail-Seiten sollen innerhalb aller Tabs sortierbar sein.
-
-Für die Auftragsübersicht ist umgesetzt:
-
-```text
-Auftrag      sortierbar
-Kunde        sortierbar
-Produkt      sortierbar
-Fällig       sortierbar
-Freigabe     sortierbar
-Status       sortierbar
-```
-
-Ein Klick auf den Spaltenkopf sortiert aufsteigend. Ein weiterer Klick auf dieselbe Spalte sortiert absteigend.
-
-Die aktive Sortierung bleibt beim Wechsel zwischen Tabs erhalten, sodass z. B. `In Produktion`, `Wartet` oder `Archiv` nach derselben Logik sortiert werden können.
+Detailbereiche werden nicht dauerhaft unter oder neben die Tabelle gesetzt, sondern erscheinen ausschließlich im Drawer.

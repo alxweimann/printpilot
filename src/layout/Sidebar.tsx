@@ -1,5 +1,12 @@
 import type { CSSProperties } from "react";
+import { useEffect, useMemo, useState } from "react";
+
 import { navigationGroups, navigationItems } from "../app/navigation";
+import { usePrintPilotStore } from "../store/PrintPilotStore";
+import {
+  formatPrintPilotDate,
+  formatPrintPilotTime,
+} from "../utils/dateFormat";
 
 type SidebarProps = {
   activePage: string;
@@ -7,6 +14,26 @@ type SidebarProps = {
 };
 
 export function Sidebar({ activePage, onNavigate }: SidebarProps) {
+  const { settings } = usePrintPilotStore();
+  const [now, setNow] = useState(() => new Date());
+
+  useEffect(() => {
+    const intervalId = window.setInterval(() => {
+      setNow(new Date());
+    }, 1000);
+
+    return () => {
+      window.clearInterval(intervalId);
+    };
+  }, []);
+
+  const ledDate = useMemo(
+    () => formatPrintPilotDate(now, settings.dateFormat),
+    [now, settings.dateFormat],
+  );
+
+  const ledTime = useMemo(() => formatPrintPilotTime(now), [now]);
+
   return (
     <aside className="sidebar">
       <div className="sidebar-brand">
@@ -48,6 +75,14 @@ export function Sidebar({ activePage, onNavigate }: SidebarProps) {
           );
         })}
       </nav>
+
+      <div className="sidebar-led-clock" aria-label="Aktuelles Datum und Uhrzeit">
+        <div className="sidebar-led-label">Systemzeit</div>
+        <div className="sidebar-led-display">
+          <div className="sidebar-led-date">{ledDate}</div>
+          <div className="sidebar-led-time">{ledTime}</div>
+        </div>
+      </div>
     </aside>
   );
 }

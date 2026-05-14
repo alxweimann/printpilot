@@ -4,6 +4,7 @@ import { getModuleConfig } from "../app/moduleConfig";
 
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
+import { usePrintPilotStore } from "../store/PrintPilotStore";
 
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
@@ -23,6 +24,7 @@ import { DataTable, TableToolbar } from "../ui/Table";
 import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
+import { formatPrintPilotDateString } from "../utils/dateFormat";
 
 const invoiceTabs = ["Liste", "Entwurf", "Offen", "Bezahlt", "Überfällig"] as const;
 const invoiceStatusOptions = ["Entwurf", "Offen", "Bezahlt", "Überfällig"] as const;
@@ -202,6 +204,7 @@ function getInvoiceSortValue(invoice: InvoiceRow, sortKey: InvoiceSortKey) {
 
 export function InvoicesPage() {
   const module = getModuleConfig("invoices");
+  const { settings } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
@@ -356,8 +359,8 @@ export function InvoicesPage() {
                     <td style={{ whiteSpace: "nowrap" }}>{invoice.number}</td>
                     <td>{invoice.customer}</td>
                     <td>{invoice.subject}</td>
-                    <td style={{ whiteSpace: "nowrap" }}>{invoice.invoiceDate}</td>
-                    <td style={{ whiteSpace: "nowrap" }}>{invoice.dueDate}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{formatPrintPilotDateString(invoice.invoiceDate, settings.dateFormat)}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{formatPrintPilotDateString(invoice.dueDate, settings.dateFormat)}</td>
                     <td style={{ whiteSpace: "nowrap" }}>
                       <Badge variant={invoice.badgeVariant}>{invoice.status}</Badge>
                     </td>

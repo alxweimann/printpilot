@@ -33,6 +33,7 @@ import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
+import { formatPrintPilotDateString } from "../utils/dateFormat";
 
 const orderTabs = [
   "Alle Aufträge",
@@ -177,7 +178,7 @@ function getOrderSortValue(order: PrintPilotOrder, key: OrderSortKey) {
 
 export function OrdersPage() {
   const module = getModuleConfig("orders");
-  const { machines, orders, updateOrder } = usePrintPilotStore();
+  const { machines, orders, settings, updateOrder } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
@@ -454,7 +455,7 @@ export function OrdersPage() {
                     <td style={{ whiteSpace: "nowrap" }}>{order.number}</td>
                     <td>{order.customerName}</td>
                     <td>{order.product}</td>
-                    <td style={{ whiteSpace: "nowrap" }}>{order.dueDate}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{formatPrintPilotDateString(order.dueDate, settings.dateFormat)}</td>
                     <td style={{ whiteSpace: "nowrap" }}>
                       <Badge
                         variant={getPrintPilotApprovalBadgeVariant(

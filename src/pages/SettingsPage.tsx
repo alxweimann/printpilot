@@ -326,6 +326,21 @@ export function SettingsPage() {
                     <option>Aufträge</option>
                   </Select>
                 </Field>
+
+                <Field label="Datumsformat">
+                  <Select
+                    value={draft?.dateFormat ?? "TT.MM.JJJJ"}
+                    disabled={!isEditing}
+                    onChange={(event) =>
+                      updateDraftField("dateFormat", event.target.value)
+                    }
+                  >
+                    <option>TT.MM.JJJJ</option>
+                    <option>TT-MM-JJJJ</option>
+                    <option>JJJJ-MM-TT</option>
+                    <option>JJJJ/MM/TT</option>
+                  </Select>
+                </Field>
               </FieldGrid>
             </>
           )}

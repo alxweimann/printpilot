@@ -31,6 +31,7 @@ import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
+import { formatPrintPilotDateString } from "../utils/dateFormat";
 
 const quoteTabs = [
   "Alle Angebote",
@@ -101,7 +102,7 @@ function isQuoteTab(tab: string): tab is QuoteTab {
 
 export function QuotesPage() {
   const module = getModuleConfig("quotes");
-  const { addOrder, orders, quotes, updateQuote } = usePrintPilotStore();
+  const { addOrder, orders, quotes, settings, updateQuote } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
@@ -321,7 +322,7 @@ export function QuotesPage() {
                     <td style={{ whiteSpace: "nowrap" }}>{quote.number}</td>
                     <td>{quote.customerName}</td>
                     <td>{quote.subject}</td>
-                    <td style={{ whiteSpace: "nowrap" }}>{quote.quoteDate}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{formatPrintPilotDateString(quote.quoteDate, settings.dateFormat)}</td>
                     <td style={{ whiteSpace: "nowrap" }}>
                       <Badge variant={getPrintPilotStatusBadgeVariant(quote.status)}>
                         {quote.status}

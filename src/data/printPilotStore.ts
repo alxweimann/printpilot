@@ -176,6 +176,7 @@ export type PrintPilotSettings = {
   mode: string;
   startModule: string;
   defaultCalculationModule: string;
+  dateFormat: string;
   quotePrefix: string;
   quoteNextNumber: string;
   orderPrefix: string;
@@ -213,6 +214,7 @@ export const initialPrintPilotSettings: PrintPilotSettings = {
   mode: "Lokal",
   startModule: "Dashboard",
   defaultCalculationModule: "Kalkulation",
+  dateFormat: "TT.MM.JJJJ",
   quotePrefix: "AG",
   quoteNextNumber: "2026-001",
   orderPrefix: "AU",

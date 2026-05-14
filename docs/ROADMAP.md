@@ -1,4 +1,9 @@
-# Roadmap
-- Erledigt: Sidebar LED-Anzeige optisch reduziert und gleich breit ausgerichtet
-- Erledigt: Sidebar LED-Anzeige ohne Rahmen/Balken und größer dargestellt
-- Erledigt: Sidebar LED-Anzeige auf gleiche Breite und reduzierten Glow angepasst
+# PrintPilot Roadmap
+
+Stand: 14.05.2026
+
+## Erledigt
+
+- DetailDrawer per React Portal stabilisiert
+- Drawer öffnet global rechts über der App
+- Seitenlayout/Scrollcontainer können Drawer-Position nicht mehr beeinflussen

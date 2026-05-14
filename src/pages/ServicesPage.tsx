@@ -16,6 +16,7 @@ import { PageTabs } from "../layout/PageTabs";
 
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { DetailDrawer } from "../ui/DetailDrawer";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -78,6 +79,7 @@ export function ServicesPage() {
   const { services, updateService } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
+  const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
 
   const serviceRowsByTab = useMemo(() => {
     return groupPrintPilotServicesByStatus(services);
@@ -98,7 +100,6 @@ export function ServicesPage() {
     sortedRows: sortedServiceRows,
     sortConfig: serviceSortConfig,
     requestSort: requestServiceSort,
-    getAriaSort: getServiceAriaSort,
   } = useSortableTable<PrintPilotService, ServiceSortKey>({
     rows: serviceRows,
     initialSortKey: "number",
@@ -114,12 +115,19 @@ export function ServicesPage() {
     if (isServiceTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
+      setIsDetailDrawerOpen(false);
     }
   }
 
   function handleServiceSelect(serviceId: string) {
     selectItem(serviceId);
     setIsEditing(false);
+    setIsDetailDrawerOpen(true);
+  }
+
+  function handleCloseDetailDrawer() {
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   function handleResetDraft() {
@@ -141,6 +149,7 @@ export function ServicesPage() {
     updateService(savedService);
     saveDraft(savedService);
     setIsEditing(false);
+    setIsDetailDrawerOpen(false);
   }
 
   return (
@@ -164,101 +173,117 @@ export function ServicesPage() {
           statusValue={isEditing ? "Bearbeitung offen" : activeTab}
         />
 
-        <div className="master-detail-layout">
-          <section className="workspace-panel master-list-panel">
-            <TableToolbar>
-              <Input
-                className="search-input"
-                placeholder="Leistungen suchen..."
-              />
+        <section className="workspace-panel master-list-panel">
+          <TableToolbar>
+            <Input
+              className="search-input"
+              placeholder="Leistungen suchen..."
+            />
+            <Button>Filter</Button>
+          </TableToolbar>
 
-              <Button>Filter</Button>
-            </TableToolbar>
+          <DataTable>
+            <thead>
+              <tr>
+                <SortableTableHeader
+                  label="Leistungsnr."
+                  sortKey="number"
+                  sortConfig={serviceSortConfig}
+                  onSort={requestServiceSort}
+                />
+                <SortableTableHeader
+                  label="Name"
+                  sortKey="name"
+                  sortConfig={serviceSortConfig}
+                  onSort={requestServiceSort}
+                />
+                <SortableTableHeader
+                  label="Gruppe"
+                  sortKey="group"
+                  sortConfig={serviceSortConfig}
+                  onSort={requestServiceSort}
+                />
+                <SortableTableHeader
+                  label="Einheit"
+                  sortKey="unit"
+                  sortConfig={serviceSortConfig}
+                  onSort={requestServiceSort}
+                />
+                <SortableTableHeader
+                  label="Preis"
+                  sortKey="price"
+                  sortConfig={serviceSortConfig}
+                  onSort={requestServiceSort}
+                />
+                <SortableTableHeader
+                  label="Status"
+                  sortKey="status"
+                  sortConfig={serviceSortConfig}
+                  onSort={requestServiceSort}
+                />
+              </tr>
+            </thead>
 
-            <DataTable>
-              <thead>
-                <tr>
-                  <th aria-sort={getServiceAriaSort("number")}>
-                    <SortableTableHeader
-                      label="Leistungsnr."
-                      active={ serviceSortConfig?.key === "number" }
-                      direction={ serviceSortConfig?.direction }
-                      onClick={() => requestServiceSort("number")}
-                    />
-                  </th>
-                  <th aria-sort={getServiceAriaSort("name")}>
-                    <SortableTableHeader
-                      label="Name"
-                      active={ serviceSortConfig?.key === "name" }
-                      direction={ serviceSortConfig?.direction }
-                      onClick={() => requestServiceSort("name")}
-                    />
-                  </th>
-                  <th aria-sort={getServiceAriaSort("group")}>
-                    <SortableTableHeader
-                      label="Gruppe"
-                      active={ serviceSortConfig?.key === "group" }
-                      direction={ serviceSortConfig?.direction }
-                      onClick={() => requestServiceSort("group")}
-                    />
-                  </th>
-                  <th aria-sort={getServiceAriaSort("unit")}>
-                    <SortableTableHeader
-                      label="Einheit"
-                      active={ serviceSortConfig?.key === "unit" }
-                      direction={ serviceSortConfig?.direction }
-                      onClick={() => requestServiceSort("unit")}
-                    />
-                  </th>
-                  <th aria-sort={getServiceAriaSort("price")}>
-                    <SortableTableHeader
-                      label="Preis"
-                      active={ serviceSortConfig?.key === "price" }
-                      direction={ serviceSortConfig?.direction }
-                      onClick={() => requestServiceSort("price")}
-                    />
-                  </th>
-                  <th aria-sort={getServiceAriaSort("status")}>
-                    <SortableTableHeader
-                      label="Status"
-                      active={ serviceSortConfig?.key === "status" }
-                      direction={ serviceSortConfig?.direction }
-                      onClick={() => requestServiceSort("status")}
-                    />
-                  </th>
-                </tr>
-              </thead>
+            <tbody>
+              {sortedServiceRows.map((service) => {
+                const isSelected = service.id === selectedService?.id;
 
-              <tbody>
-                {sortedServiceRows.map((service) => {
-                  const isSelected = service.id === selectedService?.id;
+                return (
+                  <tr
+                    key={service.id}
+                    className={isSelected ? "data-table-row-selected" : undefined}
+                    onClick={() => handleServiceSelect(service.id)}
+                  >
+                    <td style={{ whiteSpace: "nowrap" }}>{service.number}</td>
+                    <td>{service.name}</td>
+                    <td>{service.group}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{service.unit}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>{service.price}</td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <Badge variant={getPrintPilotStatusBadgeVariant(service.status)}>
+                        {service.status}
+                      </Badge>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </DataTable>
+        </section>
+      </section>
 
-                  return (
-                    <tr
-                      key={service.id}
-                      className={
-                        isSelected ? "data-table-row-selected" : undefined
-                      }
-                      onClick={() => handleServiceSelect(service.id)}
-                    >
-                      <td style={{ whiteSpace: "nowrap" }}>{service.number}</td>
-                      <td>{service.name}</td>
-                      <td>{service.group}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>{service.unit}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>{service.price}</td>
-                      <td style={{ whiteSpace: "nowrap" }}>
-                        <Badge variant={getPrintPilotStatusBadgeVariant(service.status)}>
-                          {service.status}
-                        </Badge>
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </DataTable>
-          </section>
+      <DetailDrawer
+        open={isDetailDrawerOpen && Boolean(selectedService)}
+        eyebrow="Leistung"
+        title={selectedService?.name ?? "Leistung"}
+        subtitle={
+          selectedService
+            ? `${selectedService.number} · ${selectedService.group}`
+            : undefined
+        }
+        onClose={handleCloseDetailDrawer}
+        size="xl"
+        footer={
+          <>
+            <DirtyStateNotice isDirty={isDirty} />
 
-          <section className="workspace-panel master-editor-panel">
+            <EditLockToggle
+              isEditing={isEditing}
+              onToggle={handleToggleEditing}
+            />
+
+            <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+
+            <SaveActionButton
+              isDirty={isDirty}
+              defaultLabel="Leistung speichern"
+              onClick={handleSaveDraft}
+            />
+          </>
+        }
+      >
+        <div className="detail-drawer-stack">
+          <section className="detail-drawer-panel">
             <SectionHeader>Leistungsdaten</SectionHeader>
 
             <FieldGrid>
@@ -339,7 +364,9 @@ export function ServicesPage() {
                 </Select>
               </Field>
             </FieldGrid>
+          </section>
 
+          <section className="detail-drawer-panel">
             <SectionHeader>Kalkulation</SectionHeader>
 
             <FieldGrid>
@@ -352,7 +379,13 @@ export function ServicesPage() {
                   }
                 />
               </Field>
+            </FieldGrid>
+          </section>
 
+          <section className="detail-drawer-panel">
+            <SectionHeader>Beschreibung</SectionHeader>
+
+            <FieldGrid>
               <Field label="Beschreibung">
                 <Input
                   value={draft?.description ?? ""}
@@ -363,26 +396,9 @@ export function ServicesPage() {
                 />
               </Field>
             </FieldGrid>
-
-            <div className="calculation-footer">
-              <DirtyStateNotice isDirty={isDirty} />
-
-              <EditLockToggle
-                isEditing={isEditing}
-                onToggle={handleToggleEditing}
-              />
-
-              <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-
-              <SaveActionButton
-                isDirty={isDirty}
-                defaultLabel="Leistung speichern"
-                onClick={handleSaveDraft}
-              />
-            </div>
           </section>
         </div>
-      </section>
+      </DetailDrawer>
     </div>
   );
 }

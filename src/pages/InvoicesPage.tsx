@@ -1,7 +1,12 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
 
 import { getModuleConfig } from "../app/moduleConfig";
-
+import {
+  type PrintPilotInvoice,
+  type PrintPilotInvoiceStatus,
+  groupPrintPilotInvoicesByStatus,
+} from "../data/printPilotStore";
+import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
 import { useEditableDraft } from "../hooks/useEditableDraft";
 import { useMasterDetailSelection } from "../hooks/useMasterDetailSelection";
 import { usePrintPilotStore } from "../store/PrintPilotStore";
@@ -17,146 +22,32 @@ import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
 import { FieldGrid } from "../ui/FieldGrid";
 import { Input } from "../ui/Input";
-import { SectionHeader } from "../ui/SectionHeader";
 import { SaveActionButton } from "../ui/SaveActionButton";
+import { SectionHeader } from "../ui/SectionHeader";
 import { Select } from "../ui/Select";
-import { DataTable, TableToolbar } from "../ui/Table";
 import { SortableTableHeader } from "../ui/SortableTableHeader";
+import { DataTable, TableToolbar } from "../ui/Table";
 import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 import { formatPrintPilotDateString } from "../utils/dateFormat";
 
 const invoiceTabs = ["Liste", "Entwurf", "Offen", "Bezahlt", "Überfällig"] as const;
-const invoiceStatusOptions = ["Entwurf", "Offen", "Bezahlt", "Überfällig"] as const;
+const invoiceStatusOptions: PrintPilotInvoiceStatus[] = [
+  "Entwurf",
+  "Offen",
+  "Bezahlt",
+  "Überfällig",
+];
 
-type InvoiceTab = (typeof invoiceTabs)[number];
-type InvoiceStatus = (typeof invoiceStatusOptions)[number];
-
-type InvoiceRow = {
-  id: string;
-  number: string;
-  customer: string;
-  subject: string;
-  status: InvoiceStatus;
-  paymentTerms: string;
-  paymentType: string;
-  template: string;
-  invoiceDate: string;
-  dueDate: string;
-  badgeVariant?: "success";
-};
+type InvoiceTab = "Liste" | PrintPilotInvoiceStatus;
 
 type InvoiceSortKey =
   | "number"
-  | "customer"
+  | "customerName"
   | "subject"
   | "invoiceDate"
   | "dueDate"
   | "status";
-
-const invoiceRowsByTab: Record<InvoiceTab, InvoiceRow[]> = {
-  Liste: [
-    {
-      id: "invoice-re-2026-001",
-      number: "RE-2026-001",
-      customer: "Sonnendruck GmbH",
-      subject: "Broschüre A4",
-      status: "Entwurf",
-      paymentTerms: "14 Tage netto",
-      paymentType: "Überweisung",
-      template: "Standardrechnung",
-      invoiceDate: "2026-05-05",
-      dueDate: "2026-05-19",
-      badgeVariant: "success",
-    },
-    {
-      id: "invoice-re-2026-002",
-      number: "RE-2026-002",
-      customer: "Musterkunde GmbH",
-      subject: "Flyer A5",
-      status: "Offen",
-      paymentTerms: "14 Tage netto",
-      paymentType: "Überweisung",
-      template: "Standardrechnung",
-      invoiceDate: "2026-05-03",
-      dueDate: "2026-05-17",
-      badgeVariant: undefined,
-    },
-    {
-      id: "invoice-re-2026-003",
-      number: "RE-2026-003",
-      customer: "Beispiel AG",
-      subject: "Folder DIN lang",
-      status: "Bezahlt",
-      paymentTerms: "30 Tage netto",
-      paymentType: "Überweisung",
-      template: "Kurzrechnung",
-      invoiceDate: "2026-04-22",
-      dueDate: "2026-05-22",
-      badgeVariant: "success",
-    },
-  ],
-  Entwurf: [
-    {
-      id: "invoice-re-2026-001",
-      number: "RE-2026-001",
-      customer: "Sonnendruck GmbH",
-      subject: "Broschüre A4",
-      status: "Entwurf",
-      paymentTerms: "14 Tage netto",
-      paymentType: "Überweisung",
-      template: "Standardrechnung",
-      invoiceDate: "2026-05-05",
-      dueDate: "2026-05-19",
-      badgeVariant: "success",
-    },
-  ],
-  Offen: [
-    {
-      id: "invoice-re-2026-002",
-      number: "RE-2026-002",
-      customer: "Musterkunde GmbH",
-      subject: "Flyer A5",
-      status: "Offen",
-      paymentTerms: "14 Tage netto",
-      paymentType: "Überweisung",
-      template: "Standardrechnung",
-      invoiceDate: "2026-05-03",
-      dueDate: "2026-05-17",
-      badgeVariant: undefined,
-    },
-  ],
-  Bezahlt: [
-    {
-      id: "invoice-re-2026-003",
-      number: "RE-2026-003",
-      customer: "Beispiel AG",
-      subject: "Folder DIN lang",
-      status: "Bezahlt",
-      paymentTerms: "30 Tage netto",
-      paymentType: "Überweisung",
-      template: "Kurzrechnung",
-      invoiceDate: "2026-04-22",
-      dueDate: "2026-05-22",
-      badgeVariant: "success",
-    },
-  ],
-  Überfällig: [
-    {
-      id: "invoice-re-2026-009",
-      number: "RE-2026-009",
-      customer: "Testkunde KG",
-      subject: "Plakat A1",
-      status: "Überfällig",
-      paymentTerms: "Sofort ohne Abzug",
-      paymentType: "Überweisung",
-      template: "Standardrechnung",
-      invoiceDate: "2026-04-01",
-      dueDate: "2026-04-15",
-      badgeVariant: undefined,
-    },
-  ],
-};
 
 function getInvoiceTitle(tab: InvoiceTab) {
   switch (tab) {
@@ -185,12 +76,12 @@ function isInvoiceTab(tab: string): tab is InvoiceTab {
   return invoiceTabs.includes(tab as InvoiceTab);
 }
 
-function getInvoiceSortValue(invoice: InvoiceRow, sortKey: InvoiceSortKey) {
+function getInvoiceSortValue(invoice: PrintPilotInvoice, sortKey: InvoiceSortKey) {
   switch (sortKey) {
     case "number":
       return invoice.number;
-    case "customer":
-      return invoice.customer;
+    case "customerName":
+      return invoice.customerName;
     case "subject":
       return invoice.subject;
     case "invoiceDate":
@@ -204,10 +95,17 @@ function getInvoiceSortValue(invoice: InvoiceRow, sortKey: InvoiceSortKey) {
 
 export function InvoicesPage() {
   const module = getModuleConfig("invoices");
-  const { settings } = usePrintPilotStore();
+  const { invoices, settings, updateInvoice } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
+
+  const invoiceRowsByTab = useMemo(() => {
+    return {
+      Liste: invoices,
+      ...groupPrintPilotInvoicesByStatus(invoices),
+    };
+  }, [invoices]);
 
   const {
     activeTab,
@@ -227,7 +125,7 @@ export function InvoicesPage() {
     sortedRows: sortedInvoiceRows,
     sortConfig: invoiceSortConfig,
     requestSort: requestInvoiceSort,
-  } = useSortableTable<InvoiceRow, InvoiceSortKey>({
+  } = useSortableTable<PrintPilotInvoice, InvoiceSortKey>({
     rows: invoiceRows,
     initialSortKey: "number",
     getSortValue: getInvoiceSortValue,
@@ -269,11 +167,20 @@ export function InvoicesPage() {
       return;
     }
 
-    const savedInvoice = draft as InvoiceRow;
+    const savedInvoice = draft as PrintPilotInvoice;
 
+    updateInvoice(savedInvoice);
     saveDraft(savedInvoice);
     setIsEditing(false);
     setIsDetailDrawerOpen(false);
+
+    if (activeTab !== "Liste") {
+      setActiveTab("Liste");
+    }
+
+    window.setTimeout(() => {
+      selectItem(savedInvoice.id);
+    }, 0);
   }
 
   return (
@@ -307,41 +214,41 @@ export function InvoicesPage() {
             <thead>
               <tr>
                 <SortableTableHeader
-                    label="Rechnung"
-                    sortKey="number"
-                    sortConfig={invoiceSortConfig}
-                    onSort={requestInvoiceSort}
-                  />
+                  label="Rechnung"
+                  sortKey="number"
+                  sortConfig={invoiceSortConfig}
+                  onSort={requestInvoiceSort}
+                />
                 <SortableTableHeader
-                    label="Kunde"
-                    sortKey="customer"
-                    sortConfig={invoiceSortConfig}
-                    onSort={requestInvoiceSort}
-                  />
+                  label="Kunde"
+                  sortKey="customerName"
+                  sortConfig={invoiceSortConfig}
+                  onSort={requestInvoiceSort}
+                />
                 <SortableTableHeader
-                    label="Betreff"
-                    sortKey="subject"
-                    sortConfig={invoiceSortConfig}
-                    onSort={requestInvoiceSort}
-                  />
+                  label="Betreff"
+                  sortKey="subject"
+                  sortConfig={invoiceSortConfig}
+                  onSort={requestInvoiceSort}
+                />
                 <SortableTableHeader
-                    label="Datum"
-                    sortKey="invoiceDate"
-                    sortConfig={invoiceSortConfig}
-                    onSort={requestInvoiceSort}
-                  />
+                  label="Datum"
+                  sortKey="invoiceDate"
+                  sortConfig={invoiceSortConfig}
+                  onSort={requestInvoiceSort}
+                />
                 <SortableTableHeader
-                    label="Fällig"
-                    sortKey="dueDate"
-                    sortConfig={invoiceSortConfig}
-                    onSort={requestInvoiceSort}
-                  />
+                  label="Fällig"
+                  sortKey="dueDate"
+                  sortConfig={invoiceSortConfig}
+                  onSort={requestInvoiceSort}
+                />
                 <SortableTableHeader
-                    label="Status"
-                    sortKey="status"
-                    sortConfig={invoiceSortConfig}
-                    onSort={requestInvoiceSort}
-                  />
+                  label="Status"
+                  sortKey="status"
+                  sortConfig={invoiceSortConfig}
+                  onSort={requestInvoiceSort}
+                />
               </tr>
             </thead>
 
@@ -357,12 +264,21 @@ export function InvoicesPage() {
                     onClick={() => handleInvoiceSelect(invoice.id)}
                   >
                     <td style={{ whiteSpace: "nowrap" }}>{invoice.number}</td>
-                    <td>{invoice.customer}</td>
+                    <td>{invoice.customerName}</td>
                     <td>{invoice.subject}</td>
-                    <td style={{ whiteSpace: "nowrap" }}>{formatPrintPilotDateString(invoice.invoiceDate, settings.dateFormat)}</td>
-                    <td style={{ whiteSpace: "nowrap" }}>{formatPrintPilotDateString(invoice.dueDate, settings.dateFormat)}</td>
                     <td style={{ whiteSpace: "nowrap" }}>
-                      <Badge variant={invoice.badgeVariant}>{invoice.status}</Badge>
+                      {formatPrintPilotDateString(
+                        invoice.invoiceDate,
+                        settings.dateFormat,
+                      )}
+                    </td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      {formatPrintPilotDateString(invoice.dueDate, settings.dateFormat)}
+                    </td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <Badge variant={getPrintPilotStatusBadgeVariant(invoice.status)}>
+                        {invoice.status}
+                      </Badge>
                     </td>
                   </tr>
                 );
@@ -379,7 +295,7 @@ export function InvoicesPage() {
         title={draft?.number ?? selectedInvoice?.number ?? "Rechnung"}
         subtitle={
           selectedInvoice
-            ? `${selectedInvoice.customer} · ${selectedInvoice.subject}`
+            ? `${selectedInvoice.customerName} · ${selectedInvoice.subject}`
             : undefined
         }
         size="xl"
@@ -414,7 +330,11 @@ export function InvoicesPage() {
               </Field>
 
               <Field label="Kunde">
-                <Input value={draft?.customer ?? ""} readOnly />
+                <Input value={draft?.customerName ?? ""} readOnly />
+              </Field>
+
+              <Field label="Auftrag">
+                <Input value={draft?.orderNumber ?? ""} readOnly />
               </Field>
 
               <Field label="Betreff">
@@ -432,7 +352,10 @@ export function InvoicesPage() {
                   value={draft?.status ?? ""}
                   disabled={!canEdit}
                   onChange={(event) =>
-                    updateDraftField("status", event.target.value as InvoiceStatus)
+                    updateDraftField(
+                      "status",
+                      event.target.value as PrintPilotInvoiceStatus,
+                    )
                   }
                 >
                   {invoiceStatusOptions.map((status) => (
@@ -480,7 +403,7 @@ export function InvoicesPage() {
               <tbody>
                 <tr>
                   <td>1</td>
-                  <td>Leistung aus Auftrag übernehmen</td>
+                  <td>{draft?.subject ?? "Leistung aus Auftrag übernehmen"}</td>
                   <td>—</td>
                   <td>—</td>
                 </tr>

@@ -1,116 +1,74 @@
 # PrintPilot Roadmap
 
-## Kurzfristig
+Stand: 14.05.2026
 
-### 1. DetailDrawer-Komponente bauen ✅
+## Erledigt
 
-```text
-Tabelle über volle Breite
-Details rechts als Drawer
-```
+### UI-Standardisierung
 
-### 2. Aufträge auf Drawer-Layout umstellen ✅
+- Tabellen optisch vereinheitlicht
+- Globale Sortierlogik eingeführt
+- Sortierbare Header ohne Button-Look umgesetzt
+- Sortierpfeile sichtbar und sauber neben dem Header-Text positioniert
+- Tabellenköpfe und Tabellenzellen linksbündig standardisiert
+- Verschachtelte `th`-Strukturen entfernt
 
-Bestehende Logik muss erhalten bleiben:
+### Master-Detail-Drawer
 
-```text
-Alle Aufträge
-Status-Tabs
-Freigabe-Warnung
-Übergabe-Warnung
-Maschinen-Dropdown
-Speichern
-Änderungen verwerfen
-ConfirmDialog
-```
+Umgesetzt:
 
-### 3. Angebote auf Drawer-Layout umstellen ✅
+- Angebote
+- Aufträge
+- Rechnungen
+- Lieferscheine
 
-Bestehende Logik muss erhalten bleiben:
+### Build / Stabilität
 
-```text
-Alle Angebote
-Status-Tabs
-Auftrag erstellen
-Dublettenwarnung
-ConfirmDialog
-```
+- CSS-Side-Effect-Import-Probleme bereinigt
+- Store-/Typ-Probleme für aktuellen Buildstand bereinigt
+- ConfirmDialog-Layer über Drawer gelegt
 
-## Mittelfristig
+## Nächste Schritte
 
-### 4. Dokumenten-/Ausgabesystem vorbereiten
+### 1. Drawer-Rollout fortsetzen
 
-```text
-Auftragstasche
-Etiketten / Kartonaufkleber
-Lieferschein
-Rechnung
-Mahnung
-Angebot
-Kalkulation
-```
+Als Nächstes:
 
-### 5. Auftragstasche als erste Druckausgabe
-
-```text
-Vorschau
-Drucklayout
-PDF später
-```
-
-### 6. Etiketten / Kartonaufkleber
-
-```text
-Kartonetiketten aus Auftragsdaten
-Karton 1 von X
-PDF/Druck
-```
-
-### 7. Dashboard-Plantafel
-
-```text
-Wochenübersicht über fällige Aufträge
-```
-
-## Langfristig
-
-```text
-Kalkulationsverknüpfungen
-Angebotsausgabe / PDF
-Rechnungen
-Lieferscheine
+```txt
 Mahnungen
-Datenbank
-Mehrplatzbetrieb
-API
+Kunden
+Material
+Maschinen
+Weiterverarbeitung
+Leistungen
+Vorlagen
 ```
 
-## Grundregeln
+### 2. Detailinhalte fachlich ausbauen
 
-```text
-ein Modul pro Schritt
-keine Massenänderungen
-immer build testen
-immer pushen
-Doku aktuell halten
+Nach dem Drawer-Rollout:
+
+```txt
+Positionstabellen
+Statuslogik
+Druck-/Produktionsdaten
+PDF-/Ausgabeaktionen
+Verknüpfungen zwischen Angebot → Auftrag → Rechnung → Lieferschein → Mahnung
 ```
 
-## UI-Layer Standard
+### 3. Doku schlank halten
 
-```text
-Erledigt: ConfirmDialog über DetailDrawer gelegt
+Keine neuen Mini-Doku-Dateien pro Hotfix.
+
+Änderungen werden bevorzugt in diesen Dateien gepflegt:
+
+```txt
+docs/PROJECT_STATE.md
+docs/ROADMAP.md
+docs/UI_STANDARDS.md
+docs/MASTER_DETAIL_DRAWER.md
+docs/WORKFLOWS.md
+docs/ARCHITECTURE.md
 ```
-- Erledigt: Auftrags-Drawer schließt nach erfolgreichem Speichern inklusive Freigabe-Warnbestätigung
-- Erledigt: Auftrags-Drawer Feldreihenfolge Freigabe/Übergabe fachlich korrigiert
-- Erledigt: Auftragsstatus-Badges vereinheitlicht
-- Erledigt: Auftragsliste in allen Tabs sortierbar gemacht
-- Erledigt: Build-Baseline vor globaler Sortierung stabilisiert
-- In Arbeit: Globale Sortierung für alle Tabellen; Aufträge nutzen bereits die zentralen Sortier-Utilities
-- Stabilisiert: Drawer-Rollout für Stammdaten und Mahnungen auf aktuellen Portal-Drawer-Standard nachgezogen
-- Erledigt: Drawer-Akzentfarben je Modul angebunden
-- Erledigt: Drawer-Innenakzente und primäre Drawer-Aktion auf Modulfarbe umgestellt
-- Hotfix erledigt: Drawer-SectionHeader-Akzente auf Modulfarbe korrigiert
-- Hotfix erledigt: SectionHeader-Inline-Akzent für zuverlässige Drawer-Modulfarben
-- Erledigt: Sidebar-Uhr/Datum optisch an PP-Logo-Farbverlauf angepasst
-- Erledigt: Angebots-Workflow `Angebot → Auftrag erzeugen` mit Dubletten-Schutz angebunden
-- Erledigt: Soft-CMYK-Gradient als ruhiger App-Hintergrund umgesetzt
+- Erledigt: Auftrags-Workflow `Auftrag → Rechnung erzeugen` mit Dubletten-Schutz angebunden
+- Hotfix erledigt: Store-Struktur für Lieferscheine und Rechnungen zusammengeführt

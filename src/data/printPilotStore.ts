@@ -125,6 +125,29 @@ export type PrintPilotOrder = {
   badgeVariant?: "success";
 };
 
+export type PrintPilotInvoiceStatus =
+  | "Entwurf"
+  | "Offen"
+  | "Bezahlt"
+  | "Überfällig";
+
+export type PrintPilotInvoice = {
+  id: PrintPilotId;
+  number: string;
+  orderId: PrintPilotId;
+  orderNumber: string;
+  customerId: PrintPilotId | null;
+  customerName: string;
+  subject: string;
+  status: PrintPilotInvoiceStatus;
+  paymentTerms: string;
+  paymentType: string;
+  template: string;
+  invoiceDate: string;
+  dueDate: string;
+  badgeVariant?: "success";
+};
+
 export type PrintPilotDeliveryNoteStatus =
   | "Entwurf"
   | "Versandbereit"
@@ -223,6 +246,7 @@ export type PrintPilotStoreData = {
   customers: PrintPilotCustomer[];
   quotes: PrintPilotQuote[];
   orders: PrintPilotOrder[];
+  invoices: PrintPilotInvoice[];
   deliveryNotes: PrintPilotDeliveryNote[];
   materials: PrintPilotMaterial[];
   machines: PrintPilotMachine[];
@@ -829,6 +853,108 @@ export const initialPrintPilotOrders: PrintPilotOrder[] = [
   },
 ];
 
+export const initialPrintPilotInvoices: PrintPilotInvoice[] = [
+  {
+    id: "invoice-re-2026-001",
+    number: "RE-2026-001",
+    orderId: "order-au-2026-001",
+    orderNumber: "AU-2026-001",
+    customerId: "customer-sonnendruck",
+    customerName: "Sonnendruck GmbH",
+    subject: "Broschüre A4",
+    status: "Entwurf",
+    paymentTerms: "14 Tage netto",
+    paymentType: "Überweisung",
+    template: "Standardrechnung",
+    invoiceDate: "2026-05-05",
+    dueDate: "2026-05-19",
+    badgeVariant: "success",
+  },
+  {
+    id: "invoice-re-2026-002",
+    number: "RE-2026-002",
+    orderId: "order-au-2026-002",
+    orderNumber: "AU-2026-002",
+    customerId: "customer-musterkunde",
+    customerName: "Musterkunde GmbH",
+    subject: "Flyer A5",
+    status: "Offen",
+    paymentTerms: "14 Tage netto",
+    paymentType: "Überweisung",
+    template: "Standardrechnung",
+    invoiceDate: "2026-05-03",
+    dueDate: "2026-05-17",
+  },
+  {
+    id: "invoice-re-2026-003",
+    number: "RE-2026-003",
+    orderId: "order-au-2026-003",
+    orderNumber: "AU-2026-003",
+    customerId: "customer-agentur-beispiel",
+    customerName: "Beispiel AG",
+    subject: "Folder DIN lang",
+    status: "Bezahlt",
+    paymentTerms: "30 Tage netto",
+    paymentType: "Überweisung",
+    template: "Kurzrechnung",
+    invoiceDate: "2026-04-22",
+    dueDate: "2026-05-22",
+    badgeVariant: "success",
+  },
+  {
+    id: "invoice-re-2026-009",
+    number: "RE-2026-009",
+    orderId: "order-au-2026-005",
+    orderNumber: "AU-2026-005",
+    customerId: "customer-testkunde-kg",
+    customerName: "Testkunde KG",
+    subject: "Plakat A1",
+    status: "Überfällig",
+    paymentTerms: "Sofort ohne Abzug",
+    paymentType: "Überweisung",
+    template: "Standardrechnung",
+    invoiceDate: "2026-04-01",
+    dueDate: "2026-04-15",
+  },
+];
+
+function getNextOrderNumber(orders: PrintPilotOrder[]) {
+  const year = new Date().getFullYear();
+  const numbersForYear = orders
+    .map((order) => order.number)
+    .filter((number) => number.startsWith(`AU-${year}-`))
+    .map((number) => Number(number.replace(`AU-${year}-`, "")))
+    .filter((number) => Number.isFinite(number));
+
+  const nextNumber =
+    numbersForYear.length > 0 ? Math.max(...numbersForYear) + 1 : 1;
+
+  return `AU-${year}-${String(nextNumber).padStart(3, "0")}`;
+}
+
+export function createPrintPilotOrderFromQuote(
+  quote: PrintPilotQuote,
+  existingOrders: PrintPilotOrder[],
+): PrintPilotOrder {
+  const number = getNextOrderNumber(existingOrders);
+
+  return {
+    id: `order-${number.toLowerCase()}`,
+    number,
+    quoteId: quote.id,
+    customerId: quote.customerId,
+    customerName: quote.customerName,
+    product: quote.subject,
+    status: "Neu",
+    dueDate: quote.validUntil,
+    machine: "",
+    priority: "Normal",
+    handoff: "Druckdaten prüfen",
+    approval: "Freigabe ausstehend",
+  };
+}
+
+
 export const initialPrintPilotDeliveryNotes: PrintPilotDeliveryNote[] = [
   {
     id: "delivery-ls-2026-001",
@@ -891,42 +1017,55 @@ export const initialPrintPilotDeliveryNotes: PrintPilotDeliveryNote[] = [
   },
 ];
 
-function getNextOrderNumber(orders: PrintPilotOrder[]) {
+function getNextInvoiceNumber(invoices: PrintPilotInvoice[]) {
   const year = new Date().getFullYear();
-  const numbersForYear = orders
-    .map((order) => order.number)
-    .filter((number) => number.startsWith(`AU-${year}-`))
-    .map((number) => Number(number.replace(`AU-${year}-`, "")))
+  const numbersForYear = invoices
+    .map((invoice) => invoice.number)
+    .filter((number) => number.startsWith(`RE-${year}-`))
+    .map((number) => Number(number.replace(`RE-${year}-`, "")))
     .filter((number) => Number.isFinite(number));
 
   const nextNumber =
     numbersForYear.length > 0 ? Math.max(...numbersForYear) + 1 : 1;
 
-  return `AU-${year}-${String(nextNumber).padStart(3, "0")}`;
+  return `RE-${year}-${String(nextNumber).padStart(3, "0")}`;
 }
 
-export function createPrintPilotOrderFromQuote(
-  quote: PrintPilotQuote,
-  existingOrders: PrintPilotOrder[],
-): PrintPilotOrder {
-  const number = getNextOrderNumber(existingOrders);
+function addDaysToIsoDate(value: string, days: number) {
+  const baseDate = value ? new Date(`${value}T00:00:00`) : new Date();
+
+  if (Number.isNaN(baseDate.getTime())) {
+    return "";
+  }
+
+  baseDate.setDate(baseDate.getDate() + days);
+
+  return baseDate.toISOString().slice(0, 10);
+}
+
+export function createPrintPilotInvoiceFromOrder(
+  order: PrintPilotOrder,
+  existingInvoices: PrintPilotInvoice[],
+): PrintPilotInvoice {
+  const number = getNextInvoiceNumber(existingInvoices);
+  const invoiceDate = new Date().toISOString().slice(0, 10);
 
   return {
-    id: `order-${number.toLowerCase()}`,
+    id: `invoice-${number.toLowerCase()}`,
     number,
-    quoteId: quote.id,
-    customerId: quote.customerId,
-    customerName: quote.customerName,
-    product: quote.subject,
-    status: "Neu",
-    dueDate: quote.validUntil,
-    machine: "",
-    priority: "Normal",
-    handoff: "Druckdaten prüfen",
-    approval: "Freigabe ausstehend",
+    orderId: order.id,
+    orderNumber: order.number,
+    customerId: order.customerId,
+    customerName: order.customerName,
+    subject: order.product,
+    status: "Entwurf",
+    paymentTerms: "14 Tage netto",
+    paymentType: "Überweisung",
+    template: "Standardrechnung",
+    invoiceDate,
+    dueDate: addDaysToIsoDate(invoiceDate, 14),
   };
 }
-
 
 function getNextDeliveryNoteNumber(deliveryNotes: PrintPilotDeliveryNote[]) {
   const year = new Date().getFullYear();
@@ -964,12 +1103,12 @@ export function createPrintPilotDeliveryNoteFromOrder(
   };
 }
 
-
 export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
   return {
     customers: initialPrintPilotCustomers,
     quotes: initialPrintPilotQuotes,
     orders: initialPrintPilotOrders,
+    invoices: initialPrintPilotInvoices,
     deliveryNotes: initialPrintPilotDeliveryNotes,
     materials: initialPrintPilotMaterials,
     machines: initialPrintPilotMachines,
@@ -1000,6 +1139,10 @@ export function createPrintPilotStoreSnapshot(
       overrides.orders && overrides.orders.length > 0
         ? overrides.orders
         : emptyStore.orders,
+    invoices:
+      overrides.invoices && overrides.invoices.length > 0
+        ? overrides.invoices
+        : emptyStore.invoices,
     deliveryNotes:
       overrides.deliveryNotes && overrides.deliveryNotes.length > 0
         ? overrides.deliveryNotes
@@ -1129,6 +1272,17 @@ export function groupPrintPilotDeliveryNotesByStatus(
     Abgeschlossen: deliveryNotes.filter(
       (deliveryNote) => deliveryNote.status === "Abgeschlossen",
     ),
+  };
+}
+
+export function groupPrintPilotInvoicesByStatus(
+  invoices: PrintPilotInvoice[],
+): Record<PrintPilotInvoiceStatus, PrintPilotInvoice[]> {
+  return {
+    Entwurf: invoices.filter((invoice) => invoice.status === "Entwurf"),
+    Offen: invoices.filter((invoice) => invoice.status === "Offen"),
+    Bezahlt: invoices.filter((invoice) => invoice.status === "Bezahlt"),
+    Überfällig: invoices.filter((invoice) => invoice.status === "Überfällig"),
   };
 }
 

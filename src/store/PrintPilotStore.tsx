@@ -11,6 +11,7 @@ import {
   type PrintPilotCustomer,
   type PrintPilotDeliveryNote,
   type PrintPilotFinishingProcess,
+  type PrintPilotInvoice,
   type PrintPilotMachine,
   type PrintPilotMaterial,
   type PrintPilotOrder,
@@ -29,6 +30,7 @@ type PrintPilotStoreContextValue = {
   customers: PrintPilotCustomer[];
   quotes: PrintPilotQuote[];
   orders: PrintPilotOrder[];
+  invoices: PrintPilotInvoice[];
   deliveryNotes: PrintPilotDeliveryNote[];
   materials: PrintPilotMaterial[];
   machines: PrintPilotMachine[];
@@ -37,8 +39,10 @@ type PrintPilotStoreContextValue = {
   templates: PrintPilotTemplate[];
   settings: PrintPilotSettings;
   addOrder: (order: PrintPilotOrder) => void;
+  addInvoice: (invoice: PrintPilotInvoice) => void;
   addDeliveryNote: (deliveryNote: PrintPilotDeliveryNote) => void;
   updateCustomer: (customer: PrintPilotCustomer) => void;
+  updateInvoice: (invoice: PrintPilotInvoice) => void;
   updateDeliveryNote: (deliveryNote: PrintPilotDeliveryNote) => void;
   updateFinishingProcess: (process: PrintPilotFinishingProcess) => void;
   updateMachine: (machine: PrintPilotMachine) => void;
@@ -71,6 +75,7 @@ function isValidStoreData(value: unknown): value is PrintPilotStoreData {
     Array.isArray(candidate.customers) &&
     Array.isArray(candidate.quotes) &&
     Array.isArray(candidate.orders) &&
+    (candidate.invoices === undefined || Array.isArray(candidate.invoices)) &&
     (candidate.deliveryNotes === undefined || Array.isArray(candidate.deliveryNotes)) &&
     Array.isArray(candidate.materials) &&
     Array.isArray(candidate.machines) &&
@@ -124,10 +129,26 @@ export function PrintPilotStoreProvider({
     }));
   }
 
+  function addInvoice(invoice: PrintPilotInvoice) {
+    setData((currentData) => ({
+      ...currentData,
+      invoices: [invoice, ...currentData.invoices],
+    }));
+  }
+
   function addDeliveryNote(deliveryNote: PrintPilotDeliveryNote) {
     setData((currentData) => ({
       ...currentData,
       deliveryNotes: [deliveryNote, ...currentData.deliveryNotes],
+    }));
+  }
+
+  function updateInvoice(updatedInvoice: PrintPilotInvoice) {
+    setData((currentData) => ({
+      ...currentData,
+      invoices: currentData.invoices.map((invoice) =>
+        invoice.id === updatedInvoice.id ? updatedInvoice : invoice,
+      ),
     }));
   }
 
@@ -238,10 +259,12 @@ export function PrintPilotStoreProvider({
     () => ({
       data,
       addOrder,
+      addInvoice,
       addDeliveryNote,
       customers: data.customers,
       quotes: data.quotes,
       orders: data.orders,
+      invoices: data.invoices,
       deliveryNotes: data.deliveryNotes,
       materials: data.materials,
       machines: data.machines,
@@ -250,6 +273,7 @@ export function PrintPilotStoreProvider({
       templates: data.templates,
       settings: data.settings,
       updateCustomer,
+      updateInvoice,
       updateDeliveryNote,
       updateFinishingProcess,
       updateMachine,

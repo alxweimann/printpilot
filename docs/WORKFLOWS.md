@@ -114,3 +114,47 @@ Dashboard-Plantafel
 DetailDrawer-Layout
 Kalkulationsverknüpfungen
 ```
+
+## Auftrag → Rechnung
+
+Der Auftragsdrawer enthält die Aktion `Rechnung erstellen`.
+
+Ablauf:
+
+```text
+1. Auftrag auswählen
+2. Aktion „Rechnung erstellen“ auslösen
+3. System prüft, ob bereits eine Rechnung mit gleicher orderId existiert
+4. Wenn keine Rechnung existiert:
+   - neue Rechnung wird erzeugt
+   - Rechnung erhält orderId und orderNumber des Auftrags
+   - Kunde und Produkt werden übernommen
+   - Rechnungsstatus = Entwurf
+   - Rechnungsdatum = aktuelles Datum
+   - Fälligkeit = Rechnungsdatum + 14 Tage
+5. Wenn eine Rechnung existiert:
+   - keine weitere Rechnung wird erzeugt
+   - Hinweis verhindert Dublette
+```
+
+Technischer Standard:
+
+```text
+order.id → invoice.orderId
+order.number → invoice.orderNumber
+order.customerId → invoice.customerId
+order.customerName → invoice.customerName
+order.product → invoice.subject
+```
+
+## Workflow-Store-Merge
+
+Die Workflows `Auftrag → Lieferschein` und `Auftrag → Rechnung` teilen sich die gemeinsame Store-Struktur.
+
+```text
+orders[]
+deliveryNotes[]
+invoices[]
+```
+
+Die Verknüpfung erfolgt jeweils über `orderId` und `orderNumber`.

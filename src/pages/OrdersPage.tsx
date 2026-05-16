@@ -7,6 +7,7 @@ import {
   type PrintPilotOrder,
   type PrintPilotOrderPriority,
   createPrintPilotDeliveryNoteFromOrder,
+  createPrintPilotInvoiceFromOrder,
   type PrintPilotOrderStatus,
   getPrintPilotApprovalBadgeVariant,
   groupPrintPilotOrdersByStatus,
@@ -181,7 +182,9 @@ export function OrdersPage() {
   const module = getModuleConfig("orders");
   const {
     addDeliveryNote,
+    addInvoice,
     deliveryNotes,
+    invoices,
     machines,
     orders,
     settings,
@@ -195,6 +198,10 @@ export function OrdersPage() {
   const [isCreateDeliveryNoteDialogOpen, setIsCreateDeliveryNoteDialogOpen] =
     useState(false);
   const [isDuplicateDeliveryNoteDialogOpen, setIsDuplicateDeliveryNoteDialogOpen] =
+    useState(false);
+  const [isCreateInvoiceDialogOpen, setIsCreateInvoiceDialogOpen] =
+    useState(false);
+  const [isDuplicateInvoiceDialogOpen, setIsDuplicateInvoiceDialogOpen] =
     useState(false);
 
   const orderRowsByTab = useMemo(() => {
@@ -222,6 +229,9 @@ export function OrdersPage() {
   const draftOrder = draft as PrintPilotOrder | undefined;
   const existingDeliveryNoteForSelectedOrder = selectedOrder
     ? deliveryNotes.find((deliveryNote) => deliveryNote.orderId === selectedOrder.id)
+    : undefined;
+  const existingInvoiceForSelectedOrder = selectedOrder
+    ? invoices.find((invoice) => invoice.orderId === selectedOrder.id)
     : undefined;
 
   const {
@@ -251,6 +261,8 @@ export function OrdersPage() {
       setIsProductionApprovalDialogOpen(false);
       setIsCreateDeliveryNoteDialogOpen(false);
       setIsDuplicateDeliveryNoteDialogOpen(false);
+    setIsCreateInvoiceDialogOpen(false);
+    setIsDuplicateInvoiceDialogOpen(false);
     }
   }
 
@@ -261,6 +273,8 @@ export function OrdersPage() {
     setIsProductionApprovalDialogOpen(false);
     setIsCreateDeliveryNoteDialogOpen(false);
     setIsDuplicateDeliveryNoteDialogOpen(false);
+    setIsCreateInvoiceDialogOpen(false);
+    setIsDuplicateInvoiceDialogOpen(false);
   }
 
   function handleCloseDetailDrawer() {
@@ -269,6 +283,8 @@ export function OrdersPage() {
     setIsProductionApprovalDialogOpen(false);
     setIsCreateDeliveryNoteDialogOpen(false);
     setIsDuplicateDeliveryNoteDialogOpen(false);
+    setIsCreateInvoiceDialogOpen(false);
+    setIsDuplicateInvoiceDialogOpen(false);
   }
 
   function handleResetDraft() {
@@ -277,6 +293,8 @@ export function OrdersPage() {
     setIsProductionApprovalDialogOpen(false);
     setIsCreateDeliveryNoteDialogOpen(false);
     setIsDuplicateDeliveryNoteDialogOpen(false);
+    setIsCreateInvoiceDialogOpen(false);
+    setIsDuplicateInvoiceDialogOpen(false);
   }
 
   function handleToggleEditing() {
@@ -386,6 +404,8 @@ export function OrdersPage() {
 
   function handleCancelDuplicateDeliveryNoteDialog() {
     setIsDuplicateDeliveryNoteDialogOpen(false);
+    setIsCreateInvoiceDialogOpen(false);
+    setIsDuplicateInvoiceDialogOpen(false);
   }
 
   function handleCreateDeliveryNoteFromOrder() {
@@ -402,6 +422,40 @@ export function OrdersPage() {
 
     addDeliveryNote(newDeliveryNote);
     setIsCreateDeliveryNoteDialogOpen(false);
+  }
+
+  function handleOpenCreateInvoiceDialog() {
+    if (!selectedOrder) {
+      return;
+    }
+
+    if (existingInvoiceForSelectedOrder) {
+      setIsDuplicateInvoiceDialogOpen(true);
+      return;
+    }
+
+    setIsCreateInvoiceDialogOpen(true);
+  }
+
+  function handleCancelCreateInvoiceDialog() {
+    setIsCreateInvoiceDialogOpen(false);
+  }
+
+  function handleCancelDuplicateInvoiceDialog() {
+    setIsDuplicateInvoiceDialogOpen(false);
+  }
+
+  function handleCreateInvoiceFromOrder() {
+    if (!selectedOrder || existingInvoiceForSelectedOrder) {
+      setIsCreateInvoiceDialogOpen(false);
+      setIsDuplicateInvoiceDialogOpen(Boolean(existingInvoiceForSelectedOrder));
+      return;
+    }
+
+    const newInvoice = createPrintPilotInvoiceFromOrder(selectedOrder, invoices);
+
+    addInvoice(newInvoice);
+    setIsCreateInvoiceDialogOpen(false);
   }
 
   function handleCancelProductionApprovalDialog() {
@@ -563,6 +617,10 @@ export function OrdersPage() {
 
             <Button variant="primary" onClick={handleOpenCreateDeliveryNoteDialog}>
               Lieferschein erstellen
+            </Button>
+
+            <Button variant="primary" onClick={handleOpenCreateInvoiceDialog}>
+              Rechnung erstellen
             </Button>
 
             <SaveActionButton
@@ -776,6 +834,74 @@ export function OrdersPage() {
         confirmLabel="Verstanden"
         onCancel={handleCancelDuplicateDeliveryNoteDialog}
         onConfirm={handleCancelDuplicateDeliveryNoteDialog}
+      />
+
+      <ConfirmDialog
+        open={isCreateInvoiceDialogOpen && Boolean(selectedOrder)}
+        title="Rechnung aus Auftrag erstellen?"
+        description={
+          <>
+            Aus dem ausgewählten Auftrag wird eine neue Rechnung erzeugt. Die
+            Rechnung wird eindeutig mit dem Auftrag verknüpft.
+          </>
+        }
+        details={
+          selectedOrder ? (
+            <>
+              <span>
+                <strong>Auftrag:</strong> {selectedOrder.number}
+              </span>
+              <span>
+                <strong>Kunde:</strong> {selectedOrder.customerName}
+              </span>
+              <span>
+                <strong>Produkt:</strong> {selectedOrder.product}
+              </span>
+              <span>
+                <strong>Status neue Rechnung:</strong> Entwurf
+              </span>
+            </>
+          ) : null
+        }
+        variant="default"
+        cancelLabel="Abbrechen"
+        confirmLabel="Rechnung erstellen"
+        onCancel={handleCancelCreateInvoiceDialog}
+        onConfirm={handleCreateInvoiceFromOrder}
+      />
+
+      <ConfirmDialog
+        open={isDuplicateInvoiceDialogOpen && Boolean(selectedOrder)}
+        title="Rechnung existiert bereits"
+        description={
+          <>
+            Für diesen Auftrag existiert bereits eine Rechnung. Es wird keine
+            weitere Rechnung erzeugt, damit keine Dublette entsteht.
+          </>
+        }
+        details={
+          selectedOrder ? (
+            <>
+              <span>
+                <strong>Auftrag:</strong> {selectedOrder.number}
+              </span>
+              <span>
+                <strong>Kunde:</strong> {selectedOrder.customerName}
+              </span>
+              {existingInvoiceForSelectedOrder && (
+                <span>
+                  <strong>Vorhandene Rechnung:</strong>{" "}
+                  {existingInvoiceForSelectedOrder.number}
+                </span>
+              )}
+            </>
+          ) : null
+        }
+        variant="warning"
+        cancelLabel="Schließen"
+        confirmLabel="Verstanden"
+        onCancel={handleCancelDuplicateInvoiceDialog}
+        onConfirm={handleCancelDuplicateInvoiceDialog}
       />
 
       <ConfirmDialog

@@ -1,146 +1,114 @@
 # PrintPilot Projektstand
 
-## Aktueller Stand
+Stand: 14.05.2026
 
-PrintPilot ist ein stabiler UI-/Store-/Workflow-Zwischenstand.
+## Aktueller stabiler Stand
 
-## Persistente Store-Bereiche
-
-```text
-Angebote
-Aufträge
-Kunden
-Material
-Maschinen
-Leistungen / Services
-Weiterverarbeitung / Finishing
-Vorlagen / Templates
-Einstellungen
-```
+Der aktuelle Stand ist gepushed.
 
 ## Umgesetzt
 
-```text
-App-weiter Store
-localStorage-Persistenz
-Backup-Export
-Backup-Import "Alles ersetzen"
-Sicherheitsbackup vor Import
-localStorage-Migrationen
-ConfirmDialog-Standard
-Status-Badge-Farblogik
-einzeilige Tabellenzellen
-Alle Angebote Übersicht
-Alle Aufträge Übersicht
-Angebot → Auftrag
-Dublettenwarnung bei Angebot → Auftrag
-Freigabe-/Produktionslogik bei Aufträgen
-Maschine im Auftrag als Dropdown aus Maschinen-Store
-Dokumenten-/Ausgabesystem geplant
-Master-Detail-Drawer für Angebote und Aufträge umgesetzt
-ConfirmDialog liegt jetzt über geöffneten Detail-Drawern und bleibt mittig bedienbar
+### Tabellen / Sortierung
+
+Die globale Sortierung ist im Kern umgesetzt.
+
+Sortierbar sind:
+
+- Aufträge
+- Angebote
+- Rechnungen
+- Lieferscheine
+- Mahnungen
+- Kunden
+- Material
+- Maschinen
+- Weiterverarbeitung
+- Leistungen
+- Vorlagen
+
+Der gemeinsame Sortierstandard liegt in:
+
+```txt
+src/ui/useSortableTable.ts
+src/ui/SortableTableHeader.tsx
 ```
 
-## Aktuelle Workflows
+### Tabellen-Ausrichtung
 
-### Angebote
+Der finale Tabellenstandard ist:
 
-```text
-Alle Angebote
-Entwurf
-Offen
-Angenommen
-Abgelehnt
+```txt
+Header linksbündig
+Zellinhalte linksbündig
+Sortierpfeile sichtbar
+Sortierpfeil rechts neben dem Header-Text
+keine verschachtelten th-Strukturen
+kein Button-Look bei Sortierköpfen
+kein Textcursor bei Sortierköpfen
 ```
 
-Funktionen:
+Wichtig:
 
-```text
-Angebot bearbeiten
-Status ändern
-Auftrag erstellen
-Dublettenwarnung, wenn bereits Auftrag aus Angebot existiert
+```tsx
+<SortableTableHeader ... />
 ```
 
-### Aufträge
+muss direkt im `<tr>` stehen.
 
-```text
-Alle Aufträge
-Neu
-In Produktion
-Wartet
-Fertig
-Archiv
+Nicht erlaubt:
+
+```tsx
+<th>
+  <SortableTableHeader ... />
+</th>
 ```
 
-Funktionen:
+### Master-Detail-Drawer
 
-```text
-Auftrag bearbeiten
-Status ändern
-Freigabe ändern
-Übergabe ändern
-Maschine auswählen
-Warnung bei Produktion / Druck ohne gültige Freigabe
+Bereits umgesetzt:
+
+- Angebote
+- Aufträge
+- Rechnungen
+- Lieferscheine
+
+Standard:
+
+```txt
+Tabelle bleibt volle Hauptansicht
+Klick auf Tabellenzeile öffnet DetailDrawer rechts
+Details liegen im Drawer
+Footer-Aktionen liegen im Drawer
+ConfirmDialog liegt über dem Drawer
+Speichern schließt den Drawer, wenn fachlich sinnvoll
 ```
 
-## Noch nicht umgesetzt
+### Dialog-Layer
+
+`ConfirmDialog` liegt über geöffneten Drawern.
+
+## Letzter Feinschliff
+
+Die verschachtelten Sortierheader wurden in Angeboten, Rechnungen und Aufträgen entfernt. Damit ist die Tabellenkopf-Struktur jetzt über die Kernseiten vereinheitlicht.
+
+## Rechnungs-Workflow
+
+Der nächste Fachlogik-Workflow ist angebunden:
 
 ```text
-echte Datenbank
-API
-Mehrplatzbetrieb
-echte Kalkulationslogik
-produktive Rechnung / Lieferschein / Mahnung
-PDF-Erzeugung
-E-Mail-Versand
-Dashboard-Plantafel
-Auftragstasche
-Etiketten / Kartonaufkleber
+Auftrag → Rechnung erzeugen
+Dubletten-Schutz über orderId
+Rechnung wird mit orderId und orderNumber verknüpft
+Rechnung übernimmt Kunde und Produkt aus Auftrag
 ```
 
-- Aufträge: Speichern aus dem DetailDrawer schließt den Drawer nach erfolgreichem Speichern
+## Workflow-Store-Merge
 
-- Auftrags-Drawer: Feldreihenfolge in Produktion auf Freigabe links und Übergabe rechts angepasst
-
-- Auftragsstatus-Badges werden jetzt fest nach Status gemappt, damit gleiche Statuswerte gleich aussehen
-
-- Aufträge: Tabellen sind in allen Tabs per Spaltenkopf nach Auftrag, Kunde, Produkt, Fällig, Freigabe und Status sortierbar
-
-- Build-Baseline stabilisiert: Store-Typen, Tab-State-Typisierung, Maschinenfeld und CSS-Modul-Imports korrigiert.
-
-- Globale Sortier-Utilities eingeführt und Auftragsliste darauf umgestellt
-
-## Stabilisierung Drawer-Standard
-
-Der Drawer-Standard wurde zentral nachgezogen:
+Lieferschein- und Rechnungs-Workflows sind gemeinsam im Store angebunden.
 
 ```text
-DetailDrawer rendert per React Portal an document.body
-Kunden, Material, Maschinen, Weiterverarbeitung, Leistungen, Vorlagen und Mahnungen nutzen den Portal-Drawer
-alte untere Editorbereiche wurden auf diesen Seiten entfernt
-SortableTableHeader steht direkt im tr, ohne verschachtelte th-Struktur
+Auftrag → Lieferschein
+Auftrag → Rechnung
+beide mit Dubletten-Schutz über orderId
+Store enthält deliveryNotes und invoices
 ```
-
-- DetailDrawer zeigt jetzt modulbezogene Akzentfarben im Header, basierend auf module.accentColor
-
-- Drawer-Innenakzente angebunden: Abschnittsstriche und primäre Footer-Aktion nutzen jetzt die Modulfarbe
-
-- SectionHeader im Drawer nutzt jetzt die tatsächliche form-section-title-Struktur für Modul-Akzentfarben
-
-- SectionHeader nutzt jetzt inline CSS-Variablen; Drawer-Abschnittsstriche übernehmen zuverlässig die Modulfarbe
-
-- Sidebar-Datum und Uhrzeit nutzen jetzt denselben Cyan-Magenta-Farbverlauf wie das PP-Logo
-
-## Angebots-Workflow
-
-Der erste Fachlogik-Workflow ist angebunden:
-
-```text
-Angebot → Auftrag erzeugen
-Dubletten-Schutz über quoteId
-Angebot wird auf „Angenommen“ gesetzt
-neuer Auftrag wird mit quoteId verknüpft
-```
-
-- App-Hintergrund auf Soft-CMYK-Gradient umgestellt: dezenter Cyan-, Magenta- und Gelb-Schimmer bei neutraler Grundfläche

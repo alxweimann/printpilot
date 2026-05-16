@@ -124,3 +124,21 @@ kein Rahmen
 kein Balken
 reduzierter Glow über drop-shadow
 ```
+
+## App-Hintergrund: Soft CMYK Gradient
+
+Der App-Hintergrund nutzt einen sehr dezenten CMYK-inspirierten Verlauf.
+
+Standard:
+
+```text
+Grundfläche: sehr helles Grau/Weiß
+oben links: leichter Cyan-Schimmer
+rechts/oben: leichter Magenta-Schimmer
+unten/rechts: sehr leichter Gelb-Hauch
+keine harten Muster
+keine starke Sättigung
+Panels bleiben weiß und gut lesbar
+```
+
+Technisch liegt der Hintergrund in `src/styles/globals.css` und wird über CSS-Variablen gesteuert.

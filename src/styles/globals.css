@@ -1167,3 +1167,41 @@ button {
     drop-shadow(0 0 2px rgba(0, 174, 239, 0.28))
     drop-shadow(0 0 4px rgba(236, 0, 140, 0.18)) !important;
 }
+
+
+/* App background: soft CMYK print gradient */
+:root {
+  --app-background-base: #f8fafc;
+  --app-background-cyan: rgba(0, 174, 239, 0.105);
+  --app-background-magenta: rgba(236, 0, 140, 0.095);
+  --app-background-yellow: rgba(255, 221, 0, 0.075);
+}
+
+body {
+  background:
+    radial-gradient(circle at 18% 8%, var(--app-background-cyan) 0%, rgba(0, 174, 239, 0.045) 23%, transparent 48%),
+    radial-gradient(circle at 86% 22%, var(--app-background-magenta) 0%, rgba(236, 0, 140, 0.04) 22%, transparent 47%),
+    radial-gradient(circle at 82% 88%, var(--app-background-yellow) 0%, rgba(255, 221, 0, 0.035) 20%, transparent 42%),
+    linear-gradient(135deg, #f8fafc 0%, #f6f8fb 45%, #f9fafb 100%) !important;
+  background-attachment: fixed;
+}
+
+.app-shell,
+.app-main,
+.main-shell,
+.main-content,
+.page {
+  background: transparent;
+}
+
+.calculation-sheet,
+.workspace-panel,
+.detail-drawer-panel {
+  backdrop-filter: saturate(1.02);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  body {
+    background: #f8fafc !important;
+  }
+}

@@ -142,3 +142,5 @@ Dubletten-Schutz über quoteId
 Angebot wird auf „Angenommen“ gesetzt
 neuer Auftrag wird mit quoteId verknüpft
 ```
+
+- App-Hintergrund auf Soft-CMYK-Gradient umgestellt: dezenter Cyan-, Magenta- und Gelb-Schimmer bei neutraler Grundfläche

@@ -113,3 +113,4 @@ Erledigt: ConfirmDialog über DetailDrawer gelegt
 - Hotfix erledigt: SectionHeader-Inline-Akzent für zuverlässige Drawer-Modulfarben
 - Erledigt: Sidebar-Uhr/Datum optisch an PP-Logo-Farbverlauf angepasst
 - Erledigt: Angebots-Workflow `Angebot → Auftrag erzeugen` mit Dubletten-Schutz angebunden
+- Erledigt: Soft-CMYK-Gradient als ruhiger App-Hintergrund umgesetzt

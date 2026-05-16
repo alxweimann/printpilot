@@ -1267,6 +1267,91 @@ export function createPrintPilotDeliveryNoteFromOrder(
   };
 }
 
+function comparePrintPilotNextNumbers(a: string, b: string) {
+  const parse = (value: string) => {
+    const match = value.match(/^(\d{4})-(\d+)$/);
+
+    if (!match) {
+      return { year: 0, number: 0 };
+    }
+
+    return {
+      year: Number(match[1]),
+      number: Number(match[2]),
+    };
+  };
+
+  const parsedA = parse(a);
+  const parsedB = parse(b);
+
+  if (parsedA.year !== parsedB.year) {
+    return parsedA.year - parsedB.year;
+  }
+
+  return parsedA.number - parsedB.number;
+}
+
+function getNextNumberFromExistingNumbers(
+  existingNumbers: string[],
+  prefix: string,
+  fallbackNextNumber: string,
+) {
+  const year = new Date().getFullYear();
+  const prefixWithYear = `${prefix}-${year}-`;
+
+  const numericValues = existingNumbers
+    .filter((number) => number.startsWith(prefixWithYear))
+    .map((number) => Number(number.replace(prefixWithYear, "")))
+    .filter((number) => Number.isFinite(number));
+
+  if (numericValues.length === 0) {
+    return fallbackNextNumber;
+  }
+
+  const nextFromExisting = `${year}-${String(Math.max(...numericValues) + 1).padStart(
+    3,
+    "0",
+  )}`;
+
+  return comparePrintPilotNextNumbers(nextFromExisting, fallbackNextNumber) > 0
+    ? nextFromExisting
+    : fallbackNextNumber;
+}
+
+export function synchronizePrintPilotNumberRanges(
+  data: PrintPilotStoreData,
+): PrintPilotStoreData {
+  const settings = data.settings;
+
+  return {
+    ...data,
+    settings: {
+      ...settings,
+      orderNextNumber: getNextNumberFromExistingNumbers(
+        data.orders.map((order) => order.number),
+        settings.orderPrefix,
+        settings.orderNextNumber,
+      ),
+      deliveryNoteNextNumber: getNextNumberFromExistingNumbers(
+        data.deliveryNotes.map((deliveryNote) => deliveryNote.number),
+        settings.deliveryNotePrefix,
+        settings.deliveryNoteNextNumber,
+      ),
+      invoiceNextNumber: getNextNumberFromExistingNumbers(
+        data.invoices.map((invoice) => invoice.number),
+        settings.invoicePrefix,
+        settings.invoiceNextNumber,
+      ),
+      reminderNextNumber: getNextNumberFromExistingNumbers(
+        data.reminders.map((reminder) => reminder.number),
+        settings.reminderPrefix,
+        settings.reminderNextNumber,
+      ),
+    },
+  };
+}
+
+
 export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
   return {
     customers: initialPrintPilotCustomers,
@@ -1289,7 +1374,7 @@ export function createPrintPilotStoreSnapshot(
 ): PrintPilotStoreData {
   const emptyStore = createEmptyPrintPilotStoreData();
 
-  return {
+  const snapshot = {
     ...emptyStore,
     ...overrides,
     customers:
@@ -1341,6 +1426,8 @@ export function createPrintPilotStoreSnapshot(
       ...(overrides.settings ?? {}),
     },
   };
+
+  return synchronizePrintPilotNumberRanges(snapshot);
 }
 
 export function groupPrintPilotCustomersByStatus(

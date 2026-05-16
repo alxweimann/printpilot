@@ -8,3 +8,4 @@ Stand: 14.05.2026
 - Drawer öffnet global rechts über der App
 - Seitenlayout/Scrollcontainer können Drawer-Position nicht mehr beeinflussen
 - Hotfix erledigt: Workflow-Store, Backup und Dokumentseiten wieder konsistent ausgerichtet
+- Hotfix erledigt: Nummernkreise werden mit vorhandenen Dokumentnummern synchronisiert

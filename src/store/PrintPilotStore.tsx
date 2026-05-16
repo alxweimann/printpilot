@@ -23,6 +23,7 @@ import {
   type PrintPilotTemplate,
   createPrintPilotStoreSnapshot,
   getNextPrintPilotDocumentNumber,
+  synchronizePrintPilotNumberRanges,
 } from "../data/printPilotStore";
 
 const PRINTPILOT_LOCAL_STORAGE_KEY = "printpilot-store-v1";
@@ -101,18 +102,18 @@ function readStoredData() {
     );
 
     if (!storedValue) {
-      return createPrintPilotStoreSnapshot();
+      return synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot());
     }
 
     const parsedValue = JSON.parse(storedValue) as unknown;
 
     if (!isValidStoreData(parsedValue)) {
-      return createPrintPilotStoreSnapshot();
+      return synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot());
     }
 
-    return createPrintPilotStoreSnapshot(parsedValue);
+    return synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot(parsedValue));
   } catch {
-    return createPrintPilotStoreSnapshot();
+    return synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot());
   }
 }
 
@@ -320,12 +321,12 @@ export function PrintPilotStoreProvider({
   }
 
   function replaceStoreData(nextData: PrintPilotStoreData) {
-    setData(createPrintPilotStoreSnapshot(nextData));
+    setData(synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot(nextData)));
   }
 
   function resetStoreData() {
     window.localStorage.removeItem(PRINTPILOT_LOCAL_STORAGE_KEY);
-    setData(createPrintPilotStoreSnapshot());
+    setData(synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot()));
   }
 
   function getBackupData() {

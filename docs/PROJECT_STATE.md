@@ -22,3 +22,17 @@ RemindersPage liest aus dem Store
 ```
 
 Die Statusfolge `Rechnung Bezahlt → Mahnung Erledigt` liegt zentral in `updateInvoice()`.
+
+## Nummernkreis-Synchronisierung
+
+Die Nummernkreise werden beim Laden und Ersetzen des Stores mit vorhandenen Dokumentnummern synchronisiert.
+
+Beispiel:
+
+```text
+vorhanden: AU-2026-011
+Einstellung: AU / 2026-001
+synchronisiert: AU / 2026-012
+```
+
+Die Synchronisierung erhöht Nummern nur auf den nächsten freien Stand und senkt manuell höhere Werte nicht ab.

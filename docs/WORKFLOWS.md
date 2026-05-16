@@ -128,3 +128,16 @@ Rechnung Bezahlt → Mahnung Erledigt
 ```
 
 Die automatische Mahnungserledigung passiert zentral in `PrintPilotStore.tsx` innerhalb von `updateInvoice()`.
+
+## Nummernkreis-Synchronisierung
+
+Beim Laden des Stores prüft PrintPilot die höchsten vorhandenen Dokumentnummern je Prefix.
+
+```text
+AU-2026-011 → orderNextNumber mindestens 2026-012
+LS-2026-003 → deliveryNoteNextNumber mindestens 2026-004
+RE-2026-009 → invoiceNextNumber mindestens 2026-010
+MA-2026-008 → reminderNextNumber mindestens 2026-009
+```
+
+Dadurch entstehen keine Dubletten, wenn Nummernkreise nachträglich eingeführt oder alte Daten geladen werden.

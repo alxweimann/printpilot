@@ -417,7 +417,7 @@ export function OrdersPage() {
 
     const newDeliveryNote = createPrintPilotDeliveryNoteFromOrder(
       selectedOrder,
-      deliveryNotes,
+      settings,
     );
 
     addDeliveryNote(newDeliveryNote);
@@ -452,7 +452,7 @@ export function OrdersPage() {
       return;
     }
 
-    const newInvoice = createPrintPilotInvoiceFromOrder(selectedOrder, invoices);
+    const newInvoice = createPrintPilotInvoiceFromOrder(selectedOrder, settings);
 
     addInvoice(newInvoice);
     setIsCreateInvoiceDialogOpen(false);

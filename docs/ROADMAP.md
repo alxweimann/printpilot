@@ -74,3 +74,8 @@ docs/ARCHITECTURE.md
 - Hotfix erledigt: Store-Struktur für Lieferscheine und Rechnungen zusammengeführt
 - Erledigt: Rechnungs-Workflow `Rechnung → Mahnung erzeugen` mit Dubletten-Schutz angebunden
 - Hotfix erledigt: addReminder im Store-Context-Value ergänzt
+- Erledigt: zentrale Nummernkreise für Auftrag, Lieferschein, Rechnung und Mahnung angebunden
+- Erledigt: Nummernkreis-Einstellungen als Kartenlayout je Dokumenttyp aufgeräumt
+- Hotfix erledigt: Nummernkreis-Karten breiter und lesbarer gestaltet
+- Hotfix erledigt: Nummernkreis-Karten auf 3-Spalten-Layout umgestellt
+- Hotfix erledigt: Innenabstand der Nummernkreis-Karten zum Panelrand erhöht

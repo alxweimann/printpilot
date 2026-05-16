@@ -349,67 +349,186 @@ export function SettingsPage() {
             <>
               <SectionHeader>Nummernkreise</SectionHeader>
 
-              <FieldGrid>
-                <Field label="Angebots-Präfix">
-                  <Input
-                    value={draft?.quotePrefix ?? ""}
-                    readOnly={!isEditing}
-                    onChange={(event) =>
-                      updateDraftField("quotePrefix", event.target.value)
-                    }
-                  />
-                </Field>
+              <div
+                style={{
+                  display: "grid",
+                  gridTemplateColumns: "repeat(3, minmax(0, 1fr))",
+                  gap: "16px",
+                  alignItems: "stretch",
+                  padding: "12px 18px 24px",
+                }}
+              >
+                <section className="workspace-panel" style={{ padding: "20px" }}>
+                  <SectionHeader>Angebote</SectionHeader>
 
-                <Field label="Nächste Angebotsnummer">
-                  <Input
-                    value={draft?.quoteNextNumber ?? ""}
-                    readOnly={!isEditing}
-                    onChange={(event) =>
-                      updateDraftField("quoteNextNumber", event.target.value)
-                    }
-                  />
-                </Field>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "104px minmax(0, 1fr)",
+                      gap: "14px",
+                      alignItems: "end",
+                    }}
+                  >
+                    <Field label="Präfix">
+                      <Input
+                        value={draft?.quotePrefix ?? ""}
+                        readOnly={!isEditing}
+                        onChange={(event) =>
+                          updateDraftField("quotePrefix", event.target.value)
+                        }
+                      />
+                    </Field>
 
-                <Field label="Auftrags-Präfix">
-                  <Input
-                    value={draft?.orderPrefix ?? ""}
-                    readOnly={!isEditing}
-                    onChange={(event) =>
-                      updateDraftField("orderPrefix", event.target.value)
-                    }
-                  />
-                </Field>
+                    <Field label="Nächste Nummer">
+                      <Input
+                        value={draft?.quoteNextNumber ?? ""}
+                        readOnly={!isEditing}
+                        onChange={(event) =>
+                          updateDraftField("quoteNextNumber", event.target.value)
+                        }
+                      />
+                    </Field>
+                  </div>
+                </section>
 
-                <Field label="Nächste Auftragsnummer">
-                  <Input
-                    value={draft?.orderNextNumber ?? ""}
-                    readOnly={!isEditing}
-                    onChange={(event) =>
-                      updateDraftField("orderNextNumber", event.target.value)
-                    }
-                  />
-                </Field>
+                <section className="workspace-panel" style={{ padding: "20px" }}>
+                  <SectionHeader>Aufträge</SectionHeader>
 
-                <Field label="Rechnungs-Präfix">
-                  <Input
-                    value={draft?.invoicePrefix ?? ""}
-                    readOnly={!isEditing}
-                    onChange={(event) =>
-                      updateDraftField("invoicePrefix", event.target.value)
-                    }
-                  />
-                </Field>
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "104px minmax(0, 1fr)",
+                      gap: "14px",
+                      alignItems: "end",
+                    }}
+                  >
+                    <Field label="Präfix">
+                      <Input
+                        value={draft?.orderPrefix ?? ""}
+                        readOnly={!isEditing}
+                        onChange={(event) =>
+                          updateDraftField("orderPrefix", event.target.value)
+                        }
+                      />
+                    </Field>
 
-                <Field label="Nächste Rechnungsnummer">
-                  <Input
-                    value={draft?.invoiceNextNumber ?? ""}
-                    readOnly={!isEditing}
-                    onChange={(event) =>
-                      updateDraftField("invoiceNextNumber", event.target.value)
-                    }
-                  />
-                </Field>
-              </FieldGrid>
+                    <Field label="Nächste Nummer">
+                      <Input
+                        value={draft?.orderNextNumber ?? ""}
+                        readOnly={!isEditing}
+                        onChange={(event) =>
+                          updateDraftField("orderNextNumber", event.target.value)
+                        }
+                      />
+                    </Field>
+                  </div>
+                </section>
+
+                <section className="workspace-panel" style={{ padding: "20px" }}>
+                  <SectionHeader>Lieferscheine</SectionHeader>
+
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "104px minmax(0, 1fr)",
+                      gap: "14px",
+                      alignItems: "end",
+                    }}
+                  >
+                    <Field label="Präfix">
+                      <Input
+                        value={draft?.deliveryNotePrefix ?? ""}
+                        readOnly={!isEditing}
+                        onChange={(event) =>
+                          updateDraftField(
+                            "deliveryNotePrefix",
+                            event.target.value,
+                          )
+                        }
+                      />
+                    </Field>
+
+                    <Field label="Nächste Nummer">
+                      <Input
+                        value={draft?.deliveryNoteNextNumber ?? ""}
+                        readOnly={!isEditing}
+                        onChange={(event) =>
+                          updateDraftField(
+                            "deliveryNoteNextNumber",
+                            event.target.value,
+                          )
+                        }
+                      />
+                    </Field>
+                  </div>
+                </section>
+
+                <section className="workspace-panel" style={{ padding: "20px" }}>
+                  <SectionHeader>Rechnungen</SectionHeader>
+
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "104px minmax(0, 1fr)",
+                      gap: "14px",
+                      alignItems: "end",
+                    }}
+                  >
+                    <Field label="Präfix">
+                      <Input
+                        value={draft?.invoicePrefix ?? ""}
+                        readOnly={!isEditing}
+                        onChange={(event) =>
+                          updateDraftField("invoicePrefix", event.target.value)
+                        }
+                      />
+                    </Field>
+
+                    <Field label="Nächste Nummer">
+                      <Input
+                        value={draft?.invoiceNextNumber ?? ""}
+                        readOnly={!isEditing}
+                        onChange={(event) =>
+                          updateDraftField("invoiceNextNumber", event.target.value)
+                        }
+                      />
+                    </Field>
+                  </div>
+                </section>
+
+                <section className="workspace-panel" style={{ padding: "20px" }}>
+                  <SectionHeader>Mahnungen</SectionHeader>
+
+                  <div
+                    style={{
+                      display: "grid",
+                      gridTemplateColumns: "104px minmax(0, 1fr)",
+                      gap: "14px",
+                      alignItems: "end",
+                    }}
+                  >
+                    <Field label="Präfix">
+                      <Input
+                        value={draft?.reminderPrefix ?? ""}
+                        readOnly={!isEditing}
+                        onChange={(event) =>
+                          updateDraftField("reminderPrefix", event.target.value)
+                        }
+                      />
+                    </Field>
+
+                    <Field label="Nächste Nummer">
+                      <Input
+                        value={draft?.reminderNextNumber ?? ""}
+                        readOnly={!isEditing}
+                        onChange={(event) =>
+                          updateDraftField("reminderNextNumber", event.target.value)
+                        }
+                      />
+                    </Field>
+                  </div>
+                </section>
+              </div>
             </>
           )}
 

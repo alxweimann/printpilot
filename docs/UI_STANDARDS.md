@@ -142,3 +142,64 @@ Panels bleiben weiß und gut lesbar
 ```
 
 Technisch liegt der Hintergrund in `src/styles/globals.css` und wird über CSS-Variablen gesteuert.
+
+## Einstellungen: Nummernkreise
+
+Die Nummernkreis-Einstellungen enthalten Prefix und nächste Nummer je Dokumenttyp.
+
+```text
+Angebote
+Aufträge
+Lieferscheine
+Rechnungen
+Mahnungen
+```
+
+Formatstandard: `PREFIX-JJJJ-000`, z. B. `RE-2026-001`.
+
+## Nummernkreis-Karten
+
+Die Nummernkreise werden in den Einstellungen als Karten je Dokumenttyp dargestellt.
+
+```text
+Angebote: Präfix + nächste Nummer
+Aufträge: Präfix + nächste Nummer
+Lieferscheine: Präfix + nächste Nummer
+Rechnungen: Präfix + nächste Nummer
+Mahnungen: Präfix + nächste Nummer
+```
+
+Damit bleibt die Paarlogik klar und die Einstellungen sind besser lesbar.
+
+## Nummernkreis-Karten Layout
+
+Nummernkreis-Karten verwenden ein Mindestmaß von 340px und eine feste Präfixspalte.
+
+```text
+Präfix: 104px
+Nächste Nummer: flexible Restbreite
+Karten: repeat(auto-fit, minmax(340px, 1fr))
+```
+
+Dadurch werden Nummern wie `2026-001` nicht abgeschnitten.
+
+## Nummernkreis-Karten: 3-Spalten-Layout
+
+Die Nummernkreis-Karten werden im Desktop-Layout mit drei Karten nebeneinander dargestellt.
+
+```text
+1. Reihe: Angebote, Aufträge, Lieferscheine
+2. Reihe: Rechnungen, Mahnungen
+```
+
+Dadurch wirkt die Einstellungsseite ruhiger und weniger gedrängt.
+
+## Nummernkreis-Karten: Innenabstand
+
+Das Nummernkreis-Raster erhält Innenabstand zum Panelrand.
+
+```text
+padding: 12px 18px 24px
+3-Spalten-Layout bleibt erhalten
+Karten kleben nicht am linken/rechten Rand
+```

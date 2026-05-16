@@ -248,8 +248,12 @@ export type PrintPilotSettings = {
   quoteNextNumber: string;
   orderPrefix: string;
   orderNextNumber: string;
+  deliveryNotePrefix: string;
+  deliveryNoteNextNumber: string;
   invoicePrefix: string;
   invoiceNextNumber: string;
+  reminderPrefix: string;
+  reminderNextNumber: string;
   companyName: string;
   companyStreet: string;
   companyZip: string;
@@ -289,8 +293,12 @@ export const initialPrintPilotSettings: PrintPilotSettings = {
   quoteNextNumber: "2026-001",
   orderPrefix: "AU",
   orderNextNumber: "2026-001",
+  deliveryNotePrefix: "LS",
+  deliveryNoteNextNumber: "2026-001",
   invoicePrefix: "RE",
   invoiceNextNumber: "2026-001",
+  reminderPrefix: "MA",
+  reminderNextNumber: "2026-001",
   companyName: "Sonnendruck GmbH",
   companyStreet: "",
   companyZip: "",
@@ -1018,9 +1026,12 @@ function getNextOrderNumber(orders: PrintPilotOrder[]) {
 
 export function createPrintPilotOrderFromQuote(
   quote: PrintPilotQuote,
-  existingOrders: PrintPilotOrder[],
+  settings: PrintPilotSettings,
 ): PrintPilotOrder {
-  const number = getNextOrderNumber(existingOrders);
+  const number = formatPrintPilotDocumentNumber(
+    settings.orderPrefix,
+    settings.orderNextNumber,
+  );
 
   return {
     id: `order-${number.toLowerCase()}`,
@@ -1101,6 +1112,30 @@ export const initialPrintPilotDeliveryNotes: PrintPilotDeliveryNote[] = [
   },
 ];
 
+export function formatPrintPilotDocumentNumber(prefix: string, nextNumber: string) {
+  return `${prefix}-${nextNumber}`;
+}
+
+export function getNextPrintPilotDocumentNumber(nextNumber: string) {
+  const currentYear = new Date().getFullYear();
+  const fallbackNumber = `${currentYear}-001`;
+  const match = nextNumber.match(/^(\d{4})-(\d+)$/);
+
+  if (!match) {
+    return fallbackNumber;
+  }
+
+  const [, year, numericValue] = match;
+  const nextNumericValue =
+    year === String(currentYear) ? Number(numericValue) + 1 : 1;
+
+  if (!Number.isFinite(nextNumericValue)) {
+    return fallbackNumber;
+  }
+
+  return `${currentYear}-${String(nextNumericValue).padStart(numericValue.length, "0")}`;
+}
+
 function getNextReminderNumber(reminders: PrintPilotReminder[]) {
   const year = new Date().getFullYear();
   const numbersForYear = reminders
@@ -1117,9 +1152,12 @@ function getNextReminderNumber(reminders: PrintPilotReminder[]) {
 
 export function createPrintPilotReminderFromInvoice(
   invoice: PrintPilotInvoice,
-  existingReminders: PrintPilotReminder[],
+  settings: PrintPilotSettings,
 ): PrintPilotReminder {
-  const number = getNextReminderNumber(existingReminders);
+  const number = formatPrintPilotDocumentNumber(
+    settings.reminderPrefix,
+    settings.reminderNextNumber,
+  );
 
   return {
     id: `reminder-${number.toLowerCase()}`,
@@ -1165,9 +1203,12 @@ function addDaysToIsoDate(value: string, days: number) {
 
 export function createPrintPilotInvoiceFromOrder(
   order: PrintPilotOrder,
-  existingInvoices: PrintPilotInvoice[],
+  settings: PrintPilotSettings,
 ): PrintPilotInvoice {
-  const number = getNextInvoiceNumber(existingInvoices);
+  const number = formatPrintPilotDocumentNumber(
+    settings.invoicePrefix,
+    settings.invoiceNextNumber,
+  );
   const invoiceDate = new Date().toISOString().slice(0, 10);
 
   return {
@@ -1203,9 +1244,12 @@ function getNextDeliveryNoteNumber(deliveryNotes: PrintPilotDeliveryNote[]) {
 
 export function createPrintPilotDeliveryNoteFromOrder(
   order: PrintPilotOrder,
-  existingDeliveryNotes: PrintPilotDeliveryNote[],
+  settings: PrintPilotSettings,
 ): PrintPilotDeliveryNote {
-  const number = getNextDeliveryNoteNumber(existingDeliveryNotes);
+  const number = formatPrintPilotDocumentNumber(
+    settings.deliveryNotePrefix,
+    settings.deliveryNoteNextNumber,
+  );
 
   return {
     id: `delivery-${number.toLowerCase()}`,

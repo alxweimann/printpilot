@@ -194,3 +194,16 @@ invoice.subject → reminder.subject
 ## Hotfix Mahn-Workflow Store
 
 `addReminder` ist Bestandteil des Store-Context-Values und steht damit dem Rechnungsdrawer zur Aktion `Mahnung erstellen` zur Verfügung.
+
+## Nummernkreise in Workflows
+
+Workflow-Aktionen erzeugen Dokumentnummern aus den Einstellungen.
+
+```text
+orderPrefix + orderNextNumber → Auftragsnummer
+deliveryNotePrefix + deliveryNoteNextNumber → Lieferscheinnummer
+invoicePrefix + invoiceNextNumber → Rechnungsnummer
+reminderPrefix + reminderNextNumber → Mahnungsnummer
+```
+
+Nach dem Anlegen eines Dokuments erhöht der Store den passenden NextNumber-Wert automatisch.

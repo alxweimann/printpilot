@@ -236,7 +236,7 @@ export function InvoicesPage() {
 
     const newReminder = createPrintPilotReminderFromInvoice(
       selectedInvoice,
-      reminders,
+      settings,
     );
 
     addReminder(newReminder);

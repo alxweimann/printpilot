@@ -22,6 +22,7 @@ import {
   type PrintPilotStoreData,
   type PrintPilotTemplate,
   createPrintPilotStoreSnapshot,
+  getNextPrintPilotDocumentNumber,
 } from "../data/printPilotStore";
 
 const PRINTPILOT_LOCAL_STORAGE_KEY = "printpilot-store-v1";
@@ -127,10 +128,28 @@ export function PrintPilotStoreProvider({
     );
   }, [data]);
 
+  function getSettingsWithIncrementedNumber(
+    settings: PrintPilotSettings,
+    key:
+      | "orderNextNumber"
+      | "deliveryNoteNextNumber"
+      | "invoiceNextNumber"
+      | "reminderNextNumber",
+  ): PrintPilotSettings {
+    return {
+      ...settings,
+      [key]: getNextPrintPilotDocumentNumber(settings[key]),
+    };
+  }
+
   function addOrder(order: PrintPilotOrder) {
     setData((currentData) => ({
       ...currentData,
       orders: [order, ...currentData.orders],
+      settings: getSettingsWithIncrementedNumber(
+        currentData.settings,
+        "orderNextNumber",
+      ),
     }));
   }
 
@@ -138,6 +157,10 @@ export function PrintPilotStoreProvider({
     setData((currentData) => ({
       ...currentData,
       invoices: [invoice, ...currentData.invoices],
+      settings: getSettingsWithIncrementedNumber(
+        currentData.settings,
+        "invoiceNextNumber",
+      ),
     }));
   }
 
@@ -145,6 +168,10 @@ export function PrintPilotStoreProvider({
     setData((currentData) => ({
       ...currentData,
       reminders: [reminder, ...currentData.reminders],
+      settings: getSettingsWithIncrementedNumber(
+        currentData.settings,
+        "reminderNextNumber",
+      ),
     }));
   }
 
@@ -152,6 +179,10 @@ export function PrintPilotStoreProvider({
     setData((currentData) => ({
       ...currentData,
       deliveryNotes: [deliveryNote, ...currentData.deliveryNotes],
+      settings: getSettingsWithIncrementedNumber(
+        currentData.settings,
+        "deliveryNoteNextNumber",
+      ),
     }));
   }
 

@@ -214,7 +214,7 @@ export function QuotesPage() {
       badgeVariant: "success",
     };
 
-    const newOrder = createPrintPilotOrderFromQuote(acceptedQuote, orders);
+    const newOrder = createPrintPilotOrderFromQuote(acceptedQuote, settings);
 
     addOrder(newOrder);
     updateQuote(acceptedQuote);

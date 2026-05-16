@@ -126,3 +126,25 @@ Mahnstufe startet mit 1. Mahnung
 ```
 
 - Hotfix: addReminder wird im PrintPilotStoreContext-Value mitgegeben
+
+## Nummernkreise
+
+Dokumentnummern werden jetzt zentral über Einstellungen geführt.
+
+```text
+AG = Angebot
+AU = Auftrag
+LS = Lieferschein
+RE = Rechnung
+MA = Mahnung
+```
+
+Die Workflow-Factories verwenden Prefix und NextNumber aus den Einstellungen. Beim Anlegen eines Dokuments erhöht der Store den jeweiligen NextNumber-Wert automatisch.
+
+- Nummernkreise werden in den Einstellungen jetzt als Karten pro Dokumenttyp dargestellt
+
+- Nummernkreis-Kartenlayout verbreitert: Felder sind nicht mehr abgeschnitten
+
+- Nummernkreis-Kartenlayout auf maximal 3 Karten nebeneinander umgestellt
+
+- Nummernkreis-Karten haben jetzt mehr Innenabstand zum Panelrand

@@ -111,6 +111,8 @@ export function InvoicesPage() {
     useState(false);
   const [isDuplicateReminderDialogOpen, setIsDuplicateReminderDialogOpen] =
     useState(false);
+  const [isReminderStatusBlockedDialogOpen, setIsReminderStatusBlockedDialogOpen] =
+    useState(false);
 
   const invoiceRowsByTab = useMemo(() => {
     return {
@@ -145,9 +147,14 @@ export function InvoicesPage() {
   });
 
   const canEdit = isEditing && Boolean(draft);
+  const draftInvoice = draft as PrintPilotInvoice | undefined;
+  const invoiceForReminderGuard = draftInvoice ?? selectedInvoice;
   const existingReminderForSelectedInvoice = selectedInvoice
     ? reminders.find((reminder) => reminder.invoiceId === selectedInvoice.id)
     : undefined;
+  const canCreateReminderFromSelectedInvoice =
+    invoiceForReminderGuard?.status === "Offen" ||
+    invoiceForReminderGuard?.status === "Überfällig";
 
   function handleTabChange(tab: string) {
     if (isInvoiceTab(tab)) {
@@ -156,6 +163,7 @@ export function InvoicesPage() {
       setIsDetailDrawerOpen(false);
       setIsCreateReminderDialogOpen(false);
       setIsDuplicateReminderDialogOpen(false);
+      setIsReminderStatusBlockedDialogOpen(false);
     }
   }
 
@@ -165,6 +173,7 @@ export function InvoicesPage() {
     setIsDetailDrawerOpen(true);
     setIsCreateReminderDialogOpen(false);
     setIsDuplicateReminderDialogOpen(false);
+    setIsReminderStatusBlockedDialogOpen(false);
   }
 
   function handleCloseDetailDrawer() {
@@ -172,6 +181,7 @@ export function InvoicesPage() {
     setIsDetailDrawerOpen(false);
     setIsCreateReminderDialogOpen(false);
     setIsDuplicateReminderDialogOpen(false);
+    setIsReminderStatusBlockedDialogOpen(false);
   }
 
   function handleResetDraft() {
@@ -179,6 +189,7 @@ export function InvoicesPage() {
     setIsEditing(false);
     setIsCreateReminderDialogOpen(false);
     setIsDuplicateReminderDialogOpen(false);
+    setIsReminderStatusBlockedDialogOpen(false);
   }
 
   function handleToggleEditing() {
@@ -211,6 +222,13 @@ export function InvoicesPage() {
       return;
     }
 
+    if (!canCreateReminderFromSelectedInvoice) {
+      setIsCreateReminderDialogOpen(false);
+      setIsDuplicateReminderDialogOpen(false);
+      setIsReminderStatusBlockedDialogOpen(true);
+      return;
+    }
+
     if (existingReminderForSelectedInvoice) {
       setIsDuplicateReminderDialogOpen(true);
       return;
@@ -227,10 +245,26 @@ export function InvoicesPage() {
     setIsDuplicateReminderDialogOpen(false);
   }
 
+  function handleCancelReminderStatusBlockedDialog() {
+    setIsReminderStatusBlockedDialogOpen(false);
+  }
+
   function handleCreateReminderFromInvoice() {
-    if (!selectedInvoice || existingReminderForSelectedInvoice) {
+    if (!selectedInvoice) {
       setIsCreateReminderDialogOpen(false);
-      setIsDuplicateReminderDialogOpen(Boolean(existingReminderForSelectedInvoice));
+      return;
+    }
+
+    if (!canCreateReminderFromSelectedInvoice) {
+      setIsCreateReminderDialogOpen(false);
+      setIsDuplicateReminderDialogOpen(false);
+      setIsReminderStatusBlockedDialogOpen(true);
+      return;
+    }
+
+    if (existingReminderForSelectedInvoice) {
+      setIsCreateReminderDialogOpen(false);
+      setIsDuplicateReminderDialogOpen(true);
       return;
     }
 
@@ -371,8 +405,14 @@ export function InvoicesPage() {
 
             <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
             <Button>Vorschau prüfen</Button>
-            <Button variant="primary" onClick={handleOpenCreateReminderDialog}>
-              Mahnung erstellen
+            <Button
+              variant="primary"
+              disabled={!canCreateReminderFromSelectedInvoice}
+              onClick={handleOpenCreateReminderDialog}
+            >
+              {canCreateReminderFromSelectedInvoice
+                ? "Mahnung erstellen"
+                : "Mahnung gesperrt"}
             </Button>
 
             <SaveActionButton
@@ -543,6 +583,39 @@ export function InvoicesPage() {
           </section>
         </div>
       </DetailDrawer>
+
+      <ConfirmDialog
+        open={isReminderStatusBlockedDialogOpen && Boolean(selectedInvoice)}
+        title="Mahnung nicht möglich"
+        description={
+          <>
+            Eine Mahnung kann nur aus Rechnungen mit Status{" "}
+            <strong>Offen</strong> oder <strong>Überfällig</strong> erstellt
+            werden.
+          </>
+        }
+        details={
+          selectedInvoice ? (
+            <>
+              <span>
+                <strong>Rechnung:</strong> {selectedInvoice.number}
+              </span>
+              <span>
+                <strong>Kunde:</strong> {selectedInvoice.customerName}
+              </span>
+              <span>
+                <strong>Aktueller Status:</strong>{" "}
+                {invoiceForReminderGuard?.status ?? selectedInvoice.status}
+              </span>
+            </>
+          ) : null
+        }
+        variant="warning"
+        cancelLabel="Schließen"
+        confirmLabel="Verstanden"
+        onCancel={handleCancelReminderStatusBlockedDialog}
+        onConfirm={handleCancelReminderStatusBlockedDialog}
+      />
 
       <ConfirmDialog
         open={isCreateReminderDialogOpen && Boolean(selectedInvoice)}

@@ -79,3 +79,5 @@ docs/ARCHITECTURE.md
 - Hotfix erledigt: Nummernkreis-Karten breiter und lesbarer gestaltet
 - Hotfix erledigt: Nummernkreis-Karten auf 3-Spalten-Layout umgestellt
 - Hotfix erledigt: Innenabstand der Nummernkreis-Karten zum Panelrand erhöht
+- Erledigt: Statuslogik für Rechnung → Mahnung angebunden
+- Hotfix erledigt: Mahnungserstellung bei bezahlten/Entwurfs-Rechnungen hart gesperrt

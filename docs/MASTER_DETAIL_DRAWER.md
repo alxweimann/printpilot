@@ -84,3 +84,11 @@ Der Auftragsdrawer kann sowohl Lieferscheine als auch Rechnungen erzeugen. Beide
 Der Rechnungsdrawer enthält die fachliche Aktion `Mahnung erstellen`.
 
 Die Aktion erzeugt eine Mahnung nur, wenn für die Rechnung noch keine Mahnung mit gleicher `invoiceId` existiert. Dadurch bleibt die Kette Rechnung → Mahnung eindeutig.
+
+## Statusschutz im Rechnungsdrawer
+
+Die Aktion `Mahnung erstellen` prüft den Rechnungsstatus. Bei `Entwurf` oder `Bezahlt` wird ein Hinweisdialog angezeigt, statt eine Mahnung zu erzeugen.
+
+## Harte Mahnungssperre
+
+Der Rechnungsdrawer deaktiviert die Aktion `Mahnung erstellen`, wenn der aktuelle Rechnungsstatus `Entwurf` oder `Bezahlt` ist. Zusätzlich prüft die Erzeugungsfunktion denselben Status erneut.

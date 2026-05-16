@@ -207,3 +207,29 @@ reminderPrefix + reminderNextNumber → Mahnungsnummer
 ```
 
 Nach dem Anlegen eines Dokuments erhöht der Store den passenden NextNumber-Wert automatisch.
+
+## Statuslogik Rechnung → Mahnung
+
+Mahnungen dürfen nur aus offenen oder überfälligen Rechnungen erzeugt werden.
+
+```text
+Entwurf → Mahnung blockiert
+Offen → Mahnung möglich
+Bezahlt → Mahnung blockiert
+Überfällig → Mahnung möglich
+```
+
+Der Schutz greift sowohl beim Öffnen der Aktion als auch beim finalen Bestätigen.
+
+## Hotfix Mahnungssperre
+
+Die Mahnungserstellung prüft jetzt den aktuellen Rechnungs-Draft im Drawer und nicht nur die ursprüngliche Auswahl.
+
+```text
+Entwurf → Button gesperrt
+Bezahlt → Button gesperrt
+Offen → Button aktiv
+Überfällig → Button aktiv
+```
+
+Die Bestätigungsfunktion enthält zusätzlich dieselbe harte Prüfung.

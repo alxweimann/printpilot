@@ -148,3 +148,16 @@ Die Workflow-Factories verwenden Prefix und NextNumber aus den Einstellungen. Be
 - Nummernkreis-Kartenlayout auf maximal 3 Karten nebeneinander umgestellt
 
 - Nummernkreis-Karten haben jetzt mehr Innenabstand zum Panelrand
+
+## Statuslogik: Rechnung → Mahnung
+
+Mahnungserzeugung ist jetzt statusabhängig:
+
+```text
+Erlaubt: Rechnung Offen, Überfällig
+Gesperrt: Rechnung Entwurf, Bezahlt
+```
+
+Bei gesperrtem Status wird ein Hinweis angezeigt und keine Mahnung erzeugt.
+
+- Hotfix: Mahnungssperre nutzt jetzt den aktuellen Rechnungs-Draft und deaktiviert den Button bei Entwurf/Bezahlt

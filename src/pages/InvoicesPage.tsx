@@ -4,6 +4,7 @@ import { getModuleConfig } from "../app/moduleConfig";
 import {
   type PrintPilotInvoice,
   type PrintPilotInvoiceStatus,
+  createPrintPilotReminderFromInvoice,
   groupPrintPilotInvoicesByStatus,
 } from "../data/printPilotStore";
 import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
@@ -16,6 +17,7 @@ import { PageTabs } from "../layout/PageTabs";
 
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
+import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DetailDrawer } from "../ui/DetailDrawer";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
@@ -95,10 +97,20 @@ function getInvoiceSortValue(invoice: PrintPilotInvoice, sortKey: InvoiceSortKey
 
 export function InvoicesPage() {
   const module = getModuleConfig("invoices");
-  const { invoices, settings, updateInvoice } = usePrintPilotStore();
+  const {
+    addReminder,
+    invoices,
+    reminders,
+    settings,
+    updateInvoice,
+  } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
+  const [isCreateReminderDialogOpen, setIsCreateReminderDialogOpen] =
+    useState(false);
+  const [isDuplicateReminderDialogOpen, setIsDuplicateReminderDialogOpen] =
+    useState(false);
 
   const invoiceRowsByTab = useMemo(() => {
     return {
@@ -133,12 +145,17 @@ export function InvoicesPage() {
   });
 
   const canEdit = isEditing && Boolean(draft);
+  const existingReminderForSelectedInvoice = selectedInvoice
+    ? reminders.find((reminder) => reminder.invoiceId === selectedInvoice.id)
+    : undefined;
 
   function handleTabChange(tab: string) {
     if (isInvoiceTab(tab)) {
       setActiveTab(tab);
       setIsEditing(false);
       setIsDetailDrawerOpen(false);
+      setIsCreateReminderDialogOpen(false);
+      setIsDuplicateReminderDialogOpen(false);
     }
   }
 
@@ -146,16 +163,22 @@ export function InvoicesPage() {
     selectItem(invoiceId);
     setIsEditing(false);
     setIsDetailDrawerOpen(true);
+    setIsCreateReminderDialogOpen(false);
+    setIsDuplicateReminderDialogOpen(false);
   }
 
   function handleCloseDetailDrawer() {
     setIsEditing(false);
     setIsDetailDrawerOpen(false);
+    setIsCreateReminderDialogOpen(false);
+    setIsDuplicateReminderDialogOpen(false);
   }
 
   function handleResetDraft() {
     resetDraft();
     setIsEditing(false);
+    setIsCreateReminderDialogOpen(false);
+    setIsDuplicateReminderDialogOpen(false);
   }
 
   function handleToggleEditing() {
@@ -181,6 +204,43 @@ export function InvoicesPage() {
     window.setTimeout(() => {
       selectItem(savedInvoice.id);
     }, 0);
+  }
+
+  function handleOpenCreateReminderDialog() {
+    if (!selectedInvoice) {
+      return;
+    }
+
+    if (existingReminderForSelectedInvoice) {
+      setIsDuplicateReminderDialogOpen(true);
+      return;
+    }
+
+    setIsCreateReminderDialogOpen(true);
+  }
+
+  function handleCancelCreateReminderDialog() {
+    setIsCreateReminderDialogOpen(false);
+  }
+
+  function handleCancelDuplicateReminderDialog() {
+    setIsDuplicateReminderDialogOpen(false);
+  }
+
+  function handleCreateReminderFromInvoice() {
+    if (!selectedInvoice || existingReminderForSelectedInvoice) {
+      setIsCreateReminderDialogOpen(false);
+      setIsDuplicateReminderDialogOpen(Boolean(existingReminderForSelectedInvoice));
+      return;
+    }
+
+    const newReminder = createPrintPilotReminderFromInvoice(
+      selectedInvoice,
+      reminders,
+    );
+
+    addReminder(newReminder);
+    setIsCreateReminderDialogOpen(false);
   }
 
   return (
@@ -311,6 +371,9 @@ export function InvoicesPage() {
 
             <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
             <Button>Vorschau prüfen</Button>
+            <Button variant="primary" onClick={handleOpenCreateReminderDialog}>
+              Mahnung erstellen
+            </Button>
 
             <SaveActionButton
               isDirty={isDirty}
@@ -480,6 +543,75 @@ export function InvoicesPage() {
           </section>
         </div>
       </DetailDrawer>
+
+      <ConfirmDialog
+        open={isCreateReminderDialogOpen && Boolean(selectedInvoice)}
+        title="Mahnung aus Rechnung erstellen?"
+        description={
+          <>
+            Aus der ausgewählten Rechnung wird eine neue Mahnung erzeugt. Die
+            Mahnung wird eindeutig mit der Rechnung verknüpft.
+          </>
+        }
+        details={
+          selectedInvoice ? (
+            <>
+              <span>
+                <strong>Rechnung:</strong> {selectedInvoice.number}
+              </span>
+              <span>
+                <strong>Kunde:</strong> {selectedInvoice.customerName}
+              </span>
+              <span>
+                <strong>Betreff:</strong> {selectedInvoice.subject}
+              </span>
+              <span>
+                <strong>Mahnstufe:</strong> 1. Mahnung
+              </span>
+            </>
+          ) : null
+        }
+        variant="default"
+        cancelLabel="Abbrechen"
+        confirmLabel="Mahnung erstellen"
+        onCancel={handleCancelCreateReminderDialog}
+        onConfirm={handleCreateReminderFromInvoice}
+      />
+
+      <ConfirmDialog
+        open={isDuplicateReminderDialogOpen && Boolean(selectedInvoice)}
+        title="Mahnung existiert bereits"
+        description={
+          <>
+            Für diese Rechnung existiert bereits eine Mahnung. Es wird keine
+            weitere Mahnung erzeugt, damit keine Dublette entsteht.
+          </>
+        }
+        details={
+          selectedInvoice ? (
+            <>
+              <span>
+                <strong>Rechnung:</strong> {selectedInvoice.number}
+              </span>
+              <span>
+                <strong>Kunde:</strong> {selectedInvoice.customerName}
+              </span>
+              {existingReminderForSelectedInvoice && (
+                <span>
+                  <strong>Vorhandene Mahnung:</strong>{" "}
+                  {existingReminderForSelectedInvoice.number}
+                </span>
+              )}
+            </>
+          ) : null
+        }
+        variant="warning"
+        cancelLabel="Schließen"
+        confirmLabel="Verstanden"
+        onCancel={handleCancelDuplicateReminderDialog}
+        onConfirm={handleCancelDuplicateReminderDialog}
+      />
+
     </div>
   );
 }

@@ -125,6 +125,28 @@ export type PrintPilotOrder = {
   badgeVariant?: "success";
 };
 
+export type PrintPilotReminderStatus =
+  | "Entwurf"
+  | "Offen"
+  | "Versendet"
+  | "Erledigt";
+
+export type PrintPilotReminder = {
+  id: PrintPilotId;
+  number: string;
+  invoiceId: PrintPilotId;
+  invoiceNumber: string;
+  customerId: PrintPilotId | null;
+  customerName: string;
+  subject: string;
+  status: PrintPilotReminderStatus;
+  reminderLevel: string;
+  deadline: string;
+  template: string;
+  note: string;
+  badgeVariant?: "success";
+};
+
 export type PrintPilotInvoiceStatus =
   | "Entwurf"
   | "Offen"
@@ -247,6 +269,7 @@ export type PrintPilotStoreData = {
   quotes: PrintPilotQuote[];
   orders: PrintPilotOrder[];
   invoices: PrintPilotInvoice[];
+  reminders: PrintPilotReminder[];
   deliveryNotes: PrintPilotDeliveryNote[];
   materials: PrintPilotMaterial[];
   machines: PrintPilotMachine[];
@@ -853,6 +876,67 @@ export const initialPrintPilotOrders: PrintPilotOrder[] = [
   },
 ];
 
+export const initialPrintPilotReminders: PrintPilotReminder[] = [
+  {
+    id: "reminder-ma-2026-001",
+    number: "MA-2026-001",
+    invoiceId: "invoice-re-2026-001",
+    invoiceNumber: "RE-2026-001",
+    customerId: "customer-sonnendruck",
+    customerName: "Sonnendruck GmbH",
+    subject: "Broschüre A4",
+    status: "Entwurf",
+    reminderLevel: "Zahlungserinnerung",
+    deadline: "7 Tage",
+    template: "Zahlungserinnerung",
+    note: "Freundliche Erinnerung senden",
+    badgeVariant: "success",
+  },
+  {
+    id: "reminder-ma-2026-002",
+    number: "MA-2026-002",
+    invoiceId: "invoice-re-2026-002",
+    invoiceNumber: "RE-2026-002",
+    customerId: "customer-musterkunde",
+    customerName: "Musterkunde GmbH",
+    subject: "Flyer A5",
+    status: "Offen",
+    reminderLevel: "1. Mahnung",
+    deadline: "10 Tage",
+    template: "Standardmahnung",
+    note: "Offene Rechnung prüfen",
+  },
+  {
+    id: "reminder-ma-2026-003",
+    number: "MA-2026-003",
+    invoiceId: "invoice-re-2026-003",
+    invoiceNumber: "RE-2026-003",
+    customerId: "customer-agentur-beispiel",
+    customerName: "Beispiel AG",
+    subject: "Folder DIN lang",
+    status: "Versendet",
+    reminderLevel: "2. Mahnung",
+    deadline: "7 Tage",
+    template: "Standardmahnung",
+    note: "Bereits versendet",
+  },
+  {
+    id: "reminder-ma-2026-008",
+    number: "MA-2026-008",
+    invoiceId: "invoice-re-2026-009",
+    invoiceNumber: "RE-2026-009",
+    customerId: "customer-testkunde-kg",
+    customerName: "Testkunde KG",
+    subject: "Plakat A1",
+    status: "Erledigt",
+    reminderLevel: "Letzte Mahnung",
+    deadline: "14 Tage",
+    template: "Letzte Mahnung",
+    note: "Erledigt",
+    badgeVariant: "success",
+  },
+];
+
 export const initialPrintPilotInvoices: PrintPilotInvoice[] = [
   {
     id: "invoice-re-2026-001",
@@ -1017,6 +1101,42 @@ export const initialPrintPilotDeliveryNotes: PrintPilotDeliveryNote[] = [
   },
 ];
 
+function getNextReminderNumber(reminders: PrintPilotReminder[]) {
+  const year = new Date().getFullYear();
+  const numbersForYear = reminders
+    .map((reminder) => reminder.number)
+    .filter((number) => number.startsWith(`MA-${year}-`))
+    .map((number) => Number(number.replace(`MA-${year}-`, "")))
+    .filter((number) => Number.isFinite(number));
+
+  const nextNumber =
+    numbersForYear.length > 0 ? Math.max(...numbersForYear) + 1 : 1;
+
+  return `MA-${year}-${String(nextNumber).padStart(3, "0")}`;
+}
+
+export function createPrintPilotReminderFromInvoice(
+  invoice: PrintPilotInvoice,
+  existingReminders: PrintPilotReminder[],
+): PrintPilotReminder {
+  const number = getNextReminderNumber(existingReminders);
+
+  return {
+    id: `reminder-${number.toLowerCase()}`,
+    number,
+    invoiceId: invoice.id,
+    invoiceNumber: invoice.number,
+    customerId: invoice.customerId,
+    customerName: invoice.customerName,
+    subject: invoice.subject,
+    status: "Entwurf",
+    reminderLevel: "1. Mahnung",
+    deadline: "7 Tage",
+    template: "Standardmahnung",
+    note: `Erstellt aus Rechnung ${invoice.number}`,
+  };
+}
+
 function getNextInvoiceNumber(invoices: PrintPilotInvoice[]) {
   const year = new Date().getFullYear();
   const numbersForYear = invoices
@@ -1109,6 +1229,7 @@ export function createEmptyPrintPilotStoreData(): PrintPilotStoreData {
     quotes: initialPrintPilotQuotes,
     orders: initialPrintPilotOrders,
     invoices: initialPrintPilotInvoices,
+    reminders: initialPrintPilotReminders,
     deliveryNotes: initialPrintPilotDeliveryNotes,
     materials: initialPrintPilotMaterials,
     machines: initialPrintPilotMachines,
@@ -1143,6 +1264,10 @@ export function createPrintPilotStoreSnapshot(
       overrides.invoices && overrides.invoices.length > 0
         ? overrides.invoices
         : emptyStore.invoices,
+    reminders:
+      overrides.reminders && overrides.reminders.length > 0
+        ? overrides.reminders
+        : emptyStore.reminders,
     deliveryNotes:
       overrides.deliveryNotes && overrides.deliveryNotes.length > 0
         ? overrides.deliveryNotes
@@ -1272,6 +1397,17 @@ export function groupPrintPilotDeliveryNotesByStatus(
     Abgeschlossen: deliveryNotes.filter(
       (deliveryNote) => deliveryNote.status === "Abgeschlossen",
     ),
+  };
+}
+
+export function groupPrintPilotRemindersByStatus(
+  reminders: PrintPilotReminder[],
+): Record<PrintPilotReminderStatus, PrintPilotReminder[]> {
+  return {
+    Entwurf: reminders.filter((reminder) => reminder.status === "Entwurf"),
+    Offen: reminders.filter((reminder) => reminder.status === "Offen"),
+    Versendet: reminders.filter((reminder) => reminder.status === "Versendet"),
+    Erledigt: reminders.filter((reminder) => reminder.status === "Erledigt"),
   };
 }
 

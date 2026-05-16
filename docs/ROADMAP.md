@@ -72,3 +72,5 @@ docs/ARCHITECTURE.md
 ```
 - Erledigt: Auftrags-Workflow `Auftrag → Rechnung erzeugen` mit Dubletten-Schutz angebunden
 - Hotfix erledigt: Store-Struktur für Lieferscheine und Rechnungen zusammengeführt
+- Erledigt: Rechnungs-Workflow `Rechnung → Mahnung erzeugen` mit Dubletten-Schutz angebunden
+- Hotfix erledigt: addReminder im Store-Context-Value ergänzt

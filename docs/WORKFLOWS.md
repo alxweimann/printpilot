@@ -158,3 +158,39 @@ invoices[]
 ```
 
 Die Verknüpfung erfolgt jeweils über `orderId` und `orderNumber`.
+
+## Rechnung → Mahnung
+
+Der Rechnungsdrawer enthält die Aktion `Mahnung erstellen`.
+
+Ablauf:
+
+```text
+1. Rechnung auswählen
+2. Aktion „Mahnung erstellen“ auslösen
+3. System prüft, ob bereits eine Mahnung mit gleicher invoiceId existiert
+4. Wenn keine Mahnung existiert:
+   - neue Mahnung wird erzeugt
+   - Mahnung erhält invoiceId und invoiceNumber der Rechnung
+   - Kunde und Betreff werden übernommen
+   - Mahnstatus = Entwurf
+   - Mahnstufe = 1. Mahnung
+   - Frist = 7 Tage
+5. Wenn eine Mahnung existiert:
+   - keine weitere Mahnung wird erzeugt
+   - Hinweis verhindert Dublette
+```
+
+Technischer Standard:
+
+```text
+invoice.id → reminder.invoiceId
+invoice.number → reminder.invoiceNumber
+invoice.customerId → reminder.customerId
+invoice.customerName → reminder.customerName
+invoice.subject → reminder.subject
+```
+
+## Hotfix Mahn-Workflow Store
+
+`addReminder` ist Bestandteil des Store-Context-Values und steht damit dem Rechnungsdrawer zur Aktion `Mahnung erstellen` zur Verfügung.

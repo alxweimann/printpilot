@@ -78,3 +78,9 @@ Die Aktion erzeugt eine Rechnung nur, wenn für den Auftrag noch keine Rechnung 
 ## Auftragsaktionen gemeinsam
 
 Der Auftragsdrawer kann sowohl Lieferscheine als auch Rechnungen erzeugen. Beide Aktionen prüfen vorhandene Dokumente über `orderId`, bevor neue Dokumente erstellt werden.
+
+## Rechnungsaktion Mahnung im Drawer
+
+Der Rechnungsdrawer enthält die fachliche Aktion `Mahnung erstellen`.
+
+Die Aktion erzeugt eine Mahnung nur, wenn für die Rechnung noch keine Mahnung mit gleicher `invoiceId` existiert. Dadurch bleibt die Kette Rechnung → Mahnung eindeutig.

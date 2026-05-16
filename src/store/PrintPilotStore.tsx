@@ -16,6 +16,7 @@ import {
   type PrintPilotMaterial,
   type PrintPilotOrder,
   type PrintPilotQuote,
+  type PrintPilotReminder,
   type PrintPilotService,
   type PrintPilotSettings,
   type PrintPilotStoreData,
@@ -31,6 +32,7 @@ type PrintPilotStoreContextValue = {
   quotes: PrintPilotQuote[];
   orders: PrintPilotOrder[];
   invoices: PrintPilotInvoice[];
+  reminders: PrintPilotReminder[];
   deliveryNotes: PrintPilotDeliveryNote[];
   materials: PrintPilotMaterial[];
   machines: PrintPilotMachine[];
@@ -40,9 +42,11 @@ type PrintPilotStoreContextValue = {
   settings: PrintPilotSettings;
   addOrder: (order: PrintPilotOrder) => void;
   addInvoice: (invoice: PrintPilotInvoice) => void;
+  addReminder: (reminder: PrintPilotReminder) => void;
   addDeliveryNote: (deliveryNote: PrintPilotDeliveryNote) => void;
   updateCustomer: (customer: PrintPilotCustomer) => void;
   updateInvoice: (invoice: PrintPilotInvoice) => void;
+  updateReminder: (reminder: PrintPilotReminder) => void;
   updateDeliveryNote: (deliveryNote: PrintPilotDeliveryNote) => void;
   updateFinishingProcess: (process: PrintPilotFinishingProcess) => void;
   updateMachine: (machine: PrintPilotMachine) => void;
@@ -76,6 +80,7 @@ function isValidStoreData(value: unknown): value is PrintPilotStoreData {
     Array.isArray(candidate.quotes) &&
     Array.isArray(candidate.orders) &&
     (candidate.invoices === undefined || Array.isArray(candidate.invoices)) &&
+    (candidate.reminders === undefined || Array.isArray(candidate.reminders)) &&
     (candidate.deliveryNotes === undefined || Array.isArray(candidate.deliveryNotes)) &&
     Array.isArray(candidate.materials) &&
     Array.isArray(candidate.machines) &&
@@ -136,6 +141,13 @@ export function PrintPilotStoreProvider({
     }));
   }
 
+  function addReminder(reminder: PrintPilotReminder) {
+    setData((currentData) => ({
+      ...currentData,
+      reminders: [reminder, ...currentData.reminders],
+    }));
+  }
+
   function addDeliveryNote(deliveryNote: PrintPilotDeliveryNote) {
     setData((currentData) => ({
       ...currentData,
@@ -148,6 +160,15 @@ export function PrintPilotStoreProvider({
       ...currentData,
       invoices: currentData.invoices.map((invoice) =>
         invoice.id === updatedInvoice.id ? updatedInvoice : invoice,
+      ),
+    }));
+  }
+
+  function updateReminder(updatedReminder: PrintPilotReminder) {
+    setData((currentData) => ({
+      ...currentData,
+      reminders: currentData.reminders.map((reminder) =>
+        reminder.id === updatedReminder.id ? updatedReminder : reminder,
       ),
     }));
   }
@@ -260,11 +281,13 @@ export function PrintPilotStoreProvider({
       data,
       addOrder,
       addInvoice,
+      addReminder,
       addDeliveryNote,
       customers: data.customers,
       quotes: data.quotes,
       orders: data.orders,
       invoices: data.invoices,
+      reminders: data.reminders,
       deliveryNotes: data.deliveryNotes,
       materials: data.materials,
       machines: data.machines,
@@ -280,6 +303,7 @@ export function PrintPilotStoreProvider({
       updateMaterial,
       updateOrder,
       updateQuote,
+      updateReminder,
       updateService,
       updateSettings,
       updateTemplate,

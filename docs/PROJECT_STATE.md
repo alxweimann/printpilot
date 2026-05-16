@@ -112,3 +112,17 @@ Auftrag → Rechnung
 beide mit Dubletten-Schutz über orderId
 Store enthält deliveryNotes und invoices
 ```
+
+## Mahn-Workflow
+
+Der nächste Fachlogik-Workflow ist angebunden:
+
+```text
+Rechnung → Mahnung erzeugen
+Dubletten-Schutz über invoiceId
+Mahnung wird mit invoiceId und invoiceNumber verknüpft
+Mahnung übernimmt Kunde und Betreff aus Rechnung
+Mahnstufe startet mit 1. Mahnung
+```
+
+- Hotfix: addReminder wird im PrintPilotStoreContext-Value mitgegeben

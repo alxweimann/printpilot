@@ -19,6 +19,7 @@ export type PrintPilotBackupSummary = {
   quotes: number;
   orders: number;
   invoices: number;
+  reminders: number;
   deliveryNotes: number;
   materials: number;
   machines: number;
@@ -82,6 +83,7 @@ function isBackupData(value: unknown): value is PrintPilotBackupData {
     Array.isArray(candidate.quotes) &&
     Array.isArray(candidate.orders) &&
     (candidate.invoices === undefined || Array.isArray(candidate.invoices)) &&
+    (candidate.reminders === undefined || Array.isArray(candidate.reminders)) &&
     (candidate.deliveryNotes === undefined || Array.isArray(candidate.deliveryNotes)) &&
     Array.isArray(candidate.materials) &&
     Array.isArray(candidate.machines) &&
@@ -121,6 +123,7 @@ export function getPrintPilotBackupSummary(
     quotes: backup.data.quotes.length,
     orders: backup.data.orders.length,
     invoices: backup.data.invoices.length,
+    reminders: backup.data.reminders.length,
     deliveryNotes: backup.data.deliveryNotes.length,
     materials: backup.data.materials.length,
     machines: backup.data.machines.length,

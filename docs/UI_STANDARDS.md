@@ -1,22 +1,45 @@
-# UI Standards
+# Ui Standards
 
-Stand: 14.05.2026
+## Sidebar LED-Anzeige
 
-## DetailDrawer
-
-Der DetailDrawer wird per React Portal in `document.body` gerendert.
+Die Sidebar zeigt unten Datum und Uhrzeit als reduzierte LED-Anzeige.
 
 Standard:
 
-```txt
-fixed rechts
-z-index 1000/1001
-Overlay über der App
-Content scrollt intern
-Footer bleibt unten
-keine Abhängigkeit von externer CSS-Datei für kritische Positionierung
+```text
+kein zusätzliches Label wie „Systemzeit“
+kein äußerer Rahmen um die Anzeige
+Datum und Uhrzeit gleich breit
+zwei kompakte LED-Zeilen
+ruhiger dunkler Hintergrund je Zeile
 ```
 
-## Nummernkreis- und Workflow-Seiten
+## Sidebar LED-Anzeige ohne Rahmen
 
-Die Nummernkreis-Karten bleiben im 3-Spalten-Layout mit Innenabstand. Dokumentseiten lesen ihre Daten aus dem zentralen Store, nicht aus lokalen statischen Arrays.
+Die LED-Anzeige in der Sidebar besteht nur aus leuchtendem Text.
+
+Standard:
+
+```text
+kein äußerer Rahmen
+kein Hintergrundbalken je Zeile
+kein Kasten um Datum/Uhrzeit
+Datum und Uhrzeit gleich breit
+größere LED-Ziffern
+zentrierte Darstellung
+```
+
+## Sidebar LED-Anzeige Breite und Glow
+
+Datum und Uhrzeit werden als gleich breite LED-Zeilen dargestellt.
+
+Aktueller Standard:
+
+```text
+Zeilenbreite: 138px
+Schriftgröße: 16px
+Glow deutlich reduziert
+kein Rahmen
+kein Hintergrundbalken
+zentrierte Darstellung
+```

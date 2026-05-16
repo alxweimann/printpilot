@@ -1,64 +1,23 @@
-# PrintPilot Projektstand
+# Project State
 
-Stand: 14.05.2026
+- Sidebar LED-Anzeige vereinfacht: ohne Systemzeit-Label und ohne äußeren Rahmen, Datum/Uhrzeit gleich breit
 
-## Hotfix
+- Sidebar LED-Anzeige: Hintergründe/Rahmen vollständig entfernt und Ziffern größer gesetzt
 
-DetailDrawer rendert jetzt per React Portal direkt in `document.body`.
+- Sidebar LED-Anzeige: beide Zeilen gleich breit, Schrift größer und Glow reduziert
 
-Damit öffnet der Drawer zuverlässig rechts über der App und nicht mehr unten im Seitenfluss.
+## Full Workflow Consistency Fix
 
-## Workflow-Store-Realignment
+Store, Datenmodell, Backup und Dokumentseiten wurden als vollständiges Konsistenzpaket zusammengeführt.
 
-Store, Datenmodell, Backup und Workflow-Seiten wurden wieder auf einen konsistenten Stand gebracht.
-
-```text
-printPilotStore.ts enthält deliveryNotes, invoices, reminders
-PrintPilotStore.tsx enthält add/update für deliveryNotes, invoices, reminders
-backup.ts kennt deliveryNotes, invoices, reminders
-DeliveryNotesPage liest aus dem Store
-InvoicesPage liest aus dem Store und enthält Mahnungs-Statusschutz
-RemindersPage liest aus dem Store
-```
-
-Die Statusfolge `Rechnung Bezahlt → Mahnung Erledigt` liegt zentral in `updateInvoice()`.
-
-## Nummernkreis-Synchronisierung
-
-Die Nummernkreise werden beim Laden und Ersetzen des Stores mit vorhandenen Dokumentnummern synchronisiert.
-
-Beispiel:
+Enthalten:
 
 ```text
-vorhanden: AU-2026-011
-Einstellung: AU / 2026-001
-synchronisiert: AU / 2026-012
+addQuote/addDeliveryNote/addInvoice/addReminder
+updateDeliveryNote/updateInvoice/updateReminder
+Store-bound DeliveryNotesPage/InvoicesPage/RemindersPage
+Neues Angebot erstellen
+Nummernkreis-Synchronisierung
+Angebot → Folgebelege Kaskade
+Auftrag → Folgebelege Normalisierung
 ```
-
-Die Synchronisierung erhöht Nummern nur auf den nächsten freien Stand und senkt manuell höhere Werte nicht ab.
-
-## Neues Angebot erstellen
-
-Die Angebotsseite kann jetzt neue Angebote erzeugen.
-
-```text
-Button „Neues Angebot“
-AG-Nummernkreis aus Einstellungen
-neues Angebot im Store speichern
-quoteNextNumber automatisch erhöhen
-neues Angebot direkt im Drawer öffnen
-Drawer direkt entsperrt
-```
-
-## Kaskadenlogik: Angebot aktualisiert Folgebelege
-
-Wenn ein Angebot nachträglich geändert wird, werden verknüpfte Folgebelege synchronisiert.
-
-```text
-Angebot.customerName → Auftrag.customerName
-Angebot.subject → Auftrag.product
-Angebot.validUntil → Auftrag.dueDate
-verknüpfte Lieferscheine/Rechnungen/Mahnungen werden ebenfalls aktualisiert
-```
-
-Damit bleibt ein Auftrag konsistent, wenn ein Angebot zuerst ohne Kundenname erstellt und später korrigiert wird.

@@ -96,6 +96,70 @@ function isValidStoreData(value: unknown): value is PrintPilotStoreData {
   );
 }
 
+function synchronizeOrderLinkedDocuments(
+  data: PrintPilotStoreData,
+): PrintPilotStoreData {
+  const orderById = new Map(data.orders.map((order) => [order.id, order]));
+  const invoiceById = new Map(data.invoices.map((invoice) => [invoice.id, invoice]));
+
+  return {
+    ...data,
+    deliveryNotes: data.deliveryNotes.map((deliveryNote) => {
+      const linkedOrder = orderById.get(deliveryNote.orderId);
+
+      if (!linkedOrder) {
+        return deliveryNote;
+      }
+
+      return {
+        ...deliveryNote,
+        customerId: linkedOrder.customerId,
+        customerName: linkedOrder.customerName,
+        product: linkedOrder.product,
+        recipient:
+          deliveryNote.recipient && deliveryNote.recipient.trim().length > 0
+            ? deliveryNote.recipient
+            : linkedOrder.customerName,
+      };
+    }),
+    invoices: data.invoices.map((invoice) => {
+      const linkedOrder = orderById.get(invoice.orderId);
+
+      if (!linkedOrder) {
+        return invoice;
+      }
+
+      return {
+        ...invoice,
+        customerId: linkedOrder.customerId,
+        customerName: linkedOrder.customerName,
+        subject: linkedOrder.product,
+      };
+    }),
+    reminders: data.reminders.map((reminder) => {
+      const linkedInvoice = invoiceById.get(reminder.invoiceId);
+
+      if (!linkedInvoice) {
+        return reminder;
+      }
+
+      const linkedOrder = orderById.get(linkedInvoice.orderId);
+
+      if (!linkedOrder) {
+        return reminder;
+      }
+
+      return {
+        ...reminder,
+        customerId: linkedOrder.customerId,
+        customerName: linkedOrder.customerName,
+        subject: linkedOrder.product,
+      };
+    }),
+  };
+}
+
+
 function readStoredData() {
   try {
     const storedValue = window.localStorage.getItem(
@@ -103,18 +167,26 @@ function readStoredData() {
     );
 
     if (!storedValue) {
-      return synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot());
+      return synchronizeOrderLinkedDocuments(
+        synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot()),
+      );
     }
 
     const parsedValue = JSON.parse(storedValue) as unknown;
 
     if (!isValidStoreData(parsedValue)) {
-      return synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot());
+      return synchronizeOrderLinkedDocuments(
+        synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot()),
+      );
     }
 
-    return synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot(parsedValue));
+    return synchronizeOrderLinkedDocuments(
+      synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot(parsedValue)),
+    );
   } catch {
-    return synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot());
+    return synchronizeOrderLinkedDocuments(
+        synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot()),
+      );
   }
 }
 
@@ -291,13 +363,16 @@ export function PrintPilotStoreProvider({
   }
 
   function updateOrder(updatedOrder: PrintPilotOrder) {
-    setData((currentData) => ({
-      ...currentData,
-      orders: currentData.orders.map((order) =>
-        order.id === updatedOrder.id ? updatedOrder : order,
-      ),
-    }));
+    setData((currentData) =>
+      synchronizeOrderLinkedDocuments({
+        ...currentData,
+        orders: currentData.orders.map((order) =>
+          order.id === updatedOrder.id ? updatedOrder : order,
+        ),
+      }),
+    );
   }
+
 
   function updateQuote(updatedQuote: PrintPilotQuote) {
     setData((currentData) => {
@@ -363,6 +438,7 @@ export function PrintPilotStoreProvider({
     });
   }
 
+
   function updateService(updatedService: PrintPilotService) {
     setData((currentData) => ({
       ...currentData,
@@ -389,12 +465,20 @@ export function PrintPilotStoreProvider({
   }
 
   function replaceStoreData(nextData: PrintPilotStoreData) {
-    setData(synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot(nextData)));
+    setData(
+      synchronizeOrderLinkedDocuments(
+        synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot(nextData)),
+      ),
+    );
   }
 
   function resetStoreData() {
     window.localStorage.removeItem(PRINTPILOT_LOCAL_STORAGE_KEY);
-    setData(synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot()));
+    setData(
+      synchronizeOrderLinkedDocuments(
+        synchronizePrintPilotNumberRanges(createPrintPilotStoreSnapshot()),
+      ),
+    );
   }
 
   function getBackupData() {

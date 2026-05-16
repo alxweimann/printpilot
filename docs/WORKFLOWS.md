@@ -115,121 +115,16 @@ DetailDrawer-Layout
 Kalkulationsverknüpfungen
 ```
 
-## Auftrag → Rechnung
+## Workflow-Store-Realignment
 
-Der Auftragsdrawer enthält die Aktion `Rechnung erstellen`.
-
-Ablauf:
+Die komplette Dokumentkette ist wieder konsistent verdrahtet.
 
 ```text
-1. Auftrag auswählen
-2. Aktion „Rechnung erstellen“ auslösen
-3. System prüft, ob bereits eine Rechnung mit gleicher orderId existiert
-4. Wenn keine Rechnung existiert:
-   - neue Rechnung wird erzeugt
-   - Rechnung erhält orderId und orderNumber des Auftrags
-   - Kunde und Produkt werden übernommen
-   - Rechnungsstatus = Entwurf
-   - Rechnungsdatum = aktuelles Datum
-   - Fälligkeit = Rechnungsdatum + 14 Tage
-5. Wenn eine Rechnung existiert:
-   - keine weitere Rechnung wird erzeugt
-   - Hinweis verhindert Dublette
+Angebot → Auftrag
+Auftrag → Lieferschein
+Auftrag → Rechnung
+Rechnung → Mahnung
+Rechnung Bezahlt → Mahnung Erledigt
 ```
 
-Technischer Standard:
-
-```text
-order.id → invoice.orderId
-order.number → invoice.orderNumber
-order.customerId → invoice.customerId
-order.customerName → invoice.customerName
-order.product → invoice.subject
-```
-
-## Workflow-Store-Merge
-
-Die Workflows `Auftrag → Lieferschein` und `Auftrag → Rechnung` teilen sich die gemeinsame Store-Struktur.
-
-```text
-orders[]
-deliveryNotes[]
-invoices[]
-```
-
-Die Verknüpfung erfolgt jeweils über `orderId` und `orderNumber`.
-
-## Rechnung → Mahnung
-
-Der Rechnungsdrawer enthält die Aktion `Mahnung erstellen`.
-
-Ablauf:
-
-```text
-1. Rechnung auswählen
-2. Aktion „Mahnung erstellen“ auslösen
-3. System prüft, ob bereits eine Mahnung mit gleicher invoiceId existiert
-4. Wenn keine Mahnung existiert:
-   - neue Mahnung wird erzeugt
-   - Mahnung erhält invoiceId und invoiceNumber der Rechnung
-   - Kunde und Betreff werden übernommen
-   - Mahnstatus = Entwurf
-   - Mahnstufe = 1. Mahnung
-   - Frist = 7 Tage
-5. Wenn eine Mahnung existiert:
-   - keine weitere Mahnung wird erzeugt
-   - Hinweis verhindert Dublette
-```
-
-Technischer Standard:
-
-```text
-invoice.id → reminder.invoiceId
-invoice.number → reminder.invoiceNumber
-invoice.customerId → reminder.customerId
-invoice.customerName → reminder.customerName
-invoice.subject → reminder.subject
-```
-
-## Hotfix Mahn-Workflow Store
-
-`addReminder` ist Bestandteil des Store-Context-Values und steht damit dem Rechnungsdrawer zur Aktion `Mahnung erstellen` zur Verfügung.
-
-## Nummernkreise in Workflows
-
-Workflow-Aktionen erzeugen Dokumentnummern aus den Einstellungen.
-
-```text
-orderPrefix + orderNextNumber → Auftragsnummer
-deliveryNotePrefix + deliveryNoteNextNumber → Lieferscheinnummer
-invoicePrefix + invoiceNextNumber → Rechnungsnummer
-reminderPrefix + reminderNextNumber → Mahnungsnummer
-```
-
-Nach dem Anlegen eines Dokuments erhöht der Store den passenden NextNumber-Wert automatisch.
-
-## Statuslogik Rechnung → Mahnung
-
-Mahnungen dürfen nur aus offenen oder überfälligen Rechnungen erzeugt werden.
-
-```text
-Entwurf → Mahnung blockiert
-Offen → Mahnung möglich
-Bezahlt → Mahnung blockiert
-Überfällig → Mahnung möglich
-```
-
-Der Schutz greift sowohl beim Öffnen der Aktion als auch beim finalen Bestätigen.
-
-## Hotfix Mahnungssperre
-
-Die Mahnungserstellung prüft jetzt den aktuellen Rechnungs-Draft im Drawer und nicht nur die ursprüngliche Auswahl.
-
-```text
-Entwurf → Button gesperrt
-Bezahlt → Button gesperrt
-Offen → Button aktiv
-Überfällig → Button aktiv
-```
-
-Die Bestätigungsfunktion enthält zusätzlich dieselbe harte Prüfung.
+Die automatische Mahnungserledigung passiert zentral in `PrintPilotStore.tsx` innerhalb von `updateInvoice()`.

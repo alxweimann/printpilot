@@ -204,6 +204,7 @@ export function InvoicesPage() {
     const savedInvoice = draft as PrintPilotInvoice;
 
     updateInvoice(savedInvoice);
+
     saveDraft(savedInvoice);
     setIsEditing(false);
     setIsDetailDrawerOpen(false);

@@ -2,22 +2,20 @@
 
 Stand: 14.05.2026
 
-## Ziel
+## Aktueller Standard
 
-PrintPilot verwendet für Listen und Detailansichten einen einheitlichen Master-Detail-Standard.
+Der DetailDrawer wird per React Portal direkt an `document.body` gerendert.
 
-```txt
-Liste/Tabelle bleibt volle Hauptansicht
-Klick auf eine Zeile öffnet rechts den DetailDrawer
-Detailinformationen liegen im Drawer
-Aktionen liegen im Drawer-Footer
-Tabelle bleibt währenddessen sichtbar
-```
+Dadurch hängt der Drawer nicht mehr innerhalb einzelner Seitenlayouts oder Scrollcontainer und kann nicht mehr unten im normalen Dokumentfluss erscheinen.
 
-## Komponente
+## Layout
 
 ```txt
-src/ui/DetailDrawer.tsx
+fixed rechts
+Overlay über der App
+Drawer-Panel rechts
+Content scrollt im Drawer
+Footer bleibt unten im Drawer
 ```
 
 ## Bereits umgesetzt
@@ -27,68 +25,15 @@ Angebote
 Aufträge
 Rechnungen
 Lieferscheine
-```
-
-## Noch offen
-
-```txt
 Mahnungen
-Kunden
-Material
-Maschinen
-Weiterverarbeitung
-Leistungen
-Vorlagen
 ```
 
-## Verhalten
+## Technische Regel
 
-### Öffnen
+`DetailDrawer` darf nicht von externen CSS-Dateien abhängen, wenn es um kritische Positionierung geht.
 
-```txt
-Zeile anklicken
-ausgewählter Datensatz bleibt in Tabelle markiert
-Drawer öffnet rechts
-```
+Kritische Styles liegen direkt in `src/ui/DetailDrawer.tsx`.
 
-### Schließen
+## Workflow-Realignment
 
-```txt
-X rechts oben
-Klick außerhalb
-Speichern/Ausgeben schließt den Drawer, wenn fachlich sinnvoll
-```
-
-### Dialoge
-
-Warnungen und ConfirmDialog liegen immer über dem Drawer.
-
-## Tabellen im Drawer-Kontext
-
-Die Haupttabelle bleibt die zentrale Arbeitsfläche.
-
-Detailbereiche werden nicht dauerhaft unter oder neben die Tabelle gesetzt, sondern erscheinen ausschließlich im Drawer.
-
-## Auftragsaktion Rechnung im Drawer
-
-Der Auftragsdrawer enthält die fachliche Aktion `Rechnung erstellen`.
-
-Die Aktion erzeugt eine Rechnung nur, wenn für den Auftrag noch keine Rechnung mit gleicher `orderId` existiert. Dadurch bleibt die Kette Auftrag → Rechnung eindeutig.
-
-## Auftragsaktionen gemeinsam
-
-Der Auftragsdrawer kann sowohl Lieferscheine als auch Rechnungen erzeugen. Beide Aktionen prüfen vorhandene Dokumente über `orderId`, bevor neue Dokumente erstellt werden.
-
-## Rechnungsaktion Mahnung im Drawer
-
-Der Rechnungsdrawer enthält die fachliche Aktion `Mahnung erstellen`.
-
-Die Aktion erzeugt eine Mahnung nur, wenn für die Rechnung noch keine Mahnung mit gleicher `invoiceId` existiert. Dadurch bleibt die Kette Rechnung → Mahnung eindeutig.
-
-## Statusschutz im Rechnungsdrawer
-
-Die Aktion `Mahnung erstellen` prüft den Rechnungsstatus. Bei `Entwurf` oder `Bezahlt` wird ein Hinweisdialog angezeigt, statt eine Mahnung zu erzeugen.
-
-## Harte Mahnungssperre
-
-Der Rechnungsdrawer deaktiviert die Aktion `Mahnung erstellen`, wenn der aktuelle Rechnungsstatus `Entwurf` oder `Bezahlt` ist. Zusätzlich prüft die Erzeugungsfunktion denselben Status erneut.
+Die Drawer-Aktionen der Dokumentseiten arbeiten wieder gegen denselben Store-Stand. Besonders wichtig: Rechnungen und Mahnungen werden nicht mehr statisch dargestellt, sondern über `usePrintPilotStore()` gelesen und gespeichert.

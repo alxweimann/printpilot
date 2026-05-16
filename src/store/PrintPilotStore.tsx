@@ -192,6 +192,31 @@ export function PrintPilotStoreProvider({
       invoices: currentData.invoices.map((invoice) =>
         invoice.id === updatedInvoice.id ? updatedInvoice : invoice,
       ),
+      reminders:
+        updatedInvoice.status === "Bezahlt"
+          ? currentData.reminders.map((reminder) => {
+              if (
+                reminder.invoiceId !== updatedInvoice.id ||
+                reminder.status === "Erledigt"
+              ) {
+                return reminder;
+              }
+
+              const autoNote =
+                "Automatisch erledigt, weil Rechnung bezahlt wurde.";
+
+              return {
+                ...reminder,
+                status: "Erledigt",
+                note:
+                  reminder.note && reminder.note.trim().length > 0
+                    ? reminder.note.includes(autoNote)
+                      ? reminder.note
+                      : `${reminder.note} · ${autoNote}`
+                    : autoNote,
+              };
+            })
+          : currentData.reminders,
     }));
   }
 

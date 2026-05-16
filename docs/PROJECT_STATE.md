@@ -2,162 +2,23 @@
 
 Stand: 14.05.2026
 
-## Aktueller stabiler Stand
+## Hotfix
 
-Der aktuelle Stand ist gepushed.
+DetailDrawer rendert jetzt per React Portal direkt in `document.body`.
 
-## Umgesetzt
+Damit öffnet der Drawer zuverlässig rechts über der App und nicht mehr unten im Seitenfluss.
 
-### Tabellen / Sortierung
+## Workflow-Store-Realignment
 
-Die globale Sortierung ist im Kern umgesetzt.
-
-Sortierbar sind:
-
-- Aufträge
-- Angebote
-- Rechnungen
-- Lieferscheine
-- Mahnungen
-- Kunden
-- Material
-- Maschinen
-- Weiterverarbeitung
-- Leistungen
-- Vorlagen
-
-Der gemeinsame Sortierstandard liegt in:
-
-```txt
-src/ui/useSortableTable.ts
-src/ui/SortableTableHeader.tsx
-```
-
-### Tabellen-Ausrichtung
-
-Der finale Tabellenstandard ist:
-
-```txt
-Header linksbündig
-Zellinhalte linksbündig
-Sortierpfeile sichtbar
-Sortierpfeil rechts neben dem Header-Text
-keine verschachtelten th-Strukturen
-kein Button-Look bei Sortierköpfen
-kein Textcursor bei Sortierköpfen
-```
-
-Wichtig:
-
-```tsx
-<SortableTableHeader ... />
-```
-
-muss direkt im `<tr>` stehen.
-
-Nicht erlaubt:
-
-```tsx
-<th>
-  <SortableTableHeader ... />
-</th>
-```
-
-### Master-Detail-Drawer
-
-Bereits umgesetzt:
-
-- Angebote
-- Aufträge
-- Rechnungen
-- Lieferscheine
-
-Standard:
-
-```txt
-Tabelle bleibt volle Hauptansicht
-Klick auf Tabellenzeile öffnet DetailDrawer rechts
-Details liegen im Drawer
-Footer-Aktionen liegen im Drawer
-ConfirmDialog liegt über dem Drawer
-Speichern schließt den Drawer, wenn fachlich sinnvoll
-```
-
-### Dialog-Layer
-
-`ConfirmDialog` liegt über geöffneten Drawern.
-
-## Letzter Feinschliff
-
-Die verschachtelten Sortierheader wurden in Angeboten, Rechnungen und Aufträgen entfernt. Damit ist die Tabellenkopf-Struktur jetzt über die Kernseiten vereinheitlicht.
-
-## Rechnungs-Workflow
-
-Der nächste Fachlogik-Workflow ist angebunden:
+Store, Datenmodell, Backup und Workflow-Seiten wurden wieder auf einen konsistenten Stand gebracht.
 
 ```text
-Auftrag → Rechnung erzeugen
-Dubletten-Schutz über orderId
-Rechnung wird mit orderId und orderNumber verknüpft
-Rechnung übernimmt Kunde und Produkt aus Auftrag
+printPilotStore.ts enthält deliveryNotes, invoices, reminders
+PrintPilotStore.tsx enthält add/update für deliveryNotes, invoices, reminders
+backup.ts kennt deliveryNotes, invoices, reminders
+DeliveryNotesPage liest aus dem Store
+InvoicesPage liest aus dem Store und enthält Mahnungs-Statusschutz
+RemindersPage liest aus dem Store
 ```
 
-## Workflow-Store-Merge
-
-Lieferschein- und Rechnungs-Workflows sind gemeinsam im Store angebunden.
-
-```text
-Auftrag → Lieferschein
-Auftrag → Rechnung
-beide mit Dubletten-Schutz über orderId
-Store enthält deliveryNotes und invoices
-```
-
-## Mahn-Workflow
-
-Der nächste Fachlogik-Workflow ist angebunden:
-
-```text
-Rechnung → Mahnung erzeugen
-Dubletten-Schutz über invoiceId
-Mahnung wird mit invoiceId und invoiceNumber verknüpft
-Mahnung übernimmt Kunde und Betreff aus Rechnung
-Mahnstufe startet mit 1. Mahnung
-```
-
-- Hotfix: addReminder wird im PrintPilotStoreContext-Value mitgegeben
-
-## Nummernkreise
-
-Dokumentnummern werden jetzt zentral über Einstellungen geführt.
-
-```text
-AG = Angebot
-AU = Auftrag
-LS = Lieferschein
-RE = Rechnung
-MA = Mahnung
-```
-
-Die Workflow-Factories verwenden Prefix und NextNumber aus den Einstellungen. Beim Anlegen eines Dokuments erhöht der Store den jeweiligen NextNumber-Wert automatisch.
-
-- Nummernkreise werden in den Einstellungen jetzt als Karten pro Dokumenttyp dargestellt
-
-- Nummernkreis-Kartenlayout verbreitert: Felder sind nicht mehr abgeschnitten
-
-- Nummernkreis-Kartenlayout auf maximal 3 Karten nebeneinander umgestellt
-
-- Nummernkreis-Karten haben jetzt mehr Innenabstand zum Panelrand
-
-## Statuslogik: Rechnung → Mahnung
-
-Mahnungserzeugung ist jetzt statusabhängig:
-
-```text
-Erlaubt: Rechnung Offen, Überfällig
-Gesperrt: Rechnung Entwurf, Bezahlt
-```
-
-Bei gesperrtem Status wird ein Hinweis angezeigt und keine Mahnung erzeugt.
-
-- Hotfix: Mahnungssperre nutzt jetzt den aktuellen Rechnungs-Draft und deaktiviert den Button bei Entwurf/Bezahlt
+Die Statusfolge `Rechnung Bezahlt → Mahnung Erledigt` liegt zentral in `updateInvoice()`.

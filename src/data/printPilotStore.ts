@@ -1010,6 +1010,31 @@ export const initialPrintPilotInvoices: PrintPilotInvoice[] = [
   },
 ];
 
+export function createPrintPilotQuoteFromSettings(
+  settings: PrintPilotSettings,
+): PrintPilotQuote {
+  const number = formatPrintPilotDocumentNumber(
+    settings.quotePrefix,
+    settings.quoteNextNumber,
+  );
+  const quoteDate = new Date().toISOString().slice(0, 10);
+  const validUntil = addDaysToIsoDate(quoteDate, 14);
+
+  return {
+    id: `quote-${number.toLowerCase()}`,
+    number,
+    customerId: null,
+    customerName: "",
+    subject: "",
+    status: "Entwurf",
+    quoteDate,
+    validUntil,
+    paymentTerms: "14 Tage netto",
+    deliveryTerms: "Abholung",
+    template: "Standardangebot",
+  };
+}
+
 function getNextOrderNumber(orders: PrintPilotOrder[]) {
   const year = new Date().getFullYear();
   const numbersForYear = orders
@@ -1327,6 +1352,11 @@ export function synchronizePrintPilotNumberRanges(
     ...data,
     settings: {
       ...settings,
+      quoteNextNumber: getNextNumberFromExistingNumbers(
+        data.quotes.map((quote) => quote.number),
+        settings.quotePrefix,
+        settings.quoteNextNumber,
+      ),
       orderNextNumber: getNextNumberFromExistingNumbers(
         data.orders.map((order) => order.number),
         settings.orderPrefix,

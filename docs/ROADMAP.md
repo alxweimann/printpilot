@@ -9,3 +9,5 @@ Stand: 14.05.2026
 - Seitenlayout/Scrollcontainer können Drawer-Position nicht mehr beeinflussen
 - Hotfix erledigt: Workflow-Store, Backup und Dokumentseiten wieder konsistent ausgerichtet
 - Hotfix erledigt: Nummernkreise werden mit vorhandenen Dokumentnummern synchronisiert
+- Erledigt: Neues Angebot erstellen mit AG-Nummernkreis angebunden
+- Hotfix erledigt: Angebotsänderungen synchronisieren verknüpfte Aufträge und Folgebelege

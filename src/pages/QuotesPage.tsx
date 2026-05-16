@@ -5,6 +5,7 @@ import {
   type PrintPilotQuote,
   type PrintPilotQuoteStatus,
   createPrintPilotOrderFromQuote,
+  createPrintPilotQuoteFromSettings,
   groupPrintPilotQuotesByStatus,
 } from "../data/printPilotStore";
 import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
@@ -102,7 +103,14 @@ function isQuoteTab(tab: string): tab is QuoteTab {
 
 export function QuotesPage() {
   const module = getModuleConfig("quotes");
-  const { addOrder, orders, quotes, settings, updateQuote } = usePrintPilotStore();
+  const {
+    addOrder,
+    addQuote,
+    orders,
+    quotes,
+    settings,
+    updateQuote,
+  } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
@@ -180,6 +188,22 @@ export function QuotesPage() {
     setIsEditing((currentValue) => !currentValue);
   }
 
+  function handleCreateNewQuote() {
+    const newQuote = createPrintPilotQuoteFromSettings(settings);
+
+    addQuote(newQuote);
+    saveDraft(newQuote);
+    setActiveTab("Alle Angebote");
+    setIsEditing(true);
+    setIsDetailDrawerOpen(true);
+    setIsCreateOrderDialogOpen(false);
+    setIsDuplicateOrderDialogOpen(false);
+
+    window.setTimeout(() => {
+      selectItem(newQuote.id);
+    }, 0);
+  }
+
   function handleOpenCreateOrderDialog() {
     if (!selectedQuote) {
       return;
@@ -250,6 +274,7 @@ export function QuotesPage() {
         title={module.title}
         description={module.description}
         actionLabel={module.actionLabel}
+        onAction={handleCreateNewQuote}
       />
 
       <PageTabs

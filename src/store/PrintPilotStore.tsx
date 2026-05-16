@@ -42,6 +42,7 @@ type PrintPilotStoreContextValue = {
   finishing: PrintPilotFinishingProcess[];
   templates: PrintPilotTemplate[];
   settings: PrintPilotSettings;
+  addQuote: (quote: PrintPilotQuote) => void;
   addOrder: (order: PrintPilotOrder) => void;
   addInvoice: (invoice: PrintPilotInvoice) => void;
   addReminder: (reminder: PrintPilotReminder) => void;
@@ -132,6 +133,7 @@ export function PrintPilotStoreProvider({
   function getSettingsWithIncrementedNumber(
     settings: PrintPilotSettings,
     key:
+      | "quoteNextNumber"
       | "orderNextNumber"
       | "deliveryNoteNextNumber"
       | "invoiceNextNumber"
@@ -141,6 +143,17 @@ export function PrintPilotStoreProvider({
       ...settings,
       [key]: getNextPrintPilotDocumentNumber(settings[key]),
     };
+  }
+
+  function addQuote(quote: PrintPilotQuote) {
+    setData((currentData) => ({
+      ...currentData,
+      quotes: [quote, ...currentData.quotes],
+      settings: getSettingsWithIncrementedNumber(
+        currentData.settings,
+        "quoteNextNumber",
+      ),
+    }));
   }
 
   function addOrder(order: PrintPilotOrder) {
@@ -287,12 +300,67 @@ export function PrintPilotStoreProvider({
   }
 
   function updateQuote(updatedQuote: PrintPilotQuote) {
-    setData((currentData) => ({
-      ...currentData,
-      quotes: currentData.quotes.map((quote) =>
-        quote.id === updatedQuote.id ? updatedQuote : quote,
-      ),
-    }));
+    setData((currentData) => {
+      const linkedOrderIds = currentData.orders
+        .filter((order) => order.quoteId === updatedQuote.id)
+        .map((order) => order.id);
+
+      const linkedInvoiceIds = currentData.invoices
+        .filter((invoice) => linkedOrderIds.includes(invoice.orderId))
+        .map((invoice) => invoice.id);
+
+      return {
+        ...currentData,
+        quotes: currentData.quotes.map((quote) =>
+          quote.id === updatedQuote.id ? updatedQuote : quote,
+        ),
+        orders: currentData.orders.map((order) =>
+          order.quoteId === updatedQuote.id
+            ? {
+                ...order,
+                customerId: updatedQuote.customerId,
+                customerName: updatedQuote.customerName,
+                product: updatedQuote.subject,
+                dueDate: updatedQuote.validUntil,
+              }
+            : order,
+        ),
+        deliveryNotes: currentData.deliveryNotes.map((deliveryNote) =>
+          linkedOrderIds.includes(deliveryNote.orderId)
+            ? {
+                ...deliveryNote,
+                customerId: updatedQuote.customerId,
+                customerName: updatedQuote.customerName,
+                product: updatedQuote.subject,
+                recipient:
+                  deliveryNote.recipient && deliveryNote.recipient.trim().length > 0
+                    ? deliveryNote.recipient
+                    : updatedQuote.customerName,
+              }
+            : deliveryNote,
+        ),
+        invoices: currentData.invoices.map((invoice) =>
+          linkedOrderIds.includes(invoice.orderId)
+            ? {
+                ...invoice,
+                customerId: updatedQuote.customerId,
+                customerName: updatedQuote.customerName,
+                subject: updatedQuote.subject,
+              }
+            : invoice,
+        ),
+        reminders: currentData.reminders.map((reminder) =>
+          linkedInvoiceIds.includes(reminder.invoiceId)
+            ? {
+                ...reminder,
+                customerId: updatedQuote.customerId,
+                customerName: updatedQuote.customerName,
+                subject: updatedQuote.subject,
+              }
+            : reminder,
+        ),
+      };
+    });
   }
 
   function updateService(updatedService: PrintPilotService) {
@@ -336,6 +404,7 @@ export function PrintPilotStoreProvider({
   const value = useMemo<PrintPilotStoreContextValue>(
     () => ({
       data,
+      addQuote,
       addOrder,
       addInvoice,
       addReminder,

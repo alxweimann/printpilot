@@ -141,3 +141,30 @@ MA-2026-008 → reminderNextNumber mindestens 2026-009
 ```
 
 Dadurch entstehen keine Dubletten, wenn Nummernkreise nachträglich eingeführt oder alte Daten geladen werden.
+
+## Neues Angebot erstellen
+
+Die Angebotsseite erzeugt neue Angebote über den zentralen Store.
+
+Ablauf:
+
+```text
+1. Button „Neues Angebot“ klicken
+2. Nummer wird aus quotePrefix + quoteNextNumber erzeugt
+3. Angebot wird als Entwurf gespeichert
+4. quoteNextNumber wird automatisch erhöht
+5. neuer Datensatz wird ausgewählt und im Drawer geöffnet
+6. Drawer ist direkt bearbeitbar
+```
+
+## Angebotsänderung → Folgebelege synchronisieren
+
+Änderungen an einem Angebot werden an verknüpfte Folgebelege weitergereicht.
+
+```text
+quote.id = order.quoteId
+order.id = deliveryNote.orderId / invoice.orderId
+invoice.id = reminder.invoiceId
+```
+
+Synchronisiert werden aktuell Kunde, Betreff/Produkt und Auftragsfrist.

@@ -4,9 +4,15 @@ type PageHeaderProps = {
   title: string;
   description?: string;
   actionLabel?: string;
+  onAction?: () => void;
 };
 
-export function PageHeader({ title, description, actionLabel }: PageHeaderProps) {
+export function PageHeader({
+  title,
+  description,
+  actionLabel,
+  onAction,
+}: PageHeaderProps) {
   return (
     <header className="page-header">
       <div>
@@ -14,7 +20,11 @@ export function PageHeader({ title, description, actionLabel }: PageHeaderProps)
         {description ? <p>{description}</p> : null}
       </div>
 
-      {actionLabel ? <Button variant="primary">{actionLabel}</Button> : null}
+      {actionLabel ? (
+        <Button variant="primary" onClick={onAction}>
+          {actionLabel}
+        </Button>
+      ) : null}
     </header>
   );
 }

@@ -37,3 +37,11 @@ Kritische Styles liegen direkt in `src/ui/DetailDrawer.tsx`.
 ## Workflow-Realignment
 
 Die Drawer-Aktionen der Dokumentseiten arbeiten wieder gegen denselben Store-Stand. Besonders wichtig: Rechnungen und Mahnungen werden nicht mehr statisch dargestellt, sondern über `usePrintPilotStore()` gelesen und gespeichert.
+
+## Neuer Angebotsdrawer
+
+Neue Angebote werden direkt nach dem Erstellen im Detaildrawer geöffnet. Der Drawer ist unmittelbar entsperrt, damit Kunden-/Betreff-/Konditionsdaten ergänzt werden können.
+
+## Angebotsdrawer: Kaskaden-Sync
+
+Beim Speichern eines Angebots synchronisiert der Store verknüpfte Aufträge und deren Folgebelege. Dadurch werden nachträglich ergänzte Kundendaten in bereits erzeugten Aufträgen sichtbar.

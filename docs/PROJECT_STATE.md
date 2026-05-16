@@ -36,3 +36,29 @@ synchronisiert: AU / 2026-012
 ```
 
 Die Synchronisierung erhöht Nummern nur auf den nächsten freien Stand und senkt manuell höhere Werte nicht ab.
+
+## Neues Angebot erstellen
+
+Die Angebotsseite kann jetzt neue Angebote erzeugen.
+
+```text
+Button „Neues Angebot“
+AG-Nummernkreis aus Einstellungen
+neues Angebot im Store speichern
+quoteNextNumber automatisch erhöhen
+neues Angebot direkt im Drawer öffnen
+Drawer direkt entsperrt
+```
+
+## Kaskadenlogik: Angebot aktualisiert Folgebelege
+
+Wenn ein Angebot nachträglich geändert wird, werden verknüpfte Folgebelege synchronisiert.
+
+```text
+Angebot.customerName → Auftrag.customerName
+Angebot.subject → Auftrag.product
+Angebot.validUntil → Auftrag.dueDate
+verknüpfte Lieferscheine/Rechnungen/Mahnungen werden ebenfalls aktualisiert
+```
+
+Damit bleibt ein Auftrag konsistent, wenn ein Angebot zuerst ohne Kundenname erstellt und später korrigiert wird.

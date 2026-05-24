@@ -23,6 +23,7 @@ import { Badge, type BadgeVariant } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DetailDrawer } from "../ui/DetailDrawer";
+import { DocumentPreviewDialog } from "../ui/DocumentPreviewDialog";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -266,6 +267,7 @@ export function OrdersPage() {
     useState(false);
   const [isRequiredFieldsDialogOpen, setIsRequiredFieldsDialogOpen] =
     useState(false);
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
   const [requiredFieldsActionLabel, setRequiredFieldsActionLabel] =
     useState("Folgebeleg");
 
@@ -459,6 +461,18 @@ export function OrdersPage() {
     }
 
     saveOrder(savedOrder);
+  }
+
+  function handleOpenPreviewDialog() {
+    if (!draft && !selectedOrder) {
+      return;
+    }
+
+    setIsPreviewDialogOpen(true);
+  }
+
+  function handleClosePreviewDialog() {
+    setIsPreviewDialogOpen(false);
   }
 
   function handleOpenCreateDeliveryNoteDialog() {
@@ -732,6 +746,7 @@ export function OrdersPage() {
 
             <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
 
+            <Button onClick={handleOpenPreviewDialog}>Vorschau prüfen</Button>
             <Button variant="primary" onClick={handleOpenCreateDeliveryNoteDialog}>
               Lieferschein erstellen
             </Button>
@@ -886,6 +901,68 @@ export function OrdersPage() {
           </section>
         </div>
       </DetailDrawer>
+
+      <DocumentPreviewDialog
+        open={isPreviewDialogOpen && Boolean(draft ?? selectedOrder)}
+        eyebrow="Auftragsvorschau"
+        title={(draft as PrintPilotOrder | undefined)?.number ?? selectedOrder?.number ?? "Auftrag"}
+        subtitle={
+          (draft as PrintPilotOrder | undefined)?.customerName ??
+          selectedOrder?.customerName ??
+          "Kein Kunde hinterlegt"
+        }
+        fields={[
+          {
+            label: "Kunde",
+            value:
+              (draft as PrintPilotOrder | undefined)?.customerName ??
+              selectedOrder?.customerName,
+          },
+          {
+            label: "Produkt",
+            value:
+              (draft as PrintPilotOrder | undefined)?.product ??
+              selectedOrder?.product,
+          },
+          {
+            label: "Status",
+            value:
+              (draft as PrintPilotOrder | undefined)?.status ??
+              selectedOrder?.status,
+          },
+          {
+            label: "Fällig am",
+            value:
+              (draft as PrintPilotOrder | undefined)?.dueDate ??
+              selectedOrder?.dueDate,
+          },
+          {
+            label: "Maschine",
+            value:
+              (draft as PrintPilotOrder | undefined)?.machine ??
+              selectedOrder?.machine,
+          },
+          {
+            label: "Priorität",
+            value:
+              (draft as PrintPilotOrder | undefined)?.priority ??
+              selectedOrder?.priority,
+          },
+          {
+            label: "Übergabe",
+            value:
+              (draft as PrintPilotOrder | undefined)?.handoff ??
+              selectedOrder?.handoff,
+          },
+          {
+            label: "Freigabe",
+            value:
+              (draft as PrintPilotOrder | undefined)?.approval ??
+              selectedOrder?.approval,
+          },
+        ]}
+        onClose={handleClosePreviewDialog}
+      />
 
       <ConfirmDialog
         open={isRequiredFieldsDialogOpen && Boolean(selectedOrder)}

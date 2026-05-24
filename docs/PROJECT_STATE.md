@@ -84,3 +84,15 @@ Statt fehlerhafter Folgebelege erscheint ein Hinweisdialog mit den fehlenden Ang
 ## Hotfix Pflichtfeld-Schutz Typen
 
 Die Pflichtfeld-Issue-Arrays in Angebots- und Auftragsseite sind jetzt explizit als `string[]` typisiert.
+
+## Vorschau-Button sichtbar im Footer
+
+Die Buttons `Vorschau prüfen` werden jetzt direkt in den Footern von Angebots- und Auftragsdrawer gerendert.
+
+## Vorschau-Dialog Layout-Fix
+
+Die interne Dokumentvorschau wird jetzt kleiner und weiter links vom geöffneten Detaildrawer positioniert. Dadurch liegt sie nicht mehr ungünstig hinter dem Drawer.
+
+## Vorschau-Dialog im Vordergrund
+
+Die Dokumentvorschau liegt jetzt über dem Drawer und dimmt die gesamte App. Der Drawer bleibt nicht mehr im Vordergrund.

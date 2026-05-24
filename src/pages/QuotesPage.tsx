@@ -20,6 +20,7 @@ import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DetailDrawer } from "../ui/DetailDrawer";
+import { DocumentPreviewDialog } from "../ui/DocumentPreviewDialog";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -184,6 +185,7 @@ export function QuotesPage() {
     useState(false);
   const [isRequiredFieldsDialogOpen, setIsRequiredFieldsDialogOpen] =
     useState(false);
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
 
   const quoteRowsByTab = useMemo(() => {
     return {
@@ -278,6 +280,18 @@ export function QuotesPage() {
     window.setTimeout(() => {
       selectItem(newQuote.id);
     }, 0);
+  }
+
+  function handleOpenPreviewDialog() {
+    if (!draft && !selectedQuote) {
+      return;
+    }
+
+    setIsPreviewDialogOpen(true);
+  }
+
+  function handleClosePreviewDialog() {
+    setIsPreviewDialogOpen(false);
   }
 
   function handleOpenCreateOrderDialog() {
@@ -482,6 +496,7 @@ export function QuotesPage() {
 
             <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
 
+            <Button onClick={handleOpenPreviewDialog}>Vorschau prüfen</Button>
             <Button variant="primary" onClick={handleOpenCreateOrderDialog}>
               Auftrag erstellen
             </Button>
@@ -602,6 +617,68 @@ export function QuotesPage() {
           </section>
         </div>
       </DetailDrawer>
+
+      <DocumentPreviewDialog
+        open={isPreviewDialogOpen && Boolean(draft ?? selectedQuote)}
+        eyebrow="Angebotsvorschau"
+        title={(draft as PrintPilotQuote | undefined)?.number ?? selectedQuote?.number ?? "Angebot"}
+        subtitle={
+          (draft as PrintPilotQuote | undefined)?.customerName ??
+          selectedQuote?.customerName ??
+          "Kein Kunde hinterlegt"
+        }
+        fields={[
+          {
+            label: "Kunde",
+            value:
+              (draft as PrintPilotQuote | undefined)?.customerName ??
+              selectedQuote?.customerName,
+          },
+          {
+            label: "Betreff / Produkt",
+            value:
+              (draft as PrintPilotQuote | undefined)?.subject ??
+              selectedQuote?.subject,
+          },
+          {
+            label: "Status",
+            value:
+              (draft as PrintPilotQuote | undefined)?.status ??
+              selectedQuote?.status,
+          },
+          {
+            label: "Angebotsdatum",
+            value:
+              (draft as PrintPilotQuote | undefined)?.quoteDate ??
+              selectedQuote?.quoteDate,
+          },
+          {
+            label: "Gültig bis",
+            value:
+              (draft as PrintPilotQuote | undefined)?.validUntil ??
+              selectedQuote?.validUntil,
+          },
+          {
+            label: "Zahlungsbedingungen",
+            value:
+              (draft as PrintPilotQuote | undefined)?.paymentTerms ??
+              selectedQuote?.paymentTerms,
+          },
+          {
+            label: "Lieferbedingungen",
+            value:
+              (draft as PrintPilotQuote | undefined)?.deliveryTerms ??
+              selectedQuote?.deliveryTerms,
+          },
+          {
+            label: "Vorlage",
+            value:
+              (draft as PrintPilotQuote | undefined)?.template ??
+              selectedQuote?.template,
+          },
+        ]}
+        onClose={handleClosePreviewDialog}
+      />
 
       <ConfirmDialog
         open={isRequiredFieldsDialogOpen && Boolean(selectedQuote)}

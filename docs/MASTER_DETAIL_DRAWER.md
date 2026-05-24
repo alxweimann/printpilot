@@ -61,3 +61,15 @@ Folgeaktionen in Drawern zeigen einen Warn-Dialog, wenn Pflichtangaben fehlen. D
 ## Hotfix Pflichtfeld-Dialoge Typen
 
 Die Pflichtfeld-Dialoge verwenden typisierte Issue-Listen (`string[]`).
+
+## Vorschau im Footer
+
+Die Vorschau-Aktion wird im Drawer-Footer neben den Folgeaktionen angezeigt.
+
+## Vorschau-Dialog neben Drawer
+
+Wenn der Detaildrawer geöffnet ist, bleibt der Vorschau-Dialog sichtbar und wird nicht mehr vom Drawer überlagert.
+
+## Vorschau über Drawer
+
+`DocumentPreviewDialog` liegt bewusst über dem Detaildrawer. So wird die Vorschau nicht vom Drawer verdeckt.

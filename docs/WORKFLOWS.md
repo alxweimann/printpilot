@@ -192,3 +192,15 @@ Die Prüfung läuft sowohl beim Öffnen der Aktion als auch beim finalen Bestät
 ## Hotfix Pflichtfeld-Schutz Typen
 
 Die Arrays für fehlende Pflichtfelder sind als `string[]` typisiert, damit der Build mit `noImplicitAny` sauber läuft.
+
+## Vorschau-Button sichtbar
+
+`Vorschau prüfen` ist jetzt als echte Footer-Aktion in Angebots- und Auftragsdrawer eingebunden und öffnet `DocumentPreviewDialog`.
+
+## Vorschau-Dialog Layout
+
+Die interne Vorschau wird oberhalb der App mit höherem `z-index` gerendert und bei geöffnetem Drawer optisch nach links versetzt.
+
+## Vorschau-Dialog Vordergrund
+
+Die interne Dokumentvorschau verwendet eine höhere Overlay-Ebene und wird zentral über Drawer und App dargestellt.

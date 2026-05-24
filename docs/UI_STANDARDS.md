@@ -81,3 +81,15 @@ Workflow-Hints dürfen nur Statuswerte verwenden, die im jeweiligen Dokumenttyp 
 ## Lieferschein Workflow-Hints
 
 Lieferschein-Hints werden für `Entwurf`, `Versandbereit`, `Geliefert` und `Abgeschlossen` angezeigt.
+
+## Vorschau-Button
+
+`Vorschau prüfen` wird als sekundäre Footer-Aktion vor primären Folgeaktionen platziert.
+
+## Preview Dialog Layout
+
+`DocumentPreviewDialog` verwendet ein kompaktes Sheet und eine höhere Overlay-Ebene. Bei breiten Viewports wird die Vorschau vom rechten Drawer weg nach links versetzt.
+
+## Preview Dialog Foreground
+
+Die Vorschau nutzt `z-index: 9999`, damit sie als oberste Ebene über Drawer und App sichtbar ist.

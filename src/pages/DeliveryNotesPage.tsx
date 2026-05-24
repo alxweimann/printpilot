@@ -5,6 +5,7 @@ import {
   type PrintPilotDeliveryNote,
   type PrintPilotDeliveryNoteStatus,
   groupPrintPilotDeliveryNotesByStatus,
+  createPrintPilotHistoryEntry,
 } from "../data/printPilotStore";
 import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
 import { useEditableDraft } from "../hooks/useEditableDraft";
@@ -17,7 +18,7 @@ import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { DetailDrawer } from "../ui/DetailDrawer";
-import { DocumentPreviewDialog } from "../ui/DocumentPreviewDialog";
+import { DocumentHistory } from "../ui/DocumentHistory";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -29,7 +30,6 @@ import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
-import { WorkflowHints } from "../ui/WorkflowHints";
 import { useSortableTable } from "../ui/useSortableTable";
 
 const deliveryTabs = [
@@ -98,61 +98,12 @@ function getDeliverySortValue(
   }
 }
 
-function getDeliveryNoteWorkflowHints(
-  deliveryNote: PrintPilotDeliveryNote | undefined,
-) {
-  if (!deliveryNote) {
-    return [];
-  }
-
-  const hints = [];
-
-  if (deliveryNote.status === "Entwurf") {
-    hints.push({
-      title: "Lieferschein noch nicht ausgegeben",
-      description:
-        "Der Lieferschein ist noch ein Entwurf und sollte vor Ausgabe geprüft werden.",
-      variant: "info" as const,
-    });
-  }
-
-  if (deliveryNote.status === "Versandbereit") {
-    hints.push({
-      title: "Versand/Abholung vorbereiten",
-      description:
-        "Der Lieferschein ist bereit. Prüfe Versandart, Empfänger und Adresse.",
-      variant: "warning" as const,
-    });
-  }
-
-  if (deliveryNote.status === "Geliefert") {
-    hints.push({
-      title: "Lieferung prüfen",
-      description:
-        "Der Lieferschein ist geliefert. Prüfe, ob Rückmeldung oder Nachweis vollständig ist.",
-      variant: "info" as const,
-    });
-  }
-
-  if (deliveryNote.status === "Abgeschlossen") {
-    hints.push({
-      title: "Lieferschein abgeschlossen",
-      description:
-        "Der Lieferschein ist abgeschlossen und benötigt aktuell keine weitere Aktion.",
-      variant: "success" as const,
-    });
-  }
-
-  return hints;
-}
-
 export function DeliveryNotesPage() {
   const module = getModuleConfig("delivery-notes");
   const { deliveryNotes, updateDeliveryNote } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
-  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
 
   const deliveryRowsByTab = useMemo(() => {
     return {
@@ -176,9 +127,6 @@ export function DeliveryNotesPage() {
     useEditableDraft(selectedDeliveryNote);
 
   const canEdit = isEditing && Boolean(draft);
-  const deliveryNoteWorkflowHints = getDeliveryNoteWorkflowHints(
-    draft as PrintPilotDeliveryNote | undefined,
-  );
 
   const {
     sortedRows: sortedDeliveryRows,
@@ -220,18 +168,6 @@ export function DeliveryNotesPage() {
     setIsEditing((currentValue) => !currentValue);
   }
 
-  function handleOpenPreviewDialog() {
-    if (!draft && !selectedDeliveryNote) {
-      return;
-    }
-
-    setIsPreviewDialogOpen(true);
-  }
-
-  function handleClosePreviewDialog() {
-    setIsPreviewDialogOpen(false);
-  }
-
   function handleIssueDeliveryNote() {
     const deliveryNoteToIssue =
       (draft as PrintPilotDeliveryNote | undefined) ?? selectedDeliveryNote;
@@ -240,9 +176,15 @@ export function DeliveryNotesPage() {
       return;
     }
 
+    const previousHistory = deliveryNoteToIssue.history ?? [];
+
     const issuedDeliveryNote: PrintPilotDeliveryNote = {
       ...deliveryNoteToIssue,
       status: "Versandbereit",
+      history: [
+        createPrintPilotHistoryEntry("Lieferschein ausgegeben", "Versandbereit"),
+        ...previousHistory,
+      ],
     };
 
     updateDeliveryNote(issuedDeliveryNote);
@@ -396,7 +338,7 @@ export function DeliveryNotesPage() {
             />
 
             <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-            <Button onClick={handleOpenPreviewDialog}>Vorschau prüfen</Button>
+            <Button>Vorschau prüfen</Button>
             <SaveActionButton
               isDirty={isDirty}
               defaultLabel="Änderungen speichern"
@@ -408,8 +350,8 @@ export function DeliveryNotesPage() {
           </>
         }
       >
-        <WorkflowHints hints={deliveryNoteWorkflowHints} />
 
+        <DocumentHistory entries={(draft as PrintPilotDeliveryNote | undefined)?.history ?? selectedDeliveryNote?.history} />
         <section className="workspace-panel">
           <SectionHeader>Lieferscheinkopf</SectionHeader>
 
@@ -540,72 +482,6 @@ export function DeliveryNotesPage() {
           </FieldGrid>
         </section>
       </DetailDrawer>
-      <DocumentPreviewDialog
-        open={isPreviewDialogOpen && Boolean(draft ?? selectedDeliveryNote)}
-        eyebrow="Lieferscheinvorschau"
-        title={
-          (draft as PrintPilotDeliveryNote | undefined)?.number ??
-          selectedDeliveryNote?.number ??
-          "Lieferschein"
-        }
-        subtitle={
-          (draft as PrintPilotDeliveryNote | undefined)?.customerName ??
-          selectedDeliveryNote?.customerName ??
-          "Kein Kunde hinterlegt"
-        }
-        fields={[
-          {
-            label: "Kunde",
-            value:
-              (draft as PrintPilotDeliveryNote | undefined)?.customerName ??
-              selectedDeliveryNote?.customerName,
-          },
-          {
-            label: "Auftrag",
-            value:
-              (draft as PrintPilotDeliveryNote | undefined)?.orderNumber ??
-              selectedDeliveryNote?.orderNumber,
-          },
-          {
-            label: "Produkt",
-            value:
-              (draft as PrintPilotDeliveryNote | undefined)?.product ??
-              selectedDeliveryNote?.product,
-          },
-          {
-            label: "Status",
-            value:
-              (draft as PrintPilotDeliveryNote | undefined)?.status ??
-              selectedDeliveryNote?.status,
-          },
-          {
-            label: "Versandart",
-            value:
-              (draft as PrintPilotDeliveryNote | undefined)?.shippingMethod ??
-              selectedDeliveryNote?.shippingMethod,
-          },
-          {
-            label: "Empfänger",
-            value:
-              (draft as PrintPilotDeliveryNote | undefined)?.recipient ??
-              selectedDeliveryNote?.recipient,
-          },
-          {
-            label: "Adresse",
-            value:
-              (draft as PrintPilotDeliveryNote | undefined)?.address ??
-              selectedDeliveryNote?.address,
-          },
-          {
-            label: "Vorlage",
-            value:
-              (draft as PrintPilotDeliveryNote | undefined)?.template ??
-              selectedDeliveryNote?.template,
-          },
-        ]}
-        onClose={handleClosePreviewDialog}
-      />
-
     </div>
   );
 }

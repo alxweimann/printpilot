@@ -19,6 +19,25 @@ export type PrintPilotCustomer = {
   badgeVariant?: "success";
 };
 
+export type PrintPilotHistoryEntry = {
+  id: PrintPilotId;
+  createdAt: string;
+  action: string;
+  status: string;
+};
+
+export function createPrintPilotHistoryEntry(
+  action: string,
+  status: string,
+): PrintPilotHistoryEntry {
+  return {
+    id: `history-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    createdAt: new Date().toISOString(),
+    action,
+    status,
+  };
+}
+
 export type PrintPilotQuoteStatus =
   | "Entwurf"
   | "Offen"
@@ -38,6 +57,7 @@ export type PrintPilotQuote = {
   deliveryTerms: string;
   template: string;
   badgeVariant?: "success";
+  history?: PrintPilotHistoryEntry[];
 };
 
 export type PrintPilotMaterialStatus =
@@ -145,6 +165,7 @@ export type PrintPilotReminder = {
   template: string;
   note: string;
   badgeVariant?: "success";
+  history?: PrintPilotHistoryEntry[];
 };
 
 export type PrintPilotInvoiceStatus =
@@ -168,6 +189,7 @@ export type PrintPilotInvoice = {
   invoiceDate: string;
   dueDate: string;
   badgeVariant?: "success";
+  history?: PrintPilotHistoryEntry[];
 };
 
 export type PrintPilotDeliveryNoteStatus =
@@ -190,6 +212,7 @@ export type PrintPilotDeliveryNote = {
   address: string;
   template: string;
   badgeVariant?: "success";
+  history?: PrintPilotHistoryEntry[];
 };
 
 export type PrintPilotServiceStatus = "Aktiv" | "Optional" | "Archiv";

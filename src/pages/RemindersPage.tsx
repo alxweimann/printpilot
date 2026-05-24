@@ -5,6 +5,7 @@ import {
   type PrintPilotReminder,
   type PrintPilotReminderStatus,
   groupPrintPilotRemindersByStatus,
+  createPrintPilotHistoryEntry,
 } from "../data/printPilotStore";
 import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
 import { useEditableDraft } from "../hooks/useEditableDraft";
@@ -17,7 +18,7 @@ import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { DetailDrawer } from "../ui/DetailDrawer";
-import { DocumentPreviewDialog } from "../ui/DocumentPreviewDialog";
+import { DocumentHistory } from "../ui/DocumentHistory";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -30,7 +31,6 @@ import { DataTable, TableToolbar } from "../ui/Table";
 import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
-import { WorkflowHints } from "../ui/WorkflowHints";
 
 const reminderTabs = ["Liste", "Entwurf", "Offen", "Versendet", "Erledigt"] as const;
 
@@ -88,55 +88,12 @@ function getReminderSortValue(reminder: PrintPilotReminder, sortKey: ReminderSor
   }
 }
 
-function getReminderWorkflowHints(reminder: PrintPilotReminder | undefined) {
-  if (!reminder) {
-    return [];
-  }
-
-  const hints = [];
-
-  if (reminder.status === "Entwurf") {
-    hints.push({
-      title: "Mahnung noch nicht versendet",
-      description: "Die Mahnung ist vorbereitet, aber noch nicht ausgegeben.",
-      variant: "info" as const,
-    });
-  }
-
-  if (reminder.status === "Offen") {
-    hints.push({
-      title: "Zahlungseingang prüfen",
-      description: "Die Mahnung ist offen. Prüfe, ob bereits eine Zahlung eingegangen ist.",
-      variant: "warning" as const,
-    });
-  }
-
-  if (reminder.status === "Versendet") {
-    hints.push({
-      title: "Frist überwachen",
-      description: "Die Mahnung wurde versendet. Behalte die gesetzte Zahlungsfrist im Blick.",
-      variant: "info" as const,
-    });
-  }
-
-  if (reminder.status === "Erledigt") {
-    hints.push({
-      title: "Mahnung abgeschlossen",
-      description: "Die Mahnung ist erledigt und benötigt aktuell keine weitere Aktion.",
-      variant: "success" as const,
-    });
-  }
-
-  return hints;
-}
-
 export function RemindersPage() {
   const module = getModuleConfig("reminders");
   const { reminders, updateReminder } = usePrintPilotStore();
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
-  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
 
   const reminderRowsByTab = useMemo(() => {
     return {
@@ -160,9 +117,6 @@ export function RemindersPage() {
     useEditableDraft(selectedReminder);
 
   const canEdit = isEditing && Boolean(draft);
-  const reminderWorkflowHints = getReminderWorkflowHints(
-    draft as PrintPilotReminder | undefined,
-  );
 
   const {
     sortedRows: sortedReminderRows,
@@ -203,18 +157,6 @@ export function RemindersPage() {
     setIsEditing((currentValue) => !currentValue);
   }
 
-  function handleOpenPreviewDialog() {
-    if (!draft && !selectedReminder) {
-      return;
-    }
-
-    setIsPreviewDialogOpen(true);
-  }
-
-  function handleClosePreviewDialog() {
-    setIsPreviewDialogOpen(false);
-  }
-
   function handleIssueReminder() {
     const reminderToIssue =
       (draft as PrintPilotReminder | undefined) ?? selectedReminder;
@@ -223,9 +165,15 @@ export function RemindersPage() {
       return;
     }
 
+    const previousHistory = reminderToIssue.history ?? [];
+
     const issuedReminder: PrintPilotReminder = {
       ...reminderToIssue,
       status: "Versendet",
+      history: [
+        createPrintPilotHistoryEntry("Mahnung versendet", "Versendet"),
+        ...previousHistory,
+      ],
     };
 
     updateReminder(issuedReminder);
@@ -382,7 +330,7 @@ export function RemindersPage() {
             />
 
             <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-            <Button onClick={handleOpenPreviewDialog}>Vorschau prüfen</Button>
+            <Button>Vorschau prüfen</Button>
             <SaveActionButton
               isDirty={isDirty}
               defaultLabel="Änderungen speichern"
@@ -394,8 +342,8 @@ export function RemindersPage() {
           </>
         }
       >
-        <WorkflowHints hints={reminderWorkflowHints} />
 
+        <DocumentHistory entries={(draft as PrintPilotReminder | undefined)?.history ?? selectedReminder?.history} />
         <section className="workspace-panel">
           <SectionHeader>Mahnkopf</SectionHeader>
 
@@ -489,72 +437,6 @@ export function RemindersPage() {
           </FieldGrid>
         </section>
       </DetailDrawer>
-      <DocumentPreviewDialog
-        open={isPreviewDialogOpen && Boolean(draft ?? selectedReminder)}
-        eyebrow="Mahnvorschau"
-        title={
-          (draft as PrintPilotReminder | undefined)?.number ??
-          selectedReminder?.number ??
-          "Mahnung"
-        }
-        subtitle={
-          (draft as PrintPilotReminder | undefined)?.customerName ??
-          selectedReminder?.customerName ??
-          "Kein Kunde hinterlegt"
-        }
-        fields={[
-          {
-            label: "Kunde",
-            value:
-              (draft as PrintPilotReminder | undefined)?.customerName ??
-              selectedReminder?.customerName,
-          },
-          {
-            label: "Rechnung",
-            value:
-              (draft as PrintPilotReminder | undefined)?.invoiceNumber ??
-              selectedReminder?.invoiceNumber,
-          },
-          {
-            label: "Betreff",
-            value:
-              (draft as PrintPilotReminder | undefined)?.subject ??
-              selectedReminder?.subject,
-          },
-          {
-            label: "Status",
-            value:
-              (draft as PrintPilotReminder | undefined)?.status ??
-              selectedReminder?.status,
-          },
-          {
-            label: "Mahnstufe",
-            value:
-              (draft as PrintPilotReminder | undefined)?.reminderLevel ??
-              selectedReminder?.reminderLevel,
-          },
-          {
-            label: "Frist",
-            value:
-              (draft as PrintPilotReminder | undefined)?.deadline ??
-              selectedReminder?.deadline,
-          },
-          {
-            label: "Vorlage",
-            value:
-              (draft as PrintPilotReminder | undefined)?.template ??
-              selectedReminder?.template,
-          },
-          {
-            label: "Notiz",
-            value:
-              (draft as PrintPilotReminder | undefined)?.note ??
-              selectedReminder?.note,
-          },
-        ]}
-        onClose={handleClosePreviewDialog}
-      />
-
     </div>
   );
 }

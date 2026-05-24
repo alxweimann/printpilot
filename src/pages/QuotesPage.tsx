@@ -7,6 +7,7 @@ import {
   createPrintPilotOrderFromQuote,
   createPrintPilotQuoteFromSettings,
   groupPrintPilotQuotesByStatus,
+  createPrintPilotHistoryEntry,
 } from "../data/printPilotStore";
 import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
 import { useEditableDraft } from "../hooks/useEditableDraft";
@@ -20,7 +21,7 @@ import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DetailDrawer } from "../ui/DetailDrawer";
-import { DocumentPreviewDialog } from "../ui/DocumentPreviewDialog";
+import { DocumentHistory } from "../ui/DocumentHistory";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -103,28 +104,6 @@ function isQuoteTab(tab: string): tab is QuoteTab {
   return quoteTabs.includes(tab as QuoteTab);
 }
 
-function getQuoteRequiredFieldIssues(quote: PrintPilotQuote | undefined) {
-  const issues: string[] = [];
-
-  if (!quote) {
-    return issues;
-  }
-
-  if (!quote.customerName || quote.customerName.trim().length === 0) {
-    issues.push("Kunde fehlt");
-  }
-
-  if (!quote.subject || quote.subject.trim().length === 0) {
-    issues.push("Betreff/Produkt fehlt");
-  }
-
-  if (!quote.validUntil || quote.validUntil.trim().length === 0) {
-    issues.push("Gültigkeit fehlt");
-  }
-
-  return issues;
-}
-
 function getQuoteWorkflowHints(quote: PrintPilotQuote | undefined) {
   if (!quote) {
     return [];
@@ -183,9 +162,6 @@ export function QuotesPage() {
   const [isCreateOrderDialogOpen, setIsCreateOrderDialogOpen] = useState(false);
   const [isDuplicateOrderDialogOpen, setIsDuplicateOrderDialogOpen] =
     useState(false);
-  const [isRequiredFieldsDialogOpen, setIsRequiredFieldsDialogOpen] =
-    useState(false);
-  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
 
   const quoteRowsByTab = useMemo(() => {
     return {
@@ -212,11 +188,7 @@ export function QuotesPage() {
   const existingOrderForSelectedQuote = selectedQuote
     ? orders.find((order) => order.quoteId === selectedQuote.id)
     : undefined;
-  const quoteDraft = draft as PrintPilotQuote | undefined;
-  const quoteWorkflowHints = getQuoteWorkflowHints(quoteDraft);
-  const quoteRequiredFieldIssues = getQuoteRequiredFieldIssues(
-    quoteDraft ?? selectedQuote,
-  );
+  const quoteWorkflowHints = getQuoteWorkflowHints(draft as PrintPilotQuote | undefined);
 
   const {
     sortedRows: sortedQuoteRows,
@@ -234,7 +206,6 @@ export function QuotesPage() {
       setIsDetailDrawerOpen(false);
       setIsCreateOrderDialogOpen(false);
       setIsDuplicateOrderDialogOpen(false);
-      setIsRequiredFieldsDialogOpen(false);
     }
   }
 
@@ -244,7 +215,6 @@ export function QuotesPage() {
     setIsDetailDrawerOpen(true);
     setIsCreateOrderDialogOpen(false);
     setIsDuplicateOrderDialogOpen(false);
-    setIsRequiredFieldsDialogOpen(false);
   }
 
   function handleCloseDetailDrawer() {
@@ -252,7 +222,6 @@ export function QuotesPage() {
     setIsDetailDrawerOpen(false);
     setIsCreateOrderDialogOpen(false);
     setIsDuplicateOrderDialogOpen(false);
-    setIsRequiredFieldsDialogOpen(false);
   }
 
   function handleResetDraft() {
@@ -275,32 +244,14 @@ export function QuotesPage() {
     setIsDetailDrawerOpen(true);
     setIsCreateOrderDialogOpen(false);
     setIsDuplicateOrderDialogOpen(false);
-    setIsRequiredFieldsDialogOpen(false);
 
     window.setTimeout(() => {
       selectItem(newQuote.id);
     }, 0);
   }
 
-  function handleOpenPreviewDialog() {
-    if (!draft && !selectedQuote) {
-      return;
-    }
-
-    setIsPreviewDialogOpen(true);
-  }
-
-  function handleClosePreviewDialog() {
-    setIsPreviewDialogOpen(false);
-  }
-
   function handleOpenCreateOrderDialog() {
     if (!selectedQuote) {
-      return;
-    }
-
-    if (quoteRequiredFieldIssues.length > 0) {
-      setIsRequiredFieldsDialogOpen(true);
       return;
     }
 
@@ -320,25 +271,10 @@ export function QuotesPage() {
     setIsDuplicateOrderDialogOpen(false);
   }
 
-  function handleCancelRequiredFieldsDialog() {
-    setIsRequiredFieldsDialogOpen(false);
-  }
-
   function handleCreateOrderFromQuote() {
-    if (!selectedQuote) {
+    if (!selectedQuote || existingOrderForSelectedQuote) {
       setIsCreateOrderDialogOpen(false);
-      return;
-    }
-
-    if (quoteRequiredFieldIssues.length > 0) {
-      setIsCreateOrderDialogOpen(false);
-      setIsRequiredFieldsDialogOpen(true);
-      return;
-    }
-
-    if (existingOrderForSelectedQuote) {
-      setIsCreateOrderDialogOpen(false);
-      setIsDuplicateOrderDialogOpen(true);
+      setIsDuplicateOrderDialogOpen(Boolean(existingOrderForSelectedQuote));
       return;
     }
 
@@ -362,9 +298,15 @@ export function QuotesPage() {
       return;
     }
 
+    const previousHistory = (draft as PrintPilotQuote).history ?? [];
+
     const issuedQuote: PrintPilotQuote = {
       ...(draft as PrintPilotQuote),
       status: "Offen",
+      history: [
+        createPrintPilotHistoryEntry("Angebot ausgegeben", "Offen"),
+        ...previousHistory,
+      ],
     };
 
     updateQuote(issuedQuote);
@@ -520,7 +462,6 @@ export function QuotesPage() {
 
             <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
 
-            <Button onClick={handleOpenPreviewDialog}>Vorschau prüfen</Button>
             <Button variant="primary" onClick={handleOpenCreateOrderDialog}>
               Auftrag erstellen
             </Button>
@@ -534,6 +475,8 @@ export function QuotesPage() {
         }
       >
         <WorkflowHints hints={quoteWorkflowHints} />
+
+        <DocumentHistory entries={(draft as PrintPilotQuote | undefined)?.history ?? selectedQuote?.history} />
 
         <div className="detail-drawer-stack">
           <section className="detail-drawer-panel">
@@ -641,93 +584,6 @@ export function QuotesPage() {
           </section>
         </div>
       </DetailDrawer>
-
-      <DocumentPreviewDialog
-        open={isPreviewDialogOpen && Boolean(draft ?? selectedQuote)}
-        eyebrow="Angebotsvorschau"
-        title={(draft as PrintPilotQuote | undefined)?.number ?? selectedQuote?.number ?? "Angebot"}
-        subtitle={
-          (draft as PrintPilotQuote | undefined)?.customerName ??
-          selectedQuote?.customerName ??
-          "Kein Kunde hinterlegt"
-        }
-        fields={[
-          {
-            label: "Kunde",
-            value:
-              (draft as PrintPilotQuote | undefined)?.customerName ??
-              selectedQuote?.customerName,
-          },
-          {
-            label: "Betreff / Produkt",
-            value:
-              (draft as PrintPilotQuote | undefined)?.subject ??
-              selectedQuote?.subject,
-          },
-          {
-            label: "Status",
-            value:
-              (draft as PrintPilotQuote | undefined)?.status ??
-              selectedQuote?.status,
-          },
-          {
-            label: "Angebotsdatum",
-            value:
-              (draft as PrintPilotQuote | undefined)?.quoteDate ??
-              selectedQuote?.quoteDate,
-          },
-          {
-            label: "Gültig bis",
-            value:
-              (draft as PrintPilotQuote | undefined)?.validUntil ??
-              selectedQuote?.validUntil,
-          },
-          {
-            label: "Zahlungsbedingungen",
-            value:
-              (draft as PrintPilotQuote | undefined)?.paymentTerms ??
-              selectedQuote?.paymentTerms,
-          },
-          {
-            label: "Lieferbedingungen",
-            value:
-              (draft as PrintPilotQuote | undefined)?.deliveryTerms ??
-              selectedQuote?.deliveryTerms,
-          },
-          {
-            label: "Vorlage",
-            value:
-              (draft as PrintPilotQuote | undefined)?.template ??
-              selectedQuote?.template,
-          },
-        ]}
-        onClose={handleClosePreviewDialog}
-      />
-
-      <ConfirmDialog
-        open={isRequiredFieldsDialogOpen && Boolean(selectedQuote)}
-        title="Auftrag kann nicht erstellt werden"
-        description={
-          <>
-            Aus diesem Angebot kann noch kein Auftrag erzeugt werden, weil
-            Pflichtangaben fehlen.
-          </>
-        }
-        details={
-          <>
-            {quoteRequiredFieldIssues.map((issue) => (
-              <span key={issue}>
-                <strong>Fehlt:</strong> {issue}
-              </span>
-            ))}
-          </>
-        }
-        variant="warning"
-        cancelLabel="Schließen"
-        confirmLabel="Verstanden"
-        onCancel={handleCancelRequiredFieldsDialog}
-        onConfirm={handleCancelRequiredFieldsDialog}
-      />
 
       <ConfirmDialog
         open={isCreateOrderDialogOpen && Boolean(selectedQuote)}

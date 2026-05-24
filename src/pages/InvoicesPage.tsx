@@ -6,6 +6,7 @@ import {
   type PrintPilotInvoiceStatus,
   createPrintPilotReminderFromInvoice,
   groupPrintPilotInvoicesByStatus,
+  createPrintPilotHistoryEntry,
 } from "../data/printPilotStore";
 import { getPrintPilotStatusBadgeVariant } from "../data/statusBadges";
 import { useEditableDraft } from "../hooks/useEditableDraft";
@@ -19,7 +20,7 @@ import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DetailDrawer } from "../ui/DetailDrawer";
-import { DocumentPreviewDialog } from "../ui/DocumentPreviewDialog";
+import { DocumentHistory } from "../ui/DocumentHistory";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -32,7 +33,6 @@ import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
-import { WorkflowHints } from "../ui/WorkflowHints";
 import { formatPrintPilotDateString } from "../utils/dateFormat";
 
 const invoiceTabs = ["Liste", "Entwurf", "Offen", "Bezahlt", "Überfällig"] as const;
@@ -97,48 +97,6 @@ function getInvoiceSortValue(invoice: PrintPilotInvoice, sortKey: InvoiceSortKey
   }
 }
 
-function getInvoiceWorkflowHints(invoice: PrintPilotInvoice | undefined) {
-  if (!invoice) {
-    return [];
-  }
-
-  const hints = [];
-
-  if (invoice.status === "Entwurf") {
-    hints.push({
-      title: "Rechnung noch nicht ausgegeben",
-      description: "Die Rechnung ist noch ein Entwurf und sollte vor Versand geprüft werden.",
-      variant: "info" as const,
-    });
-  }
-
-  if (invoice.status === "Offen") {
-    hints.push({
-      title: "Zahlungseingang prüfen",
-      description: "Die Rechnung ist offen. Prüfe regelmäßig den Zahlungseingang.",
-      variant: "info" as const,
-    });
-  }
-
-  if (invoice.status === "Überfällig") {
-    hints.push({
-      title: "Mahnung prüfen",
-      description: "Die Rechnung ist überfällig. Eine Mahnung kann vorbereitet werden.",
-      variant: "warning" as const,
-    });
-  }
-
-  if (invoice.status === "Bezahlt") {
-    hints.push({
-      title: "Rechnung erledigt",
-      description: "Die Rechnung ist bezahlt. Zugehörige Mahnungen werden automatisch erledigt.",
-      variant: "success" as const,
-    });
-  }
-
-  return hints;
-}
-
 export function InvoicesPage() {
   const module = getModuleConfig("invoices");
   const {
@@ -151,7 +109,6 @@ export function InvoicesPage() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
-  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
   const [isCreateReminderDialogOpen, setIsCreateReminderDialogOpen] =
     useState(false);
   const [isDuplicateReminderDialogOpen, setIsDuplicateReminderDialogOpen] =
@@ -193,7 +150,6 @@ export function InvoicesPage() {
 
   const canEdit = isEditing && Boolean(draft);
   const draftInvoice = draft as PrintPilotInvoice | undefined;
-  const invoiceWorkflowHints = getInvoiceWorkflowHints(draftInvoice);
   const invoiceForReminderGuard = draftInvoice ?? selectedInvoice;
   const existingReminderForSelectedInvoice = selectedInvoice
     ? reminders.find((reminder) => reminder.invoiceId === selectedInvoice.id)
@@ -242,26 +198,20 @@ export function InvoicesPage() {
     setIsEditing((currentValue) => !currentValue);
   }
 
-  function handleOpenPreviewDialog() {
-    if (!draft && !selectedInvoice) {
-      return;
-    }
-
-    setIsPreviewDialogOpen(true);
-  }
-
-  function handleClosePreviewDialog() {
-    setIsPreviewDialogOpen(false);
-  }
-
   function handleIssueInvoice() {
     if (!draft) {
       return;
     }
 
+    const previousHistory = (draft as PrintPilotInvoice).history ?? [];
+
     const issuedInvoice: PrintPilotInvoice = {
       ...(draft as PrintPilotInvoice),
       status: "Offen",
+      history: [
+        createPrintPilotHistoryEntry("Rechnung ausgegeben", "Offen"),
+        ...previousHistory,
+      ],
     };
 
     updateInvoice(issuedInvoice);
@@ -487,7 +437,7 @@ export function InvoicesPage() {
             />
 
             <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-            <Button onClick={handleOpenPreviewDialog}>Vorschau prüfen</Button>
+            <Button>Vorschau prüfen</Button>
             <Button
               variant="primary"
               disabled={!canCreateReminderFromSelectedInvoice}
@@ -506,8 +456,8 @@ export function InvoicesPage() {
           </>
         }
       >
-        <WorkflowHints hints={invoiceWorkflowHints} />
 
+        <DocumentHistory entries={(draft as PrintPilotInvoice | undefined)?.history ?? selectedInvoice?.history} />
         <div className="detail-drawer-stack">
           <section className="detail-drawer-panel">
             <SectionHeader>Rechnungskopf</SectionHeader>
@@ -668,78 +618,6 @@ export function InvoicesPage() {
           </section>
         </div>
       </DetailDrawer>
-
-      <DocumentPreviewDialog
-        open={isPreviewDialogOpen && Boolean(draft ?? selectedInvoice)}
-        eyebrow="Rechnungsvorschau"
-        title={
-          (draft as PrintPilotInvoice | undefined)?.number ??
-          selectedInvoice?.number ??
-          "Rechnung"
-        }
-        subtitle={
-          (draft as PrintPilotInvoice | undefined)?.customerName ??
-          selectedInvoice?.customerName ??
-          "Kein Kunde hinterlegt"
-        }
-        fields={[
-          {
-            label: "Kunde",
-            value:
-              (draft as PrintPilotInvoice | undefined)?.customerName ??
-              selectedInvoice?.customerName,
-          },
-          {
-            label: "Auftrag",
-            value:
-              (draft as PrintPilotInvoice | undefined)?.orderNumber ??
-              selectedInvoice?.orderNumber,
-          },
-          {
-            label: "Betreff",
-            value:
-              (draft as PrintPilotInvoice | undefined)?.subject ??
-              selectedInvoice?.subject,
-          },
-          {
-            label: "Status",
-            value:
-              (draft as PrintPilotInvoice | undefined)?.status ??
-              selectedInvoice?.status,
-          },
-          {
-            label: "Rechnungsdatum",
-            value:
-              (draft as PrintPilotInvoice | undefined)?.invoiceDate ??
-              selectedInvoice?.invoiceDate,
-          },
-          {
-            label: "Fällig am",
-            value:
-              (draft as PrintPilotInvoice | undefined)?.dueDate ??
-              selectedInvoice?.dueDate,
-          },
-          {
-            label: "Zahlungsbedingungen",
-            value:
-              (draft as PrintPilotInvoice | undefined)?.paymentTerms ??
-              selectedInvoice?.paymentTerms,
-          },
-          {
-            label: "Zahlungsart",
-            value:
-              (draft as PrintPilotInvoice | undefined)?.paymentType ??
-              selectedInvoice?.paymentType,
-          },
-          {
-            label: "Vorlage",
-            value:
-              (draft as PrintPilotInvoice | undefined)?.template ??
-              selectedInvoice?.template,
-          },
-        ]}
-        onClose={handleClosePreviewDialog}
-      />
 
       <ConfirmDialog
         open={isReminderStatusBlockedDialogOpen && Boolean(selectedInvoice)}

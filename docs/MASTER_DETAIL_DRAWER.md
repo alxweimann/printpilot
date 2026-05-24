@@ -38,50 +38,6 @@ Kritische Styles liegen direkt in `src/ui/DetailDrawer.tsx`.
 
 Drawer können oberhalb der Detailbereiche eine kompakte Hinweis-Ampel anzeigen. Die Hinweise sind nicht blockierend, sondern sollen fachliche Lücken sichtbar machen.
 
-## Workflow-Hinweise in Rechnungs- und Mahnungsdrawern
+## Dokumenthistorie im Drawer
 
-Rechnungs- und Mahnungsdrawer verwenden die gemeinsame Komponente `WorkflowHints`, um Statushinweise direkt oberhalb der Detailbereiche anzuzeigen.
-
-## Workflow-Hinweise im Lieferscheindrawer
-
-Der Lieferscheindrawer verwendet die gemeinsame Komponente `WorkflowHints`, um Statushinweise direkt oberhalb der Detailbereiche anzuzeigen.
-
-## Hotfix Lieferscheindrawer
-
-Die Status-Hinweise im Lieferscheindrawer sind jetzt typkonform zum aktuellen Datenmodell.
-
-## Hotfix Lieferscheindrawer Hinweise
-
-Der Lieferscheindrawer rendert `WorkflowHints` direkt oberhalb des ersten Inhaltsbereichs.
-
-## Pflichtfeld-Dialoge im Drawer
-
-Folgeaktionen in Drawern zeigen einen Warn-Dialog, wenn Pflichtangaben fehlen. Dadurch werden unvollständige Aufträge, Lieferscheine oder Rechnungen verhindert.
-
-## Hotfix Pflichtfeld-Dialoge Typen
-
-Die Pflichtfeld-Dialoge verwenden typisierte Issue-Listen (`string[]`).
-
-## Vorschau im Footer
-
-Die Vorschau-Aktion wird im Drawer-Footer neben den Folgeaktionen angezeigt.
-
-## Vorschau-Dialog neben Drawer
-
-Wenn der Detaildrawer geöffnet ist, bleibt der Vorschau-Dialog sichtbar und wird nicht mehr vom Drawer überlagert.
-
-## Vorschau über Drawer
-
-`DocumentPreviewDialog` liegt bewusst über dem Detaildrawer. So wird die Vorschau nicht vom Drawer verdeckt.
-
-## Vorschau für alle Dokumentdrawer
-
-Alle wichtigen Dokumentdrawer besitzen jetzt eine `Vorschau prüfen`-Aktion, die eine interne Dokumentvorschau öffnet.
-
-## Ausgeben-Buttons
-
-Die Ausgeben-Buttons im Drawer speichern das Dokument und setzen zusätzlich den passenden Workflow-Status.
-
-## Separate Ausgeben-Aktion
-
-Lieferschein und Mahnung haben separate primäre Ausgeben-Buttons, damit Statuswechsel nicht mehr mit normalem Speichern vermischt wird.
+Dokumentdrawer zeigen über `DocumentHistory` eine kompakte Ereignishistorie. Aktuell entstehen Einträge beim Ausgeben/Versenden.

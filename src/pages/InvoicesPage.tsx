@@ -31,6 +31,7 @@ import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
+import { WorkflowHints } from "../ui/WorkflowHints";
 import { formatPrintPilotDateString } from "../utils/dateFormat";
 
 const invoiceTabs = ["Liste", "Entwurf", "Offen", "Bezahlt", "Überfällig"] as const;
@@ -95,6 +96,48 @@ function getInvoiceSortValue(invoice: PrintPilotInvoice, sortKey: InvoiceSortKey
   }
 }
 
+function getInvoiceWorkflowHints(invoice: PrintPilotInvoice | undefined) {
+  if (!invoice) {
+    return [];
+  }
+
+  const hints = [];
+
+  if (invoice.status === "Entwurf") {
+    hints.push({
+      title: "Rechnung noch nicht ausgegeben",
+      description: "Die Rechnung ist noch ein Entwurf und sollte vor Versand geprüft werden.",
+      variant: "info" as const,
+    });
+  }
+
+  if (invoice.status === "Offen") {
+    hints.push({
+      title: "Zahlungseingang prüfen",
+      description: "Die Rechnung ist offen. Prüfe regelmäßig den Zahlungseingang.",
+      variant: "info" as const,
+    });
+  }
+
+  if (invoice.status === "Überfällig") {
+    hints.push({
+      title: "Mahnung prüfen",
+      description: "Die Rechnung ist überfällig. Eine Mahnung kann vorbereitet werden.",
+      variant: "warning" as const,
+    });
+  }
+
+  if (invoice.status === "Bezahlt") {
+    hints.push({
+      title: "Rechnung erledigt",
+      description: "Die Rechnung ist bezahlt. Zugehörige Mahnungen werden automatisch erledigt.",
+      variant: "success" as const,
+    });
+  }
+
+  return hints;
+}
+
 export function InvoicesPage() {
   const module = getModuleConfig("invoices");
   const {
@@ -148,6 +191,7 @@ export function InvoicesPage() {
 
   const canEdit = isEditing && Boolean(draft);
   const draftInvoice = draft as PrintPilotInvoice | undefined;
+  const invoiceWorkflowHints = getInvoiceWorkflowHints(draftInvoice);
   const invoiceForReminderGuard = draftInvoice ?? selectedInvoice;
   const existingReminderForSelectedInvoice = selectedInvoice
     ? reminders.find((reminder) => reminder.invoiceId === selectedInvoice.id)
@@ -424,6 +468,8 @@ export function InvoicesPage() {
           </>
         }
       >
+        <WorkflowHints hints={invoiceWorkflowHints} />
+
         <div className="detail-drawer-stack">
           <section className="detail-drawer-panel">
             <SectionHeader>Rechnungskopf</SectionHeader>

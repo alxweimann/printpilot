@@ -40,3 +40,12 @@ Damit wird das PrintPilot-Layout wieder korrekt geladen und die App fällt nicht
 ## CSS-Import Typdeklaration
 
 `src/vite-env.d.ts` wurde ergänzt, damit TypeScript CSS-Side-Effect-Imports wie `import "./styles/globals.css";` akzeptiert.
+
+## Workflow-Hinweise für Rechnungen und Mahnungen
+
+Rechnungs- und Mahnungsdrawer zeigen jetzt fachliche Statushinweise.
+
+```text
+Rechnung: Entwurf, Offen, Überfällig, Bezahlt
+Mahnung: Entwurf, Offen, Versendet, Erledigt
+```

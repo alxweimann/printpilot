@@ -65,3 +65,7 @@ Für globale CSS-Imports muss `src/vite-env.d.ts` vorhanden sein:
 ```ts
 /// <reference types="vite/client" />
 ```
+
+## Workflow-Hints für Belegstatus
+
+Die Workflow-Hints werden auch für Rechnungs- und Mahnungsstatus verwendet. Kritische Zustände wie `Überfällig` oder offene Mahnungen werden als `warning` dargestellt.

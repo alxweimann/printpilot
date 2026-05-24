@@ -29,6 +29,7 @@ import { DataTable, TableToolbar } from "../ui/Table";
 import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
+import { WorkflowHints } from "../ui/WorkflowHints";
 
 const reminderTabs = ["Liste", "Entwurf", "Offen", "Versendet", "Erledigt"] as const;
 
@@ -86,6 +87,48 @@ function getReminderSortValue(reminder: PrintPilotReminder, sortKey: ReminderSor
   }
 }
 
+function getReminderWorkflowHints(reminder: PrintPilotReminder | undefined) {
+  if (!reminder) {
+    return [];
+  }
+
+  const hints = [];
+
+  if (reminder.status === "Entwurf") {
+    hints.push({
+      title: "Mahnung noch nicht versendet",
+      description: "Die Mahnung ist vorbereitet, aber noch nicht ausgegeben.",
+      variant: "info" as const,
+    });
+  }
+
+  if (reminder.status === "Offen") {
+    hints.push({
+      title: "Zahlungseingang prüfen",
+      description: "Die Mahnung ist offen. Prüfe, ob bereits eine Zahlung eingegangen ist.",
+      variant: "warning" as const,
+    });
+  }
+
+  if (reminder.status === "Versendet") {
+    hints.push({
+      title: "Frist überwachen",
+      description: "Die Mahnung wurde versendet. Behalte die gesetzte Zahlungsfrist im Blick.",
+      variant: "info" as const,
+    });
+  }
+
+  if (reminder.status === "Erledigt") {
+    hints.push({
+      title: "Mahnung abgeschlossen",
+      description: "Die Mahnung ist erledigt und benötigt aktuell keine weitere Aktion.",
+      variant: "success" as const,
+    });
+  }
+
+  return hints;
+}
+
 export function RemindersPage() {
   const module = getModuleConfig("reminders");
   const { reminders, updateReminder } = usePrintPilotStore();
@@ -115,6 +158,9 @@ export function RemindersPage() {
     useEditableDraft(selectedReminder);
 
   const canEdit = isEditing && Boolean(draft);
+  const reminderWorkflowHints = getReminderWorkflowHints(
+    draft as PrintPilotReminder | undefined,
+  );
 
   const {
     sortedRows: sortedReminderRows,
@@ -304,6 +350,8 @@ export function RemindersPage() {
           </>
         }
       >
+        <WorkflowHints hints={reminderWorkflowHints} />
+
         <section className="workspace-panel">
           <SectionHeader>Mahnkopf</SectionHeader>
 

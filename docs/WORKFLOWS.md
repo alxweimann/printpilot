@@ -140,3 +140,18 @@ Auftrag ohne Maschine → Maschine fehlt
 Auftrag Freigabe ausstehend → Freigabe prüfen
 Auftrag Druckdaten prüfen → Datenprüfung offen
 ```
+
+## Workflow-Hinweise Rechnungen und Mahnungen
+
+Rechnungen und Mahnungen zeigen im Drawer Statushinweise.
+
+```text
+Rechnung Entwurf → Rechnung noch nicht ausgegeben
+Rechnung Offen → Zahlungseingang prüfen
+Rechnung Überfällig → Mahnung prüfen
+Rechnung Bezahlt → Rechnung erledigt
+Mahnung Entwurf → Mahnung noch nicht versendet
+Mahnung Offen → Zahlungseingang prüfen
+Mahnung Versendet → Frist überwachen
+Mahnung Erledigt → Mahnung abgeschlossen
+```

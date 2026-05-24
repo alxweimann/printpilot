@@ -6,3 +6,4 @@
 - Erledigt: Workflow-Hinweise für Angebote und Aufträge ergänzt
 - Hotfix erledigt: globalen CSS-Import in `src/main.tsx` wiederhergestellt
 - Hotfix erledigt: Vite/CSS-Typdeklaration für globalen CSS-Import ergänzt
+- Erledigt: Workflow-Hinweise für Rechnungen und Mahnungen ergänzt

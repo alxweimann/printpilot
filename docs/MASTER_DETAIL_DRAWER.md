@@ -37,3 +37,7 @@ Kritische Styles liegen direkt in `src/ui/DetailDrawer.tsx`.
 ## Workflow-Hinweise im Drawer
 
 Drawer können oberhalb der Detailbereiche eine kompakte Hinweis-Ampel anzeigen. Die Hinweise sind nicht blockierend, sondern sollen fachliche Lücken sichtbar machen.
+
+## Workflow-Hinweise in Rechnungs- und Mahnungsdrawern
+
+Rechnungs- und Mahnungsdrawer verwenden die gemeinsame Komponente `WorkflowHints`, um Statushinweise direkt oberhalb der Detailbereiche anzuzeigen.

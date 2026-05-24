@@ -43,3 +43,25 @@ kein Rahmen
 kein Hintergrundbalken
 zentrierte Darstellung
 ```
+
+## Workflow-Hints
+
+Workflow-Hinweise erscheinen als kompakte Karten im Drawer.
+
+```text
+warning = fachliche Lücke / kritisch
+info = Prüfung empfohlen
+success = Status ist positiv/abgeschlossen
+```
+
+## Globaler CSS-Import
+
+`src/main.tsx` muss `./styles/globals.css` importieren. Ohne diesen Import wird PrintPilot als ungestyltes Browser-HTML dargestellt.
+
+## CSS Import Types
+
+Für globale CSS-Imports muss `src/vite-env.d.ts` vorhanden sein:
+
+```ts
+/// <reference types="vite/client" />
+```

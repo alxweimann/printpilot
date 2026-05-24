@@ -21,3 +21,22 @@ Nummernkreis-Synchronisierung
 Angebot → Folgebelege Kaskade
 Auftrag → Folgebelege Normalisierung
 ```
+
+## Workflow-Hinweise in Drawern
+
+Angebots- und Auftragsdrawer zeigen jetzt fachliche Hinweise/Ampeln.
+
+```text
+Angebot: Kunde fehlt, Betreff fehlt, Gültigkeit fehlt, angenommen
+Auftrag: Maschine fehlt, Freigabe ausstehend, Druckdaten prüfen, fertig
+```
+
+## CSS-Import wiederhergestellt
+
+`src/main.tsx` importiert wieder `./styles/globals.css`.
+
+Damit wird das PrintPilot-Layout wieder korrekt geladen und die App fällt nicht mehr auf ungestyltes Browser-HTML zurück.
+
+## CSS-Import Typdeklaration
+
+`src/vite-env.d.ts` wurde ergänzt, damit TypeScript CSS-Side-Effect-Imports wie `import "./styles/globals.css";` akzeptiert.

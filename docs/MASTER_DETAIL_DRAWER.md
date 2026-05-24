@@ -33,3 +33,7 @@ Mahnungen
 `DetailDrawer` darf nicht von externen CSS-Dateien abhängen, wenn es um kritische Positionierung geht.
 
 Kritische Styles liegen direkt in `src/ui/DetailDrawer.tsx`.
+
+## Workflow-Hinweise im Drawer
+
+Drawer können oberhalb der Detailbereiche eine kompakte Hinweis-Ampel anzeigen. Die Hinweise sind nicht blockierend, sondern sollen fachliche Lücken sichtbar machen.

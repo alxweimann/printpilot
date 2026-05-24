@@ -35,6 +35,7 @@ import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
+import { WorkflowHints } from "../ui/WorkflowHints";
 import { formatPrintPilotDateString } from "../utils/dateFormat";
 
 const orderTabs = [
@@ -178,6 +179,48 @@ function getOrderSortValue(order: PrintPilotOrder, key: OrderSortKey) {
   }
 }
 
+function getOrderWorkflowHints(order: PrintPilotOrder | undefined) {
+  if (!order) {
+    return [];
+  }
+
+  const hints = [];
+
+  if (!order.machine || order.machine.trim().length === 0) {
+    hints.push({
+      title: "Maschine fehlt",
+      description: "Weise eine Druckmaschine zu, bevor der Auftrag produziert wird.",
+      variant: "warning" as const,
+    });
+  }
+
+  if (order.approval === "Freigabe ausstehend") {
+    hints.push({
+      title: "Freigabe ausstehend",
+      description: "Vor Produktion sollte die Kunden- oder interne Freigabe abgeschlossen sein.",
+      variant: "warning" as const,
+    });
+  }
+
+  if (order.handoff === "Druckdaten prüfen") {
+    hints.push({
+      title: "Druckdaten prüfen",
+      description: "Die Druckdaten sollten vor Übergabe in die Produktion geprüft werden.",
+      variant: "info" as const,
+    });
+  }
+
+  if (order.status === "Fertig") {
+    hints.push({
+      title: "Auftrag fertig",
+      description: "Lieferschein und Rechnung können final geprüft werden.",
+      variant: "success" as const,
+    });
+  }
+
+  return hints;
+}
+
 export function OrdersPage() {
   const module = getModuleConfig("orders");
   const {
@@ -227,6 +270,7 @@ export function OrdersPage() {
 
   const canEdit = isEditing && Boolean(draft);
   const draftOrder = draft as PrintPilotOrder | undefined;
+  const orderWorkflowHints = getOrderWorkflowHints(draftOrder);
   const existingDeliveryNoteForSelectedOrder = selectedOrder
     ? deliveryNotes.find((deliveryNote) => deliveryNote.orderId === selectedOrder.id)
     : undefined;
@@ -631,6 +675,8 @@ export function OrdersPage() {
           </>
         }
       >
+        <WorkflowHints hints={orderWorkflowHints} />
+
         <div className="detail-drawer-stack">
           <section className="detail-drawer-panel">
             <SectionHeader>Auftragskopf</SectionHeader>

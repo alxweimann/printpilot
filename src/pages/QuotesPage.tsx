@@ -32,6 +32,7 @@ import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { useSortableTable } from "../ui/useSortableTable";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
+import { WorkflowHints } from "../ui/WorkflowHints";
 import { formatPrintPilotDateString } from "../utils/dateFormat";
 
 const quoteTabs = [
@@ -101,6 +102,48 @@ function isQuoteTab(tab: string): tab is QuoteTab {
   return quoteTabs.includes(tab as QuoteTab);
 }
 
+function getQuoteWorkflowHints(quote: PrintPilotQuote | undefined) {
+  if (!quote) {
+    return [];
+  }
+
+  const hints = [];
+
+  if (!quote.customerName || quote.customerName.trim().length === 0) {
+    hints.push({
+      title: "Kunde fehlt",
+      description: "Ergänze einen Kunden, bevor aus dem Angebot ein Auftrag erzeugt wird.",
+      variant: "warning" as const,
+    });
+  }
+
+  if (!quote.subject || quote.subject.trim().length === 0) {
+    hints.push({
+      title: "Betreff/Produkt fehlt",
+      description: "Ohne Betreff ist der Folgeauftrag später nicht eindeutig.",
+      variant: "warning" as const,
+    });
+  }
+
+  if (!quote.validUntil || quote.validUntil.trim().length === 0) {
+    hints.push({
+      title: "Gültigkeit fehlt",
+      description: "Lege fest, bis wann das Angebot gültig ist.",
+      variant: "info" as const,
+    });
+  }
+
+  if (quote.status === "Angenommen") {
+    hints.push({
+      title: "Angebot angenommen",
+      description: "Dieses Angebot kann als Auftrag weitergeführt werden.",
+      variant: "success" as const,
+    });
+  }
+
+  return hints;
+}
+
 export function QuotesPage() {
   const module = getModuleConfig("quotes");
   const {
@@ -143,6 +186,7 @@ export function QuotesPage() {
   const existingOrderForSelectedQuote = selectedQuote
     ? orders.find((order) => order.quoteId === selectedQuote.id)
     : undefined;
+  const quoteWorkflowHints = getQuoteWorkflowHints(draft as PrintPilotQuote | undefined);
 
   const {
     sortedRows: sortedQuoteRows,
@@ -398,6 +442,8 @@ export function QuotesPage() {
           </>
         }
       >
+        <WorkflowHints hints={quoteWorkflowHints} />
+
         <div className="detail-drawer-stack">
           <section className="detail-drawer-panel">
             <SectionHeader>Angebotskopf</SectionHeader>

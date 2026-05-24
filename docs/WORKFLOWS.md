@@ -127,3 +127,16 @@ Auftrag → Rechnung
 Rechnung → Mahnung
 Angebot/Auftrag Änderungen → Folgebelege synchronisieren
 ```
+
+## Workflow-Hinweise
+
+Die ersten Dokumentdrawer enthalten fachliche Hinweise.
+
+```text
+Angebot ohne Kunde → Kunde fehlt
+Angebot ohne Betreff → Betreff/Produkt fehlt
+Angebot ohne Gültigkeit → Gültigkeit fehlt
+Auftrag ohne Maschine → Maschine fehlt
+Auftrag Freigabe ausstehend → Freigabe prüfen
+Auftrag Druckdaten prüfen → Datenprüfung offen
+```

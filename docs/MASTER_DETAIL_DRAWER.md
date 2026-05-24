@@ -77,3 +77,11 @@ Wenn der Detaildrawer geöffnet ist, bleibt der Vorschau-Dialog sichtbar und wir
 ## Vorschau für alle Dokumentdrawer
 
 Alle wichtigen Dokumentdrawer besitzen jetzt eine `Vorschau prüfen`-Aktion, die eine interne Dokumentvorschau öffnet.
+
+## Ausgeben-Buttons
+
+Die Ausgeben-Buttons im Drawer speichern das Dokument und setzen zusätzlich den passenden Workflow-Status.
+
+## Separate Ausgeben-Aktion
+
+Lieferschein und Mahnung haben separate primäre Ausgeben-Buttons, damit Statuswechsel nicht mehr mit normalem Speichern vermischt wird.

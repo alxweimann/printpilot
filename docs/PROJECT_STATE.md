@@ -102,3 +102,28 @@ Die Dokumentvorschau liegt jetzt über dem Drawer und dimmt die gesamte App. Der
 Die Buttons `Vorschau prüfen` in Lieferschein-, Rechnungs- und Mahnungsdrawer öffnen jetzt interne Vorschau-Dialoge.
 
 Damit nutzen alle Belegarten denselben Vorschau-Workflow.
+
+## Ausgabe-Status für Belege
+
+Die Ausgeben-Buttons setzen jetzt fachliche Statuswerte.
+
+```text
+Angebot ausgeben → Offen
+Lieferschein ausgeben → Versandbereit
+Rechnung ausgeben → Offen
+Mahnung ausgeben → Versendet
+```
+
+Dies ist die Vorstufe zur späteren echten PDF-/Druckausgabe.
+
+## Hotfix Ausgabe-Status Lieferschein/Mahnung
+
+Lieferschein und Mahnung besitzen jetzt getrennte Aktionen:
+
+```text
+Änderungen speichern = speichert ohne Statuswechsel
+Lieferschein ausgeben = setzt Status Versandbereit
+Mahnung ausgeben = setzt Status Versendet
+```
+
+Die Ausgeben-Funktion nutzt den aktuellen Draft oder fallbackweise den ausgewählten Datensatz.

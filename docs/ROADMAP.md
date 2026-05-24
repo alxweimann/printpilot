@@ -17,3 +17,5 @@
 - Hotfix erledigt: Vorschau-Dialog Layout neben geöffnetem Drawer korrigiert
 - Hotfix erledigt: Vorschau-Dialog über den Drawer gelegt
 - Erledigt: Dokumentvorschau für Lieferscheine, Rechnungen und Mahnungen ergänzt
+- Erledigt: Ausgeben-Buttons setzen fachliche Dokumentstatuswerte
+- Hotfix erledigt: Ausgeben-Buttons für Lieferschein und Mahnung von normalem Speichern getrennt

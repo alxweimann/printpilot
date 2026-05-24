@@ -357,6 +357,30 @@ export function QuotesPage() {
     setIsCreateOrderDialogOpen(false);
   }
 
+  function handleIssueQuote() {
+    if (!draft) {
+      return;
+    }
+
+    const issuedQuote: PrintPilotQuote = {
+      ...(draft as PrintPilotQuote),
+      status: "Offen",
+    };
+
+    updateQuote(issuedQuote);
+    saveDraft(issuedQuote);
+    setIsEditing(false);
+
+    if (activeTab !== "Alle Angebote") {
+      setActiveTab("Alle Angebote");
+    }
+
+    window.setTimeout(() => {
+      selectItem(issuedQuote.id);
+      setIsDetailDrawerOpen(true);
+    }, 0);
+  }
+
   function handleSaveDraft() {
     if (!draft) {
       return;
@@ -503,8 +527,8 @@ export function QuotesPage() {
 
             <SaveActionButton
               isDirty={isDirty}
-              defaultLabel="Angebot speichern"
-              onClick={handleSaveDraft}
+              defaultLabel="Angebot ausgeben"
+              onClick={handleIssueQuote}
             />
           </>
         }

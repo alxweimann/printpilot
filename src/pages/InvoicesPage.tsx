@@ -254,6 +254,30 @@ export function InvoicesPage() {
     setIsPreviewDialogOpen(false);
   }
 
+  function handleIssueInvoice() {
+    if (!draft) {
+      return;
+    }
+
+    const issuedInvoice: PrintPilotInvoice = {
+      ...(draft as PrintPilotInvoice),
+      status: "Offen",
+    };
+
+    updateInvoice(issuedInvoice);
+    saveDraft(issuedInvoice);
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
+
+    if (activeTab !== "Liste") {
+      setActiveTab("Liste");
+    }
+
+    window.setTimeout(() => {
+      selectItem(issuedInvoice.id);
+    }, 0);
+  }
+
   function handleSaveDraft() {
     if (!draft) {
       return;
@@ -477,7 +501,7 @@ export function InvoicesPage() {
             <SaveActionButton
               isDirty={isDirty}
               defaultLabel="Rechnung ausgeben"
-              onClick={handleSaveDraft}
+              onClick={handleIssueInvoice}
             />
           </>
         }

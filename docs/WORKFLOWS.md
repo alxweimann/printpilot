@@ -214,3 +214,24 @@ Lieferschein → Lieferscheinvorschau
 Rechnung → Rechnungsvorschau
 Mahnung → Mahnvorschau
 ```
+
+## Ausgabe-Status
+
+Ausgabe-Aktionen ändern aktuell den Status des Dokuments. Eine echte PDF-Erzeugung folgt später.
+
+```text
+Angebot ausgeben = Status Offen
+Lieferschein ausgeben = Status Versandbereit
+Rechnung ausgeben = Status Offen
+Mahnung ausgeben = Status Versendet
+```
+
+## Hotfix Ausgabe-Status Lieferschein/Mahnung
+
+Lieferschein- und Mahnungsdrawer trennen jetzt Speichern und Ausgeben.
+
+```text
+Speichern → kein erzwungener Statuswechsel
+Lieferschein ausgeben → Versandbereit
+Mahnung ausgeben → Versendet
+```

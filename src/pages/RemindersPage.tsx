@@ -215,6 +215,33 @@ export function RemindersPage() {
     setIsPreviewDialogOpen(false);
   }
 
+  function handleIssueReminder() {
+    const reminderToIssue =
+      (draft as PrintPilotReminder | undefined) ?? selectedReminder;
+
+    if (!reminderToIssue) {
+      return;
+    }
+
+    const issuedReminder: PrintPilotReminder = {
+      ...reminderToIssue,
+      status: "Versendet",
+    };
+
+    updateReminder(issuedReminder);
+    saveDraft(issuedReminder);
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
+
+    if (activeTab !== "Liste") {
+      setActiveTab("Liste");
+    }
+
+    window.setTimeout(() => {
+      selectItem(issuedReminder.id);
+    }, 0);
+  }
+
   function handleSaveReminder() {
     if (!draft) {
       return;
@@ -358,9 +385,12 @@ export function RemindersPage() {
             <Button onClick={handleOpenPreviewDialog}>Vorschau prüfen</Button>
             <SaveActionButton
               isDirty={isDirty}
-              defaultLabel="Mahnung ausgeben"
+              defaultLabel="Änderungen speichern"
               onClick={handleSaveReminder}
             />
+            <Button variant="primary" onClick={handleIssueReminder}>
+              Mahnung ausgeben
+            </Button>
           </>
         }
       >

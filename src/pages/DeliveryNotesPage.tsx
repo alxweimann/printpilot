@@ -232,6 +232,33 @@ export function DeliveryNotesPage() {
     setIsPreviewDialogOpen(false);
   }
 
+  function handleIssueDeliveryNote() {
+    const deliveryNoteToIssue =
+      (draft as PrintPilotDeliveryNote | undefined) ?? selectedDeliveryNote;
+
+    if (!deliveryNoteToIssue) {
+      return;
+    }
+
+    const issuedDeliveryNote: PrintPilotDeliveryNote = {
+      ...deliveryNoteToIssue,
+      status: "Versandbereit",
+    };
+
+    updateDeliveryNote(issuedDeliveryNote);
+    saveDraft(issuedDeliveryNote);
+    setIsEditing(false);
+    setIsDetailDrawerOpen(false);
+
+    if (activeTab !== "Liste") {
+      setActiveTab("Liste");
+    }
+
+    window.setTimeout(() => {
+      selectItem(issuedDeliveryNote.id);
+    }, 0);
+  }
+
   function handleSaveDeliveryNote() {
     if (!draft) {
       return;
@@ -372,9 +399,12 @@ export function DeliveryNotesPage() {
             <Button onClick={handleOpenPreviewDialog}>Vorschau prüfen</Button>
             <SaveActionButton
               isDirty={isDirty}
-              defaultLabel="Lieferschein ausgeben"
+              defaultLabel="Änderungen speichern"
               onClick={handleSaveDeliveryNote}
             />
+            <Button variant="primary" onClick={handleIssueDeliveryNote}>
+              Lieferschein ausgeben
+            </Button>
           </>
         }
       >

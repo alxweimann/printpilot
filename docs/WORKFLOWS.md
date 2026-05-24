@@ -155,3 +155,22 @@ Mahnung Offen → Zahlungseingang prüfen
 Mahnung Versendet → Frist überwachen
 Mahnung Erledigt → Mahnung abgeschlossen
 ```
+
+## Workflow-Hinweise Lieferscheine
+
+Lieferscheine zeigen im Drawer Statushinweise.
+
+```text
+Lieferschein Entwurf → Lieferschein noch nicht ausgegeben
+Lieferschein Versandbereit → Versand/Abholung vorbereiten
+Lieferschein Versendet → Sendung prüfen
+Lieferschein Erledigt → Lieferschein abgeschlossen
+```
+
+## Hotfix Lieferschein-Hinweise
+
+Ungültige Statusprüfungen wie `Versendet`/`Erledigt` wurden entfernt und durch aktuell erlaubte Lieferschein-Statuswerte ersetzt.
+
+## Hotfix Lieferschein-Hinweise sichtbar
+
+Die Lieferschein-Hinweise werden im Drawer oberhalb des Lieferscheinkopfs gerendert und verwenden die gültigen Statuswerte `Entwurf`, `Versandbereit`, `Geliefert` und `Abgeschlossen`.

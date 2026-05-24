@@ -69,3 +69,15 @@ Für globale CSS-Imports muss `src/vite-env.d.ts` vorhanden sein:
 ## Workflow-Hints für Belegstatus
 
 Die Workflow-Hints werden auch für Rechnungs- und Mahnungsstatus verwendet. Kritische Zustände wie `Überfällig` oder offene Mahnungen werden als `warning` dargestellt.
+
+## Workflow-Hints für Lieferscheine
+
+Die Workflow-Hints werden auch für Lieferscheinstatus verwendet. Versandbereite Lieferscheine werden als `warning` dargestellt, damit Versand/Abholung bewusst geprüft wird.
+
+## Hotfix Workflow-Hints Lieferscheine
+
+Workflow-Hints dürfen nur Statuswerte verwenden, die im jeweiligen Dokumenttyp definiert sind.
+
+## Lieferschein Workflow-Hints
+
+Lieferschein-Hints werden für `Entwurf`, `Versandbereit`, `Geliefert` und `Abgeschlossen` angezeigt.

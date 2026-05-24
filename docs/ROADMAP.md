@@ -7,3 +7,7 @@
 - Hotfix erledigt: globalen CSS-Import in `src/main.tsx` wiederhergestellt
 - Hotfix erledigt: Vite/CSS-Typdeklaration für globalen CSS-Import ergänzt
 - Erledigt: Workflow-Hinweise für Rechnungen und Mahnungen ergänzt
+- Erledigt: Workflow-Hinweise für Lieferscheine ergänzt
+
+- Hotfix erledigt: Lieferschein-Hinweise auf gültige Statuswerte angepasst
+- Hotfix erledigt: Lieferschein-Hinweise sichtbar eingefügt und Statuswerte korrigiert

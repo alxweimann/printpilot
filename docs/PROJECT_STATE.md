@@ -49,3 +49,22 @@ Rechnungs- und Mahnungsdrawer zeigen jetzt fachliche Statushinweise.
 Rechnung: Entwurf, Offen, Überfällig, Bezahlt
 Mahnung: Entwurf, Offen, Versendet, Erledigt
 ```
+
+## Workflow-Hinweise für Lieferscheine
+
+Der Lieferschein-Drawer zeigt jetzt fachliche Statushinweise.
+
+```text
+Entwurf → Lieferschein noch nicht ausgegeben
+Versandbereit → Versand/Abholung vorbereiten
+Versendet → Sendung prüfen
+Erledigt → Lieferschein abgeschlossen
+```
+
+## Hotfix Lieferschein-Hinweise
+
+Die Workflow-Hinweise für Lieferscheine verwenden jetzt nur Statuswerte, die im aktuellen `PrintPilotDeliveryNoteStatus` erlaubt sind.
+
+## Hotfix Lieferschein-Hinweise sichtbar
+
+Die Workflow-Hinweise im Lieferscheindrawer werden jetzt tatsächlich im Drawer gerendert und decken die gültigen Status `Entwurf`, `Versandbereit`, `Geliefert` und `Abgeschlossen` ab.

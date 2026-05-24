@@ -28,6 +28,7 @@ import { SortableTableHeader } from "../ui/SortableTableHeader";
 import { Select } from "../ui/Select";
 import { DataTable, TableToolbar } from "../ui/Table";
 import { WorkspaceHeader } from "../ui/WorkspaceHeader";
+import { WorkflowHints } from "../ui/WorkflowHints";
 import { useSortableTable } from "../ui/useSortableTable";
 
 const deliveryTabs = [
@@ -96,6 +97,54 @@ function getDeliverySortValue(
   }
 }
 
+function getDeliveryNoteWorkflowHints(
+  deliveryNote: PrintPilotDeliveryNote | undefined,
+) {
+  if (!deliveryNote) {
+    return [];
+  }
+
+  const hints = [];
+
+  if (deliveryNote.status === "Entwurf") {
+    hints.push({
+      title: "Lieferschein noch nicht ausgegeben",
+      description:
+        "Der Lieferschein ist noch ein Entwurf und sollte vor Ausgabe geprüft werden.",
+      variant: "info" as const,
+    });
+  }
+
+  if (deliveryNote.status === "Versandbereit") {
+    hints.push({
+      title: "Versand/Abholung vorbereiten",
+      description:
+        "Der Lieferschein ist bereit. Prüfe Versandart, Empfänger und Adresse.",
+      variant: "warning" as const,
+    });
+  }
+
+  if (deliveryNote.status === "Geliefert") {
+    hints.push({
+      title: "Lieferung prüfen",
+      description:
+        "Der Lieferschein ist geliefert. Prüfe, ob Rückmeldung oder Nachweis vollständig ist.",
+      variant: "info" as const,
+    });
+  }
+
+  if (deliveryNote.status === "Abgeschlossen") {
+    hints.push({
+      title: "Lieferschein abgeschlossen",
+      description:
+        "Der Lieferschein ist abgeschlossen und benötigt aktuell keine weitere Aktion.",
+      variant: "success" as const,
+    });
+  }
+
+  return hints;
+}
+
 export function DeliveryNotesPage() {
   const module = getModuleConfig("delivery-notes");
   const { deliveryNotes, updateDeliveryNote } = usePrintPilotStore();
@@ -125,6 +174,9 @@ export function DeliveryNotesPage() {
     useEditableDraft(selectedDeliveryNote);
 
   const canEdit = isEditing && Boolean(draft);
+  const deliveryNoteWorkflowHints = getDeliveryNoteWorkflowHints(
+    draft as PrintPilotDeliveryNote | undefined,
+  );
 
   const {
     sortedRows: sortedDeliveryRows,
@@ -312,6 +364,8 @@ export function DeliveryNotesPage() {
           </>
         }
       >
+        <WorkflowHints hints={deliveryNoteWorkflowHints} />
+
         <section className="workspace-panel">
           <SectionHeader>Lieferscheinkopf</SectionHeader>
 

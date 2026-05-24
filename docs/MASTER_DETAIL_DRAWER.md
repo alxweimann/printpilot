@@ -41,3 +41,15 @@ Drawer können oberhalb der Detailbereiche eine kompakte Hinweis-Ampel anzeigen.
 ## Workflow-Hinweise in Rechnungs- und Mahnungsdrawern
 
 Rechnungs- und Mahnungsdrawer verwenden die gemeinsame Komponente `WorkflowHints`, um Statushinweise direkt oberhalb der Detailbereiche anzuzeigen.
+
+## Workflow-Hinweise im Lieferscheindrawer
+
+Der Lieferscheindrawer verwendet die gemeinsame Komponente `WorkflowHints`, um Statushinweise direkt oberhalb der Detailbereiche anzuzeigen.
+
+## Hotfix Lieferscheindrawer
+
+Die Status-Hinweise im Lieferscheindrawer sind jetzt typkonform zum aktuellen Datenmodell.
+
+## Hotfix Lieferscheindrawer Hinweise
+
+Der Lieferscheindrawer rendert `WorkflowHints` direkt oberhalb des ersten Inhaltsbereichs.

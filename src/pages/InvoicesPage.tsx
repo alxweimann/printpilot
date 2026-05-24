@@ -19,6 +19,7 @@ import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DetailDrawer } from "../ui/DetailDrawer";
+import { DocumentPreviewDialog } from "../ui/DocumentPreviewDialog";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -150,6 +151,7 @@ export function InvoicesPage() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
   const [isCreateReminderDialogOpen, setIsCreateReminderDialogOpen] =
     useState(false);
   const [isDuplicateReminderDialogOpen, setIsDuplicateReminderDialogOpen] =
@@ -238,6 +240,18 @@ export function InvoicesPage() {
 
   function handleToggleEditing() {
     setIsEditing((currentValue) => !currentValue);
+  }
+
+  function handleOpenPreviewDialog() {
+    if (!draft && !selectedInvoice) {
+      return;
+    }
+
+    setIsPreviewDialogOpen(true);
+  }
+
+  function handleClosePreviewDialog() {
+    setIsPreviewDialogOpen(false);
   }
 
   function handleSaveDraft() {
@@ -449,7 +463,7 @@ export function InvoicesPage() {
             />
 
             <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-            <Button>Vorschau prüfen</Button>
+            <Button onClick={handleOpenPreviewDialog}>Vorschau prüfen</Button>
             <Button
               variant="primary"
               disabled={!canCreateReminderFromSelectedInvoice}
@@ -630,6 +644,78 @@ export function InvoicesPage() {
           </section>
         </div>
       </DetailDrawer>
+
+      <DocumentPreviewDialog
+        open={isPreviewDialogOpen && Boolean(draft ?? selectedInvoice)}
+        eyebrow="Rechnungsvorschau"
+        title={
+          (draft as PrintPilotInvoice | undefined)?.number ??
+          selectedInvoice?.number ??
+          "Rechnung"
+        }
+        subtitle={
+          (draft as PrintPilotInvoice | undefined)?.customerName ??
+          selectedInvoice?.customerName ??
+          "Kein Kunde hinterlegt"
+        }
+        fields={[
+          {
+            label: "Kunde",
+            value:
+              (draft as PrintPilotInvoice | undefined)?.customerName ??
+              selectedInvoice?.customerName,
+          },
+          {
+            label: "Auftrag",
+            value:
+              (draft as PrintPilotInvoice | undefined)?.orderNumber ??
+              selectedInvoice?.orderNumber,
+          },
+          {
+            label: "Betreff",
+            value:
+              (draft as PrintPilotInvoice | undefined)?.subject ??
+              selectedInvoice?.subject,
+          },
+          {
+            label: "Status",
+            value:
+              (draft as PrintPilotInvoice | undefined)?.status ??
+              selectedInvoice?.status,
+          },
+          {
+            label: "Rechnungsdatum",
+            value:
+              (draft as PrintPilotInvoice | undefined)?.invoiceDate ??
+              selectedInvoice?.invoiceDate,
+          },
+          {
+            label: "Fällig am",
+            value:
+              (draft as PrintPilotInvoice | undefined)?.dueDate ??
+              selectedInvoice?.dueDate,
+          },
+          {
+            label: "Zahlungsbedingungen",
+            value:
+              (draft as PrintPilotInvoice | undefined)?.paymentTerms ??
+              selectedInvoice?.paymentTerms,
+          },
+          {
+            label: "Zahlungsart",
+            value:
+              (draft as PrintPilotInvoice | undefined)?.paymentType ??
+              selectedInvoice?.paymentType,
+          },
+          {
+            label: "Vorlage",
+            value:
+              (draft as PrintPilotInvoice | undefined)?.template ??
+              selectedInvoice?.template,
+          },
+        ]}
+        onClose={handleClosePreviewDialog}
+      />
 
       <ConfirmDialog
         open={isReminderStatusBlockedDialogOpen && Boolean(selectedInvoice)}

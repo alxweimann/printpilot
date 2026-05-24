@@ -204,3 +204,13 @@ Die interne Vorschau wird oberhalb der App mit höherem `z-index` gerendert und 
 ## Vorschau-Dialog Vordergrund
 
 Die interne Dokumentvorschau verwendet eine höhere Overlay-Ebene und wird zentral über Drawer und App dargestellt.
+
+## Dokumentvorschau für alle Belegarten
+
+Lieferscheine, Rechnungen und Mahnungen verwenden jetzt ebenfalls `DocumentPreviewDialog`.
+
+```text
+Lieferschein → Lieferscheinvorschau
+Rechnung → Rechnungsvorschau
+Mahnung → Mahnvorschau
+```

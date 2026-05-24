@@ -73,3 +73,7 @@ Wenn der Detaildrawer geöffnet ist, bleibt der Vorschau-Dialog sichtbar und wir
 ## Vorschau über Drawer
 
 `DocumentPreviewDialog` liegt bewusst über dem Detaildrawer. So wird die Vorschau nicht vom Drawer verdeckt.
+
+## Vorschau für alle Dokumentdrawer
+
+Alle wichtigen Dokumentdrawer besitzen jetzt eine `Vorschau prüfen`-Aktion, die eine interne Dokumentvorschau öffnet.

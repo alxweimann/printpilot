@@ -17,6 +17,7 @@ import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { DetailDrawer } from "../ui/DetailDrawer";
+import { DocumentPreviewDialog } from "../ui/DocumentPreviewDialog";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -135,6 +136,7 @@ export function RemindersPage() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
 
   const reminderRowsByTab = useMemo(() => {
     return {
@@ -199,6 +201,18 @@ export function RemindersPage() {
 
   function handleToggleEditing() {
     setIsEditing((currentValue) => !currentValue);
+  }
+
+  function handleOpenPreviewDialog() {
+    if (!draft && !selectedReminder) {
+      return;
+    }
+
+    setIsPreviewDialogOpen(true);
+  }
+
+  function handleClosePreviewDialog() {
+    setIsPreviewDialogOpen(false);
   }
 
   function handleSaveReminder() {
@@ -341,7 +355,7 @@ export function RemindersPage() {
             />
 
             <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-            <Button>Vorschau prüfen</Button>
+            <Button onClick={handleOpenPreviewDialog}>Vorschau prüfen</Button>
             <SaveActionButton
               isDirty={isDirty}
               defaultLabel="Mahnung ausgeben"
@@ -445,6 +459,72 @@ export function RemindersPage() {
           </FieldGrid>
         </section>
       </DetailDrawer>
+      <DocumentPreviewDialog
+        open={isPreviewDialogOpen && Boolean(draft ?? selectedReminder)}
+        eyebrow="Mahnvorschau"
+        title={
+          (draft as PrintPilotReminder | undefined)?.number ??
+          selectedReminder?.number ??
+          "Mahnung"
+        }
+        subtitle={
+          (draft as PrintPilotReminder | undefined)?.customerName ??
+          selectedReminder?.customerName ??
+          "Kein Kunde hinterlegt"
+        }
+        fields={[
+          {
+            label: "Kunde",
+            value:
+              (draft as PrintPilotReminder | undefined)?.customerName ??
+              selectedReminder?.customerName,
+          },
+          {
+            label: "Rechnung",
+            value:
+              (draft as PrintPilotReminder | undefined)?.invoiceNumber ??
+              selectedReminder?.invoiceNumber,
+          },
+          {
+            label: "Betreff",
+            value:
+              (draft as PrintPilotReminder | undefined)?.subject ??
+              selectedReminder?.subject,
+          },
+          {
+            label: "Status",
+            value:
+              (draft as PrintPilotReminder | undefined)?.status ??
+              selectedReminder?.status,
+          },
+          {
+            label: "Mahnstufe",
+            value:
+              (draft as PrintPilotReminder | undefined)?.reminderLevel ??
+              selectedReminder?.reminderLevel,
+          },
+          {
+            label: "Frist",
+            value:
+              (draft as PrintPilotReminder | undefined)?.deadline ??
+              selectedReminder?.deadline,
+          },
+          {
+            label: "Vorlage",
+            value:
+              (draft as PrintPilotReminder | undefined)?.template ??
+              selectedReminder?.template,
+          },
+          {
+            label: "Notiz",
+            value:
+              (draft as PrintPilotReminder | undefined)?.note ??
+              selectedReminder?.note,
+          },
+        ]}
+        onClose={handleClosePreviewDialog}
+      />
+
     </div>
   );
 }

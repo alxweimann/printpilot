@@ -93,3 +93,7 @@ Lieferschein-Hints werden für `Entwurf`, `Versandbereit`, `Geliefert` und `Abge
 ## Preview Dialog Foreground
 
 Die Vorschau nutzt `z-index: 9999`, damit sie als oberste Ebene über Drawer und App sichtbar ist.
+
+## Einheitliche Dokumentvorschau
+
+`DocumentPreviewDialog` wird für Angebote, Aufträge, Lieferscheine, Rechnungen und Mahnungen genutzt.

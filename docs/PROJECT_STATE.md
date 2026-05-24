@@ -96,3 +96,9 @@ Die interne Dokumentvorschau wird jetzt kleiner und weiter links vom geöffneten
 ## Vorschau-Dialog im Vordergrund
 
 Die Dokumentvorschau liegt jetzt über dem Drawer und dimmt die gesamte App. Der Drawer bleibt nicht mehr im Vordergrund.
+
+## Dokumentvorschau für Lieferscheine, Rechnungen und Mahnungen
+
+Die Buttons `Vorschau prüfen` in Lieferschein-, Rechnungs- und Mahnungsdrawer öffnen jetzt interne Vorschau-Dialoge.
+
+Damit nutzen alle Belegarten denselben Vorschau-Workflow.

@@ -17,6 +17,7 @@ import { PageTabs } from "../layout/PageTabs";
 import { Badge } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { DetailDrawer } from "../ui/DetailDrawer";
+import { DocumentPreviewDialog } from "../ui/DocumentPreviewDialog";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
 import { Field } from "../ui/Field";
@@ -151,6 +152,7 @@ export function DeliveryNotesPage() {
 
   const [isEditing, setIsEditing] = useState(false);
   const [isDetailDrawerOpen, setIsDetailDrawerOpen] = useState(false);
+  const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
 
   const deliveryRowsByTab = useMemo(() => {
     return {
@@ -216,6 +218,18 @@ export function DeliveryNotesPage() {
 
   function handleToggleEditing() {
     setIsEditing((currentValue) => !currentValue);
+  }
+
+  function handleOpenPreviewDialog() {
+    if (!draft && !selectedDeliveryNote) {
+      return;
+    }
+
+    setIsPreviewDialogOpen(true);
+  }
+
+  function handleClosePreviewDialog() {
+    setIsPreviewDialogOpen(false);
   }
 
   function handleSaveDeliveryNote() {
@@ -355,7 +369,7 @@ export function DeliveryNotesPage() {
             />
 
             <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
-            <Button>Vorschau prüfen</Button>
+            <Button onClick={handleOpenPreviewDialog}>Vorschau prüfen</Button>
             <SaveActionButton
               isDirty={isDirty}
               defaultLabel="Lieferschein ausgeben"
@@ -496,6 +510,72 @@ export function DeliveryNotesPage() {
           </FieldGrid>
         </section>
       </DetailDrawer>
+      <DocumentPreviewDialog
+        open={isPreviewDialogOpen && Boolean(draft ?? selectedDeliveryNote)}
+        eyebrow="Lieferscheinvorschau"
+        title={
+          (draft as PrintPilotDeliveryNote | undefined)?.number ??
+          selectedDeliveryNote?.number ??
+          "Lieferschein"
+        }
+        subtitle={
+          (draft as PrintPilotDeliveryNote | undefined)?.customerName ??
+          selectedDeliveryNote?.customerName ??
+          "Kein Kunde hinterlegt"
+        }
+        fields={[
+          {
+            label: "Kunde",
+            value:
+              (draft as PrintPilotDeliveryNote | undefined)?.customerName ??
+              selectedDeliveryNote?.customerName,
+          },
+          {
+            label: "Auftrag",
+            value:
+              (draft as PrintPilotDeliveryNote | undefined)?.orderNumber ??
+              selectedDeliveryNote?.orderNumber,
+          },
+          {
+            label: "Produkt",
+            value:
+              (draft as PrintPilotDeliveryNote | undefined)?.product ??
+              selectedDeliveryNote?.product,
+          },
+          {
+            label: "Status",
+            value:
+              (draft as PrintPilotDeliveryNote | undefined)?.status ??
+              selectedDeliveryNote?.status,
+          },
+          {
+            label: "Versandart",
+            value:
+              (draft as PrintPilotDeliveryNote | undefined)?.shippingMethod ??
+              selectedDeliveryNote?.shippingMethod,
+          },
+          {
+            label: "Empfänger",
+            value:
+              (draft as PrintPilotDeliveryNote | undefined)?.recipient ??
+              selectedDeliveryNote?.recipient,
+          },
+          {
+            label: "Adresse",
+            value:
+              (draft as PrintPilotDeliveryNote | undefined)?.address ??
+              selectedDeliveryNote?.address,
+          },
+          {
+            label: "Vorlage",
+            value:
+              (draft as PrintPilotDeliveryNote | undefined)?.template ??
+              selectedDeliveryNote?.template,
+          },
+        ]}
+        onClose={handleClosePreviewDialog}
+      />
+
     </div>
   );
 }

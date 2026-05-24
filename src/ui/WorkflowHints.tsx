@@ -42,7 +42,10 @@ const variantStyles: Record<
   },
 };
 
-export function WorkflowHints({ title = "Workflow-Hinweise", hints }: WorkflowHintsProps) {
+export function WorkflowHints({
+  title = "Workflow-Hinweise",
+  hints,
+}: WorkflowHintsProps) {
   if (hints.length === 0) {
     return null;
   }

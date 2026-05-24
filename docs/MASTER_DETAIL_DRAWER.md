@@ -53,3 +53,11 @@ Die Status-Hinweise im Lieferscheindrawer sind jetzt typkonform zum aktuellen Da
 ## Hotfix Lieferscheindrawer Hinweise
 
 Der Lieferscheindrawer rendert `WorkflowHints` direkt oberhalb des ersten Inhaltsbereichs.
+
+## Pflichtfeld-Dialoge im Drawer
+
+Folgeaktionen in Drawern zeigen einen Warn-Dialog, wenn Pflichtangaben fehlen. Dadurch werden unvollständige Aufträge, Lieferscheine oder Rechnungen verhindert.
+
+## Hotfix Pflichtfeld-Dialoge Typen
+
+Die Pflichtfeld-Dialoge verwenden typisierte Issue-Listen (`string[]`).

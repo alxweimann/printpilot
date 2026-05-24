@@ -174,3 +174,21 @@ Ungültige Statusprüfungen wie `Versendet`/`Erledigt` wurden entfernt und durch
 ## Hotfix Lieferschein-Hinweise sichtbar
 
 Die Lieferschein-Hinweise werden im Drawer oberhalb des Lieferscheinkopfs gerendert und verwenden die gültigen Statuswerte `Entwurf`, `Versandbereit`, `Geliefert` und `Abgeschlossen`.
+
+## Pflichtfeld-Schutz vor Folgeaktionen
+
+Vor dem Erzeugen von Folgebelegen prüft PrintPilot fachliche Pflichtfelder.
+
+```text
+Angebot ohne Kunde → Auftrag blockiert
+Angebot ohne Betreff/Produkt → Auftrag blockiert
+Angebot ohne Gültigkeit → Auftrag blockiert
+Auftrag ohne Kunde → Lieferschein/Rechnung blockiert
+Auftrag ohne Produkt → Lieferschein/Rechnung blockiert
+```
+
+Die Prüfung läuft sowohl beim Öffnen der Aktion als auch beim finalen Bestätigen.
+
+## Hotfix Pflichtfeld-Schutz Typen
+
+Die Arrays für fehlende Pflichtfelder sind als `string[]` typisiert, damit der Build mit `noImplicitAny` sauber läuft.

@@ -11,3 +11,5 @@
 
 - Hotfix erledigt: Lieferschein-Hinweise auf gültige Statuswerte angepasst
 - Hotfix erledigt: Lieferschein-Hinweise sichtbar eingefügt und Statuswerte korrigiert
+- Erledigt: Pflichtfeld-Schutz vor Folgeaktionen ergänzt
+- Hotfix erledigt: TypeScript-Typen für Pflichtfeld-Issue-Arrays ergänzt

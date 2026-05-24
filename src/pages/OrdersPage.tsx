@@ -179,6 +179,24 @@ function getOrderSortValue(order: PrintPilotOrder, key: OrderSortKey) {
   }
 }
 
+function getOrderRequiredFieldIssues(order: PrintPilotOrder | undefined) {
+  const issues: string[] = [];
+
+  if (!order) {
+    return issues;
+  }
+
+  if (!order.customerName || order.customerName.trim().length === 0) {
+    issues.push("Kunde fehlt");
+  }
+
+  if (!order.product || order.product.trim().length === 0) {
+    issues.push("Produkt fehlt");
+  }
+
+  return issues;
+}
+
 function getOrderWorkflowHints(order: PrintPilotOrder | undefined) {
   if (!order) {
     return [];
@@ -246,6 +264,10 @@ export function OrdersPage() {
     useState(false);
   const [isDuplicateInvoiceDialogOpen, setIsDuplicateInvoiceDialogOpen] =
     useState(false);
+  const [isRequiredFieldsDialogOpen, setIsRequiredFieldsDialogOpen] =
+    useState(false);
+  const [requiredFieldsActionLabel, setRequiredFieldsActionLabel] =
+    useState("Folgebeleg");
 
   const orderRowsByTab = useMemo(() => {
     return {
@@ -271,6 +293,9 @@ export function OrdersPage() {
   const canEdit = isEditing && Boolean(draft);
   const draftOrder = draft as PrintPilotOrder | undefined;
   const orderWorkflowHints = getOrderWorkflowHints(draftOrder);
+  const orderRequiredFieldIssues = getOrderRequiredFieldIssues(
+    draftOrder ?? selectedOrder,
+  );
   const existingDeliveryNoteForSelectedOrder = selectedOrder
     ? deliveryNotes.find((deliveryNote) => deliveryNote.orderId === selectedOrder.id)
     : undefined;
@@ -295,6 +320,7 @@ export function OrdersPage() {
     }
 
     setIsProductionApprovalDialogOpen(false);
+    setIsRequiredFieldsDialogOpen(false);
   }
 
   function handleTabChange(tab: string) {
@@ -303,6 +329,8 @@ export function OrdersPage() {
       setIsEditing(false);
       setIsDetailDrawerOpen(false);
       setIsProductionApprovalDialogOpen(false);
+    setIsRequiredFieldsDialogOpen(false);
+      setIsRequiredFieldsDialogOpen(false);
       setIsCreateDeliveryNoteDialogOpen(false);
       setIsDuplicateDeliveryNoteDialogOpen(false);
     setIsCreateInvoiceDialogOpen(false);
@@ -315,6 +343,7 @@ export function OrdersPage() {
     setIsEditing(false);
     setIsDetailDrawerOpen(true);
     setIsProductionApprovalDialogOpen(false);
+    setIsRequiredFieldsDialogOpen(false);
     setIsCreateDeliveryNoteDialogOpen(false);
     setIsDuplicateDeliveryNoteDialogOpen(false);
     setIsCreateInvoiceDialogOpen(false);
@@ -325,6 +354,7 @@ export function OrdersPage() {
     setIsEditing(false);
     setIsDetailDrawerOpen(false);
     setIsProductionApprovalDialogOpen(false);
+    setIsRequiredFieldsDialogOpen(false);
     setIsCreateDeliveryNoteDialogOpen(false);
     setIsDuplicateDeliveryNoteDialogOpen(false);
     setIsCreateInvoiceDialogOpen(false);
@@ -335,6 +365,7 @@ export function OrdersPage() {
     resetDraft();
     setIsEditing(false);
     setIsProductionApprovalDialogOpen(false);
+    setIsRequiredFieldsDialogOpen(false);
     setIsCreateDeliveryNoteDialogOpen(false);
     setIsDuplicateDeliveryNoteDialogOpen(false);
     setIsCreateInvoiceDialogOpen(false);
@@ -403,6 +434,7 @@ export function OrdersPage() {
     saveDraft(savedOrder);
     setIsEditing(false);
     setIsProductionApprovalDialogOpen(false);
+    setIsRequiredFieldsDialogOpen(false);
     setIsDetailDrawerOpen(false);
 
     if (activeTab !== "Alle Aufträge") {
@@ -434,6 +466,12 @@ export function OrdersPage() {
       return;
     }
 
+    if (orderRequiredFieldIssues.length > 0) {
+      setRequiredFieldsActionLabel("Lieferschein");
+      setIsRequiredFieldsDialogOpen(true);
+      return;
+    }
+
     if (existingDeliveryNoteForSelectedOrder) {
       setIsDuplicateDeliveryNoteDialogOpen(true);
       return;
@@ -453,9 +491,21 @@ export function OrdersPage() {
   }
 
   function handleCreateDeliveryNoteFromOrder() {
-    if (!selectedOrder || existingDeliveryNoteForSelectedOrder) {
+    if (!selectedOrder) {
       setIsCreateDeliveryNoteDialogOpen(false);
-      setIsDuplicateDeliveryNoteDialogOpen(Boolean(existingDeliveryNoteForSelectedOrder));
+      return;
+    }
+
+    if (orderRequiredFieldIssues.length > 0) {
+      setRequiredFieldsActionLabel("Lieferschein");
+      setIsCreateDeliveryNoteDialogOpen(false);
+      setIsRequiredFieldsDialogOpen(true);
+      return;
+    }
+
+    if (existingDeliveryNoteForSelectedOrder) {
+      setIsCreateDeliveryNoteDialogOpen(false);
+      setIsDuplicateDeliveryNoteDialogOpen(true);
       return;
     }
 
@@ -470,6 +520,12 @@ export function OrdersPage() {
 
   function handleOpenCreateInvoiceDialog() {
     if (!selectedOrder) {
+      return;
+    }
+
+    if (orderRequiredFieldIssues.length > 0) {
+      setRequiredFieldsActionLabel("Rechnung");
+      setIsRequiredFieldsDialogOpen(true);
       return;
     }
 
@@ -489,10 +545,26 @@ export function OrdersPage() {
     setIsDuplicateInvoiceDialogOpen(false);
   }
 
+  function handleCancelRequiredFieldsDialog() {
+    setIsRequiredFieldsDialogOpen(false);
+  }
+
   function handleCreateInvoiceFromOrder() {
-    if (!selectedOrder || existingInvoiceForSelectedOrder) {
+    if (!selectedOrder) {
       setIsCreateInvoiceDialogOpen(false);
-      setIsDuplicateInvoiceDialogOpen(Boolean(existingInvoiceForSelectedOrder));
+      return;
+    }
+
+    if (orderRequiredFieldIssues.length > 0) {
+      setRequiredFieldsActionLabel("Rechnung");
+      setIsCreateInvoiceDialogOpen(false);
+      setIsRequiredFieldsDialogOpen(true);
+      return;
+    }
+
+    if (existingInvoiceForSelectedOrder) {
+      setIsCreateInvoiceDialogOpen(false);
+      setIsDuplicateInvoiceDialogOpen(true);
       return;
     }
 
@@ -510,6 +582,7 @@ export function OrdersPage() {
     }
 
     setIsProductionApprovalDialogOpen(false);
+    setIsRequiredFieldsDialogOpen(false);
   }
 
   function handleConfirmProductionApprovalDialog() {
@@ -813,6 +886,31 @@ export function OrdersPage() {
           </section>
         </div>
       </DetailDrawer>
+
+      <ConfirmDialog
+        open={isRequiredFieldsDialogOpen && Boolean(selectedOrder)}
+        title={`${requiredFieldsActionLabel} kann nicht erstellt werden`}
+        description={
+          <>
+            Dieser Folgebeleg kann noch nicht erzeugt werden, weil
+            Pflichtangaben im Auftrag fehlen.
+          </>
+        }
+        details={
+          <>
+            {orderRequiredFieldIssues.map((issue) => (
+              <span key={issue}>
+                <strong>Fehlt:</strong> {issue}
+              </span>
+            ))}
+          </>
+        }
+        variant="warning"
+        cancelLabel="Schließen"
+        confirmLabel="Verstanden"
+        onCancel={handleCancelRequiredFieldsDialog}
+        onConfirm={handleCancelRequiredFieldsDialog}
+      />
 
       <ConfirmDialog
         open={isCreateDeliveryNoteDialogOpen && Boolean(selectedOrder)}

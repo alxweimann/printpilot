@@ -102,6 +102,28 @@ function isQuoteTab(tab: string): tab is QuoteTab {
   return quoteTabs.includes(tab as QuoteTab);
 }
 
+function getQuoteRequiredFieldIssues(quote: PrintPilotQuote | undefined) {
+  const issues: string[] = [];
+
+  if (!quote) {
+    return issues;
+  }
+
+  if (!quote.customerName || quote.customerName.trim().length === 0) {
+    issues.push("Kunde fehlt");
+  }
+
+  if (!quote.subject || quote.subject.trim().length === 0) {
+    issues.push("Betreff/Produkt fehlt");
+  }
+
+  if (!quote.validUntil || quote.validUntil.trim().length === 0) {
+    issues.push("Gültigkeit fehlt");
+  }
+
+  return issues;
+}
+
 function getQuoteWorkflowHints(quote: PrintPilotQuote | undefined) {
   if (!quote) {
     return [];
@@ -160,6 +182,8 @@ export function QuotesPage() {
   const [isCreateOrderDialogOpen, setIsCreateOrderDialogOpen] = useState(false);
   const [isDuplicateOrderDialogOpen, setIsDuplicateOrderDialogOpen] =
     useState(false);
+  const [isRequiredFieldsDialogOpen, setIsRequiredFieldsDialogOpen] =
+    useState(false);
 
   const quoteRowsByTab = useMemo(() => {
     return {
@@ -186,7 +210,11 @@ export function QuotesPage() {
   const existingOrderForSelectedQuote = selectedQuote
     ? orders.find((order) => order.quoteId === selectedQuote.id)
     : undefined;
-  const quoteWorkflowHints = getQuoteWorkflowHints(draft as PrintPilotQuote | undefined);
+  const quoteDraft = draft as PrintPilotQuote | undefined;
+  const quoteWorkflowHints = getQuoteWorkflowHints(quoteDraft);
+  const quoteRequiredFieldIssues = getQuoteRequiredFieldIssues(
+    quoteDraft ?? selectedQuote,
+  );
 
   const {
     sortedRows: sortedQuoteRows,
@@ -204,6 +232,7 @@ export function QuotesPage() {
       setIsDetailDrawerOpen(false);
       setIsCreateOrderDialogOpen(false);
       setIsDuplicateOrderDialogOpen(false);
+      setIsRequiredFieldsDialogOpen(false);
     }
   }
 
@@ -213,6 +242,7 @@ export function QuotesPage() {
     setIsDetailDrawerOpen(true);
     setIsCreateOrderDialogOpen(false);
     setIsDuplicateOrderDialogOpen(false);
+    setIsRequiredFieldsDialogOpen(false);
   }
 
   function handleCloseDetailDrawer() {
@@ -220,6 +250,7 @@ export function QuotesPage() {
     setIsDetailDrawerOpen(false);
     setIsCreateOrderDialogOpen(false);
     setIsDuplicateOrderDialogOpen(false);
+    setIsRequiredFieldsDialogOpen(false);
   }
 
   function handleResetDraft() {
@@ -242,6 +273,7 @@ export function QuotesPage() {
     setIsDetailDrawerOpen(true);
     setIsCreateOrderDialogOpen(false);
     setIsDuplicateOrderDialogOpen(false);
+    setIsRequiredFieldsDialogOpen(false);
 
     window.setTimeout(() => {
       selectItem(newQuote.id);
@@ -250,6 +282,11 @@ export function QuotesPage() {
 
   function handleOpenCreateOrderDialog() {
     if (!selectedQuote) {
+      return;
+    }
+
+    if (quoteRequiredFieldIssues.length > 0) {
+      setIsRequiredFieldsDialogOpen(true);
       return;
     }
 
@@ -269,10 +306,25 @@ export function QuotesPage() {
     setIsDuplicateOrderDialogOpen(false);
   }
 
+  function handleCancelRequiredFieldsDialog() {
+    setIsRequiredFieldsDialogOpen(false);
+  }
+
   function handleCreateOrderFromQuote() {
-    if (!selectedQuote || existingOrderForSelectedQuote) {
+    if (!selectedQuote) {
       setIsCreateOrderDialogOpen(false);
-      setIsDuplicateOrderDialogOpen(Boolean(existingOrderForSelectedQuote));
+      return;
+    }
+
+    if (quoteRequiredFieldIssues.length > 0) {
+      setIsCreateOrderDialogOpen(false);
+      setIsRequiredFieldsDialogOpen(true);
+      return;
+    }
+
+    if (existingOrderForSelectedQuote) {
+      setIsCreateOrderDialogOpen(false);
+      setIsDuplicateOrderDialogOpen(true);
       return;
     }
 
@@ -550,6 +602,31 @@ export function QuotesPage() {
           </section>
         </div>
       </DetailDrawer>
+
+      <ConfirmDialog
+        open={isRequiredFieldsDialogOpen && Boolean(selectedQuote)}
+        title="Auftrag kann nicht erstellt werden"
+        description={
+          <>
+            Aus diesem Angebot kann noch kein Auftrag erzeugt werden, weil
+            Pflichtangaben fehlen.
+          </>
+        }
+        details={
+          <>
+            {quoteRequiredFieldIssues.map((issue) => (
+              <span key={issue}>
+                <strong>Fehlt:</strong> {issue}
+              </span>
+            ))}
+          </>
+        }
+        variant="warning"
+        cancelLabel="Schließen"
+        confirmLabel="Verstanden"
+        onCancel={handleCancelRequiredFieldsDialog}
+        onConfirm={handleCancelRequiredFieldsDialog}
+      />
 
       <ConfirmDialog
         open={isCreateOrderDialogOpen && Boolean(selectedQuote)}

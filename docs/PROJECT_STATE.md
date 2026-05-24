@@ -68,3 +68,19 @@ Die Workflow-Hinweise für Lieferscheine verwenden jetzt nur Statuswerte, die im
 ## Hotfix Lieferschein-Hinweise sichtbar
 
 Die Workflow-Hinweise im Lieferscheindrawer werden jetzt tatsächlich im Drawer gerendert und decken die gültigen Status `Entwurf`, `Versandbereit`, `Geliefert` und `Abgeschlossen` ab.
+
+## Pflichtfeld-Schutz vor Folgeaktionen
+
+Folgebelege werden blockiert, wenn fachliche Pflichtangaben fehlen.
+
+```text
+Angebot → Auftrag: Kunde, Betreff/Produkt, Gültigkeit erforderlich
+Auftrag → Lieferschein: Kunde und Produkt erforderlich
+Auftrag → Rechnung: Kunde und Produkt erforderlich
+```
+
+Statt fehlerhafter Folgebelege erscheint ein Hinweisdialog mit den fehlenden Angaben.
+
+## Hotfix Pflichtfeld-Schutz Typen
+
+Die Pflichtfeld-Issue-Arrays in Angebots- und Auftragsseite sind jetzt explizit als `string[]` typisiert.

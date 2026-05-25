@@ -54,18 +54,26 @@ info = Prüfung empfohlen
 success = Status ist positiv/abgeschlossen
 ```
 
-## DocumentHistory
+## Globaler CSS-Import
 
-Historieneinträge werden als kompakte Karten unterhalb der Workflow-Hinweise angezeigt. Die Markierung nutzt den CMYK-Akzentverlauf.
+`src/main.tsx` muss `./styles/globals.css` importieren. Ohne diesen Import wird PrintPilot als ungestyltes Browser-HTML dargestellt.
 
-## DocumentHistory Statuswechsel
+## CSS Import Types
 
-Statuswechsel werden fett als `Alt → Neu` dargestellt. Die Historie zeigt maximal 5 neueste Einträge direkt an.
+Für globale CSS-Imports muss `src/vite-env.d.ts` vorhanden sein:
 
-## Auftragshistorie
+```ts
+/// <reference types="vite/client" />
+```
 
-Auftragshistorie nutzt dieselbe `DocumentHistory`-Darstellung wie Belege.
+## Dashboard Metrics
 
-## History Timeline UI
+Dashboard-Karten verwenden echte Store-Zähler, modulbezogene Akzente und klickbare Schnellnavigation.
 
-Historien werden als kompakte Timeline angezeigt. Dokumentnummern erscheinen als kleine Referenz-Badges, Statuswechsel als hervorgehobene Pills.
+## Dashboard Datum
+
+Dashboard-Zeitstempel werden mit explizitem Formatargument formatiert.
+
+## Dashboard Stand Pill
+
+Zeitstempel im Dashboard werden als kompakte Pill dargestellt. Kennzahlkarten verwenden konsistentere Höhen, stärkere Zahlen und klare Modulakzente.

@@ -31,114 +31,36 @@ Angebot: Kunde fehlt, Betreff fehlt, Gültigkeit fehlt, angenommen
 Auftrag: Maschine fehlt, Freigabe ausstehend, Druckdaten prüfen, fertig
 ```
 
-## Ausgabe-Status und Ausgabe-Historie
+## CSS-Import wiederhergestellt
 
-Ausgabeaktionen setzen den passenden Workflow-Status und erzeugen automatisch einen Historieneintrag am Dokument.
+`src/main.tsx` importiert wieder `./styles/globals.css`.
 
-```text
-Angebot ausgeben → Status Offen + Historie
-Lieferschein ausgeben → Status Versandbereit + Historie
-Rechnung ausgeben → Status Offen + Historie
-Mahnung ausgeben → Status Versendet + Historie
-```
+Damit wird das PrintPilot-Layout wieder korrekt geladen und die App fällt nicht mehr auf ungestyltes Browser-HTML zurück.
 
-## Historie für Statusänderungen und offener Drawer
+## CSS-Import Typdeklaration
 
-Manuelle Statusänderungen werden jetzt beim Speichern in die Historie geschrieben.
+`src/vite-env.d.ts` wurde ergänzt, damit TypeScript CSS-Side-Effect-Imports wie `import "./styles/globals.css";` akzeptiert.
 
-Außerdem bleibt der Drawer nach dem Ausgeben von Lieferscheinen, Rechnungen und Mahnungen offen, damit Status und Historieneintrag direkt sichtbar bleiben.
+## Dashboard mit Workflow-Kennzahlen
 
-## Historie: Statuswechsel alt → neu
-
-Historieneinträge für manuelle Statusänderungen speichern jetzt optional den vorherigen und neuen Status.
-
-Anzeige im Drawer:
+Die Startseite zeigt jetzt echte Kennzahlen aus dem Store.
 
 ```text
-Rechnung: Status geändert
-Offen → Bezahlt
+Offene Angebote
+Aufträge in Produktion
+Versandbereite Lieferscheine
+Offene Rechnungen
+Überfällige Rechnungen
+Offene Mahnungen
+Materialhinweise
 ```
 
-Die Historie wird chronologisch neueste zuerst sortiert und zeigt zunächst maximal 5 Einträge.
+Zusätzlich zeigt das Dashboard eine dynamische Liste mit Vorgängen, bei denen Handlungsbedarf besteht.
 
-## Hotfix Rechnung Speichern vs. Ausgeben
+## Hotfix Dashboard Datumsformat
 
-Im Rechnungsdrawer sind Speichern und Ausgeben jetzt getrennt.
+Der Dashboard-Zeitstempel nutzt jetzt `formatPrintPilotDateString` mit explizitem Formatargument.
 
-```text
-Änderungen speichern → übernimmt manuelle Statusänderung, z. B. Bezahlt
-Rechnung ausgeben → setzt Status bewusst auf Offen
-```
+## Dashboard Karten und Stand-Anzeige
 
-Dadurch wird ein manuell auf `Bezahlt` gesetzter Status nicht mehr durch die Ausgabeaktion zurück auf `Offen` gesetzt.
-
-## Hotfix Angebot Speichern vs. Ausgeben
-
-Im Angebotsdrawer sind Speichern und Ausgeben jetzt getrennt.
-
-```text
-Änderungen speichern → übernimmt manuelle Statusänderung, z. B. Offen → Angenommen/Abgelehnt
-Angebot ausgeben → setzt Status bewusst auf Offen
-```
-
-Dadurch werden manuelle Statusänderungen nicht mehr durch die Ausgabeaktion überschrieben.
-
-## Auftragshistorie
-
-Aufträge führen jetzt ebenfalls eine Historie.
-
-Historisiert werden beim Speichern:
-
-```text
-Status geändert
-Freigabe geändert
-Übergabe geändert
-```
-
-Der Auftragsdrawer bleibt nach dem Speichern offen, damit die Historie direkt sichtbar ist.
-
-## Historie beim Erstellen von Folgebelegen
-
-Beim Erzeugen von Folgebelegen wird jetzt ein Historieneintrag am Ausgangsdokument erzeugt.
-
-```text
-Angebot → Auftrag erstellt
-Auftrag → Lieferschein erstellt
-Auftrag → Rechnung erstellt
-Rechnung → Mahnung erstellt
-```
-
-Der Drawer bleibt offen, damit die Historie direkt sichtbar ist.
-
-## Verlinkte Folgebeleg-Historie
-
-Historieneinträge zur Folgebeleg-Erstellung enthalten jetzt die konkrete Dokumentnummer.
-
-```text
-Angebot: Auftrag erstellt: AU-...
-Auftrag: Lieferschein erstellt: LS-...
-Auftrag: Rechnung erstellt: RE-...
-Rechnung: Mahnung erstellt: MA-...
-```
-
-Neue Folgebelege erhalten zusätzlich einen Herkunftseintrag.
-
-```text
-Auftrag: Erstellt aus Angebot: AG-...
-Lieferschein/Rechnung: Erstellt aus Auftrag: AU-...
-Mahnung: Erstellt aus Rechnung: RE-...
-```
-
-## Historie als kompakte Timeline
-
-Die Dokumenthistorie wird jetzt kompakter als vertikale Timeline dargestellt.
-
-Verbessert:
-
-```text
-neueste Einträge oben
-Dokumentnummern als kleine Referenz-Badges
-Statuswechsel Alt → Neu stärker hervorgehoben
-maximal 5 sichtbare Einträge bleiben erhalten
-ältere Einträge werden zusammengefasst
-```
+Die Dashboard-Kennzahlen wurden optisch kräftiger und gleichmäßiger gestaltet. Die Stand-Anzeige sitzt jetzt als Pill im Schnellzugriff-Kopf und zeigt Datum plus Uhrzeit.

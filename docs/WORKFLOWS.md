@@ -141,103 +141,21 @@ Auftrag Freigabe ausstehend → Freigabe prüfen
 Auftrag Druckdaten prüfen → Datenprüfung offen
 ```
 
-## Ausgabe-Historie
+## Dashboard Workflow-Kennzahlen
 
-Ausgabeaktionen erzeugen Historieneinträge am Dokument.
-
-```text
-Zeitpunkt
-Aktion
-Status danach
-```
-
-Die Historie wird im Drawer angezeigt, sobald mindestens ein Eintrag vorhanden ist.
-
-## Statusänderungen in Historie
-
-Wenn ein Dokumentstatus beim normalen Speichern geändert wurde, erzeugt PrintPilot einen Historieneintrag.
+Das Dashboard nutzt Store-Daten für operative Kennzahlen und Schnellzugriffe.
 
 ```text
-Status alt → Status neu
-Historie: <Dokument>: Status geändert
-Status danach: <neuer Status>
+Überfällige Rechnungen → Rechnung prüfen
+Offene Mahnungen → Zahlung/Frist prüfen
+Aufträge in Produktion → Produktionsstatus prüfen
+Versandbereite Lieferscheine → Versand/Abholung vorbereiten
 ```
 
-Ausgeben-Aktionen lassen den Drawer geöffnet, damit der neue Historieneintrag direkt sichtbar ist.
+## Hotfix Dashboard Datumsformat
 
-## Historie Statuswechsel
+Der Dashboard-Stand nutzt ein explizites Datumsformat, damit der Build sauber läuft.
 
-Manuelle Statusänderungen erzeugen Historieneinträge mit altem und neuem Status.
+## Dashboard Stand-Anzeige
 
-```text
-Lieferschein: Status geändert
-Versandbereit → Geliefert
-
-Mahnung: Status geändert
-Versendet → Erledigt
-```
-
-Neueste Einträge erscheinen oben. Direkt sichtbar sind maximal 5 Einträge.
-
-## Rechnung Speichern vs. Ausgeben
-
-Die Rechnungsseite trennt jetzt zwei fachliche Aktionen:
-
-```text
-Änderungen speichern = Status aus dem Formular speichern
-Rechnung ausgeben = Status Offen setzen
-```
-
-## Angebot Speichern vs. Ausgeben
-
-Die Angebotsseite trennt jetzt zwei fachliche Aktionen:
-
-```text
-Änderungen speichern = Status aus dem Formular speichern
-Angebot ausgeben = Status Offen setzen
-```
-
-## Auftragshistorie
-
-Aufträge erzeugen Historieneinträge bei relevanten Änderungen.
-
-```text
-Auftrag: Status geändert
-Neu → In Produktion
-
-Auftrag: Freigabe geändert
-Freigabe ausstehend → Freigabe erteilt
-
-Auftrag: Übergabe geändert
-Druckdaten prüfen → In Druck
-```
-
-## Folgebeleg-Erstellung in Historie
-
-Die Erstellung von Folgebelegen wird in der Historie des Ausgangsdokuments protokolliert.
-
-```text
-Angebot: Auftrag erstellt
-Auftrag: Lieferschein erstellt
-Auftrag: Rechnung erstellt
-Rechnung: Mahnung erstellt
-```
-
-## Verlinkte Folgebeleg-Historie
-
-Die Dokumentkette wird in der Historie mit konkreten Nummern nachvollziehbar.
-
-```text
-Angebot → Auftrag erstellt: AU-...
-Auftrag → Lieferschein erstellt: LS-...
-Auftrag → Rechnung erstellt: RE-...
-Rechnung → Mahnung erstellt: MA-...
-```
-
-Neue Folgebelege erhalten einen Herkunftseintrag wie `Erstellt aus Auftrag: AU-...`.
-
-## Historie Timeline
-
-Die Historie bleibt fachlich unverändert, wird aber kompakter und besser lesbar als Timeline angezeigt.
-
-Dokumentnummern aus Einträgen wie `Auftrag erstellt: AU-...` werden optisch als Referenz hervorgehoben.
+Das Dashboard zeigt den aktuellen Stand jetzt mit Datum und Uhrzeit im Schnellzugriff-Kopf.

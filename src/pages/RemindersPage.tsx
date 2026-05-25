@@ -207,6 +207,8 @@ export function RemindersPage() {
             createPrintPilotHistoryEntry(
               "Mahnung: Status geändert",
               savedReminder.status,
+              selectedReminder?.status,
+              savedReminder.status,
             ),
             ...previousHistory,
           ],

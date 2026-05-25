@@ -164,3 +164,26 @@ Status danach: <neuer Status>
 ```
 
 Ausgeben-Aktionen lassen den Drawer geöffnet, damit der neue Historieneintrag direkt sichtbar ist.
+
+## Historie Statuswechsel
+
+Manuelle Statusänderungen erzeugen Historieneinträge mit altem und neuem Status.
+
+```text
+Lieferschein: Status geändert
+Versandbereit → Geliefert
+
+Mahnung: Status geändert
+Versendet → Erledigt
+```
+
+Neueste Einträge erscheinen oben. Direkt sichtbar sind maximal 5 Einträge.
+
+## Rechnung Speichern vs. Ausgeben
+
+Die Rechnungsseite trennt jetzt zwei fachliche Aktionen:
+
+```text
+Änderungen speichern = Status aus dem Formular speichern
+Rechnung ausgeben = Status Offen setzen
+```

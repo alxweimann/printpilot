@@ -1312,3 +1312,14 @@ body {
   background: linear-gradient(135deg, var(--color-cyan), var(--color-magenta));
   box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.7);
 }
+
+.document-history-transition {
+  color: #0f172a;
+  font-weight: 800;
+}
+
+.document-history-more {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}

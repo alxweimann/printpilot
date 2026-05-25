@@ -6,3 +6,5 @@
 - Erledigt: Workflow-Hinweise für Angebote und Aufträge ergänzt
 - Erledigt: Ausgabe-Status mit Historieneinträgen für Belege ergänzt
 - Erledigt: Statusänderungen werden historisiert und Ausgeben hält den Drawer offen
+- Erledigt: Historie zeigt Statuswechsel als Alt → Neu und begrenzt sichtbare Einträge
+- Hotfix erledigt: Rechnung Speichern und Ausgeben getrennt

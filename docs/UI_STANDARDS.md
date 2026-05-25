@@ -57,3 +57,7 @@ success = Status ist positiv/abgeschlossen
 ## DocumentHistory
 
 Historieneinträge werden als kompakte Karten unterhalb der Workflow-Hinweise angezeigt. Die Markierung nutzt den CMYK-Akzentverlauf.
+
+## DocumentHistory Statuswechsel
+
+Statuswechsel werden fett als `Alt → Neu` dargestellt. Die Historie zeigt maximal 5 neueste Einträge direkt an.

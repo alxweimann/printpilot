@@ -245,6 +245,8 @@ export function InvoicesPage() {
             createPrintPilotHistoryEntry(
               "Rechnung: Status geändert",
               savedInvoice.status,
+              selectedInvoice?.status,
+              savedInvoice.status,
             ),
             ...previousHistory,
           ],
@@ -256,7 +258,6 @@ export function InvoicesPage() {
 
     saveDraft(documentToSave);
     setIsEditing(false);
-    setIsDetailDrawerOpen(false);
 
     if (activeTab !== "Liste") {
       setActiveTab("Liste");
@@ -264,6 +265,7 @@ export function InvoicesPage() {
 
     window.setTimeout(() => {
       selectItem(documentToSave.id);
+      setIsDetailDrawerOpen(true);
     }, 0);
   }
 
@@ -467,9 +469,12 @@ export function InvoicesPage() {
 
             <SaveActionButton
               isDirty={isDirty}
-              defaultLabel="Rechnung ausgeben"
-              onClick={handleIssueInvoice}
+              defaultLabel="Änderungen speichern"
+              onClick={handleSaveDraft}
             />
+            <Button variant="primary" onClick={handleIssueInvoice}>
+              Rechnung ausgeben
+            </Button>
           </>
         }
       >

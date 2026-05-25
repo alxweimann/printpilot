@@ -47,3 +47,27 @@ Mahnung ausgeben → Status Versendet + Historie
 Manuelle Statusänderungen werden jetzt beim Speichern in die Historie geschrieben.
 
 Außerdem bleibt der Drawer nach dem Ausgeben von Lieferscheinen, Rechnungen und Mahnungen offen, damit Status und Historieneintrag direkt sichtbar bleiben.
+
+## Historie: Statuswechsel alt → neu
+
+Historieneinträge für manuelle Statusänderungen speichern jetzt optional den vorherigen und neuen Status.
+
+Anzeige im Drawer:
+
+```text
+Rechnung: Status geändert
+Offen → Bezahlt
+```
+
+Die Historie wird chronologisch neueste zuerst sortiert und zeigt zunächst maximal 5 Einträge.
+
+## Hotfix Rechnung Speichern vs. Ausgeben
+
+Im Rechnungsdrawer sind Speichern und Ausgeben jetzt getrennt.
+
+```text
+Änderungen speichern → übernimmt manuelle Statusänderung, z. B. Bezahlt
+Rechnung ausgeben → setzt Status bewusst auf Offen
+```
+
+Dadurch wird ein manuell auf `Bezahlt` gesetzter Status nicht mehr durch die Ausgabeaktion zurück auf `Offen` gesetzt.

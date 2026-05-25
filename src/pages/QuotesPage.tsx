@@ -340,6 +340,8 @@ export function QuotesPage() {
             createPrintPilotHistoryEntry(
               "Angebot: Status geändert",
               savedQuote.status,
+              selectedQuote?.status,
+              savedQuote.status,
             ),
             ...previousHistory,
           ],

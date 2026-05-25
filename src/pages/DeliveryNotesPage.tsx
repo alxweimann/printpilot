@@ -218,6 +218,8 @@ export function DeliveryNotesPage() {
             createPrintPilotHistoryEntry(
               "Lieferschein: Status geändert",
               savedDeliveryNote.status,
+              selectedDeliveryNote?.status,
+              savedDeliveryNote.status,
             ),
             ...previousHistory,
           ],

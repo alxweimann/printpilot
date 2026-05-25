@@ -45,3 +45,11 @@ Dokumentdrawer zeigen über `DocumentHistory` eine kompakte Ereignishistorie. Ak
 ## Drawer bleibt nach Ausgeben offen
 
 Ausgabeaktionen schließen den Drawer nicht mehr. Der Datensatz bleibt ausgewählt und der neue Historieneintrag ist sofort sichtbar.
+
+## Historie Statuswechsel
+
+`DocumentHistory` zeigt Statuswechsel mit `previousStatus → nextStatus`, wenn diese Informationen am Historieneintrag vorhanden sind.
+
+## Rechnungsdrawer: getrennte Aktionen
+
+Der Rechnungsdrawer verwendet separate Aktionen für `Änderungen speichern` und `Rechnung ausgeben`, damit manuelle Statuswechsel nicht überschrieben werden.

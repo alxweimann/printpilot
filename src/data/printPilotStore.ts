@@ -24,17 +24,23 @@ export type PrintPilotHistoryEntry = {
   createdAt: string;
   action: string;
   status: string;
+  previousStatus?: string;
+  nextStatus?: string;
 };
 
 export function createPrintPilotHistoryEntry(
   action: string,
   status: string,
+  previousStatus?: string,
+  nextStatus?: string,
 ): PrintPilotHistoryEntry {
   return {
     id: `history-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     createdAt: new Date().toISOString(),
     action,
     status,
+    previousStatus,
+    nextStatus,
   };
 }
 

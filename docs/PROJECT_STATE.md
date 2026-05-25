@@ -101,3 +101,7 @@ Produktions-Plantafel
 ```
 
 Die Plantafel nutzt im breiten Layout zwei Spalten für Auftragskarten und fällt auf kleineren Viewports auf eine Spalte zurück.
+
+## Kompaktere Plantafel-Karten
+
+Die Auftragskarten der Dashboard-Plantafel wurden verdichtet: kleinere Innenabstände, dünnere Progressbar, kompaktere Meta-Chips und dreispaltige Detailzeile.

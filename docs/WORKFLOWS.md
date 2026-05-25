@@ -213,3 +213,7 @@ Die Wochen-Plantafel verwendet für Fälligkeitsgruppen einen expliziten Union-T
 ## Dashboard Layout
 
 Handlungsbedarf und Produktions-Plantafel stehen jetzt untereinander, damit beide Bereiche über die volle Breite nutzbar sind.
+
+## Kompakte Plantafel
+
+Die Produktions-Plantafel zeigt Auftragskarten jetzt kompakter, damit mehr Wochenplanung ohne Scrollen sichtbar bleibt.

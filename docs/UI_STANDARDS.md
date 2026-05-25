@@ -77,3 +77,7 @@ Fälligkeitsgruppen der Produktions-Timeline sind als `ProductionTimelineDueGrou
 ## Dashboard Full-Width Sections
 
 Dashboard-Arbeitsbereiche werden als gestapelte Full-Width-Sektionen dargestellt. Die Plantafel nutzt responsive Karten-Spalten.
+
+## Compact Timeline Cards
+
+Plantafel-Karten nutzen reduzierte Abstände, kleinere Chips und eine kompakte Detailzeile.

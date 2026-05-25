@@ -1699,3 +1699,89 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Compact production timeline cards. */
+.production-timeline {
+  gap: 10px;
+}
+
+.production-timeline-card {
+  gap: 7px;
+  border-radius: 15px;
+  padding: 10px 12px;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.055);
+}
+
+.production-timeline-card:hover {
+  box-shadow: 0 12px 28px rgba(15, 23, 42, 0.09);
+}
+
+.production-timeline-card-header {
+  gap: 10px;
+}
+
+.production-timeline-card-header strong {
+  font-size: 13px;
+}
+
+.production-timeline-card-header span {
+  margin-top: 1px;
+  font-size: 11px;
+  line-height: 1.28;
+}
+
+.production-timeline-priority {
+  min-height: 19px;
+  padding: 2px 7px;
+  font-size: 9px !important;
+}
+
+.production-timeline-meta {
+  gap: 5px;
+}
+
+.production-timeline-meta span {
+  min-height: 19px;
+  padding: 2px 7px;
+  font-size: 10px;
+}
+
+.production-timeline-progress {
+  gap: 8px;
+}
+
+.production-timeline-progress div {
+  height: 7px;
+}
+
+.production-timeline-progress strong {
+  font-size: 11px;
+}
+
+.production-timeline-details {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 5px;
+  font-size: 10px;
+}
+
+.production-timeline-details span {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.production-timeline-blocker {
+  padding: 3px 7px;
+  font-size: 10px;
+}
+
+@media (max-width: 1180px) {
+  .production-timeline-details {
+    grid-template-columns: 1fr;
+  }
+
+  .production-timeline-details span {
+    white-space: normal;
+  }
+}

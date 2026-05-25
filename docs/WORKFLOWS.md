@@ -222,3 +222,16 @@ Auftrag: Lieferschein erstellt
 Auftrag: Rechnung erstellt
 Rechnung: Mahnung erstellt
 ```
+
+## Verlinkte Folgebeleg-Historie
+
+Die Dokumentkette wird in der Historie mit konkreten Nummern nachvollziehbar.
+
+```text
+Angebot → Auftrag erstellt: AU-...
+Auftrag → Lieferschein erstellt: LS-...
+Auftrag → Rechnung erstellt: RE-...
+Rechnung → Mahnung erstellt: MA-...
+```
+
+Neue Folgebelege erhalten einen Herkunftseintrag wie `Erstellt aus Auftrag: AU-...`.

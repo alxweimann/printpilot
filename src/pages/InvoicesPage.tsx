@@ -324,15 +324,28 @@ export function InvoicesPage() {
       selectedInvoice,
       settings,
     );
+    const linkedReminder = {
+      ...newReminder,
+      history: [
+        createPrintPilotHistoryEntry(
+          `Erstellt aus Rechnung: ${selectedInvoice.number}`,
+          newReminder.status,
+        ),
+        ...(newReminder.history ?? []),
+      ],
+    };
     const updatedInvoice: PrintPilotInvoice = {
       ...selectedInvoice,
       history: [
-        createPrintPilotHistoryEntry("Mahnung erstellt", selectedInvoice.status),
+        createPrintPilotHistoryEntry(
+          `Mahnung erstellt: ${linkedReminder.number}`,
+          selectedInvoice.status,
+        ),
         ...(selectedInvoice.history ?? []),
       ],
     };
 
-    addReminder(newReminder);
+    addReminder(linkedReminder);
     updateInvoice(updatedInvoice);
     saveDraft(updatedInvoice);
     setIsCreateReminderDialogOpen(false);

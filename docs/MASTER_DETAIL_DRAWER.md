@@ -65,3 +65,7 @@ Der Auftragsdrawer zeigt `DocumentHistory` wie die Belegdrawer. Der Drawer bleib
 ## Historie für Folgeaktionen
 
 Folgeaktionen wie Auftrag/Lieferschein/Rechnung/Mahnung erstellen erzeugen Historieneinträge und halten den Drawer offen.
+
+## Verlinkte Historie
+
+Folgeaktionen schreiben Historieneinträge mit der Nummer des erzeugten bzw. auslösenden Dokuments.

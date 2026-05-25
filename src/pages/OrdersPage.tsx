@@ -573,18 +573,28 @@ export function OrdersPage() {
       selectedOrder,
       settings,
     );
+    const linkedDeliveryNote = {
+      ...newDeliveryNote,
+      history: [
+        createPrintPilotHistoryEntry(
+          `Erstellt aus Auftrag: ${selectedOrder.number}`,
+          newDeliveryNote.status,
+        ),
+        ...(newDeliveryNote.history ?? []),
+      ],
+    };
     const updatedOrder: PrintPilotOrder = {
       ...selectedOrder,
       history: [
         createPrintPilotHistoryEntry(
-          "Lieferschein erstellt",
+          `Lieferschein erstellt: ${linkedDeliveryNote.number}`,
           selectedOrder.status,
         ),
         ...(selectedOrder.history ?? []),
       ],
     };
 
-    addDeliveryNote(newDeliveryNote);
+    addDeliveryNote(linkedDeliveryNote);
     updateOrder(updatedOrder);
     saveDraft(updatedOrder);
     setIsCreateDeliveryNoteDialogOpen(false);
@@ -646,15 +656,28 @@ export function OrdersPage() {
     }
 
     const newInvoice = createPrintPilotInvoiceFromOrder(selectedOrder, settings);
+    const linkedInvoice = {
+      ...newInvoice,
+      history: [
+        createPrintPilotHistoryEntry(
+          `Erstellt aus Auftrag: ${selectedOrder.number}`,
+          newInvoice.status,
+        ),
+        ...(newInvoice.history ?? []),
+      ],
+    };
     const updatedOrder: PrintPilotOrder = {
       ...selectedOrder,
       history: [
-        createPrintPilotHistoryEntry("Rechnung erstellt", selectedOrder.status),
+        createPrintPilotHistoryEntry(
+          `Rechnung erstellt: ${linkedInvoice.number}`,
+          selectedOrder.status,
+        ),
         ...(selectedOrder.history ?? []),
       ],
     };
 
-    addInvoice(newInvoice);
+    addInvoice(linkedInvoice);
     updateOrder(updatedOrder);
     saveDraft(updatedOrder);
     setIsCreateInvoiceDialogOpen(false);

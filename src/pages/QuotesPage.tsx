@@ -289,10 +289,30 @@ export function QuotesPage() {
     };
 
     const newOrder = createPrintPilotOrderFromQuote(acceptedQuote, settings);
+    const linkedOrder = {
+      ...newOrder,
+      history: [
+        createPrintPilotHistoryEntry(
+          `Erstellt aus Angebot: ${acceptedQuote.number}`,
+          newOrder.status,
+        ),
+        ...(newOrder.history ?? []),
+      ],
+    };
+    const linkedQuote: PrintPilotQuote = {
+      ...acceptedQuote,
+      history: [
+        createPrintPilotHistoryEntry(
+          `Auftrag erstellt: ${linkedOrder.number}`,
+          acceptedQuote.status,
+        ),
+        ...(acceptedQuote.history ?? []),
+      ],
+    };
 
-    addOrder(newOrder);
-    updateQuote(acceptedQuote);
-    saveDraft(acceptedQuote);
+    addOrder(linkedOrder);
+    updateQuote(linkedQuote);
+    saveDraft(linkedQuote);
     setIsEditing(false);
     setIsCreateOrderDialogOpen(false);
   }

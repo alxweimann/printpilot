@@ -11,3 +11,4 @@
 - Hotfix erledigt: Angebot Speichern und Ausgeben getrennt
 - Erledigt: Auftragshistorie für Status, Freigabe und Übergabe ergänzt
 - Erledigt: Historie beim Erstellen von Folgebelegen ergänzt
+- Erledigt: Folgebeleg-Historie mit konkreten Dokumentnummern verlinkt

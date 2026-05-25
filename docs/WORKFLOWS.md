@@ -196,3 +196,18 @@ Die Angebotsseite trennt jetzt zwei fachliche Aktionen:
 Änderungen speichern = Status aus dem Formular speichern
 Angebot ausgeben = Status Offen setzen
 ```
+
+## Auftragshistorie
+
+Aufträge erzeugen Historieneinträge bei relevanten Änderungen.
+
+```text
+Auftrag: Status geändert
+Neu → In Produktion
+
+Auftrag: Freigabe geändert
+Freigabe ausstehend → Freigabe erteilt
+
+Auftrag: Übergabe geändert
+Druckdaten prüfen → In Druck
+```

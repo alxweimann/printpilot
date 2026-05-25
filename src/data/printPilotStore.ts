@@ -149,6 +149,7 @@ export type PrintPilotOrder = {
   handoff: PrintPilotHandoffStatus;
   approval: PrintPilotApprovalStatus;
   badgeVariant?: "success";
+  history?: PrintPilotHistoryEntry[];
 };
 
 export type PrintPilotReminderStatus =

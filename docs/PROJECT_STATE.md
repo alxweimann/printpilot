@@ -82,3 +82,17 @@ Angebot ausgeben → setzt Status bewusst auf Offen
 ```
 
 Dadurch werden manuelle Statusänderungen nicht mehr durch die Ausgabeaktion überschrieben.
+
+## Auftragshistorie
+
+Aufträge führen jetzt ebenfalls eine Historie.
+
+Historisiert werden beim Speichern:
+
+```text
+Status geändert
+Freigabe geändert
+Übergabe geändert
+```
+
+Der Auftragsdrawer bleibt nach dem Speichern offen, damit die Historie direkt sichtbar ist.

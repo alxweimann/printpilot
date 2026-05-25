@@ -61,3 +61,7 @@ Historieneinträge werden als kompakte Karten unterhalb der Workflow-Hinweise an
 ## DocumentHistory Statuswechsel
 
 Statuswechsel werden fett als `Alt → Neu` dargestellt. Die Historie zeigt maximal 5 neueste Einträge direkt an.
+
+## Auftragshistorie
+
+Auftragshistorie nutzt dieselbe `DocumentHistory`-Darstellung wie Belege.

@@ -9,3 +9,4 @@
 - Erledigt: Historie zeigt Statuswechsel als Alt → Neu und begrenzt sichtbare Einträge
 - Hotfix erledigt: Rechnung Speichern und Ausgeben getrennt
 - Hotfix erledigt: Angebot Speichern und Ausgeben getrennt
+- Erledigt: Auftragshistorie für Status, Freigabe und Übergabe ergänzt

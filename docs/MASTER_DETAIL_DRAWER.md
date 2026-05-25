@@ -57,3 +57,7 @@ Der Rechnungsdrawer verwendet separate Aktionen für `Änderungen speichern` und
 ## Angebotsdrawer: getrennte Aktionen
 
 Der Angebotsdrawer verwendet separate Aktionen für `Änderungen speichern` und `Angebot ausgeben`, damit manuelle Statuswechsel nicht überschrieben werden.
+
+## Auftragshistorie im Drawer
+
+Der Auftragsdrawer zeigt `DocumentHistory` wie die Belegdrawer. Der Drawer bleibt nach dem Speichern offen.

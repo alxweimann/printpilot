@@ -8,6 +8,7 @@ import {
   type PrintPilotOrderPriority,
   createPrintPilotDeliveryNoteFromOrder,
   createPrintPilotInvoiceFromOrder,
+  createPrintPilotHistoryEntry,
   type PrintPilotOrderStatus,
   getPrintPilotApprovalBadgeVariant,
   groupPrintPilotOrdersByStatus,
@@ -23,6 +24,7 @@ import { Badge, type BadgeVariant } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DetailDrawer } from "../ui/DetailDrawer";
+import { DocumentHistory } from "../ui/DocumentHistory";
 import { DocumentPreviewDialog } from "../ui/DocumentPreviewDialog";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
@@ -432,19 +434,63 @@ export function OrdersPage() {
   }
 
   function saveOrder(savedOrder: PrintPilotOrder) {
-    updateOrder(savedOrder);
-    saveDraft(savedOrder);
+    const previousHistory = savedOrder.history ?? selectedOrder?.history ?? [];
+    const historyEntries = [];
+
+    if (selectedOrder && selectedOrder.status !== savedOrder.status) {
+      historyEntries.push(
+        createPrintPilotHistoryEntry(
+          "Auftrag: Status geändert",
+          savedOrder.status,
+          selectedOrder.status,
+          savedOrder.status,
+        ),
+      );
+    }
+
+    if (selectedOrder && selectedOrder.approval !== savedOrder.approval) {
+      historyEntries.push(
+        createPrintPilotHistoryEntry(
+          "Auftrag: Freigabe geändert",
+          savedOrder.approval,
+          selectedOrder.approval,
+          savedOrder.approval,
+        ),
+      );
+    }
+
+    if (selectedOrder && selectedOrder.handoff !== savedOrder.handoff) {
+      historyEntries.push(
+        createPrintPilotHistoryEntry(
+          "Auftrag: Übergabe geändert",
+          savedOrder.handoff,
+          selectedOrder.handoff,
+          savedOrder.handoff,
+        ),
+      );
+    }
+
+    const documentToSave: PrintPilotOrder =
+      historyEntries.length > 0
+        ? {
+            ...savedOrder,
+            history: [...historyEntries, ...previousHistory],
+          }
+        : savedOrder;
+
+    updateOrder(documentToSave);
+    saveDraft(documentToSave);
     setIsEditing(false);
     setIsProductionApprovalDialogOpen(false);
     setIsRequiredFieldsDialogOpen(false);
-    setIsDetailDrawerOpen(false);
 
     if (activeTab !== "Alle Aufträge") {
       setActiveTab("Alle Aufträge");
     }
 
     window.setTimeout(() => {
-      selectItem(savedOrder.id);
+      selectItem(documentToSave.id);
+      setIsDetailDrawerOpen(true);
     }, 0);
   }
 
@@ -764,6 +810,8 @@ export function OrdersPage() {
         }
       >
         <WorkflowHints hints={orderWorkflowHints} />
+
+        <DocumentHistory entries={draftOrder?.history ?? selectedOrder?.history} />
 
         <div className="detail-drawer-stack">
           <section className="detail-drawer-panel">

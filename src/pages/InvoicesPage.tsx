@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { getModuleConfig } from "../app/moduleConfig";
 import {
@@ -133,6 +133,39 @@ export function InvoicesPage() {
     rowsByTab: invoiceRowsByTab,
     initialTab: "Liste" as InvoiceTab,
   });
+
+
+  useEffect(() => {
+    const pendingSelection = window.sessionStorage.getItem(
+      "printpilot:pending-selection",
+    );
+
+    if (!pendingSelection) {
+      return;
+    }
+
+    try {
+      const parsedSelection = JSON.parse(pendingSelection) as {
+        pageId?: string;
+        itemId?: string;
+      };
+
+      if (parsedSelection.pageId !== "invoices" || !parsedSelection.itemId) {
+        return;
+      }
+
+      window.sessionStorage.removeItem("printpilot:pending-selection");
+      setActiveTab("Liste");
+      setIsEditing(false);
+
+      window.setTimeout(() => {
+        selectItem(parsedSelection.itemId as string);
+        setIsDetailDrawerOpen(true);
+      }, 0);
+    } catch {
+      window.sessionStorage.removeItem("printpilot:pending-selection");
+    }
+  }, [selectItem, setActiveTab]);
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
     useEditableDraft(selectedInvoice);
@@ -324,36 +357,9 @@ export function InvoicesPage() {
       selectedInvoice,
       settings,
     );
-    const linkedReminder = {
-      ...newReminder,
-      history: [
-        createPrintPilotHistoryEntry(
-          `Erstellt aus Rechnung: ${selectedInvoice.number}`,
-          newReminder.status,
-        ),
-        ...(newReminder.history ?? []),
-      ],
-    };
-    const updatedInvoice: PrintPilotInvoice = {
-      ...selectedInvoice,
-      history: [
-        createPrintPilotHistoryEntry(
-          `Mahnung erstellt: ${linkedReminder.number}`,
-          selectedInvoice.status,
-        ),
-        ...(selectedInvoice.history ?? []),
-      ],
-    };
 
-    addReminder(linkedReminder);
-    updateInvoice(updatedInvoice);
-    saveDraft(updatedInvoice);
+    addReminder(newReminder);
     setIsCreateReminderDialogOpen(false);
-
-    window.setTimeout(() => {
-      selectItem(updatedInvoice.id);
-      setIsDetailDrawerOpen(true);
-    }, 0);
   }
 
   return (

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { getModuleConfig } from "../app/moduleConfig";
 import {
@@ -181,6 +181,39 @@ export function QuotesPage() {
     initialTab: "Alle Angebote" as QuoteTab,
   });
 
+
+  useEffect(() => {
+    const pendingSelection = window.sessionStorage.getItem(
+      "printpilot:pending-selection",
+    );
+
+    if (!pendingSelection) {
+      return;
+    }
+
+    try {
+      const parsedSelection = JSON.parse(pendingSelection) as {
+        pageId?: string;
+        itemId?: string;
+      };
+
+      if (parsedSelection.pageId !== "quotes" || !parsedSelection.itemId) {
+        return;
+      }
+
+      window.sessionStorage.removeItem("printpilot:pending-selection");
+      setActiveTab("Alle Angebote");
+      setIsEditing(false);
+
+      window.setTimeout(() => {
+        selectItem(parsedSelection.itemId as string);
+        setIsDetailDrawerOpen(true);
+      }, 0);
+    } catch {
+      window.sessionStorage.removeItem("printpilot:pending-selection");
+    }
+  }, [selectItem, setActiveTab]);
+
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
     useEditableDraft(selectedQuote);
 
@@ -282,52 +315,26 @@ export function QuotesPage() {
       ...selectedQuote,
       status: "Angenommen",
       badgeVariant: "success",
-      history: [
-        createPrintPilotHistoryEntry("Auftrag erstellt", "Angenommen"),
-        ...(selectedQuote.history ?? []),
-      ],
     };
 
     const newOrder = createPrintPilotOrderFromQuote(acceptedQuote, settings);
-    const linkedOrder = {
-      ...newOrder,
-      history: [
-        createPrintPilotHistoryEntry(
-          `Erstellt aus Angebot: ${acceptedQuote.number}`,
-          newOrder.status,
-        ),
-        ...(newOrder.history ?? []),
-      ],
-    };
-    const linkedQuote: PrintPilotQuote = {
-      ...acceptedQuote,
-      history: [
-        createPrintPilotHistoryEntry(
-          `Auftrag erstellt: ${linkedOrder.number}`,
-          acceptedQuote.status,
-        ),
-        ...(acceptedQuote.history ?? []),
-      ],
-    };
 
-    addOrder(linkedOrder);
-    updateQuote(linkedQuote);
-    saveDraft(linkedQuote);
+    addOrder(newOrder);
+    updateQuote(acceptedQuote);
+    saveDraft(acceptedQuote);
     setIsEditing(false);
     setIsCreateOrderDialogOpen(false);
   }
 
   function handleIssueQuote() {
-    const quoteToIssue = (draft as PrintPilotQuote | undefined) ?? selectedQuote;
-
-    if (!quoteToIssue) {
+    if (!draft) {
       return;
     }
 
-    const previousHistory = quoteToIssue.history ?? [];
+    const previousHistory = (draft as PrintPilotQuote).history ?? [];
 
     const issuedQuote: PrintPilotQuote = {
-      ...quoteToIssue,
+      ...(draft as PrintPilotQuote),
       status: "Offen",
       history: [
         createPrintPilotHistoryEntry("Angebot ausgegeben", "Offen"),
@@ -513,12 +520,9 @@ export function QuotesPage() {
 
             <SaveActionButton
               isDirty={isDirty}
-              defaultLabel="Änderungen speichern"
-              onClick={handleSaveDraft}
+              defaultLabel="Angebot ausgeben"
+              onClick={handleIssueQuote}
             />
-            <Button variant="primary" onClick={handleIssueQuote}>
-              Angebot ausgeben
-            </Button>
           </>
         }
       >

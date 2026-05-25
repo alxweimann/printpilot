@@ -54,30 +54,14 @@ info = Prüfung empfohlen
 success = Status ist positiv/abgeschlossen
 ```
 
-## Globaler CSS-Import
+## DocumentHistory
 
-`src/main.tsx` muss `./styles/globals.css` importieren. Ohne diesen Import wird PrintPilot als ungestyltes Browser-HTML dargestellt.
+Historieneinträge werden als kompakte Karten unterhalb der Workflow-Hinweise angezeigt. Die Markierung nutzt den CMYK-Akzentverlauf.
 
-## CSS Import Types
+## DocumentHistory Statuswechsel
 
-Für globale CSS-Imports muss `src/vite-env.d.ts` vorhanden sein:
+Statuswechsel werden fett als `Alt → Neu` dargestellt. Die Historie zeigt maximal 5 neueste Einträge direkt an.
 
-```ts
-/// <reference types="vite/client" />
-```
+## Dashboard Deep-Link Rows
 
-## Dashboard Metrics
-
-Dashboard-Karten verwenden echte Store-Zähler, modulbezogene Akzente und klickbare Schnellnavigation.
-
-## Dashboard Datum
-
-Dashboard-Zeitstempel werden mit explizitem Formatargument formatiert.
-
-## Dashboard Stand Pill
-
-Zeitstempel im Dashboard werden als kompakte Pill dargestellt. Kennzahlkarten verwenden konsistentere Höhen, stärkere Zahlen und klare Modulakzente.
-
-## Dashboard Prioritätszeilen
-
-Handlungsbedarf-Zeilen verwenden farbige Prioritätsleisten, kurze Handlungshinweise und Prioritäts-Pills.
+Handlungsbedarf-Zeilen sind klickbare Deep-Links in das passende Modul und den konkreten Drawer-Datensatz.

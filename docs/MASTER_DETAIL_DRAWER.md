@@ -54,22 +54,6 @@ Ausgabeaktionen schließen den Drawer nicht mehr. Der Datensatz bleibt ausgewäh
 
 Der Rechnungsdrawer verwendet separate Aktionen für `Änderungen speichern` und `Rechnung ausgeben`, damit manuelle Statuswechsel nicht überschrieben werden.
 
-## Angebotsdrawer: getrennte Aktionen
+## Öffnen aus Dashboard
 
-Der Angebotsdrawer verwendet separate Aktionen für `Änderungen speichern` und `Angebot ausgeben`, damit manuelle Statuswechsel nicht überschrieben werden.
-
-## Auftragshistorie im Drawer
-
-Der Auftragsdrawer zeigt `DocumentHistory` wie die Belegdrawer. Der Drawer bleibt nach dem Speichern offen.
-
-## Historie für Folgeaktionen
-
-Folgeaktionen wie Auftrag/Lieferschein/Rechnung/Mahnung erstellen erzeugen Historieneinträge und halten den Drawer offen.
-
-## Verlinkte Historie
-
-Folgeaktionen schreiben Historieneinträge mit der Nummer des erzeugten bzw. auslösenden Dokuments.
-
-## Kompakte Historien-Timeline
-
-`DocumentHistory` nutzt im Drawer eine Timeline-Darstellung mit Referenz-Badges für Dokumentnummern und hervorgehobenen Statuswechseln.
+Dokumentseiten lesen eine `printpilot:pending-selection` aus `sessionStorage` und öffnen dadurch den passenden Datensatz direkt im Drawer.

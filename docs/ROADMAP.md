@@ -4,9 +4,8 @@
 - Erledigt: Sidebar LED-Anzeige auf gleiche Breite und reduzierten Glow angepasst
 - Hotfix erledigt: vollständiges Workflow-Konsistenzpaket für Store, Seiten und Nummernkreise
 - Erledigt: Workflow-Hinweise für Angebote und Aufträge ergänzt
-- Hotfix erledigt: globalen CSS-Import in `src/main.tsx` wiederhergestellt
-- Hotfix erledigt: Vite/CSS-Typdeklaration für globalen CSS-Import ergänzt
-- Erledigt: Dashboard mit echten Workflow-Kennzahlen aus dem Store ergänzt
-- Hotfix erledigt: Dashboard-Datumsformat korrigiert
-- Erledigt: Dashboard-Karten und Stand-Anzeige optisch verbessert
-- Erledigt: Dashboard-Handlungsbedarf priorisiert und optisch markiert
+- Erledigt: Ausgabe-Status mit Historieneinträgen für Belege ergänzt
+- Erledigt: Statusänderungen werden historisiert und Ausgeben hält den Drawer offen
+- Erledigt: Historie zeigt Statuswechsel als Alt → Neu und begrenzt sichtbare Einträge
+- Hotfix erledigt: Rechnung Speichern und Ausgeben getrennt
+- Erledigt: Dashboard-Handlungsbedarf öffnet Ziel-Datensatz direkt im Drawer

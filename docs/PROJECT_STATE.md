@@ -31,53 +31,47 @@ Angebot: Kunde fehlt, Betreff fehlt, Gültigkeit fehlt, angenommen
 Auftrag: Maschine fehlt, Freigabe ausstehend, Druckdaten prüfen, fertig
 ```
 
-## CSS-Import wiederhergestellt
+## Ausgabe-Status und Ausgabe-Historie
 
-`src/main.tsx` importiert wieder `./styles/globals.css`.
-
-Damit wird das PrintPilot-Layout wieder korrekt geladen und die App fällt nicht mehr auf ungestyltes Browser-HTML zurück.
-
-## CSS-Import Typdeklaration
-
-`src/vite-env.d.ts` wurde ergänzt, damit TypeScript CSS-Side-Effect-Imports wie `import "./styles/globals.css";` akzeptiert.
-
-## Dashboard mit Workflow-Kennzahlen
-
-Die Startseite zeigt jetzt echte Kennzahlen aus dem Store.
+Ausgabeaktionen setzen den passenden Workflow-Status und erzeugen automatisch einen Historieneintrag am Dokument.
 
 ```text
-Offene Angebote
-Aufträge in Produktion
-Versandbereite Lieferscheine
-Offene Rechnungen
-Überfällige Rechnungen
-Offene Mahnungen
-Materialhinweise
+Angebot ausgeben → Status Offen + Historie
+Lieferschein ausgeben → Status Versandbereit + Historie
+Rechnung ausgeben → Status Offen + Historie
+Mahnung ausgeben → Status Versendet + Historie
 ```
 
-Zusätzlich zeigt das Dashboard eine dynamische Liste mit Vorgängen, bei denen Handlungsbedarf besteht.
+## Historie für Statusänderungen und offener Drawer
 
-## Hotfix Dashboard Datumsformat
+Manuelle Statusänderungen werden jetzt beim Speichern in die Historie geschrieben.
 
-Der Dashboard-Zeitstempel nutzt jetzt `formatPrintPilotDateString` mit explizitem Formatargument.
+Außerdem bleibt der Drawer nach dem Ausgeben von Lieferscheinen, Rechnungen und Mahnungen offen, damit Status und Historieneintrag direkt sichtbar bleiben.
 
-## Dashboard Karten und Stand-Anzeige
+## Historie: Statuswechsel alt → neu
 
-Die Dashboard-Kennzahlen wurden optisch kräftiger und gleichmäßiger gestaltet. Die Stand-Anzeige sitzt jetzt als Pill im Schnellzugriff-Kopf und zeigt Datum plus Uhrzeit.
+Historieneinträge für manuelle Statusänderungen speichern jetzt optional den vorherigen und neuen Status.
 
-## Dashboard Handlungsbedarf priorisiert
-
-Die Dashboard-Liste `Handlungsbedarf` wird jetzt fachlich priorisiert.
-
-Reihenfolge:
+Anzeige im Drawer:
 
 ```text
-1. Überfällige Rechnungen
-2. Offene/versendete Mahnungen
-3. Versandbereite Lieferscheine
-4. Aufträge in Produktion
-5. Wartende Aufträge
-6. Offene Angebote
+Rechnung: Status geändert
+Offen → Bezahlt
 ```
 
-Jede Zeile zeigt zusätzlich Priorität und konkreten Handlungshinweis.
+Die Historie wird chronologisch neueste zuerst sortiert und zeigt zunächst maximal 5 Einträge.
+
+## Hotfix Rechnung Speichern vs. Ausgeben
+
+Im Rechnungsdrawer sind Speichern und Ausgeben jetzt getrennt.
+
+```text
+Änderungen speichern → übernimmt manuelle Statusänderung, z. B. Bezahlt
+Rechnung ausgeben → setzt Status bewusst auf Offen
+```
+
+Dadurch wird ein manuell auf `Bezahlt` gesetzter Status nicht mehr durch die Ausgabeaktion zurück auf `Offen` gesetzt.
+
+## Dashboard Deep-Link und Workflow-Kennzahlen
+
+Das Dashboard zeigt echte Workflow-Kennzahlen und priorisierten Handlungsbedarf. Ein Klick auf eine Handlungsbedarf-Zeile öffnet jetzt das passende Modul und den konkreten Datensatz direkt im Drawer.

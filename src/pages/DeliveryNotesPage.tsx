@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { getModuleConfig } from "../app/moduleConfig";
 import {
@@ -122,6 +122,39 @@ export function DeliveryNotesPage() {
     rowsByTab: deliveryRowsByTab,
     initialTab: "Liste" as DeliveryTab,
   });
+
+
+  useEffect(() => {
+    const pendingSelection = window.sessionStorage.getItem(
+      "printpilot:pending-selection",
+    );
+
+    if (!pendingSelection) {
+      return;
+    }
+
+    try {
+      const parsedSelection = JSON.parse(pendingSelection) as {
+        pageId?: string;
+        itemId?: string;
+      };
+
+      if (parsedSelection.pageId !== "delivery-notes" || !parsedSelection.itemId) {
+        return;
+      }
+
+      window.sessionStorage.removeItem("printpilot:pending-selection");
+      setActiveTab("Liste");
+      setIsEditing(false);
+
+      window.setTimeout(() => {
+        selectItem(parsedSelection.itemId as string);
+        setIsDetailDrawerOpen(true);
+      }, 0);
+    } catch {
+      window.sessionStorage.removeItem("printpilot:pending-selection");
+    }
+  }, [selectItem, setActiveTab]);
 
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
     useEditableDraft(selectedDeliveryNote);

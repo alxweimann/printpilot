@@ -141,25 +141,53 @@ Auftrag Freigabe ausstehend → Freigabe prüfen
 Auftrag Druckdaten prüfen → Datenprüfung offen
 ```
 
-## Dashboard Workflow-Kennzahlen
+## Ausgabe-Historie
 
-Das Dashboard nutzt Store-Daten für operative Kennzahlen und Schnellzugriffe.
+Ausgabeaktionen erzeugen Historieneinträge am Dokument.
 
 ```text
-Überfällige Rechnungen → Rechnung prüfen
-Offene Mahnungen → Zahlung/Frist prüfen
-Aufträge in Produktion → Produktionsstatus prüfen
-Versandbereite Lieferscheine → Versand/Abholung vorbereiten
+Zeitpunkt
+Aktion
+Status danach
 ```
 
-## Hotfix Dashboard Datumsformat
+Die Historie wird im Drawer angezeigt, sobald mindestens ein Eintrag vorhanden ist.
 
-Der Dashboard-Stand nutzt ein explizites Datumsformat, damit der Build sauber läuft.
+## Statusänderungen in Historie
 
-## Dashboard Stand-Anzeige
+Wenn ein Dokumentstatus beim normalen Speichern geändert wurde, erzeugt PrintPilot einen Historieneintrag.
 
-Das Dashboard zeigt den aktuellen Stand jetzt mit Datum und Uhrzeit im Schnellzugriff-Kopf.
+```text
+Status alt → Status neu
+Historie: <Dokument>: Status geändert
+Status danach: <neuer Status>
+```
 
-## Dashboard Priorisierung
+Ausgeben-Aktionen lassen den Drawer geöffnet, damit der neue Historieneintrag direkt sichtbar ist.
 
-Der Handlungsbedarf im Dashboard folgt einer festen fachlichen Priorität: überfällige Rechnungen, Mahnungen, Versand, Produktion, wartende Aufträge und offene Angebote.
+## Historie Statuswechsel
+
+Manuelle Statusänderungen erzeugen Historieneinträge mit altem und neuem Status.
+
+```text
+Lieferschein: Status geändert
+Versandbereit → Geliefert
+
+Mahnung: Status geändert
+Versendet → Erledigt
+```
+
+Neueste Einträge erscheinen oben. Direkt sichtbar sind maximal 5 Einträge.
+
+## Rechnung Speichern vs. Ausgeben
+
+Die Rechnungsseite trennt jetzt zwei fachliche Aktionen:
+
+```text
+Änderungen speichern = Status aus dem Formular speichern
+Rechnung ausgeben = Status Offen setzen
+```
+
+## Dashboard Deep-Link
+
+Der Dashboard-Handlungsbedarf speichert beim Klick `pageId` und `itemId` und öffnet nach der Navigation den passenden Datensatz im Master-Detail-Drawer.

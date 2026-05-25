@@ -10,6 +10,7 @@ type DashboardPageProps = {
 };
 
 type DashboardActivity = {
+  id: string;
   type: string;
   number: string;
   customerName: string;
@@ -18,7 +19,7 @@ type DashboardActivity = {
   priority: string;
   hint: string;
   className: string;
-  variant?: "success" | "warning" | "danger";
+  variant?: "success" | "warning" | "danger" | "neutral";
 };
 
 function formatDashboardTimestamp(value: Date) {
@@ -35,6 +36,21 @@ function parseNumber(value: string) {
   const parsedValue = Number.parseFloat(value.replace(",", "."));
 
   return Number.isFinite(parsedValue) ? parsedValue : 0;
+}
+
+function openDashboardActivity(
+  activity: DashboardActivity,
+  onNavigate: (pageId: string) => void,
+) {
+  window.sessionStorage.setItem(
+    "printpilot:pending-selection",
+    JSON.stringify({
+      pageId: activity.pageId,
+      itemId: activity.id,
+    }),
+  );
+
+  onNavigate(activity.pageId);
 }
 
 export function DashboardPage({ onNavigate }: DashboardPageProps) {
@@ -77,6 +93,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 
   const dashboardActivities = useMemo<DashboardActivity[]>(() => {
     const overdueInvoiceRows = overdueInvoices.slice(0, 4).map((invoice) => ({
+      id: invoice.id,
       type: "Rechnung",
       number: invoice.number,
       customerName: invoice.customerName,
@@ -89,6 +106,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     }));
 
     const reminderRows = openReminders.slice(0, 4).map((reminder) => ({
+      id: reminder.id,
       type: "Mahnung",
       number: reminder.number,
       customerName: reminder.customerName,
@@ -103,6 +121,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     const deliveryRows = shippingReadyDeliveryNotes
       .slice(0, 3)
       .map((deliveryNote) => ({
+        id: deliveryNote.id,
         type: "Lieferschein",
         number: deliveryNote.number,
         customerName: deliveryNote.customerName,
@@ -115,6 +134,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
       }));
 
     const productionOrderRows = productionOrders.slice(0, 4).map((order) => ({
+      id: order.id,
       type: "Auftrag",
       number: order.number,
       customerName: order.customerName,
@@ -127,6 +147,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     }));
 
     const waitingOrderRows = waitingOrders.slice(0, 3).map((order) => ({
+      id: order.id,
       type: "Auftrag",
       number: order.number,
       customerName: order.customerName,
@@ -139,6 +160,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     }));
 
     const quoteRows = openQuotes.slice(0, 3).map((quote) => ({
+      id: quote.id,
       type: "Angebot",
       number: quote.number,
       customerName: quote.customerName,
@@ -276,7 +298,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                   <tr
                     key={`${activity.type}-${activity.number}`}
                     className={`dashboard-work-row ${activity.className}`}
-                    onClick={() => onNavigate(activity.pageId)}
+                    onClick={() => openDashboardActivity(activity, onNavigate)}
                   >
                     <td>{activity.type}</td>
                     <td>{activity.number}</td>
@@ -367,7 +389,6 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
               <small>{materialWarnings.length} Hinweise</small>
             </button>
           </div>
-
         </div>
       </section>
     </div>

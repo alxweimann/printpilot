@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
 import { getModuleConfig } from "../app/moduleConfig";
 import {
@@ -8,7 +8,6 @@ import {
   type PrintPilotOrderPriority,
   createPrintPilotDeliveryNoteFromOrder,
   createPrintPilotInvoiceFromOrder,
-  createPrintPilotHistoryEntry,
   type PrintPilotOrderStatus,
   getPrintPilotApprovalBadgeVariant,
   groupPrintPilotOrdersByStatus,
@@ -24,7 +23,6 @@ import { Badge, type BadgeVariant } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DetailDrawer } from "../ui/DetailDrawer";
-import { DocumentHistory } from "../ui/DocumentHistory";
 import { DocumentPreviewDialog } from "../ui/DocumentPreviewDialog";
 import { DirtyStateNotice } from "../ui/DirtyStateNotice";
 import { EditLockToggle } from "../ui/EditLockToggle";
@@ -291,6 +289,39 @@ export function OrdersPage() {
     initialTab: "Alle Aufträge" as OrderTab,
   });
 
+
+  useEffect(() => {
+    const pendingSelection = window.sessionStorage.getItem(
+      "printpilot:pending-selection",
+    );
+
+    if (!pendingSelection) {
+      return;
+    }
+
+    try {
+      const parsedSelection = JSON.parse(pendingSelection) as {
+        pageId?: string;
+        itemId?: string;
+      };
+
+      if (parsedSelection.pageId !== "orders" || !parsedSelection.itemId) {
+        return;
+      }
+
+      window.sessionStorage.removeItem("printpilot:pending-selection");
+      setActiveTab("Alle Aufträge");
+      setIsEditing(false);
+
+      window.setTimeout(() => {
+        selectItem(parsedSelection.itemId as string);
+        setIsDetailDrawerOpen(true);
+      }, 0);
+    } catch {
+      window.sessionStorage.removeItem("printpilot:pending-selection");
+    }
+  }, [selectItem, setActiveTab]);
+
   const { draft, isDirty, updateDraftField, resetDraft, saveDraft } =
     useEditableDraft(selectedOrder);
 
@@ -434,63 +465,19 @@ export function OrdersPage() {
   }
 
   function saveOrder(savedOrder: PrintPilotOrder) {
-    const previousHistory = savedOrder.history ?? selectedOrder?.history ?? [];
-    const historyEntries = [];
-
-    if (selectedOrder && selectedOrder.status !== savedOrder.status) {
-      historyEntries.push(
-        createPrintPilotHistoryEntry(
-          "Auftrag: Status geändert",
-          savedOrder.status,
-          selectedOrder.status,
-          savedOrder.status,
-        ),
-      );
-    }
-
-    if (selectedOrder && selectedOrder.approval !== savedOrder.approval) {
-      historyEntries.push(
-        createPrintPilotHistoryEntry(
-          "Auftrag: Freigabe geändert",
-          savedOrder.approval,
-          selectedOrder.approval,
-          savedOrder.approval,
-        ),
-      );
-    }
-
-    if (selectedOrder && selectedOrder.handoff !== savedOrder.handoff) {
-      historyEntries.push(
-        createPrintPilotHistoryEntry(
-          "Auftrag: Übergabe geändert",
-          savedOrder.handoff,
-          selectedOrder.handoff,
-          savedOrder.handoff,
-        ),
-      );
-    }
-
-    const documentToSave: PrintPilotOrder =
-      historyEntries.length > 0
-        ? {
-            ...savedOrder,
-            history: [...historyEntries, ...previousHistory],
-          }
-        : savedOrder;
-
-    updateOrder(documentToSave);
-    saveDraft(documentToSave);
+    updateOrder(savedOrder);
+    saveDraft(savedOrder);
     setIsEditing(false);
     setIsProductionApprovalDialogOpen(false);
     setIsRequiredFieldsDialogOpen(false);
+    setIsDetailDrawerOpen(false);
 
     if (activeTab !== "Alle Aufträge") {
       setActiveTab("Alle Aufträge");
     }
 
     window.setTimeout(() => {
-      selectItem(documentToSave.id);
-      setIsDetailDrawerOpen(true);
+      selectItem(savedOrder.id);
     }, 0);
   }
 
@@ -573,36 +560,9 @@ export function OrdersPage() {
       selectedOrder,
       settings,
     );
-    const linkedDeliveryNote = {
-      ...newDeliveryNote,
-      history: [
-        createPrintPilotHistoryEntry(
-          `Erstellt aus Auftrag: ${selectedOrder.number}`,
-          newDeliveryNote.status,
-        ),
-        ...(newDeliveryNote.history ?? []),
-      ],
-    };
-    const updatedOrder: PrintPilotOrder = {
-      ...selectedOrder,
-      history: [
-        createPrintPilotHistoryEntry(
-          `Lieferschein erstellt: ${linkedDeliveryNote.number}`,
-          selectedOrder.status,
-        ),
-        ...(selectedOrder.history ?? []),
-      ],
-    };
 
-    addDeliveryNote(linkedDeliveryNote);
-    updateOrder(updatedOrder);
-    saveDraft(updatedOrder);
+    addDeliveryNote(newDeliveryNote);
     setIsCreateDeliveryNoteDialogOpen(false);
-
-    window.setTimeout(() => {
-      selectItem(updatedOrder.id);
-      setIsDetailDrawerOpen(true);
-    }, 0);
   }
 
   function handleOpenCreateInvoiceDialog() {
@@ -656,36 +616,9 @@ export function OrdersPage() {
     }
 
     const newInvoice = createPrintPilotInvoiceFromOrder(selectedOrder, settings);
-    const linkedInvoice = {
-      ...newInvoice,
-      history: [
-        createPrintPilotHistoryEntry(
-          `Erstellt aus Auftrag: ${selectedOrder.number}`,
-          newInvoice.status,
-        ),
-        ...(newInvoice.history ?? []),
-      ],
-    };
-    const updatedOrder: PrintPilotOrder = {
-      ...selectedOrder,
-      history: [
-        createPrintPilotHistoryEntry(
-          `Rechnung erstellt: ${linkedInvoice.number}`,
-          selectedOrder.status,
-        ),
-        ...(selectedOrder.history ?? []),
-      ],
-    };
 
-    addInvoice(linkedInvoice);
-    updateOrder(updatedOrder);
-    saveDraft(updatedOrder);
+    addInvoice(newInvoice);
     setIsCreateInvoiceDialogOpen(false);
-
-    window.setTimeout(() => {
-      selectItem(updatedOrder.id);
-      setIsDetailDrawerOpen(true);
-    }, 0);
   }
 
   function handleCancelProductionApprovalDialog() {
@@ -864,8 +797,6 @@ export function OrdersPage() {
         }
       >
         <WorkflowHints hints={orderWorkflowHints} />
-
-        <DocumentHistory entries={draftOrder?.history ?? selectedOrder?.history} />
 
         <div className="detail-drawer-stack">
           <section className="detail-drawer-panel">

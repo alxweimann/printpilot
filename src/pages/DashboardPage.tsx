@@ -408,6 +408,24 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
       })
       .slice(0, 8);
   }, [orders]);
+  const productionTimelineGroups = useMemo(() => {
+    const dueGroups: ProductionTimelineDueGroup[] = [
+      "Überfällig",
+      "Heute",
+      "Morgen",
+      "Später diese Woche",
+    ];
+
+    return dueGroups
+      .map((dueGroup) => ({
+        dueGroup,
+        orders: productionTimelineOrders.filter(
+          (order) => order.dueGroup === dueGroup,
+        ),
+      }))
+      .filter((group) => group.orders.length > 0);
+  }, [productionTimelineOrders]);
+
 
   return (
     <div className="page">
@@ -562,68 +580,81 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
           </div>
 
           <div className="production-timeline">
-            {productionTimelineOrders.length > 0 ? (
-              productionTimelineOrders.map((order) => (
-                <button
-                  key={order.id}
-                  type="button"
-                  className={`production-timeline-card ${order.urgencyClassName}`}
-                  onClick={() =>
-                    openDashboardActivity(
-                      {
-                        id: order.id,
-                        type: "Auftrag",
-                        number: order.number,
-                        customerName: order.customerName,
-                        status: order.status,
-                        pageId: "orders",
-                        priority: order.priority,
-                        hint: "Auftrag prüfen",
-                        className: "dashboard-priority-production",
-                        variant: "success",
-                      },
-                      onNavigate,
-                    )
-                  }
+            {productionTimelineGroups.length > 0 ? (
+              productionTimelineGroups.map((group) => (
+                <section
+                  key={group.dueGroup}
+                  className="production-timeline-group"
                 >
-                  <div className="production-timeline-card-header">
-                    <div>
-                      <strong>{order.number}</strong>
-                      <span>
-                        {order.product} · {order.customerName}
-                      </span>
-                    </div>
-
-                    <span className="production-timeline-priority">
-                      {order.priority}
-                    </span>
+                  <div className="production-timeline-group-header">
+                    <h3>{group.dueGroup}</h3>
+                    <span>{group.orders.length} Aufträge</span>
                   </div>
 
-                  <div className="production-timeline-meta">
-                    <span>{order.dueGroup}</span>
-                    <span>{formatProductionDueDate(order.dueDate)}</span>
-                    <span>{order.machine || "keine Maschine"}</span>
-                  </div>
+                  <div className="production-timeline-group-grid">
+                    {group.orders.map((order) => (
+                      <button
+                        key={order.id}
+                        type="button"
+                        className={`production-timeline-card ${order.urgencyClassName}`}
+                        onClick={() =>
+                          openDashboardActivity(
+                            {
+                              id: order.id,
+                              type: "Auftrag",
+                              number: order.number,
+                              customerName: order.customerName,
+                              status: order.status,
+                              pageId: "orders",
+                              priority: order.priority,
+                              hint: "Auftrag prüfen",
+                              className: "dashboard-priority-production",
+                              variant: "success",
+                            },
+                            onNavigate,
+                          )
+                        }
+                      >
+                        <div className="production-timeline-card-header">
+                          <div>
+                            <strong>{order.number}</strong>
+                            <span>
+                              {order.product} · {order.customerName}
+                            </span>
+                          </div>
 
-                  <div className="production-timeline-progress">
-                    <div>
-                      <span style={{ width: `${order.progress}%` }} />
-                    </div>
-                    <strong>{order.progress}%</strong>
-                  </div>
+                          <span className="production-timeline-priority">
+                            {order.priority}
+                          </span>
+                        </div>
 
-                  <div className="production-timeline-details">
-                    <span>Status: {order.status}</span>
-                    <span>Freigabe: {order.approval}</span>
-                    <span>Übergabe: {order.handoff}</span>
-                  </div>
+                        <div className="production-timeline-meta">
+                          <span>{formatProductionDueDate(order.dueDate)}</span>
+                          <span>{order.machine || "keine Maschine"}</span>
+                        </div>
 
-                  {order.blocker ? (
-                    <div className="production-timeline-blocker">
-                      ⚠ {order.blocker}
-                    </div>
-                  ) : null}
-                </button>
+                        <div className="production-timeline-progress">
+                          <div>
+                            <span style={{ width: `${order.progress}%` }} />
+                          </div>
+                          <strong>{order.progress}%</strong>
+                        </div>
+
+                        <div className="production-timeline-details">
+                          <span>Status: {order.status}</span>
+                          <span>Freigabe: {order.approval}</span>
+                          <span>Übergabe: {order.handoff}</span>
+                        </div>
+
+                        {order.blocker ? (
+                          <div className="production-timeline-blocker">
+                            ⚠ {order.blocker}
+                          </div>
+                        ) : null}
+                      </button>
+                    ))}
+                  </div>
+                </section>
               ))
             ) : (
               <div className="production-timeline-empty">

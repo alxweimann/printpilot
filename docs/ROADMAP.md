@@ -1,16 +1,3 @@
-# Roadmap
-- Erledigt: Sidebar LED-Anzeige optisch reduziert und gleich breit ausgerichtet
-- Erledigt: Sidebar LED-Anzeige ohne Rahmen/Balken und größer dargestellt
-- Erledigt: Sidebar LED-Anzeige auf gleiche Breite und reduzierten Glow angepasst
-- Hotfix erledigt: vollständiges Workflow-Konsistenzpaket für Store, Seiten und Nummernkreise
-- Erledigt: Workflow-Hinweise für Angebote und Aufträge ergänzt
-- Erledigt: Ausgabe-Status mit Historieneinträgen für Belege ergänzt
-- Erledigt: Statusänderungen werden historisiert und Ausgeben hält den Drawer offen
-- Erledigt: Historie zeigt Statuswechsel als Alt → Neu und begrenzt sichtbare Einträge
-- Hotfix erledigt: Rechnung Speichern und Ausgeben getrennt
-- Erledigt: Dashboard-Handlungsbedarf öffnet Ziel-Datensatz direkt im Drawer
-- Erledigt: Dashboard-Schnellzugriffe durch Produktions-Timeline ersetzt
-- Hotfix erledigt: TypeScript-Typ für Plantafel-DueGroup korrigiert
-- Erledigt: Dashboard Handlungsbedarf und Plantafel auf volle Breite umgestellt
-- Erledigt: Plantafel-Karten kompakter gestaltet
-- Erledigt: Plantafel optisch ruhiger und stärker als Produktionsbereich gestaltet
+# ROADMAP
+
+- Erledigt: Plantafel mit Fälligkeitsgruppen ergänzt

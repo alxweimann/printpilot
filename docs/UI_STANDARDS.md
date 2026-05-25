@@ -19,3 +19,7 @@ Mini-Auftragskarten dürfen Inhalte nicht hart abschneiden. Einheitlichkeit wird
 ## Calm Production Week Board
 
 Die Produktions-Wochenansicht nutzt dezente Tageszeilen, flache Mini-Karten und reduzierte visuelle Akzente.
+
+## Production Week Board Typography
+
+Mini-Karten verwenden Inter mit moderateren Schriftgewichten, klarer Hierarchie und entspannterer Zeilenhöhe.

@@ -28,3 +28,7 @@ Die Mini-Auftragskarten der Wochen-Plantafel behalten eine einheitliche Mindesth
 ## Plantafel Wochenansicht beruhigt
 
 Die Wochen-Plantafel wurde optisch beruhigt: weniger Schatten, weniger Rahmenwirkung, kompaktere Karten, dezente Fortschrittsbalken und zurückhaltendere Blocker-Hinweise.
+
+## Plantafel Typografie verfeinert
+
+Die Typografie der Wochen-Plantafel wurde lesbarer gestaltet: Inter bleibt erhalten, extreme Schriftgewichte wurden reduziert, Zeilenhöhen leicht entspannt und Mini-Karten wirken ruhiger.

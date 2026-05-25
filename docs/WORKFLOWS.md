@@ -19,3 +19,7 @@ Mini-Karten nutzen eine feste Mindesthöhe, bleiben aber nach unten flexibel, da
 ## Plantafel ruhige Wochenansicht
 
 Die Wochenansicht bleibt als Tageszeilen aufgebaut, wirkt aber durch reduzierte Schatten, Rahmen und kleinere Karten ruhiger.
+
+## Plantafel Typografie
+
+Die Wochen-Plantafel nutzt reduzierte Schriftgewichte und bessere Zeilenhöhen, damit Mini-Karten trotz kompakter Darstellung lesbar bleiben.

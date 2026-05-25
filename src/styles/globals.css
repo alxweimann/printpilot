@@ -2364,3 +2364,67 @@ body {
     min-height: 102px !important;
   }
 }
+
+/* Production week board typography refinement. */
+.production-week-column-header h3 {
+  font-size: 14px !important;
+  font-weight: 850 !important;
+  letter-spacing: -0.015em !important;
+  line-height: 1.2 !important;
+}
+
+.production-week-column-header span {
+  font-size: 10px !important;
+  font-weight: 650 !important;
+  line-height: 1.25 !important;
+}
+
+.production-week-column-header strong {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+}
+
+.production-week-card-topline strong {
+  font-size: 10.5px !important;
+  font-weight: 850 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.2 !important;
+}
+
+.production-week-card-topline span {
+  font-size: 9.5px !important;
+  font-weight: 800 !important;
+  line-height: 1.2 !important;
+}
+
+.production-week-card-title {
+  font-size: 10.5px !important;
+  font-weight: 760 !important;
+  line-height: 1.26 !important;
+}
+
+.production-week-card-customer {
+  font-size: 9.5px !important;
+  font-weight: 620 !important;
+  line-height: 1.25 !important;
+}
+
+.production-week-card-meta span {
+  font-size: 8.5px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.2 !important;
+}
+
+.production-week-card-blocker {
+  font-size: 8.5px !important;
+  font-weight: 740 !important;
+  letter-spacing: 0 !important;
+  line-height: 1.2 !important;
+}
+
+.production-week-empty {
+  font-size: 9.5px !important;
+  font-weight: 650 !important;
+  letter-spacing: 0 !important;
+}

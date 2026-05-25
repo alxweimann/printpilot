@@ -45,6 +45,13 @@ type ProductionTimelineOrder = {
   urgencyClassName: string;
 };
 
+type ProductionWeekColumn = {
+  key: string;
+  title: string;
+  dateLabel: string;
+  orders: ProductionTimelineOrder[];
+};
+
 function formatDashboardTimestamp(value: Date) {
   return new Intl.DateTimeFormat("de-DE", {
     day: "2-digit",
@@ -110,6 +117,34 @@ function formatProductionDueDate(value: string) {
     day: "2-digit",
     month: "2-digit",
   }).format(dueDate);
+}
+
+function getMondayOfCurrentWeek() {
+  const today = getStartOfDay(new Date());
+  const day = today.getDay();
+  const distanceToMonday = day === 0 ? -6 : 1 - day;
+  const monday = new Date(today);
+
+  monday.setDate(today.getDate() + distanceToMonday);
+
+  return monday;
+}
+
+function formatProductionWeekDate(value: Date) {
+  return new Intl.DateTimeFormat("de-DE", {
+    day: "2-digit",
+    month: "2-digit",
+  }).format(value);
+}
+
+function isSameProductionDay(dateValue: string, targetDate: Date) {
+  const date = new Date(dateValue);
+
+  if (Number.isNaN(date.getTime())) {
+    return false;
+  }
+
+  return getStartOfDay(date).getTime() === getStartOfDay(targetDate).getTime();
 }
 
 function getProductionProgress(order: {
@@ -408,22 +443,37 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
       })
       .slice(0, 8);
   }, [orders]);
-  const productionTimelineGroups = useMemo(() => {
-    const dueGroups: ProductionTimelineDueGroup[] = [
-      "Überfällig",
-      "Heute",
-      "Morgen",
-      "Später diese Woche",
-    ];
+  const productionWeekColumns = useMemo<ProductionWeekColumn[]>(() => {
+    const monday = getMondayOfCurrentWeek();
+    const workDays = ["Montag", "Dienstag", "Mittwoch", "Donnerstag", "Freitag"];
 
-    return dueGroups
-      .map((dueGroup) => ({
-        dueGroup,
-        orders: productionTimelineOrders.filter(
-          (order) => order.dueGroup === dueGroup,
+    const overdueOrders = productionTimelineOrders.filter(
+      (order) => order.dueGroup === "Überfällig",
+    );
+
+    const dayColumns = workDays.map((title, index) => {
+      const date = new Date(monday);
+      date.setDate(monday.getDate() + index);
+
+      return {
+        key: title,
+        title,
+        dateLabel: formatProductionWeekDate(date),
+        orders: productionTimelineOrders.filter((order) =>
+          isSameProductionDay(order.dueDate, date),
         ),
-      }))
-      .filter((group) => group.orders.length > 0);
+      };
+    });
+
+    return [
+      {
+        key: "overdue",
+        title: "Überfällig",
+        dateLabel: "vor dieser Woche",
+        orders: overdueOrders,
+      },
+      ...dayColumns,
+    ];
   }, [productionTimelineOrders]);
 
 
@@ -579,24 +629,25 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
             </div>
           </div>
 
-          <div className="production-timeline">
-            {productionTimelineGroups.length > 0 ? (
-              productionTimelineGroups.map((group) => (
-                <section
-                  key={group.dueGroup}
-                  className="production-timeline-group"
-                >
-                  <div className="production-timeline-group-header">
-                    <h3>{group.dueGroup}</h3>
-                    <span>{group.orders.length} Aufträge</span>
+          <div className="production-week-board">
+            {productionWeekColumns.map((column) => (
+              <section key={column.key} className="production-week-column">
+                <div className="production-week-column-header">
+                  <div>
+                    <h3>{column.title}</h3>
+                    <span>{column.dateLabel}</span>
                   </div>
 
-                  <div className="production-timeline-group-grid">
-                    {group.orders.map((order) => (
+                  <strong>{column.orders.length}</strong>
+                </div>
+
+                <div className="production-week-column-list">
+                  {column.orders.length > 0 ? (
+                    column.orders.map((order) => (
                       <button
                         key={order.id}
                         type="button"
-                        className={`production-timeline-card ${order.urgencyClassName}`}
+                        className={`production-week-card ${order.urgencyClassName}`}
                         onClick={() =>
                           openDashboardActivity(
                             {
@@ -615,52 +666,41 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                           )
                         }
                       >
-                        <div className="production-timeline-card-header">
-                          <div>
-                            <strong>{order.number}</strong>
-                            <span>
-                              {order.product} · {order.customerName}
-                            </span>
-                          </div>
-
-                          <span className="production-timeline-priority">
-                            {order.priority}
-                          </span>
+                        <div className="production-week-card-topline">
+                          <strong>{order.number}</strong>
+                          <span>{order.progress}%</span>
                         </div>
 
-                        <div className="production-timeline-meta">
-                          <span>{formatProductionDueDate(order.dueDate)}</span>
+                        <div className="production-week-card-title">
+                          {order.product}
+                        </div>
+
+                        <div className="production-week-card-customer">
+                          {order.customerName}
+                        </div>
+
+                        <div className="production-week-card-progress">
+                          <span style={{ width: `${order.progress}%` }} />
+                        </div>
+
+                        <div className="production-week-card-meta">
                           <span>{order.machine || "keine Maschine"}</span>
-                        </div>
-
-                        <div className="production-timeline-progress">
-                          <div>
-                            <span style={{ width: `${order.progress}%` }} />
-                          </div>
-                          <strong>{order.progress}%</strong>
-                        </div>
-
-                        <div className="production-timeline-details">
-                          <span>Status: {order.status}</span>
-                          <span>Freigabe: {order.approval}</span>
-                          <span>Übergabe: {order.handoff}</span>
+                          <span>{order.status}</span>
                         </div>
 
                         {order.blocker ? (
-                          <div className="production-timeline-blocker">
+                          <div className="production-week-card-blocker">
                             ⚠ {order.blocker}
                           </div>
                         ) : null}
                       </button>
-                    ))}
-                  </div>
-                </section>
-              ))
-            ) : (
-              <div className="production-timeline-empty">
-                Keine offenen Aufträge für diese Woche.
-              </div>
-            )}
+                    ))
+                  ) : (
+                    <div className="production-week-empty">Keine Aufträge</div>
+                  )}
+                </div>
+              </section>
+            ))}
           </div>
         </div>
       </section>

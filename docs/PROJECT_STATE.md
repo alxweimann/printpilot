@@ -1,14 +1,16 @@
 # PROJECT STATE
 
-## Plantafel mit Fälligkeitsgruppen
+## Plantafel Wochenansicht
 
-Die Dashboard-Plantafel gruppiert Aufträge jetzt optisch nach Fälligkeit:
+Die Dashboard-Plantafel wurde von einer Gruppenliste auf eine Wochenansicht mit Tages-Spalten umgestellt.
 
 ```text
 Überfällig
-Heute
-Morgen
-Später diese Woche
+Montag
+Dienstag
+Mittwoch
+Donnerstag
+Freitag
 ```
 
-Die bestehende Fortschritts- und Blocker-Logik bleibt unverändert.
+Aufträge werden als kompakte Mini-Karten mit Auftragsnummer, Produkt, Kunde, Fortschritt, Maschine, Status und Blocker angezeigt.

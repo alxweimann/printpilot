@@ -12,3 +12,4 @@
 - Erledigt: Auftragshistorie für Status, Freigabe und Übergabe ergänzt
 - Erledigt: Historie beim Erstellen von Folgebelegen ergänzt
 - Erledigt: Folgebeleg-Historie mit konkreten Dokumentnummern verlinkt
+- Erledigt: Dokumenthistorie als kompakte Timeline gestaltet

@@ -34,6 +34,22 @@ function sortHistoryEntries(entries: DocumentHistoryEntry[]) {
   });
 }
 
+function getDocumentNumberFromAction(action: string) {
+  const match = action.match(/: ([A-ZÄÖÜ]{1,4}-[^\s]+)/);
+
+  return match?.[1] ?? null;
+}
+
+function getActionLabel(action: string) {
+  const documentNumber = getDocumentNumberFromAction(action);
+
+  if (!documentNumber) {
+    return action;
+  }
+
+  return action.replace(`: ${documentNumber}`, "");
+}
+
 export function DocumentHistory({
   entries = [],
   maxVisible = 5,
@@ -46,30 +62,44 @@ export function DocumentHistory({
   const hiddenCount = Math.max(entries.length - visibleEntries.length, 0);
 
   return (
-    <section className="document-history" aria-label="Dokumenthistorie">
+    <section className="document-history document-history--timeline" aria-label="Dokumenthistorie">
       <div className="document-history-title">Historie</div>
 
       <ol className="document-history-list">
-        {visibleEntries.map((entry, index) => (
-          <li key={entry.id ?? `${entry.createdAt}-${index}`}>
-            <span className="document-history-dot" aria-hidden="true" />
-            <div>
-              <strong>{entry.action}</strong>
-              {entry.previousStatus && entry.nextStatus ? (
-                <p>
-                  {formatHistoryDate(entry.createdAt)} ·{" "}
-                  <span className="document-history-transition">
-                    {entry.previousStatus} → {entry.nextStatus}
-                  </span>
-                </p>
-              ) : (
-                <p>
-                  {formatHistoryDate(entry.createdAt)} · Status: {entry.status}
-                </p>
-              )}
-            </div>
-          </li>
-        ))}
+        {visibleEntries.map((entry, index) => {
+          const documentNumber = getDocumentNumberFromAction(entry.action);
+          const actionLabel = getActionLabel(entry.action);
+
+          return (
+            <li key={entry.id ?? `${entry.createdAt}-${index}`}>
+              <span className="document-history-dot" aria-hidden="true" />
+              <div className="document-history-content">
+                <strong>
+                  {actionLabel}
+                  {documentNumber ? (
+                    <span className="document-history-reference">
+                      {documentNumber}
+                    </span>
+                  ) : null}
+                </strong>
+
+                {entry.previousStatus && entry.nextStatus ? (
+                  <p className="document-history-meta">
+                    <span className="document-history-transition">
+                      {entry.previousStatus} → {entry.nextStatus}
+                    </span>
+                    <span>{formatHistoryDate(entry.createdAt)}</span>
+                  </p>
+                ) : (
+                  <p className="document-history-meta">
+                    <span>Status: {entry.status}</span>
+                    <span>{formatHistoryDate(entry.createdAt)}</span>
+                  </p>
+                )}
+              </div>
+            </li>
+          );
+        })}
       </ol>
 
       {hiddenCount > 0 ? (

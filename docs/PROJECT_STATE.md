@@ -128,3 +128,17 @@ Auftrag: Erstellt aus Angebot: AG-...
 Lieferschein/Rechnung: Erstellt aus Auftrag: AU-...
 Mahnung: Erstellt aus Rechnung: RE-...
 ```
+
+## Historie als kompakte Timeline
+
+Die Dokumenthistorie wird jetzt kompakter als vertikale Timeline dargestellt.
+
+Verbessert:
+
+```text
+neueste Einträge oben
+Dokumentnummern als kleine Referenz-Badges
+Statuswechsel Alt → Neu stärker hervorgehoben
+maximal 5 sichtbare Einträge bleiben erhalten
+ältere Einträge werden zusammengefasst
+```

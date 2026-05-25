@@ -69,3 +69,7 @@ Folgeaktionen wie Auftrag/Lieferschein/Rechnung/Mahnung erstellen erzeugen Histo
 ## Verlinkte Historie
 
 Folgeaktionen schreiben Historieneinträge mit der Nummer des erzeugten bzw. auslösenden Dokuments.
+
+## Kompakte Historien-Timeline
+
+`DocumentHistory` nutzt im Drawer eine Timeline-Darstellung mit Referenz-Badges für Dokumentnummern und hervorgehobenen Statuswechseln.

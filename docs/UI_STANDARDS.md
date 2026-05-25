@@ -65,3 +65,7 @@ Statuswechsel werden fett als `Alt → Neu` dargestellt. Die Historie zeigt maxi
 ## Auftragshistorie
 
 Auftragshistorie nutzt dieselbe `DocumentHistory`-Darstellung wie Belege.
+
+## History Timeline UI
+
+Historien werden als kompakte Timeline angezeigt. Dokumentnummern erscheinen als kleine Referenz-Badges, Statuswechsel als hervorgehobene Pills.

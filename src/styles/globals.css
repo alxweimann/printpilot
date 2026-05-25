@@ -1323,3 +1323,112 @@ body {
   font-size: 12px;
   font-weight: 700;
 }
+
+/* Compact timeline variant for document history. */
+.document-history--timeline {
+  margin-top: 2px;
+  padding: 12px 14px;
+  border: 1px solid rgba(148, 163, 184, 0.22);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.62);
+}
+
+.document-history--timeline .document-history-list {
+  position: relative;
+  gap: 0;
+  padding-left: 3px;
+}
+
+.document-history--timeline .document-history-list::before {
+  content: "";
+  position: absolute;
+  top: 13px;
+  bottom: 13px;
+  left: 7px;
+  width: 1px;
+  background: linear-gradient(
+    180deg,
+    rgba(0, 174, 239, 0.35),
+    rgba(236, 0, 140, 0.28),
+    rgba(255, 203, 5, 0.28)
+  );
+}
+
+.document-history--timeline .document-history-list li {
+  position: relative;
+  grid-template-columns: 16px minmax(0, 1fr);
+  gap: 10px;
+  padding: 7px 0 9px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+}
+
+.document-history--timeline .document-history-dot {
+  position: relative;
+  z-index: 1;
+  width: 9px;
+  height: 9px;
+  margin-top: 5px;
+  border: 2px solid #ffffff;
+  background: linear-gradient(135deg, var(--color-cyan), var(--color-magenta));
+  box-shadow: 0 0 0 3px rgba(15, 23, 42, 0.04);
+}
+
+.document-history-content {
+  min-width: 0;
+}
+
+.document-history--timeline .document-history-list strong {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  align-items: center;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.document-history-reference {
+  display: inline-flex;
+  align-items: center;
+  min-height: 20px;
+  padding: 2px 7px;
+  border: 1px solid rgba(14, 165, 233, 0.24);
+  border-radius: 999px;
+  background: rgba(14, 165, 233, 0.08);
+  color: #0369a1;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+}
+
+.document-history-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  align-items: center;
+  margin: 3px 0 0;
+  color: #64748b;
+  font-size: 12px;
+  line-height: 1.35;
+}
+
+.document-history-transition {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 7px;
+  border-radius: 999px;
+  background: rgba(15, 23, 42, 0.05);
+  color: #0f172a;
+  font-weight: 850;
+}
+
+.document-history-more {
+  margin-top: 6px;
+  padding-top: 8px;
+  border-top: 1px dashed rgba(148, 163, 184, 0.36);
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 750;
+}

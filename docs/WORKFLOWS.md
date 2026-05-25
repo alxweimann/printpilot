@@ -235,3 +235,9 @@ Rechnung → Mahnung erstellt: MA-...
 ```
 
 Neue Folgebelege erhalten einen Herkunftseintrag wie `Erstellt aus Auftrag: AU-...`.
+
+## Historie Timeline
+
+Die Historie bleibt fachlich unverändert, wird aber kompakter und besser lesbar als Timeline angezeigt.
+
+Dokumentnummern aus Einträgen wie `Auftrag erstellt: AU-...` werden optisch als Referenz hervorgehoben.

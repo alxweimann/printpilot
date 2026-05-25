@@ -77,3 +77,7 @@ Dashboard-Zeitstempel werden mit explizitem Formatargument formatiert.
 ## Dashboard Stand Pill
 
 Zeitstempel im Dashboard werden als kompakte Pill dargestellt. Kennzahlkarten verwenden konsistentere Höhen, stärkere Zahlen und klare Modulakzente.
+
+## Dashboard Prioritätszeilen
+
+Handlungsbedarf-Zeilen verwenden farbige Prioritätsleisten, kurze Handlungshinweise und Prioritäts-Pills.

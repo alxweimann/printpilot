@@ -15,6 +15,9 @@ type DashboardActivity = {
   customerName: string;
   status: string;
   pageId: string;
+  priority: string;
+  hint: string;
+  className: string;
   variant?: "success" | "warning" | "danger";
 };
 
@@ -73,47 +76,96 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
   });
 
   const dashboardActivities = useMemo<DashboardActivity[]>(() => {
+    const overdueInvoiceRows = overdueInvoices.slice(0, 4).map((invoice) => ({
+      type: "Rechnung",
+      number: invoice.number,
+      customerName: invoice.customerName,
+      status: invoice.status,
+      pageId: "invoices",
+      priority: "Hoch",
+      hint: "Zahlung / Mahnung prüfen",
+      className: "dashboard-priority-critical",
+      variant: "danger" as const,
+    }));
+
+    const reminderRows = openReminders.slice(0, 4).map((reminder) => ({
+      type: "Mahnung",
+      number: reminder.number,
+      customerName: reminder.customerName,
+      status: reminder.status,
+      pageId: "reminders",
+      priority: reminder.status === "Versendet" ? "Frist" : "Prüfen",
+      hint: "Zahlungseingang prüfen",
+      className: "dashboard-priority-warning",
+      variant: "warning" as const,
+    }));
+
+    const deliveryRows = shippingReadyDeliveryNotes
+      .slice(0, 3)
+      .map((deliveryNote) => ({
+        type: "Lieferschein",
+        number: deliveryNote.number,
+        customerName: deliveryNote.customerName,
+        status: deliveryNote.status,
+        pageId: "delivery-notes",
+        priority: "Versand",
+        hint: "Versand / Abholung vorbereiten",
+        className: "dashboard-priority-shipping",
+        variant: "warning" as const,
+      }));
+
+    const productionOrderRows = productionOrders.slice(0, 4).map((order) => ({
+      type: "Auftrag",
+      number: order.number,
+      customerName: order.customerName,
+      status: order.status,
+      pageId: "orders",
+      priority: "Produktion",
+      hint: "Produktionsstatus prüfen",
+      className: "dashboard-priority-production",
+      variant: "success" as const,
+    }));
+
+    const waitingOrderRows = waitingOrders.slice(0, 3).map((order) => ({
+      type: "Auftrag",
+      number: order.number,
+      customerName: order.customerName,
+      status: order.status,
+      pageId: "orders",
+      priority: "Wartet",
+      hint: "Blocker prüfen",
+      className: "dashboard-priority-waiting",
+      variant: "warning" as const,
+    }));
+
     const quoteRows = openQuotes.slice(0, 3).map((quote) => ({
       type: "Angebot",
       number: quote.number,
       customerName: quote.customerName,
       status: quote.status,
       pageId: "quotes",
+      priority: "Angebot",
+      hint: "Nachfassen / Entscheidung prüfen",
+      className: "dashboard-priority-normal",
       variant: "warning" as const,
     }));
 
-    const orderRows = productionOrders.slice(0, 3).map((order) => ({
-      type: "Auftrag",
-      number: order.number,
-      customerName: order.customerName,
-      status: order.status,
-      pageId: "orders",
-      variant: "success" as const,
-    }));
-
-    const invoiceRows = overdueInvoices.slice(0, 3).map((invoice) => ({
-      type: "Rechnung",
-      number: invoice.number,
-      customerName: invoice.customerName,
-      status: invoice.status,
-      pageId: "invoices",
-      variant: "danger" as const,
-    }));
-
-    const reminderRows = openReminders.slice(0, 3).map((reminder) => ({
-      type: "Mahnung",
-      number: reminder.number,
-      customerName: reminder.customerName,
-      status: reminder.status,
-      pageId: "reminders",
-      variant: "warning" as const,
-    }));
-
-    return [...invoiceRows, ...reminderRows, ...orderRows, ...quoteRows].slice(
-      0,
-      8,
-    );
-  }, [openQuotes, openReminders, overdueInvoices, productionOrders]);
+    return [
+      ...overdueInvoiceRows,
+      ...reminderRows,
+      ...deliveryRows,
+      ...productionOrderRows,
+      ...waitingOrderRows,
+      ...quoteRows,
+    ].slice(0, 10);
+  }, [
+    openQuotes,
+    openReminders,
+    overdueInvoices,
+    productionOrders,
+    shippingReadyDeliveryNotes,
+    waitingOrders,
+  ]);
 
   return (
     <div className="page">
@@ -213,6 +265,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                 <th>Typ</th>
                 <th>Nummer</th>
                 <th>Kunde</th>
+                <th>Priorität</th>
                 <th>Status</th>
               </tr>
             </thead>
@@ -222,12 +275,20 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                 dashboardActivities.map((activity) => (
                   <tr
                     key={`${activity.type}-${activity.number}`}
-                    className="dashboard-work-row"
+                    className={`dashboard-work-row ${activity.className}`}
                     onClick={() => onNavigate(activity.pageId)}
                   >
                     <td>{activity.type}</td>
                     <td>{activity.number}</td>
-                    <td>{activity.customerName}</td>
+                    <td>
+                      <strong>{activity.customerName}</strong>
+                      <small>{activity.hint}</small>
+                    </td>
+                    <td>
+                      <span className="dashboard-priority-pill">
+                        {activity.priority}
+                      </span>
+                    </td>
                     <td>
                       <Badge variant={activity.variant}>{activity.status}</Badge>
                     </td>
@@ -235,7 +296,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
                 ))
               ) : (
                 <tr>
-                  <td colSpan={4}>
+                  <td colSpan={5}>
                     <strong>Keine kritischen Vorgänge.</strong> Aktuell gibt es
                     keine offenen Mahnungen, überfälligen Rechnungen oder
                     Produktionsengpässe.

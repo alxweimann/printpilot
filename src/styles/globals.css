@@ -1380,3 +1380,81 @@ body {
     width: fit-content;
   }
 }
+
+/* Dashboard prioritized attention table. */
+.dashboard-work-row {
+  cursor: pointer;
+}
+
+.dashboard-work-row td {
+  vertical-align: middle;
+}
+
+.dashboard-work-row td:first-child {
+  position: relative;
+  font-weight: 850;
+}
+
+.dashboard-work-row td:first-child::before {
+  content: "";
+  display: inline-block;
+  width: 4px;
+  height: 22px;
+  margin-right: 10px;
+  border-radius: 999px;
+  background: rgba(100, 116, 139, 0.42);
+  vertical-align: middle;
+}
+
+.dashboard-work-row strong {
+  display: block;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.dashboard-work-row small {
+  display: block;
+  margin-top: 2px;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 700;
+}
+
+.dashboard-priority-critical td:first-child::before {
+  background: #ef4444;
+}
+
+.dashboard-priority-warning td:first-child::before {
+  background: #f97316;
+}
+
+.dashboard-priority-shipping td:first-child::before {
+  background: #eab308;
+}
+
+.dashboard-priority-production td:first-child::before {
+  background: #22c55e;
+}
+
+.dashboard-priority-waiting td:first-child::before {
+  background: #8b5cf6;
+}
+
+.dashboard-priority-normal td:first-child::before {
+  background: var(--color-cyan);
+}
+
+.dashboard-priority-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 3px 8px;
+  border: 1px solid rgba(148, 163, 184, 0.28);
+  border-radius: 999px;
+  background: rgba(248, 250, 252, 0.86);
+  color: #334155;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.03em;
+}

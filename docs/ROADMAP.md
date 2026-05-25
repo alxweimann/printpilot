@@ -9,3 +9,4 @@
 - Erledigt: Dashboard mit echten Workflow-Kennzahlen aus dem Store ergänzt
 - Hotfix erledigt: Dashboard-Datumsformat korrigiert
 - Erledigt: Dashboard-Karten und Stand-Anzeige optisch verbessert
+- Erledigt: Dashboard-Handlungsbedarf priorisiert und optisch markiert

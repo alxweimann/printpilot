@@ -159,3 +159,7 @@ Der Dashboard-Stand nutzt ein explizites Datumsformat, damit der Build sauber l�
 ## Dashboard Stand-Anzeige
 
 Das Dashboard zeigt den aktuellen Stand jetzt mit Datum und Uhrzeit im Schnellzugriff-Kopf.
+
+## Dashboard Priorisierung
+
+Der Handlungsbedarf im Dashboard folgt einer festen fachlichen Priorität: überfällige Rechnungen, Mahnungen, Versand, Produktion, wartende Aufträge und offene Angebote.

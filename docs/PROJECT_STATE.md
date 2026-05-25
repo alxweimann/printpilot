@@ -64,3 +64,20 @@ Der Dashboard-Zeitstempel nutzt jetzt `formatPrintPilotDateString` mit explizite
 ## Dashboard Karten und Stand-Anzeige
 
 Die Dashboard-Kennzahlen wurden optisch kräftiger und gleichmäßiger gestaltet. Die Stand-Anzeige sitzt jetzt als Pill im Schnellzugriff-Kopf und zeigt Datum plus Uhrzeit.
+
+## Dashboard Handlungsbedarf priorisiert
+
+Die Dashboard-Liste `Handlungsbedarf` wird jetzt fachlich priorisiert.
+
+Reihenfolge:
+
+```text
+1. Überfällige Rechnungen
+2. Offene/versendete Mahnungen
+3. Versandbereite Lieferscheine
+4. Aufträge in Produktion
+5. Wartende Aufträge
+6. Offene Angebote
+```
+
+Jede Zeile zeigt zusätzlich Priorität und konkreten Handlungshinweis.

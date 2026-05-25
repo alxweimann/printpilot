@@ -10,3 +10,4 @@
 - Hotfix erledigt: Rechnung Speichern und Ausgeben getrennt
 - Hotfix erledigt: Angebot Speichern und Ausgeben getrennt
 - Erledigt: Auftragshistorie für Status, Freigabe und Übergabe ergänzt
+- Erledigt: Historie beim Erstellen von Folgebelegen ergänzt

@@ -61,3 +61,7 @@ Der Angebotsdrawer verwendet separate Aktionen für `Änderungen speichern` und 
 ## Auftragshistorie im Drawer
 
 Der Auftragsdrawer zeigt `DocumentHistory` wie die Belegdrawer. Der Drawer bleibt nach dem Speichern offen.
+
+## Historie für Folgeaktionen
+
+Folgeaktionen wie Auftrag/Lieferschein/Rechnung/Mahnung erstellen erzeugen Historieneinträge und halten den Drawer offen.

@@ -282,6 +282,10 @@ export function QuotesPage() {
       ...selectedQuote,
       status: "Angenommen",
       badgeVariant: "success",
+      history: [
+        createPrintPilotHistoryEntry("Auftrag erstellt", "Angenommen"),
+        ...(selectedQuote.history ?? []),
+      ],
     };
 
     const newOrder = createPrintPilotOrderFromQuote(acceptedQuote, settings);

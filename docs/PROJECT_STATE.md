@@ -96,3 +96,16 @@ Freigabe geändert
 ```
 
 Der Auftragsdrawer bleibt nach dem Speichern offen, damit die Historie direkt sichtbar ist.
+
+## Historie beim Erstellen von Folgebelegen
+
+Beim Erzeugen von Folgebelegen wird jetzt ein Historieneintrag am Ausgangsdokument erzeugt.
+
+```text
+Angebot → Auftrag erstellt
+Auftrag → Lieferschein erstellt
+Auftrag → Rechnung erstellt
+Rechnung → Mahnung erstellt
+```
+
+Der Drawer bleibt offen, damit die Historie direkt sichtbar ist.

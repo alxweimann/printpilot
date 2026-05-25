@@ -573,9 +573,26 @@ export function OrdersPage() {
       selectedOrder,
       settings,
     );
+    const updatedOrder: PrintPilotOrder = {
+      ...selectedOrder,
+      history: [
+        createPrintPilotHistoryEntry(
+          "Lieferschein erstellt",
+          selectedOrder.status,
+        ),
+        ...(selectedOrder.history ?? []),
+      ],
+    };
 
     addDeliveryNote(newDeliveryNote);
+    updateOrder(updatedOrder);
+    saveDraft(updatedOrder);
     setIsCreateDeliveryNoteDialogOpen(false);
+
+    window.setTimeout(() => {
+      selectItem(updatedOrder.id);
+      setIsDetailDrawerOpen(true);
+    }, 0);
   }
 
   function handleOpenCreateInvoiceDialog() {
@@ -629,9 +646,23 @@ export function OrdersPage() {
     }
 
     const newInvoice = createPrintPilotInvoiceFromOrder(selectedOrder, settings);
+    const updatedOrder: PrintPilotOrder = {
+      ...selectedOrder,
+      history: [
+        createPrintPilotHistoryEntry("Rechnung erstellt", selectedOrder.status),
+        ...(selectedOrder.history ?? []),
+      ],
+    };
 
     addInvoice(newInvoice);
+    updateOrder(updatedOrder);
+    saveDraft(updatedOrder);
     setIsCreateInvoiceDialogOpen(false);
+
+    window.setTimeout(() => {
+      selectItem(updatedOrder.id);
+      setIsDetailDrawerOpen(true);
+    }, 0);
   }
 
   function handleCancelProductionApprovalDialog() {

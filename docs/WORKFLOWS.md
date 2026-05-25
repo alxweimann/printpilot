@@ -211,3 +211,14 @@ Freigabe ausstehend → Freigabe erteilt
 Auftrag: Übergabe geändert
 Druckdaten prüfen → In Druck
 ```
+
+## Folgebeleg-Erstellung in Historie
+
+Die Erstellung von Folgebelegen wird in der Historie des Ausgangsdokuments protokolliert.
+
+```text
+Angebot: Auftrag erstellt
+Auftrag: Lieferschein erstellt
+Auftrag: Rechnung erstellt
+Rechnung: Mahnung erstellt
+```

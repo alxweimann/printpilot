@@ -324,9 +324,23 @@ export function InvoicesPage() {
       selectedInvoice,
       settings,
     );
+    const updatedInvoice: PrintPilotInvoice = {
+      ...selectedInvoice,
+      history: [
+        createPrintPilotHistoryEntry("Mahnung erstellt", selectedInvoice.status),
+        ...(selectedInvoice.history ?? []),
+      ],
+    };
 
     addReminder(newReminder);
+    updateInvoice(updatedInvoice);
+    saveDraft(updatedInvoice);
     setIsCreateReminderDialogOpen(false);
+
+    window.setTimeout(() => {
+      selectItem(updatedInvoice.id);
+      setIsDetailDrawerOpen(true);
+    }, 0);
   }
 
   return (

@@ -31,3 +31,7 @@ Die Handlungsbedarf-Liste nutzt reduzierte Schriftgewichte und ruhigere Badges, 
 ## Produktionspanel im Auftragsdrawer
 
 Status-Karten und Schnellaktionen im Produktionsbereich sind optisch korrigiert und bleiben als reine Pflegehilfe für Plantafel-relevante Daten gedacht.
+
+## Farbige Produktions-Schnellaktionen
+
+Die Schnellaktionen im Auftragsdrawer sind farblich nach ihrer fachlichen Bedeutung differenziert, bleiben aber bewusst dezent.

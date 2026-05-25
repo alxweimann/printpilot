@@ -31,3 +31,7 @@ Dashboard-Handlungsbedarf-Listen verwenden moderate Schriftgewichte, kompakte Ba
 ## Order Production Panel Visuals
 
 Produktionsstatus-Karten im Drawer werden als ruhige Karten mit linksseitigem Akzent dargestellt. Schnellaktionen erscheinen als dezente Pill-Buttons.
+
+## Production Quick Action Colors
+
+Produktions-Schnellaktionen verwenden dezente semantische Farben: Erfolg grün, Warnung orange, Produktionsschritte blau, Versandbereitschaft gelb und Abschluss violett.

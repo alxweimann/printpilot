@@ -40,3 +40,7 @@ Die Typografie der Dashboard-Liste `Handlungsbedarf` wurde beruhigt: weniger ext
 ## Auftragsdrawer Produktionspanel CSS-Fix
 
 Das Produktionspanel im Auftragsdrawer wurde optisch korrigiert: Status-Karten werden als Karten dargestellt, Schnellaktionen erscheinen als Pill-Buttons und Abstände/Schriftgewichte sind ruhiger.
+
+## Produktions-Schnellaktionen farblich differenziert
+
+Die Schnellbuttons im Auftragsdrawer-Produktionspanel haben jetzt dezente fachliche Farben: Freigabe grün, Daten fehlen orange, Produktionsschritte blau, Abholbereit gelb und Fertig violett.

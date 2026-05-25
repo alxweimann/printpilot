@@ -53,3 +53,7 @@ Ausgabeaktionen schließen den Drawer nicht mehr. Der Datensatz bleibt ausgewäh
 ## Rechnungsdrawer: getrennte Aktionen
 
 Der Rechnungsdrawer verwendet separate Aktionen für `Änderungen speichern` und `Rechnung ausgeben`, damit manuelle Statuswechsel nicht überschrieben werden.
+
+## Angebotsdrawer: getrennte Aktionen
+
+Der Angebotsdrawer verwendet separate Aktionen für `Änderungen speichern` und `Angebot ausgeben`, damit manuelle Statuswechsel nicht überschrieben werden.

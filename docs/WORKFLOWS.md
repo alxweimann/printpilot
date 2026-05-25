@@ -187,3 +187,12 @@ Die Rechnungsseite trennt jetzt zwei fachliche Aktionen:
 Änderungen speichern = Status aus dem Formular speichern
 Rechnung ausgeben = Status Offen setzen
 ```
+
+## Angebot Speichern vs. Ausgeben
+
+Die Angebotsseite trennt jetzt zwei fachliche Aktionen:
+
+```text
+Änderungen speichern = Status aus dem Formular speichern
+Angebot ausgeben = Status Offen setzen
+```

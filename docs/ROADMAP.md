@@ -8,3 +8,4 @@
 - Erledigt: Statusänderungen werden historisiert und Ausgeben hält den Drawer offen
 - Erledigt: Historie zeigt Statuswechsel als Alt → Neu und begrenzt sichtbare Einträge
 - Hotfix erledigt: Rechnung Speichern und Ausgeben getrennt
+- Hotfix erledigt: Angebot Speichern und Ausgeben getrennt

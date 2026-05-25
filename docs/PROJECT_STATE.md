@@ -71,3 +71,14 @@ Rechnung ausgeben → setzt Status bewusst auf Offen
 ```
 
 Dadurch wird ein manuell auf `Bezahlt` gesetzter Status nicht mehr durch die Ausgabeaktion zurück auf `Offen` gesetzt.
+
+## Hotfix Angebot Speichern vs. Ausgeben
+
+Im Angebotsdrawer sind Speichern und Ausgeben jetzt getrennt.
+
+```text
+Änderungen speichern → übernimmt manuelle Statusänderung, z. B. Offen → Angenommen/Abgelehnt
+Angebot ausgeben → setzt Status bewusst auf Offen
+```
+
+Dadurch werden manuelle Statusänderungen nicht mehr durch die Ausgabeaktion überschrieben.

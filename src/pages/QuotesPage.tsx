@@ -294,14 +294,16 @@ export function QuotesPage() {
   }
 
   function handleIssueQuote() {
-    if (!draft) {
+    const quoteToIssue = (draft as PrintPilotQuote | undefined) ?? selectedQuote;
+
+    if (!quoteToIssue) {
       return;
     }
 
-    const previousHistory = (draft as PrintPilotQuote).history ?? [];
+    const previousHistory = quoteToIssue.history ?? [];
 
     const issuedQuote: PrintPilotQuote = {
-      ...(draft as PrintPilotQuote),
+      ...quoteToIssue,
       status: "Offen",
       history: [
         createPrintPilotHistoryEntry("Angebot ausgegeben", "Offen"),
@@ -487,9 +489,12 @@ export function QuotesPage() {
 
             <SaveActionButton
               isDirty={isDirty}
-              defaultLabel="Angebot ausgeben"
-              onClick={handleIssueQuote}
+              defaultLabel="Änderungen speichern"
+              onClick={handleSaveDraft}
             />
+            <Button variant="primary" onClick={handleIssueQuote}>
+              Angebot ausgeben
+            </Button>
           </>
         }
       >

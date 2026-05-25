@@ -27,3 +27,7 @@ Die Wochen-Plantafel nutzt reduzierte Schriftgewichte und bessere Zeilenhöhen, 
 ## Dashboard Handlungsbedarf Typografie
 
 Die Handlungsbedarf-Liste nutzt reduzierte Schriftgewichte und ruhigere Badges, damit sie besser zur Plantafel passt.
+
+## Produktionspanel im Auftragsdrawer
+
+Status-Karten und Schnellaktionen im Produktionsbereich sind optisch korrigiert und bleiben als reine Pflegehilfe für Plantafel-relevante Daten gedacht.

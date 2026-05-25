@@ -27,3 +27,7 @@ Mini-Karten verwenden Inter mit moderateren Schriftgewichten, klarer Hierarchie 
 ## Attention List Typography
 
 Dashboard-Handlungsbedarf-Listen verwenden moderate Schriftgewichte, kompakte Badges und klare, aber nicht überfette Zeilenhierarchie.
+
+## Order Production Panel Visuals
+
+Produktionsstatus-Karten im Drawer werden als ruhige Karten mit linksseitigem Akzent dargestellt. Schnellaktionen erscheinen als dezente Pill-Buttons.

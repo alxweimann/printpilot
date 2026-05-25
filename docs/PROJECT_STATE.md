@@ -36,3 +36,7 @@ Die Typografie der Wochen-Plantafel wurde lesbarer gestaltet: Inter bleibt erhal
 ## Handlungsbedarf Typografie verfeinert
 
 Die Typografie der Dashboard-Liste `Handlungsbedarf` wurde beruhigt: weniger extreme Schriftgewichte, etwas kompaktere Badges und bessere Lesbarkeit in den Tabellenzeilen.
+
+## Auftragsdrawer Produktionspanel CSS-Fix
+
+Das Produktionspanel im Auftragsdrawer wurde optisch korrigiert: Status-Karten werden als Karten dargestellt, Schnellaktionen erscheinen als Pill-Buttons und Abstände/Schriftgewichte sind ruhiger.

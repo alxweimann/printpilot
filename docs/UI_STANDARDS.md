@@ -65,3 +65,15 @@ Statuswechsel werden fett als `Alt → Neu` dargestellt. Die Historie zeigt maxi
 ## Dashboard Deep-Link Rows
 
 Handlungsbedarf-Zeilen sind klickbare Deep-Links in das passende Modul und den konkreten Drawer-Datensatz.
+
+## Produktions-Timeline
+
+Die Dashboard-Plantafel nutzt kompakte Auftragskarten mit Fortschrittsbalken, Prioritäts-Pill, Fälligkeit und Blocker-Hinweis.
+
+## Plantafel Typisierung
+
+Fälligkeitsgruppen der Produktions-Timeline sind als `ProductionTimelineDueGroup` typisiert.
+
+## Dashboard Full-Width Sections
+
+Dashboard-Arbeitsbereiche werden als gestapelte Full-Width-Sektionen dargestellt. Die Plantafel nutzt responsive Karten-Spalten.

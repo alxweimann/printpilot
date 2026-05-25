@@ -9,3 +9,6 @@
 - Erledigt: Historie zeigt Statuswechsel als Alt → Neu und begrenzt sichtbare Einträge
 - Hotfix erledigt: Rechnung Speichern und Ausgeben getrennt
 - Erledigt: Dashboard-Handlungsbedarf öffnet Ziel-Datensatz direkt im Drawer
+- Erledigt: Dashboard-Schnellzugriffe durch Produktions-Timeline ersetzt
+- Hotfix erledigt: TypeScript-Typ für Plantafel-DueGroup korrigiert
+- Erledigt: Dashboard Handlungsbedarf und Plantafel auf volle Breite umgestellt

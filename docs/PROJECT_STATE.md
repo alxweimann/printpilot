@@ -75,3 +75,29 @@ Dadurch wird ein manuell auf `Bezahlt` gesetzter Status nicht mehr durch die Aus
 ## Dashboard Deep-Link und Workflow-Kennzahlen
 
 Das Dashboard zeigt echte Workflow-Kennzahlen und priorisierten Handlungsbedarf. Ein Klick auf eine Handlungsbedarf-Zeile öffnet jetzt das passende Modul und den konkreten Datensatz direkt im Drawer.
+
+## Dashboard Produktions-Timeline
+
+Der rechte Schnellzugriff-Bereich wurde durch eine Wochen-Plantafel ersetzt.
+
+Die Plantafel zeigt offene Aufträge dieser Woche mit Fortschritt in Prozent, Fälligkeit, Maschine, Status, Freigabe, Übergabe, Priorität und Blocker-Hinweisen.
+
+Der Fortschritt wird aktuell automatisch aus Status, Freigabe und Übergabe abgeleitet.
+
+## Hotfix Plantafel DueGroup-Typ
+
+Die DueGroup der Produktions-Timeline ist jetzt explizit als Union-Typ `ProductionTimelineDueGroup` typisiert, damit der TypeScript-Build sauber läuft.
+
+## Dashboard Full-Width Layout
+
+Dashboard-Handlungsbedarf und Produktions-Plantafel werden jetzt untereinander über die volle Breite dargestellt.
+
+Aufbau:
+
+```text
+Kennzahlkarten
+Handlungsbedarf
+Produktions-Plantafel
+```
+
+Die Plantafel nutzt im breiten Layout zwei Spalten für Auftragskarten und fällt auf kleineren Viewports auf eine Spalte zurück.

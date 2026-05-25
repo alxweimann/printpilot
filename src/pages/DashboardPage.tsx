@@ -22,6 +22,29 @@ type DashboardActivity = {
   variant?: "success" | "warning" | "danger" | "neutral";
 };
 
+type ProductionTimelineDueGroup =
+  | "Überfällig"
+  | "Heute"
+  | "Morgen"
+  | "Später diese Woche";
+
+type ProductionTimelineOrder = {
+  id: string;
+  number: string;
+  customerName: string;
+  product: string;
+  status: string;
+  dueDate: string;
+  dueGroup: ProductionTimelineDueGroup;
+  machine: string;
+  priority: string;
+  handoff: string;
+  approval: string;
+  progress: number;
+  blocker: string | null;
+  urgencyClassName: string;
+};
+
 function formatDashboardTimestamp(value: Date) {
   return new Intl.DateTimeFormat("de-DE", {
     day: "2-digit",
@@ -36,6 +59,149 @@ function parseNumber(value: string) {
   const parsedValue = Number.parseFloat(value.replace(",", "."));
 
   return Number.isFinite(parsedValue) ? parsedValue : 0;
+}
+
+function getStartOfDay(value: Date) {
+  return new Date(value.getFullYear(), value.getMonth(), value.getDate());
+}
+
+function getDaysUntilDueDate(value: string) {
+  const dueDate = new Date(value);
+
+  if (Number.isNaN(dueDate.getTime())) {
+    return 999;
+  }
+
+  const today = getStartOfDay(new Date());
+  const dueDay = getStartOfDay(dueDate);
+
+  return Math.round(
+    (dueDay.getTime() - today.getTime()) / (1000 * 60 * 60 * 24),
+  );
+}
+
+function getProductionDueGroup(
+  daysUntilDueDate: number,
+): ProductionTimelineDueGroup {
+  if (daysUntilDueDate < 0) {
+    return "Überfällig";
+  }
+
+  if (daysUntilDueDate === 0) {
+    return "Heute";
+  }
+
+  if (daysUntilDueDate === 1) {
+    return "Morgen";
+  }
+
+  return "Später diese Woche";
+}
+
+function formatProductionDueDate(value: string) {
+  const dueDate = new Date(value);
+
+  if (Number.isNaN(dueDate.getTime())) {
+    return "kein Fälligkeitsdatum";
+  }
+
+  return new Intl.DateTimeFormat("de-DE", {
+    weekday: "short",
+    day: "2-digit",
+    month: "2-digit",
+  }).format(dueDate);
+}
+
+function getProductionProgress(order: {
+  approval: string;
+  handoff: string;
+  status: string;
+}) {
+  if (order.status === "Fertig") {
+    return 100;
+  }
+
+  if (order.handoff === "Abholbereit" || order.handoff === "Versendet") {
+    return 90;
+  }
+
+  if (order.handoff === "In Weiterverarbeitung") {
+    return 70;
+  }
+
+  if (order.handoff === "In Druck" || order.status === "In Produktion") {
+    return 55;
+  }
+
+  if (
+    order.approval === "Freigabe ausstehend" ||
+    order.approval === "Daten unvollständig" ||
+    order.handoff === "Wartet auf Daten"
+  ) {
+    return 25;
+  }
+
+  if (order.handoff === "Druckdaten prüfen") {
+    return 35;
+  }
+
+  if (order.status === "Wartet") {
+    return 20;
+  }
+
+  if (order.status === "Neu") {
+    return 10;
+  }
+
+  return 40;
+}
+
+function getProductionBlocker(order: {
+  approval: string;
+  handoff: string;
+  status: string;
+}) {
+  if (order.approval === "Freigabe ausstehend") {
+    return "Freigabe fehlt";
+  }
+
+  if (order.approval === "Daten unvollständig") {
+    return "Daten unvollständig";
+  }
+
+  if (order.handoff === "Wartet auf Daten") {
+    return "Wartet auf Druckdaten";
+  }
+
+  if (order.status === "Wartet") {
+    return "Auftrag wartet";
+  }
+
+  return null;
+}
+
+function getProductionUrgencyClass(order: {
+  blocker: string | null;
+  daysUntilDueDate: number;
+  priority: string;
+}) {
+  if (order.daysUntilDueDate < 0) {
+    return "production-timeline-card-overdue";
+  }
+
+  if (order.blocker) {
+    return "production-timeline-card-blocked";
+  }
+
+  if (order.priority === "Express") {
+    return "production-timeline-card-express";
+  }
+
+  if (order.daysUntilDueDate === 0) {
+    return "production-timeline-card-today";
+  }
+
+  return "production-timeline-card-normal";
 }
 
 function openDashboardActivity(
@@ -189,6 +355,60 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
     waitingOrders,
   ]);
 
+  const productionTimelineOrders = useMemo<ProductionTimelineOrder[]>(() => {
+    return orders
+      .filter((order) => order.status !== "Fertig" && order.status !== "Archiv")
+      .map((order) => {
+        const daysUntilDueDate = getDaysUntilDueDate(order.dueDate);
+        const blocker = getProductionBlocker(order);
+
+        return {
+          id: order.id,
+          number: order.number,
+          customerName: order.customerName,
+          product: order.product,
+          status: order.status,
+          dueDate: order.dueDate,
+          dueGroup: getProductionDueGroup(daysUntilDueDate),
+          machine: order.machine,
+          priority: order.priority,
+          handoff: order.handoff,
+          approval: order.approval,
+          progress: getProductionProgress(order),
+          blocker,
+          urgencyClassName: getProductionUrgencyClass({
+            blocker,
+            daysUntilDueDate,
+            priority: order.priority,
+          }),
+        };
+      })
+      .filter((order) => {
+        const daysUntilDueDate = getDaysUntilDueDate(order.dueDate);
+
+        return daysUntilDueDate <= 6;
+      })
+      .sort((firstOrder, secondOrder) => {
+        const firstDue = getDaysUntilDueDate(firstOrder.dueDate);
+        const secondDue = getDaysUntilDueDate(secondOrder.dueDate);
+
+        if (firstDue !== secondDue) {
+          return firstDue - secondDue;
+        }
+
+        if (firstOrder.priority === "Express" && secondOrder.priority !== "Express") {
+          return -1;
+        }
+
+        if (secondOrder.priority === "Express" && firstOrder.priority !== "Express") {
+          return 1;
+        }
+
+        return firstOrder.number.localeCompare(secondOrder.number);
+      })
+      .slice(0, 8);
+  }, [orders]);
+
   return (
     <div className="page">
       <PageHeader
@@ -272,8 +492,8 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
         </button>
       </section>
 
-      <section className="master-detail-layout dashboard-layout">
-        <div className="workspace-panel master-list-panel">
+      <section className="dashboard-stacked-layout">
+        <div className="workspace-panel dashboard-full-panel dashboard-attention-panel">
           <div className="dashboard-panel-header">
             <div>
               <div className="sheet-kicker">Vorgänge</div>
@@ -329,11 +549,11 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
           </DataTable>
         </div>
 
-        <div className="workspace-panel master-editor-panel">
+        <div className="workspace-panel dashboard-full-panel production-timeline-panel">
           <div className="dashboard-panel-header dashboard-panel-header-split">
             <div>
-              <div className="sheet-kicker">Schnellzugriff</div>
-              <h2>Nächste Aktionen</h2>
+              <div className="sheet-kicker">Plantafel</div>
+              <h2>Diese Woche</h2>
             </div>
 
             <div className="dashboard-stand-pill">
@@ -341,53 +561,75 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
             </div>
           </div>
 
-          <div className="dashboard-action-list">
-            <button
-              type="button"
-              className="dashboard-action-item dashboard-action-calculation"
-              onClick={() => onNavigate("calculation")}
-            >
-              <span>Kalkulation starten</span>
-              <small>neues Druckprodukt vorbereiten</small>
-            </button>
+          <div className="production-timeline">
+            {productionTimelineOrders.length > 0 ? (
+              productionTimelineOrders.map((order) => (
+                <button
+                  key={order.id}
+                  type="button"
+                  className={`production-timeline-card ${order.urgencyClassName}`}
+                  onClick={() =>
+                    openDashboardActivity(
+                      {
+                        id: order.id,
+                        type: "Auftrag",
+                        number: order.number,
+                        customerName: order.customerName,
+                        status: order.status,
+                        pageId: "orders",
+                        priority: order.priority,
+                        hint: "Auftrag prüfen",
+                        className: "dashboard-priority-production",
+                        variant: "success",
+                      },
+                      onNavigate,
+                    )
+                  }
+                >
+                  <div className="production-timeline-card-header">
+                    <div>
+                      <strong>{order.number}</strong>
+                      <span>
+                        {order.product} · {order.customerName}
+                      </span>
+                    </div>
 
-            <button
-              type="button"
-              className="dashboard-action-item dashboard-action-quotes"
-              onClick={() => onNavigate("quotes")}
-            >
-              <span>Angebote prüfen</span>
-              <small>{openQuotes.length} offene Angebote</small>
-            </button>
+                    <span className="production-timeline-priority">
+                      {order.priority}
+                    </span>
+                  </div>
 
-            <button
-              type="button"
-              className="dashboard-action-item dashboard-action-orders"
-              onClick={() => onNavigate("orders")}
-            >
-              <span>Produktion prüfen</span>
-              <small>{productionOrders.length} Aufträge in Produktion</small>
-            </button>
+                  <div className="production-timeline-meta">
+                    <span>{order.dueGroup}</span>
+                    <span>{formatProductionDueDate(order.dueDate)}</span>
+                    <span>{order.machine || "keine Maschine"}</span>
+                  </div>
 
-            <button
-              type="button"
-              className="dashboard-action-item dashboard-action-invoices"
-              onClick={() => onNavigate("invoices")}
-            >
-              <span>Zahlungen prüfen</span>
-              <small>
-                {overdueInvoices.length} überfällig · {openInvoices.length} offen
-              </small>
-            </button>
+                  <div className="production-timeline-progress">
+                    <div>
+                      <span style={{ width: `${order.progress}%` }} />
+                    </div>
+                    <strong>{order.progress}%</strong>
+                  </div>
 
-            <button
-              type="button"
-              className="dashboard-action-item dashboard-action-material"
-              onClick={() => onNavigate("material")}
-            >
-              <span>Material prüfen</span>
-              <small>{materialWarnings.length} Hinweise</small>
-            </button>
+                  <div className="production-timeline-details">
+                    <span>Status: {order.status}</span>
+                    <span>Freigabe: {order.approval}</span>
+                    <span>Übergabe: {order.handoff}</span>
+                  </div>
+
+                  {order.blocker ? (
+                    <div className="production-timeline-blocker">
+                      ⚠ {order.blocker}
+                    </div>
+                  ) : null}
+                </button>
+              ))
+            ) : (
+              <div className="production-timeline-empty">
+                Keine offenen Aufträge für diese Woche.
+              </div>
+            )}
           </div>
         </div>
       </section>

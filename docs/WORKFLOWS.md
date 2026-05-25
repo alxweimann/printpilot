@@ -191,3 +191,25 @@ Rechnung ausgeben = Status Offen setzen
 ## Dashboard Deep-Link
 
 Der Dashboard-Handlungsbedarf speichert beim Klick `pageId` und `itemId` und öffnet nach der Navigation den passenden Datensatz im Master-Detail-Drawer.
+
+## Produktions-Timeline im Dashboard
+
+Die Dashboard-Plantafel zeigt Aufträge der aktuellen Woche als Timeline-Karten mit automatisch berechnetem Fortschritt.
+
+```text
+Neu → 10%
+Wartet → 20%
+Daten/Freigabe fehlen → blockiert
+In Druck / In Produktion → 55%
+In Weiterverarbeitung → 70%
+Abholbereit / Versendet → 90%
+Fertig → 100%
+```
+
+## Hotfix Plantafel-Typisierung
+
+Die Wochen-Plantafel verwendet für Fälligkeitsgruppen einen expliziten Union-Typ.
+
+## Dashboard Layout
+
+Handlungsbedarf und Produktions-Plantafel stehen jetzt untereinander, damit beide Bereiche über die volle Breite nutzbar sind.

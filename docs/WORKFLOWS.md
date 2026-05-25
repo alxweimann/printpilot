@@ -217,3 +217,7 @@ Handlungsbedarf und Produktions-Plantafel stehen jetzt untereinander, damit beid
 ## Kompakte Plantafel
 
 Die Produktions-Plantafel zeigt Auftragskarten jetzt kompakter, damit mehr Wochenplanung ohne Scrollen sichtbar bleibt.
+
+## Plantafel visuelle Verfeinerung
+
+Die Plantafel bleibt fachlich unverändert und wurde nur optisch beruhigt.

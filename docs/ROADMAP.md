@@ -13,3 +13,4 @@
 - Hotfix erledigt: TypeScript-Typ für Plantafel-DueGroup korrigiert
 - Erledigt: Dashboard Handlungsbedarf und Plantafel auf volle Breite umgestellt
 - Erledigt: Plantafel-Karten kompakter gestaltet
+- Erledigt: Plantafel optisch ruhiger und stärker als Produktionsbereich gestaltet

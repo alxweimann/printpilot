@@ -81,3 +81,7 @@ Dashboard-Arbeitsbereiche werden als gestapelte Full-Width-Sektionen dargestellt
 ## Compact Timeline Cards
 
 Plantafel-Karten nutzen reduzierte Abstände, kleinere Chips und eine kompakte Detailzeile.
+
+## Production Timeline Visual Refinement
+
+Die Plantafel nutzt dezentere Warnfarben, ruhigere Kartenflächen und einen professionelleren Fortschrittsbalken.

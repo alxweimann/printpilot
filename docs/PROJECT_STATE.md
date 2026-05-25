@@ -105,3 +105,9 @@ Die Plantafel nutzt im breiten Layout zwei Spalten für Auftragskarten und fäll
 ## Kompaktere Plantafel-Karten
 
 Die Auftragskarten der Dashboard-Plantafel wurden verdichtet: kleinere Innenabstände, dünnere Progressbar, kompaktere Meta-Chips und dreispaltige Detailzeile.
+
+## Plantafel optisch beruhigt
+
+Die Produktions-Plantafel wurde rein visuell angepasst: ruhigerer Hintergrund, dezentere Überfällig-Markierung, professionellerer Fortschrittsbalken und klarere Kartenwirkung.
+
+Es wurden keine Workflow- oder TypeScript-Logiken verändert.

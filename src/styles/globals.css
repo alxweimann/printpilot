@@ -2126,3 +2126,241 @@ body {
     grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
   }
 }
+
+/* Production week cards: equal compact size. */
+.production-week-column-list,
+.production-week-column:first-child .production-week-column-list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(165px, 1fr)) !important;
+  gap: 8px !important;
+  align-items: stretch !important;
+}
+
+.production-week-card {
+  min-height: 122px !important;
+  max-height: 122px !important;
+  align-content: start !important;
+  gap: 5px !important;
+  padding: 8px 9px !important;
+}
+
+.production-week-card-topline {
+  min-height: 15px !important;
+}
+
+.production-week-card-topline strong {
+  font-size: 10px !important;
+}
+
+.production-week-card-topline span {
+  font-size: 9px !important;
+}
+
+.production-week-card-title {
+  min-height: 14px !important;
+  font-size: 10px !important;
+  line-height: 1.2 !important;
+}
+
+.production-week-card-customer {
+  min-height: 13px !important;
+  font-size: 9px !important;
+  line-height: 1.2 !important;
+}
+
+.production-week-card-progress {
+  height: 6px !important;
+}
+
+.production-week-card-meta {
+  min-height: 18px !important;
+  gap: 3px !important;
+}
+
+.production-week-card-meta span {
+  min-height: 16px !important;
+  padding: 1px 5px !important;
+  font-size: 8px !important;
+}
+
+.production-week-card-blocker {
+  max-width: 100% !important;
+  min-height: 17px !important;
+  padding: 2px 6px !important;
+  font-size: 8px !important;
+}
+
+.production-week-empty {
+  min-height: 48px !important;
+  font-size: 9px !important;
+}
+
+@media (max-width: 900px) {
+  .production-week-card {
+    min-height: 116px !important;
+    max-height: 116px !important;
+  }
+}
+
+/* Production week cards: equal height without content cutoff. */
+.production-week-card {
+  min-height: 132px !important;
+  max-height: none !important;
+}
+
+@media (max-width: 900px) {
+  .production-week-card {
+    min-height: 126px !important;
+    max-height: none !important;
+  }
+}
+
+/* Production week board calm visuals. */
+.production-week-board {
+  gap: 8px !important;
+}
+
+.production-week-column,
+.production-week-column:first-child {
+  grid-template-columns: 132px minmax(0, 1fr) !important;
+  gap: 12px !important;
+  border-color: rgba(148, 163, 184, 0.18) !important;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, 0.58) !important;
+  box-shadow: none !important;
+  padding: 10px 12px !important;
+}
+
+.production-week-column:first-child {
+  background:
+    linear-gradient(90deg, rgba(239, 68, 68, 0.035), rgba(255, 255, 255, 0.56)),
+    rgba(255, 255, 255, 0.62) !important;
+}
+
+.production-week-column-header {
+  align-self: stretch !important;
+  padding-right: 2px !important;
+}
+
+.production-week-column-header h3 {
+  font-size: 14px !important;
+  line-height: 1.15 !important;
+}
+
+.production-week-column-header span {
+  margin-top: 4px !important;
+  font-size: 10px !important;
+  color: #64748b !important;
+}
+
+.production-week-column-header strong {
+  min-width: 22px !important;
+  min-height: 22px !important;
+  border-color: rgba(148, 163, 184, 0.2) !important;
+  background: rgba(248, 250, 252, 0.82) !important;
+  font-size: 10px !important;
+}
+
+.production-week-column-list,
+.production-week-column:first-child .production-week-column-list {
+  grid-template-columns: repeat(auto-fill, minmax(175px, 1fr)) !important;
+  gap: 7px !important;
+}
+
+.production-week-card {
+  min-height: 104px !important;
+  max-height: none !important;
+  gap: 4px !important;
+  border-color: rgba(148, 163, 184, 0.2) !important;
+  border-left-width: 3px !important;
+  border-radius: 11px !important;
+  background: rgba(255, 255, 255, 0.82) !important;
+  box-shadow: none !important;
+  padding: 7px 8px !important;
+}
+
+.production-week-card:hover {
+  border-color: rgba(14, 165, 233, 0.3) !important;
+  background: rgba(255, 255, 255, 0.94) !important;
+  box-shadow: 0 8px 18px rgba(15, 23, 42, 0.055) !important;
+  transform: translateY(-1px) !important;
+}
+
+.production-week-card-topline {
+  min-height: 14px !important;
+  gap: 6px !important;
+}
+
+.production-week-card-topline strong {
+  font-size: 10px !important;
+}
+
+.production-week-card-topline span {
+  color: #0f766e !important;
+  font-size: 9px !important;
+}
+
+.production-week-card-title {
+  min-height: 13px !important;
+  font-size: 10px !important;
+  line-height: 1.18 !important;
+}
+
+.production-week-card-customer {
+  min-height: 12px !important;
+  color: #64748b !important;
+  font-size: 9px !important;
+  line-height: 1.18 !important;
+}
+
+.production-week-card-progress {
+  height: 5px !important;
+  background: rgba(148, 163, 184, 0.14) !important;
+}
+
+.production-week-card-progress span {
+  background: linear-gradient(90deg, rgba(14, 165, 233, 0.78), rgba(34, 197, 94, 0.68)) !important;
+}
+
+.production-week-card-meta {
+  gap: 3px !important;
+  min-height: 16px !important;
+}
+
+.production-week-card-meta span {
+  min-height: 15px !important;
+  border: 0 !important;
+  background: rgba(248, 250, 252, 0.68) !important;
+  color: #475569 !important;
+  padding: 1px 5px !important;
+  font-size: 8px !important;
+}
+
+.production-week-card-blocker {
+  min-height: 16px !important;
+  border: 0 !important;
+  background: rgba(255, 247, 237, 0.78) !important;
+  color: #9a3412 !important;
+  padding: 2px 6px !important;
+  font-size: 8px !important;
+}
+
+.production-week-empty {
+  min-height: 42px !important;
+  max-width: 180px !important;
+  border-color: rgba(148, 163, 184, 0.22) !important;
+  background: rgba(255, 255, 255, 0.42) !important;
+  color: #94a3b8 !important;
+  font-size: 9px !important;
+}
+
+@media (max-width: 900px) {
+  .production-week-column,
+  .production-week-column:first-child {
+    grid-template-columns: 1fr !important;
+  }
+
+  .production-week-card {
+    min-height: 102px !important;
+  }
+}

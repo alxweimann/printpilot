@@ -7,3 +7,15 @@ Plantafel-Gruppen verwenden dezente Überschriften und responsive Kartenraster.
 ## Production Week Board Rows
 
 Die Wochen-Plantafel verwendet Tageszeilen: links Tageskopf, rechts responsive Mini-Auftragskarten.
+
+## Equal Compact Week Cards
+
+Mini-Auftragskarten in der Produktions-Wochenansicht verwenden eine feste kompakte Höhe und gekürzte Textzeilen.
+
+## Week Cards No Cutoff
+
+Mini-Auftragskarten dürfen Inhalte nicht hart abschneiden. Einheitlichkeit wird über Mindesthöhe statt Maximalhöhe erreicht.
+
+## Calm Production Week Board
+
+Die Produktions-Wochenansicht nutzt dezente Tageszeilen, flache Mini-Karten und reduzierte visuelle Akzente.

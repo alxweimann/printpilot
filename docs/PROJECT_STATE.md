@@ -32,3 +32,7 @@ Die Wochen-Plantafel wurde optisch beruhigt: weniger Schatten, weniger Rahmenwir
 ## Plantafel Typografie verfeinert
 
 Die Typografie der Wochen-Plantafel wurde lesbarer gestaltet: Inter bleibt erhalten, extreme Schriftgewichte wurden reduziert, Zeilenhöhen leicht entspannt und Mini-Karten wirken ruhiger.
+
+## Handlungsbedarf Typografie verfeinert
+
+Die Typografie der Dashboard-Liste `Handlungsbedarf` wurde beruhigt: weniger extreme Schriftgewichte, etwas kompaktere Badges und bessere Lesbarkeit in den Tabellenzeilen.

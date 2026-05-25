@@ -2428,3 +2428,51 @@ body {
   font-weight: 650 !important;
   letter-spacing: 0 !important;
 }
+
+/* Dashboard attention list typography refinement. */
+.dashboard-attention-panel .data-table {
+  font-size: 12.5px;
+}
+
+.dashboard-attention-panel .data-table th {
+  font-size: 10.5px;
+  font-weight: 720;
+  letter-spacing: 0.045em;
+}
+
+.dashboard-attention-panel .data-table td {
+  height: 40px;
+  line-height: 1.25;
+}
+
+.dashboard-attention-panel .dashboard-work-row td:first-child {
+  font-weight: 780;
+}
+
+.dashboard-attention-panel .dashboard-work-row strong {
+  font-size: 12.5px;
+  font-weight: 780;
+  line-height: 1.2;
+}
+
+.dashboard-attention-panel .dashboard-work-row small {
+  margin-top: 2px;
+  font-size: 10.5px;
+  font-weight: 620;
+  line-height: 1.25;
+}
+
+.dashboard-attention-panel .dashboard-priority-pill {
+  min-height: 21px;
+  padding: 2px 8px;
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: 0.02em;
+}
+
+.dashboard-attention-panel .badge {
+  height: 21px;
+  padding: 0 8px;
+  font-size: 10px;
+  font-weight: 720;
+}

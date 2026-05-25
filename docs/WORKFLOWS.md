@@ -23,3 +23,7 @@ Die Wochenansicht bleibt als Tageszeilen aufgebaut, wirkt aber durch reduzierte 
 ## Plantafel Typografie
 
 Die Wochen-Plantafel nutzt reduzierte Schriftgewichte und bessere Zeilenhöhen, damit Mini-Karten trotz kompakter Darstellung lesbar bleiben.
+
+## Dashboard Handlungsbedarf Typografie
+
+Die Handlungsbedarf-Liste nutzt reduzierte Schriftgewichte und ruhigere Badges, damit sie besser zur Plantafel passt.

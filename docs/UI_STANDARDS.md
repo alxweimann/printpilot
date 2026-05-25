@@ -23,3 +23,7 @@ Die Produktions-Wochenansicht nutzt dezente Tageszeilen, flache Mini-Karten und 
 ## Production Week Board Typography
 
 Mini-Karten verwenden Inter mit moderateren Schriftgewichten, klarer Hierarchie und entspannterer Zeilenhöhe.
+
+## Attention List Typography
+
+Dashboard-Handlungsbedarf-Listen verwenden moderate Schriftgewichte, kompakte Badges und klare, aber nicht überfette Zeilenhierarchie.

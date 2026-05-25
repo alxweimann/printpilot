@@ -1,5 +1,9 @@
 # UI STANDARDS
 
-## Production Week Board
+## Production Timeline Due Groups
 
-Die Plantafel nutzt eine Wochenansicht mit kompakten Mini-Auftragskarten pro Tages-Spalte.
+Plantafel-Gruppen verwenden dezente Überschriften und responsive Kartenraster.
+
+## Production Week Board Rows
+
+Die Wochen-Plantafel verwendet Tageszeilen: links Tageskopf, rechts responsive Mini-Auftragskarten.

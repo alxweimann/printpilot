@@ -1,5 +1,9 @@
 # WORKFLOWS
 
-## Plantafel Wochenansicht
+## Plantafel Fälligkeitsgruppen
 
-Die Plantafel zeigt die aktuelle Woche als Spaltenansicht. Überfällige Aufträge stehen separat, danach folgen Montag bis Freitag.
+Die Plantafel gliedert Aufträge nach Fälligkeit, ohne Fortschritts- oder Blockerlogik zu verändern.
+
+## Plantafel Tageszeilen
+
+Die Plantafel zeigt Überfällig und Montag bis Freitag untereinander. Aufträge stehen rechts daneben als Mini-Karten.

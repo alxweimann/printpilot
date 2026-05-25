@@ -1,3 +1,4 @@
 # ROADMAP
 
-- Erledigt: Plantafel als Wochenansicht mit Tages-Spalten umgesetzt
+- Erledigt: Plantafel mit Fälligkeitsgruppen ergänzt
+- Erledigt: Plantafel-Wochenansicht auf Tageszeilen mit Karten daneben umgestellt

@@ -1854,216 +1854,275 @@ body {
   box-shadow: inset 0 0 0 1px rgba(148, 163, 184, 0.12);
 }
 
-/* Production timeline week board. */
-.production-week-board {
-  display: grid;
-  grid-template-columns: minmax(170px, 0.85fr) repeat(5, minmax(170px, 1fr));
-  gap: 10px;
-  overflow-x: auto;
-  padding-bottom: 4px;
+/* Safe production timeline due groups. */
+.production-timeline {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 16px;
 }
 
-.production-week-column {
+.production-timeline-group {
   display: grid;
-  align-content: start;
   gap: 9px;
-  min-width: 170px;
-  border: 1px solid rgba(148, 163, 184, 0.24);
-  border-radius: 16px;
-  background: rgba(255, 255, 255, 0.58);
-  padding: 9px;
+}
+
+.production-timeline-group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 0 2px;
+}
+
+.production-timeline-group-header h3 {
+  margin: 0;
+  color: #0f172a;
+  font-size: 13px;
+  font-weight: 950;
+}
+
+.production-timeline-group-header span {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 850;
+}
+
+.production-timeline-group-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+@media (max-width: 1280px) {
+  .production-timeline-group-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* Production week board vertical day rows. */
+.production-week-board {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 10px !important;
+  width: 100% !important;
+  overflow-x: visible !important;
+  padding: 2px 2px 8px !important;
+}
+
+.production-week-column,
+.production-week-column:first-child {
+  display: grid !important;
+  grid-template-columns: 150px minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 12px !important;
+  min-width: 0 !important;
+  width: 100% !important;
+  height: auto !important;
+  border: 1px solid rgba(148, 163, 184, 0.24) !important;
+  border-radius: 18px !important;
+  background:
+    linear-gradient(135deg, rgba(255, 255, 255, 0.92), rgba(248, 250, 252, 0.78)),
+    rgba(255, 255, 255, 0.78) !important;
+  box-shadow: 0 10px 26px rgba(15, 23, 42, 0.045) !important;
+  padding: 12px !important;
 }
 
 .production-week-column:first-child {
   background:
-    linear-gradient(180deg, rgba(239, 68, 68, 0.045), rgba(255, 255, 255, 0.62)),
-    rgba(255, 255, 255, 0.68);
+    linear-gradient(135deg, rgba(239, 68, 68, 0.04), rgba(255, 255, 255, 0.84)),
+    rgba(255, 255, 255, 0.82) !important;
 }
 
 .production-week-column-header {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 8px;
-  min-height: 38px;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  align-items: start !important;
+  gap: 8px !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  border: 0 !important;
 }
 
 .production-week-column-header h3 {
-  margin: 0;
-  color: #0f172a;
-  font-size: 12px;
-  font-weight: 950;
+  margin: 0 !important;
+  color: #0f172a !important;
+  font-size: 15px !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.02em !important;
 }
 
 .production-week-column-header span {
-  display: block;
-  margin-top: 2px;
-  color: #64748b;
-  font-size: 10px;
-  font-weight: 800;
+  display: block !important;
+  margin-top: 5px !important;
+  color: #64748b !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
 }
 
 .production-week-column-header strong {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 24px;
-  min-height: 24px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.06);
-  color: #0f172a;
-  font-size: 11px;
-  font-weight: 950;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  min-width: 26px !important;
+  min-height: 26px !important;
+  border: 1px solid rgba(148, 163, 184, 0.24) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 255, 255, 0.82) !important;
+  color: #0f172a !important;
+  font-size: 12px !important;
+  font-weight: 950 !important;
 }
 
-.production-week-column-list {
-  display: grid;
-  gap: 7px;
+.production-week-column-list,
+.production-week-column:first-child .production-week-column-list {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)) !important;
+  gap: 9px !important;
+  align-items: start !important;
+  min-width: 0 !important;
 }
 
 .production-week-card {
-  display: grid;
-  gap: 5px;
-  width: 100%;
-  border: 1px solid rgba(148, 163, 184, 0.24);
-  border-left: 4px solid rgba(14, 165, 233, 0.72);
-  border-radius: 13px;
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) !important;
+  gap: 7px !important;
+  width: 100% !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(148, 163, 184, 0.26) !important;
+  border-left: 4px solid rgba(14, 165, 233, 0.72) !important;
+  border-radius: 15px !important;
   background:
-    linear-gradient(135deg, rgba(255, 255, 255, 0.94), rgba(248, 250, 252, 0.86)),
-    rgba(255, 255, 255, 0.88);
-  padding: 8px;
-  color: inherit;
-  text-align: left;
+    linear-gradient(135deg, rgba(255, 255, 255, 0.98), rgba(248, 250, 252, 0.9)),
+    rgba(255, 255, 255, 0.94) !important;
+  box-shadow: 0 8px 22px rgba(15, 23, 42, 0.055) !important;
+  padding: 9px 10px !important;
+  color: inherit !important;
+  text-align: left !important;
 }
 
 .production-week-card:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 12px 26px rgba(15, 23, 42, 0.08);
-}
-
-.production-week-card.production-timeline-card-overdue {
-  border-left-color: rgba(239, 68, 68, 0.72);
-}
-
-.production-week-card.production-timeline-card-blocked {
-  border-left-color: rgba(249, 115, 22, 0.74);
-}
-
-.production-week-card.production-timeline-card-express {
-  border-left-color: rgba(139, 92, 246, 0.78);
-}
-
-.production-week-card.production-timeline-card-today {
-  border-left-color: rgba(234, 179, 8, 0.78);
-}
-
-.production-week-card.production-timeline-card-normal {
-  border-left-color: rgba(14, 165, 233, 0.72);
+  transform: translateY(-1px) !important;
+  box-shadow: 0 14px 30px rgba(15, 23, 42, 0.1) !important;
 }
 
 .production-week-card-topline {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 8px;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+  min-width: 0 !important;
 }
 
 .production-week-card-topline strong {
-  color: #0f172a;
-  font-size: 11px;
-  font-weight: 950;
-  letter-spacing: -0.01em;
+  overflow: hidden !important;
+  color: #0f172a !important;
+  font-size: 11px !important;
+  font-weight: 950 !important;
+  letter-spacing: -0.01em !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
 .production-week-card-topline span {
-  color: #0369a1;
-  font-size: 10px;
-  font-weight: 950;
+  flex-shrink: 0 !important;
+  color: #0369a1 !important;
+  font-size: 10px !important;
+  font-weight: 950 !important;
 }
 
 .production-week-card-title {
-  overflow: hidden;
-  color: #0f172a;
-  font-size: 11px;
-  font-weight: 850;
-  line-height: 1.25;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: hidden !important;
+  color: #0f172a !important;
+  font-size: 11px !important;
+  font-weight: 850 !important;
+  line-height: 1.25 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
 .production-week-card-customer {
-  overflow: hidden;
-  color: #64748b;
-  font-size: 10px;
-  font-weight: 750;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+  overflow: hidden !important;
+  color: #64748b !important;
+  font-size: 10px !important;
+  font-weight: 760 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
 .production-week-card-progress {
-  height: 5px;
-  overflow: hidden;
-  border-radius: 999px;
-  background: rgba(148, 163, 184, 0.18);
+  display: block !important;
+  height: 7px !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  background: rgba(148, 163, 184, 0.18) !important;
 }
 
 .production-week-card-progress span {
-  display: block;
-  height: 100%;
-  border-radius: inherit;
-  background: linear-gradient(90deg, rgba(14, 165, 233, 0.86), rgba(34, 197, 94, 0.82));
+  display: block !important;
+  height: 100% !important;
+  min-width: 4px !important;
+  border-radius: inherit !important;
+  background: linear-gradient(90deg, rgba(14, 165, 233, 0.9), rgba(34, 197, 94, 0.82)) !important;
 }
 
 .production-week-card-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 4px;
+  display: flex !important;
+  flex-wrap: wrap !important;
+  gap: 4px !important;
+  min-width: 0 !important;
 }
 
 .production-week-card-meta span {
-  display: inline-flex;
-  max-width: 100%;
-  min-height: 18px;
-  align-items: center;
-  border-radius: 999px;
-  background: rgba(248, 250, 252, 0.94);
-  color: #475569;
-  padding: 2px 6px;
-  font-size: 9px;
-  font-weight: 850;
+  display: inline-flex !important;
+  max-width: 100% !important;
+  min-height: 18px !important;
+  align-items: center !important;
+  overflow: hidden !important;
+  border-radius: 999px !important;
+  background: rgba(248, 250, 252, 0.96) !important;
+  color: #475569 !important;
+  padding: 2px 6px !important;
+  font-size: 9px !important;
+  font-weight: 850 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
 .production-week-card-blocker {
-  width: fit-content;
-  border: 1px solid rgba(249, 115, 22, 0.18);
-  border-radius: 999px;
-  background: rgba(255, 247, 237, 0.88);
-  color: #9a3412;
-  padding: 2px 6px;
-  font-size: 9px;
-  font-weight: 900;
+  width: fit-content !important;
+  max-width: 100% !important;
+  overflow: hidden !important;
+  border: 1px solid rgba(249, 115, 22, 0.18) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 247, 237, 0.88) !important;
+  color: #9a3412 !important;
+  padding: 3px 7px !important;
+  font-size: 9px !important;
+  font-weight: 900 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
 }
 
 .production-week-empty {
-  display: grid;
-  min-height: 52px;
-  place-items: center;
-  border: 1px dashed rgba(148, 163, 184, 0.32);
-  border-radius: 13px;
-  color: #94a3b8;
-  font-size: 10px;
-  font-weight: 850;
+  display: grid !important;
+  min-height: 58px !important;
+  place-items: center !important;
+  border: 1px dashed rgba(148, 163, 184, 0.32) !important;
+  border-radius: 14px !important;
+  background: rgba(255, 255, 255, 0.42) !important;
+  color: #94a3b8 !important;
+  font-size: 10px !important;
+  font-weight: 850 !important;
 }
 
-@media (max-width: 1180px) {
-  .production-week-board {
-    grid-template-columns: repeat(3, minmax(180px, 1fr));
+@media (max-width: 900px) {
+  .production-week-column,
+  .production-week-column:first-child {
+    grid-template-columns: 1fr !important;
   }
-}
 
-@media (max-width: 760px) {
-  .production-week-board {
-    grid-template-columns: 1fr;
-    overflow-x: visible;
+  .production-week-column-list,
+  .production-week-column:first-child .production-week-column-list {
+    grid-template-columns: repeat(auto-fill, minmax(160px, 1fr)) !important;
   }
 }

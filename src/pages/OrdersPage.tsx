@@ -464,6 +464,89 @@ export function OrdersPage() {
     openApprovalDialogIfNeeded(nextOrder);
   }
 
+  function handleProductionQuickAction(
+    action:
+      | "approve"
+      | "missingData"
+      | "startPrint"
+      | "startFinishing"
+      | "readyForPickup"
+      | "done",
+  ) {
+    if (!draftOrder || !canEdit) {
+      return;
+    }
+
+    if (action === "approve") {
+      handleApprovalChange("Freigabe erteilt");
+      return;
+    }
+
+    if (action === "missingData") {
+      const nextOrder: PrintPilotOrder = {
+        ...draftOrder,
+        approval: "Daten unvollständig",
+        handoff: "Wartet auf Daten",
+        status: "Wartet",
+      };
+
+      updateDraftField("approval", nextOrder.approval);
+      updateDraftField("handoff", nextOrder.handoff);
+      updateDraftField("status", nextOrder.status);
+      openApprovalDialogIfNeeded(nextOrder);
+      return;
+    }
+
+    if (action === "startPrint") {
+      const nextOrder: PrintPilotOrder = {
+        ...draftOrder,
+        handoff: "In Druck",
+        status: "In Produktion",
+      };
+
+      updateDraftField("handoff", nextOrder.handoff);
+      updateDraftField("status", nextOrder.status);
+      openApprovalDialogIfNeeded(nextOrder);
+      return;
+    }
+
+    if (action === "startFinishing") {
+      const nextOrder: PrintPilotOrder = {
+        ...draftOrder,
+        handoff: "In Weiterverarbeitung",
+        status: "In Produktion",
+      };
+
+      updateDraftField("handoff", nextOrder.handoff);
+      updateDraftField("status", nextOrder.status);
+      openApprovalDialogIfNeeded(nextOrder);
+      return;
+    }
+
+    if (action === "readyForPickup") {
+      const nextOrder: PrintPilotOrder = {
+        ...draftOrder,
+        handoff: "Abholbereit",
+        status: "Fertig",
+      };
+
+      updateDraftField("handoff", nextOrder.handoff);
+      updateDraftField("status", nextOrder.status);
+      openApprovalDialogIfNeeded(nextOrder);
+      return;
+    }
+
+    const nextOrder: PrintPilotOrder = {
+      ...draftOrder,
+      handoff: "Abgeschlossen",
+      status: "Fertig",
+    };
+
+    updateDraftField("handoff", nextOrder.handoff);
+    updateDraftField("status", nextOrder.status);
+    openApprovalDialogIfNeeded(nextOrder);
+  }
+
   function saveOrder(savedOrder: PrintPilotOrder) {
     updateOrder(savedOrder);
     saveDraft(savedOrder);
@@ -862,6 +945,82 @@ export function OrdersPage() {
 
           <section className="detail-drawer-panel">
             <SectionHeader>Produktion</SectionHeader>
+
+            <div className="order-production-overview">
+              <div className="order-production-card order-production-card-status">
+                <span>Status</span>
+                <strong>{draft?.status ?? "—"}</strong>
+              </div>
+
+              <div className="order-production-card order-production-card-approval">
+                <span>Freigabe</span>
+                <strong>{draft?.approval ?? "—"}</strong>
+              </div>
+
+              <div className="order-production-card order-production-card-handoff">
+                <span>Übergabe</span>
+                <strong>{draft?.handoff ?? "—"}</strong>
+              </div>
+
+              <div className="order-production-card order-production-card-due">
+                <span>Fällig</span>
+                <strong>
+                  {draft?.dueDate
+                    ? formatPrintPilotDateString(draft.dueDate, "dd.MM.yyyy")
+                    : "—"}
+                </strong>
+              </div>
+            </div>
+
+            <div className="order-production-quick-actions">
+              <button
+                type="button"
+                disabled={!canEdit}
+                onClick={() => handleProductionQuickAction("approve")}
+              >
+                Freigabe erteilt
+              </button>
+
+              <button
+                type="button"
+                disabled={!canEdit}
+                onClick={() => handleProductionQuickAction("missingData")}
+              >
+                Daten fehlen
+              </button>
+
+              <button
+                type="button"
+                disabled={!canEdit}
+                onClick={() => handleProductionQuickAction("startPrint")}
+              >
+                In Druck
+              </button>
+
+              <button
+                type="button"
+                disabled={!canEdit}
+                onClick={() => handleProductionQuickAction("startFinishing")}
+              >
+                Weiterverarbeitung
+              </button>
+
+              <button
+                type="button"
+                disabled={!canEdit}
+                onClick={() => handleProductionQuickAction("readyForPickup")}
+              >
+                Abholbereit
+              </button>
+
+              <button
+                type="button"
+                disabled={!canEdit}
+                onClick={() => handleProductionQuickAction("done")}
+              >
+                Fertig
+              </button>
+            </div>
 
             <FieldGrid>
               <Field label="Maschine">

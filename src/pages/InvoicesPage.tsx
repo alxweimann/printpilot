@@ -217,7 +217,6 @@ export function InvoicesPage() {
     updateInvoice(issuedInvoice);
     saveDraft(issuedInvoice);
     setIsEditing(false);
-    setIsDetailDrawerOpen(false);
 
     if (activeTab !== "Liste") {
       setActiveTab("Liste");
@@ -225,6 +224,7 @@ export function InvoicesPage() {
 
     window.setTimeout(() => {
       selectItem(issuedInvoice.id);
+      setIsDetailDrawerOpen(true);
     }, 0);
   }
 
@@ -235,9 +235,26 @@ export function InvoicesPage() {
 
     const savedInvoice = draft as PrintPilotInvoice;
 
-    updateInvoice(savedInvoice);
+    const statusChanged =
+      selectedInvoice && selectedInvoice.status !== savedInvoice.status;
+    const previousHistory = savedInvoice.history ?? selectedInvoice?.history ?? [];
+    const documentToSave: PrintPilotInvoice = statusChanged
+      ? {
+          ...savedInvoice,
+          history: [
+            createPrintPilotHistoryEntry(
+              "Rechnung: Status geändert",
+              savedInvoice.status,
+            ),
+            ...previousHistory,
+          ],
+        }
+      : savedInvoice;
 
-    saveDraft(savedInvoice);
+
+    updateInvoice(documentToSave);
+
+    saveDraft(documentToSave);
     setIsEditing(false);
     setIsDetailDrawerOpen(false);
 
@@ -246,7 +263,7 @@ export function InvoicesPage() {
     }
 
     window.setTimeout(() => {
-      selectItem(savedInvoice.id);
+      selectItem(documentToSave.id);
     }, 0);
   }
 

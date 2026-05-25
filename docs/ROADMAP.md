@@ -5,3 +5,4 @@
 - Hotfix erledigt: vollständiges Workflow-Konsistenzpaket für Store, Seiten und Nummernkreise
 - Erledigt: Workflow-Hinweise für Angebote und Aufträge ergänzt
 - Erledigt: Ausgabe-Status mit Historieneinträgen für Belege ergänzt
+- Erledigt: Statusänderungen werden historisiert und Ausgeben hält den Drawer offen

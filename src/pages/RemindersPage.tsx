@@ -179,7 +179,6 @@ export function RemindersPage() {
     updateReminder(issuedReminder);
     saveDraft(issuedReminder);
     setIsEditing(false);
-    setIsDetailDrawerOpen(false);
 
     if (activeTab !== "Liste") {
       setActiveTab("Liste");
@@ -187,6 +186,7 @@ export function RemindersPage() {
 
     window.setTimeout(() => {
       selectItem(issuedReminder.id);
+      setIsDetailDrawerOpen(true);
     }, 0);
   }
 
@@ -197,8 +197,25 @@ export function RemindersPage() {
 
     const savedReminder = draft as PrintPilotReminder;
 
-    updateReminder(savedReminder);
-    saveDraft(savedReminder);
+    const statusChanged =
+      selectedReminder && selectedReminder.status !== savedReminder.status;
+    const previousHistory = savedReminder.history ?? selectedReminder?.history ?? [];
+    const documentToSave: PrintPilotReminder = statusChanged
+      ? {
+          ...savedReminder,
+          history: [
+            createPrintPilotHistoryEntry(
+              "Mahnung: Status geändert",
+              savedReminder.status,
+            ),
+            ...previousHistory,
+          ],
+        }
+      : savedReminder;
+
+
+    updateReminder(documentToSave);
+    saveDraft(documentToSave);
     setIsEditing(false);
     setIsDetailDrawerOpen(false);
 
@@ -207,7 +224,7 @@ export function RemindersPage() {
     }
 
     window.setTimeout(() => {
-      selectItem(savedReminder.id);
+      selectItem(documentToSave.id);
     }, 0);
   }
 

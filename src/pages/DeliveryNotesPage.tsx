@@ -190,7 +190,6 @@ export function DeliveryNotesPage() {
     updateDeliveryNote(issuedDeliveryNote);
     saveDraft(issuedDeliveryNote);
     setIsEditing(false);
-    setIsDetailDrawerOpen(false);
 
     if (activeTab !== "Liste") {
       setActiveTab("Liste");
@@ -198,6 +197,7 @@ export function DeliveryNotesPage() {
 
     window.setTimeout(() => {
       selectItem(issuedDeliveryNote.id);
+      setIsDetailDrawerOpen(true);
     }, 0);
   }
 
@@ -208,8 +208,25 @@ export function DeliveryNotesPage() {
 
     const savedDeliveryNote = draft as PrintPilotDeliveryNote;
 
-    updateDeliveryNote(savedDeliveryNote);
-    saveDraft(savedDeliveryNote);
+    const statusChanged =
+      selectedDeliveryNote && selectedDeliveryNote.status !== savedDeliveryNote.status;
+    const previousHistory = savedDeliveryNote.history ?? selectedDeliveryNote?.history ?? [];
+    const documentToSave: PrintPilotDeliveryNote = statusChanged
+      ? {
+          ...savedDeliveryNote,
+          history: [
+            createPrintPilotHistoryEntry(
+              "Lieferschein: Status geändert",
+              savedDeliveryNote.status,
+            ),
+            ...previousHistory,
+          ],
+        }
+      : savedDeliveryNote;
+
+
+    updateDeliveryNote(documentToSave);
+    saveDraft(documentToSave);
     setIsEditing(false);
     setIsDetailDrawerOpen(false);
 
@@ -218,7 +235,7 @@ export function DeliveryNotesPage() {
     }
 
     window.setTimeout(() => {
-      selectItem(savedDeliveryNote.id);
+      selectItem(documentToSave.id);
     }, 0);
   }
 

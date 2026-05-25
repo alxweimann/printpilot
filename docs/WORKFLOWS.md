@@ -152,3 +152,15 @@ Status danach
 ```
 
 Die Historie wird im Drawer angezeigt, sobald mindestens ein Eintrag vorhanden ist.
+
+## Statusänderungen in Historie
+
+Wenn ein Dokumentstatus beim normalen Speichern geändert wurde, erzeugt PrintPilot einen Historieneintrag.
+
+```text
+Status alt → Status neu
+Historie: <Dokument>: Status geändert
+Status danach: <neuer Status>
+```
+
+Ausgeben-Aktionen lassen den Drawer geöffnet, damit der neue Historieneintrag direkt sichtbar ist.

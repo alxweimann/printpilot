@@ -330,8 +330,25 @@ export function QuotesPage() {
 
     const savedQuote = draft as PrintPilotQuote;
 
-    updateQuote(savedQuote);
-    saveDraft(savedQuote);
+    const statusChanged =
+      selectedQuote && selectedQuote.status !== savedQuote.status;
+    const previousHistory = savedQuote.history ?? selectedQuote?.history ?? [];
+    const documentToSave: PrintPilotQuote = statusChanged
+      ? {
+          ...savedQuote,
+          history: [
+            createPrintPilotHistoryEntry(
+              "Angebot: Status geändert",
+              savedQuote.status,
+            ),
+            ...previousHistory,
+          ],
+        }
+      : savedQuote;
+
+
+    updateQuote(documentToSave);
+    saveDraft(documentToSave);
     setIsEditing(false);
 
     if (activeTab !== "Alle Angebote") {
@@ -339,7 +356,7 @@ export function QuotesPage() {
     }
 
     window.setTimeout(() => {
-      selectItem(savedQuote.id);
+      selectItem(documentToSave.id);
       setIsDetailDrawerOpen(true);
     }, 0);
   }

@@ -41,3 +41,9 @@ Lieferschein ausgeben → Status Versandbereit + Historie
 Rechnung ausgeben → Status Offen + Historie
 Mahnung ausgeben → Status Versendet + Historie
 ```
+
+## Historie für Statusänderungen und offener Drawer
+
+Manuelle Statusänderungen werden jetzt beim Speichern in die Historie geschrieben.
+
+Außerdem bleibt der Drawer nach dem Ausgeben von Lieferscheinen, Rechnungen und Mahnungen offen, damit Status und Historieneintrag direkt sichtbar bleiben.

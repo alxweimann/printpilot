@@ -41,3 +41,7 @@ Drawer können oberhalb der Detailbereiche eine kompakte Hinweis-Ampel anzeigen.
 ## Dokumenthistorie im Drawer
 
 Dokumentdrawer zeigen über `DocumentHistory` eine kompakte Ereignishistorie. Aktuell entstehen Einträge beim Ausgeben/Versenden.
+
+## Drawer bleibt nach Ausgeben offen
+
+Ausgabeaktionen schließen den Drawer nicht mehr. Der Datensatz bleibt ausgewählt und der neue Historieneintrag ist sofort sichtbar.

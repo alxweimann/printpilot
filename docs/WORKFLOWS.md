@@ -104,3 +104,7 @@ Die Kalkulation startet fachlich mit Digitaldruck-Bogenware, weil dies das Haupt
 3. Standardformate stehen für DIN A3 bis DIN A7 sowie DIN Lang zur Verfügung.
 4. Bei manueller Änderung von Breite/Höhe wird auf freies Endformat gewechselt.
 5. Rohbogenformat kann separat als SRA3, DIN A3 bis DIN A7 oder freies Rohformat gewählt werden.
+
+## Kalkulation – Format-Stammdaten
+
+Endformate und Rohbogenformate werden ab sofort in den Einstellungen gepflegt. Endformate sind fertige Produktformate und können für Produktarten wie Einzelblatt, Flyer, Broschüre, Block, SD-Satz, Karte und Großformat markiert werden. Rohbogenformate sind Produktionsformate für Nutzenberechnung, Papierverbrauch und Maschinenfähigkeit. Die Kalkulation soll künftig diese Stammdaten verwenden, damit Broschüren, Blöcke, SD-Sätze und weitere Produktarten nicht jeweils eigene starre Formatlisten benötigen.

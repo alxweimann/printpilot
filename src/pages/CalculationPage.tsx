@@ -1,6 +1,7 @@
 import { useMemo, useState } from "react";
 import { getModuleConfig } from "../app/moduleConfig";
 import { PageHeader } from "../layout/PageHeader";
+import { usePrintPilotStore } from "../store/PrintPilotStore";
 import { PageTabs } from "../layout/PageTabs";
 import { Field } from "../ui/Field";
 import { FieldGrid } from "../ui/FieldGrid";
@@ -11,12 +12,6 @@ import { WorkspaceHeader } from "../ui/WorkspaceHeader";
 
 type Orientation = "normal" | "rotated";
 type PrintSideMode = "color" | "black" | "blank";
-
-type FormatPreset = {
-  label: string;
-  width: number;
-  height: number;
-};
 
 type ImpositionVariant = {
   orientation: Orientation;
@@ -34,27 +29,13 @@ type ImpositionVariant = {
   wasteArea: number;
 };
 
-const PRODUCT_FORMAT_PRESETS: Record<string, FormatPreset> = {
-  a3: { label: "DIN A3 · 297 × 420 mm", width: 297, height: 420 },
-  a4: { label: "DIN A4 · 210 × 297 mm", width: 210, height: 297 },
-  a5: { label: "DIN A5 · 148 × 210 mm", width: 148, height: 210 },
-  a6: { label: "DIN A6 · 105 × 148 mm", width: 105, height: 148 },
-  a7: { label: "DIN A7 · 74 × 105 mm", width: 74, height: 105 },
-  dinLang: { label: "DIN Lang · 99 × 210 mm", width: 99, height: 210 },
-  dinLangQuer: { label: "DIN Lang quer · 210 × 99 mm", width: 210, height: 99 },
-  dinLangPlus: { label: "DIN Lang Plus · 105 × 210 mm", width: 105, height: 210 },
-  custom: { label: "Freies Endformat", width: 210, height: 99 },
-};
-
-const SHEET_PRESETS: Record<string, FormatPreset> = {
-  sra3: { label: "SRA3 · 450 × 320 mm", width: 450, height: 320 },
-  a3: { label: "DIN A3 · 420 × 297 mm", width: 420, height: 297 },
-  a4: { label: "DIN A4 · 297 × 210 mm", width: 297, height: 210 },
-  a5: { label: "DIN A5 · 210 × 148 mm", width: 210, height: 148 },
-  a6: { label: "DIN A6 · 148 × 105 mm", width: 148, height: 105 },
-  a7: { label: "DIN A7 · 105 × 74 mm", width: 105, height: 74 },
-  custom: { label: "Freies Rohformat", width: 450, height: 320 },
-};
+function formatPresetLabel(format: {
+  name: string;
+  widthMm: string;
+  heightMm: string;
+}) {
+  return `${format.name} · ${format.widthMm} × ${format.heightMm} mm`;
+}
 
 function toNumber(value: string, fallback = 0) {
   const normalized = value.replace(",", ".").trim();
@@ -135,13 +116,33 @@ function getSideClicks(mode: PrintSideMode, sheets: number) {
 
 export function CalculationPage() {
   const module = getModuleConfig("calculation");
+  const { settings } = usePrintPilotStore();
+  const productFormatOptions = settings.productFormats.filter(
+    (format) => format.isActive === "Ja",
+  );
+  const rawSheetFormatOptions = settings.rawSheetFormats.filter(
+    (format) => format.isActive === "Ja",
+  );
+  const defaultProductFormat =
+    productFormatOptions.find((format) => format.isDefault === "Ja") ??
+    productFormatOptions[0];
+  const defaultRawSheetFormat =
+    rawSheetFormatOptions.find((format) => format.isDefault === "Ja") ??
+    rawSheetFormatOptions[0];
+
   const [quantity, setQuantity] = useState("1000");
-  const [productPreset, setProductPreset] = useState("dinLangQuer");
-  const [finalWidth, setFinalWidth] = useState("210");
-  const [finalHeight, setFinalHeight] = useState("99");
-  const [sheetPreset, setSheetPreset] = useState("sra3");
-  const [sheetWidth, setSheetWidth] = useState("450");
-  const [sheetHeight, setSheetHeight] = useState("320");
+  const [productPreset, setProductPreset] = useState(
+    defaultProductFormat?.id ?? "custom",
+  );
+  const [finalWidth, setFinalWidth] = useState(
+    defaultProductFormat?.widthMm ?? "210",
+  );
+  const [finalHeight, setFinalHeight] = useState(
+    defaultProductFormat?.heightMm ?? "99",
+  );
+  const [sheetPreset, setSheetPreset] = useState(defaultRawSheetFormat?.id ?? "custom");
+  const [sheetWidth, setSheetWidth] = useState(defaultRawSheetFormat?.widthMm ?? "450");
+  const [sheetHeight, setSheetHeight] = useState(defaultRawSheetFormat?.heightMm ?? "320");
   const [bleed, setBleed] = useState("3");
   const [gap, setGap] = useState("4");
   const [margin, setMargin] = useState("5");
@@ -251,21 +252,21 @@ export function CalculationPage() {
 
   function handleProductPresetChange(value: string) {
     setProductPreset(value);
-    const preset = PRODUCT_FORMAT_PRESETS[value];
+    const preset = productFormatOptions.find((format) => format.id === value);
 
-    if (preset && value !== "custom") {
-      setFinalWidth(String(preset.width));
-      setFinalHeight(String(preset.height));
+    if (preset) {
+      setFinalWidth(preset.widthMm);
+      setFinalHeight(preset.heightMm);
     }
   }
 
   function handleSheetPresetChange(value: string) {
     setSheetPreset(value);
-    const preset = SHEET_PRESETS[value];
+    const preset = rawSheetFormatOptions.find((format) => format.id === value);
 
-    if (preset && value !== "custom") {
-      setSheetWidth(String(preset.width));
-      setSheetHeight(String(preset.height));
+    if (preset) {
+      setSheetWidth(preset.widthMm);
+      setSheetHeight(preset.heightMm);
     }
   }
 
@@ -297,11 +298,12 @@ export function CalculationPage() {
 
               <Field label="Endformat-Vorlage">
                 <Select value={productPreset} onChange={(event) => handleProductPresetChange(event.target.value)}>
-                  {Object.entries(PRODUCT_FORMAT_PRESETS).map(([value, preset]) => (
-                    <option key={value} value={value}>
-                      {preset.label}
+                  {productFormatOptions.map((format) => (
+                    <option key={format.id} value={format.id}>
+                      {formatPresetLabel(format)}
                     </option>
                   ))}
+                  <option value="custom">Freies Endformat</option>
                 </Select>
               </Field>
 
@@ -329,11 +331,12 @@ export function CalculationPage() {
 
               <Field label="Rohbogenformat">
                 <Select value={sheetPreset} onChange={(event) => handleSheetPresetChange(event.target.value)}>
-                  {Object.entries(SHEET_PRESETS).map(([value, preset]) => (
-                    <option key={value} value={value}>
-                      {preset.label}
+                  {rawSheetFormatOptions.map((format) => (
+                    <option key={format.id} value={format.id}>
+                      {formatPresetLabel(format)}
                     </option>
                   ))}
+                  <option value="custom">Freies Rohformat</option>
                 </Select>
               </Field>
 
@@ -509,7 +512,7 @@ export function CalculationPage() {
         </div>
 
         <div className="calculation-note">
-          V1 rechnet bewusst als robuste Kalkulationsbasis: DIN-Formate, Nutzen, Druckbogen, Papierkosten und Klickkosten. Laufrichtung,
+V1 rechnet bewusst als robuste Kalkulationsbasis: Format- und Rohbogenstammdaten, Nutzen, Druckbogen, Papierkosten und Klickkosten. Laufrichtung,
           grafische Bogenvorschau, Maschinenzeiten, Weiterverarbeitung und Großformatdruck folgen in den nächsten Ausbaustufen.
         </div>
       </section>

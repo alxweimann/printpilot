@@ -118,3 +118,7 @@ Die Kalkulationsseite wurde vom reinen Formular zur ersten aktiven Rechenmaske e
 - Enthalten: DIN A3, A4, A5, A6, A7 sowie DIN Lang, DIN Lang quer und DIN Lang Plus.
 - Rohbogen-Vorlagen wurden ebenfalls um DIN A5, A6 und A7 ergänzt; SRA3, A3 und A4 bleiben enthalten.
 - Manuelle Formatänderung stellt die jeweilige Vorlage automatisch auf „frei“, damit individuelle Sonderformate weiter möglich bleiben.
+
+## Update 2026-05-30 – Format-Stammdaten in Einstellungen
+
+Die Einstellungen wurden um zentrale Stammdaten für Endformate und Rohbogenformate erweitert. Endformate enthalten Name, Breite, Höhe, Kategorie, Produktarten, Aktiv-Status und Standard-Kennzeichnung. Rohbogenformate enthalten Name, Breite, Höhe, Kategorie, optionale Maschinenzuordnung, Laufrichtung, Aktiv-Status und Standard-Kennzeichnung. Die Standarddaten decken DIN A3 bis A7, DIN Lang-Varianten, Quadrat 210, Visitenkarte sowie SRA3, DIN-Rohbogen und Iridesse-Langbogen/Bannerbogen ab. Der Digitaldruck-Bogenrechner liest seine Format-Dropdowns jetzt aus diesen Stammdaten statt aus hart codierten Formatlisten.

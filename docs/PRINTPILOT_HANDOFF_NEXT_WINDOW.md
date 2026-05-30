@@ -195,3 +195,12 @@ Empfohlener Test:
 - DIN A6 auf SRA3 testen.
 - DIN A7 auf A4 testen.
 - Breite/Höhe manuell ändern und prüfen, ob die Vorlage auf frei springt.
+
+## Letzter Stand – Einstellungen Format-Stammdaten
+
+Die Einstellungen enthalten jetzt neue Tabs `Formate` und `Rohbogenformate`. Formate sind zentrale Endformate für Einzelblatt/Flyer/Broschüre/Block/SD-Satz/Karte/Großformat. Rohbogenformate sind Produktionsformate für Nutzenberechnung und spätere Maschinen-/Materiallogik. Der Digitaldruck-Bogenrechner nutzt die aktiven Stammdaten direkt in seinen Dropdowns. Manuelle Breite-/Höhe-Änderungen bleiben weiterhin als freie Formate möglich.
+
+Empfohlener Test:
+- Einstellungen öffnen → Bearbeitung aktivieren → Formate prüfen/ändern/speichern.
+- Rohbogenformate prüfen, SRA3 als Standard belassen.
+- Kalkulation öffnen und kontrollieren, ob die Dropdowns die aktiven Stammdaten anzeigen.

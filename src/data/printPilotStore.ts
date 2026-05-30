@@ -268,6 +268,60 @@ export type PrintPilotTemplate = {
   badgeVariant?: "success";
 };
 
+
+export type PrintPilotProductType =
+  | "Einzelblatt"
+  | "Flyer"
+  | "Broschüre"
+  | "Block"
+  | "SD-Satz"
+  | "Karte"
+  | "Großformat";
+
+export type PrintPilotFormatCategory =
+  | "DIN"
+  | "Flyer"
+  | "Karte"
+  | "Broschüre"
+  | "Block"
+  | "SD-Satz"
+  | "Sonderformat";
+
+export type PrintPilotRawSheetCategory =
+  | "DIN"
+  | "SRA"
+  | "Langbogen"
+  | "Maschinenformat"
+  | "Sonderformat";
+
+export type PrintPilotGrainDirection =
+  | "Unbekannt"
+  | "Schmalbahn"
+  | "Breitbahn";
+
+export type PrintPilotProductFormat = {
+  id: PrintPilotId;
+  name: string;
+  widthMm: string;
+  heightMm: string;
+  category: PrintPilotFormatCategory;
+  productTypes: PrintPilotProductType[];
+  isDefault: string;
+  isActive: string;
+};
+
+export type PrintPilotRawSheetFormat = {
+  id: PrintPilotId;
+  name: string;
+  widthMm: string;
+  heightMm: string;
+  category: PrintPilotRawSheetCategory;
+  machine: string;
+  grainDirection: PrintPilotGrainDirection;
+  isDefault: string;
+  isActive: string;
+};
+
 export type PrintPilotSettings = {
   id: PrintPilotId;
   mode: string;
@@ -296,6 +350,8 @@ export type PrintPilotSettings = {
   backupMode: string;
   apiStatus: string;
   debugMode: string;
+  productFormats: PrintPilotProductFormat[];
+  rawSheetFormats: PrintPilotRawSheetFormat[];
 };
 
 export type PrintPilotStoreData = {
@@ -312,6 +368,201 @@ export type PrintPilotStoreData = {
   templates: PrintPilotTemplate[];
   settings: PrintPilotSettings;
 };
+
+
+export const initialPrintPilotProductFormats: PrintPilotProductFormat[] = [
+  {
+    id: "format-din-a3",
+    name: "DIN A3",
+    widthMm: "297",
+    heightMm: "420",
+    category: "DIN",
+    productTypes: ["Einzelblatt", "Flyer", "Broschüre"],
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "format-din-a4",
+    name: "DIN A4",
+    widthMm: "210",
+    heightMm: "297",
+    category: "DIN",
+    productTypes: ["Einzelblatt", "Flyer", "Broschüre", "Block", "SD-Satz"],
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "format-din-a5",
+    name: "DIN A5",
+    widthMm: "148",
+    heightMm: "210",
+    category: "DIN",
+    productTypes: ["Einzelblatt", "Flyer", "Broschüre", "Block", "SD-Satz"],
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "format-din-a6",
+    name: "DIN A6",
+    widthMm: "105",
+    heightMm: "148",
+    category: "DIN",
+    productTypes: ["Einzelblatt", "Flyer", "Karte"],
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "format-din-a7",
+    name: "DIN A7",
+    widthMm: "74",
+    heightMm: "105",
+    category: "DIN",
+    productTypes: ["Einzelblatt", "Karte"],
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "format-din-lang",
+    name: "DIN Lang",
+    widthMm: "99",
+    heightMm: "210",
+    category: "Flyer",
+    productTypes: ["Einzelblatt", "Flyer"],
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "format-din-lang-quer",
+    name: "DIN Lang quer",
+    widthMm: "210",
+    heightMm: "99",
+    category: "Flyer",
+    productTypes: ["Einzelblatt", "Flyer"],
+    isDefault: "Ja",
+    isActive: "Ja",
+  },
+  {
+    id: "format-din-lang-plus",
+    name: "DIN Lang Plus",
+    widthMm: "105",
+    heightMm: "210",
+    category: "Flyer",
+    productTypes: ["Einzelblatt", "Flyer"],
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "format-square-210",
+    name: "Quadrat 210",
+    widthMm: "210",
+    heightMm: "210",
+    category: "Sonderformat",
+    productTypes: ["Einzelblatt", "Broschüre"],
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "format-business-card",
+    name: "Visitenkarte",
+    widthMm: "85",
+    heightMm: "55",
+    category: "Karte",
+    productTypes: ["Karte"],
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+];
+
+export const initialPrintPilotRawSheetFormats: PrintPilotRawSheetFormat[] = [
+  {
+    id: "raw-sra3",
+    name: "SRA3",
+    widthMm: "450",
+    heightMm: "320",
+    category: "SRA",
+    machine: "Digitaldruck allgemein",
+    grainDirection: "Unbekannt",
+    isDefault: "Ja",
+    isActive: "Ja",
+  },
+  {
+    id: "raw-din-a3",
+    name: "DIN A3",
+    widthMm: "420",
+    heightMm: "297",
+    category: "DIN",
+    machine: "Digitaldruck allgemein",
+    grainDirection: "Unbekannt",
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "raw-din-a4",
+    name: "DIN A4",
+    widthMm: "297",
+    heightMm: "210",
+    category: "DIN",
+    machine: "Digitaldruck allgemein",
+    grainDirection: "Unbekannt",
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "raw-din-a5",
+    name: "DIN A5",
+    widthMm: "210",
+    heightMm: "148",
+    category: "DIN",
+    machine: "Digitaldruck allgemein",
+    grainDirection: "Unbekannt",
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "raw-din-a6",
+    name: "DIN A6",
+    widthMm: "148",
+    heightMm: "105",
+    category: "DIN",
+    machine: "Digitaldruck allgemein",
+    grainDirection: "Unbekannt",
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "raw-din-a7",
+    name: "DIN A7",
+    widthMm: "105",
+    heightMm: "74",
+    category: "DIN",
+    machine: "Digitaldruck allgemein",
+    grainDirection: "Unbekannt",
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "raw-iridesse-long-330-660",
+    name: "Iridesse Langbogen",
+    widthMm: "330",
+    heightMm: "660",
+    category: "Langbogen",
+    machine: "Xerox Iridesse",
+    grainDirection: "Unbekannt",
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "raw-iridesse-banner-330-1200",
+    name: "Iridesse Bannerbogen",
+    widthMm: "330",
+    heightMm: "1200",
+    category: "Langbogen",
+    machine: "Xerox Iridesse",
+    grainDirection: "Unbekannt",
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+];
 
 export const initialPrintPilotSettings: PrintPilotSettings = {
   id: "settings-local",
@@ -341,6 +592,8 @@ export const initialPrintPilotSettings: PrintPilotSettings = {
   backupMode: "Manuell",
   apiStatus: "Nicht aktiv",
   debugMode: "Aus",
+  productFormats: initialPrintPilotProductFormats,
+  rawSheetFormats: initialPrintPilotRawSheetFormats,
 };
 
 export const initialPrintPilotCustomers: PrintPilotCustomer[] = [

@@ -67,3 +67,10 @@ Der Auftragsbereich ist nach Listenfilterung und Tabellen-Feinschliff visuell ab
 - Digitaldruck V1.1: Formatauswahl ist erweitert.
 - Danach: grafische Bogenvorschau, Papierlaufrichtung, Maschinenzeiten, Sonderfarben und Weiterverarbeitung.
 - Großformatdruck bleibt als separater Rechner nach Stabilisierung des Digitaldruck-Kerns vorgesehen.
+
+## Erledigt – Kalkulation Format-Stammdaten
+
+- Einstellungen um Tabs `Formate` und `Rohbogenformate` erweitert.
+- Endformate und Rohbogenformate als zentrale Stammdaten vorbereitet.
+- Digitaldruck-Rechner liest Format- und Rohbogen-Auswahl jetzt aus den Einstellungen.
+- Nächster sinnvoller Schritt: Nutzenrechner V2 mit grafischer Bogenvorschau, Laufrichtung und maschinenbezogenen Rohbogen-/Materialparametern.

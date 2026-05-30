@@ -103,3 +103,7 @@ Kalkulationsseiten verwenden links Eingabegruppen und rechts eine kompakte Ergeb
 - Endformat und Rohbogenformat bleiben getrennte Eingabegruppen.
 - Manuelle Abweichungen müssen sichtbar als freie Formate behandelt werden.
 - Formatlabels sollen immer Name und Millimetermaß zeigen, z. B. „DIN Lang quer · 210 × 99 mm“.
+
+## Einstellungen – Stammdatenkarten
+
+Stammdaten in den Einstellungen werden als ruhige Karten mit kompaktem Kopf, moderatem Radius und FieldGrid-Eingaben dargestellt. Hinzufügen, Löschen und Standardmarkierung erfolgen im entsperrten Bearbeitungsmodus. Produktart-Zuordnungen werden als kompakte Checkbox-Chips mit `var(--radius-md)` dargestellt, nicht als vollrunde Pills.

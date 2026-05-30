@@ -2,6 +2,14 @@ import { useRef, useState } from "react";
 
 import { getModuleConfig } from "../app/moduleConfig";
 import {
+  type PrintPilotFormatCategory,
+  type PrintPilotGrainDirection,
+  type PrintPilotProductFormat,
+  type PrintPilotProductType,
+  type PrintPilotRawSheetCategory,
+  type PrintPilotRawSheetFormat,
+} from "../data/printPilotStore";
+import {
   type PrintPilotBackupFile,
   type PrintPilotBackupSummary,
   createPrintPilotBackup,
@@ -32,6 +40,8 @@ const settingsTabs = [
   "Nummernkreise",
   "Firma",
   "Design",
+  "Formate",
+  "Rohbogenformate",
   "System",
   "Datensicherung",
 ] as const;
@@ -56,12 +66,57 @@ function getSettingsTitle(tab: SettingsTab) {
     case "Design":
       return "Design einstellen";
 
+    case "Formate":
+      return "Endformate verwalten";
+
+    case "Rohbogenformate":
+      return "Rohbogenformate verwalten";
+
     case "System":
       return "Systemeinstellungen prüfen";
 
     case "Datensicherung":
       return "Datensicherung verwalten";
   }
+}
+
+
+const productTypeOptions: PrintPilotProductType[] = [
+  "Einzelblatt",
+  "Flyer",
+  "Broschüre",
+  "Block",
+  "SD-Satz",
+  "Karte",
+  "Großformat",
+];
+
+const productFormatCategoryOptions: PrintPilotFormatCategory[] = [
+  "DIN",
+  "Flyer",
+  "Karte",
+  "Broschüre",
+  "Block",
+  "SD-Satz",
+  "Sonderformat",
+];
+
+const rawSheetCategoryOptions: PrintPilotRawSheetCategory[] = [
+  "DIN",
+  "SRA",
+  "Langbogen",
+  "Maschinenformat",
+  "Sonderformat",
+];
+
+const grainDirectionOptions: PrintPilotGrainDirection[] = [
+  "Unbekannt",
+  "Schmalbahn",
+  "Breitbahn",
+];
+
+function createDraftId(prefix: string) {
+  return `${prefix}-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`;
 }
 
 function formatBackupDate(value: string) {
@@ -144,6 +199,129 @@ export function SettingsPage() {
     updateSettings(draft);
     saveDraft(draft);
     setIsEditing(false);
+  }
+
+
+  function updateProductFormat(
+    formatId: string,
+    patch: Partial<PrintPilotProductFormat>,
+  ) {
+    if (!draft) return;
+
+    updateDraftField(
+      "productFormats",
+      draft.productFormats.map((format) =>
+        format.id === formatId ? { ...format, ...patch } : format,
+      ),
+    );
+  }
+
+  function addProductFormat() {
+    if (!draft) return;
+
+    updateDraftField("productFormats", [
+      ...draft.productFormats,
+      {
+        id: createDraftId("format"),
+        name: "Neues Format",
+        widthMm: "210",
+        heightMm: "297",
+        category: "Sonderformat",
+        productTypes: ["Einzelblatt"],
+        isDefault: "Nein",
+        isActive: "Ja",
+      },
+    ]);
+  }
+
+  function removeProductFormat(formatId: string) {
+    if (!draft) return;
+
+    updateDraftField(
+      "productFormats",
+      draft.productFormats.filter((format) => format.id !== formatId),
+    );
+  }
+
+  function setDefaultProductFormat(formatId: string) {
+    if (!draft) return;
+
+    updateDraftField(
+      "productFormats",
+      draft.productFormats.map((format) => ({
+        ...format,
+        isDefault: format.id === formatId ? "Ja" : "Nein",
+      })),
+    );
+  }
+
+  function toggleProductFormatType(
+    format: PrintPilotProductFormat,
+    productType: PrintPilotProductType,
+  ) {
+    const hasType = format.productTypes.includes(productType);
+    const nextProductTypes = hasType
+      ? format.productTypes.filter((currentType) => currentType !== productType)
+      : [...format.productTypes, productType];
+
+    updateProductFormat(format.id, {
+      productTypes:
+        nextProductTypes.length > 0 ? nextProductTypes : ["Einzelblatt"],
+    });
+  }
+
+  function updateRawSheetFormat(
+    formatId: string,
+    patch: Partial<PrintPilotRawSheetFormat>,
+  ) {
+    if (!draft) return;
+
+    updateDraftField(
+      "rawSheetFormats",
+      draft.rawSheetFormats.map((format) =>
+        format.id === formatId ? { ...format, ...patch } : format,
+      ),
+    );
+  }
+
+  function addRawSheetFormat() {
+    if (!draft) return;
+
+    updateDraftField("rawSheetFormats", [
+      ...draft.rawSheetFormats,
+      {
+        id: createDraftId("raw"),
+        name: "Neuer Rohbogen",
+        widthMm: "450",
+        heightMm: "320",
+        category: "Sonderformat",
+        machine: "Digitaldruck allgemein",
+        grainDirection: "Unbekannt",
+        isDefault: "Nein",
+        isActive: "Ja",
+      },
+    ]);
+  }
+
+  function removeRawSheetFormat(formatId: string) {
+    if (!draft) return;
+
+    updateDraftField(
+      "rawSheetFormats",
+      draft.rawSheetFormats.filter((format) => format.id !== formatId),
+    );
+  }
+
+  function setDefaultRawSheetFormat(formatId: string) {
+    if (!draft) return;
+
+    updateDraftField(
+      "rawSheetFormats",
+      draft.rawSheetFormats.map((format) => ({
+        ...format,
+        isDefault: format.id === formatId ? "Ja" : "Nein",
+      })),
+    );
   }
 
   function handleCreateBackup() {
@@ -692,6 +870,310 @@ export function SettingsPage() {
                   </Select>
                 </Field>
               </FieldGrid>
+            </>
+          )}
+
+
+          {activeTab === "Formate" && (
+            <>
+              <SectionHeader>Endformate</SectionHeader>
+
+              <div className="settings-data-intro">
+                Zentrale Endformate für Einzelblatt, Flyer, Broschüren, Blöcke,
+                SD-Sätze und spätere Kalkulationsarten. Die Kalkulation liest
+                diese Stammdaten im nächsten Schritt direkt aus den Einstellungen.
+              </div>
+
+              <div className="settings-data-actions">
+                <Button onClick={addProductFormat} disabled={!isEditing}>Format hinzufügen</Button>
+              </div>
+
+              <div className="settings-data-list">
+                {(draft?.productFormats ?? []).map((format) => (
+                  <article className="settings-data-card" key={format.id}>
+                    <div className="settings-data-card-header">
+                      <strong>{format.name}</strong>
+                      <span>
+                        {format.widthMm} × {format.heightMm} mm · {format.category}
+                      </span>
+                    </div>
+
+                    <FieldGrid>
+                      <Field label="Name">
+                        <Input
+                          value={format.name}
+                          readOnly={!isEditing}
+                          onChange={(event) =>
+                            updateProductFormat(format.id, {
+                              name: event.target.value,
+                            })
+                          }
+                        />
+                      </Field>
+
+                      <Field label="Breite mm">
+                        <Input
+                          inputMode="decimal"
+                          value={format.widthMm}
+                          readOnly={!isEditing}
+                          onChange={(event) =>
+                            updateProductFormat(format.id, {
+                              widthMm: event.target.value,
+                            })
+                          }
+                        />
+                      </Field>
+
+                      <Field label="Höhe mm">
+                        <Input
+                          inputMode="decimal"
+                          value={format.heightMm}
+                          readOnly={!isEditing}
+                          onChange={(event) =>
+                            updateProductFormat(format.id, {
+                              heightMm: event.target.value,
+                            })
+                          }
+                        />
+                      </Field>
+
+                      <Field label="Kategorie">
+                        <Select
+                          value={format.category}
+                          disabled={!isEditing}
+                          onChange={(event) =>
+                            updateProductFormat(format.id, {
+                              category: event.target
+                                .value as PrintPilotFormatCategory,
+                            })
+                          }
+                        >
+                          {productFormatCategoryOptions.map((category) => (
+                            <option key={category}>{category}</option>
+                          ))}
+                        </Select>
+                      </Field>
+
+                      <Field label="Aktiv">
+                        <Select
+                          value={format.isActive}
+                          disabled={!isEditing}
+                          onChange={(event) =>
+                            updateProductFormat(format.id, {
+                              isActive: event.target.value,
+                            })
+                          }
+                        >
+                          <option>Ja</option>
+                          <option>Nein</option>
+                        </Select>
+                      </Field>
+
+                      <Field label="Standard">
+                        <Select
+                          value={format.isDefault}
+                          disabled={!isEditing}
+                          onChange={(event) => {
+                            if (event.target.value === "Ja") {
+                              setDefaultProductFormat(format.id);
+                            } else {
+                              updateProductFormat(format.id, {
+                                isDefault: "Nein",
+                              });
+                            }
+                          }}
+                        >
+                          <option>Ja</option>
+                          <option>Nein</option>
+                        </Select>
+                      </Field>
+                    </FieldGrid>
+
+                    <div className="settings-product-type-grid">
+                      {productTypeOptions.map((productType) => (
+                        <label key={productType}>
+                          <input
+                            type="checkbox"
+                            checked={format.productTypes.includes(productType)}
+                            disabled={!isEditing}
+                            onChange={() =>
+                              toggleProductFormatType(format, productType)
+                            }
+                          />
+                          <span>{productType}</span>
+                        </label>
+                      ))}
+                    </div>
+
+                    <div className="settings-data-card-footer">
+                      <Button
+                        onClick={() => removeProductFormat(format.id)}
+                        disabled={!isEditing || format.isDefault === "Ja"}
+                      >
+                        Löschen
+                      </Button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </>
+          )}
+
+          {activeTab === "Rohbogenformate" && (
+            <>
+              <SectionHeader>Rohbogenformate</SectionHeader>
+
+              <div className="settings-data-intro">
+                Rohbogenformate sind die Ausgangsformate für Nutzenberechnung,
+                Papierverbrauch und Maschinenfähigkeit. Langbogen und
+                Bannerbogen sind hier bewusst als Stammdaten vorbereitet.
+              </div>
+
+              <div className="settings-data-actions">
+                <Button onClick={addRawSheetFormat} disabled={!isEditing}>Rohbogen hinzufügen</Button>
+              </div>
+
+              <div className="settings-data-list">
+                {(draft?.rawSheetFormats ?? []).map((format) => (
+                  <article className="settings-data-card" key={format.id}>
+                    <div className="settings-data-card-header">
+                      <strong>{format.name}</strong>
+                      <span>
+                        {format.widthMm} × {format.heightMm} mm · {format.category}
+                      </span>
+                    </div>
+
+                    <FieldGrid>
+                      <Field label="Name">
+                        <Input
+                          value={format.name}
+                          readOnly={!isEditing}
+                          onChange={(event) =>
+                            updateRawSheetFormat(format.id, {
+                              name: event.target.value,
+                            })
+                          }
+                        />
+                      </Field>
+
+                      <Field label="Breite mm">
+                        <Input
+                          inputMode="decimal"
+                          value={format.widthMm}
+                          readOnly={!isEditing}
+                          onChange={(event) =>
+                            updateRawSheetFormat(format.id, {
+                              widthMm: event.target.value,
+                            })
+                          }
+                        />
+                      </Field>
+
+                      <Field label="Höhe mm">
+                        <Input
+                          inputMode="decimal"
+                          value={format.heightMm}
+                          readOnly={!isEditing}
+                          onChange={(event) =>
+                            updateRawSheetFormat(format.id, {
+                              heightMm: event.target.value,
+                            })
+                          }
+                        />
+                      </Field>
+
+                      <Field label="Kategorie">
+                        <Select
+                          value={format.category}
+                          disabled={!isEditing}
+                          onChange={(event) =>
+                            updateRawSheetFormat(format.id, {
+                              category: event.target
+                                .value as PrintPilotRawSheetCategory,
+                            })
+                          }
+                        >
+                          {rawSheetCategoryOptions.map((category) => (
+                            <option key={category}>{category}</option>
+                          ))}
+                        </Select>
+                      </Field>
+
+                      <Field label="Maschine">
+                        <Input
+                          value={format.machine}
+                          readOnly={!isEditing}
+                          onChange={(event) =>
+                            updateRawSheetFormat(format.id, {
+                              machine: event.target.value,
+                            })
+                          }
+                        />
+                      </Field>
+
+                      <Field label="Laufrichtung">
+                        <Select
+                          value={format.grainDirection}
+                          disabled={!isEditing}
+                          onChange={(event) =>
+                            updateRawSheetFormat(format.id, {
+                              grainDirection: event.target
+                                .value as PrintPilotGrainDirection,
+                            })
+                          }
+                        >
+                          {grainDirectionOptions.map((grainDirection) => (
+                            <option key={grainDirection}>{grainDirection}</option>
+                          ))}
+                        </Select>
+                      </Field>
+
+                      <Field label="Aktiv">
+                        <Select
+                          value={format.isActive}
+                          disabled={!isEditing}
+                          onChange={(event) =>
+                            updateRawSheetFormat(format.id, {
+                              isActive: event.target.value,
+                            })
+                          }
+                        >
+                          <option>Ja</option>
+                          <option>Nein</option>
+                        </Select>
+                      </Field>
+
+                      <Field label="Standard">
+                        <Select
+                          value={format.isDefault}
+                          disabled={!isEditing}
+                          onChange={(event) => {
+                            if (event.target.value === "Ja") {
+                              setDefaultRawSheetFormat(format.id);
+                            } else {
+                              updateRawSheetFormat(format.id, {
+                                isDefault: "Nein",
+                              });
+                            }
+                          }}
+                        >
+                          <option>Ja</option>
+                          <option>Nein</option>
+                        </Select>
+                      </Field>
+                    </FieldGrid>
+
+                    <div className="settings-data-card-footer">
+                      <Button
+                        onClick={() => removeRawSheetFormat(format.id)}
+                        disabled={!isEditing || format.isDefault === "Ja"}
+                      >
+                        Löschen
+                      </Button>
+                    </div>
+                  </article>
+                ))}
+              </div>
             </>
           )}
 

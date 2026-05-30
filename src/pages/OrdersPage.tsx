@@ -9,7 +9,6 @@ import {
   createPrintPilotDeliveryNoteFromOrder,
   createPrintPilotInvoiceFromOrder,
   type PrintPilotOrderStatus,
-  getPrintPilotApprovalBadgeVariant,
   groupPrintPilotOrdersByStatus,
 } from "../data/printPilotStore";
 import { useEditableDraft } from "../hooks/useEditableDraft";
@@ -19,7 +18,6 @@ import { usePrintPilotStore } from "../store/PrintPilotStore";
 import { PageHeader } from "../layout/PageHeader";
 import { PageTabs } from "../layout/PageTabs";
 
-import { Badge, type BadgeVariant } from "../ui/Badge";
 import { Button } from "../ui/Button";
 import { ConfirmDialog } from "../ui/ConfirmDialog";
 import { DetailDrawer } from "../ui/DetailDrawer";
@@ -81,6 +79,7 @@ type OrderSortKey =
   | "product"
   | "dueDate"
   | "approval"
+  | "handoff"
   | "status";
 
 const orderSortLabels: Record<OrderSortKey, string> = {
@@ -89,6 +88,7 @@ const orderSortLabels: Record<OrderSortKey, string> = {
   product: "Produkt",
   dueDate: "Fällig",
   approval: "Freigabe",
+  handoff: "Übergabe",
   status: "Status",
 };
 
@@ -221,7 +221,7 @@ function getOrderStatusSummary(status: PrintPilotOrderStatus) {
       return { label: "Wartet", detail: "Blocker offen", tone: "warning" as const };
 
     case "In Produktion":
-      return { label: "Offene Plantafel", detail: "sichtbar bis Fertig", tone: "info" as const };
+      return { label: "In Produktion", detail: "offen bis Fertig", tone: "info" as const };
 
     case "Fertig":
       return { label: "Fertig", detail: "nicht mehr offen", tone: "success" as const };
@@ -229,6 +229,11 @@ function getOrderStatusSummary(status: PrintPilotOrderStatus) {
     case "Archiv":
       return { label: "Archiv", detail: "ausgeblendet", tone: "neutral" as const };
   }
+}
+
+
+function getOrderListBadgeClass(tone: "success" | "warning" | "neutral" | "info") {
+  return `order-list-badge order-list-badge-${tone}`;
 }
 
 function getOrderMachineSummary(order: PrintPilotOrder | undefined) {
@@ -250,23 +255,6 @@ function needsProductionApprovalWarning(order: PrintPilotOrder) {
   );
 }
 
-function getOrderStatusBadgeVariant(
-  status: PrintPilotOrderStatus,
-): BadgeVariant {
-  switch (status) {
-    case "In Produktion":
-    case "Fertig":
-      return "success";
-
-    case "Wartet":
-      return "warning";
-
-    case "Neu":
-    case "Archiv":
-      return "neutral";
-  }
-}
-
 function getOrderSortValue(order: PrintPilotOrder, key: OrderSortKey) {
   switch (key) {
     case "number":
@@ -283,6 +271,9 @@ function getOrderSortValue(order: PrintPilotOrder, key: OrderSortKey) {
 
     case "approval":
       return order.approval;
+
+    case "handoff":
+      return order.handoff;
 
     case "status":
       return order.status;
@@ -1060,6 +1051,12 @@ export function OrdersPage() {
                     onSort={handleOrderSort}
                   />
                 <SortableTableHeader
+                    sortKey="handoff"
+                    label={orderSortLabels.handoff}
+                    sortConfig={orderSortConfig}
+                    onSort={handleOrderSort}
+                  />
+                <SortableTableHeader
                     sortKey="status"
                     label={orderSortLabels.status}
                     sortConfig={orderSortConfig}
@@ -1072,6 +1069,9 @@ export function OrdersPage() {
               {sortedOrderRows.map((order) => {
                 const isSelected =
                   isDetailDrawerOpen && order.id === selectedOrder?.id;
+                const approvalSummary = getOrderApprovalSummary(order.approval);
+                const handoffSummary = getOrderHandoffSummary(order.handoff);
+                const statusSummary = getOrderStatusSummary(order.status);
 
                 return (
                   <tr
@@ -1084,20 +1084,32 @@ export function OrdersPage() {
                     <td style={{ whiteSpace: "nowrap" }}>{order.number}</td>
                     <td>{order.customerName}</td>
                     <td>{order.product}</td>
-                    <td style={{ whiteSpace: "nowrap" }}>{formatPrintPilotDateString(order.dueDate, settings.dateFormat)}</td>
                     <td style={{ whiteSpace: "nowrap" }}>
-                      <Badge
-                        variant={getPrintPilotApprovalBadgeVariant(
-                          order.approval,
-                        )}
-                      >
-                        {order.approval}
-                      </Badge>
+                      {formatPrintPilotDateString(order.dueDate, settings.dateFormat)}
                     </td>
                     <td style={{ whiteSpace: "nowrap" }}>
-                      <Badge variant={getOrderStatusBadgeVariant(order.status)}>
-                        {order.status}
-                      </Badge>
+                      <span
+                        className={getOrderListBadgeClass(approvalSummary.tone)}
+                        title={approvalSummary.detail}
+                      >
+                        {approvalSummary.label}
+                      </span>
+                    </td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <span
+                        className={getOrderListBadgeClass(handoffSummary.tone)}
+                        title={handoffSummary.detail}
+                      >
+                        {handoffSummary.label}
+                      </span>
+                    </td>
+                    <td style={{ whiteSpace: "nowrap" }}>
+                      <span
+                        className={getOrderListBadgeClass(statusSummary.tone)}
+                        title={statusSummary.detail}
+                      >
+                        {statusSummary.label}
+                      </span>
                     </td>
                   </tr>
                 );

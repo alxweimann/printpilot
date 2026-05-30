@@ -65,3 +65,13 @@ Die Schnellaktionen im Produktionsbereich verwenden `border-radius: var(--radius
 
 ## Auftragsdrawer – Produktionsbereich final
 Der Produktionsbereich im Auftragsdrawer folgt einer ruhigen Reihenfolge: vier kompakte Statuskarten, Produktionsprüfung, beschriftete Schnellaktionen, danach die Detailfelder. Schnellaktionen und Blockerchips verwenden moderate Radien (`var(--radius-md)`), keine Pill-Optik. Inaktive Schnellaktionen bleiben neutral; Farben werden nur für Hover und aktiven Zustand genutzt.
+
+## Auftragsliste – fachliche Statusspalten
+Die Auftragsliste zeigt Produktionszustände getrennt nach Freigabe, Übergabe und Status. Listen-Badges verwenden moderate Radien (`var(--radius-md)`) und ruhige semantische Farben. Konkrete Übergabeschritte wie `In Druck`, `Weiterverarbeitung` oder `Abholbereit` sollen sichtbar sein; technische Sammelwerte wie `In Produktion` dürfen nicht die einzige sichtbare Information bleiben.
+
+## Update: Auftragsliste Statuslabel In Produktion
+
+- Das Statuslabel `Offene Plantafel` wurde zurückgenommen, weil es fachlich missverständlich war.
+- `status = In Produktion` wird in Drawer und Auftragsliste wieder als `In Produktion` angezeigt.
+- Der konkrete Produktionsschritt bleibt separat über `Übergabe` sichtbar, z. B. `In Druck`, `Weiterverarbeitung` oder `Abholbereit`.
+- Die interne Logik bleibt unverändert: Aufträge bleiben bis `Fertig` in der offenen Plantafel sichtbar.

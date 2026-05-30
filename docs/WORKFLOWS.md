@@ -65,3 +65,13 @@ Schnellaktionen im Produktionsbereich werden als kompakte Buttons dargestellt. S
 
 ## Update 2026-05-30 – Auftragsdrawer Layout-Feinschliff
 Im Auftragsdrawer wurde der Produktionsbereich optisch finalisiert. Die Schnellaktionen sind jetzt klar als eigener Abschnitt beschriftet. Die Workflow-Logik selbst wurde nicht geändert: `Abholbereit` bleibt offen sichtbar, `Fertig` schließt den Auftrag für die offene Plantafel ab.
+
+## Aufträge – Listenlogik für Produktion
+Die Auftragsliste ist an die Drawer-/Plantafel-Logik angeglichen. Ein Auftrag kann intern weiterhin `status = In Produktion` haben, während die Liste zusätzlich den konkreten Übergabeschritt aus `handoff` zeigt. Freigabe, Übergabe und Status sind getrennte Spalten und müssen fachlich getrennt bleiben.
+
+## Update: Auftragsliste Statuslabel In Produktion
+
+- Das Statuslabel `Offene Plantafel` wurde zurückgenommen, weil es fachlich missverständlich war.
+- `status = In Produktion` wird in Drawer und Auftragsliste wieder als `In Produktion` angezeigt.
+- Der konkrete Produktionsschritt bleibt separat über `Übergabe` sichtbar, z. B. `In Druck`, `Weiterverarbeitung` oder `Abholbereit`.
+- Die interne Logik bleibt unverändert: Aufträge bleiben bis `Fertig` in der offenen Plantafel sichtbar.

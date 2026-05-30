@@ -21,3 +21,13 @@
 
 ## Erledigt – Auftragsdrawer Layout-Feinschliff
 Der finale Layout-Check des Auftragsdrawers ist umgesetzt. Nächster sinnvoller Block: fachliche Weiterarbeit an Belegerstellung, Vorschau oder Übergang Angebot → Auftrag.
+
+## Erledigt – Auftragsliste Statusqualität
+Die Auftragsliste wurde an die aktuelle Produktionslogik angeglichen: Freigabe, Übergabe und Status werden als separate fachliche Kurzlabels angezeigt. Nächster möglicher Schritt: Filter/Suche in der Auftragsliste funktional ausbauen und nach diesen Statusinformationen filterbar machen.
+
+## Update: Auftragsliste Statuslabel In Produktion
+
+- Das Statuslabel `Offene Plantafel` wurde zurückgenommen, weil es fachlich missverständlich war.
+- `status = In Produktion` wird in Drawer und Auftragsliste wieder als `In Produktion` angezeigt.
+- Der konkrete Produktionsschritt bleibt separat über `Übergabe` sichtbar, z. B. `In Druck`, `Weiterverarbeitung` oder `Abholbereit`.
+- Die interne Logik bleibt unverändert: Aufträge bleiben bis `Fertig` in der offenen Plantafel sichtbar.

@@ -135,3 +135,13 @@ Schnellaktionsbuttons im Auftragsdrawer sind nicht mehr komplett rund, sondern e
 
 ## Letzter Stand – Auftragsdrawer finaler Layout-Check
 Der aktuelle Stand enthält den finalen Layout-Feinschliff für den Produktionsbereich im Auftragsdrawer. Statuskarten, Produktionsprüfung und Schnellaktionen sind kompakter und ruhiger. Die Schnellaktionen haben eine eigene Überschrift und verwenden denselben moderaten Button-Radius wie die übrigen Buttons. Keine Änderung an der fachlichen Statuslogik.
+
+## Letzter Stand – Auftragsliste Status-/Freigabeanzeige
+Die Auftragsliste zeigt jetzt neben der Freigabe auch den konkreten Übergabeschritt und einen fachlichen Status. Dadurch sind `Weiterverarbeitung`, `Abholbereit`, `Daten fehlen`, `Freigabe ok` usw. direkt in der Liste sichtbar. Die interne Logik bleibt unverändert: `Abholbereit` bleibt `In Produktion`, `Fertig` entfernt den Auftrag aus der offenen Plantafel.
+
+## Update: Auftragsliste Statuslabel In Produktion
+
+- Das Statuslabel `Offene Plantafel` wurde zurückgenommen, weil es fachlich missverständlich war.
+- `status = In Produktion` wird in Drawer und Auftragsliste wieder als `In Produktion` angezeigt.
+- Der konkrete Produktionsschritt bleibt separat über `Übergabe` sichtbar, z. B. `In Druck`, `Weiterverarbeitung` oder `Abholbereit`.
+- Die interne Logik bleibt unverändert: Aufträge bleiben bis `Fertig` in der offenen Plantafel sichtbar.

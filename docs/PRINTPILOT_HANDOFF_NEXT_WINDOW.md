@@ -126,3 +126,9 @@ Nach diesem Block bitte zuerst im Browser testen:
 Aktueller Zusatz: Die Plantafel zeigt jetzt zusätzlich zum konkreten Produktionsschritt auch den Freigabestand als kompakte Meta-Pill. Bitte besonders prüfen, ob `Freigabe ok`, `Freigabe fehlt` und `Daten unvollständig` in den Mini-Karten fachlich richtig und optisch ruhig angezeigt werden.
 
 Wenn das passt, kann als nächstes entweder der Auftragsdrawer optisch weiter geglättet oder der nächste Funktionsblock begonnen werden.
+Aktueller Zusatz: Die Produktions-Schnellaktionen im Auftragsdrawer sind jetzt ruhiger. Inaktive Schritte sind neutral, nur Hover und aktiver Zustand verwenden die fachliche Farbe. Bitte besonders prüfen, ob die aktive Aktion klar genug ist und die Button-Reihe nicht mehr zu bunt wirkt.
+
+- Schnellaktionen im Auftragsdrawer sind beruhigt und verwenden wieder lesbare einzeilige Labels ohne zusammengeschobene Wörter.
+
+## Letzter Stand
+Schnellaktionsbuttons im Auftragsdrawer sind nicht mehr komplett rund, sondern entsprechen optisch den unteren Drawer-Buttons. Nächster sinnvoller Schritt: finaler Sichttest des Drawers und anschließend nächster Funktionsblock.

@@ -51,3 +51,14 @@ Mini-Karten in der Plantafel zeigen neben Maschine und Produktionsschritt auch d
 ## Dashboard Metric Card Colors
 
 Dashboard-Kennzahlenkarten müssen eine einheitliche Accent-Variable verwenden. Farbstreifen, Label und Verlauf dürfen nicht aus unterschiedlichen CSS-Variablen kommen. Aktuelle Zuordnung: Angebote grün, Aufträge lila, Versand gelb, Rechnungen blau, Mahnungen magenta, Material orange.
+
+## Calm Production Quick Actions
+
+Schnellaktionen im Auftragsdrawer dürfen nicht als bunte Statusleiste wirken. Inaktive Workflow-Schritte bleiben neutral. Semantische Farben werden für Hover und aktive Zustände verwendet, damit der aktuelle Zustand klar ist, aber die Reihe ruhig bleibt.
+
+## Quick Action Label Readability
+
+Schnellaktionen im Auftragsdrawer müssen als lesbare einzeilige Labels erscheinen. Inaktive Buttons bleiben neutral, aktive Buttons nutzen semantische Farbe. Mehrteilige Labels dürfen nicht ohne Abstand zusammenlaufen.
+
+## Auftragsdrawer – Schnellaktionsbuttons
+Die Schnellaktionen im Produktionsbereich verwenden `border-radius: var(--radius-md)` statt voll gerundeter Pill-Optik. Dadurch passen sie optisch zu den unteren Aktionsbuttons und wirken ruhiger.

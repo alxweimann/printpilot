@@ -60,3 +60,14 @@ Die Plantafel zeigt in den Mini-Auftragskarten jetzt zusätzlich zur Maschine un
 ## Dashboard Kennzahlenkarten Farben
 
 Die sechs oberen Dashboard-Karten verwenden jetzt durchgehend dieselbe Accent-Variable. Angebote sind grün, Aufträge lila, Versand/Lieferscheine gelb, Rechnungen blau, Mahnungen magenta und Materialhinweise orange. Linker Farbstreifen, Label und dezenter Hintergrundverlauf greifen damit konsistent auf dieselbe Farbe zu.
+
+## Auftragsdrawer Schnellaktionen beruhigt
+
+Die Produktions-Schnellaktionen im Auftragsdrawer sind optisch weiter beruhigt. Inaktive Schritte bleiben neutral, die fachliche Farbe wird nur noch beim Hover und beim aktiven Schritt eingesetzt. Dadurch bleibt der aktuelle Workflow-Schritt klar erkennbar, ohne dass die gesamte Button-Reihe bunt und unruhig wirkt.
+
+## Auftragsdrawer Schnellaktionen Beschriftung
+
+Die Schnellaktionen im Auftragsdrawer verwenden jetzt wieder klare einzeilige Beschriftungen wie `Freigabe erteilt`, `Daten fehlen`, `In Druck`, `Weiterverarbeitung`, `Abholbereit` und `Fertig`. Dadurch entstehen keine zusammengeschobenen Texte mehr.
+
+## Update 2026-05-30 – Auftragsdrawer Schnellaktionen eckiger
+Die Schnellaktions-Buttons im Auftragsdrawer wurden optisch an die unteren Drawer-Buttons angeglichen: nicht mehr pillenförmig/komplett rund, sondern mit `var(--radius-md)`. Die Statuslogik bleibt unverändert.

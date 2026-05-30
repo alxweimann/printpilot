@@ -160,6 +160,89 @@ function getOrderStatusForHandoff(
   return currentStatus;
 }
 
+
+function getOrderApprovalSummary(approval: PrintPilotApprovalStatus) {
+  switch (approval) {
+    case "Freigabe erteilt":
+    case "Freigegeben":
+      return { label: "Freigabe ok", detail: approval, tone: "success" as const };
+
+    case "Nicht erforderlich":
+      return { label: "Nicht nötig", detail: "ohne Kundenfreigabe", tone: "neutral" as const };
+
+    case "Daten unvollständig":
+      return { label: "Daten fehlen", detail: "Druckdaten unvollständig", tone: "warning" as const };
+
+    case "Korrektur angefordert":
+      return { label: "Korrektur", detail: "Kundenkorrektur offen", tone: "warning" as const };
+
+    case "Freigabe offen":
+    case "Freigabe ausstehend":
+    case "Kundenfreigabe fehlt":
+      return { label: "Freigabe fehlt", detail: approval, tone: "warning" as const };
+
+    case "Archiv":
+    default:
+      return { label: approval, detail: "nicht produktionsrelevant", tone: "neutral" as const };
+  }
+}
+
+function getOrderHandoffSummary(handoff: PrintPilotHandoffStatus) {
+  switch (handoff) {
+    case "Druckdaten prüfen":
+      return { label: "Daten prüfen", detail: "Vorstufe", tone: "info" as const };
+
+    case "Wartet auf Daten":
+      return { label: "Daten fehlen", detail: "wartet auf Kunde", tone: "warning" as const };
+
+    case "In Druck":
+      return { label: "In Druck", detail: "Produktion läuft", tone: "info" as const };
+
+    case "In Weiterverarbeitung":
+      return { label: "Weiterverarbeitung", detail: "nach dem Druck", tone: "info" as const };
+
+    case "Abholbereit":
+      return { label: "Abholbereit", detail: "fertig zur Übergabe", tone: "success" as const };
+
+    case "Versendet":
+      return { label: "Versendet", detail: "ausgeliefert", tone: "success" as const };
+
+    case "Abgeschlossen":
+      return { label: "Abgeschlossen", detail: "fertig", tone: "success" as const };
+  }
+}
+
+function getOrderStatusSummary(status: PrintPilotOrderStatus) {
+  switch (status) {
+    case "Neu":
+      return { label: "Neu", detail: "noch nicht eingeplant", tone: "neutral" as const };
+
+    case "Wartet":
+      return { label: "Wartet", detail: "Blocker offen", tone: "warning" as const };
+
+    case "In Produktion":
+      return { label: "Offene Plantafel", detail: "sichtbar bis Fertig", tone: "info" as const };
+
+    case "Fertig":
+      return { label: "Fertig", detail: "nicht mehr offen", tone: "success" as const };
+
+    case "Archiv":
+      return { label: "Archiv", detail: "ausgeblendet", tone: "neutral" as const };
+  }
+}
+
+function getOrderMachineSummary(order: PrintPilotOrder | undefined) {
+  if (!order) {
+    return { label: "—", detail: "keine Auswahl", tone: "neutral" as const };
+  }
+
+  if (!order.machine || order.machine.trim().length === 0) {
+    return { label: "Keine Maschine", detail: "noch zuweisen", tone: "warning" as const };
+  }
+
+  return { label: order.machine, detail: "zugewiesen", tone: "success" as const };
+}
+
 function needsProductionApprovalWarning(order: PrintPilotOrder) {
   return (
     isProductionLikeState(order.status, order.handoff) &&
@@ -503,6 +586,16 @@ export function OrdersPage() {
   const draftOrder = draft as PrintPilotOrder | undefined;
   const orderWorkflowHints = getOrderWorkflowHints(draftOrder);
   const orderProductionReadiness = getOrderProductionReadiness(draftOrder);
+  const orderStatusSummary = draftOrder
+    ? getOrderStatusSummary(draftOrder.status)
+    : undefined;
+  const orderApprovalSummary = draftOrder
+    ? getOrderApprovalSummary(draftOrder.approval)
+    : undefined;
+  const orderHandoffSummary = draftOrder
+    ? getOrderHandoffSummary(draftOrder.handoff)
+    : undefined;
+  const orderMachineSummary = getOrderMachineSummary(draftOrder);
   const orderRequiredFieldIssues = getOrderRequiredFieldIssues(
     draftOrder ?? selectedOrder,
   );
@@ -1122,28 +1215,36 @@ export function OrdersPage() {
             <SectionHeader>Produktion</SectionHeader>
 
             <div className="order-production-overview">
-              <div className="order-production-card order-production-card-status">
-                <span>Status</span>
-                <strong>{draft?.status ?? "—"}</strong>
+              <div
+                className={`order-production-card order-production-card-status order-production-card-${orderStatusSummary?.tone ?? "neutral"}`}
+              >
+                <span>Plantafel</span>
+                <strong>{orderStatusSummary?.label ?? "—"}</strong>
+                <small>{orderStatusSummary?.detail ?? "kein Auftrag gewählt"}</small>
               </div>
 
-              <div className="order-production-card order-production-card-approval">
+              <div
+                className={`order-production-card order-production-card-approval order-production-card-${orderApprovalSummary?.tone ?? "neutral"}`}
+              >
                 <span>Freigabe</span>
-                <strong>{draft?.approval ?? "—"}</strong>
+                <strong>{orderApprovalSummary?.label ?? "—"}</strong>
+                <small>{orderApprovalSummary?.detail ?? "kein Auftrag gewählt"}</small>
               </div>
 
-              <div className="order-production-card order-production-card-handoff">
+              <div
+                className={`order-production-card order-production-card-handoff order-production-card-${orderHandoffSummary?.tone ?? "neutral"}`}
+              >
                 <span>Übergabe</span>
-                <strong>{draft?.handoff ?? "—"}</strong>
+                <strong>{orderHandoffSummary?.label ?? "—"}</strong>
+                <small>{orderHandoffSummary?.detail ?? "kein Auftrag gewählt"}</small>
               </div>
 
-              <div className="order-production-card order-production-card-due">
-                <span>Fällig</span>
-                <strong>
-                  {draft?.dueDate
-                    ? formatPrintPilotDateString(draft.dueDate, "dd.MM.yyyy")
-                    : "—"}
-                </strong>
+              <div
+                className={`order-production-card order-production-card-machine order-production-card-${orderMachineSummary.tone}`}
+              >
+                <span>Maschine</span>
+                <strong>{orderMachineSummary.label}</strong>
+                <small>{orderMachineSummary.detail}</small>
               </div>
             </div>
 
@@ -1179,7 +1280,7 @@ export function OrdersPage() {
                 aria-pressed={isProductionQuickActionActive(draftOrder, "approve")}
                 onClick={() => handleProductionQuickAction("approve")}
               >
-                Freigabe erteilt
+                <span>Freigabe erteilt</span>
               </button>
 
               <button
@@ -1193,7 +1294,7 @@ export function OrdersPage() {
                 aria-pressed={isProductionQuickActionActive(draftOrder, "missingData")}
                 onClick={() => handleProductionQuickAction("missingData")}
               >
-                Daten fehlen
+                <span>Daten fehlen</span>
               </button>
 
               <button
@@ -1207,7 +1308,7 @@ export function OrdersPage() {
                 aria-pressed={isProductionQuickActionActive(draftOrder, "startPrint")}
                 onClick={() => handleProductionQuickAction("startPrint")}
               >
-                In Druck
+                <span>In Druck</span>
               </button>
 
               <button
@@ -1221,7 +1322,7 @@ export function OrdersPage() {
                 aria-pressed={isProductionQuickActionActive(draftOrder, "startFinishing")}
                 onClick={() => handleProductionQuickAction("startFinishing")}
               >
-                Weiterverarbeitung
+                <span>Weiterverarbeitung</span>
               </button>
 
               <button
@@ -1235,7 +1336,7 @@ export function OrdersPage() {
                 aria-pressed={isProductionQuickActionActive(draftOrder, "readyForPickup")}
                 onClick={() => handleProductionQuickAction("readyForPickup")}
               >
-                Abholbereit
+                <span>Abholbereit</span>
               </button>
 
               <button
@@ -1249,7 +1350,7 @@ export function OrdersPage() {
                 aria-pressed={isProductionQuickActionActive(draftOrder, "done")}
                 onClick={() => handleProductionQuickAction("done")}
               >
-                Fertig
+                <span>Fertig</span>
               </button>
             </div>
 

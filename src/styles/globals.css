@@ -2557,21 +2557,29 @@ body {
   appearance: none !important;
   min-height: 30px !important;
   border: 1px solid rgba(148, 163, 184, 0.28) !important;
-  border-radius: 999px !important;
+  border-radius: var(--radius-md) !important;
   background: rgba(248, 250, 252, 0.92) !important;
   color: #334155 !important;
-  padding: 5px 10px !important;
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 4px !important;
+  padding: 5px 11px !important;
   font: inherit !important;
   font-size: 11px !important;
   font-weight: 760 !important;
   line-height: 1.2 !important;
+  letter-spacing: -0.01em !important;
+  white-space: nowrap !important;
   cursor: pointer !important;
 }
 
-.detail-drawer-panel .order-production-quick-actions button:hover:not(:disabled) {
-  border-color: rgba(124, 58, 237, 0.34) !important;
-  background: rgba(124, 58, 237, 0.08) !important;
-  color: #5b21b6 !important;
+.detail-drawer-panel .order-production-quick-actions button span,
+.detail-drawer-panel .order-production-quick-actions button strong {
+  display: inline !important;
+  font: inherit !important;
+  color: inherit !important;
+  white-space: nowrap !important;
 }
 
 .detail-drawer-panel .order-production-quick-actions button:disabled {
@@ -2591,62 +2599,49 @@ body {
   }
 }
 
-/* Order production quick action semantic colors. */
+/* Order production quick action semantic colors.
+   Inactive workflow steps stay intentionally neutral; the semantic color is used on hover
+   and for the active/current step only. */
 .detail-drawer-panel .order-production-quick-actions button:nth-child(1) {
-  border-color: rgba(34, 197, 94, 0.24) !important;
-  background: rgba(240, 253, 244, 0.82) !important;
-  color: #166534 !important;
+  --order-quick-rgb: 34, 197, 94;
+  --order-quick-text: #166534;
 }
 
 .detail-drawer-panel .order-production-quick-actions button:nth-child(2) {
-  border-color: rgba(249, 115, 22, 0.26) !important;
-  background: rgba(255, 247, 237, 0.86) !important;
-  color: #9a3412 !important;
+  --order-quick-rgb: 249, 115, 22;
+  --order-quick-text: #9a3412;
 }
 
 .detail-drawer-panel .order-production-quick-actions button:nth-child(3),
 .detail-drawer-panel .order-production-quick-actions button:nth-child(4) {
-  border-color: rgba(14, 165, 233, 0.24) !important;
-  background: rgba(240, 249, 255, 0.84) !important;
-  color: #075985 !important;
+  --order-quick-rgb: 14, 165, 233;
+  --order-quick-text: #075985;
 }
 
 .detail-drawer-panel .order-production-quick-actions button:nth-child(5) {
-  border-color: rgba(234, 179, 8, 0.3) !important;
-  background: rgba(254, 252, 232, 0.86) !important;
-  color: #854d0e !important;
+  --order-quick-rgb: 234, 179, 8;
+  --order-quick-text: #854d0e;
 }
 
 .detail-drawer-panel .order-production-quick-actions button:nth-child(6) {
-  border-color: rgba(124, 58, 237, 0.24) !important;
-  background: rgba(245, 243, 255, 0.86) !important;
-  color: #5b21b6 !important;
+  --order-quick-rgb: 124, 58, 237;
+  --order-quick-text: #5b21b6;
 }
 
-.detail-drawer-panel .order-production-quick-actions button:nth-child(1):hover:not(:disabled) {
-  border-color: rgba(34, 197, 94, 0.42) !important;
-  background: rgba(220, 252, 231, 0.88) !important;
+.detail-drawer-panel .order-production-quick-actions button:hover:not(:disabled) {
+  border-color: rgba(var(--order-quick-rgb, 124, 58, 237), 0.34) !important;
+  background: rgba(var(--order-quick-rgb, 124, 58, 237), 0.07) !important;
+  color: var(--order-quick-text, #5b21b6) !important;
 }
 
-.detail-drawer-panel .order-production-quick-actions button:nth-child(2):hover:not(:disabled) {
-  border-color: rgba(249, 115, 22, 0.44) !important;
-  background: rgba(255, 237, 213, 0.9) !important;
-}
-
-.detail-drawer-panel .order-production-quick-actions button:nth-child(3):hover:not(:disabled),
-.detail-drawer-panel .order-production-quick-actions button:nth-child(4):hover:not(:disabled) {
-  border-color: rgba(14, 165, 233, 0.42) !important;
-  background: rgba(224, 242, 254, 0.9) !important;
-}
-
-.detail-drawer-panel .order-production-quick-actions button:nth-child(5):hover:not(:disabled) {
-  border-color: rgba(234, 179, 8, 0.46) !important;
-  background: rgba(254, 249, 195, 0.9) !important;
-}
-
-.detail-drawer-panel .order-production-quick-actions button:nth-child(6):hover:not(:disabled) {
-  border-color: rgba(124, 58, 237, 0.42) !important;
-  background: rgba(237, 233, 254, 0.9) !important;
+.detail-drawer-panel .order-production-quick-actions .order-production-quick-action-active,
+.detail-drawer-panel .order-production-quick-actions button[aria-pressed="true"] {
+  border-color: rgba(var(--order-quick-rgb, 124, 58, 237), 0.48) !important;
+  background:
+    linear-gradient(135deg, rgba(var(--order-quick-rgb, 124, 58, 237), 0.16), rgba(var(--order-quick-rgb, 124, 58, 237), 0.07)) !important;
+  color: var(--order-quick-text, #5b21b6) !important;
+  box-shadow: inset 0 0 0 1px rgba(var(--order-quick-rgb, 124, 58, 237), 0.2), 0 8px 18px rgba(15, 23, 42, 0.08) !important;
+  transform: translateY(-1px) !important;
 }
 
 /* Order production readiness / blocker summary. */
@@ -2727,12 +2722,6 @@ body {
 
 .detail-drawer-panel .order-production-readiness-warning strong {
   color: #92400e !important;
-}
-
-.detail-drawer-panel .order-production-quick-actions .order-production-quick-action-active,
-.detail-drawer-panel .order-production-quick-actions button[aria-pressed="true"] {
-  box-shadow: inset 0 0 0 1px currentColor, 0 8px 18px rgba(15, 23, 42, 0.08) !important;
-  transform: translateY(-1px) !important;
 }
 
 @media (max-width: 780px) {

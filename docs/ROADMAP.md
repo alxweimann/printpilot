@@ -14,3 +14,7 @@
 - Erledigt: Plantafel zeigt konkrete Produktionsschritte statt nur `In Produktion`
 - Erledigt: Plantafel zeigt Freigabestand zusätzlich zum Produktionsschritt
 - Erledigt: Farben der sechs Dashboard-Kennzahlenkarten vereinheitlicht
+- Erledigt: Schnellaktionen im Auftragsdrawer optisch beruhigt
+- Erledigt: Lesbarkeit der Schnellaktions-Beschriftungen im Auftragsdrawer korrigiert
+
+- Erledigt: Schnellaktionsbuttons im Auftragsdrawer optisch an die unteren Drawer-Buttons angeglichen.

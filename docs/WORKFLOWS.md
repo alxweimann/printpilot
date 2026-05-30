@@ -51,3 +51,14 @@ In der Plantafel werden Maschinenzuordnung, konkreter Produktionsschritt und Fre
 ## Dashboard Kennzahlenfarben
 
 Die Dashboard-Kennzahlenkarten sind farblich semantisch getrennt. Die Farblogik dient als schneller visueller Einstieg in Angebote, Aufträge, Versand, Rechnungen, Mahnungen und Materialhinweise.
+
+## Ruhige Produktions-Schnellaktionen
+
+Die Schnellaktionen bleiben fachlich dieselben Pflegehilfen für Freigabe, Datenlage und Übergabe. Inaktive Schritte werden neutral dargestellt; nur der aktuell passende Schritt erhält die semantische Farbe.
+
+## Auftragsdrawer Schnellaktionen
+
+Die Produktions-Schnellaktionen bleiben als kurze Workflow-Pills sichtbar. Die Beschriftungen sind eindeutig und einzeilig, damit sie im Drawer nicht wie zusammengeklebte Begriffe wirken.
+
+## UI-Regel – Schnellaktionen im Auftragsdrawer
+Schnellaktionen im Produktionsbereich werden als kompakte Buttons dargestellt. Sie verwenden denselben moderaten Radius wie die unteren Drawer-Aktionen, damit sie nicht wie bunte Status-Pills wirken.

@@ -2786,3 +2786,64 @@ body {
   background: rgba(100, 116, 139, 0.09);
   color: #475569;
 }
+
+/* Order list filter bar: compact semantic quick filters. */
+.order-filter-bar {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 8px;
+}
+
+.order-filter-chip {
+  appearance: none;
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  border: 1px solid rgba(148, 163, 184, 0.3);
+  border-radius: var(--radius-md);
+  background: rgba(248, 250, 252, 0.92);
+  color: #334155;
+  padding: 6px 10px;
+  font: inherit;
+  font-size: 11.5px;
+  font-weight: 720;
+  line-height: 1.2;
+  cursor: pointer;
+}
+
+.order-filter-chip:hover {
+  border-color: color-mix(in srgb, var(--module-accent) 30%, var(--color-border));
+  background: color-mix(in srgb, var(--module-accent) 7%, white);
+  color: var(--color-text);
+}
+
+.order-filter-chip.active {
+  border-color: color-mix(in srgb, var(--module-accent) 42%, var(--color-border));
+  background: color-mix(in srgb, var(--module-accent) 12%, white);
+  color: var(--module-accent-strong, var(--module-accent));
+  box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--module-accent) 16%, transparent);
+}
+
+.order-filter-chip strong {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 21px;
+  height: 21px;
+  border-radius: var(--radius-sm);
+  background: rgba(15, 23, 42, 0.06);
+  color: inherit;
+  padding: 0 6px;
+  font-size: 10.5px;
+  font-weight: 780;
+  line-height: 1;
+}
+
+.order-filter-result-summary {
+  margin: 0 0 10px;
+  color: #64748b;
+  font-size: 11.5px;
+  font-weight: 650;
+}

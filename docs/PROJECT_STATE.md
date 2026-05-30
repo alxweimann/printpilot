@@ -84,3 +84,11 @@ Die Auftragsliste verwendet nun dieselben fachlichen Kurzlabels wie Drawer und P
 - `status = In Produktion` wird in Drawer und Auftragsliste wieder als `In Produktion` angezeigt.
 - Der konkrete Produktionsschritt bleibt separat über `Übergabe` sichtbar, z. B. `In Druck`, `Weiterverarbeitung` oder `Abholbereit`.
 - Die interne Logik bleibt unverändert: Aufträge bleiben bis `Fertig` in der offenen Plantafel sichtbar.
+
+
+## Update: Auftragsliste Filter und Suche
+
+- Die Auftragsliste hat jetzt eine funktionale Suche über Auftrag, Kunde, Produkt, Fälligkeit, Maschine, Priorität, Status, Freigabe und Übergabe.
+- Zusätzlich gibt es kompakte Schnellfilter: `Alle`, `Wartet`, `In Produktion`, `Abholbereit`, `Daten fehlen`, `Freigabe fehlt` und `Fertig`.
+- Die Filter arbeiten auf den fachlich getrennten Feldern Status, Freigabe und Übergabe, ohne die bestehende Plantafel- oder Drawer-Logik zu verändern.
+- Eine Ergebniszeile zeigt, wie viele Aufträge aktuell sichtbar sind.

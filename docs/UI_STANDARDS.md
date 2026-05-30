@@ -75,3 +75,8 @@ Die Auftragsliste zeigt Produktionszustände getrennt nach Freigabe, Übergabe u
 - `status = In Produktion` wird in Drawer und Auftragsliste wieder als `In Produktion` angezeigt.
 - Der konkrete Produktionsschritt bleibt separat über `Übergabe` sichtbar, z. B. `In Druck`, `Weiterverarbeitung` oder `Abholbereit`.
 - Die interne Logik bleibt unverändert: Aufträge bleiben bis `Fertig` in der offenen Plantafel sichtbar.
+
+
+## Auftragsliste – Filterbar
+
+Schnellfilter in Listen werden als ruhige, moderat gerundete Buttons dargestellt. Der aktive Filter nutzt die jeweilige Modul-Akzentfarbe dezent; inaktive Filter bleiben neutral. Zähler werden als kleine rechteckige Counter mit `var(--radius-sm)` dargestellt.

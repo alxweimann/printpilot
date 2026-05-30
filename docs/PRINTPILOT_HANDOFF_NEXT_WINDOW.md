@@ -145,3 +145,10 @@ Die Auftragsliste zeigt jetzt neben der Freigabe auch den konkreten Übergabesch
 - `status = In Produktion` wird in Drawer und Auftragsliste wieder als `In Produktion` angezeigt.
 - Der konkrete Produktionsschritt bleibt separat über `Übergabe` sichtbar, z. B. `In Druck`, `Weiterverarbeitung` oder `Abholbereit`.
 - Die interne Logik bleibt unverändert: Aufträge bleiben bis `Fertig` in der offenen Plantafel sichtbar.
+
+
+## Letzter Stand – Auftragsliste Filter und Suche
+
+Die Auftragsliste enthält jetzt eine funktionale Suche und Schnellfilter. Suche und Filter arbeiten auf den getrennten Informationen Status, Freigabe und Übergabe. Besonders testen: Suche nach `Abholbereit`, `Weiterverarbeitung`, `Daten fehlen`, `Freigabe fehlt`; Schnellfilter `Abholbereit`, `Daten fehlen`, `Freigabe fehlt` und `Fertig`.
+
+Nächster sinnvoller Schritt: Belegerstellung/Vorschau aus Auftrag fachlich prüfen oder den Übergang Angebot → Auftrag weiter ausbauen.

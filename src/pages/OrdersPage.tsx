@@ -92,6 +92,25 @@ const orderSortLabels: Record<OrderSortKey, string> = {
   status: "Status",
 };
 
+type OrderQuickFilterKey =
+  | "all"
+  | "waiting"
+  | "inProduction"
+  | "readyForPickup"
+  | "missingData"
+  | "missingApproval"
+  | "done";
+
+const orderQuickFilters: Array<{ key: OrderQuickFilterKey; label: string }> = [
+  { key: "all", label: "Alle" },
+  { key: "waiting", label: "Wartet" },
+  { key: "inProduction", label: "In Produktion" },
+  { key: "readyForPickup", label: "Abholbereit" },
+  { key: "missingData", label: "Daten fehlen" },
+  { key: "missingApproval", label: "Freigabe fehlt" },
+  { key: "done", label: "Fertig" },
+];
+
 
 function getOrderTitle(tab: OrderTab) {
   switch (tab) {
@@ -278,6 +297,73 @@ function getOrderSortValue(order: PrintPilotOrder, key: OrderSortKey) {
     case "status":
       return order.status;
   }
+}
+
+function matchesOrderSearch(order: PrintPilotOrder, query: string) {
+  const normalizedQuery = query.trim().toLowerCase();
+
+  if (!normalizedQuery) {
+    return true;
+  }
+
+  const approvalSummary = getOrderApprovalSummary(order.approval);
+  const handoffSummary = getOrderHandoffSummary(order.handoff);
+  const statusSummary = getOrderStatusSummary(order.status);
+
+  return [
+    order.number,
+    order.customerName,
+    order.product,
+    order.dueDate,
+    order.machine,
+    order.priority,
+    order.approval,
+    approvalSummary.label,
+    order.handoff,
+    handoffSummary.label,
+    order.status,
+    statusSummary.label,
+  ]
+    .filter(Boolean)
+    .some((value) => value.toLowerCase().includes(normalizedQuery));
+}
+
+function matchesOrderQuickFilter(
+  order: PrintPilotOrder,
+  filter: OrderQuickFilterKey,
+) {
+  switch (filter) {
+    case "all":
+      return true;
+
+    case "waiting":
+      return order.status === "Wartet" || order.handoff === "Wartet auf Daten";
+
+    case "inProduction":
+      return order.status === "In Produktion";
+
+    case "readyForPickup":
+      return order.handoff === "Abholbereit";
+
+    case "missingData":
+      return (
+        order.approval === "Daten unvollständig" ||
+        order.handoff === "Wartet auf Daten"
+      );
+
+    case "missingApproval":
+      return needsProductionApprovalWarning(order);
+
+    case "done":
+      return order.status === "Fertig" || order.handoff === "Abgeschlossen";
+  }
+}
+
+function getOrderQuickFilterCount(
+  rows: PrintPilotOrder[],
+  filter: OrderQuickFilterKey,
+) {
+  return rows.filter((order) => matchesOrderQuickFilter(order, filter)).length;
 }
 
 function getOrderRequiredFieldIssues(order: PrintPilotOrder | undefined) {
@@ -518,6 +604,9 @@ export function OrdersPage() {
   const [isPreviewDialogOpen, setIsPreviewDialogOpen] = useState(false);
   const [requiredFieldsActionLabel, setRequiredFieldsActionLabel] =
     useState("Folgebeleg");
+  const [orderSearchQuery, setOrderSearchQuery] = useState("");
+  const [activeOrderQuickFilter, setActiveOrderQuickFilter] =
+    useState<OrderQuickFilterKey>("all");
 
   const orderRowsByTab = useMemo(() => {
     return {
@@ -597,13 +686,28 @@ export function OrdersPage() {
     ? invoices.find((invoice) => invoice.orderId === selectedOrder.id)
     : undefined;
 
+  const searchFilteredOrderRows = useMemo(() => {
+    return orderRows.filter((order) =>
+      matchesOrderSearch(order, orderSearchQuery),
+    );
+  }, [orderRows, orderSearchQuery]);
+
+  const filteredOrderRows = useMemo(() => {
+    return searchFilteredOrderRows.filter((order) =>
+      matchesOrderQuickFilter(order, activeOrderQuickFilter),
+    );
+  }, [activeOrderQuickFilter, searchFilteredOrderRows]);
+
+  const hasActiveOrderFilters =
+    orderSearchQuery.trim().length > 0 || activeOrderQuickFilter !== "all";
+
   const {
     sortedRows: sortedOrderRows,
     sortConfig: orderSortConfig,
     requestSort: handleOrderSort,
     getAriaSort: getOrderSortAriaValue,
   } = useSortableTable<PrintPilotOrder, OrderSortKey>({
-    rows: orderRows,
+    rows: filteredOrderRows,
     getSortValue: getOrderSortValue,
   });
 
@@ -668,6 +772,11 @@ export function OrdersPage() {
 
   function handleToggleEditing() {
     setIsEditing((currentValue) => !currentValue);
+  }
+
+  function handleResetOrderFilters() {
+    setOrderSearchQuery("");
+    setActiveOrderQuickFilter("all");
   }
 
   function handleStatusChange(nextStatus: PrintPilotOrderStatus) {
@@ -1012,10 +1121,44 @@ export function OrdersPage() {
 
         <section className="workspace-panel">
           <TableToolbar>
-            <Input className="search-input" placeholder="Aufträge suchen..." />
+            <Input
+              className="search-input"
+              placeholder="Aufträge suchen..."
+              value={orderSearchQuery}
+              onChange={(event) => setOrderSearchQuery(event.target.value)}
+            />
 
-            <Button>Filter</Button>
+            <Button onClick={handleResetOrderFilters} disabled={!hasActiveOrderFilters}>
+              Filter zurücksetzen
+            </Button>
           </TableToolbar>
+
+          <div className="order-filter-bar" aria-label="Auftragsfilter">
+            {orderQuickFilters.map((filter) => {
+              const count = getOrderQuickFilterCount(
+                searchFilteredOrderRows,
+                filter.key,
+              );
+              const isActive = activeOrderQuickFilter === filter.key;
+
+              return (
+                <button
+                  key={filter.key}
+                  type="button"
+                  className={isActive ? "order-filter-chip active" : "order-filter-chip"}
+                  aria-pressed={isActive}
+                  onClick={() => setActiveOrderQuickFilter(filter.key)}
+                >
+                  <span>{filter.label}</span>
+                  <strong>{count}</strong>
+                </button>
+              );
+            })}
+          </div>
+
+          <div className="order-filter-result-summary">
+            {filteredOrderRows.length} von {orderRows.length} Aufträgen angezeigt
+          </div>
 
           <DataTable>
             <thead>

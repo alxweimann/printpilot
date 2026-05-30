@@ -75,3 +75,8 @@ Die Auftragsliste ist an die Drawer-/Plantafel-Logik angeglichen. Ein Auftrag ka
 - `status = In Produktion` wird in Drawer und Auftragsliste wieder als `In Produktion` angezeigt.
 - Der konkrete Produktionsschritt bleibt separat über `Übergabe` sichtbar, z. B. `In Druck`, `Weiterverarbeitung` oder `Abholbereit`.
 - Die interne Logik bleibt unverändert: Aufträge bleiben bis `Fertig` in der offenen Plantafel sichtbar.
+
+
+## Update: Auftragsliste Filter und Suche
+
+Die Auftragsliste ist nun praktisch nach Produktionszuständen filterbar. Die Suche berücksichtigt Rohwerte und fachliche Kurzlabels, damit Begriffe wie `Weiterverarbeitung`, `Abholbereit`, `Daten fehlen` oder `Freigabe fehlt` direkt gefunden werden. Schnellfilter verändern keine Daten, sondern reduzieren nur die Listenansicht.

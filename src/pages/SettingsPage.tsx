@@ -3,8 +3,10 @@ import { useRef, useState } from "react";
 import { getModuleConfig } from "../app/moduleConfig";
 import {
   type PrintPilotFormatCategory,
+  type PrintPilotFoldType,
   type PrintPilotGrainDirection,
   type PrintPilotProductFormat,
+  type PrintPilotProductTemplate,
   type PrintPilotProductType,
   type PrintPilotRawSheetCategory,
   type PrintPilotRawSheetFormat,
@@ -45,6 +47,7 @@ const settingsTabs = [
   "Design",
   "Formate",
   "Rohbogenformate",
+  "Produktvorlagen",
   "System",
   "Datensicherung",
 ] as const;
@@ -75,6 +78,9 @@ function getSettingsTitle(tab: SettingsTab) {
     case "Rohbogenformate":
       return "Rohbogenformate verwalten";
 
+    case "Produktvorlagen":
+      return "Produktvorlagen verwalten";
+
     case "System":
       return "Systemeinstellungen prüfen";
 
@@ -87,6 +93,7 @@ function getSettingsTitle(tab: SettingsTab) {
 const productTypeOptions: PrintPilotProductType[] = [
   "Einzelblatt",
   "Flyer",
+  "Folder/Falzflyer",
   "Broschüre",
   "Block",
   "SD-Satz",
@@ -97,6 +104,7 @@ const productTypeOptions: PrintPilotProductType[] = [
 const productFormatCategoryOptions: PrintPilotFormatCategory[] = [
   "DIN",
   "Flyer",
+  "Folder",
   "Karte",
   "Broschüre",
   "Block",
@@ -116,6 +124,17 @@ const grainDirectionOptions: PrintPilotGrainDirection[] = [
   "Unbekannt",
   "Schmalbahn",
   "Breitbahn",
+];
+
+const foldTypeOptions: PrintPilotFoldType[] = [
+  "Kein Falz",
+  "Einfachfalz",
+  "Wickelfalz",
+  "Zickzackfalz",
+  "Doppelparallelfalz",
+  "Altarfalz",
+  "Kreuzbruch",
+  "Sonderfalz",
 ];
 
 function createDraftId(prefix: string) {
@@ -163,6 +182,17 @@ function formatFormatSize(widthMm: string, heightMm: string) {
   return `${widthMm} × ${heightMm} mm`;
 }
 
+function getProductFormatName(
+  productFormats: PrintPilotProductFormat[],
+  formatId: string,
+) {
+  return productFormats.find((format) => format.id === formatId)?.name ?? "Freies Format";
+}
+
+function formatTemplateSize(template: PrintPilotProductTemplate) {
+  return `${template.openWidthMm} × ${template.openHeightMm} mm offen`;
+}
+
 export function SettingsPage() {
   const module = getModuleConfig("settings");
   const {
@@ -185,9 +215,13 @@ export function SettingsPage() {
     useState<string | null>(null);
   const [selectedRawSheetFormatId, setSelectedRawSheetFormatId] =
     useState<string | null>(null);
+  const [selectedProductTemplateId, setSelectedProductTemplateId] =
+    useState<string | null>(null);
   const [isProductFormatDrawerOpen, setIsProductFormatDrawerOpen] =
     useState(false);
   const [isRawSheetDrawerOpen, setIsRawSheetDrawerOpen] = useState(false);
+  const [isProductTemplateDrawerOpen, setIsProductTemplateDrawerOpen] =
+    useState(false);
   const [isReplaceArmed, setIsReplaceArmed] = useState(false);
   const [isReplaceConfirmOpen, setIsReplaceConfirmOpen] = useState(false);
   const backupInputRef = useRef<HTMLInputElement | null>(null);
@@ -201,6 +235,10 @@ export function SettingsPage() {
   const selectedRawSheetFormat =
     draft?.rawSheetFormats.find((format) => format.id === selectedRawSheetFormatId) ??
     null;
+  const selectedProductTemplate =
+    draft?.productTemplates.find(
+      (template) => template.id === selectedProductTemplateId,
+    ) ?? null;
   const canEditMasterData = isEditing;
 
   function handleTabChange(tab: string) {
@@ -209,8 +247,10 @@ export function SettingsPage() {
       setIsEditing(false);
       setIsProductFormatDrawerOpen(false);
       setIsRawSheetDrawerOpen(false);
+      setIsProductTemplateDrawerOpen(false);
       setSelectedProductFormatId(null);
       setSelectedRawSheetFormatId(null);
+      setSelectedProductTemplateId(null);
       setIsReplaceArmed(false);
       setIsReplaceConfirmOpen(false);
     }
@@ -221,8 +261,10 @@ export function SettingsPage() {
     setIsEditing(false);
     setIsProductFormatDrawerOpen(false);
     setIsRawSheetDrawerOpen(false);
+    setIsProductTemplateDrawerOpen(false);
     setSelectedProductFormatId(null);
     setSelectedRawSheetFormatId(null);
+    setSelectedProductTemplateId(null);
   }
 
   function handleToggleEditing() {
@@ -249,6 +291,11 @@ export function SettingsPage() {
     setIsRawSheetDrawerOpen(true);
   }
 
+  function handleProductTemplateSelect(templateId: string) {
+    setSelectedProductTemplateId(templateId);
+    setIsProductTemplateDrawerOpen(true);
+  }
+
   function handleCloseProductFormatDrawer() {
     setIsProductFormatDrawerOpen(false);
   }
@@ -257,10 +304,15 @@ export function SettingsPage() {
     setIsRawSheetDrawerOpen(false);
   }
 
+  function handleCloseProductTemplateDrawer() {
+    setIsProductTemplateDrawerOpen(false);
+  }
+
   function handleSaveAndCloseSettings() {
     handleSaveSettings();
     setIsProductFormatDrawerOpen(false);
     setIsRawSheetDrawerOpen(false);
+    setIsProductTemplateDrawerOpen(false);
   }
 
   function updateProductFormat(
@@ -391,6 +443,77 @@ export function SettingsPage() {
       draft.rawSheetFormats.map((format) => ({
         ...format,
         isDefault: format.id === formatId ? "Ja" : "Nein",
+      })),
+    );
+  }
+
+  function updateProductTemplate(
+    templateId: string,
+    patch: Partial<PrintPilotProductTemplate>,
+  ) {
+    if (!draft) return;
+
+    updateDraftField(
+      "productTemplates",
+      draft.productTemplates.map((template) =>
+        template.id === templateId ? { ...template, ...patch } : template,
+      ),
+    );
+  }
+
+  function addProductTemplate() {
+    if (!draft) return;
+
+    const defaultFormat =
+      draft.productFormats.find((format) => format.name === "DIN Lang") ??
+      draft.productFormats[0];
+
+    const nextTemplate: PrintPilotProductTemplate = {
+      id: createDraftId("product-template"),
+      name: "Neue Produktvorlage",
+      productType: "Folder/Falzflyer",
+      closedFormatId: defaultFormat?.id ?? "",
+      openWidthMm: "297",
+      openHeightMm: "210",
+      pages: "6",
+      panels: "3",
+      foldType: "Wickelfalz",
+      panelWidthsMm: "100 / 100 / 97",
+      standardBleedMm: "3",
+      finishing: "Falzen",
+      isDefault: "Nein",
+      isActive: "Ja",
+    };
+
+    updateDraftField("productTemplates", [
+      ...draft.productTemplates,
+      nextTemplate,
+    ]);
+    setSelectedProductTemplateId(nextTemplate.id);
+    setIsProductTemplateDrawerOpen(true);
+  }
+
+  function removeProductTemplate(templateId: string) {
+    if (!draft) return;
+
+    updateDraftField(
+      "productTemplates",
+      draft.productTemplates.filter((template) => template.id !== templateId),
+    );
+    if (selectedProductTemplateId === templateId) {
+      setIsProductTemplateDrawerOpen(false);
+      setSelectedProductTemplateId(null);
+    }
+  }
+
+  function setDefaultProductTemplate(templateId: string) {
+    if (!draft) return;
+
+    updateDraftField(
+      "productTemplates",
+      draft.productTemplates.map((template) => ({
+        ...template,
+        isDefault: template.id === templateId ? "Ja" : "Nein",
       })),
     );
   }
@@ -1116,6 +1239,100 @@ export function SettingsPage() {
             </>
           )}
 
+
+          {activeTab === "Produktvorlagen" && (
+            <>
+              <SectionHeader>Produktvorlagen</SectionHeader>
+
+              <div className="settings-data-intro">
+                Produktvorlagen verbinden Produktart, geschlossenes Format,
+                offenes Druckformat und Weiterverarbeitung. Sie bilden die
+                Grundlage für Folder/Falzflyer, Broschüren, Blöcke und SD-Sätze.
+              </div>
+
+              <div className="settings-list-toolbar">
+                <div>
+                  <strong>{draft?.productTemplates.length ?? 0} Produktvorlagen</strong>
+                  <span>Vorlagen steuern später die produktartspezifische Kalkulation.</span>
+                </div>
+
+                <Button onClick={addProductTemplate} disabled={!canEditMasterData}>
+                  Vorlage hinzufügen
+                </Button>
+              </div>
+
+              <TableShell className="settings-master-table-shell">
+                <table className="data-table settings-master-table">
+                  <colgroup>
+                    <col style={{ width: "24%" }} />
+                    <col style={{ width: "16%" }} />
+                    <col style={{ width: "14%" }} />
+                    <col style={{ width: "16%" }} />
+                    <col style={{ width: "10%" }} />
+                    <col style={{ width: "10%" }} />
+                    <col style={{ width: "5%" }} />
+                    <col style={{ width: "5%" }} />
+                  </colgroup>
+                  <thead>
+                    <tr>
+                      <th>Name</th>
+                      <th>Produktart</th>
+                      <th>Geschlossen</th>
+                      <th>Offenes Format</th>
+                      <th>Seiten</th>
+                      <th>Falzart</th>
+                      <th>Aktiv</th>
+                      <th>Standard</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {(draft?.productTemplates ?? []).map((template) => (
+                      <tr
+                        key={template.id}
+                        className={
+                          selectedProductTemplateId === template.id
+                            ? "data-table-row-selected"
+                            : undefined
+                        }
+                        onClick={() => handleProductTemplateSelect(template.id)}
+                      >
+                        <td>
+                          <strong className="settings-table-primary-text">
+                            {template.name}
+                          </strong>
+                        </td>
+                        <td>{template.productType}</td>
+                        <td>
+                          <span className="settings-table-muted-text">
+                            {getProductFormatName(
+                              draft?.productFormats ?? [],
+                              template.closedFormatId,
+                            )}
+                          </span>
+                        </td>
+                        <td style={{ whiteSpace: "nowrap" }}>
+                          {formatTemplateSize(template)}
+                        </td>
+                        <td>{template.pages} S. / {template.panels} Panels</td>
+                        <td>{template.foldType}</td>
+                        <td>
+                          <Badge variant={getYesNoBadgeVariant(template.isActive)}>
+                            {template.isActive === "Ja" ? "Aktiv" : "Inaktiv"}
+                          </Badge>
+                        </td>
+                        <td>
+                          <Badge variant={getYesNoBadgeVariant(template.isDefault)}>
+                            {template.isDefault === "Ja" ? "Standard" : "—"}
+                          </Badge>
+                        </td>
+                      </tr>
+                    ))}
+                  </tbody>
+                </table>
+              </TableShell>
+            </>
+          )}
+
           {activeTab === "Datensicherung" && (
             <>
               <SectionHeader>Backup & Wiederherstellung</SectionHeader>
@@ -1520,6 +1737,245 @@ export function SettingsPage() {
                         setDefaultRawSheetFormat(selectedRawSheetFormat.id);
                       } else {
                         updateRawSheetFormat(selectedRawSheetFormat.id, {
+                          isDefault: "Nein",
+                        });
+                      }
+                    }}
+                  >
+                    <option>Ja</option>
+                    <option>Nein</option>
+                  </Select>
+                </Field>
+              </FieldGrid>
+            </section>
+          </div>
+        ) : null}
+      </DetailDrawer>
+
+
+      <DetailDrawer
+        accentColor={module.accentColor}
+        open={isProductTemplateDrawerOpen && Boolean(selectedProductTemplate)}
+        eyebrow="Produktvorlage"
+        title={selectedProductTemplate?.name ?? "Produktvorlage"}
+        subtitle={
+          selectedProductTemplate
+            ? `${selectedProductTemplate.productType} · ${formatTemplateSize(
+                selectedProductTemplate,
+              )}`
+            : undefined
+        }
+        onClose={handleCloseProductTemplateDrawer}
+        size="lg"
+        footer={
+          <>
+            <DirtyStateNotice isDirty={isDirty} />
+
+            <EditLockToggle
+              isEditing={isEditing}
+              onToggle={handleToggleEditing}
+            />
+
+            <Button onClick={handleResetDraft}>Änderungen verwerfen</Button>
+
+            {selectedProductTemplate ? (
+              <Button
+                onClick={() => removeProductTemplate(selectedProductTemplate.id)}
+                disabled={!canEditMasterData || selectedProductTemplate.isDefault === "Ja"}
+              >
+                Löschen
+              </Button>
+            ) : null}
+
+            <SaveActionButton
+              isDirty={isDirty}
+              defaultLabel="Einstellungen speichern"
+              onClick={handleSaveAndCloseSettings}
+            />
+          </>
+        }
+      >
+        {selectedProductTemplate ? (
+          <div className="detail-drawer-stack">
+            <section className="detail-drawer-panel">
+              <SectionHeader>Vorlagendaten</SectionHeader>
+
+              <FieldGrid>
+                <Field label="Name">
+                  <Input
+                    value={selectedProductTemplate.name}
+                    readOnly={!canEditMasterData}
+                    onChange={(event) =>
+                      updateProductTemplate(selectedProductTemplate.id, {
+                        name: event.target.value,
+                      })
+                    }
+                  />
+                </Field>
+
+                <Field label="Produktart">
+                  <Select
+                    value={selectedProductTemplate.productType}
+                    disabled={!canEditMasterData}
+                    onChange={(event) =>
+                      updateProductTemplate(selectedProductTemplate.id, {
+                        productType: event.target.value as PrintPilotProductType,
+                      })
+                    }
+                  >
+                    {productTypeOptions.map((productType) => (
+                      <option key={productType}>{productType}</option>
+                    ))}
+                  </Select>
+                </Field>
+
+                <Field label="Geschlossenes Format">
+                  <Select
+                    value={selectedProductTemplate.closedFormatId}
+                    disabled={!canEditMasterData}
+                    onChange={(event) =>
+                      updateProductTemplate(selectedProductTemplate.id, {
+                        closedFormatId: event.target.value,
+                      })
+                    }
+                  >
+                    {(draft?.productFormats ?? []).map((format) => (
+                      <option key={format.id} value={format.id}>
+                        {format.name} · {formatFormatSize(format.widthMm, format.heightMm)}
+                      </option>
+                    ))}
+                  </Select>
+                </Field>
+
+                <Field label="Offene Breite mm">
+                  <Input
+                    inputMode="decimal"
+                    value={selectedProductTemplate.openWidthMm}
+                    readOnly={!canEditMasterData}
+                    onChange={(event) =>
+                      updateProductTemplate(selectedProductTemplate.id, {
+                        openWidthMm: event.target.value,
+                      })
+                    }
+                  />
+                </Field>
+
+                <Field label="Offene Höhe mm">
+                  <Input
+                    inputMode="decimal"
+                    value={selectedProductTemplate.openHeightMm}
+                    readOnly={!canEditMasterData}
+                    onChange={(event) =>
+                      updateProductTemplate(selectedProductTemplate.id, {
+                        openHeightMm: event.target.value,
+                      })
+                    }
+                  />
+                </Field>
+
+                <Field label="Seiten">
+                  <Input
+                    inputMode="numeric"
+                    value={selectedProductTemplate.pages}
+                    readOnly={!canEditMasterData}
+                    onChange={(event) =>
+                      updateProductTemplate(selectedProductTemplate.id, {
+                        pages: event.target.value,
+                      })
+                    }
+                  />
+                </Field>
+
+                <Field label="Panels">
+                  <Input
+                    inputMode="numeric"
+                    value={selectedProductTemplate.panels}
+                    readOnly={!canEditMasterData}
+                    onChange={(event) =>
+                      updateProductTemplate(selectedProductTemplate.id, {
+                        panels: event.target.value,
+                      })
+                    }
+                  />
+                </Field>
+
+                <Field label="Falzart">
+                  <Select
+                    value={selectedProductTemplate.foldType}
+                    disabled={!canEditMasterData}
+                    onChange={(event) =>
+                      updateProductTemplate(selectedProductTemplate.id, {
+                        foldType: event.target.value as PrintPilotFoldType,
+                      })
+                    }
+                  >
+                    {foldTypeOptions.map((foldType) => (
+                      <option key={foldType}>{foldType}</option>
+                    ))}
+                  </Select>
+                </Field>
+
+                <Field label="Panelbreiten mm">
+                  <Input
+                    value={selectedProductTemplate.panelWidthsMm}
+                    readOnly={!canEditMasterData}
+                    onChange={(event) =>
+                      updateProductTemplate(selectedProductTemplate.id, {
+                        panelWidthsMm: event.target.value,
+                      })
+                    }
+                  />
+                </Field>
+
+                <Field label="Standard-Beschnitt mm">
+                  <Input
+                    inputMode="decimal"
+                    value={selectedProductTemplate.standardBleedMm}
+                    readOnly={!canEditMasterData}
+                    onChange={(event) =>
+                      updateProductTemplate(selectedProductTemplate.id, {
+                        standardBleedMm: event.target.value,
+                      })
+                    }
+                  />
+                </Field>
+
+                <Field label="Weiterverarbeitung">
+                  <Input
+                    value={selectedProductTemplate.finishing}
+                    readOnly={!canEditMasterData}
+                    onChange={(event) =>
+                      updateProductTemplate(selectedProductTemplate.id, {
+                        finishing: event.target.value,
+                      })
+                    }
+                  />
+                </Field>
+
+                <Field label="Aktiv">
+                  <Select
+                    value={selectedProductTemplate.isActive}
+                    disabled={!canEditMasterData}
+                    onChange={(event) =>
+                      updateProductTemplate(selectedProductTemplate.id, {
+                        isActive: event.target.value,
+                      })
+                    }
+                  >
+                    <option>Ja</option>
+                    <option>Nein</option>
+                  </Select>
+                </Field>
+
+                <Field label="Standard">
+                  <Select
+                    value={selectedProductTemplate.isDefault}
+                    disabled={!canEditMasterData}
+                    onChange={(event) => {
+                      if (event.target.value === "Ja") {
+                        setDefaultProductTemplate(selectedProductTemplate.id);
+                      } else {
+                        updateProductTemplate(selectedProductTemplate.id, {
                           isDefault: "Nein",
                         });
                       }

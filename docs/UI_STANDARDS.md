@@ -111,3 +111,7 @@ Stammdaten in den Einstellungen werden als ruhige Karten mit kompaktem Kopf, mod
 ## Einstellungen – Stammdatenlisten
 
 Stammdaten-Register in den Einstellungen verwenden Tabellen-/Listenansichten mit klickbaren Zeilen und Detaildrawer. Direkte Inline-Kartenbearbeitung soll vermieden werden, wenn Daten später kalkulationsrelevant sind. Die Drawer verwenden denselben Footer-Standard wie die übrigen Module: Bearbeitung umschalten, Änderungen verwerfen, optional löschen und speichern.
+
+## Einstellungs-Stammdaten: Produktvorlagen
+
+Produktvorlagen folgen dem gleichen Master-Detail-Muster wie Formate und Rohbogenformate: Listenansicht, Zeile öffnet Detaildrawer, Bearbeitung nur im Edit-Modus, Speichern über den gemeinsamen Einstellungs-Footer. Vorlagen-Badges verwenden den globalen moderaten Badge-Radius.

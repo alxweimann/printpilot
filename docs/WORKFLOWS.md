@@ -112,3 +112,11 @@ Endformate und Rohbogenformate werden ab sofort in den Einstellungen gepflegt. E
 ## Einstellungen – Format-Stammdaten Workflow
 
 Format- und Rohbogen-Stammdaten werden nicht inline in Karten gepflegt, sondern wie andere Masterdaten über Listenansicht und Detaildrawer. Neue Einträge werden im entsperrten Bearbeitungsmodus angelegt und direkt im Drawer geöffnet. Standardformate können nicht gelöscht werden. Änderungen werden erst mit `Einstellungen speichern` übernommen.
+
+## Erledigt – Produktvorlagen als Kalkulations-Stammdaten
+
+- Neuer Einstellungstab `Produktvorlagen` ergänzt.
+- Vorlagen werden wie Formate und Rohbogenformate über Listenansicht plus Detaildrawer gepflegt.
+- Produktvorlagen speichern geschlossenes Format, offenes Druckformat, Seiten, Panels, Falzart, Panelbreiten, Beschnitt und Weiterverarbeitung.
+- Standardvorlagen für DIN-Lang-Folder/Falzflyer sind enthalten.
+- Nächster sinnvoller Schritt: Digitaldruck-Kalkulation um Produktart/Vorlage erweitern, sodass Folder anhand des offenen Formats gerechnet werden.

@@ -272,6 +272,7 @@ export type PrintPilotTemplate = {
 export type PrintPilotProductType =
   | "Einzelblatt"
   | "Flyer"
+  | "Folder/Falzflyer"
   | "Broschüre"
   | "Block"
   | "SD-Satz"
@@ -281,6 +282,7 @@ export type PrintPilotProductType =
 export type PrintPilotFormatCategory =
   | "DIN"
   | "Flyer"
+  | "Folder"
   | "Karte"
   | "Broschüre"
   | "Block"
@@ -298,6 +300,16 @@ export type PrintPilotGrainDirection =
   | "Unbekannt"
   | "Schmalbahn"
   | "Breitbahn";
+
+export type PrintPilotFoldType =
+  | "Kein Falz"
+  | "Einfachfalz"
+  | "Wickelfalz"
+  | "Zickzackfalz"
+  | "Doppelparallelfalz"
+  | "Altarfalz"
+  | "Kreuzbruch"
+  | "Sonderfalz";
 
 export type PrintPilotProductFormat = {
   id: PrintPilotId;
@@ -318,6 +330,23 @@ export type PrintPilotRawSheetFormat = {
   category: PrintPilotRawSheetCategory;
   machine: string;
   grainDirection: PrintPilotGrainDirection;
+  isDefault: string;
+  isActive: string;
+};
+
+export type PrintPilotProductTemplate = {
+  id: PrintPilotId;
+  name: string;
+  productType: PrintPilotProductType;
+  closedFormatId: PrintPilotId;
+  openWidthMm: string;
+  openHeightMm: string;
+  pages: string;
+  panels: string;
+  foldType: PrintPilotFoldType;
+  panelWidthsMm: string;
+  standardBleedMm: string;
+  finishing: string;
   isDefault: string;
   isActive: string;
 };
@@ -352,6 +381,7 @@ export type PrintPilotSettings = {
   debugMode: string;
   productFormats: PrintPilotProductFormat[];
   rawSheetFormats: PrintPilotRawSheetFormat[];
+  productTemplates: PrintPilotProductTemplate[];
 };
 
 export type PrintPilotStoreData = {
@@ -427,7 +457,7 @@ export const initialPrintPilotProductFormats: PrintPilotProductFormat[] = [
     widthMm: "99",
     heightMm: "210",
     category: "Flyer",
-    productTypes: ["Einzelblatt", "Flyer"],
+    productTypes: ["Einzelblatt", "Flyer", "Folder/Falzflyer"],
     isDefault: "Nein",
     isActive: "Ja",
   },
@@ -437,7 +467,7 @@ export const initialPrintPilotProductFormats: PrintPilotProductFormat[] = [
     widthMm: "210",
     heightMm: "99",
     category: "Flyer",
-    productTypes: ["Einzelblatt", "Flyer"],
+    productTypes: ["Einzelblatt", "Flyer", "Folder/Falzflyer"],
     isDefault: "Ja",
     isActive: "Ja",
   },
@@ -447,7 +477,7 @@ export const initialPrintPilotProductFormats: PrintPilotProductFormat[] = [
     widthMm: "105",
     heightMm: "210",
     category: "Flyer",
-    productTypes: ["Einzelblatt", "Flyer"],
+    productTypes: ["Einzelblatt", "Flyer", "Folder/Falzflyer"],
     isDefault: "Nein",
     isActive: "Ja",
   },
@@ -564,6 +594,89 @@ export const initialPrintPilotRawSheetFormats: PrintPilotRawSheetFormat[] = [
   },
 ];
 
+export const initialPrintPilotProductTemplates: PrintPilotProductTemplate[] = [
+  {
+    id: "template-sheet-din-a4",
+    name: "DIN A4 Einzelblatt",
+    productType: "Einzelblatt",
+    closedFormatId: "format-din-a4",
+    openWidthMm: "210",
+    openHeightMm: "297",
+    pages: "2",
+    panels: "1",
+    foldType: "Kein Falz",
+    panelWidthsMm: "",
+    standardBleedMm: "3",
+    finishing: "Schneiden",
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "template-folder-din-lang-4p",
+    name: "DIN Lang 4-seitig Einfachfalz",
+    productType: "Folder/Falzflyer",
+    closedFormatId: "format-din-lang",
+    openWidthMm: "198",
+    openHeightMm: "210",
+    pages: "4",
+    panels: "2",
+    foldType: "Einfachfalz",
+    panelWidthsMm: "99 / 99",
+    standardBleedMm: "3",
+    finishing: "Falzen 1-Bruch",
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "template-folder-din-lang-6p-wickel",
+    name: "DIN Lang 6-seitig Wickelfalz",
+    productType: "Folder/Falzflyer",
+    closedFormatId: "format-din-lang",
+    openWidthMm: "297",
+    openHeightMm: "210",
+    pages: "6",
+    panels: "3",
+    foldType: "Wickelfalz",
+    panelWidthsMm: "100 / 100 / 97",
+    standardBleedMm: "3",
+    finishing: "Falzen Wickelfalz",
+    isDefault: "Ja",
+    isActive: "Ja",
+  },
+  {
+    id: "template-folder-din-lang-6p-zickzack",
+    name: "DIN Lang 6-seitig Zickzackfalz",
+    productType: "Folder/Falzflyer",
+    closedFormatId: "format-din-lang",
+    openWidthMm: "297",
+    openHeightMm: "210",
+    pages: "6",
+    panels: "3",
+    foldType: "Zickzackfalz",
+    panelWidthsMm: "99 / 99 / 99",
+    standardBleedMm: "3",
+    finishing: "Falzen Zickzack",
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+  {
+    id: "template-folder-a5-4p",
+    name: "DIN A5 4-seitig Einfachfalz",
+    productType: "Folder/Falzflyer",
+    closedFormatId: "format-din-a5",
+    openWidthMm: "296",
+    openHeightMm: "210",
+    pages: "4",
+    panels: "2",
+    foldType: "Einfachfalz",
+    panelWidthsMm: "148 / 148",
+    standardBleedMm: "3",
+    finishing: "Falzen 1-Bruch",
+    isDefault: "Nein",
+    isActive: "Ja",
+  },
+];
+
 export const initialPrintPilotSettings: PrintPilotSettings = {
   id: "settings-local",
   mode: "Lokal",
@@ -594,6 +707,7 @@ export const initialPrintPilotSettings: PrintPilotSettings = {
   debugMode: "Aus",
   productFormats: initialPrintPilotProductFormats,
   rawSheetFormats: initialPrintPilotRawSheetFormats,
+  productTemplates: initialPrintPilotProductTemplates,
 };
 
 export const initialPrintPilotCustomers: PrintPilotCustomer[] = [

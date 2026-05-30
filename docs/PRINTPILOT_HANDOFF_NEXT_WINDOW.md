@@ -213,3 +213,15 @@ Empfohlener Test:
 - Einstellungen → Formate öffnen, Bearbeitung aktivieren, Zeile anklicken, Drawer prüfen.
 - Neues Format anlegen, speichern, danach Kalkulation öffnen und Dropdown prüfen.
 - Einstellungen → Rohbogenformate genauso testen.
+
+## Letzter Stand – Produktvorlagen in Einstellungen
+
+Neu ergänzt wurde der Einstellungstab `Produktvorlagen`. Er nutzt Listenansicht plus Detaildrawer und enthält Stammdaten für produktartspezifische Kalkulationen. Besonders wichtig für Folder/Falzflyer: geschlossenes Format und offenes Druckformat sind getrennt gespeichert. Enthaltene Startvorlagen: DIN A4 Einzelblatt, DIN Lang 4-seitig Einfachfalz, DIN Lang 6-seitig Wickelfalz, DIN Lang 6-seitig Zickzackfalz und DIN A5 4-seitig Einfachfalz.
+
+Empfohlener Test:
+- Einstellungen → Produktvorlagen öffnen.
+- Bearbeitung aktivieren.
+- DIN Lang 6-seitig Wickelfalz öffnen und Panelbreiten prüfen.
+- Neue Vorlage anlegen und speichern.
+
+Nächster sinnvoller Schritt: Kalkulation um Produktart/Vorlage erweitern, sodass Folder mit offenem Druckformat in die Nutzenberechnung gehen.

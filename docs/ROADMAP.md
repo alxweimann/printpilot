@@ -80,3 +80,7 @@ Der Auftragsbereich ist nach Listenfilterung und Tabellen-Feinschliff visuell ab
 - Endformate und Rohbogenformate wurden von Inline-Karten auf Listenansicht plus Detaildrawer umgestellt.
 - Bedienung ist damit konsistent zu Kunden, Aufträgen, Material und weiteren Modulen.
 - Nächste sinnvolle Kalkulationsausbaustufe: Nutzenrechner V2 mit grafischer Bogenvorschau und Laufrichtung.
+
+## Kalkulation – Produktvorlagen / Folder
+
+Umgesetzt: Produktvorlagen in den Einstellungen. Nächste Ausbaustufe: Digitaldruck-Rechner um Produktart-Auswahl erweitern. Für `Folder/Falzflyer` muss der Nutzenrechner mit dem offenen Druckformat rechnen, während das geschlossene Format als Kunden-/Endformat sichtbar bleibt. Danach folgen grafische Bogenvorschau, Laufrichtung und Weiterverarbeitungskosten.

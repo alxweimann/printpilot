@@ -126,3 +126,7 @@ Die Einstellungen wurden um zentrale Stammdaten für Endformate und Rohbogenform
 ## Update 2026-05-30 – Einstellungen Stammdaten-Listen und Drawer
 
 Die neuen Format-Stammdaten in den Einstellungen wurden an das Bedienmuster der übrigen PrintPilot-Module angepasst. `Formate` und `Rohbogenformate` werden jetzt als ruhige Listenansichten dargestellt. Einzelne Einträge öffnen per Zeilenklick einen Detaildrawer mit Bearbeitungsmodus, Speichern/Verwerfen und Löschen. Die bestehende Stammdaten- und Kalkulationslogik bleibt unverändert; der Digitaldruck-Rechner liest weiterhin aktive Endformate und Rohbogenformate aus den Einstellungen.
+
+## Update 2026-05-30 – Produktvorlagen für Kalkulation
+
+Die Einstellungen wurden um den Tab `Produktvorlagen` erweitert. Produktvorlagen verbinden Produktart, geschlossenes Kundenformat, offenes Druckformat, Seitenzahl, Panels, Falzart, Panelbreiten, Standard-Beschnitt und Weiterverarbeitung. Damit sind Folder/Falzflyer wie DIN Lang 4-seitig, DIN Lang 6-seitig Wickelfalz und DIN Lang 6-seitig Zickzackfalz als Stammdaten vorbereitet. Diese Struktur ist bewusst auch für spätere Broschüren, Blöcke und SD-Sätze ausgelegt.

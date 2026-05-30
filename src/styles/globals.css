@@ -3439,3 +3439,71 @@ body {
     white-space: normal;
   }
 }
+
+.settings-list-toolbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin: 0 18px 16px;
+}
+
+.settings-list-toolbar > div {
+  display: grid;
+  gap: 3px;
+}
+
+.settings-list-toolbar strong {
+  color: var(--color-text);
+  font-size: 0.95rem;
+  font-weight: 650;
+}
+
+.settings-list-toolbar span {
+  color: var(--color-text-muted);
+  font-size: 0.82rem;
+}
+
+.settings-master-table-shell {
+  margin: 0 18px 24px;
+}
+
+.settings-master-table td,
+.settings-master-table th {
+  white-space: nowrap;
+}
+
+.settings-master-table td:nth-child(4) {
+  max-width: 320px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.settings-table-primary-text {
+  display: block;
+  overflow: hidden;
+  color: var(--color-text);
+  font-weight: 650;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.settings-table-muted-text {
+  display: block;
+  overflow: hidden;
+  color: var(--color-text-muted);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 960px) {
+  .settings-list-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .settings-list-toolbar button {
+    align-self: flex-start;
+  }
+}

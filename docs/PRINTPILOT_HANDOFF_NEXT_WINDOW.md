@@ -204,3 +204,12 @@ Empfohlener Test:
 - Einstellungen öffnen → Bearbeitung aktivieren → Formate prüfen/ändern/speichern.
 - Rohbogenformate prüfen, SRA3 als Standard belassen.
 - Kalkulation öffnen und kontrollieren, ob die Dropdowns die aktiven Stammdaten anzeigen.
+
+## Letzter Stand – Einstellungen Format-Stammdaten mit Drawer
+
+Die Tabs `Formate` und `Rohbogenformate` in den Einstellungen verwenden jetzt Listenansichten statt Inline-Karten. Zeilen öffnen einen Detaildrawer. Neue Formate/Rohbogenformate werden über den Button in der Liste angelegt und direkt im Drawer bearbeitet. Standardformate sind gegen Löschen geschützt. Die Kalkulation liest weiterhin die aktiven Stammdaten aus den Einstellungen.
+
+Empfohlener Test:
+- Einstellungen → Formate öffnen, Bearbeitung aktivieren, Zeile anklicken, Drawer prüfen.
+- Neues Format anlegen, speichern, danach Kalkulation öffnen und Dropdown prüfen.
+- Einstellungen → Rohbogenformate genauso testen.

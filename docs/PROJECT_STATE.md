@@ -122,3 +122,7 @@ Die Kalkulationsseite wurde vom reinen Formular zur ersten aktiven Rechenmaske e
 ## Update 2026-05-30 – Format-Stammdaten in Einstellungen
 
 Die Einstellungen wurden um zentrale Stammdaten für Endformate und Rohbogenformate erweitert. Endformate enthalten Name, Breite, Höhe, Kategorie, Produktarten, Aktiv-Status und Standard-Kennzeichnung. Rohbogenformate enthalten Name, Breite, Höhe, Kategorie, optionale Maschinenzuordnung, Laufrichtung, Aktiv-Status und Standard-Kennzeichnung. Die Standarddaten decken DIN A3 bis A7, DIN Lang-Varianten, Quadrat 210, Visitenkarte sowie SRA3, DIN-Rohbogen und Iridesse-Langbogen/Bannerbogen ab. Der Digitaldruck-Bogenrechner liest seine Format-Dropdowns jetzt aus diesen Stammdaten statt aus hart codierten Formatlisten.
+
+## Update 2026-05-30 – Einstellungen Stammdaten-Listen und Drawer
+
+Die neuen Format-Stammdaten in den Einstellungen wurden an das Bedienmuster der übrigen PrintPilot-Module angepasst. `Formate` und `Rohbogenformate` werden jetzt als ruhige Listenansichten dargestellt. Einzelne Einträge öffnen per Zeilenklick einen Detaildrawer mit Bearbeitungsmodus, Speichern/Verwerfen und Löschen. Die bestehende Stammdaten- und Kalkulationslogik bleibt unverändert; der Digitaldruck-Rechner liest weiterhin aktive Endformate und Rohbogenformate aus den Einstellungen.

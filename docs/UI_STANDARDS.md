@@ -107,3 +107,7 @@ Kalkulationsseiten verwenden links Eingabegruppen und rechts eine kompakte Ergeb
 ## Einstellungen – Stammdatenkarten
 
 Stammdaten in den Einstellungen werden als ruhige Karten mit kompaktem Kopf, moderatem Radius und FieldGrid-Eingaben dargestellt. Hinzufügen, Löschen und Standardmarkierung erfolgen im entsperrten Bearbeitungsmodus. Produktart-Zuordnungen werden als kompakte Checkbox-Chips mit `var(--radius-md)` dargestellt, nicht als vollrunde Pills.
+
+## Einstellungen – Stammdatenlisten
+
+Stammdaten-Register in den Einstellungen verwenden Tabellen-/Listenansichten mit klickbaren Zeilen und Detaildrawer. Direkte Inline-Kartenbearbeitung soll vermieden werden, wenn Daten später kalkulationsrelevant sind. Die Drawer verwenden denselben Footer-Standard wie die übrigen Module: Bearbeitung umschalten, Änderungen verwerfen, optional löschen und speichern.

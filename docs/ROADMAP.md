@@ -74,3 +74,9 @@ Der Auftragsbereich ist nach Listenfilterung und Tabellen-Feinschliff visuell ab
 - Endformate und Rohbogenformate als zentrale Stammdaten vorbereitet.
 - Digitaldruck-Rechner liest Format- und Rohbogen-Auswahl jetzt aus den Einstellungen.
 - Nächster sinnvoller Schritt: Nutzenrechner V2 mit grafischer Bogenvorschau, Laufrichtung und maschinenbezogenen Rohbogen-/Materialparametern.
+
+## Erledigt – Einstellungen Listenansicht und Drawer für Formate
+
+- Endformate und Rohbogenformate wurden von Inline-Karten auf Listenansicht plus Detaildrawer umgestellt.
+- Bedienung ist damit konsistent zu Kunden, Aufträgen, Material und weiteren Modulen.
+- Nächste sinnvolle Kalkulationsausbaustufe: Nutzenrechner V2 mit grafischer Bogenvorschau und Laufrichtung.

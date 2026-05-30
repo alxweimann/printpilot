@@ -108,3 +108,7 @@ Die Kalkulation startet fachlich mit Digitaldruck-Bogenware, weil dies das Haupt
 ## Kalkulation – Format-Stammdaten
 
 Endformate und Rohbogenformate werden ab sofort in den Einstellungen gepflegt. Endformate sind fertige Produktformate und können für Produktarten wie Einzelblatt, Flyer, Broschüre, Block, SD-Satz, Karte und Großformat markiert werden. Rohbogenformate sind Produktionsformate für Nutzenberechnung, Papierverbrauch und Maschinenfähigkeit. Die Kalkulation soll künftig diese Stammdaten verwenden, damit Broschüren, Blöcke, SD-Sätze und weitere Produktarten nicht jeweils eigene starre Formatlisten benötigen.
+
+## Einstellungen – Format-Stammdaten Workflow
+
+Format- und Rohbogen-Stammdaten werden nicht inline in Karten gepflegt, sondern wie andere Masterdaten über Listenansicht und Detaildrawer. Neue Einträge werden im entsperrten Bearbeitungsmodus angelegt und direkt im Drawer geöffnet. Standardformate können nicht gelöscht werden. Änderungen werden erst mit `Einstellungen speichern` übernommen.

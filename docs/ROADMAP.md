@@ -53,3 +53,17 @@ Der Auftragsbereich ist nach Listenfilterung und Tabellen-Feinschliff visuell ab
 - Überfette Schriftgewichte in mehreren UI-Bereichen weiter beruhigt.
 - Fortschrittsbalken und echte Indikatoren bleiben bewusst rund.
 - Keine Daten-, Status- oder Workflowlogik geändert.
+
+## Erledigt – Kalkulation V1 Digitaldruck-Bogen
+
+- Erste aktive Kalkulationsseite für Digitaldruck-Bogenware umgesetzt.
+- Nutzenrechner vergleicht normale und gedrehte Ausrichtung.
+- Netto-/Brutto-Druckbogen, Ausschuss, Rüstbogen, Klickkosten, Papierkosten und kalkulatorischer Verkaufspreis werden berechnet.
+- Nächste sinnvolle Schritte: grafische Bogenvorschau, Papierlaufrichtung, Maschinenparameter, Weiterverarbeitung und danach Großformatdruck-Rechner.
+
+
+## Nächste Kalkulationsausbaustufen
+
+- Digitaldruck V1.1: Formatauswahl ist erweitert.
+- Danach: grafische Bogenvorschau, Papierlaufrichtung, Maschinenzeiten, Sonderfarben und Weiterverarbeitung.
+- Großformatdruck bleibt als separater Rechner nach Stabilisierung des Digitaldruck-Kerns vorgesehen.

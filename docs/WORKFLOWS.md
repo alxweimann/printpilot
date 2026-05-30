@@ -91,3 +91,16 @@ Master-Listen sollen einheitlich aufgebaut sein: feste Spaltenbreiten über `col
 ## Globaler UI-Konsistenzcheck
 
 Nach dem Tabellen-Feinschliff wurden globale UI-Reste bereinigt: Statuslabels, Badges, Dashboard-Pills und Produktionshinweise folgen jetzt dem moderaten Button-Radius. Dadurch wirken Tabellen, Drawer, Dashboard und Plantafel konsistenter, ohne Daten- oder Workflowlogik zu verändern.
+
+## Kalkulation – Digitaldruck V1
+
+Die Kalkulation startet fachlich mit Digitaldruck-Bogenware, weil dies das Hauptgeschäft ist. V1 berechnet Nutzen auf dem Rohbogen, Netto-/Brutto-Druckbogen, Ausschuss, Rüstbogen, Klickkosten und Papierkosten. Die Ausrichtung wird automatisch zwischen normal und gedreht verglichen. Die Werte sind kalkulatorisch und bilden noch keine vollständige Angebotskalkulation mit Weiterverarbeitung, Maschinenzeit, Laufrichtung oder grafischer Bogenvorschau ab.
+
+
+## Kalkulation – Digitaldruck-Formate
+
+1. Kalkulation öffnen.
+2. Im Bereich „Produkt & Format“ eine Endformat-Vorlage wählen.
+3. Standardformate stehen für DIN A3 bis DIN A7 sowie DIN Lang zur Verfügung.
+4. Bei manueller Änderung von Breite/Höhe wird auf freies Endformat gewechselt.
+5. Rohbogenformat kann separat als SRA3, DIN A3 bis DIN A7 oder freies Rohformat gewählt werden.

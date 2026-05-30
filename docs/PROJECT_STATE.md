@@ -106,3 +106,15 @@ Der finale Tabellenstandard aus der Auftragsliste wurde auf die übrigen Master-
 ## Globaler UI-Konsistenzcheck
 
 Der globale UI-Konsistenzcheck ist umgesetzt. Restliche alte Pill-Optiken in Badges, Dashboard-Hinweisen, Produktionslabels und Tabellenstatus wurden auf den moderaten Button-Radius umgestellt. Extreme Schriftgewichte in Plantafel, Handlungsbedarf und Produktionshinweisen wurden weiter reduziert. Fortschrittsbalken und echte Punkt-/Strichmarker bleiben bewusst rund, weil sie keine klickbaren Pills sind.
+
+## Update 2026-05-30 – Kalkulation V1 Digitaldruck-Bogenrechner
+
+Die Kalkulationsseite wurde vom reinen Formular zur ersten aktiven Rechenmaske erweitert. V1 fokussiert bewusst auf das Hauptgeschäft Digitaldruck: Auflage, Endformat, Rohbogenformat, Beschnitt, Nutzenabstand, Maschinenrand, Simplex/Duplex, Klickkosten, Papierkosten, Ausschuss und kalkulatorischer Verkaufspreis. Der Nutzenrechner vergleicht normale und gedrehte Ausrichtung und wählt automatisch die bessere Variante. Großformatdruck, Laufrichtung, grafische Bogenvorschau, Weiterverarbeitung und Maschinenzeiten bleiben Folgeausbaustufen.
+
+
+## 2026-05-30 – Kalkulation Digitaldruck Formatauswahl erweitert
+
+- Digitaldruck-Bogenrechner hat jetzt eine eigene Endformat-Vorlage.
+- Enthalten: DIN A3, A4, A5, A6, A7 sowie DIN Lang, DIN Lang quer und DIN Lang Plus.
+- Rohbogen-Vorlagen wurden ebenfalls um DIN A5, A6 und A7 ergänzt; SRA3, A3 und A4 bleiben enthalten.
+- Manuelle Formatänderung stellt die jeweilige Vorlage automatisch auf „frei“, damit individuelle Sonderformate weiter möglich bleiben.

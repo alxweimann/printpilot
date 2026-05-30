@@ -27,7 +27,7 @@ export const moduleConfig: Record<string, ModuleConfig> = {
     label: "Kalkulation",
     title: "Kalkulation",
     description:
-      "Technische Eingabemaske für Druckprodukte. Noch ohne Berechnungslogik.",
+      "Aktive Kalkulationsseite für Digitaldruck-Bogenware. Großformatdruck und weitere Module folgen.",
     group: "sales",
     accentColor: "#00AEEF",
     actionLabel: "Neue Kalkulation",

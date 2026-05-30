@@ -176,3 +176,22 @@ Umgesetzt und gepushed werden soll nach dem Einsetzen:
 - keine Logikänderungen
 
 Nächster sinnvoller Schritt danach: fachliches Modul auswählen, zum Beispiel Angebote, Material oder Maschinen.
+
+## Letzter Block – Kalkulation V1 Digitaldruck-Bogenrechner
+
+Die Kalkulationsseite enthält jetzt den ersten aktiven Digitaldruck-Bogenrechner. Eingaben: Auflage, Endformat, Rohbogenformat, Beschnitt, Nutzenabstand, Maschinenrand, Simplex/Duplex, Vorder-/Rückseiten-Farbigkeit, Ausschuss, Rüstbogen, Papierpreis je 1000 Bogen, Klickkosten Farbe/Schwarz und Aufschlag. Der Rechner vergleicht normale und gedrehte Ausrichtung und zeigt Nutzen, Druckbogen netto/brutto, Klicks, Papierkosten, Klickkosten, Herstellkosten und kalkulatorischen Verkaufspreis.
+
+Nächster sinnvoller Schritt: V1 im Browser mit realen Digitaldruck-Beispielen testen, dann grafische Bogenvorschau und Papierlaufrichtung ergänzen.
+
+
+## Letzter Stand – Kalkulation Digitaldruck Formate
+
+- Endformat-Vorlagen ergänzt: DIN A3, A4, A5, A6, A7, DIN Lang, DIN Lang quer, DIN Lang Plus.
+- Rohbogen-Vorlagen ergänzt: SRA3, DIN A3, DIN A4, DIN A5, DIN A6, DIN A7, freies Rohformat.
+- Keine Änderung an der eigentlichen Nutzen-/Kostenlogik; nur Formatvorgaben und automatische Custom-Umschaltung ergänzt.
+
+Empfohlener Test:
+- DIN Lang quer auf SRA3 testen.
+- DIN A6 auf SRA3 testen.
+- DIN A7 auf A4 testen.
+- Breite/Höhe manuell ändern und prüfen, ob die Vorlage auf frei springt.

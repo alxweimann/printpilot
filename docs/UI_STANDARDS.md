@@ -91,3 +91,15 @@ Neben der Auftragsliste verwenden die übrigen Master-Listen jetzt den gemeinsam
 ## Global UI Consistency
 
 Badges, Filter-Chips, Schnellaktionen und Statuslabels verwenden standardmäßig `var(--radius-md)` und keine vollrunden Pill-Radien. Sehr runde Formen bleiben nur für echte Indikatoren wie Fortschrittsbalken, kleine Dots oder schmale Akzentmarker erlaubt. Schriftgewichte sollen im UI überwiegend zwischen 600 und 760 liegen; extreme Gewichte sind nur für Sonderfälle wie Logos oder LED-Anzeigen zulässig.
+
+## Kalkulation V1 – Rechenmaske
+
+Kalkulationsseiten verwenden links Eingabegruppen und rechts eine kompakte Ergebnis-Spalte. Ergebnis-Karten zeigen immer eine kurze Kategorie, einen starken Hauptwert und eine erklärende Detailzeile. Vergleichsvarianten wie Nutzen normal/gedreht werden als ruhige Karten dargestellt; die beste Variante nutzt einen schmalen Akzentmarker statt lauter Vollflächenfarbe.
+
+
+## Kalkulation – Formatfelder
+
+- Standardformate werden über Select-Felder angeboten.
+- Endformat und Rohbogenformat bleiben getrennte Eingabegruppen.
+- Manuelle Abweichungen müssen sichtbar als freie Formate behandelt werden.
+- Formatlabels sollen immer Name und Millimetermaß zeigen, z. B. „DIN Lang quer · 210 × 99 mm“.

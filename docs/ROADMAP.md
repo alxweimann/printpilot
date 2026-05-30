@@ -10,3 +10,4 @@
 - Erledigt: CSS-Fix für Produktionspanel im Auftragsdrawer
 - Erledigt: Produktions-Schnellaktionen im Auftragsdrawer farblich differenziert
 - Erledigt: Abholbereit/Fertig fachlich getrennt – Abholbereit bleibt in der offenen Plantafel, Fertig schließt den Auftrag ab
+- Erledigt: Plantafel-Mini-Karten final auf ruhiges Gleichmaß gebracht

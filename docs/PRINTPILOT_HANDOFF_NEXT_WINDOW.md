@@ -1,6 +1,6 @@
 # PrintPilot – Übergabe für neues Chat-Fenster
 
-Stand: nach dem Block **Plantafel-Datenlogik / Abholbereit-Fertig-Trennung**  
+Stand: nach dem Block **Plantafel ruhiges Gleichmaß**  
 Branch: `restart-designsystem`  
 Projektordner lokal: `C:\printpilot`
 
@@ -29,6 +29,9 @@ Umgesetzt und gepushed:
 - Blocker-Hinweis sichtbar
 - Typografie der Plantafel beruhigt
 - Kartenoptik optisch reduziert und ruhiger gestaltet
+- Mini-Karten final auf gleiche kompakte Höhe gebracht
+- Schriftgewichte in Plantafel und Handlungsbedarf nochmals reduziert
+- Blocker-, Meta- und Fortschrittsflächen dezenter gestaltet
 
 ### Aufträge
 
@@ -126,9 +129,9 @@ C:\printpilot\src\styles\globals.css
 
 ## Nächster sinnvoller Schritt
 
-### Block: Plantafel-Datenlogik testen
+### Block: Plantafel im Browser gegenprüfen
 
-Die wichtigste Korrektur wurde umgesetzt: **Abholbereit** bleibt jetzt offen in der Plantafel und wird nicht mehr sofort als Fertig abgeschlossen. Trotzdem sollte der Ablauf im Browser einmal praktisch getestet werden.
+Die Datenlogik und die optische Beruhigung sind umgesetzt. Jetzt sollte die Plantafel im Browser mit echten Aufträgen geprüft werden: gleiche Kartenhöhe, ruhige Typografie, sichtbare Fortschrittsbalken und korrektes Verhalten von Abholbereit/Fertig.
 
 Testablauf:
 

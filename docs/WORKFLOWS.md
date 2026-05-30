@@ -46,3 +46,7 @@ Die Schnellaktionen im Auftragsdrawer wirken fachlich auf Status, Übergabe und 
 - **Weiterverarbeitung** setzt `handoff = In Weiterverarbeitung` und `status = In Produktion`.
 - **Abholbereit** setzt `handoff = Abholbereit` und bleibt mit `status = In Produktion` offen sichtbar.
 - **Fertig** setzt `handoff = Abgeschlossen` und `status = Fertig`; der Auftrag verschwindet aus der offenen Plantafel.
+
+## Plantafel ruhiges Gleichmaß
+
+Die Tageszeilen der Plantafel bleiben erhalten. Auftragskarten werden bewusst gleich hoch und kompakt dargestellt, damit die Wochenansicht nicht springt oder unruhig wirkt. Längere Hinweise werden in der Karte gekürzt statt die Kartenhöhe aufzubrechen.

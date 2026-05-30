@@ -54,3 +54,7 @@ Zusätzlich leitet die manuelle Änderung des Übergabe-Status den passenden Auf
 - `Wartet auf Daten` → `Wartet`
 - `In Druck`, `In Weiterverarbeitung`, `Abholbereit`, `Versendet` → `In Produktion`
 - `Abgeschlossen` → `Fertig`
+
+## Plantafel Gleichmaß finalisiert
+
+Die Wochen-Plantafel wurde nochmals beruhigt: Mini-Karten haben jetzt wieder eine feste kompakte Höhe, reduzierte Schriftgewichte, dezente Statusfarben und flachere Tageszeilen. Fortschrittsbalken, Meta-Informationen und Blocker bleiben sichtbar, wirken aber weniger dominant.

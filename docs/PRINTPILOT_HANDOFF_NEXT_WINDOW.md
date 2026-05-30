@@ -1,6 +1,6 @@
 # PrintPilot – Übergabe für neues Chat-Fenster
 
-Stand: nach dem Block **Plantafel ruhiges Gleichmaß**  
+Stand: nach dem Block **farbige Produktions-Schnellaktionen**  
 Branch: `restart-designsystem`  
 Projektordner lokal: `C:\printpilot`
 
@@ -29,9 +29,7 @@ Umgesetzt und gepushed:
 - Blocker-Hinweis sichtbar
 - Typografie der Plantafel beruhigt
 - Kartenoptik optisch reduziert und ruhiger gestaltet
-- Mini-Karten final auf gleiche kompakte Höhe gebracht
-- Schriftgewichte in Plantafel und Handlungsbedarf nochmals reduziert
-- Blocker-, Meta- und Fortschrittsflächen dezenter gestaltet
+- Fortschrittsbalken der Mini-Karten leicht verstärkt
 
 ### Aufträge
 
@@ -129,9 +127,9 @@ C:\printpilot\src\styles\globals.css
 
 ## Nächster sinnvoller Schritt
 
-### Block: Plantafel im Browser gegenprüfen
+### Block: Plantafel-Datenlogik testen
 
-Die Datenlogik und die optische Beruhigung sind umgesetzt. Jetzt sollte die Plantafel im Browser mit echten Aufträgen geprüft werden: gleiche Kartenhöhe, ruhige Typografie, sichtbare Fortschrittsbalken und korrektes Verhalten von Abholbereit/Fertig.
+Jetzt sollte nicht direkt weiter am Design geschraubt werden. Zuerst sollte geprüft werden, ob die Schnellaktionen im Auftrag logisch korrekt auf die Plantafel wirken.
 
 Testablauf:
 
@@ -180,12 +178,15 @@ Erwartung:
 
 #### Abholbereit
 
-Erwartung jetzt:
+Erwartung aktuell:
 
 - `handoff = Abholbereit`
-- `status = In Produktion`
-- Auftrag bleibt offen in der Plantafel sichtbar
-- Fortschritt liegt bei 90%
+- `status = Fertig`
+
+Zu entscheiden:
+
+- Soll ein abholbereiter Auftrag wirklich sofort als **Fertig** gelten?
+- Oder brauchen wir später einen eigenen Status/Zwischenzustand wie **Abholbereit**?
 
 #### Fertig
 
@@ -208,7 +209,15 @@ Falls Tests zeigen, dass Blocker oder Fortschritt nicht sauber passen:
 
 ### 2. Abholbereit als eigener Produktionszustand prüfen
 
-Vorläufig gelöst: **Abholbereit** bleibt mit `status = In Produktion` offen sichtbar und wird über `handoff = Abholbereit` abgebildet. Ein eigener Hauptstatus **Abholbereit** kann später ergänzt werden, ist aktuell aber nicht zwingend notwendig.
+Aktuell setzt der Schnellbutton **Abholbereit** den Auftrag auf `Fertig`. Fachlich könnte aber besser sein:
+
+```txt
+In Produktion / Abholbereit
+oder
+eigener Status: Abholbereit
+```
+
+Das sollte vor weiteren Automatismen entschieden werden.
 
 ### 3. Maschinen-/Kapazitätslogik vorbereiten
 
@@ -258,3 +267,10 @@ powershell Compress-Archive -Path .\src,.\docs -DestinationPath .\printpilot-cur
 ```
 
 Dann `printpilot-current-full.zip` im neuen Chat hochladen.
+
+
+## Zuletzt erledigt
+
+- Plantafel final feinjustiert
+- Fortschrittsbalken der Mini-Karten von sehr dezent auf besser sichtbar erhöht
+- Karten bleiben weiterhin kompakt und ruhig

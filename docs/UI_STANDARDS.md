@@ -35,7 +35,6 @@ Produktionsstatus-Karten im Drawer werden als ruhige Karten mit linksseitigem Ak
 ## Production Quick Action Colors
 
 Produktions-Schnellaktionen verwenden dezente semantische Farben: Erfolg grün, Warnung orange, Produktionsschritte blau, Versandbereitschaft gelb und Abschluss violett.
+## Production Week Progress Bar
 
-## Final Calm Equal Week Cards
-
-Mini-Auftragskarten in der Wochen-Plantafel sind gleich hoch, flach, kompakt und typografisch zurückhaltend. Status- und Blockerfarben bleiben erkennbar, dürfen die Karten aber nicht dominieren.
+Fortschrittsbalken in Wochen-Mini-Karten sollen sichtbar genug sein, aber ruhig bleiben: ca. 7 px Höhe, dezenter Hintergrund, abgerundeter Verlauf.

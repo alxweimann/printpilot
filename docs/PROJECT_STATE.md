@@ -44,17 +44,6 @@ Das Produktionspanel im Auftragsdrawer wurde optisch korrigiert: Status-Karten w
 ## Produktions-Schnellaktionen farblich differenziert
 
 Die Schnellbuttons im Auftragsdrawer-Produktionspanel haben jetzt dezente fachliche Farben: Freigabe grün, Daten fehlen orange, Produktionsschritte blau, Abholbereit gelb und Fertig violett.
+## Plantafel finaler Feinschliff
 
-## Abholbereit bleibt offen in der Plantafel
-
-Die Produktionslogik wurde korrigiert: Die Schnellaktion **Abholbereit** setzt den Auftrag jetzt auf `handoff = Abholbereit` und lässt `status = In Produktion`. Dadurch bleibt der Auftrag mit 90% Fortschritt in der offenen Plantafel sichtbar. Erst die Schnellaktion **Fertig** setzt `handoff = Abgeschlossen` und `status = Fertig`, wodurch der Auftrag aus der offenen Plantafel verschwindet.
-
-Zusätzlich leitet die manuelle Änderung des Übergabe-Status den passenden Auftragsstatus ab:
-
-- `Wartet auf Daten` → `Wartet`
-- `In Druck`, `In Weiterverarbeitung`, `Abholbereit`, `Versendet` → `In Produktion`
-- `Abgeschlossen` → `Fertig`
-
-## Plantafel Gleichmaß finalisiert
-
-Die Wochen-Plantafel wurde nochmals beruhigt: Mini-Karten haben jetzt wieder eine feste kompakte Höhe, reduzierte Schriftgewichte, dezente Statusfarben und flachere Tageszeilen. Fortschrittsbalken, Meta-Informationen und Blocker bleiben sichtbar, wirken aber weniger dominant.
+Die Wochen-Plantafel wurde final feinjustiert: Fortschrittsbalken sind etwas dicker und dadurch besser lesbar, ohne die kompakte Kartenwirkung zu verlieren.

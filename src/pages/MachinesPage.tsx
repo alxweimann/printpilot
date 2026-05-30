@@ -177,7 +177,16 @@ export function MachinesPage() {
             <Button>Filter</Button>
           </TableToolbar>
 
-          <DataTable>
+          <DataTable tableClassName="entity-data-table machines-data-table">
+
+            <colgroup>
+              <col className="machines-table-col-number" />
+              <col className="machines-table-col-name" />
+              <col className="machines-table-col-type" />
+              <col className="machines-table-col-color" />
+              <col className="machines-table-col-status" />
+            </colgroup>
+
             <thead>
               <tr>
                 <SortableTableHeader

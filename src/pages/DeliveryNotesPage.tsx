@@ -301,7 +301,16 @@ export function DeliveryNotesPage() {
             <Button>Filter</Button>
           </TableToolbar>
 
-          <DataTable>
+          <DataTable tableClassName="entity-data-table delivery-notes-data-table">
+
+            <colgroup>
+              <col className="delivery-table-col-number" />
+              <col className="delivery-table-col-customer" />
+              <col className="delivery-table-col-order" />
+              <col className="delivery-table-col-shipping" />
+              <col className="delivery-table-col-status" />
+            </colgroup>
+
             <thead>
               <tr>
                 <SortableTableHeader

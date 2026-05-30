@@ -175,7 +175,15 @@ export function CustomersPage() {
             <Button>Filter</Button>
           </TableToolbar>
 
-          <DataTable>
+          <DataTable tableClassName="entity-data-table customers-data-table">
+
+            <colgroup>
+              <col className="customers-table-col-number" />
+              <col className="customers-table-col-name" />
+              <col className="customers-table-col-city" />
+              <col className="customers-table-col-status" />
+            </colgroup>
+
             <thead>
               <tr>
                 <SortableTableHeader

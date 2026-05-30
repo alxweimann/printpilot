@@ -389,7 +389,17 @@ export function InvoicesPage() {
             <Button>Filter</Button>
           </TableToolbar>
 
-          <DataTable>
+          <DataTable tableClassName="entity-data-table invoices-data-table">
+
+            <colgroup>
+              <col className="invoices-table-col-number" />
+              <col className="invoices-table-col-customer" />
+              <col className="invoices-table-col-subject" />
+              <col className="invoices-table-col-date" />
+              <col className="invoices-table-col-due" />
+              <col className="invoices-table-col-status" />
+            </colgroup>
+
             <thead>
               <tr>
                 <SortableTableHeader

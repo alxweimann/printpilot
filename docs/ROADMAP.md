@@ -40,3 +40,9 @@ Die Auftragsliste hat jetzt eine funktionale Suche und Schnellfilter für Status
 ## Update: Aufträge Tabellenabschluss
 
 Der Auftragsbereich ist nach Listenfilterung und Tabellen-Feinschliff visuell abgeschlossen. Nächster sinnvoller Bereich: entweder letzter Review des Auftragsmoduls im Gesamtkontext oder Start des nächsten Moduls wie Angebote/Kunden/Material.
+
+## Erledigt - Einheitlicher Tabellen-Feinschliff
+
+- Auftragslisten-Standard auf weitere Master-Listen übertragen.
+- Tabellenlayout für Kunden, Angebote, Lieferscheine, Rechnungen, Mahnungen, Material, Maschinen, Weiterverarbeitung, Leistungen und Vorlagen vereinheitlicht.
+- Nächster sinnvoller Schritt: nach finaler Sichtprüfung mit dem nächsten Modulbereich weitermachen oder gezielt Such-/Filterfunktionen für weitere Listen ausbauen.

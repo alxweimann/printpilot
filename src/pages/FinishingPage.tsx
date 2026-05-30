@@ -180,7 +180,16 @@ export function FinishingPage() {
             <Button>Filter</Button>
           </TableToolbar>
 
-          <DataTable>
+          <DataTable tableClassName="entity-data-table finishing-data-table">
+
+            <colgroup>
+              <col className="finishing-table-col-number" />
+              <col className="finishing-table-col-name" />
+              <col className="finishing-table-col-category" />
+              <col className="finishing-table-col-pricing" />
+              <col className="finishing-table-col-status" />
+            </colgroup>
+
             <thead>
               <tr>
                 <SortableTableHeader

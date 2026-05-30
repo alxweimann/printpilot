@@ -290,7 +290,17 @@ export function RemindersPage() {
             <Button>Filter</Button>
           </TableToolbar>
 
-          <DataTable>
+          <DataTable tableClassName="entity-data-table reminders-data-table">
+
+            <colgroup>
+              <col className="reminders-table-col-number" />
+              <col className="reminders-table-col-customer" />
+              <col className="reminders-table-col-invoice" />
+              <col className="reminders-table-col-level" />
+              <col className="reminders-table-col-deadline" />
+              <col className="reminders-table-col-status" />
+            </colgroup>
+
             <thead>
               <tr>
                 <SortableTableHeader

@@ -99,3 +99,7 @@ Die Auftragsliste verwendet nun dieselben fachlichen Kurzlabels wie Drawer und P
 - Die Filterleiste ist auf kleineren Breiten stabiler und bricht sauber um.
 - Bei leeren Treffern erscheint jetzt eine eigene ruhige Leeranzeige mit direktem `Filter zurücksetzen`.
 - Status-, Freigabe-, Übergabe-, Plantafel- und Drawer-Logik bleiben unverändert.
+
+## Update 2026-05-30 - Tabellen-Feinschliff auf weitere Module übertragen
+
+Der finale Tabellenstandard aus der Auftragsliste wurde auf die übrigen Master-Listen übertragen: Kunden, Angebote, Lieferscheine, Rechnungen, Mahnungen, Material, Maschinen, Weiterverarbeitung, Leistungen und Vorlagen. Die Tabellen nutzen jetzt feste Spaltenbreiten, ruhigere Tabellenköpfe, einzeilige gekürzte Texte, konsistentere Status-Badges und ein stabileres Umbruchverhalten auf kleineren Breiten. Die fachliche Logik der Module wurde nicht geändert.

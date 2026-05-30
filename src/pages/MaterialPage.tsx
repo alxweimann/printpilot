@@ -180,7 +180,16 @@ export function MaterialPage() {
             <Button>Filter</Button>
           </TableToolbar>
 
-          <DataTable>
+          <DataTable tableClassName="entity-data-table materials-data-table">
+
+            <colgroup>
+              <col className="materials-table-col-number" />
+              <col className="materials-table-col-name" />
+              <col className="materials-table-col-format" />
+              <col className="materials-table-col-stock" />
+              <col className="materials-table-col-status" />
+            </colgroup>
+
             <thead>
               <tr>
                 <SortableTableHeader

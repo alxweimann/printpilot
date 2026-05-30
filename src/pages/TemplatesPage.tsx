@@ -179,7 +179,17 @@ export function TemplatesPage() {
             <Button>Filter</Button>
           </TableToolbar>
 
-          <DataTable>
+          <DataTable tableClassName="entity-data-table templates-data-table">
+
+            <colgroup>
+              <col className="templates-table-col-number" />
+              <col className="templates-table-col-name" />
+              <col className="templates-table-col-type" />
+              <col className="templates-table-col-area" />
+              <col className="templates-table-col-default" />
+              <col className="templates-table-col-status" />
+            </colgroup>
+
             <thead>
               <tr>
                 <SortableTableHeader

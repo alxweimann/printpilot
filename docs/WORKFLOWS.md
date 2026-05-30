@@ -84,3 +84,7 @@ Die Auftragsliste ist nun praktisch nach Produktionszuständen filterbar. Die Su
 ## Update: Auftragsliste Tabellen-Feinschliff
 
 Der Tabellen-Feinschliff verändert ausschließlich Darstellung und Bedienbarkeit. Die Filter, Suche und fachlich getrennten Spalten bleiben bestehen; es werden keine Statuswerte, Freigaben oder Übergaben automatisch geändert.
+
+## Tabellenstandard für Master-Listen
+
+Master-Listen sollen einheitlich aufgebaut sein: feste Spaltenbreiten über `colgroup`, einzeilige gekürzte Haupttexte mit Ellipsis, Status-Badges mit moderatem Radius und ruhige Tabellenköpfe. Dieser Standard gilt aktuell für Aufträge sowie für die weiteren Listenmodule Kunden, Angebote, Lieferscheine, Rechnungen, Mahnungen, Material, Maschinen, Weiterverarbeitung, Leistungen und Vorlagen.

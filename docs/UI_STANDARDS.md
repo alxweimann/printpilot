@@ -84,3 +84,7 @@ Schnellfilter in Listen werden als ruhige, moderat gerundete Buttons dargestellt
 ## Auftragsliste – finaler Tabellenstil
 
 Auftragstabellen verwenden feste Spaltenbreiten und `table-layout: fixed`, damit Status-, Freigabe- und Übergabe-Badges ruhig ausgerichtet bleiben. Lange Kunden- und Produkttexte werden einzeilig gekürzt. Leere Such-/Filtertreffer erhalten eine eigene ruhige Empty-State-Zeile mit Rücksetz-Aktion.
+
+## Tabellenstandard - weitere Module
+
+Neben der Auftragsliste verwenden die übrigen Master-Listen jetzt den gemeinsamen `entity-data-table`-Standard. Tabellen sollen visuell ruhig bleiben: feste Spalten, keine springenden Textumbrüche, einzeilige Ellipsis für lange Namen/Betreffe, Badge-Radius `var(--radius-md)` statt Pill-Optik und kompakte Zeilenhöhen. Modul- oder fachlogische Sonderfälle dürfen eigene Klassen ergänzen, sollen aber auf diesem Standard aufbauen.

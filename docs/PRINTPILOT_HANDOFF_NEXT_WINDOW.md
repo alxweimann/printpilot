@@ -158,3 +158,9 @@ Nächster sinnvoller Schritt: Belegerstellung/Vorschau aus Auftrag fachlich prü
 Zuletzt umgesetzt: Auftragsliste final optisch beruhigt. Feste Spaltenbreiten, gekürzte lange Zelltexte, konsistente Badge-Breiten, kompaktere Filterdarstellung bei kleinen Breiten und Empty-State für leere Treffer. Keine Änderung an Status-/Freigabe-/Übergabe- oder Plantafel-Logik.
 
 Empfohlener nächster Schritt: Auftragsbereich kurz im Browser gesamthaft prüfen und dann entscheiden, ob mit Angebote, Kunden, Material oder Maschinen weitergearbeitet wird.
+
+## Letzter Stand - Tabellen-Feinschliff globalisiert
+
+Nach dem finalen Feinschliff der Auftragsliste wurde der gleiche visuelle Tabellenstandard auf die übrigen Listen übertragen. Betroffene Seiten: CustomersPage, QuotesPage, DeliveryNotesPage, InvoicesPage, RemindersPage, MaterialPage, MachinesPage, FinishingPage, ServicesPage, TemplatesPage. Zusätzlich wurde der gemeinsame CSS-Standard in `src/styles/globals.css` ergänzt.
+
+Bitte nach dem Einsetzen prüfen: alle genannten Listen öffnen, lange Namen/Betreffe kontrollieren, Status-Badges prüfen und Fensterbreite verkleinern.

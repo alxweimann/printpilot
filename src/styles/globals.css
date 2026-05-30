@@ -3015,3 +3015,153 @@ body {
     padding: 5px 8px;
   }
 }
+
+/* Shared list-table polish: applied to all non-order master tables after the orders table standard. */
+.entity-data-table {
+  min-width: 880px;
+  table-layout: fixed;
+}
+
+.entity-data-table th {
+  height: 34px;
+  background: rgba(248, 250, 252, 0.72);
+}
+
+.entity-data-table td {
+  height: 44px;
+  padding-right: 14px;
+  vertical-align: middle;
+}
+
+.entity-data-table .badge {
+  min-width: 98px;
+  justify-content: center;
+  border-radius: var(--radius-md);
+  font-weight: 680;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.32);
+}
+
+.entity-data-table td:first-child {
+  color: #475569;
+  font-weight: 720;
+  letter-spacing: -0.01em;
+  white-space: nowrap;
+}
+
+.entity-data-table td:last-child {
+  white-space: nowrap;
+}
+
+.entity-data-table td:nth-child(2),
+.entity-data-table td:nth-child(3),
+.entity-data-table td:nth-child(4) {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.customers-table-col-number,
+.quotes-table-col-number,
+.invoices-table-col-number,
+.reminders-table-col-number,
+.materials-table-col-number,
+.machines-table-col-number,
+.finishing-table-col-number,
+.services-table-col-number,
+.templates-table-col-number {
+  width: 128px;
+}
+
+.delivery-table-col-number {
+  width: 142px;
+}
+
+.customers-table-col-status,
+.quotes-table-col-status,
+.delivery-table-col-status,
+.invoices-table-col-status,
+.reminders-table-col-status,
+.materials-table-col-status,
+.machines-table-col-status,
+.finishing-table-col-status,
+.services-table-col-status,
+.templates-table-col-status {
+  width: 132px;
+}
+
+.customers-table-col-name,
+.quotes-table-col-customer,
+.delivery-table-col-customer,
+.invoices-table-col-customer,
+.reminders-table-col-customer,
+.materials-table-col-name,
+.machines-table-col-name,
+.finishing-table-col-name,
+.services-table-col-name,
+.templates-table-col-name {
+  width: 30%;
+}
+
+.customers-table-col-city {
+  width: auto;
+}
+
+.quotes-table-col-subject,
+.invoices-table-col-subject {
+  width: 34%;
+}
+
+.quotes-table-col-date,
+.invoices-table-col-date,
+.invoices-table-col-due,
+.reminders-table-col-deadline {
+  width: 112px;
+}
+
+.delivery-table-col-order,
+.reminders-table-col-invoice {
+  width: 132px;
+}
+
+.delivery-table-col-shipping,
+.materials-table-col-format,
+.machines-table-col-type,
+.finishing-table-col-category,
+.services-table-col-group,
+.templates-table-col-area {
+  width: 20%;
+}
+
+.materials-table-col-stock,
+.machines-table-col-color,
+.finishing-table-col-pricing,
+.services-table-col-unit,
+.services-table-col-price,
+.templates-table-col-type,
+.templates-table-col-default,
+.reminders-table-col-level {
+  width: 128px;
+}
+
+.services-data-table {
+  min-width: 980px;
+}
+
+.templates-data-table {
+  min-width: 980px;
+}
+
+.invoices-data-table {
+  min-width: 980px;
+}
+
+.delivery-notes-data-table,
+.reminders-data-table {
+  min-width: 920px;
+}
+
+@media (max-width: 860px) {
+  .entity-data-table {
+    min-width: 760px;
+  }
+}

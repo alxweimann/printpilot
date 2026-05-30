@@ -182,7 +182,17 @@ export function ServicesPage() {
             <Button>Filter</Button>
           </TableToolbar>
 
-          <DataTable>
+          <DataTable tableClassName="entity-data-table services-data-table">
+
+            <colgroup>
+              <col className="services-table-col-number" />
+              <col className="services-table-col-name" />
+              <col className="services-table-col-group" />
+              <col className="services-table-col-unit" />
+              <col className="services-table-col-price" />
+              <col className="services-table-col-status" />
+            </colgroup>
+
             <thead>
               <tr>
                 <SortableTableHeader

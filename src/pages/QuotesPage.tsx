@@ -425,7 +425,16 @@ export function QuotesPage() {
             <Button>Filter</Button>
           </TableToolbar>
 
-          <DataTable>
+          <DataTable tableClassName="entity-data-table quotes-data-table">
+
+            <colgroup>
+              <col className="quotes-table-col-number" />
+              <col className="quotes-table-col-customer" />
+              <col className="quotes-table-col-subject" />
+              <col className="quotes-table-col-date" />
+              <col className="quotes-table-col-status" />
+            </colgroup>
+
             <thead>
               <tr>
                 <SortableTableHeader

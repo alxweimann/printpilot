@@ -80,3 +80,7 @@ Die Auftragsliste zeigt Produktionszustände getrennt nach Freigabe, Übergabe u
 ## Auftragsliste – Filterbar
 
 Schnellfilter in Listen werden als ruhige, moderat gerundete Buttons dargestellt. Der aktive Filter nutzt die jeweilige Modul-Akzentfarbe dezent; inaktive Filter bleiben neutral. Zähler werden als kleine rechteckige Counter mit `var(--radius-sm)` dargestellt.
+
+## Auftragsliste – finaler Tabellenstil
+
+Auftragstabellen verwenden feste Spaltenbreiten und `table-layout: fixed`, damit Status-, Freigabe- und Übergabe-Badges ruhig ausgerichtet bleiben. Lange Kunden- und Produkttexte werden einzeilig gekürzt. Leere Such-/Filtertreffer erhalten eine eigene ruhige Empty-State-Zeile mit Rücksetz-Aktion.

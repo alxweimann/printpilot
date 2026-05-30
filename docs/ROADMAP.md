@@ -36,3 +36,7 @@ Die Auftragsliste wurde an die aktuelle Produktionslogik angeglichen: Freigabe, 
 ## Erledigt – Auftragsliste Filter und Suche
 
 Die Auftragsliste hat jetzt eine funktionale Suche und Schnellfilter für Status-/Produktionsfälle wie `Wartet`, `In Produktion`, `Abholbereit`, `Daten fehlen`, `Freigabe fehlt` und `Fertig`. Nächster sinnvoller Block: Belegerstellung/Vorschau fachlich prüfen oder Angebot → Auftrag sauberer ausbauen.
+
+## Update: Aufträge Tabellenabschluss
+
+Der Auftragsbereich ist nach Listenfilterung und Tabellen-Feinschliff visuell abgeschlossen. Nächster sinnvoller Bereich: entweder letzter Review des Auftragsmoduls im Gesamtkontext oder Start des nächsten Moduls wie Angebote/Kunden/Material.

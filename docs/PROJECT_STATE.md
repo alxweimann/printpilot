@@ -92,3 +92,10 @@ Die Auftragsliste verwendet nun dieselben fachlichen Kurzlabels wie Drawer und P
 - Zusätzlich gibt es kompakte Schnellfilter: `Alle`, `Wartet`, `In Produktion`, `Abholbereit`, `Daten fehlen`, `Freigabe fehlt` und `Fertig`.
 - Die Filter arbeiten auf den fachlich getrennten Feldern Status, Freigabe und Übergabe, ohne die bestehende Plantafel- oder Drawer-Logik zu verändern.
 - Eine Ergebniszeile zeigt, wie viele Aufträge aktuell sichtbar sind.
+
+## Update: Auftragsliste Tabellen-Feinschliff
+
+- Die Auftragsliste wurde optisch final beruhigt: feste Spaltenbreiten, klarere Tabellenkopffläche, gekürzte lange Kunden-/Produkttexte und konsistent zentrierte Status-Badges.
+- Die Filterleiste ist auf kleineren Breiten stabiler und bricht sauber um.
+- Bei leeren Treffern erscheint jetzt eine eigene ruhige Leeranzeige mit direktem `Filter zurücksetzen`.
+- Status-, Freigabe-, Übergabe-, Plantafel- und Drawer-Logik bleiben unverändert.

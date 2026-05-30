@@ -80,3 +80,7 @@ Die Auftragsliste ist an die Drawer-/Plantafel-Logik angeglichen. Ein Auftrag ka
 ## Update: Auftragsliste Filter und Suche
 
 Die Auftragsliste ist nun praktisch nach Produktionszuständen filterbar. Die Suche berücksichtigt Rohwerte und fachliche Kurzlabels, damit Begriffe wie `Weiterverarbeitung`, `Abholbereit`, `Daten fehlen` oder `Freigabe fehlt` direkt gefunden werden. Schnellfilter verändern keine Daten, sondern reduzieren nur die Listenansicht.
+
+## Update: Auftragsliste Tabellen-Feinschliff
+
+Der Tabellen-Feinschliff verändert ausschließlich Darstellung und Bedienbarkeit. Die Filter, Suche und fachlich getrennten Spalten bleiben bestehen; es werden keine Statuswerte, Freigaben oder Übergaben automatisch geändert.

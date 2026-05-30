@@ -152,3 +152,9 @@ Die Auftragsliste zeigt jetzt neben der Freigabe auch den konkreten Übergabesch
 Die Auftragsliste enthält jetzt eine funktionale Suche und Schnellfilter. Suche und Filter arbeiten auf den getrennten Informationen Status, Freigabe und Übergabe. Besonders testen: Suche nach `Abholbereit`, `Weiterverarbeitung`, `Daten fehlen`, `Freigabe fehlt`; Schnellfilter `Abholbereit`, `Daten fehlen`, `Freigabe fehlt` und `Fertig`.
 
 Nächster sinnvoller Schritt: Belegerstellung/Vorschau aus Auftrag fachlich prüfen oder den Übergang Angebot → Auftrag weiter ausbauen.
+
+## Übergabe-Update: Auftragsliste Tabellen-Feinschliff
+
+Zuletzt umgesetzt: Auftragsliste final optisch beruhigt. Feste Spaltenbreiten, gekürzte lange Zelltexte, konsistente Badge-Breiten, kompaktere Filterdarstellung bei kleinen Breiten und Empty-State für leere Treffer. Keine Änderung an Status-/Freigabe-/Übergabe- oder Plantafel-Logik.
+
+Empfohlener nächster Schritt: Auftragsbereich kurz im Browser gesamthaft prüfen und dann entscheiden, ob mit Angebote, Kunden, Material oder Maschinen weitergearbeitet wird.

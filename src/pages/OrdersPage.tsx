@@ -1120,7 +1120,7 @@ export function OrdersPage() {
         />
 
         <section className="workspace-panel">
-          <TableToolbar>
+          <TableToolbar className="order-table-toolbar">
             <Input
               className="search-input"
               placeholder="Aufträge suchen..."
@@ -1160,7 +1160,17 @@ export function OrdersPage() {
             {filteredOrderRows.length} von {orderRows.length} Aufträgen angezeigt
           </div>
 
-          <DataTable>
+          <DataTable tableClassName="orders-data-table">
+            <colgroup>
+              <col className="orders-table-col-number" />
+              <col className="orders-table-col-customer" />
+              <col className="orders-table-col-product" />
+              <col className="orders-table-col-due" />
+              <col className="orders-table-col-approval" />
+              <col className="orders-table-col-handoff" />
+              <col className="orders-table-col-status" />
+            </colgroup>
+
             <thead>
               <tr>
                 <SortableTableHeader
@@ -1224,13 +1234,17 @@ export function OrdersPage() {
                     }
                     onClick={() => handleOrderSelect(order.id)}
                   >
-                    <td style={{ whiteSpace: "nowrap" }}>{order.number}</td>
-                    <td>{order.customerName}</td>
-                    <td>{order.product}</td>
-                    <td style={{ whiteSpace: "nowrap" }}>
+                    <td className="orders-table-cell-nowrap orders-table-number">{order.number}</td>
+                    <td className="orders-table-customer" title={order.customerName}>
+                      {order.customerName}
+                    </td>
+                    <td className="orders-table-product" title={order.product}>
+                      {order.product}
+                    </td>
+                    <td className="orders-table-cell-nowrap orders-table-date">
                       {formatPrintPilotDateString(order.dueDate, settings.dateFormat)}
                     </td>
-                    <td style={{ whiteSpace: "nowrap" }}>
+                    <td className="orders-table-cell-nowrap">
                       <span
                         className={getOrderListBadgeClass(approvalSummary.tone)}
                         title={approvalSummary.detail}
@@ -1238,7 +1252,7 @@ export function OrdersPage() {
                         {approvalSummary.label}
                       </span>
                     </td>
-                    <td style={{ whiteSpace: "nowrap" }}>
+                    <td className="orders-table-cell-nowrap">
                       <span
                         className={getOrderListBadgeClass(handoffSummary.tone)}
                         title={handoffSummary.detail}
@@ -1246,7 +1260,7 @@ export function OrdersPage() {
                         {handoffSummary.label}
                       </span>
                     </td>
-                    <td style={{ whiteSpace: "nowrap" }}>
+                    <td className="orders-table-cell-nowrap">
                       <span
                         className={getOrderListBadgeClass(statusSummary.tone)}
                         title={statusSummary.detail}
@@ -1257,6 +1271,24 @@ export function OrdersPage() {
                   </tr>
                 );
               })}
+
+              {sortedOrderRows.length === 0 ? (
+                <tr className="orders-table-empty-row">
+                  <td colSpan={7}>
+                    <div className="orders-table-empty-state">
+                      <strong>Keine passenden Aufträge gefunden</strong>
+                      <span>
+                        Passe die Suche oder den Schnellfilter an, um wieder Aufträge anzuzeigen.
+                      </span>
+                      {hasActiveOrderFilters ? (
+                        <button type="button" onClick={handleResetOrderFilters}>
+                          Filter zurücksetzen
+                        </button>
+                      ) : null}
+                    </div>
+                  </td>
+                </tr>
+              ) : null}
             </tbody>
           </DataTable>
         </section>

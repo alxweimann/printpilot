@@ -46,3 +46,10 @@ Der Auftragsbereich ist nach Listenfilterung und Tabellen-Feinschliff visuell ab
 - Auftragslisten-Standard auf weitere Master-Listen übertragen.
 - Tabellenlayout für Kunden, Angebote, Lieferscheine, Rechnungen, Mahnungen, Material, Maschinen, Weiterverarbeitung, Leistungen und Vorlagen vereinheitlicht.
 - Nächster sinnvoller Schritt: nach finaler Sichtprüfung mit dem nächsten Modulbereich weitermachen oder gezielt Such-/Filterfunktionen für weitere Listen ausbauen.
+## Erledigt – Globaler UI-Konsistenzcheck
+
+- Alte Pill-Optiken in Badges, Dashboard-Hinweisen und Produktionslabels reduziert.
+- Badge- und Status-Radien an den Button-Stil angepasst.
+- Überfette Schriftgewichte in mehreren UI-Bereichen weiter beruhigt.
+- Fortschrittsbalken und echte Indikatoren bleiben bewusst rund.
+- Keine Daten-, Status- oder Workflowlogik geändert.

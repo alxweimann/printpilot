@@ -88,3 +88,6 @@ Auftragstabellen verwenden feste Spaltenbreiten und `table-layout: fixed`, damit
 ## Tabellenstandard - weitere Module
 
 Neben der Auftragsliste verwenden die übrigen Master-Listen jetzt den gemeinsamen `entity-data-table`-Standard. Tabellen sollen visuell ruhig bleiben: feste Spalten, keine springenden Textumbrüche, einzeilige Ellipsis für lange Namen/Betreffe, Badge-Radius `var(--radius-md)` statt Pill-Optik und kompakte Zeilenhöhen. Modul- oder fachlogische Sonderfälle dürfen eigene Klassen ergänzen, sollen aber auf diesem Standard aufbauen.
+## Global UI Consistency
+
+Badges, Filter-Chips, Schnellaktionen und Statuslabels verwenden standardmäßig `var(--radius-md)` und keine vollrunden Pill-Radien. Sehr runde Formen bleiben nur für echte Indikatoren wie Fortschrittsbalken, kleine Dots oder schmale Akzentmarker erlaubt. Schriftgewichte sollen im UI überwiegend zwischen 600 und 760 liegen; extreme Gewichte sind nur für Sonderfälle wie Logos oder LED-Anzeigen zulässig.

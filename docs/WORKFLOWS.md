@@ -88,3 +88,6 @@ Der Tabellen-Feinschliff verändert ausschließlich Darstellung und Bedienbarkei
 ## Tabellenstandard für Master-Listen
 
 Master-Listen sollen einheitlich aufgebaut sein: feste Spaltenbreiten über `colgroup`, einzeilige gekürzte Haupttexte mit Ellipsis, Status-Badges mit moderatem Radius und ruhige Tabellenköpfe. Dieser Standard gilt aktuell für Aufträge sowie für die weiteren Listenmodule Kunden, Angebote, Lieferscheine, Rechnungen, Mahnungen, Material, Maschinen, Weiterverarbeitung, Leistungen und Vorlagen.
+## Globaler UI-Konsistenzcheck
+
+Nach dem Tabellen-Feinschliff wurden globale UI-Reste bereinigt: Statuslabels, Badges, Dashboard-Pills und Produktionshinweise folgen jetzt dem moderaten Button-Radius. Dadurch wirken Tabellen, Drawer, Dashboard und Plantafel konsistenter, ohne Daten- oder Workflowlogik zu verändern.

@@ -296,7 +296,7 @@ export function StatusBadge({
   return (
     <span
       className={[
-        "inline-flex min-w-[88px] items-center justify-center rounded-full px-3 py-1.5 text-xs font-semibold ring-1 ring-inset",
+        "inline-flex min-w-[88px] items-center justify-center rounded-md px-3 py-1.5 text-xs font-semibold ring-1 ring-inset",
         badgeToneClasses[tone],
       ].join(" ")}
     >

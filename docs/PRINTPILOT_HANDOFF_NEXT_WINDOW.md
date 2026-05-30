@@ -164,3 +164,15 @@ Empfohlener nächster Schritt: Auftragsbereich kurz im Browser gesamthaft prüfe
 Nach dem finalen Feinschliff der Auftragsliste wurde der gleiche visuelle Tabellenstandard auf die übrigen Listen übertragen. Betroffene Seiten: CustomersPage, QuotesPage, DeliveryNotesPage, InvoicesPage, RemindersPage, MaterialPage, MachinesPage, FinishingPage, ServicesPage, TemplatesPage. Zusätzlich wurde der gemeinsame CSS-Standard in `src/styles/globals.css` ergänzt.
 
 Bitte nach dem Einsetzen prüfen: alle genannten Listen öffnen, lange Namen/Betreffe kontrollieren, Status-Badges prüfen und Fensterbreite verkleinern.
+## Letzter Block: Globaler UI-Konsistenzcheck
+
+Umgesetzt und gepushed werden soll nach dem Einsetzen:
+
+- alte Pill-Optiken weiter reduziert
+- Badge-/Status-Radius an Button-Stil angeglichen
+- Dashboard-Pills, Produktionslabels und Tabellen-Badges optisch harmonisiert
+- extreme Schriftgewichte in Plantafel/Handlungsbedarf weiter reduziert
+- Fortschrittsbalken und echte Indikatorpunkte bleiben rund
+- keine Logikänderungen
+
+Nächster sinnvoller Schritt danach: fachliches Modul auswählen, zum Beispiel Angebote, Material oder Maschinen.

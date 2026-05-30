@@ -103,3 +103,6 @@ Die Auftragsliste verwendet nun dieselben fachlichen Kurzlabels wie Drawer und P
 ## Update 2026-05-30 - Tabellen-Feinschliff auf weitere Module übertragen
 
 Der finale Tabellenstandard aus der Auftragsliste wurde auf die übrigen Master-Listen übertragen: Kunden, Angebote, Lieferscheine, Rechnungen, Mahnungen, Material, Maschinen, Weiterverarbeitung, Leistungen und Vorlagen. Die Tabellen nutzen jetzt feste Spaltenbreiten, ruhigere Tabellenköpfe, einzeilige gekürzte Texte, konsistentere Status-Badges und ein stabileres Umbruchverhalten auf kleineren Breiten. Die fachliche Logik der Module wurde nicht geändert.
+## Globaler UI-Konsistenzcheck
+
+Der globale UI-Konsistenzcheck ist umgesetzt. Restliche alte Pill-Optiken in Badges, Dashboard-Hinweisen, Produktionslabels und Tabellenstatus wurden auf den moderaten Button-Radius umgestellt. Extreme Schriftgewichte in Plantafel, Handlungsbedarf und Produktionshinweisen wurden weiter reduziert. Fortschrittsbalken und echte Punkt-/Strichmarker bleiben bewusst rund, weil sie keine klickbaren Pills sind.

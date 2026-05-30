@@ -840,10 +840,10 @@ button {
   display: inline-flex;
   align-items: center;
   height: 22px;
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   padding: 0 9px;
   font-size: 11px;
-  font-weight: 700;
+  font-weight: 680;
   white-space: nowrap;
 }
 
@@ -1086,7 +1086,7 @@ button {
     "Liberation Mono",
     monospace !important;
   font-size: 15px !important;
-  font-weight: 800 !important;
+  font-weight: 720 !important;
   letter-spacing: 0.16em !important;
   line-height: 1.25 !important;
   text-align: center !important;
@@ -1134,7 +1134,7 @@ button {
     "Liberation Mono",
     monospace !important;
   font-size: 16px !important;
-  font-weight: 800 !important;
+  font-weight: 720 !important;
   letter-spacing: 0.16em !important;
   line-height: 1.25 !important;
   text-align: center !important;
@@ -1387,13 +1387,13 @@ body {
   min-height: 30px;
   padding: 6px 10px;
   border: 1px solid rgba(148, 163, 184, 0.32);
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   background:
-    linear-gradient(135deg, rgba(0, 174, 239, 0.08), rgba(236, 0, 140, 0.08)),
+    linear-gradient(135deg, rgba(0, 174, 239, 0.07), rgba(236, 0, 140, 0.06)),
     rgba(255, 255, 255, 0.72);
   color: #475569;
   font-size: 12px;
-  font-weight: 850;
+  font-weight: 720;
   white-space: nowrap;
 }
 
@@ -1407,7 +1407,7 @@ body {
 
 .dashboard-work-row td:first-child {
   position: relative;
-  font-weight: 850;
+  font-weight: 720;
 }
 
 .dashboard-work-row td:first-child::before {
@@ -1425,7 +1425,7 @@ body {
   display: block;
   color: #0f172a;
   font-size: 13px;
-  font-weight: 850;
+  font-weight: 720;
 }
 
 .dashboard-work-row small {
@@ -1466,12 +1466,12 @@ body {
   min-height: 22px;
   padding: 3px 8px;
   border: 1px solid rgba(148, 163, 184, 0.28);
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   background: rgba(248, 250, 252, 0.86);
   color: var(--dashboard-accent, #334155);
   font-size: 11px;
-  font-weight: 900;
-  letter-spacing: 0.03em;
+  font-weight: 720;
+  letter-spacing: 0.01em;
 }
 
 @media (max-width: 1440px) {
@@ -1558,7 +1558,7 @@ body {
   display: block;
   color: #0f172a;
   font-size: 14px;
-  font-weight: 950;
+  font-weight: 760;
 }
 
 .production-timeline-card-header span {
@@ -1575,12 +1575,12 @@ body {
   min-height: 22px;
   align-items: center;
   padding: 3px 8px;
-  border-radius: 999px;
-  background: rgba(15, 23, 42, 0.06);
+  border-radius: var(--radius-md);
+  background: rgba(15, 23, 42, 0.055);
   color: #0f172a !important;
   font-size: 10px !important;
-  font-weight: 950 !important;
-  letter-spacing: 0.06em;
+  font-weight: 760 !important;
+  letter-spacing: 0.035em;
   text-transform: uppercase;
   white-space: nowrap;
 }
@@ -1596,11 +1596,11 @@ body {
   min-height: 22px;
   align-items: center;
   padding: 3px 8px;
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   background: rgba(248, 250, 252, 0.9);
   color: #475569;
   font-size: 11px;
-  font-weight: 850;
+  font-weight: 680;
 }
 
 .production-timeline-progress {
@@ -1627,7 +1627,7 @@ body {
 .production-timeline-progress strong {
   color: #0f172a;
   font-size: 12px;
-  font-weight: 950;
+  font-weight: 760;
 }
 
 .production-timeline-details {
@@ -1641,21 +1641,21 @@ body {
 
 .production-timeline-blocker {
   width: fit-content;
-  border-radius: 999px;
+  border-radius: var(--radius-md);
   padding: 4px 8px;
   background: rgba(249, 115, 22, 0.12);
   color: #9a3412;
   font-size: 11px;
-  font-weight: 900;
+  font-weight: 740;
 }
 
 .production-timeline-empty {
   border: 1px dashed rgba(148, 163, 184, 0.42);
-  border-radius: 18px;
+  border-radius: var(--radius-lg);
   padding: 18px;
   color: #64748b;
   font-size: 13px;
-  font-weight: 800;
+  font-weight: 680;
   text-align: center;
 }
 
@@ -1877,13 +1877,13 @@ body {
   margin: 0;
   color: #0f172a;
   font-size: 13px;
-  font-weight: 950;
+  font-weight: 760;
 }
 
 .production-timeline-group-header span {
   color: #64748b;
   font-size: 11px;
-  font-weight: 850;
+  font-weight: 720;
 }
 
 .production-timeline-group-grid {
@@ -1946,7 +1946,7 @@ body {
   margin: 0 !important;
   color: #0f172a !important;
   font-size: 15px !important;
-  font-weight: 950 !important;
+  font-weight: 760 !important;
   letter-spacing: -0.02em !important;
 }
 
@@ -1955,7 +1955,7 @@ body {
   margin-top: 5px !important;
   color: #64748b !important;
   font-size: 11.25px !important;
-  font-weight: 800 !important;
+  font-weight: 720 !important;
 }
 
 .production-week-column-header strong {
@@ -1969,7 +1969,7 @@ body {
   background: rgba(255, 255, 255, 0.82) !important;
   color: #0f172a !important;
   font-size: 12px !important;
-  font-weight: 950 !important;
+  font-weight: 760 !important;
 }
 
 .production-week-column-list,
@@ -2017,7 +2017,7 @@ body {
   overflow: hidden !important;
   color: #0f172a !important;
   font-size: 11.25px !important;
-  font-weight: 950 !important;
+  font-weight: 760 !important;
   letter-spacing: -0.01em !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
@@ -2027,14 +2027,14 @@ body {
   flex-shrink: 0 !important;
   color: #0369a1 !important;
   font-size: 10px !important;
-  font-weight: 950 !important;
+  font-weight: 760 !important;
 }
 
 .production-week-card-title {
   overflow: hidden !important;
   color: #0f172a !important;
   font-size: 11.25px !important;
-  font-weight: 850 !important;
+  font-weight: 740 !important;
   line-height: 1.25 !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
@@ -2078,12 +2078,12 @@ body {
   min-height: 18px !important;
   align-items: center !important;
   overflow: hidden !important;
-  border-radius: 999px !important;
+  border-radius: var(--radius-md) !important;
   background: rgba(248, 250, 252, 0.96) !important;
   color: #475569 !important;
   padding: 2px 6px !important;
   font-size: 9px !important;
-  font-weight: 850 !important;
+  font-weight: 720 !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
 }
@@ -2093,12 +2093,12 @@ body {
   max-width: 100% !important;
   overflow: hidden !important;
   border: 1px solid rgba(249, 115, 22, 0.18) !important;
-  border-radius: 999px !important;
+  border-radius: var(--radius-md) !important;
   background: rgba(255, 247, 237, 0.88) !important;
   color: #9a3412 !important;
   padding: 3px 7px !important;
   font-size: 9px !important;
-  font-weight: 900 !important;
+  font-weight: 760 !important;
   text-overflow: ellipsis !important;
   white-space: nowrap !important;
 }
@@ -2112,7 +2112,7 @@ body {
   background: rgba(255, 255, 255, 0.42) !important;
   color: #94a3b8 !important;
   font-size: 10px !important;
-  font-weight: 850 !important;
+  font-weight: 720 !important;
 }
 
 @media (max-width: 900px) {
@@ -2368,7 +2368,7 @@ body {
 /* Production week board typography refinement. */
 .production-week-column-header h3 {
   font-size: 14px !important;
-  font-weight: 850 !important;
+  font-weight: 740 !important;
   letter-spacing: -0.015em !important;
   line-height: 1.2 !important;
 }
@@ -2381,19 +2381,19 @@ body {
 
 .production-week-column-header strong {
   font-size: 10px !important;
-  font-weight: 800 !important;
+  font-weight: 720 !important;
 }
 
 .production-week-card-topline strong {
   font-size: 10.5px !important;
-  font-weight: 850 !important;
+  font-weight: 740 !important;
   letter-spacing: 0 !important;
   line-height: 1.2 !important;
 }
 
 .production-week-card-topline span {
   font-size: 9.5px !important;
-  font-weight: 800 !important;
+  font-weight: 720 !important;
   line-height: 1.2 !important;
 }
 

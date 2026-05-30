@@ -62,3 +62,6 @@ Die Produktions-Schnellaktionen bleiben als kurze Workflow-Pills sichtbar. Die B
 
 ## UI-Regel – Schnellaktionen im Auftragsdrawer
 Schnellaktionen im Produktionsbereich werden als kompakte Buttons dargestellt. Sie verwenden denselben moderaten Radius wie die unteren Drawer-Aktionen, damit sie nicht wie bunte Status-Pills wirken.
+
+## Update 2026-05-30 – Auftragsdrawer Layout-Feinschliff
+Im Auftragsdrawer wurde der Produktionsbereich optisch finalisiert. Die Schnellaktionen sind jetzt klar als eigener Abschnitt beschriftet. Die Workflow-Logik selbst wurde nicht geändert: `Abholbereit` bleibt offen sichtbar, `Fertig` schließt den Auftrag für die offene Plantafel ab.

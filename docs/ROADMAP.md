@@ -18,3 +18,6 @@
 - Erledigt: Lesbarkeit der Schnellaktions-Beschriftungen im Auftragsdrawer korrigiert
 
 - Erledigt: Schnellaktionsbuttons im Auftragsdrawer optisch an die unteren Drawer-Buttons angeglichen.
+
+## Erledigt – Auftragsdrawer Layout-Feinschliff
+Der finale Layout-Check des Auftragsdrawers ist umgesetzt. Nächster sinnvoller Block: fachliche Weiterarbeit an Belegerstellung, Vorschau oder Übergang Angebot → Auftrag.

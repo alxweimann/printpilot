@@ -71,3 +71,6 @@ Die Schnellaktionen im Auftragsdrawer verwenden jetzt wieder klare einzeilige Be
 
 ## Update 2026-05-30 – Auftragsdrawer Schnellaktionen eckiger
 Die Schnellaktions-Buttons im Auftragsdrawer wurden optisch an die unteren Drawer-Buttons angeglichen: nicht mehr pillenförmig/komplett rund, sondern mit `var(--radius-md)`. Die Statuslogik bleibt unverändert.
+
+## Update 2026-05-30 – Auftragsdrawer finaler Layout-Check
+Der Produktionsbereich im Auftragsdrawer wurde final optisch nachgeschärft: Produktionskarten und Produktionsprüfung sind etwas kompakter, die Schnellaktionen haben eine eigene kleine Überschrift und die Warn-/Blockerchips verwenden nun ebenfalls moderat gerundete Radien statt Pill-Optik. Die fachliche Status-, Freigabe- und Plantafel-Logik bleibt unverändert.

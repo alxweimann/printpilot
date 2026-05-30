@@ -1268,9 +1268,12 @@ export function OrdersPage() {
               ) : null}
             </div>
 
-            <div className="order-production-quick-actions">
-              <button
-                type="button"
+            <div className="order-production-action-group">
+              <div className="order-production-action-heading">Schnellaktionen</div>
+
+              <div className="order-production-quick-actions">
+                <button
+                  type="button"
                 className={
                   isProductionQuickActionActive(draftOrder, "approve")
                     ? "order-production-quick-action-active"
@@ -1352,6 +1355,7 @@ export function OrdersPage() {
               >
                 <span>Fertig</span>
               </button>
+              </div>
             </div>
 
             <FieldGrid>

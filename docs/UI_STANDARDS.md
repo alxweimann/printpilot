@@ -62,3 +62,6 @@ Schnellaktionen im Auftragsdrawer müssen als lesbare einzeilige Labels erschein
 
 ## Auftragsdrawer – Schnellaktionsbuttons
 Die Schnellaktionen im Produktionsbereich verwenden `border-radius: var(--radius-md)` statt voll gerundeter Pill-Optik. Dadurch passen sie optisch zu den unteren Aktionsbuttons und wirken ruhiger.
+
+## Auftragsdrawer – Produktionsbereich final
+Der Produktionsbereich im Auftragsdrawer folgt einer ruhigen Reihenfolge: vier kompakte Statuskarten, Produktionsprüfung, beschriftete Schnellaktionen, danach die Detailfelder. Schnellaktionen und Blockerchips verwenden moderate Radien (`var(--radius-md)`), keine Pill-Optik. Inaktive Schnellaktionen bleiben neutral; Farben werden nur für Hover und aktiven Zustand genutzt.

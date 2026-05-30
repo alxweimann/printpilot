@@ -132,3 +132,6 @@ Aktueller Zusatz: Die Produktions-Schnellaktionen im Auftragsdrawer sind jetzt r
 
 ## Letzter Stand
 Schnellaktionsbuttons im Auftragsdrawer sind nicht mehr komplett rund, sondern entsprechen optisch den unteren Drawer-Buttons. Nächster sinnvoller Schritt: finaler Sichttest des Drawers und anschließend nächster Funktionsblock.
+
+## Letzter Stand – Auftragsdrawer finaler Layout-Check
+Der aktuelle Stand enthält den finalen Layout-Feinschliff für den Produktionsbereich im Auftragsdrawer. Statuskarten, Produktionsprüfung und Schnellaktionen sind kompakter und ruhiger. Die Schnellaktionen haben eine eigene Überschrift und verwenden denselben moderaten Button-Radius wie die übrigen Buttons. Keine Änderung an der fachlichen Statuslogik.

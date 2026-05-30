@@ -9,4 +9,8 @@
 - Erledigt: Typografie im Dashboard-Handlungsbedarf beruhigt
 - Erledigt: CSS-Fix für Produktionspanel im Auftragsdrawer
 - Erledigt: Produktions-Schnellaktionen im Auftragsdrawer farblich differenziert
-- Erledigt: Fortschrittsbalken der Plantafel-Mini-Karten sichtbarer gemacht
+
+- Erledigt: Auftragsdrawer um Blocker-/Produktionsprüfung ergänzt
+- Erledigt: Plantafel zeigt konkrete Produktionsschritte statt nur `In Produktion`
+- Erledigt: Plantafel zeigt Freigabestand zusätzlich zum Produktionsschritt
+- Erledigt: Farben der sechs Dashboard-Kennzahlenkarten vereinheitlicht

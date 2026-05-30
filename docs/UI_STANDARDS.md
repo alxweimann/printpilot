@@ -35,6 +35,19 @@ Produktionsstatus-Karten im Drawer werden als ruhige Karten mit linksseitigem Ak
 ## Production Quick Action Colors
 
 Produktions-Schnellaktionen verwenden dezente semantische Farben: Erfolg grün, Warnung orange, Produktionsschritte blau, Versandbereitschaft gelb und Abschluss violett.
-## Production Week Progress Bar
 
-Fortschrittsbalken in Wochen-Mini-Karten sollen sichtbar genug sein, aber ruhig bleiben: ca. 7 px Höhe, dezenter Hintergrund, abgerundeter Verlauf.
+## Order Production Readiness
+
+Produktionsbereiche im Drawer verwenden eine ruhige Readiness-Box zwischen Statuskarten und Schnellaktionen. Warnungen werden als kleine Pills dargestellt, erfolgreiche Zustände bleiben grün und dezent. Aktive Schnellaktionen erhalten eine leichte Innenkontur statt harter Farbflächen.
+
+## Production Week Status Labels
+
+Mini-Karten in der Plantafel zeigen fachliche Produktionslabels. Technische Sammelstatus wie `In Produktion` sollen nicht dominieren, wenn ein konkreter Übergabeschritt wie `In Druck`, `Weiterverarbeitung` oder `Abholbereit` vorhanden ist.
+
+## Production Week Approval Labels
+
+Mini-Karten in der Plantafel zeigen neben Maschine und Produktionsschritt auch den Freigabestand. Die Freigabe wird kompakt als Meta-Pill dargestellt und soll nicht den eigentlichen Produktionsschritt ersetzen.
+
+## Dashboard Metric Card Colors
+
+Dashboard-Kennzahlenkarten müssen eine einheitliche Accent-Variable verwenden. Farbstreifen, Label und Verlauf dürfen nicht aus unterschiedlichen CSS-Variablen kommen. Aktuelle Zuordnung: Angebote grün, Aufträge lila, Versand gelb, Rechnungen blau, Mahnungen magenta, Material orange.

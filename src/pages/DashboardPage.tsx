@@ -34,6 +34,8 @@ type ProductionTimelineOrder = {
   customerName: string;
   product: string;
   status: string;
+  productionLabel: string;
+  approvalLabel: string;
   dueDate: string;
   dueGroup: ProductionTimelineDueGroup;
   machine: string;
@@ -170,6 +172,7 @@ function getProductionProgress(order: {
 
   if (
     order.approval === "Freigabe ausstehend" ||
+    order.approval === "Freigabe offen" ||
     order.approval === "Daten unvollständig" ||
     order.handoff === "Wartet auf Daten"
   ) {
@@ -191,12 +194,68 @@ function getProductionProgress(order: {
   return 40;
 }
 
+
+function getProductionDisplayLabel(order: {
+  handoff: string;
+  status: string;
+}) {
+  if (order.handoff === "In Weiterverarbeitung") {
+    return "Weiterverarbeitung";
+  }
+
+  if (order.handoff === "Abholbereit") {
+    return "Abholbereit";
+  }
+
+  if (order.handoff === "In Druck") {
+    return "In Druck";
+  }
+
+  if (order.handoff === "Wartet auf Daten") {
+    return "Daten fehlen";
+  }
+
+  if (order.handoff === "Druckdaten prüfen") {
+    return "Daten prüfen";
+  }
+
+  if (order.handoff === "Versendet") {
+    return "Versendet";
+  }
+
+  if (order.handoff === "Abgeschlossen") {
+    return "Fertig";
+  }
+
+  return order.status;
+}
+
+function getProductionApprovalLabel(approval: string) {
+  if (approval === "Freigabe erteilt") {
+    return "Freigabe ok";
+  }
+
+  if (approval === "Nicht erforderlich") {
+    return "Freigabe nicht nötig";
+  }
+
+  if (approval === "Daten unvollständig") {
+    return "Daten unvollständig";
+  }
+
+  if (approval === "Freigabe ausstehend" || approval === "Freigabe offen") {
+    return "Freigabe fehlt";
+  }
+
+  return approval || "Freigabe offen";
+}
+
 function getProductionBlocker(order: {
   approval: string;
   handoff: string;
   status: string;
 }) {
-  if (order.approval === "Freigabe ausstehend") {
+  if (order.approval === "Freigabe ausstehend" || order.approval === "Freigabe offen") {
     return "Freigabe fehlt";
   }
 
@@ -339,7 +398,7 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
       type: "Auftrag",
       number: order.number,
       customerName: order.customerName,
-      status: order.status,
+      status: getProductionDisplayLabel(order),
       pageId: "orders",
       priority: "Produktion",
       hint: "Produktionsstatus prüfen",
@@ -403,6 +462,8 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
           customerName: order.customerName,
           product: order.product,
           status: order.status,
+          productionLabel: getProductionDisplayLabel(order),
+          approvalLabel: getProductionApprovalLabel(order.approval),
           dueDate: order.dueDate,
           dueGroup: getProductionDueGroup(daysUntilDueDate),
           machine: order.machine,
@@ -685,7 +746,8 @@ export function DashboardPage({ onNavigate }: DashboardPageProps) {
 
                         <div className="production-week-card-meta">
                           <span>{order.machine || "keine Maschine"}</span>
-                          <span>{order.status}</span>
+                          <span>{order.productionLabel}</span>
+                          <span>{order.approvalLabel}</span>
                         </div>
 
                         {order.blocker ? (

@@ -1330,11 +1330,11 @@ body {
 }
 
 .dashboard-metric-delivery {
-  --metric-accent: var(--color-yellow);
+  --dashboard-accent: #f59e0b;
 }
 
 .dashboard-metric-reminders {
-  --metric-accent: var(--color-magenta);
+  --dashboard-accent: #db2777;
 }
 
 .dashboard-grid-workflow .dashboard-metric-card {
@@ -1349,13 +1349,13 @@ body {
   position: absolute;
   inset: 0 auto 0 0;
   width: 5px;
-  background: var(--metric-accent, var(--color-cyan));
-  opacity: 0.88;
+  background: var(--dashboard-accent, var(--color-cyan));
+  opacity: 0.9;
 }
 
 .dashboard-grid-workflow .dashboard-metric-label {
   min-height: 28px;
-  color: #334155;
+  color: var(--dashboard-accent, #334155);
   font-size: 11px;
   line-height: 1.25;
 }
@@ -1468,7 +1468,7 @@ body {
   border: 1px solid rgba(148, 163, 184, 0.28);
   border-radius: 999px;
   background: rgba(248, 250, 252, 0.86);
-  color: #334155;
+  color: var(--dashboard-accent, #334155);
   font-size: 11px;
   font-weight: 900;
   letter-spacing: 0.03em;
@@ -2314,15 +2314,12 @@ body {
 }
 
 .production-week-card-progress {
-  height: 7px !important;
-  margin: 1px 0 !important;
-  border-radius: 999px !important;
-  background: rgba(148, 163, 184, 0.16) !important;
+  height: 5px !important;
+  background: rgba(148, 163, 184, 0.14) !important;
 }
 
 .production-week-card-progress span {
-  border-radius: inherit !important;
-  background: linear-gradient(90deg, rgba(14, 165, 233, 0.86), rgba(34, 197, 94, 0.76)) !important;
+  background: linear-gradient(90deg, rgba(14, 165, 233, 0.78), rgba(34, 197, 94, 0.68)) !important;
 }
 
 .production-week-card-meta {
@@ -2650,4 +2647,101 @@ body {
 .detail-drawer-panel .order-production-quick-actions button:nth-child(6):hover:not(:disabled) {
   border-color: rgba(124, 58, 237, 0.42) !important;
   background: rgba(237, 233, 254, 0.9) !important;
+}
+
+/* Order production readiness / blocker summary. */
+.detail-drawer-panel .order-production-readiness {
+  display: grid !important;
+  grid-template-columns: minmax(0, 1fr) auto !important;
+  gap: 12px !important;
+  align-items: center !important;
+  margin: 0 0 14px !important;
+  border: 1px solid rgba(148, 163, 184, 0.24) !important;
+  border-radius: 16px !important;
+  background: rgba(248, 250, 252, 0.9) !important;
+  padding: 11px 12px !important;
+}
+
+.detail-drawer-panel .order-production-readiness span {
+  display: block !important;
+  margin: 0 0 3px !important;
+  color: #64748b !important;
+  font-size: 10px !important;
+  font-weight: 760 !important;
+  letter-spacing: 0.06em !important;
+  line-height: 1.2 !important;
+  text-transform: uppercase !important;
+}
+
+.detail-drawer-panel .order-production-readiness strong {
+  display: block !important;
+  color: #0f172a !important;
+  font-size: 13px !important;
+  font-weight: 780 !important;
+  line-height: 1.25 !important;
+}
+
+.detail-drawer-panel .order-production-readiness p {
+  margin: 3px 0 0 !important;
+  color: #64748b !important;
+  font-size: 12px !important;
+  line-height: 1.45 !important;
+}
+
+.detail-drawer-panel .order-production-readiness ul {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  justify-content: flex-end !important;
+  gap: 6px !important;
+  max-width: 360px !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  list-style: none !important;
+}
+
+.detail-drawer-panel .order-production-readiness li {
+  border: 1px solid rgba(245, 158, 11, 0.24) !important;
+  border-radius: 999px !important;
+  background: rgba(255, 251, 235, 0.82) !important;
+  color: #92400e !important;
+  padding: 4px 8px !important;
+  font-size: 10px !important;
+  font-weight: 760 !important;
+  line-height: 1.2 !important;
+  white-space: nowrap !important;
+}
+
+.detail-drawer-panel .order-production-readiness-warning {
+  border-color: rgba(245, 158, 11, 0.3) !important;
+  background: rgba(255, 251, 235, 0.62) !important;
+}
+
+.detail-drawer-panel .order-production-readiness-success {
+  border-color: rgba(34, 197, 94, 0.22) !important;
+  background: rgba(240, 253, 244, 0.62) !important;
+}
+
+.detail-drawer-panel .order-production-readiness-success strong {
+  color: #166534 !important;
+}
+
+.detail-drawer-panel .order-production-readiness-warning strong {
+  color: #92400e !important;
+}
+
+.detail-drawer-panel .order-production-quick-actions .order-production-quick-action-active,
+.detail-drawer-panel .order-production-quick-actions button[aria-pressed="true"] {
+  box-shadow: inset 0 0 0 1px currentColor, 0 8px 18px rgba(15, 23, 42, 0.08) !important;
+  transform: translateY(-1px) !important;
+}
+
+@media (max-width: 780px) {
+  .detail-drawer-panel .order-production-readiness {
+    grid-template-columns: 1fr !important;
+  }
+
+  .detail-drawer-panel .order-production-readiness ul {
+    justify-content: flex-start !important;
+    max-width: none !important;
+  }
 }

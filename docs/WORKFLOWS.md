@@ -35,6 +35,19 @@ Status-Karten und Schnellaktionen im Produktionsbereich sind optisch korrigiert 
 ## Farbige Produktions-Schnellaktionen
 
 Die Schnellaktionen im Auftragsdrawer sind farblich nach ihrer fachlichen Bedeutung differenziert, bleiben aber bewusst dezent.
-## Plantafel Fortschrittsbalken
 
-Die Fortschrittsbalken der Mini-Karten sind bewusst etwas stärker sichtbar, damit der Produktionsstand schneller erfassbar bleibt.
+## Auftragsdrawer Blockerlogik
+
+Im Produktionsbereich des Auftragsdrawers gibt es eine direkte Prüfung der Produktionsbereitschaft. Status, Freigabe und Übergabe bleiben die führenden Felder; die Prüfung erklärt, warum ein Auftrag blockiert ist oder warum er fachlich plausibel für die aktuelle Produktionsphase ist.
+
+## Plantafel Statusanzeige
+
+Die Plantafel trennt interne Steuerlogik und sichtbare Anzeige. Für Filterung und Zählung bleibt `status = In Produktion` erhalten, die Mini-Karten zeigen aber den fachlich konkreten Schritt aus `handoff`, zum Beispiel `Weiterverarbeitung` oder `Abholbereit`.
+
+## Plantafel Freigabe und Produktionsschritt
+
+In der Plantafel werden Maschinenzuordnung, konkreter Produktionsschritt und Freigabezustand gemeinsam als kompakte Meta-Pills gezeigt. Die interne Statuslogik bleibt davon getrennt.
+
+## Dashboard Kennzahlenfarben
+
+Die Dashboard-Kennzahlenkarten sind farblich semantisch getrennt. Die Farblogik dient als schneller visueller Einstieg in Angebote, Aufträge, Versand, Rechnungen, Mahnungen und Materialhinweise.

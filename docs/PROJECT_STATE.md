@@ -44,6 +44,19 @@ Das Produktionspanel im Auftragsdrawer wurde optisch korrigiert: Status-Karten w
 ## Produktions-Schnellaktionen farblich differenziert
 
 Die Schnellbuttons im Auftragsdrawer-Produktionspanel haben jetzt dezente fachliche Farben: Freigabe grün, Daten fehlen orange, Produktionsschritte blau, Abholbereit gelb und Fertig violett.
-## Plantafel finaler Feinschliff
 
-Die Wochen-Plantafel wurde final feinjustiert: Fortschrittsbalken sind etwas dicker und dadurch besser lesbar, ohne die kompakte Kartenwirkung zu verlieren.
+## Auftragsdrawer Blocker-/Produktionsprüfung
+
+Der Auftragsdrawer zeigt im Produktionsbereich jetzt eine kompakte Produktionsprüfung. Offene Punkte wie fehlende Kundendaten, fehlendes Produkt, fehlende Fälligkeit, fehlende Freigabe, fehlende Maschine oder wartende Druckdaten werden direkt im Drawer sichtbar. Die Schnellaktionen markieren den aktuell passenden Zustand aktiv, ohne die bestehende Plantafel-Logik zu ändern.
+
+## Plantafel konkrete Produktionsanzeige
+
+Die Plantafel zeigt bei produktionsrelevanten Aufträgen jetzt den konkreten Übergabe-/Produktionsschritt statt nur den technischen Sammelstatus `In Produktion`. `In Weiterverarbeitung` erscheint als `Weiterverarbeitung`, `Abholbereit` bleibt sichtbar als `Abholbereit`, während die interne Statuslogik unverändert bleibt.
+
+## Plantafel Freigabeanzeige
+
+Die Plantafel zeigt in den Mini-Auftragskarten jetzt zusätzlich zur Maschine und zum konkreten Produktionsschritt auch den Freigabestand. Damit sind Produktionsphase und Produktionsfreigabe getrennt sichtbar: zum Beispiel `Weiterverarbeitung` plus `Freigabe ok` oder `Freigabe fehlt`.
+
+## Dashboard Kennzahlenkarten Farben
+
+Die sechs oberen Dashboard-Karten verwenden jetzt durchgehend dieselbe Accent-Variable. Angebote sind grün, Aufträge lila, Versand/Lieferscheine gelb, Rechnungen blau, Mahnungen magenta und Materialhinweise orange. Linker Farbstreifen, Label und dezenter Hintergrundverlauf greifen damit konsistent auf dieselbe Farbe zu.

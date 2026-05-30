@@ -224,34 +224,105 @@ function getOrderRequiredFieldIssues(order: PrintPilotOrder | undefined) {
   return issues;
 }
 
+type OrderWorkflowHint = {
+  title: string;
+  description: string;
+  variant: "warning" | "info" | "success";
+};
+
+function getOrderProductionIssues(order: PrintPilotOrder | undefined) {
+  const issues: OrderWorkflowHint[] = [];
+
+  if (!order) {
+    return issues;
+  }
+
+  if (!order.customerName || order.customerName.trim().length === 0) {
+    issues.push({
+      title: "Kunde fehlt",
+      description: "Ohne Kundenzuordnung sollte der Auftrag nicht weiterverarbeitet werden.",
+      variant: "warning",
+    });
+  }
+
+  if (!order.product || order.product.trim().length === 0) {
+    issues.push({
+      title: "Produkt fehlt",
+      description: "Trage das Produkt ein, damit Produktion und Folgebelege eindeutig bleiben.",
+      variant: "warning",
+    });
+  }
+
+  if (!order.dueDate || order.dueDate.trim().length === 0) {
+    issues.push({
+      title: "Fälligkeit fehlt",
+      description: "Ohne Fälligkeitsdatum kann der Auftrag in der Plantafel nicht sauber priorisiert werden.",
+      variant: "warning",
+    });
+  }
+
+  if (order.approval === "Daten unvollständig") {
+    issues.push({
+      title: "Daten fehlen",
+      description: "Der Auftrag wartet auf vollständige Druckdaten und bleibt als Blocker sichtbar.",
+      variant: "warning",
+    });
+  }
+
+  if (order.handoff === "Wartet auf Daten") {
+    issues.push({
+      title: "Wartet auf Druckdaten",
+      description: "Die Übergabe steht auf Wartestatus. Erst nach Dateneingang in Druck oder Prüfung setzen.",
+      variant: "warning",
+    });
+  }
+
+  if (needsProductionApprovalWarning(order)) {
+    issues.push({
+      title: "Freigabe fehlt",
+      description: "Der Auftrag ist produktionsrelevant, hat aber noch keine gültige Freigabe.",
+      variant: "warning",
+    });
+  }
+
+  if (
+    isProductionLikeState(order.status, order.handoff) &&
+    (!order.machine || order.machine.trim().length === 0)
+  ) {
+    issues.push({
+      title: "Maschine fehlt",
+      description: "Weise eine Druckmaschine zu, bevor der Auftrag produziert wird.",
+      variant: "warning",
+    });
+  }
+
+  return issues;
+}
+
 function getOrderWorkflowHints(order: PrintPilotOrder | undefined) {
   if (!order) {
     return [];
   }
 
-  const hints = [];
-
-  if (!order.machine || order.machine.trim().length === 0) {
-    hints.push({
-      title: "Maschine fehlt",
-      description: "Weise eine Druckmaschine zu, bevor der Auftrag produziert wird.",
-      variant: "warning" as const,
-    });
-  }
-
-  if (order.approval === "Freigabe ausstehend") {
-    hints.push({
-      title: "Freigabe ausstehend",
-      description: "Vor Produktion sollte die Kunden- oder interne Freigabe abgeschlossen sein.",
-      variant: "warning" as const,
-    });
-  }
+  const hints = [...getOrderProductionIssues(order)];
 
   if (order.handoff === "Druckdaten prüfen") {
     hints.push({
       title: "Druckdaten prüfen",
       description: "Die Druckdaten sollten vor Übergabe in die Produktion geprüft werden.",
       variant: "info" as const,
+    });
+  }
+
+  if (
+    hints.length === 0 &&
+    isProductionLikeState(order.status, order.handoff) &&
+    hasValidApproval(order.approval)
+  ) {
+    hints.push({
+      title: "Produktion bereit",
+      description: "Freigabe, Übergabe und Status sind für die Plantafel plausibel gesetzt.",
+      variant: "success" as const,
     });
   }
 
@@ -264,6 +335,83 @@ function getOrderWorkflowHints(order: PrintPilotOrder | undefined) {
   }
 
   return hints;
+}
+
+function getOrderProductionReadiness(order: PrintPilotOrder | undefined) {
+  const issues = getOrderProductionIssues(order);
+
+  if (!order) {
+    return {
+      title: "Kein Auftrag gewählt",
+      description: "Wähle einen Auftrag aus, um die Produktionsbereitschaft zu prüfen.",
+      issues,
+      variant: "neutral" as const,
+    };
+  }
+
+  if (order.status === "Fertig") {
+    return {
+      title: "Auftrag fertig",
+      description: "Der Auftrag ist abgeschlossen und wird nicht mehr in der offenen Plantafel geführt.",
+      issues,
+      variant: "success" as const,
+    };
+  }
+
+  if (issues.length > 0) {
+    return {
+      title: "Blocker / Prüfung offen",
+      description: "Diese Punkte beeinflussen Plantafel, Status oder Produktionsfreigabe.",
+      issues,
+      variant: "warning" as const,
+    };
+  }
+
+  return {
+    title: "Keine Blocker",
+    description: "Der Auftrag ist fachlich plausibel für die aktuelle Produktionsphase.",
+    issues,
+    variant: "success" as const,
+  };
+}
+
+function isProductionQuickActionActive(
+  order: PrintPilotOrder | undefined,
+  action:
+    | "approve"
+    | "missingData"
+    | "startPrint"
+    | "startFinishing"
+    | "readyForPickup"
+    | "done",
+) {
+  if (!order) {
+    return false;
+  }
+
+  switch (action) {
+    case "approve":
+      return order.approval === "Freigabe erteilt";
+
+    case "missingData":
+      return (
+        order.approval === "Daten unvollständig" ||
+        order.handoff === "Wartet auf Daten" ||
+        order.status === "Wartet"
+      );
+
+    case "startPrint":
+      return order.handoff === "In Druck";
+
+    case "startFinishing":
+      return order.handoff === "In Weiterverarbeitung";
+
+    case "readyForPickup":
+      return order.handoff === "Abholbereit";
+
+    case "done":
+      return order.status === "Fertig" || order.handoff === "Abgeschlossen";
+  }
 }
 
 export function OrdersPage() {
@@ -354,6 +502,7 @@ export function OrdersPage() {
   const canEdit = isEditing && Boolean(draft);
   const draftOrder = draft as PrintPilotOrder | undefined;
   const orderWorkflowHints = getOrderWorkflowHints(draftOrder);
+  const orderProductionReadiness = getOrderProductionReadiness(draftOrder);
   const orderRequiredFieldIssues = getOrderRequiredFieldIssues(
     draftOrder ?? selectedOrder,
   );
@@ -998,10 +1147,36 @@ export function OrdersPage() {
               </div>
             </div>
 
+            <div
+              className={`order-production-readiness order-production-readiness-${orderProductionReadiness.variant}`}
+            >
+              <div>
+                <span>Produktionsprüfung</span>
+                <strong>{orderProductionReadiness.title}</strong>
+                <p>{orderProductionReadiness.description}</p>
+              </div>
+
+              {orderProductionReadiness.issues.length > 0 ? (
+                <ul aria-label="Offene Produktionspunkte">
+                  {orderProductionReadiness.issues.map((issue) => (
+                    <li key={`${issue.title}-${issue.description}`}>
+                      {issue.title}
+                    </li>
+                  ))}
+                </ul>
+              ) : null}
+            </div>
+
             <div className="order-production-quick-actions">
               <button
                 type="button"
+                className={
+                  isProductionQuickActionActive(draftOrder, "approve")
+                    ? "order-production-quick-action-active"
+                    : undefined
+                }
                 disabled={!canEdit}
+                aria-pressed={isProductionQuickActionActive(draftOrder, "approve")}
                 onClick={() => handleProductionQuickAction("approve")}
               >
                 Freigabe erteilt
@@ -1009,7 +1184,13 @@ export function OrdersPage() {
 
               <button
                 type="button"
+                className={
+                  isProductionQuickActionActive(draftOrder, "missingData")
+                    ? "order-production-quick-action-active"
+                    : undefined
+                }
                 disabled={!canEdit}
+                aria-pressed={isProductionQuickActionActive(draftOrder, "missingData")}
                 onClick={() => handleProductionQuickAction("missingData")}
               >
                 Daten fehlen
@@ -1017,7 +1198,13 @@ export function OrdersPage() {
 
               <button
                 type="button"
+                className={
+                  isProductionQuickActionActive(draftOrder, "startPrint")
+                    ? "order-production-quick-action-active"
+                    : undefined
+                }
                 disabled={!canEdit}
+                aria-pressed={isProductionQuickActionActive(draftOrder, "startPrint")}
                 onClick={() => handleProductionQuickAction("startPrint")}
               >
                 In Druck
@@ -1025,7 +1212,13 @@ export function OrdersPage() {
 
               <button
                 type="button"
+                className={
+                  isProductionQuickActionActive(draftOrder, "startFinishing")
+                    ? "order-production-quick-action-active"
+                    : undefined
+                }
                 disabled={!canEdit}
+                aria-pressed={isProductionQuickActionActive(draftOrder, "startFinishing")}
                 onClick={() => handleProductionQuickAction("startFinishing")}
               >
                 Weiterverarbeitung
@@ -1033,7 +1226,13 @@ export function OrdersPage() {
 
               <button
                 type="button"
+                className={
+                  isProductionQuickActionActive(draftOrder, "readyForPickup")
+                    ? "order-production-quick-action-active"
+                    : undefined
+                }
                 disabled={!canEdit}
+                aria-pressed={isProductionQuickActionActive(draftOrder, "readyForPickup")}
                 onClick={() => handleProductionQuickAction("readyForPickup")}
               >
                 Abholbereit
@@ -1041,7 +1240,13 @@ export function OrdersPage() {
 
               <button
                 type="button"
+                className={
+                  isProductionQuickActionActive(draftOrder, "done")
+                    ? "order-production-quick-action-active"
+                    : undefined
+                }
                 disabled={!canEdit}
+                aria-pressed={isProductionQuickActionActive(draftOrder, "done")}
                 onClick={() => handleProductionQuickAction("done")}
               >
                 Fertig

@@ -130,8 +130,34 @@ function isProductionLikeState(
   return (
     status === "In Produktion" ||
     handoff === "In Druck" ||
-    handoff === "In Weiterverarbeitung"
+    handoff === "In Weiterverarbeitung" ||
+    handoff === "Abholbereit" ||
+    handoff === "Versendet"
   );
+}
+
+function getOrderStatusForHandoff(
+  nextHandoff: PrintPilotHandoffStatus,
+  currentStatus: PrintPilotOrderStatus,
+): PrintPilotOrderStatus {
+  if (nextHandoff === "Wartet auf Daten") {
+    return "Wartet";
+  }
+
+  if (
+    nextHandoff === "In Druck" ||
+    nextHandoff === "In Weiterverarbeitung" ||
+    nextHandoff === "Abholbereit" ||
+    nextHandoff === "Versendet"
+  ) {
+    return "In Produktion";
+  }
+
+  if (nextHandoff === "Abgeschlossen") {
+    return "Fertig";
+  }
+
+  return currentStatus;
 }
 
 function needsProductionApprovalWarning(order: PrintPilotOrder) {
@@ -430,10 +456,10 @@ export function OrdersPage() {
       return;
     }
 
-    const nextStatus =
-      nextHandoff === "In Druck" || nextHandoff === "In Weiterverarbeitung"
-        ? "In Produktion"
-        : draftOrder.status;
+    const nextStatus = getOrderStatusForHandoff(
+      nextHandoff,
+      draftOrder.status,
+    );
 
     const nextOrder: PrintPilotOrder = {
       ...draftOrder,
@@ -527,7 +553,7 @@ export function OrdersPage() {
       const nextOrder: PrintPilotOrder = {
         ...draftOrder,
         handoff: "Abholbereit",
-        status: "Fertig",
+        status: "In Produktion",
       };
 
       updateDraftField("handoff", nextOrder.handoff);

@@ -35,3 +35,14 @@ Status-Karten und Schnellaktionen im Produktionsbereich sind optisch korrigiert 
 ## Farbige Produktions-Schnellaktionen
 
 Die Schnellaktionen im Auftragsdrawer sind farblich nach ihrer fachlichen Bedeutung differenziert, bleiben aber bewusst dezent.
+
+## Produktions-Schnellaktionen und Plantafel-Logik
+
+Die Schnellaktionen im Auftragsdrawer wirken fachlich auf Status, Übergabe und Plantafel:
+
+- **Freigabe erteilt** setzt `approval = Freigabe erteilt`; der Blocker „Freigabe fehlt“ verschwindet.
+- **Daten fehlen** setzt `approval = Daten unvollständig`, `handoff = Wartet auf Daten` und `status = Wartet`.
+- **In Druck** setzt `handoff = In Druck` und `status = In Produktion`.
+- **Weiterverarbeitung** setzt `handoff = In Weiterverarbeitung` und `status = In Produktion`.
+- **Abholbereit** setzt `handoff = Abholbereit` und bleibt mit `status = In Produktion` offen sichtbar.
+- **Fertig** setzt `handoff = Abgeschlossen` und `status = Fertig`; der Auftrag verschwindet aus der offenen Plantafel.

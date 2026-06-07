@@ -140,3 +140,19 @@ Als nächstes sollte die Auftragstasche einmal lokal im Browser geprüft werden:
 
 Der CMY-Diagonalstreifen-Hintergrund aus Sprint 21 wurde wieder entfernt. Der Logo-Bereich im Auftragstaschen-Header ist jetzt vollflächig im dunklen Footer-Blau gehalten, damit Header und Bottom-Navigation eine einheitlichere Klammer bilden. Zusätzlich wurde eine Logo-Variante für dunklen Hintergrund ergänzt (`printpilot-logo-on-navy.png`), bei der der PRINT-Schriftzug weiß statt navy ist.
 
+## Design Sprint 23 – Logo-Hintergrund weich auslaufend
+
+- harte Kante zwischen Logo-Bereich und Auftragstaschen-Titel entfernt
+- Logo-Fond bleibt links im dunklen Footer-Blau
+- Hintergrund läuft nach rechts per CSS-Verlauf weich ins Weiß aus
+- Trennlinie zwischen Logo und Titel entfernt, damit der Übergang ruhiger wirkt
+- Logo-Datei, Header-Aufbau, QR-Bereich und Karten nicht verändert
+
+## Design Sprint 24 – Logo-Verlauf auf Logo-Fläche begrenzt
+
+- Der dunkle Logo-Hintergrund läuft jetzt nur innerhalb der linken Logo-Zone aus.
+- Der Verlauf beginnt ungefähr nach dem PrintPilot-Schriftzug und endet vor dem Auftragstaschen-Titel.
+- Auftragstaschen-Titel, Auftragsnummer und QR-Bereich bleiben vollständig auf weißem Hintergrund.
+- Die zuvor zu weit in den Header laufende graue/helle Verlaufsfläche wurde entfernt.
+- Keine Änderungen an Karten, Footer, QR-Bereich oder Maschinen-/Timeline-Karten.
+

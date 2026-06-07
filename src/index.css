@@ -59,10 +59,10 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   z-index: 4;
   display: flex;
   align-items: center;
-  padding: 0 26px 0 28px;
+  padding: 0 36px 0 28px;
   color: #ffffff;
-  background: linear-gradient(180deg, #082957 0%, #031738 100%);
-  box-shadow: inset -1px 0 0 rgba(255,255,255,.08);
+  background: linear-gradient(90deg, #082957 0%, #082957 72%, rgba(8, 41, 87, .74) 83%, rgba(8, 41, 87, .28) 93%, rgba(8, 41, 87, 0) 100%);
+  box-shadow: none;
 }
 
 .pp-header-brand::before {
@@ -70,14 +70,7 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 }
 
 .pp-header-brand::after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  right: 0;
-  width: 1px;
-  height: 62px;
-  transform: translateY(-50%);
-  background: rgba(255,255,255,.22);
+  content: none;
 }
 
 .pp-brand-logo {
@@ -98,6 +91,7 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   justify-content: center;
   padding-left: 32px;
   color: #07183a;
+  background: #ffffff;
 }
 
 .pp-header-title-shape h1 {
@@ -614,7 +608,7 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 
 @media (max-width: 1500px) {
   .pp-master-header { grid-template-columns: 282px 338px 1fr 238px; }
-  .pp-header-brand { padding-left: 22px; padding-right: 22px; }
+  .pp-header-brand { padding-left: 22px; padding-right: 32px; }
   .pp-brand-logo { height: 66px; max-width: 232px; }
   .pp-header-title-shape { padding-left: 24px; }
   .pp-header-title-shape h1 { font-size: 23px; }

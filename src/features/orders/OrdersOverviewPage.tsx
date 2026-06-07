@@ -285,6 +285,15 @@ function DrawerFact({ label, value }: { label: string; value: string }) {
   );
 }
 
+function DrawerStatusTile({ label, status }: { label: string; status: OrderStatus }) {
+  return (
+    <span className="pp-orders-drawer-status-tile">
+      <small>{label}</small>
+      <StatusPill tone={status.tone}>{status.label}</StatusPill>
+    </span>
+  );
+}
+
 function DrawerAction({ icon, title, helper, tone = "default" }: { icon: ReactNode; title: string; helper: string; tone?: "default" | "primary" }) {
   return (
     <button type="button" className={`pp-orders-drawer-action pp-orders-drawer-action--${tone}`}>
@@ -355,83 +364,105 @@ function OrderDetailDrawer({ order, onClose }: { order: OrderRow | null; onClose
         {order ? (
           <>
             <header className="pp-orders-drawer-header">
-              <div>
-                <p className="pp-eyebrow">Sprint 40 · Detail-Drawer</p>
-                <h2>{order.product}</h2>
-                <span>{order.id} · {order.customer}</span>
+              <div className="pp-orders-drawer-header__main">
+                <span className="pp-panel__icon"><OrdersIcon name="drawer" /></span>
+                <div>
+                  <p className="pp-eyebrow">Sprint 40.2 · Detail-Drawer</p>
+                  <h2>{order.product}</h2>
+                  <span>{order.id} · {order.customer}</span>
+                </div>
               </div>
               <button type="button" className="pp-orders-drawer-close" onClick={onClose} aria-label="Detail-Drawer schließen">
                 <OrdersIcon name="close" />
               </button>
             </header>
 
-            <div className="pp-orders-drawer-status" aria-label="Statusübersicht">
-              <StatusPill tone={order.production.tone}>{order.production.label}</StatusPill>
-              <StatusPill tone={order.approval.tone}>{order.approval.label}</StatusPill>
-              <StatusPill tone={order.data.tone}>{order.data.label}</StatusPill>
-              <StatusPill tone={order.priority.tone}>{order.priority.label}</StatusPill>
+            <section className="pp-orders-drawer-primary-action" aria-label="Primäre Aktion">
+              <button type="button">
+                <span className="pp-panel__icon"><OrdersIcon name="pocket" /></span>
+                <span>
+                  <b>Auftragstasche öffnen</b>
+                  <small>UI vorbereitet · spätere Verknüpfung zur produktiven Auftragstasche</small>
+                </span>
+              </button>
+            </section>
+
+            <div className="pp-orders-drawer-scrollbody">
+              <section className="pp-orders-drawer-section pp-orders-drawer-section--accent pp-orders-drawer-section--compact">
+                <div className="pp-panel__header">
+                  <span className="pp-panel__icon"><OrdersIcon name="check" /></span>
+                  <h3>Status und Prüfung</h3>
+                </div>
+                <div className="pp-orders-drawer-status-grid" aria-label="Statusübersicht">
+                  <DrawerStatusTile label="Produktion" status={order.production} />
+                  <DrawerStatusTile label="Freigabe" status={order.approval} />
+                  <DrawerStatusTile label="Daten" status={order.data} />
+                  <DrawerStatusTile label="Priorität" status={order.priority} />
+                </div>
+                <p className="pp-orders-drawer-hint">Vorbereitete Controls: Statuswechsel werden später mit Speicherlogik und Historie verbunden.</p>
+              </section>
+
+              <section className="pp-orders-drawer-section">
+                <div className="pp-panel__header">
+                  <span className="pp-panel__icon"><OrdersIcon name="orders" /></span>
+                  <h3>Auftragskopf</h3>
+                </div>
+                <div className="pp-orders-drawer-facts">
+                  <DrawerFact label="Kunde" value={order.customer} />
+                  <DrawerFact label="Ansprechpartner" value={order.contact} />
+                  <DrawerFact label="Produkt" value={order.product} />
+                  <DrawerFact label="Format" value={order.format} />
+                  <DrawerFact label="Auflage" value={order.quantity} />
+                  <DrawerFact label="Lieferung" value={order.delivery} />
+                </div>
+              </section>
+
+              <section className="pp-orders-drawer-section">
+                <div className="pp-panel__header">
+                  <span className="pp-panel__icon"><OrdersIcon name="calendar" /></span>
+                  <h3>Produktion</h3>
+                </div>
+                <div className="pp-orders-drawer-facts pp-orders-drawer-facts--two">
+                  <DrawerFact label="Termin" value={`${order.dueDate} · ${order.dueMeta}`} />
+                  <DrawerFact label="Maschine" value={order.machine} />
+                  <DrawerFact label="Bereich" value={order.department} />
+                  <DrawerFact label="Verantwortlich" value={order.owner} />
+                </div>
+                <div className="pp-orders-drawer-progress">
+                  <span>
+                    <small>Produktionsstand</small>
+                    <b>{order.progress}%</b>
+                  </span>
+                  <div className="pp-order-progress" aria-label={`Fortschritt ${order.progress} Prozent`}>
+                    <span style={{ width: `${order.progress}%` }}></span>
+                  </div>
+                </div>
+              </section>
+
+              <section className="pp-orders-drawer-section">
+                <div className="pp-panel__header">
+                  <span className="pp-panel__icon"><OrdersIcon name="data" /></span>
+                  <h3>Druckdaten und Weiterverarbeitung</h3>
+                </div>
+                <div className="pp-orders-drawer-note-grid">
+                  <p><small>Preflight</small>{order.preflight}</p>
+                  <p><small>Material</small>{order.material}</p>
+                  <p><small>Weiterverarbeitung</small>{order.finishing}</p>
+                </div>
+              </section>
+
+              <section className="pp-orders-drawer-section pp-orders-drawer-section--note">
+                <small>Nächster Schritt</small>
+                <strong>{order.nextStep}</strong>
+                <p>{order.note}</p>
+              </section>
             </div>
 
-            <section className="pp-orders-drawer-section pp-orders-drawer-section--accent">
-              <div className="pp-panel__header">
-                <span className="pp-panel__icon"><OrdersIcon name="orders" /></span>
-                <h3>Auftragskopf</h3>
-              </div>
-              <div className="pp-orders-drawer-facts">
-                <DrawerFact label="Kunde" value={order.customer} />
-                <DrawerFact label="Ansprechpartner" value={order.contact} />
-                <DrawerFact label="Produkt" value={order.product} />
-                <DrawerFact label="Format" value={order.format} />
-                <DrawerFact label="Auflage" value={order.quantity} />
-                <DrawerFact label="Lieferung" value={order.delivery} />
-              </div>
-            </section>
-
-            <section className="pp-orders-drawer-section">
-              <div className="pp-panel__header">
-                <span className="pp-panel__icon"><OrdersIcon name="calendar" /></span>
-                <h3>Produktion</h3>
-              </div>
-              <div className="pp-orders-drawer-facts pp-orders-drawer-facts--two">
-                <DrawerFact label="Termin" value={`${order.dueDate} · ${order.dueMeta}`} />
-                <DrawerFact label="Maschine" value={order.machine} />
-                <DrawerFact label="Bereich" value={order.department} />
-                <DrawerFact label="Verantwortlich" value={order.owner} />
-              </div>
-              <div className="pp-orders-drawer-progress">
-                <span>
-                  <small>Produktionsstand</small>
-                  <b>{order.progress}%</b>
-                </span>
-                <div className="pp-order-progress" aria-label={`Fortschritt ${order.progress} Prozent`}>
-                  <span style={{ width: `${order.progress}%` }}></span>
-                </div>
-              </div>
-            </section>
-
-            <section className="pp-orders-drawer-section">
-              <div className="pp-panel__header">
-                <span className="pp-panel__icon"><OrdersIcon name="data" /></span>
-                <h3>Druckdaten und Weiterverarbeitung</h3>
-              </div>
-              <div className="pp-orders-drawer-note-grid">
-                <p><small>Preflight</small>{order.preflight}</p>
-                <p><small>Material</small>{order.material}</p>
-                <p><small>Weiterverarbeitung</small>{order.finishing}</p>
-              </div>
-            </section>
-
-            <section className="pp-orders-drawer-section pp-orders-drawer-section--note">
-              <small>Nächster Schritt</small>
-              <strong>{order.nextStep}</strong>
-              <p>{order.note}</p>
-            </section>
-
-            <footer className="pp-orders-drawer-actions">
-              <DrawerAction icon={<OrdersIcon name="pocket" />} title="Auftragstasche öffnen" helper="später direkte Verknüpfung" tone="primary" />
-              <DrawerAction icon={<OrdersIcon name="check" />} title="Freigabe markieren" helper="Statuslogik vorbereitet" />
-              <DrawerAction icon={<OrdersIcon name="data" />} title="Daten prüfen" helper="Preflight-Aktion vorbereitet" />
-              <DrawerAction icon={<OrdersIcon name="machine" />} title="Status ändern" helper="Produktion / Wartet / Fertig" />
+            <footer className="pp-orders-drawer-actions" aria-label="Vorbereitete Drawer-Aktionen">
+              <DrawerAction icon={<OrdersIcon name="check" />} title="Freigabe markieren" helper="UI-Dummy · später Status speichern" />
+              <DrawerAction icon={<OrdersIcon name="data" />} title="Daten prüfen" helper="UI-Dummy · Preflight verbinden" />
+              <DrawerAction icon={<OrdersIcon name="machine" />} title="Status ändern" helper="UI-Dummy · Produktionsstatus wählen" />
+              <DrawerAction icon={<OrdersIcon name="calendar" />} title="Termin planen" helper="UI-Dummy · Kalender später" />
             </footer>
           </>
         ) : null}
@@ -449,9 +480,9 @@ export function OrdersOverviewPage() {
         <div className="pp-orders-hero__title">
           <span className="pp-panel__icon"><OrdersIcon name="orders" /></span>
           <div>
-            <p className="pp-eyebrow">Sprint 40 · Aufträge</p>
+            <p className="pp-eyebrow">Sprint 40.2 · Aufträge</p>
             <h1>Aufträge-Übersicht</h1>
-            <span>Produktionsnahe Übersicht mit vorbereitetem Detail-Drawer.</span>
+            <span>Produktionsnahe Übersicht mit korrigiertem Detail-Drawer-Footer.</span>
           </div>
         </div>
         <div className="pp-orders-hero__actions">
@@ -482,8 +513,8 @@ export function OrdersOverviewPage() {
           </div>
           <div className="pp-orders-next-panel">
             <span className="pp-panel__icon"><OrdersIcon name="drawer" /></span>
-            <strong>Detail-Drawer aktiv</strong>
-            <p>„Auftrag öffnen“ fährt rechts eine kompakte Detailansicht auf. Auftragstaschen- und Statusaktionen sind vorbereitet.</p>
+            <strong>Detail-Drawer Footer korrigiert</strong>
+            <p>„Auftrag öffnen“ fährt rechts eine kompakte Detailansicht auf. Die Aktionsleiste besitzt jetzt einen eigenen Footer und überdeckt keine Inhalte.</p>
           </div>
         </aside>
 

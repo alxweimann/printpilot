@@ -44,14 +44,17 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     category: 'drawer',
     name: 'Auftrags-Detail-Drawer',
     purpose:
-      'Öffnet aus einer Auftragskarte rechts eine kompakte Detailansicht mit Auftragskopf, Status, Produktion, Druckdaten, nächstem Schritt und vorbereiteten Aktionen.',
+      'Öffnet aus einer Auftragskarte rechts eine kompakte Detailansicht im Auftragstaschen-Stil mit prominentem Auftragstaschen-Einstieg, strukturierter Status-/Prüfgruppe, Produktion, Druckdaten, nächstem Schritt und eigenem Footer für klar gekennzeichnete UI-Dummy-Aktionen ohne Inhaltsüberdeckung.',
     reference: 'Aufträge · Detail-Drawer',
     classNames: [
       'pp-orders-drawer-shell',
       'pp-orders-detail-drawer',
       'pp-orders-drawer-header',
+      'pp-orders-drawer-primary-action',
+      'pp-orders-drawer-status-grid',
       'pp-orders-drawer-section',
       'pp-orders-drawer-facts',
+      'pp-orders-drawer-scrollbody',
       'pp-orders-drawer-actions',
     ],
     reuseFor: ['Auftragsdetails', 'Kundendetails', 'Produktionsdetails', 'Angebotsdetails', 'Rechnungsdetails'],

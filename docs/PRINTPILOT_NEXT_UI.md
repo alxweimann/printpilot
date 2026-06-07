@@ -468,3 +468,68 @@ Sprint 40 aktiviert den vorbereiteten Einstieg aus der Aufträge-Übersicht. Aus
 ### Nächster sinnvoller Schritt
 
 Sprint 41 kann den Drawer interaktiver machen: Statusfelder editierbar vorbereiten, Freigabe-/Datenstatus als auswählbare Controls darstellen und die Auftragstaschen-Aktion später sauber mit dem bestehenden Auftragstaschen-Screen verbinden.
+
+## Design Sprint 40.1 – Detail-Drawer Feinschliff
+
+Sprint 40.1 verfeinert den in Sprint 40 eingeführten Auftrags-Detail-Drawer. Ziel war, den Drawer näher an die Auftragstasche als Design-Referenz heranzuführen, die vorbereiteten Aktionen klarer zu kennzeichnen und die Ansicht auf kleineren Breiten robuster zu machen.
+
+### Umgesetzt
+
+- Detail-Drawer optisch stärker an die Auftragstasche angelehnt:
+  - cyanfarbener linker Akzent,
+  - helles technisches Kartenlayout,
+  - kompaktere Abstände,
+  - klarerer Header mit Icon und Sprint-Kontext.
+- `Auftragstasche öffnen` als prominente Primäraktion direkt unter dem Drawer-Kopf platziert.
+- Statusbereich neu strukturiert als eigene Prüfgruppe:
+  - Produktion,
+  - Freigabe,
+  - Daten,
+  - Priorität.
+- Hinweistext ergänzt, dass Statuswechsel aktuell vorbereitete Controls sind und später mit Speicherlogik/Historie verbunden werden.
+- Drawer-Aktionen klar als UI-Dummy gekennzeichnet:
+  - Freigabe markieren,
+  - Daten prüfen,
+  - Status ändern,
+  - Termin planen.
+- Aktionsbereich im Drawer unten als klebende Aktionsleiste vorbereitet.
+- Responsive Regeln ergänzt, damit Drawer, Statusgruppe, Faktenraster und Aktionen auf kleineren Breiten einspaltig laufen.
+- `src/design-system/ui-patterns.ts` um die verfeinerte Drawer-Struktur erweitert.
+
+### Nicht verändert
+
+- `src/features/order-pocket/OrderPocketPage.tsx` blieb unverändert.
+- Es wurde weiterhin keine echte Speicher-, Routing-, Statuswechsel- oder Auftragstaschen-Navigation eingebaut.
+- Die Änderungen betreffen nur Aufträge-Übersicht, Drawer-Styles, Pattern-Doku und Projektdokumentation.
+
+### Nächster sinnvoller Schritt
+
+Sprint 41 kann den Drawer interaktiver machen: Status, Freigabe, Datenprüfung und Priorität als auswählbare Controls vorbereiten und die Zustandsänderungen zunächst lokal im UI-State abbilden.
+
+
+## Design Sprint 40.2 – Detail-Drawer Scroll- und Footer-Fix
+
+Sprint 40.2 korrigiert das im Testvideo sichtbare Problem, dass die untere Drawer-Aktionsleiste Inhalte überdeckt hat. Der Detail-Drawer bleibt optisch im Auftragstaschen-Stil, bekommt aber eine sauberere technische Struktur aus Header, Primäraktion, scrollendem Inhaltsbereich und eigenem Footer.
+
+### Umgesetzt
+
+- Detail-Drawer strukturell verbessert:
+  - Header und Primäraktion bleiben außerhalb des Scroll-Inhalts,
+  - Status, Auftragskopf, Produktion, Druckdaten und Notiz liegen in einem eigenen Scrollbereich,
+  - vorbereitete Aktionen sitzen in einem eigenen Footer-Bereich.
+- Die frühere sticky-Aktionsleiste wurde entschärft, damit sie keine Inhalte mehr überdeckt.
+- Scrollbereich erhält eigenen unteren Sicherheitsabstand.
+- Footer besitzt jetzt eine klare Kennzeichnung `Vorbereitete Aktionen`.
+- Drawer-Footer ist optisch als eigener Abschluss mit Trennlinie und leichter Schattenkante umgesetzt.
+- Responsive Regeln für schmale Breiten angepasst, damit der Footer auch dort nicht über dem Inhalt liegt.
+- `src/design-system/ui-patterns.ts` um die Scrollbody-/Footer-Struktur des Detail-Drawers ergänzt.
+
+### Nicht verändert
+
+- `src/features/order-pocket/OrderPocketPage.tsx` blieb unverändert.
+- Es wurde weiterhin keine echte Speicher-, Routing-, Statuswechsel- oder Auftragstaschen-Navigation eingebaut.
+- Die Änderungen betreffen nur Aufträge-Übersicht, Drawer-Styles, Pattern-Doku und Projektdokumentation.
+
+### Nächster sinnvoller Schritt
+
+Sprint 41 kann jetzt auf einem stabileren Drawer aufbauen und Status, Freigabe, Datenprüfung und Priorität als auswählbare Controls mit lokalem UI-State vorbereiten.

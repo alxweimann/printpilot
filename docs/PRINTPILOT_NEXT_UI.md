@@ -397,3 +397,38 @@ Sprint 39.1 schärft die erste Aufträge-Übersicht optisch nach. Ziel war, die 
 ### Nächster sinnvoller Schritt
 
 Sprint 40 kann den Detail-Drawer technisch vorbereiten: Klick auf eine Auftragskarte öffnet rechts eine kompakte Detailansicht mit Auftrag, Kunde, Freigabe, Datenstatus, Termin, Maschine und Button zur Auftragstasche.
+
+## Design Sprint 39.2 – Aufträge-Übersicht Feinschliff und Interaktion vorbereitet
+
+Sprint 39.2 verfeinert die Aufträge-Übersicht nach dem ersten Praxisscreenshot. Ziel war, die Ansicht auf großen Monitoren stärker zu fokussieren und die nächsten Interaktionsschritte vorzubereiten, ohne bereits einen echten Drawer oder Routing einzubauen.
+
+### Umgesetzt
+
+- Gesamtbreite von Header, Kennzahlen und Arbeitsbereich begrenzt, damit die Auftragsliste auf großen Monitoren nicht zu weit auseinanderläuft.
+- Status-Pill-Gruppe technisch sauberer vorbereitet:
+  - Produktionsstatus,
+  - Freigabe,
+  - Datenstatus,
+  - Priorität.
+- Status-Pills können bei langen Kombinationen kontrolliert umbrechen.
+- Verantwortlichkeit wurde aus der unteren Fußzeile in die Infokachel-Zeile integriert.
+- Infokacheln je Auftrag zeigen jetzt:
+  - Termin,
+  - Maschine,
+  - Auflage,
+  - Verantwortlich.
+- Fußzeile je Auftrag ist klarer auf den nächsten Produktionsschritt und Aktionen fokussiert.
+- Zweite Kartenaktion vorbereitet: `Auftragstasche` neben `Auftrag öffnen`.
+- Sprint-Kennung im Header auf `Sprint 39.2 · Aufträge` aktualisiert.
+- UI-Pattern `orders-overview-list` um die fokussierte Karten-/Aktionslogik ergänzt.
+
+### Nicht verändert
+
+- `src/features/order-pocket/OrderPocketPage.tsx` blieb unverändert.
+- Es wurde weiterhin kein echter Detail-Drawer und kein Routing eingeführt.
+- Die Buttons bleiben vorbereitete Einstiegspunkte ohne produktive Navigationslogik.
+
+### Nächster sinnvoller Schritt
+
+Sprint 40 kann jetzt den Detail-Drawer technisch vorbereiten: Klick auf eine Auftragskarte öffnet rechts eine kompakte Detailansicht mit Auftrag, Kunde, Status, Termin, Maschine, Freigabe, Datenstatus und direktem Einstieg in die Auftragstasche.
+

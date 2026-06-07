@@ -241,6 +241,7 @@ function OrderCard({ order }: { order: OrderRow }) {
           <MiniInfo icon={<OrdersIcon name="calendar" />} label="Termin" value={`${order.dueDate} · ${order.dueMeta}`} />
           <MiniInfo icon={<OrdersIcon name="machine" />} label="Maschine" value={order.machine} />
           <MiniInfo icon={<OrdersIcon name="orders" />} label="Auflage" value={order.quantity} />
+          <MiniInfo icon={<OrdersIcon name="customer" />} label="Verantwortlich" value={order.owner} />
         </div>
       </div>
 
@@ -253,11 +254,10 @@ function OrderCard({ order }: { order: OrderRow }) {
           <small>Nächster Schritt</small>
           <b>{order.nextStep}</b>
         </span>
-        <span>
-          <small>Verantwortlich</small>
-          <b>{order.owner}</b>
-        </span>
-        <button type="button">Auftrag öffnen →</button>
+        <div className="pp-order-row-card__actions">
+          <button type="button">Auftrag öffnen →</button>
+          <button type="button">Auftragstasche</button>
+        </div>
       </div>
     </article>
   );
@@ -270,7 +270,7 @@ export function OrdersOverviewPage() {
         <div className="pp-orders-hero__title">
           <span className="pp-panel__icon"><OrdersIcon name="orders" /></span>
           <div>
-            <p className="pp-eyebrow">Sprint 39.1 · Aufträge</p>
+            <p className="pp-eyebrow">Sprint 39.2 · Aufträge</p>
             <h1>Aufträge-Übersicht</h1>
             <span>Produktionsnahe Übersicht im Stil der stabilisierten Auftragstasche.</span>
           </div>

@@ -24,7 +24,7 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     category: 'list',
     name: 'Aufträge-Übersichtsliste',
     purpose:
-      'Überträgt die technische Auftragstaschen-Formsprache auf verdichtete Auftragskarten mit gruppierten Status-Pills, Freigabe, Datenstatus, Termin, Kunde, Produkt und Maschine.',
+      'Überträgt die technische Auftragstaschen-Formsprache auf fokussierte Auftragskarten mit sauber umbrechenden Status-Pills, integrierter Verantwortlichkeit, Freigabe, Datenstatus, Termin, Kunde, Produkt, Maschine und vorbereiteten Aktionen.',
     reference: 'Aufträge · Übersicht',
     classNames: [
       'pp-orders-overview',
@@ -33,8 +33,9 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       'pp-order-row-card',
       'pp-orders-mini-info',
       'pp-order-specs',
+      'pp-order-row-card__actions',
     ],
-    reuseFor: ['Aufträge', 'Produktionsplanung', 'Kundenaufträge', 'Detail-Drawer-Einstiege'],
+    reuseFor: ['Aufträge', 'Produktionsplanung', 'Kundenaufträge', 'Detail-Drawer-Einstiege', 'Auftragstaschen-Einstiege'],
   },
   {
     id: 'order-pocket-header',

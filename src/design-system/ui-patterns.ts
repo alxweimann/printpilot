@@ -25,22 +25,42 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     category: 'list',
     name: 'Aufträge-Übersichtsliste',
     purpose:
-      'Überträgt die technische Auftragstaschen-Formsprache auf fokussierte Auftragskarten mit sauber umbrechenden Status-Pills, integrierter Verantwortlichkeit, Freigabe, Datenstatus, Termin, Kunde, Produkt, Maschine, Druckdatei-Preview, sichtbarer Primäraktion und direktem Einstieg in die Auftragstasche.',
+      'Überträgt die technische Auftragstaschen-Formsprache auf fokussierte Auftragskarten mit sauber umbrechenden Status-Pills, integrierter Verantwortlichkeit, Freigabe, Datenstatus, Termin, Kunde, Produkt, Maschine, Druckdatei-Preview und direktem Kartenklick in die Auftragstasche.',
     reference: 'Aufträge · Übersicht',
     classNames: [
       'pp-orders-overview',
-      'pp-orders-hero',
+      'pp-orders-master-header',
+      'pp-header-overview-status',
       'pp-orders-workbench',
       'pp-order-row-card',
       'pp-orders-mini-info',
       'pp-order-specs',
-      'pp-order-row-card__actions',
+      'pp-order-row-card__open-hint',
       'pp-order-row-card--clickable',
       'pp-order-preview',
       'pp-pocket-route-toolbar',
     ],
-    reuseFor: ['Aufträge', 'Produktionsplanung', 'Kundenaufträge', 'Druckdatei-Previews', 'Auftragstaschen-Einstiege', 'Rücknavigation'],
+    reuseFor: ['Aufträge', 'Produktionsplanung', 'Kundenaufträge', 'Druckdatei-Previews', 'Auftragstaschen-Einstiege', 'Kartenklick-Navigation', 'Rücknavigation'],
   },
+
+  {
+    id: 'orders-overview-master-header',
+    category: 'layout',
+    name: 'Aufträge-Übersicht Header',
+    purpose:
+      'Verwendet den Auftragstaschen-Master-Header für die Aufträge-Übersicht, damit Übersicht und Auftragstasche dieselbe visuelle Hierarchie haben. Der Titel wechselt auf Aufträge-Übersicht, während Kennzahlen und Status-Hinweise die Produktionscockpit-Rolle erklären.',
+    reference: 'Aufträge · Übersicht',
+    classNames: [
+      'pp-master-header',
+      'pp-orders-master-header',
+      'pp-header-brand',
+      'pp-header-title-shape',
+      'pp-header-job--overview',
+      'pp-header-overview-status',
+    ],
+    reuseFor: ['Aufträge', 'Produktionscockpit', 'Modul-Header', 'Übersichtsseiten'],
+  },
+
   {
     id: 'order-file-preview',
     category: 'media',

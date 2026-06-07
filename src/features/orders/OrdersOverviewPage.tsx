@@ -1,5 +1,6 @@
 import type { KeyboardEvent, ReactNode } from "react";
 import { StatusPill } from "../../components/ui/StatusPill";
+import printPilotLogo from "../../assets/logo/printpilot-logo-on-navy.png";
 
 type OrderTone = "green" | "orange" | "gray" | "blue";
 
@@ -341,9 +342,10 @@ function OrderCard({ order, onOpenOrderPocket }: { order: OrderRow; onOpenOrderP
           <small>Nächster Schritt</small>
           <b>{order.nextStep}</b>
         </span>
-        <div className="pp-order-row-card__actions">
-          <button type="button" onClick={(event) => { event.stopPropagation(); openOrderPocket(); }}>Auftrag öffnen →</button>
-        </div>
+        <span className="pp-order-row-card__open-hint">
+          <span className="pp-panel__icon"><OrdersIcon name="pocket" /></span>
+          <span>Karte öffnet Auftragstasche</span>
+        </span>
       </div>
     </article>
   );
@@ -352,18 +354,29 @@ function OrderCard({ order, onOpenOrderPocket }: { order: OrderRow; onOpenOrderP
 export function OrdersOverviewPage({ onOpenOrderPocket }: { onOpenOrderPocket: (order: OrderRow) => void }) {
   return (
     <div className="pp-orders-overview">
-      <header className="pp-orders-hero">
-        <div className="pp-orders-hero__title">
-          <span className="pp-panel__icon"><OrdersIcon name="orders" /></span>
-          <div>
-            <p className="pp-eyebrow">Sprint 40.5 · Aufträge</p>
-            <h1>Aufträge-Übersicht</h1>
-            <span>Produktionscockpit mit Druckdatei-Preview und direktem Einstieg in die Auftragstasche.</span>
-          </div>
+      <header className="pp-master-header pp-orders-master-header">
+        <div className="pp-header-brand">
+          <img className="pp-brand-logo" src={printPilotLogo} alt="PrintPilot" />
         </div>
-        <div className="pp-orders-hero__actions">
-          <button type="button">+ Neuer Auftrag</button>
-          <button type="button" onClick={() => onOpenOrderPocket(orderRows[0])}>Auftragstasche öffnen</button>
+
+        <div className="pp-header-title-shape">
+          <h1>AUFTRÄGE-ÜBERSICHT</h1>
+          <p>Produktionscockpit</p>
+        </div>
+
+        <div className="pp-header-job pp-header-job--overview" aria-label="Aktive Aufträge">
+          <span>Aktive Aufträge</span>
+          <strong>{orderRows.length}</strong>
+        </div>
+
+        <div className="pp-header-overview-status" aria-label="Übersichtsstatus">
+          <span>Sprint 40.6 · Aufträge</span>
+          <div>
+            <StatusPill tone="green">Freigaben</StatusPill>
+            <StatusPill tone="orange">Datenstatus</StatusPill>
+            <StatusPill tone="blue">Preview</StatusPill>
+          </div>
+          <small>Karte anklicken, um die Auftragstasche zu öffnen.</small>
         </div>
       </header>
 
@@ -390,7 +403,7 @@ export function OrdersOverviewPage({ onOpenOrderPocket }: { onOpenOrderPocket: (
           <div className="pp-orders-next-panel">
             <span className="pp-panel__icon"><OrdersIcon name="preview" /></span>
             <strong>Auftragstasche ist Detailansicht</strong>
-            <p>„Auftrag öffnen“ führt direkt in die Auftragstasche. Die Übersicht bleibt das schnelle Produktionscockpit mit Druckdatei-Preview.</p>
+            <p>Die komplette Auftragskarte führt direkt in die Auftragstasche. Die Übersicht bleibt das schnelle Produktionscockpit mit Druckdatei-Preview.</p>
           </div>
         </aside>
 

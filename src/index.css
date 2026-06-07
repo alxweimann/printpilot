@@ -3143,3 +3143,143 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
     --pp-bottom-nav-safe-gap: 72px;
   }
 }
+
+/* Sprint 40.6 · Aufträge-Übersicht vereinfachen und Header angleichen */
+.pp-orders-master-header {
+  width: min(100%, 1720px);
+  margin: 0 auto 14px;
+  grid-template-columns: 320px minmax(360px, .95fr) minmax(190px, .42fr) minmax(360px, .78fr);
+}
+
+.pp-orders-master-header .pp-header-title-shape h1 {
+  font-size: clamp(22px, 2.2vw, 31px);
+  letter-spacing: -.055em;
+}
+
+.pp-header-job--overview strong {
+  font-size: 34px;
+}
+
+.pp-header-overview-status {
+  position: relative;
+  z-index: 2;
+  align-self: center;
+  min-height: 74px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 8px;
+  padding: 0 24px;
+  border-left: 1px solid #e1e8f2;
+}
+
+.pp-header-overview-status > span {
+  color: #607086;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+}
+
+.pp-header-overview-status > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.pp-header-overview-status small {
+  color: #213657;
+  font-size: 12px;
+  font-weight: 720;
+  line-height: 1.2;
+}
+
+.pp-order-row-card__foot {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+}
+
+.pp-order-row-card__open-hint {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: 210px;
+  color: #52637d;
+  font-size: 12px;
+  font-weight: 820;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+}
+
+.pp-order-row-card__open-hint .pp-panel__icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 8px;
+  background: #f4f9ff;
+}
+
+.pp-order-row-card:hover .pp-order-row-card__open-hint {
+  color: #087bff;
+}
+
+.pp-order-row-card:hover .pp-order-row-card__open-hint .pp-panel__icon {
+  border-color: rgba(0,159,227,.28);
+  background: rgba(0,159,227,.08);
+}
+
+.pp-order-row-card__actions {
+  display: none;
+}
+
+@media (max-width: 1180px) {
+  .pp-orders-master-header {
+    min-height: auto;
+    grid-template-columns: 1fr;
+  }
+
+  .pp-orders-master-header .pp-header-brand {
+    min-height: 86px;
+  }
+
+  .pp-orders-master-header .pp-header-title-shape,
+  .pp-orders-master-header .pp-header-job,
+  .pp-header-overview-status {
+    min-height: 76px;
+    padding: 16px 22px;
+    border-left: 0;
+    border-top: 1px solid #e1e8f2;
+  }
+
+  .pp-orders-master-header .pp-header-job {
+    align-items: flex-start;
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-orders-master-header {
+    margin-bottom: 12px;
+  }
+
+  .pp-orders-master-header .pp-header-brand {
+    justify-content: flex-start;
+    min-height: 78px;
+    padding-left: 20px;
+  }
+
+  .pp-orders-master-header .pp-header-title-shape h1 {
+    font-size: 24px;
+  }
+
+  .pp-order-row-card__foot {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .pp-order-row-card__open-hint {
+    justify-content: flex-start;
+    min-width: 0;
+    white-space: normal;
+  }
+}

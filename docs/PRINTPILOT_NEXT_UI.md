@@ -617,3 +617,36 @@ Sprint 40.5 behebt ein zentrales Layoutproblem der festen Bottom-Navigation: Inh
 ### Nächster sinnvoller Schritt
 
 Sprint 41 kann jetzt auf einem stabilen Layout aufbauen. Sinnvoll wäre entweder die dynamische Übergabe des ausgewählten Auftrags an die Auftragstasche oder ein technischer Cleanup der alten Drawer-Styles aus Sprint 40 bis 40.2.
+
+## Design Sprint 40.6 – Aufträge-Übersicht vereinfacht und Header angeglichen
+
+Sprint 40.6 vereinfacht die Auftragskarten und gleicht die Aufträge-Übersicht stärker an die visuelle Struktur der Auftragstasche an. Die Übersicht bleibt das Produktionscockpit, die Auftragstasche bleibt die Detail-/Produktionsansicht.
+
+### Umgesetzt
+
+- Der Button `Auftrag öffnen` wurde aus den Auftragskarten entfernt, weil die komplette Karte bereits klickbar ist.
+- Der Kartenklick bleibt die zentrale Interaktion und öffnet weiterhin die Auftragstasche.
+- Der Kartenfooter wurde beruhigt:
+  - links bleibt `Nächster Schritt`,
+  - rechts steht nur noch ein dezenter Hinweis `Karte öffnet Auftragstasche`.
+- Die Aufträge-Übersicht nutzt jetzt den Master-Header im Stil der Auftragstasche:
+  - PrintPilot-Logo links,
+  - Titel `AUFTRÄGE-ÜBERSICHT`,
+  - Subline `Produktionscockpit`,
+  - Kennzahl `Aktive Aufträge`,
+  - Status-Hinweise für Freigaben, Datenstatus und Preview.
+- Die frühere Hero-Karte der Übersicht wurde durch den konsistenteren Master-Header ersetzt.
+- Responsive Verhalten für den neuen Übersicht-Header ergänzt.
+- Pattern `orders-overview-master-header` ergänzt.
+- Pattern `orders-overview-list` auf Kartenklick-Navigation statt sichtbarer Primäraktion aktualisiert.
+
+### Nicht verändert
+
+- `src/features/order-pocket/OrderPocketPage.tsx` blieb unverändert.
+- Die Auftragstasche zeigt weiterhin den bestehenden Demo-Auftrag `PP-2026-00481`.
+- Es wurde noch keine dynamische Übergabe der ausgewählten Auftragsdaten an die Auftragstasche eingebaut.
+- Es wurde keine Fachlogik geändert.
+
+### Nächster sinnvoller Schritt
+
+Sprint 41 sollte die ausgewählte Auftragskarte mit der Auftragstasche verbinden, damit die Auftragstasche je nach geöffnetem Auftrag andere Kopfdaten, Status, Maschine, Termin und Druckdaten anzeigen kann.

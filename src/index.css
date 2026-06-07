@@ -1509,9 +1509,13 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 .pp-imposition-sheet {
   position: relative;
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
-  gap: 6px;
-  min-height: 138px;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+  gap: 7px;
+  width: min(100%, 460px);
+  aspect-ratio: 450 / 320;
+  min-height: 0;
+  margin-inline: auto;
   padding: 16px;
   overflow: hidden;
   border: 1px solid #dbe7f4;
@@ -1548,7 +1552,7 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   z-index: 1;
   display: grid;
   place-items: center;
-  min-height: 48px;
+  min-height: 0;
   border: 1px solid rgba(0, 159, 227, .32);
   border-radius: 7px;
   background: rgba(255,255,255,.82);
@@ -1608,7 +1612,11 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   .pp-schedule-step { grid-template-columns: 20px minmax(0, 1fr); }
   .pp-schedule-step time { justify-items: start; grid-column: 2; margin-top: -4px; }
   .pp-imposition-stats { grid-template-columns: 1fr; }
-  .pp-imposition-sheet { grid-template-columns: repeat(2, 1fr); min-height: 190px; }
+  .pp-imposition-sheet {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(2, minmax(0, 1fr));
+    width: min(100%, 420px);
+  }
   .pp-imposition-details { grid-template-columns: 1fr; }
 }
 
@@ -1789,4 +1797,10 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   .pp-machine-visual img {
     width: 144px;
   }
+}
+
+
+/* Design Sprint 37: Nutzenplan fachlicheres Druckbogenverhältnis */
+.pp-imposition-sheet {
+  /* SRA3/Digitaldruckbogen näher an 450 × 320 mm statt freier Kartenfüllung. */
 }

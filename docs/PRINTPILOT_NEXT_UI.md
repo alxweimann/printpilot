@@ -262,3 +262,12 @@ Der CMY-Diagonalstreifen-Hintergrund aus Sprint 21 wurde wieder entfernt. Der Lo
 - QR-Text hierarchisch gegliedert: Aktion, Auftragsnummer, Zielsystem.
 - Header-Spalten neu gewichtet, damit Logo, Titel, Auftragsnummer und QR-Bereich ausgewogener wirken.
 - Auftragstaschen-Karten und übrige Bereiche unverändert gelassen.
+
+
+## Design Sprint 37 – Nutzenplan mit realistischem Druckbogenverhältnis
+
+- Nutzenplan-Darstellung fachlich korrigiert: Druckbogenfläche nutzt jetzt ein Verhältnis von ca. 450 × 320 mm.
+- Der Nutzenplan füllt die Karte nicht mehr beliebig, sondern bleibt als SRA3-/Digitaldruckbogen proportional nachvollziehbar.
+- Bogenformat in der Karte um `450 × 320 mm` ergänzt.
+- 4 × 2 Nutzen bleiben als schematische Produktionsansicht erhalten.
+- Header, Footer und übrige Auftragstaschen-Karten wurden nicht verändert.

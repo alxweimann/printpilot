@@ -89,14 +89,14 @@ const scheduleRows = [
 ];
 
 const impositionStats = [
-  ["Bogenformat", "SRA3"],
+  ["Bogenformat", "SRA3 · 450 × 320 mm"],
   ["Nutzen", "8 Nutzen"],
   ["Druckbogen", "375 Bg. + 50 Ausschuss"],
 ];
 
 const impositionDetails = [
   ["Endformat", "210 × 99 mm"],
-  ["Anordnung", "4 × 2 Nutzen"],
+  ["Anordnung", "4 × 2 Nutzen · schematisch"],
   ["Beschnitt", "3 mm umlaufend"],
   ["Wendeart", "Längswende"],
 ];

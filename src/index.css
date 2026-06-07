@@ -165,16 +165,33 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 
 .pp-brand-word span { color: #20c9ff; }
 
-.pp-header-order {
+.pp-header-job {
   position: relative;
   z-index: 2;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
+  gap: 6px;
+  color: #07183a;
+  text-align: center;
+}
+
+.pp-header-job span {
+  color: #607086;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 850;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+}
+
+.pp-header-job strong {
   color: #07183a;
   font-size: 25px;
-  font-weight: 950;
-  letter-spacing: .012em;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: .01em;
 }
 
 .pp-header-qr {
@@ -191,17 +208,16 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 }
 
 .pp-qr-code {
-  width: 54px;
-  height: 54px;
-  flex: 0 0 54px;
-  background:
-    linear-gradient(90deg, #000 7px, transparent 7px 12px, #000 12px 18px, transparent 18px 24px, #000 24px 30px, transparent 30px 36px, #000 36px 43px, transparent 43px),
-    linear-gradient(#000 7px, transparent 7px 12px, #000 12px 18px, transparent 18px 24px, #000 24px 30px, transparent 30px 36px, #000 36px 43px, transparent 43px),
-    #fff;
-  border: 4px solid #fff;
-  outline: 1px solid #111827;
-  color: transparent;
-  font-size: 0;
+  width: 58px;
+  height: 58px;
+  flex: 0 0 58px;
+  display: block;
+  padding: 4px;
+  background: #ffffff;
+  border: 1px solid #111827;
+  border-radius: 4px;
+  box-shadow: 0 8px 18px rgba(10,31,68,.08);
+  object-fit: contain;
 }
 
 .pp-header-qr span {
@@ -1176,7 +1192,7 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   .pp-brand-logo { height: 66px; max-width: 232px; }
   .pp-header-title-shape { padding-left: 24px; }
   .pp-header-title-shape h1 { font-size: 23px; }
-  .pp-header-order { font-size: 23px; }
+  .pp-header-job strong { font-size: 23px; }
   .pp-brand-word { font-size: 24px; }
   .pp-logo-mark { width: 40px; height: 42px; flex-basis: 40px; }
   .pp-logo-mark__stem { height: 42px; }

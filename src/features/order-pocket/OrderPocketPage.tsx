@@ -1,6 +1,7 @@
 import type { ReactNode } from "react";
 import { Panel } from "../../components/ui/Panel";
 import printPilotLogo from "../../assets/logo/printpilot-logo-on-navy.png";
+import orderQrCode from "../../assets/qr/order-pp-2026-00481.svg";
 import digitalColorMachine from "../../assets/machines/machine-digital-color.svg";
 import digitalMonoMachine from "../../assets/machines/machine-digital-mono.svg";
 import wideFormatMachine from "../../assets/machines/machine-wide-format.svg";
@@ -671,16 +672,23 @@ export function OrderPocketPage() {
           <p>Produktionsauftrag</p>
         </div>
 
-        <strong className="pp-header-order">PP-2026-00481</strong>
+        <div className="pp-header-job" aria-label="Auftragsnummer">
+          <span>Auftragsnummer</span>
+          <strong>PP-2026-00481</strong>
+        </div>
 
         <div className="pp-header-qr">
-          <div className="pp-qr-code" aria-label="QR-Code"></div>
+          <img
+            className="pp-qr-code"
+            src={orderQrCode}
+            alt="QR-Code für Auftrag PP-2026-00481"
+          />
           <span>
-            QR-Code scannen
+            Auftrag scannen
             <br />
-            für Auftrag in
+            PP-2026-00481
             <br />
-            PrintPilot öffnen
+            in PrintPilot öffnen
           </span>
         </div>
       </header>

@@ -245,3 +245,11 @@ Der CMY-Diagonalstreifen-Hintergrund aus Sprint 21 wurde wieder entfernt. Der Lo
 - Dateien, Notizen, Verlauf, Checkliste, Termine und Nutzenplan optisch weiter vereinheitlicht.
 - Responsive-Verhalten der Maschinenkarte bei schmaleren Fenstern verbessert.
 - Header, Logo-Verlauf, Footer und zentrale Kartenstruktur nicht verändert.
+
+## Design Sprint 35 – Header-Auftragsnummer und echter QR-Code
+
+- Header-Informationshierarchie verbessert: Die Auftragsnummer ist jetzt klar als "Auftragsnummer" beschriftet.
+- Die bisher frei stehende Nummer `PP-2026-00481` wurde in einen eigenen Job-Block gesetzt.
+- QR-Platzhalter durch echten QR-Code für `printpilot://orders/PP-2026-00481` ersetzt.
+- QR-Bereich zeigt jetzt direkt, welcher Auftrag beim Scannen geöffnet wird.
+- Logo-Verlauf, Kartenraster, Footer und alle Inhaltskarten nicht verändert.

@@ -589,3 +589,31 @@ Sprint 40.4 korrigiert die ersten Layoutprobleme nach der Umstellung von Drawer 
 ### Nächster sinnvoller Schritt
 
 Sprint 41 sollte die Auftragstasche dynamisch mit dem ausgewählten Auftrag aus der Übersicht verbinden oder vorher einen technischen Cleanup der alten Drawer-Styles durchführen.
+
+
+## Design Sprint 40.5 – Globaler Bottom-Navigation-Sicherheitsabstand
+
+Sprint 40.5 behebt ein zentrales Layoutproblem der festen Bottom-Navigation: Inhalte dürfen bei tiefem Scrollstand nicht mehr unter der unteren Navigation verschwinden. Der Fix ist bewusst global umgesetzt, damit spätere Module denselben Sicherheitsabstand automatisch nutzen.
+
+### Umgesetzt
+
+- Zentrale CSS-Variablen für die Bottom-Navigation ergänzt:
+  - `--pp-bottom-nav-height`,
+  - `--pp-bottom-nav-safe-gap`,
+  - `--pp-page-bottom-safe`.
+- `.pp-main` und `.pp-main--console` nutzen den globalen unteren Sicherheitsabstand.
+- `.pp-orders-overview` nutzt den globalen Abstand statt eines hart codierten Bottom-Paddings.
+- `.pp-order-pocket` und `.pp-pocket-route-shell` erhalten denselben Sicherheitsabstand, damit die Auftragstasche bis unten vollständig bedienbar bleibt.
+- Die feste Bottom-Navigation berücksichtigt `env(safe-area-inset-bottom, 0px)` für robustere Geräte-/Viewport-Unterstützung.
+- Auf schmaleren Breiten wird der zusätzliche Sicherheitsabstand erhöht.
+- Neues Pattern `bottom-navigation-safe-area` in `src/design-system/ui-patterns.ts` dokumentiert.
+
+### Nicht verändert
+
+- Keine fachliche Logik geändert.
+- Keine Änderungen an `src/features/order-pocket/OrderPocketPage.tsx`.
+- Keine Änderung an der aktuellen Navigation von Aufträge-Übersicht zur Auftragstasche.
+
+### Nächster sinnvoller Schritt
+
+Sprint 41 kann jetzt auf einem stabilen Layout aufbauen. Sinnvoll wäre entweder die dynamische Übergabe des ausgewählten Auftrags an die Auftragstasche oder ein technischer Cleanup der alten Drawer-Styles aus Sprint 40 bis 40.2.

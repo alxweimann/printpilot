@@ -56,6 +56,24 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
     reuseFor: ['Aufträge', 'Druckdaten', 'Freigabeansicht', 'Produktionscockpit', 'Dateilisten'],
   },
+
+  {
+    id: 'bottom-navigation-safe-area',
+    category: 'layout',
+    name: 'Bottom-Navigation Sicherheitsabstand',
+    purpose:
+      'Zentraler Layout-Abstand für feste Bottom-Navigation, damit Scroll-Inhalte in Übersichten und Detailseiten nicht verdeckt werden.',
+    reference: 'AppShell · Bottom Navigation',
+    classNames: [
+      'pp-main',
+      'pp-main--console',
+      'pp-bottom-nav',
+      'pp-orders-overview',
+      'pp-order-pocket',
+      'pp-pocket-route-shell',
+    ],
+    reuseFor: ['Alle Module mit Bottom-Navigation', 'Aufträge', 'Auftragstasche', 'Mobile Ansichten'],
+  },
   {
     id: 'order-pocket-header',
     category: 'layout',

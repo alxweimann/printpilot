@@ -356,7 +356,7 @@ export function OrdersOverviewPage({ onOpenOrderPocket }: { onOpenOrderPocket: (
         <div className="pp-orders-hero__title">
           <span className="pp-panel__icon"><OrdersIcon name="orders" /></span>
           <div>
-            <p className="pp-eyebrow">Sprint 40.4 · Aufträge</p>
+            <p className="pp-eyebrow">Sprint 40.5 · Aufträge</p>
             <h1>Aufträge-Übersicht</h1>
             <span>Produktionscockpit mit Druckdatei-Preview und direktem Einstieg in die Auftragstasche.</span>
           </div>

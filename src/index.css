@@ -700,3 +700,92 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   .pp-status-pill { min-height: 29px; padding-inline: 11px; font-size: 10.5px; }
   .pp-bottom-nav { padding-inline: 36px; }
 }
+
+/* Sprint 29: unified note/history timeline cards */
+.pp-activity-list {
+  position: relative;
+  display: grid;
+  gap: 10px;
+}
+
+.pp-activity-list::before {
+  content: '';
+  position: absolute;
+  top: 13px;
+  bottom: 13px;
+  left: 7px;
+  width: 1px;
+  background: linear-gradient(180deg, rgba(0, 159, 227, .28), rgba(146, 163, 184, .18));
+}
+
+.pp-activity-item {
+  position: relative;
+  display: grid;
+  grid-template-columns: 18px 1fr;
+  gap: 10px;
+  align-items: start;
+  min-width: 0;
+}
+
+.pp-activity-dot {
+  position: relative;
+  z-index: 1;
+  width: 15px;
+  height: 15px;
+  margin-top: 3px;
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  background: #94a3b8;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, .38), 0 5px 12px rgba(7, 31, 72, .10);
+}
+
+.pp-activity-dot--green { background: #10b981; box-shadow: 0 0 0 1px rgba(16, 185, 129, .34), 0 5px 12px rgba(7, 31, 72, .10); }
+.pp-activity-dot--blue { background: #009fe3; box-shadow: 0 0 0 1px rgba(0, 159, 227, .34), 0 5px 12px rgba(7, 31, 72, .10); }
+.pp-activity-dot--gray { background: #94a3b8; }
+
+.pp-activity-item > div {
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid #e2eaf4;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+
+.pp-activity-list--notes .pp-activity-item:first-child > div {
+  border-color: rgba(0, 159, 227, .24);
+  background: linear-gradient(180deg, #f7fcff 0%, #f2f9ff 100%);
+}
+
+.pp-activity-item strong {
+  display: block;
+  color: #06163a;
+  font-size: 12px;
+  font-weight: 760;
+  line-height: 1.25;
+}
+
+.pp-activity-item p {
+  margin: 3px 0 0;
+  color: #52637d;
+  font-size: 11.5px;
+  font-weight: 620;
+  line-height: 1.35;
+}
+
+.pp-activity-item small {
+  display: block;
+  margin-bottom: 3px;
+  color: #63738d;
+  font-size: 10.5px;
+  font-weight: 680;
+  line-height: 1.25;
+}
+
+.pp-activity-list--notes .pp-activity-item small {
+  margin: 5px 0 0;
+}
+
+.pp-activity-list--history .pp-activity-item > div {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}

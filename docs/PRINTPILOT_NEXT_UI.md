@@ -173,3 +173,26 @@ Der CMY-Diagonalstreifen-Hintergrund aus Sprint 21 wurde wieder entfernt. Der Lo
 - Wichtige Liefernotiz dezent hervorgehoben.
 - Notiz-Meta-Information als ruhige Schlusszeile gesetzt.
 - Header, Logo-Verlauf, Footer, Maschinenkarte und übrige Karten nicht verändert.
+
+## Design Sprint 27 – Compact files and notes cards
+
+- Dateien-Karte kompakter gesetzt, damit sie im unteren Kartenraster nicht hinter der Bottom-Navigation verschwindet.
+- Dateizeilen, Typ-Badges, Meta-Zeilen und Link-Abstand reduziert.
+- Notizen-Karte kompakter gesetzt und interne Scrollbereiche für längere Inhalte vorbereitet.
+- Header, Logo-Verlauf, Footer, Maschine und übrige Karten unverändert gelassen.
+
+
+## Design Sprint 28 – Dateien/Notizen ohne interne Scrollbars
+
+- Interne Scrollbereiche in Dateien- und Notizen-Karte entfernt.
+- Karten dürfen wieder natürlich mit dem Seiteninhalt wachsen.
+- Gesamtfenster bleibt der führende Scrollbereich.
+- Dateien- und Notizen-Optik aus Sprint 26 wiederhergestellt.
+- Header, Logo-Verlauf, Footer, Maschine und übrige Karten nicht verändert.
+
+
+## Design Sprint 29 – Notizen und Verlauf als einheitliche Timeline
+- Kommentare / Verlauf wieder auf die ruhige Timeline-Darstellung gesetzt.
+- Notizen im gleichen Timeline-Stil aufgebaut, damit beide Karten optisch zusammenpassen.
+- Keine internen Scrollbereiche in Notizen/Verlauf; die Seite bleibt der zentrale Scrollbereich.
+- Dateien-, Header-, Footer- und Logo-Verlauf nicht verändert.

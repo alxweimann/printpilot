@@ -52,6 +52,18 @@ const files = [
   ['PDF', 'nutzenplan.pdf', 'Nutzenplan', '30.05.2026', '10:12', '0,6 MB'],
 ]
 
+const noteRows = [
+  { tone: 'blue', label: 'Lieferung', text: 'Kunde wünscht Lieferung bis spätestens Mittwoch.', meta: 'Admin · 30.05.2026 · 14:22' },
+  { tone: 'gray', label: 'Verpackung', text: 'Kartons mit Aufkleber „Messeaktion Juni“ kennzeichnen.', meta: 'Admin · 30.05.2026 · 14:18' },
+  { tone: 'gray', label: 'Rückfrage', text: 'Rückfragen an Max Mustermann.', meta: 'Sarah K. · 30.05.2026 · 11:40' },
+]
+
+const historyRows = [
+  { tone: 'green', date: '30.05.2026', time: '14:20', title: 'Kundenfreigabe erteilt', user: 'Max M.' },
+  { tone: 'green', date: '30.05.2026', time: '11:30', title: 'Datenprüfung abgeschlossen', user: 'Sarah K.' },
+  { tone: 'blue', date: '30.05.2026', time: '10:15', title: 'Auftrag angelegt', user: 'Admin' },
+]
+
 type MachineType = 'digital-color' | 'digital-mono' | 'wide-format' | 'inkjet' | 'finishing'
 
 type MachineCardData = {
@@ -355,21 +367,18 @@ export function OrderPocketPage() {
         </Panel>
 
         <Panel title="Notizen" icon={<PocketIcon name="notes" />}>
-          <div className="pp-notes-list">
-            <article className="pp-note-card pp-note-card--important">
-              <span>Lieferung</span>
-              <p>Kunde wünscht Lieferung bis spätestens Mittwoch.</p>
-            </article>
-            <article className="pp-note-card">
-              <span>Verpackung</span>
-              <p>Kartons mit Aufkleber „Messeaktion Juni“ kennzeichnen.</p>
-            </article>
-            <article className="pp-note-card">
-              <span>Rückfrage</span>
-              <p>Rückfragen an Max Mustermann.</p>
-            </article>
+          <div className="pp-activity-list pp-activity-list--notes">
+            {noteRows.map((note) => (
+              <article className="pp-activity-item" key={note.label}>
+                <span className={`pp-activity-dot pp-activity-dot--${note.tone}`}></span>
+                <div>
+                  <strong>{note.label}</strong>
+                  <p>{note.text}</p>
+                  <small>{note.meta}</small>
+                </div>
+              </article>
+            ))}
           </div>
-          <small className="pp-note-meta">Letzte Notiz: 30.05.2026 14:22 von Admin</small>
         </Panel>
 
         <Panel title="Maschine" icon={<PocketIcon name="machine" />}>
@@ -378,10 +387,17 @@ export function OrderPocketPage() {
         </Panel>
 
         <Panel title="Kommentare / Verlauf" icon={<PocketIcon name="history" />}>
-          <div className="pp-history-list">
-            <div><span>30.05.2026&nbsp;&nbsp;14:20</span><b>Kundenfreigabe erteilt</b><em>Max M.</em></div>
-            <div><span>30.05.2026&nbsp;&nbsp;11:30</span><b>Datenprüfung abgeschlossen</b><em>Sarah K.</em></div>
-            <div><span>30.05.2026&nbsp;&nbsp;10:15</span><b>Auftrag angelegt</b><em>Admin</em></div>
+          <div className="pp-activity-list pp-activity-list--history">
+            {historyRows.map((entry) => (
+              <article className="pp-activity-item" key={`${entry.date}-${entry.time}-${entry.title}`}>
+                <span className={`pp-activity-dot pp-activity-dot--${entry.tone}`}></span>
+                <div>
+                  <small>{entry.date} · {entry.time}</small>
+                  <strong>{entry.title}</strong>
+                  <p>{entry.user}</p>
+                </div>
+              </article>
+            ))}
           </div>
           <a className="pp-card-link">Gesamten Verlauf anzeigen →</a>
         </Panel>

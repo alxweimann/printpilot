@@ -87,3 +87,12 @@ Als nächstes sollte die Auftragstasche einmal lokal im Browser geprüft werden:
 - Mehr Abstand zwischen Icon-Kacheln und vertikalen Trennlinien gesetzt.
 - Karten-Icons in den Hauptbereichen unverändert gelassen.
 - Header aus Sprint 11/12 nicht verändert.
+
+
+## Design Sprint 14 – Status-/Prozess-Pills ruhiger
+
+- Status-Buttons in der Statusübersicht kleiner und kompakter gesetzt.
+- Pfeiltrenner in der Statusübersicht verkleinert und leichter gewichtet.
+- Schriftgewicht in den Status-Pills reduziert, damit die Buttons weniger massiv wirken.
+- Weiterverarbeitungs-Pills kompakter gemacht und Spaltenbreite reduziert.
+- Header, Logo, Trennlinien und Karten-Icons aus Sprint 13 unverändert gelassen.

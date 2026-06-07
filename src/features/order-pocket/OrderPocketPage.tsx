@@ -8,12 +8,15 @@ import inkjetMachine from '../../assets/machines/machine-inkjet.svg'
 import finishingMachine from '../../assets/machines/machine-finishing.svg'
 import { StatusPill } from '../../components/ui/StatusPill'
 
-const productRows = [
+const productHighlights = [
   ['Auflage', '3.000 Stück'],
-  ['Format (Endformat)', '210 × 99 mm'],
-  ['Seiten', '2-seitig (Vorder- & Rückseite)'],
-  ['Farbigkeit', '4/4-farbig (CMYK)'],
+  ['Endformat', '210 × 99 mm'],
+  ['Seiten', '2-seitig'],
+]
+
+const productDetails = [
   ['Papier', 'Bilderdruck matt 135 g'],
+  ['Farbigkeit', '4/4-farbig CMYK'],
   ['Rohformat', 'SRA3'],
   ['Nutzen', '8 Nutzen'],
   ['Beschnitt', '3 mm'],
@@ -21,17 +24,21 @@ const productRows = [
   ['Gewicht gesamt', 'ca. 48,6 kg'],
 ]
 
-const printRows = [
+const printStatusItems = [
+  { tone: 'green', label: 'Preflight', value: 'OK' },
+  { tone: 'green', label: 'Farbmodus', value: 'CMYK' },
+  { tone: 'orange', label: 'Beschnitt', value: 'prüfen' },
+]
+
+const printSpecs = [
   ['Maschine', 'Xerox® Iridesse 1'],
   ['Druckverfahren', 'Digitaldruck'],
-  ['Duplex', 'Ja (Längswende)'],
-  ['Sonderfarben', 'Keine'],
-  ['Farbmodus', 'CMYK'],
+  ['Duplex', 'Längswende'],
   ['Profil', 'Coated FOGRA39'],
   ['Auflösung', '2400 × 2400 dpi'],
-  ['Klicks (Schätz.)', '6.100'],
   ['Papierbedarf', '425 Bogen SRA3'],
-  ['Druckzeit (Schätz.)', '00:35 Std.'],
+  ['Klicks', '6.100'],
+  ['Druckzeit', '00:35 Std.'],
   ['Operator', 'Noch nicht zugewiesen'],
 ]
 
@@ -168,19 +175,6 @@ function PocketIcon({ name }: { name: PocketIconName }) {
   }
 }
 
-function DataRows({ rows }: { rows: string[][] }) {
-  return (
-    <div className="pp-data-rows">
-      {rows.map(([label, value]) => (
-        <div className="pp-data-row" key={label}>
-          <span>{label}</span>
-          <strong>{value}</strong>
-        </div>
-      ))}
-    </div>
-  )
-}
-
 type CheckStatus = 'done' | 'open' | 'required'
 
 const checklistSections = [
@@ -247,6 +241,71 @@ function TopInfoCard({ icon, label, title, children }: { icon: ReactNode; label:
   )
 }
 
+function ProductCard() {
+  return (
+    <div className="pp-product-card">
+      <div className="pp-product-hero">
+        <div>
+          <span>Produkt</span>
+          <h3>Flyer DIN Lang</h3>
+          <p>2-seitiger Werbeflyer für Messeaktion Juni</p>
+        </div>
+        <div className="pp-product-sheet" aria-label="Produktmotiv">
+          <span>Gesund<br />Genießen</span>
+          <i></i>
+          <b></b>
+        </div>
+      </div>
+
+      <div className="pp-product-highlights">
+        {productHighlights.map(([label, value]) => (
+          <span key={label}><small>{label}</small><strong>{value}</strong></span>
+        ))}
+      </div>
+
+      <div className="pp-compact-data-list">
+        {productDetails.map(([label, value]) => (
+          <div key={label}>
+            <span>{label}</span>
+            <strong>{value}</strong>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+function PrintDataCard() {
+  return (
+    <div className="pp-printdata-card">
+      <div className="pp-printdata-file">
+        <span className="pp-printdata-file__type">PDF</span>
+        <div>
+          <b>flyer_druck.pdf</b>
+          <small>Druck-PDF · 30.05.2026 · 10:10 · 8,2 MB</small>
+        </div>
+      </div>
+
+      <div className="pp-printdata-status">
+        {printStatusItems.map((item) => (
+          <span className={`pp-printdata-check pp-printdata-check--${item.tone}`} key={item.label}>
+            <small>{item.label}</small>
+            <strong>{item.value}</strong>
+          </span>
+        ))}
+      </div>
+
+      <div className="pp-compact-data-list pp-compact-data-list--print">
+        {printSpecs.map(([label, value]) => (
+          <div key={label}>
+            <span>{label}</span>
+            <strong>{value}</strong>
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
 
 function PreviewCard() {
   return (
@@ -358,21 +417,11 @@ export function OrderPocketPage() {
 
       <div className="pp-pocket-grid">
         <Panel title="Produkt" icon={<PocketIcon name="product" />} className="pp-product-panel">
-          <h3>Flyer DIN Lang</h3>
-          <div className="pp-product-content">
-            <div className="pp-flyer-stack" aria-label="Produktvorschau">
-              <div className="pp-flyer pp-flyer--back"></div>
-              <div className="pp-flyer pp-flyer--front">
-                <span>Gesund<br />Genießen</span>
-                <i></i>
-              </div>
-            </div>
-            <DataRows rows={productRows} />
-          </div>
+          <ProductCard />
         </Panel>
 
-        <Panel title="Druckdaten" icon={<PocketIcon name="print-data" />}>
-          <DataRows rows={printRows} />
+        <Panel title="Druckdaten" icon={<PocketIcon name="print-data" />} className="pp-printdata-panel">
+          <PrintDataCard />
         </Panel>
 
         <Panel title="Termine" icon={<PocketIcon name="timeline" />}>

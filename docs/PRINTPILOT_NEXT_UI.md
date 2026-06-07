@@ -213,3 +213,14 @@ Der CMY-Diagonalstreifen-Hintergrund aus Sprint 21 wurde wieder entfernt. Der Lo
 - Checkboxen, Abstände und Schriftgewichte an die kantigere PrintPilot-Formsprache angepasst.
 - Signaturbereich optisch vom Arbeitsbereich getrennt.
 - Header, Logo-Verlauf, Footer, Vorschau, Dateien, Notizen und Verlauf nicht verändert.
+
+## Design Sprint 32 – Produkt und Druckdaten verfeinert
+
+- Produkt-Karte auf eine hochwertigere Produktübersicht umgestellt.
+- Produktname, Kurzbeschreibung, Motivfläche und Kernwerte sind jetzt klarer gruppiert.
+- Auflage, Endformat und Seitenzahl werden als ruhige Kennzahlen dargestellt.
+- Produktdetails wie Papier, Farbigkeit, Rohformat, Nutzen, Beschnitt, Ausschuss und Gewicht bleiben kompakt lesbar.
+- Druckdaten-Karte um eine Dateikopfleiste mit PDF-Badge ergänzt.
+- Preflight, Farbmodus und Beschnittprüfung werden als kleine Statusfelder dargestellt.
+- Druckdaten-Spezifikationen wurden von einer Roh-Tabelle auf eine kompakte Produktionsliste umgestellt.
+- Header, Logo-Verlauf, Footer, Vorschau, Maschine, Dateien, Notizen, Verlauf und Checkliste nicht verändert.

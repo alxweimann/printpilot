@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react'
 import { Panel } from '../../components/ui/Panel'
-import printPilotLogo from '../../assets/logo/printpilot-logo-transparent.png'
+import printPilotLogo from '../../assets/logo/printpilot-logo-on-navy.png'
 import digitalColorMachine from '../../assets/machines/machine-digital-color.svg'
 import digitalMonoMachine from '../../assets/machines/machine-digital-mono.svg'
 import wideFormatMachine from '../../assets/machines/machine-wide-format.svg'
@@ -50,12 +50,6 @@ const files = [
   ['PDF', 'flyer_freigabe.pdf', '30.05.2026', '14:20', '1,3 MB'],
   ['JPG', 'flyer_ansicht.jpg', '30.05.2026', '10:10', '2,1 MB'],
   ['PDF', 'nutzenplan.pdf', '30.05.2026', '10:12', '0,6 MB'],
-]
-
-const historyRows = [
-  { time: '14:20', date: '30.05.2026', title: 'Kundenfreigabe erteilt', user: 'Max M.' },
-  { time: '11:30', date: '30.05.2026', title: 'Datenprüfung abgeschlossen', user: 'Sarah K.' },
-  { time: '10:15', date: '30.05.2026', title: 'Auftrag angelegt', user: 'Admin' },
 ]
 
 type MachineType = 'digital-color' | 'digital-mono' | 'wide-format' | 'inkjet' | 'finishing'
@@ -200,16 +194,21 @@ function MachineCard({ machine }: { machine: MachineCardData }) {
         <img src={imageSource} alt="" />
       </div>
       <div className="pp-machine-details">
-        <div className="pp-machine-kicker">Ausgewählte Maschine</div>
-        <div className="pp-machine-title-row">
-          <b>{machine.name}</b>
-          <p>{machine.typeLabel} · {machine.location}</p>
+        <div className="pp-machine-details__head">
+          <div>
+            <span>Ausgewählte Maschine</span>
+            <b>{machine.name}</b>
+          </div>
           <StatusPill tone="green">{machine.status}</StatusPill>
         </div>
         <div className="pp-machine-specs">
           {machine.specs.map((spec) => <span key={spec}>{spec}</span>)}
         </div>
-        <p className="pp-machine-service">Letzter Service: <strong>{machine.service}</strong></p>
+        <dl className="pp-machine-meta">
+          <div><dt>Typ</dt><dd>{machine.typeLabel}</dd></div>
+          <div><dt>Standort</dt><dd>{machine.location}</dd></div>
+          <div><dt>Service</dt><dd>{machine.service}</dd></div>
+        </dl>
       </div>
     </div>
   )
@@ -364,19 +363,9 @@ export function OrderPocketPage() {
 
         <Panel title="Kommentare / Verlauf" icon={<PocketIcon name="history" />}>
           <div className="pp-history-list">
-            {historyRows.map((entry) => (
-              <article className="pp-history-item" key={`${entry.date}-${entry.time}-${entry.title}`}>
-                <div className="pp-history-time">
-                  <strong>{entry.time}</strong>
-                  <span>{entry.date}</span>
-                </div>
-                <div className="pp-history-marker" aria-hidden="true"></div>
-                <div className="pp-history-content">
-                  <b>{entry.title}</b>
-                  <span>{entry.user}</span>
-                </div>
-              </article>
-            ))}
+            <div><span>30.05.2026&nbsp;&nbsp;14:20</span><b>Kundenfreigabe erteilt</b><em>Max M.</em></div>
+            <div><span>30.05.2026&nbsp;&nbsp;11:30</span><b>Datenprüfung abgeschlossen</b><em>Sarah K.</em></div>
+            <div><span>30.05.2026&nbsp;&nbsp;10:15</span><b>Auftrag angelegt</b><em>Admin</em></div>
           </div>
           <a className="pp-card-link">Gesamten Verlauf anzeigen →</a>
         </Panel>

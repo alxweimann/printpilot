@@ -1,6 +1,6 @@
 # PrintPilot Next UI
 
-## Stand: Design Sprint 11
+## Stand: Design Sprint 22
 
 Aktueller Fokus: Auftragstaschen-Header mit freigestelltem PrintPilot-Logo stabilisieren und die offiziellen PrintPilot-Farbwerte im UI-Stand verankern.
 
@@ -129,23 +129,14 @@ Als nächstes sollte die Auftragstasche einmal lokal im Browser geprüft werden:
 - Meta-Felder in der Maschinenkarte wurden minimal kantiger abgestimmt.
 - Header, Footer, Maschinenaufbau und übrige Karten wurden nicht verändert.
 
+## Design Sprint 21 – Logo-Hinterlegung mit CMY-Diagonalstreifen
 
-## Design Sprint 19 – Maschinenkarte responsiv beruhigt
+- Der Logo-Bereich im Auftragstaschen-Header erhielt eine dezente CMY-Hinterlegung als Print-Anspielung.
+- Die Streifen werden rein per CSS erzeugt, damit das transparente PrintPilot-Logo sauber bleibt und später unabhängig angepasst werden kann.
+- Cyan, Magenta und Yellow sind bewusst zurückhaltend transparent gesetzt, damit der Header nicht unruhig wird.
+- Die bestehende Header-Struktur, Trennlinie, QR-Fläche und übrigen Karten wurden nicht verändert.
 
-- Die Maschinenkarte wurde für unterschiedliche Fensterbreiten robuster aufgebaut.
-- Auf breiteren Ansichten bleibt die Darstellung zweispaltig mit Illustration links und Maschinendaten rechts.
-- Auf schmaleren Ansichten wechselt die Karte automatisch in eine einspaltige Darstellung mit Bild oben und Daten darunter.
-- Die vorherigen Mini-Meta-Kacheln für Typ, Standort und Service wurden entfernt, damit die Karte weniger kleinteilig wirkt.
-- Typ und Standort erscheinen jetzt als ruhige Textzeile unter dem Maschinennamen; der letzte Service steht als dezente Servicezeile darunter.
-- Status-Badge und technische Merkmale bleiben erhalten, sind aber weniger dominant und dürfen sauber umbrechen.
-- Header, Footer, Logo, Top-Info-Bereich und übrige Karten wurden nicht verändert.
+## Design Sprint 22 – Logo-Bereich vollflächig im Footer-Blau
 
-## Design Sprint 20 – Maschinenkarte und Verlauf beruhigt
+Der CMY-Diagonalstreifen-Hintergrund aus Sprint 21 wurde wieder entfernt. Der Logo-Bereich im Auftragstaschen-Header ist jetzt vollflächig im dunklen Footer-Blau gehalten, damit Header und Bottom-Navigation eine einheitlichere Klammer bilden. Zusätzlich wurde eine Logo-Variante für dunklen Hintergrund ergänzt (`printpilot-logo-on-navy.png`), bei der der PRINT-Schriftzug weiß statt navy ist.
 
-- Die Maschinenkarte wurde weiter stabilisiert: Der Status-Badge sitzt jetzt unter dem Maschinennamen statt rechts daneben.
-- Der Maschinenname bekommt dadurch mehr nutzbare Breite und bricht auf schmaleren Karten ruhiger um.
-- Typ, Standort, Status, technische Merkmale und Service bleiben erhalten, wirken aber weniger gequetscht.
-- Die Karte bleibt responsiv: Bild und Daten können weiterhin je nach Fensterbreite ein- oder zweispaltig erscheinen.
-- Der Bereich `Kommentare / Verlauf` wurde von einer tabellarischen Darstellung auf eine kompakte Timeline umgestellt.
-- Zeit, Datum, Ereignis und Benutzer sind klarer gruppiert; die Timeline ist bei schmaleren Fenstern robuster.
-- Header, Footer, Top-Info-Bereich und übrige Karten wurden nicht verändert.

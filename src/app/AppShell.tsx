@@ -21,7 +21,7 @@ export function AppShell({ children }: AppShellProps) {
         {children}
         <nav className="pp-bottom-nav" aria-label="Schnellnavigation">
           {bottomNav.map(([icon, label]) => (
-            <button key={label}>
+            <button key={label} className={label === 'Aufträge' ? 'is-active' : undefined}>
               <span>{icon}</span>
               {label}
             </button>

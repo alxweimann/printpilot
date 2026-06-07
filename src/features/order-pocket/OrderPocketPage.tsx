@@ -1,5 +1,6 @@
 import type { ReactNode } from 'react'
 import { Panel } from '../../components/ui/Panel'
+import printPilotLogo from '../../assets/logo/printpilot-logo-transparent.png'
 import { StatusPill } from '../../components/ui/StatusPill'
 
 const productRows = [
@@ -86,11 +87,7 @@ export function OrderPocketPage() {
     <div className="pp-order-pocket">
       <header className="pp-master-header">
         <div className="pp-header-brand">
-          <div className="pp-logo-mark" aria-hidden="true">
-            <span className="pp-logo-mark__stem" />
-            <span className="pp-logo-mark__bowl" />
-          </div>
-          <div className="pp-brand-word">PRINT<span>PILOT</span></div>
+          <img className="pp-brand-logo" src={printPilotLogo} alt="PrintPilot" />
         </div>
 
         <div className="pp-header-title-shape">

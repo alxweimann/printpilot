@@ -227,9 +227,13 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 
 .pp-top-info-card {
   display: flex;
-  gap: 16px;
-  padding-right: 24px;
+  gap: 12px;
+  padding: 0 26px 0 18px;
   border-right: 1px solid #d9e2ef;
+}
+
+.pp-top-info-card:first-child {
+  padding-left: 0;
 }
 
 .pp-top-info-card__icon,
@@ -244,9 +248,9 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 }
 
 .pp-top-info-card__icon {
-  width: 43px;
-  height: 43px;
-  border-radius: 11px;
+  width: 34px;
+  height: 34px;
+  border-radius: 9px;
 }
 
 .pp-panel__icon {
@@ -269,8 +273,8 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 }
 
 .pp-top-info-card__icon .pp-pocket-icon {
-  width: 19px;
-  height: 19px;
+  width: 15px;
+  height: 15px;
 }
 
 .pp-eyebrow,
@@ -465,6 +469,8 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   .pp-logo-mark__bowl { width: 40px; height: 23px; }
   .pp-pocket-grid { grid-template-columns: 1.45fr 1.22fr 1.14fr .95fr; gap: 14px; }
   .pp-top-info-panel { grid-template-columns: 1fr 1fr .86fr .9fr 2.35fr; padding: 22px 20px; }
+  .pp-top-info-card { padding: 0 20px 0 14px; gap: 10px; }
+  .pp-top-info-card:first-child { padding-left: 0; }
   .pp-status-pill { padding-inline: 12px; font-size: 11px; }
   .pp-bottom-nav { padding-inline: 36px; }
 }

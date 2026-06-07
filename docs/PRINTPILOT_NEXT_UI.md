@@ -79,3 +79,11 @@ Als nächstes sollte die Auftragstasche einmal lokal im Browser geprüft werden:
 - Eingeführte Icons: Kunde, Ansprechpartner, Datum, Liefertermin, Produkt, Druckdaten, Termine, Produktions-Checkliste, Nutzenplan, Vorschau, Weiterverarbeitung, Dateien, Notizen, Maschine und Kommentare/Verlauf.
 - Der Header aus Sprint 11 wurde nicht verändert.
 - Die CSS-Klassen `.pp-pocket-icon`, `.pp-top-info-card__icon` und `.pp-panel__icon` definieren den gemeinsamen Icon-Look.
+
+
+## Design Sprint 13 – Top-Info-Icons feiner ausgerichtet
+
+- Top-Info-Icons unterhalb des Headers verkleinert.
+- Mehr Abstand zwischen Icon-Kacheln und vertikalen Trennlinien gesetzt.
+- Karten-Icons in den Hauptbereichen unverändert gelassen.
+- Header aus Sprint 11/12 nicht verändert.

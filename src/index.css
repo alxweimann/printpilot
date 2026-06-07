@@ -235,16 +235,42 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 .pp-top-info-card__icon,
 .pp-panel__icon {
   flex: 0 0 auto;
-  width: 43px;
-  height: 43px;
   display: grid;
   place-items: center;
-  border-radius: 10px;
-  color: #0074ff;
-  background: #f7faff;
-  border: 1px solid #e0e9f4;
-  box-shadow: 0 5px 12px rgba(10,31,68,.055);
-  font-weight: 900;
+  color: var(--pp-blue);
+  background: linear-gradient(180deg, #f9fcff 0%, #eef7ff 100%);
+  border: 1px solid #d8e9f7;
+  box-shadow: 0 6px 14px rgba(10,31,68,.06);
+}
+
+.pp-top-info-card__icon {
+  width: 43px;
+  height: 43px;
+  border-radius: 11px;
+}
+
+.pp-panel__icon {
+  width: 30px;
+  height: 30px;
+  border-radius: 8px;
+}
+
+.pp-pocket-icon {
+  display: block;
+  width: 18px;
+  height: 18px;
+}
+
+.pp-pocket-icon path {
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.pp-top-info-card__icon .pp-pocket-icon {
+  width: 19px;
+  height: 19px;
 }
 
 .pp-eyebrow,
@@ -307,7 +333,6 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 }
 
 .pp-panel__header { display: flex; align-items: center; gap: 12px; margin-bottom: 14px; }
-.pp-panel__icon { width: 28px; height: 28px; border-radius: 8px; font-size: 12px; }
 .pp-product-panel { min-height: 360px; }
 .pp-product-panel h3 { margin: 4px 0 26px; font-size: 20px; letter-spacing: -.03em; }
 .pp-product-content { display: grid; grid-template-columns: 168px 1fr; gap: 22px; align-items: start; }
@@ -417,6 +442,11 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 .pp-bottom-nav span {
   font-size: 20px;
   color: #dce8fb;
+}
+
+.pp-bottom-nav svg {
+  width: 18px;
+  height: 18px;
 }
 
 .pp-bottom-nav button:hover span,

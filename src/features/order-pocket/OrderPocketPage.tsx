@@ -45,6 +45,13 @@ const timelineRows = [
   ['gray', 'Versand / Abholung', '03.06.2026', ''],
 ]
 
+
+const previewSpecs = [
+  ['Format', 'DIN Lang'],
+  ['Seiten', '2'],
+  ['Beschnitt', '3 mm'],
+]
+
 const files = [
   ['PDF', 'flyer_druck.pdf', 'Druckdaten', '30.05.2026', '10:10', '8,2 MB'],
   ['PDF', 'flyer_freigabe.pdf', 'Freigabe', '30.05.2026', '14:20', '1,3 MB'],
@@ -196,6 +203,39 @@ function TopInfoCard({ icon, label, title, children }: { icon: ReactNode; label:
   )
 }
 
+
+function PreviewCard() {
+  return (
+    <div className="pp-preview-card">
+      <div className="pp-preview-stage" aria-label="PDF-Druckvorschau">
+        <div className="pp-preview-page">
+          <span className="pp-preview-mark pp-preview-mark--tl"></span>
+          <span className="pp-preview-mark pp-preview-mark--tr"></span>
+          <span className="pp-preview-mark pp-preview-mark--bl"></span>
+          <span className="pp-preview-mark pp-preview-mark--br"></span>
+          <div className="pp-preview-bleed"></div>
+          <div className="pp-preview-artwork">
+            <span>Gesund<br />Genießen</span>
+            <i></i>
+            <b></b>
+          </div>
+        </div>
+      </div>
+
+      <div className="pp-preview-meta">
+        <b>flyer_druck.pdf</b>
+        <span>Druck-PDF · CMYK · 300 dpi</span>
+      </div>
+
+      <div className="pp-preview-specs">
+        {previewSpecs.map(([label, value]) => (
+          <span key={label}><small>{label}</small><strong>{value}</strong></span>
+        ))}
+      </div>
+    </div>
+  )
+}
+
 function MachineCard({ machine }: { machine: MachineCardData }) {
   const imageSource = machine.image ?? machineFallbacks[machine.type]
 
@@ -338,8 +378,7 @@ export function OrderPocketPage() {
         </Panel>
 
         <Panel title="Vorschau" icon={<PocketIcon name="preview" />}>
-          <div className="pp-preview-sheet"><span></span><strong></strong></div>
-          <p className="pp-file-name">Dateiname: flyer_druck.pdf</p>
+          <PreviewCard />
         </Panel>
 
         <Panel title="Weiterverarbeitung" icon={<PocketIcon name="finishing" />}>

@@ -196,3 +196,11 @@ Der CMY-Diagonalstreifen-Hintergrund aus Sprint 21 wurde wieder entfernt. Der Lo
 - Notizen im gleichen Timeline-Stil aufgebaut, damit beide Karten optisch zusammenpassen.
 - Keine internen Scrollbereiche in Notizen/Verlauf; die Seite bleibt der zentrale Scrollbereich.
 - Dateien-, Header-, Footer- und Logo-Verlauf nicht verändert.
+
+## Design Sprint 30 – Vorschau-Karte veredelt
+
+- Vorschau-Karte auf eine echte PDF-/Druckvorschau-Anmutung umgestellt.
+- Papierbogen mit dezenter Schattenwirkung, Beschnitt-Andeutung und Schnittmarken ergänzt.
+- Flyer-Motiv aus der Produktkarte stilistisch in der Vorschau aufgegriffen.
+- Dateiname, Druckparameter und Produktionsinfos unterhalb der Vorschau sauber gruppiert.
+- Header, Logo-Verlauf, Footer, Dateien, Notizen, Verlauf und Maschinenkarte nicht verändert.

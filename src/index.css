@@ -371,9 +371,163 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 .pp-imposition-grid span { display: grid; place-items: center; border-right: 1px solid #1686ff; border-bottom: 1px solid #1686ff; font-size: 18px; font-weight: 950; }
 .pp-plan-meta { display: flex; gap: 22px; align-items: center; margin-top: 15px; color: #071f48; font-size: 12px; }
 .pp-plan-meta i { width: 1px; height: 15px; background: #8ea1ba; }
-.pp-preview-sheet { width: 230px; height: 150px; margin: 18px auto 14px; background: #f8fafc; border: 1px solid #d9e2ef; box-shadow: 0 10px 24px rgba(10,31,68,.12); display: grid; grid-template-columns: .42fr .58fr; }
-.pp-preview-sheet span { background: linear-gradient(180deg, #fbfcfe, #f0f4f9); }
-.pp-preview-sheet strong { background: linear-gradient(135deg, #b4de72, #77bd24); }
+.pp-preview-card {
+  display: grid;
+  gap: 12px;
+}
+
+.pp-preview-stage {
+  position: relative;
+  display: grid;
+  place-items: center;
+  min-height: 166px;
+  overflow: hidden;
+  border: 1px solid #e0e8f2;
+  border-radius: 14px;
+  background:
+    linear-gradient(90deg, rgba(22, 39, 81, .035) 1px, transparent 1px) 0 0 / 18px 18px,
+    linear-gradient(180deg, #fbfdff 0%, #f3f7fc 100%);
+}
+
+.pp-preview-stage::after {
+  content: '';
+  position: absolute;
+  left: 32px;
+  right: 32px;
+  bottom: 18px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(22, 39, 81, .18), transparent);
+}
+
+.pp-preview-page {
+  position: relative;
+  width: min(206px, 84%);
+  aspect-ratio: 1.42 / 1;
+  padding: 11px;
+  border: 1px solid #cfd9e6;
+  background: #ffffff;
+  box-shadow: 0 16px 26px rgba(10, 31, 68, .14);
+  transform: rotate(-1.5deg);
+}
+
+.pp-preview-bleed {
+  position: absolute;
+  inset: 7px;
+  border: 1px dashed rgba(0, 159, 227, .48);
+  pointer-events: none;
+}
+
+.pp-preview-artwork {
+  position: relative;
+  height: 100%;
+  overflow: hidden;
+  border-radius: 3px;
+  background:
+    linear-gradient(90deg, #ffffff 0 43%, transparent 43%),
+    linear-gradient(135deg, #c7e87d 0%, #79bd24 100%);
+}
+
+.pp-preview-artwork span {
+  position: absolute;
+  left: 14px;
+  top: 16px;
+  color: #149600;
+  font-size: 14px;
+  font-weight: 900;
+  line-height: 1.02;
+  letter-spacing: -.04em;
+}
+
+.pp-preview-artwork i {
+  position: absolute;
+  left: 14px;
+  bottom: 23px;
+  width: 46px;
+  height: 22px;
+  border-top: 2px solid #72c783;
+  border-bottom: 2px solid #72c783;
+}
+
+.pp-preview-artwork b {
+  position: absolute;
+  right: 16px;
+  bottom: 16px;
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, .30);
+}
+
+.pp-preview-mark {
+  position: absolute;
+  width: 11px;
+  height: 11px;
+}
+.pp-preview-mark::before,
+.pp-preview-mark::after {
+  content: '';
+  position: absolute;
+  background: #162751;
+  opacity: .46;
+}
+.pp-preview-mark::before { width: 11px; height: 1px; }
+.pp-preview-mark::after { width: 1px; height: 11px; }
+.pp-preview-mark--tl { left: -6px; top: -6px; }
+.pp-preview-mark--tr { right: -6px; top: -6px; transform: rotate(90deg); }
+.pp-preview-mark--bl { left: -6px; bottom: -6px; transform: rotate(-90deg); }
+.pp-preview-mark--br { right: -6px; bottom: -6px; transform: rotate(180deg); }
+
+.pp-preview-meta {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+.pp-preview-meta b {
+  overflow: hidden;
+  color: #06163a;
+  font-size: 12.5px;
+  font-weight: 820;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pp-preview-meta span {
+  color: #63738d;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+.pp-preview-specs {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 7px;
+}
+.pp-preview-specs span {
+  min-width: 0;
+  padding: 7px 8px;
+  border: 1px solid #e0e8f2;
+  border-radius: 7px;
+  background: #fbfdff;
+}
+.pp-preview-specs small,
+.pp-preview-specs strong {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.pp-preview-specs small {
+  margin-bottom: 2px;
+  color: #64748b;
+  font-size: 9px;
+  font-weight: 720;
+  text-transform: uppercase;
+  letter-spacing: .05em;
+}
+.pp-preview-specs strong {
+  color: #06163a;
+  font-size: 11px;
+  font-weight: 820;
+}
 .pp-finishing-list { display: grid; gap: 11px; margin-top: 22px; }
 .pp-finishing-list div { display: grid; grid-template-columns: 1fr 138px; gap: 12px; align-items: center; border-bottom: 1px solid #e4ebf4; padding-bottom: 6px; font-size: 12px; }
 .pp-finishing-list .pp-status-pill { min-height: 31px; padding: 7px 12px; font-size: 11px; font-weight: 800; }

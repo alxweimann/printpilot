@@ -162,3 +162,14 @@ Der CMY-Diagonalstreifen-Hintergrund aus Sprint 21 wurde wieder entfernt. Der Lo
 - Verlauf von Footer-Blau zu Weiß wurde länger und weicher abgestuft.
 - Titelbereich, Auftragsnummer, QR-Bereich, Karten und Footer bleiben unverändert.
 
+
+
+## Design Sprint 26 – Dateien und Notizen verfeinert
+
+- Dateien-Karte von tabellarischer Roh-Liste auf ruhigere Dateizeilen umgestellt.
+- Dateityp, Dateiname, Kategorie, Datum/Uhrzeit und Dateigröße klarer gruppiert.
+- PDF/JPG-Badges kleiner, kantiger und passend zur bestehenden Status-Formsprache gestaltet.
+- Notizen-Karte auf kompakte Notizkarten umgestellt.
+- Wichtige Liefernotiz dezent hervorgehoben.
+- Notiz-Meta-Information als ruhige Schlusszeile gesetzt.
+- Header, Logo-Verlauf, Footer, Maschinenkarte und übrige Karten nicht verändert.

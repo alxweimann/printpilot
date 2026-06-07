@@ -46,10 +46,10 @@ const timelineRows = [
 ]
 
 const files = [
-  ['PDF', 'flyer_druck.pdf', '30.05.2026', '10:10', '8,2 MB'],
-  ['PDF', 'flyer_freigabe.pdf', '30.05.2026', '14:20', '1,3 MB'],
-  ['JPG', 'flyer_ansicht.jpg', '30.05.2026', '10:10', '2,1 MB'],
-  ['PDF', 'nutzenplan.pdf', '30.05.2026', '10:12', '0,6 MB'],
+  ['PDF', 'flyer_druck.pdf', 'Druckdaten', '30.05.2026', '10:10', '8,2 MB'],
+  ['PDF', 'flyer_freigabe.pdf', 'Freigabe', '30.05.2026', '14:20', '1,3 MB'],
+  ['JPG', 'flyer_ansicht.jpg', 'Ansicht', '30.05.2026', '10:10', '2,1 MB'],
+  ['PDF', 'nutzenplan.pdf', 'Nutzenplan', '30.05.2026', '10:12', '0,6 MB'],
 ]
 
 type MachineType = 'digital-color' | 'digital-mono' | 'wide-format' | 'inkjet' | 'finishing'
@@ -340,9 +340,14 @@ export function OrderPocketPage() {
 
         <Panel title="Dateien" icon={<PocketIcon name="files" />}>
           <div className="pp-files-list">
-            {files.map(([type, name, date, time, size]) => (
-              <div key={name}>
-                <span>{type}</span><b>{name}</b><em>{date}</em><em>{time}</em><strong>{size}</strong>
+            {files.map(([type, name, category, date, time, size]) => (
+              <div className="pp-file-row" key={name}>
+                <span className={`pp-file-type pp-file-type--${type.toLowerCase()}`}>{type}</span>
+                <div className="pp-file-main">
+                  <b>{name}</b>
+                  <small>{category} · {date} · {time}</small>
+                </div>
+                <strong>{size}</strong>
               </div>
             ))}
           </div>
@@ -350,10 +355,21 @@ export function OrderPocketPage() {
         </Panel>
 
         <Panel title="Notizen" icon={<PocketIcon name="notes" />}>
-          <p className="pp-note-text">Kunde wünscht Lieferung bis spätestens Mittwoch.</p>
-          <p className="pp-note-text">Kartons mit Aufkleber „Messeaktion Juni“ kennzeichnen.</p>
-          <p className="pp-note-text">Rückfragen an Max Mustermann.</p>
-          <small>Letzte Notiz: 30.05.2026 14:22 von Admin</small>
+          <div className="pp-notes-list">
+            <article className="pp-note-card pp-note-card--important">
+              <span>Lieferung</span>
+              <p>Kunde wünscht Lieferung bis spätestens Mittwoch.</p>
+            </article>
+            <article className="pp-note-card">
+              <span>Verpackung</span>
+              <p>Kartons mit Aufkleber „Messeaktion Juni“ kennzeichnen.</p>
+            </article>
+            <article className="pp-note-card">
+              <span>Rückfrage</span>
+              <p>Rückfragen an Max Mustermann.</p>
+            </article>
+          </div>
+          <small className="pp-note-meta">Letzte Notiz: 30.05.2026 14:22 von Admin</small>
         </Panel>
 
         <Panel title="Maschine" icon={<PocketIcon name="machine" />}>

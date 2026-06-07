@@ -271,3 +271,55 @@ Der CMY-Diagonalstreifen-Hintergrund aus Sprint 21 wurde wieder entfernt. Der Lo
 - Bogenformat in der Karte um `450 × 320 mm` ergänzt.
 - 4 × 2 Nutzen bleiben als schematische Produktionsansicht erhalten.
 - Header, Footer und übrige Auftragstaschen-Karten wurden nicht verändert.
+
+## Design Sprint 38 – Auftragstasche als Design-Referenz stabilisiert
+
+Sprint 38 macht keine großen sichtbaren UI-Umbauten mehr, sondern stabilisiert die Auftragstasche als Referenzscreen für die nächsten PrintPilot-Module.
+
+### Referenzscreen
+
+Die Auftragstasche gilt ab diesem Stand als visuelle Design-Referenz für:
+
+- technische Karten mit Icon-Kachel, ruhigem Rahmen und klarer Inhaltsgruppe,
+- kantige Status-Pills, Badges und Produktions-Chips,
+- Timeline-Darstellungen für Termine, Notizen und Verlauf,
+- Checklisten mit erledigt/offen/Pflichtpunkt-Logik,
+- proportional korrekte Nutzenplan-/Druckbogen-Darstellungen,
+- Maschinenkarten mit echtem Bild oder SVG-Fallback,
+- PDF-/Druckvorschau-Karten mit Beschnitt- und Schnittmarken-Andeutung,
+- Header mit Logo, Dokumenttyp, Auftragsnummer und QR-Code.
+
+### UI-Pattern-Registry
+
+Eine kleine Pattern-Registry wurde ergänzt:
+
+```text
+src/design-system/ui-patterns.ts
+```
+
+Sie dokumentiert die wichtigsten wiederverwendbaren UI-Muster aus der Auftragstasche mit:
+
+- Pattern-ID,
+- Kategorie,
+- Zweck,
+- Referenzbereich,
+- relevanten CSS-Klassen,
+- möglichen Wiederverwendungen in weiteren Modulen.
+
+Diese Registry ist bewusst leichtgewichtig und greift noch nicht aktiv ins Rendering ein. Sie dient zunächst als stabile technische Notiz direkt im Codebestand, damit die nächsten Module im gleichen Stil aufgebaut werden können.
+
+### Abgeleitete Muster
+
+- `order-pocket-header`: Kopfzeile für Produktionsdokumente mit QR- und Auftragsbezug.
+- `technical-panel`: Standardkarte für Produktionsinformationen.
+- `status-pill`: kantige Status-/Badge-Formsprache.
+- `timeline`: Ereignisstruktur für Termine, Notizen und Verlauf.
+- `checklist`: gegliederte Produktionsprüfung.
+- `imposition-sheet`: proportionaler Druckbogen/Nutzenplan.
+- `machine-card`: Maschinenkarte mit Bild/Fallback-Logik.
+- `preview-card`: PDF-/Druckvorschau.
+
+### Nächster sinnvoller Schritt
+
+Auf Basis dieser Referenz kann als nächstes die **Aufträge-Übersicht** oder das **Maschinen-Modul** im gleichen Stil aufgebaut werden. Die Auftragstasche sollte dabei nicht mehr als Experimentierfläche genutzt werden, sondern als stabiler UI-Maßstab.
+

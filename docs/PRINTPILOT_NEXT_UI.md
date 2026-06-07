@@ -432,3 +432,39 @@ Sprint 39.2 verfeinert die Aufträge-Übersicht nach dem ersten Praxisscreenshot
 
 Sprint 40 kann jetzt den Detail-Drawer technisch vorbereiten: Klick auf eine Auftragskarte öffnet rechts eine kompakte Detailansicht mit Auftrag, Kunde, Status, Termin, Maschine, Freigabe, Datenstatus und direktem Einstieg in die Auftragstasche.
 
+
+## Design Sprint 40 – Auftrags-Detail-Drawer vorbereitet
+
+Sprint 40 aktiviert den vorbereiteten Einstieg aus der Aufträge-Übersicht. Aus `Auftrag öffnen` wird nun ein rechter Detail-Drawer im PrintPilot-Stil geöffnet. Die Auftragstasche selbst bleibt unverändert und weiter Design-Referenz.
+
+### Umgesetzt
+
+- `src/features/orders/OrdersOverviewPage.tsx` um lokalen Drawer-State erweitert.
+- Klick auf eine Auftragskarte oder auf `Auftrag öffnen` öffnet rechts den Detail-Drawer.
+- Ausgewählte Auftragskarte erhält einen sichtbaren aktiven Zustand.
+- Rechter Drawer mit:
+  - Auftragskopf mit Auftragsnummer, Kunde und Produkt,
+  - Produktionsstatus, Freigabe, Datenstatus und Priorität,
+  - kompakten Kopfdaten zu Kunde, Ansprechpartner, Format, Auflage und Lieferung,
+  - Produktionsdaten zu Termin, Maschine, Bereich und Verantwortlichkeit,
+  - Produktionsfortschritt,
+  - Druckdaten-/Preflight-, Material- und Weiterverarbeitungsnotizen,
+  - nächstem Schritt und interner Produktionsnotiz.
+- Drawer-Aktionen vorbereitet:
+  - `Auftragstasche öffnen`,
+  - `Freigabe markieren`,
+  - `Daten prüfen`,
+  - `Status ändern`.
+- Drawer kann über das X oder über den abgedunkelten Hintergrund geschlossen werden.
+- `src/index.css` um die Drawer-, Backdrop-, Aktions- und Selected-Card-Styles ergänzt.
+- `src/design-system/ui-patterns.ts` um Pattern `order-detail-drawer` erweitert.
+
+### Nicht verändert
+
+- `src/features/order-pocket/OrderPocketPage.tsx` blieb unverändert.
+- Es wurde noch keine echte Datenbank-, Speicher-, Routing- oder Statuswechsel-Logik eingebaut.
+- Die Aktion `Auftragstasche öffnen` ist bewusst zunächst nur als UI-Einstieg vorbereitet.
+
+### Nächster sinnvoller Schritt
+
+Sprint 41 kann den Drawer interaktiver machen: Statusfelder editierbar vorbereiten, Freigabe-/Datenstatus als auswählbare Controls darstellen und die Auftragstaschen-Aktion später sauber mit dem bestehenden Auftragstaschen-Screen verbinden.

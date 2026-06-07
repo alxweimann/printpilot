@@ -6,6 +6,7 @@ export type PrintPilotPatternCategory =
   | 'production'
   | 'media'
   | 'list'
+  | 'drawer'
 
 export type PrintPilotPattern = {
   id: string
@@ -24,7 +25,7 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     category: 'list',
     name: 'Aufträge-Übersichtsliste',
     purpose:
-      'Überträgt die technische Auftragstaschen-Formsprache auf fokussierte Auftragskarten mit sauber umbrechenden Status-Pills, integrierter Verantwortlichkeit, Freigabe, Datenstatus, Termin, Kunde, Produkt, Maschine und vorbereiteten Aktionen.',
+      'Überträgt die technische Auftragstaschen-Formsprache auf fokussierte Auftragskarten mit sauber umbrechenden Status-Pills, integrierter Verantwortlichkeit, Freigabe, Datenstatus, Termin, Kunde, Produkt, Maschine, vorbereiteten Aktionen und aktivem Detail-Drawer.',
     reference: 'Aufträge · Übersicht',
     classNames: [
       'pp-orders-overview',
@@ -34,8 +35,26 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       'pp-orders-mini-info',
       'pp-order-specs',
       'pp-order-row-card__actions',
+      'pp-orders-detail-drawer',
     ],
     reuseFor: ['Aufträge', 'Produktionsplanung', 'Kundenaufträge', 'Detail-Drawer-Einstiege', 'Auftragstaschen-Einstiege'],
+  },
+  {
+    id: 'order-detail-drawer',
+    category: 'drawer',
+    name: 'Auftrags-Detail-Drawer',
+    purpose:
+      'Öffnet aus einer Auftragskarte rechts eine kompakte Detailansicht mit Auftragskopf, Status, Produktion, Druckdaten, nächstem Schritt und vorbereiteten Aktionen.',
+    reference: 'Aufträge · Detail-Drawer',
+    classNames: [
+      'pp-orders-drawer-shell',
+      'pp-orders-detail-drawer',
+      'pp-orders-drawer-header',
+      'pp-orders-drawer-section',
+      'pp-orders-drawer-facts',
+      'pp-orders-drawer-actions',
+    ],
+    reuseFor: ['Auftragsdetails', 'Kundendetails', 'Produktionsdetails', 'Angebotsdetails', 'Rechnungsdetails'],
   },
   {
     id: 'order-pocket-header',

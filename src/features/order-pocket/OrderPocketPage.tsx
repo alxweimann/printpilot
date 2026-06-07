@@ -181,11 +181,55 @@ function DataRows({ rows }: { rows: string[][] }) {
   )
 }
 
-function CheckItem({ checked, label }: { checked?: boolean; label: string }) {
+type CheckStatus = 'done' | 'open' | 'required'
+
+const checklistSections = [
+  {
+    title: 'Druck',
+    done: 3,
+    total: 7,
+    items: [
+      { status: 'done', label: 'Datei geprüft' },
+      { status: 'done', label: 'Preflight OK' },
+      { status: 'done', label: 'Farben geprüft' },
+      { status: 'required', label: 'Ausschießung prüfen' },
+      { status: 'open', label: 'Papier eingelegt' },
+      { status: 'open', label: 'Testdruck OK' },
+      { status: 'open', label: 'Druck fertig' },
+    ],
+  },
+  {
+    title: 'Weiterverarbeitung',
+    done: 0,
+    total: 5,
+    items: [
+      { status: 'open', label: 'Schneiden' },
+      { status: 'open', label: 'Falzen' },
+      { status: 'open', label: 'Rillen' },
+      { status: 'open', label: 'Heften' },
+      { status: 'open', label: 'Verpacken' },
+    ],
+  },
+  {
+    title: 'Versand',
+    done: 0,
+    total: 3,
+    items: [
+      { status: 'open', label: 'Auflage geprüft' },
+      { status: 'open', label: 'Verpackung OK' },
+      { status: 'open', label: 'Versendet / Abgeholt' },
+    ],
+  },
+] satisfies Array<{ title: string; done: number; total: number; items: Array<{ status: CheckStatus; label: string }> }>
+
+function CheckItem({ status, label }: { status: CheckStatus; label: string }) {
+  const stateLabel = status === 'done' ? 'erledigt' : status === 'required' ? 'pflicht' : 'offen'
+
   return (
-    <label className="pp-check-item">
-      <span className={checked ? 'is-checked' : ''}>{checked ? '✓' : ''}</span>
-      {label}
+    <label className={`pp-check-item pp-check-item--${status}`}>
+      <span className="pp-check-box" aria-hidden="true">{status === 'done' ? '✓' : ''}</span>
+      <span className="pp-check-label">{label}</span>
+      <small>{stateLabel}</small>
     </label>
   )
 }
@@ -345,28 +389,31 @@ export function OrderPocketPage() {
         </Panel>
 
         <Panel title="Produktions-Checkliste" icon={<PocketIcon name="checklist" />} className="pp-checklist-panel">
-          <h4>Druck</h4>
-          <CheckItem checked label="Datei geprüft" />
-          <CheckItem checked label="Preflight OK" />
-          <CheckItem checked label="Farben geprüft" />
-          <CheckItem label="Ausschießung geprüft" />
-          <CheckItem label="Papier eingelegt" />
-          <CheckItem label="Testdruck OK" />
-          <CheckItem label="Druck fertig" />
-          <hr />
-          <h4>Weiterverarbeitung</h4>
-          <CheckItem label="Schneiden" />
-          <CheckItem label="Falzen" />
-          <CheckItem label="Rillen" />
-          <CheckItem label="Heften" />
-          <CheckItem label="Verpacken" />
-          <hr />
-          <h4>Versand</h4>
-          <CheckItem label="Auflage geprüft" />
-          <CheckItem label="Verpackung OK" />
-          <CheckItem label="Versendet / Abgeholt" />
-          <hr />
-          <div className="pp-signature"><b>Geprüft von / am</b><span>Unterschrift</span></div>
+          <div className="pp-checklist-summary">
+            <strong>3 / 15 erledigt</strong>
+            <span>1 Pflichtpunkt offen</span>
+          </div>
+
+          <div className="pp-checklist-sections">
+            {checklistSections.map((section) => (
+              <section className="pp-check-section" key={section.title}>
+                <div className="pp-check-section__head">
+                  <h4>{section.title}</h4>
+                  <span>{section.done}/{section.total}</span>
+                </div>
+                <div className="pp-check-section__items">
+                  {section.items.map((item) => (
+                    <CheckItem key={item.label} status={item.status} label={item.label} />
+                  ))}
+                </div>
+              </section>
+            ))}
+          </div>
+
+          <div className="pp-signature">
+            <b>Geprüft von / am</b>
+            <span>Unterschrift</span>
+          </div>
         </Panel>
 
         <Panel title="Nutzenplan" icon={<PocketIcon name="imposition" />}>

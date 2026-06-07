@@ -204,3 +204,12 @@ Der CMY-Diagonalstreifen-Hintergrund aus Sprint 21 wurde wieder entfernt. Der Lo
 - Flyer-Motiv aus der Produktkarte stilistisch in der Vorschau aufgegriffen.
 - Dateiname, Druckparameter und Produktionsinfos unterhalb der Vorschau sauber gruppiert.
 - Header, Logo-Verlauf, Footer, Dateien, Notizen, Verlauf und Maschinenkarte nicht verändert.
+
+## Design Sprint 31 – Produktions-Checkliste verfeinert
+
+- Produktions-Checkliste auf eine ruhigere Abschnittsstruktur umgestellt.
+- Abschnittsköpfe zeigen jetzt erledigte Punkte je Bereich, ohne wie massive Badges zu wirken.
+- Checklistenpunkte unterscheiden erledigt, offen und Pflichtpunkt dezent über Farbe und Statuslabel.
+- Checkboxen, Abstände und Schriftgewichte an die kantigere PrintPilot-Formsprache angepasst.
+- Signaturbereich optisch vom Arbeitsbereich getrennt.
+- Header, Logo-Verlauf, Footer, Vorschau, Dateien, Notizen und Verlauf nicht verändert.

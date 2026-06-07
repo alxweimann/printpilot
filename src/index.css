@@ -360,12 +360,131 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 .pp-dot--orange { color: #f97316; }
 .pp-dot--gray { color: #9aa9bd; }
 .pp-checklist-panel { grid-row: span 2; }
-.pp-checklist-panel h4 { margin: 14px 0 8px; text-transform: uppercase; font-size: 13px; letter-spacing: .02em; }
-.pp-checklist-panel hr { margin: 18px 0; border: 0; border-top: 1px solid #dfe6f0; }
-.pp-check-item { display: flex; align-items: center; gap: 10px; min-height: 25px; font-size: 12px; }
-.pp-check-item span { width: 14px; height: 14px; border: 1px solid #9fb0c7; border-radius: 3px; display: grid; place-items: center; font-size: 10px; color: white; }
-.pp-check-item span.is-checked { background: #10a861; border-color: #10a861; }
-.pp-signature { display: flex; justify-content: space-between; gap: 12px; font-size: 12px; }
+.pp-checklist-summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  padding: 10px 11px;
+  margin-bottom: 13px;
+  border: 1px solid #e0e8f2;
+  border-radius: 10px;
+  background: linear-gradient(180deg, #fbfdff 0%, #f5f8fc 100%);
+}
+.pp-checklist-summary strong {
+  color: #06163a;
+  font-size: 12px;
+  font-weight: 780;
+}
+.pp-checklist-summary span {
+  color: #f36b05;
+  font-size: 10.5px;
+  font-weight: 720;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+.pp-checklist-sections { display: grid; gap: 12px; }
+.pp-check-section {
+  padding-top: 10px;
+  border-top: 1px solid #e2eaf4;
+}
+.pp-check-section:first-child { padding-top: 0; border-top: 0; }
+.pp-check-section__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 7px;
+}
+.pp-check-section h4 {
+  margin: 0;
+  color: #071f48;
+  text-transform: uppercase;
+  font-size: 11px;
+  font-weight: 820;
+  letter-spacing: .055em;
+}
+.pp-check-section__head span {
+  min-width: 34px;
+  min-height: 20px;
+  display: inline-grid;
+  place-items: center;
+  border: 1px solid #dbe5f1;
+  border-radius: 6px;
+  background: #f7faff;
+  color: #52637d;
+  font-size: 10.5px;
+  font-weight: 760;
+}
+.pp-check-section__items { display: grid; gap: 5px; }
+.pp-check-item {
+  display: grid;
+  grid-template-columns: 18px minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  min-height: 27px;
+  padding: 4px 7px;
+  border: 1px solid transparent;
+  border-radius: 8px;
+  color: #071f48;
+  font-size: 12px;
+}
+.pp-check-item--done {
+  background: rgba(16, 185, 129, .055);
+}
+.pp-check-item--required {
+  border-color: rgba(249, 115, 22, .22);
+  background: rgba(255, 247, 237, .72);
+}
+.pp-check-box {
+  width: 16px;
+  height: 16px;
+  border: 1px solid #9fb0c7;
+  border-radius: 4px;
+  display: grid;
+  place-items: center;
+  color: white;
+  font-size: 10px;
+  font-weight: 900;
+  line-height: 1;
+  background: #fff;
+}
+.pp-check-item--done .pp-check-box {
+  background: #10a861;
+  border-color: #10a861;
+}
+.pp-check-item--required .pp-check-box {
+  border-color: #f97316;
+  background: #fff7ed;
+}
+.pp-check-label {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-weight: 650;
+}
+.pp-check-item small {
+  color: #7a8aa3;
+  font-size: 9.5px;
+  font-weight: 760;
+  text-transform: uppercase;
+  letter-spacing: .045em;
+}
+.pp-check-item--done small { color: #079261; }
+.pp-check-item--required small { color: #f36b05; }
+.pp-signature {
+  display: flex;
+  justify-content: space-between;
+  align-items: end;
+  gap: 12px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px dashed #cfd9e6;
+  color: #52637d;
+  font-size: 12px;
+}
+.pp-signature b { color: #071f48; font-weight: 760; }
 .pp-panel-note, .pp-file-name { margin: 0 0 10px; color: #071f48; font-size: 13px; }
 .pp-imposition-grid { display: grid; grid-template-columns: repeat(4, 1fr); height: 126px; border: 2px solid #1686ff; }
 .pp-imposition-grid span { display: grid; place-items: center; border-right: 1px solid #1686ff; border-bottom: 1px solid #1686ff; font-size: 18px; font-weight: 950; }

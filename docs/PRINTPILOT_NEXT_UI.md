@@ -139,3 +139,13 @@ Als nächstes sollte die Auftragstasche einmal lokal im Browser geprüft werden:
 - Typ und Standort erscheinen jetzt als ruhige Textzeile unter dem Maschinennamen; der letzte Service steht als dezente Servicezeile darunter.
 - Status-Badge und technische Merkmale bleiben erhalten, sind aber weniger dominant und dürfen sauber umbrechen.
 - Header, Footer, Logo, Top-Info-Bereich und übrige Karten wurden nicht verändert.
+
+## Design Sprint 20 – Maschinenkarte und Verlauf beruhigt
+
+- Die Maschinenkarte wurde weiter stabilisiert: Der Status-Badge sitzt jetzt unter dem Maschinennamen statt rechts daneben.
+- Der Maschinenname bekommt dadurch mehr nutzbare Breite und bricht auf schmaleren Karten ruhiger um.
+- Typ, Standort, Status, technische Merkmale und Service bleiben erhalten, wirken aber weniger gequetscht.
+- Die Karte bleibt responsiv: Bild und Daten können weiterhin je nach Fensterbreite ein- oder zweispaltig erscheinen.
+- Der Bereich `Kommentare / Verlauf` wurde von einer tabellarischen Darstellung auf eine kompakte Timeline umgestellt.
+- Zeit, Datum, Ereignis und Benutzer sind klarer gruppiert; die Timeline ist bei schmaleren Fenstern robuster.
+- Header, Footer, Top-Info-Bereich und übrige Karten wurden nicht verändert.

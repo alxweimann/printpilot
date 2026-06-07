@@ -52,6 +52,12 @@ const files = [
   ['PDF', 'nutzenplan.pdf', '30.05.2026', '10:12', '0,6 MB'],
 ]
 
+const historyRows = [
+  { time: '14:20', date: '30.05.2026', title: 'Kundenfreigabe erteilt', user: 'Max M.' },
+  { time: '11:30', date: '30.05.2026', title: 'Datenprüfung abgeschlossen', user: 'Sarah K.' },
+  { time: '10:15', date: '30.05.2026', title: 'Auftrag angelegt', user: 'Admin' },
+]
+
 type MachineType = 'digital-color' | 'digital-mono' | 'wide-format' | 'inkjet' | 'finishing'
 
 type MachineCardData = {
@@ -196,10 +202,8 @@ function MachineCard({ machine }: { machine: MachineCardData }) {
       <div className="pp-machine-details">
         <div className="pp-machine-kicker">Ausgewählte Maschine</div>
         <div className="pp-machine-title-row">
-          <div>
-            <b>{machine.name}</b>
-            <p>{machine.typeLabel} · {machine.location}</p>
-          </div>
+          <b>{machine.name}</b>
+          <p>{machine.typeLabel} · {machine.location}</p>
           <StatusPill tone="green">{machine.status}</StatusPill>
         </div>
         <div className="pp-machine-specs">
@@ -360,9 +364,19 @@ export function OrderPocketPage() {
 
         <Panel title="Kommentare / Verlauf" icon={<PocketIcon name="history" />}>
           <div className="pp-history-list">
-            <div><span>30.05.2026&nbsp;&nbsp;14:20</span><b>Kundenfreigabe erteilt</b><em>Max M.</em></div>
-            <div><span>30.05.2026&nbsp;&nbsp;11:30</span><b>Datenprüfung abgeschlossen</b><em>Sarah K.</em></div>
-            <div><span>30.05.2026&nbsp;&nbsp;10:15</span><b>Auftrag angelegt</b><em>Admin</em></div>
+            {historyRows.map((entry) => (
+              <article className="pp-history-item" key={`${entry.date}-${entry.time}-${entry.title}`}>
+                <div className="pp-history-time">
+                  <strong>{entry.time}</strong>
+                  <span>{entry.date}</span>
+                </div>
+                <div className="pp-history-marker" aria-hidden="true"></div>
+                <div className="pp-history-content">
+                  <b>{entry.title}</b>
+                  <span>{entry.user}</span>
+                </div>
+              </article>
+            ))}
           </div>
           <a className="pp-card-link">Gesamten Verlauf anzeigen →</a>
         </Panel>

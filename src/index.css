@@ -3028,3 +3028,89 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
     justify-content: flex-start;
   }
 }
+
+/* Sprint 40.4 · Navigation und Button-Layout bereinigt */
+.pp-pocket-route-shell {
+  padding-top: 16px;
+}
+
+.pp-pocket-route-toolbar {
+  position: relative;
+  top: auto;
+  z-index: 30;
+  max-width: 1540px;
+  margin: 0 auto 12px;
+  padding: 0 28px;
+  pointer-events: auto;
+}
+
+.pp-pocket-route-toolbar button {
+  background: #ffffff;
+}
+
+.pp-pocket-route-toolbar button:hover {
+  border-color: #b8d5ee;
+  box-shadow: 0 12px 28px rgba(0,159,227,.12);
+}
+
+.pp-order-row-card--clickable {
+  cursor: pointer;
+}
+
+.pp-order-row-card--clickable:focus-visible {
+  outline: 3px solid rgba(0,159,227,.28);
+  outline-offset: 3px;
+}
+
+.pp-order-row-card__hitarea {
+  display: none;
+}
+
+.pp-order-row-card__foot {
+  grid-template-columns: minmax(0, 1fr) minmax(150px, auto);
+}
+
+.pp-order-row-card__foot > span {
+  min-width: 0;
+}
+
+.pp-order-row-card__actions {
+  min-width: 150px;
+  justify-content: flex-end;
+}
+
+.pp-order-row-card__actions button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 142px;
+  padding: 0 16px;
+  border-color: transparent !important;
+  background: linear-gradient(180deg, #20d4ff 0%, #087bff 100%) !important;
+  color: #ffffff !important;
+  box-shadow: 0 12px 22px rgba(8,123,255,.18);
+  opacity: 1;
+  visibility: visible;
+}
+
+.pp-order-row-card__actions button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 15px 26px rgba(8,123,255,.23);
+}
+
+@media (max-width: 760px) {
+  .pp-pocket-route-shell {
+    padding-top: 12px;
+  }
+
+  .pp-pocket-route-toolbar {
+    align-items: stretch;
+    flex-direction: column;
+    padding: 0 14px 10px;
+  }
+
+  .pp-order-row-card__actions,
+  .pp-order-row-card__actions button {
+    width: 100%;
+  }
+}

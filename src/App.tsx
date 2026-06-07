@@ -16,7 +16,7 @@ export default function App() {
         <div className="pp-pocket-route-shell">
           <div className="pp-pocket-route-toolbar" aria-label="Auftragstaschen-Navigation">
             <button type="button" onClick={() => setActiveView('orders')}>← Zur Aufträge-Übersicht</button>
-            <span>Auftragstasche · PP-2026-00481</span>
+            <span>Detailansicht · Auftragstasche PP-2026-00481</span>
           </div>
           <OrderPocketPage />
         </div>

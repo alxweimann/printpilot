@@ -565,3 +565,27 @@ Sprint 40.3 korrigiert die Navigationslogik der Aufträge-Übersicht: Der Detail
 ### Nächster sinnvoller Schritt
 
 Sprint 41 sollte entweder die Auftragstasche dynamisch mit dem ausgewählten Auftrag verbinden oder zuerst einen kleinen Cleanup-Sprint durchführen, der nicht mehr benötigte Drawer-Styles und Dummy-Logik entfernt.
+
+## Design Sprint 40.4 – Navigation und Button-Layout bereinigt
+
+Sprint 40.4 korrigiert die ersten Layoutprobleme nach der Umstellung von Drawer auf Auftragstasche als Detailansicht.
+
+### Umgesetzt
+
+- Der Button `Auftrag öffnen` in der Aufträge-Übersicht ist wieder eindeutig sichtbar und als primäre Kartenaktion ausgerichtet.
+- Die früheren leeren weißen Aktionsflächen in den Auftragskarten wurden durch eine klare Button-Fläche ersetzt.
+- Die Karten bleiben weiterhin klickbar und führen direkt in die Auftragstasche.
+- Die unsichtbare Hitarea aus der Drawer-Phase wurde deaktiviert, damit sie keine Button-/Layoutbereiche mehr überlagert.
+- Die Rücknavigation der Auftragstasche wurde aus der überlagernden Sticky-Position gelöst und als normaler Navigationsstreifen oberhalb der Auftragstasche platziert.
+- Header und Kopfdaten der Auftragstasche werden dadurch nicht mehr vom Rückbutton überlagert.
+- Header-Kennzeichnung der Aufträge-Übersicht wurde auf `Sprint 40.4` aktualisiert.
+
+### Nicht verändert
+
+- `src/features/order-pocket/OrderPocketPage.tsx` blieb unverändert.
+- Die Auftragstasche zeigt weiterhin den bestehenden Demo-Auftrag `PP-2026-00481`.
+- Es wurde noch keine dynamische Übergabe der ausgewählten Auftragsdaten an die Auftragstasche eingebaut.
+
+### Nächster sinnvoller Schritt
+
+Sprint 41 sollte die Auftragstasche dynamisch mit dem ausgewählten Auftrag aus der Übersicht verbinden oder vorher einen technischen Cleanup der alten Drawer-Styles durchführen.

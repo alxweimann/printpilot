@@ -1,4 +1,4 @@
-import type { ReactNode } from "react";
+import type { KeyboardEvent, ReactNode } from "react";
 import { StatusPill } from "../../components/ui/StatusPill";
 
 type OrderTone = "green" | "orange" | "gray" | "blue";
@@ -284,9 +284,24 @@ function OrderPreviewCard({ preview, product }: { preview: OrderPreview; product
 }
 
 function OrderCard({ order, onOpenOrderPocket }: { order: OrderRow; onOpenOrderPocket: (order: OrderRow) => void }) {
+  const openOrderPocket = () => onOpenOrderPocket(order);
+
+  const handleKeyDown = (event: KeyboardEvent<HTMLElement>) => {
+    if (event.key === "Enter" || event.key === " ") {
+      event.preventDefault();
+      openOrderPocket();
+    }
+  };
+
   return (
-    <article className="pp-order-row-card">
-      <button type="button" className="pp-order-row-card__hitarea" onClick={() => onOpenOrderPocket(order)} aria-label={`${order.id} Auftragstasche öffnen`} />
+    <article
+      className="pp-order-row-card pp-order-row-card--clickable"
+      role="button"
+      tabIndex={0}
+      onClick={openOrderPocket}
+      onKeyDown={handleKeyDown}
+      aria-label={`${order.id} Auftragstasche öffnen`}
+    >
       <div className="pp-order-row-card__topline">
         <span className="pp-order-id">{order.id}</span>
         <div className="pp-order-row-card__status" aria-label="Auftragsstatus">
@@ -327,7 +342,7 @@ function OrderCard({ order, onOpenOrderPocket }: { order: OrderRow; onOpenOrderP
           <b>{order.nextStep}</b>
         </span>
         <div className="pp-order-row-card__actions">
-          <button type="button" onClick={() => onOpenOrderPocket(order)}>Auftrag öffnen →</button>
+          <button type="button" onClick={(event) => { event.stopPropagation(); openOrderPocket(); }}>Auftrag öffnen →</button>
         </div>
       </div>
     </article>
@@ -341,7 +356,7 @@ export function OrdersOverviewPage({ onOpenOrderPocket }: { onOpenOrderPocket: (
         <div className="pp-orders-hero__title">
           <span className="pp-panel__icon"><OrdersIcon name="orders" /></span>
           <div>
-            <p className="pp-eyebrow">Sprint 40.3 · Aufträge</p>
+            <p className="pp-eyebrow">Sprint 40.4 · Aufträge</p>
             <h1>Aufträge-Übersicht</h1>
             <span>Produktionscockpit mit Druckdatei-Preview und direktem Einstieg in die Auftragstasche.</span>
           </div>

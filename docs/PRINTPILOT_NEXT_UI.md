@@ -650,3 +650,44 @@ Sprint 40.6 vereinfacht die Auftragskarten und gleicht die Aufträge-Übersicht 
 ### Nächster sinnvoller Schritt
 
 Sprint 41 sollte die ausgewählte Auftragskarte mit der Auftragstasche verbinden, damit die Auftragstasche je nach geöffnetem Auftrag andere Kopfdaten, Status, Maschine, Termin und Druckdaten anzeigen kann.
+
+
+## Design Sprint 41 – Auftragsdaten an Auftragstasche übergeben
+
+Sprint 41 verbindet die Aufträge-Übersicht erstmals fachlich mit der Auftragstasche. Die Übersicht bleibt das Produktionscockpit; die Auftragstasche zeigt jetzt die Daten des angeklickten Auftrags statt eines festen Demo-Auftrags.
+
+### Umgesetzt
+
+- Neue zentrale Demo-Datenstruktur `src/features/orders/order-data.ts` eingeführt.
+- Aufträge-Übersicht und Auftragstasche nutzen dieselben Auftragsdaten als gemeinsame Grundlage.
+- `src/App.tsx` hält den aktuell ausgewählten Auftrag im lokalen State.
+- Klick auf eine Auftragskarte:
+  - setzt den ausgewählten Auftrag,
+  - wechselt zur Auftragstasche,
+  - übergibt die Auftragsdaten an `OrderPocketPage`.
+- Rücknavigation bleibt erhalten und zeigt in der Toolbar die aktuelle Auftragsnummer.
+- Auftragstasche zeigt dynamisch je geöffnetem Auftrag:
+  - Auftragsnummer,
+  - Kunde und Adresse,
+  - Ansprechpartner,
+  - Auftragsdatum und Liefertermin,
+  - Statuskette mit Datenstatus, Freigabe und Produktionsstatus,
+  - Produkt, Auflage, Endformat, Seiten,
+  - Druckdaten-Dateiname und Dateikontext,
+  - Termin-/Produktionsstart,
+  - Maschine und Maschinentyp,
+  - Vorschau-/Datei-Metadaten,
+  - Notizen mit Bezug zum geöffneten Auftrag.
+- Header der Übersicht wurde auf `Sprint 41 · Aufträge` aktualisiert.
+- Neues Pattern `selected-order-state` dokumentiert die vorbereitete State-Übergabe zwischen Übersicht und Auftragstasche.
+
+### Nicht verändert
+
+- Es wurde noch kein echter Router eingebaut.
+- Es wurde noch keine Persistenz/Datenbanklogik ergänzt.
+- QR-Code-Asset bleibt technisch noch das bestehende Demo-SVG; Alt-Text und sichtbare Auftragsnummer sind dynamisch.
+- Die Auftragstasche bleibt visuell im bestehenden Layout, wurde aber an dynamische Daten angebunden.
+
+### Nächster sinnvoller Schritt
+
+Sprint 41.1 sollte prüfen, welche Auftragstaschen-Bereiche noch zu statisch wirken, zum Beispiel Motivgrafik, Nutzenplan-Raster, Checklistenpunkte und QR-Code. Danach kann ein kleiner Cleanup-Sprint folgen, der alte Drawer-Reste aus Sprint 40 bis 40.2 entfernt.

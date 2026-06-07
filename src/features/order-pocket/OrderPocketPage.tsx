@@ -8,132 +8,217 @@ import wideFormatMachine from "../../assets/machines/machine-wide-format.svg";
 import inkjetMachine from "../../assets/machines/machine-inkjet.svg";
 import finishingMachine from "../../assets/machines/machine-finishing.svg";
 import { StatusPill } from "../../components/ui/StatusPill";
+import type { PrintPilotOrder } from "../orders/order-data";
 
-const productHighlights = [
-  ["Auflage", "3.000 Stück"],
-  ["Endformat", "210 × 99 mm"],
-  ["Seiten", "2-seitig"],
-];
+function getProductHighlights(order: PrintPilotOrder) {
+  return [
+    ["Auflage", order.quantity],
+    ["Endformat", order.endFormat],
+    ["Seiten", order.pages],
+  ];
+}
 
-const productDetails = [
-  ["Papier", "Bilderdruck matt 135 g"],
-  ["Farbigkeit", "4/4-farbig CMYK"],
-  ["Rohformat", "SRA3"],
-  ["Nutzen", "8 Nutzen"],
-  ["Beschnitt", "3 mm"],
-  ["Ausschuss", "ca. 50 Bogen"],
-  ["Gewicht gesamt", "ca. 48,6 kg"],
-];
+function getProductDetails(order: PrintPilotOrder) {
+  return [
+    ["Papier", order.paper],
+    ["Farbigkeit", order.color],
+    ["Rohformat", order.rawFormat],
+    ["Nutzen", order.imposition],
+    ["Beschnitt", order.bleed],
+    ["Ausschuss", order.waste],
+    ["Gewicht gesamt", order.totalWeight],
+  ];
+}
 
-const printStatusItems = [
-  { tone: "green", label: "Preflight", value: "OK" },
-  { tone: "green", label: "Farbmodus", value: "CMYK" },
-  { tone: "orange", label: "Beschnitt", value: "prüfen" },
-];
+function getPrintStatusItems(order: PrintPilotOrder) {
+  return [
+    { tone: order.data.tone, label: "Preflight", value: order.preflightValue },
+    {
+      tone: "green" as const,
+      label: "Farbmodus",
+      value: order.color.includes("CMYK") ? "CMYK" : order.color,
+    },
+    {
+      tone: order.bleedStatus.tone,
+      label: "Beschnitt",
+      value: order.bleedStatus.label,
+    },
+  ];
+}
 
-const printSpecs = [
-  ["Maschine", "Xerox® Iridesse 1"],
-  ["Druckverfahren", "Digitaldruck"],
-  ["Duplex", "Längswende"],
-  ["Profil", "Coated FOGRA39"],
-  ["Auflösung", "2400 × 2400 dpi"],
-  ["Papierbedarf", "425 Bogen SRA3"],
-  ["Klicks", "6.100"],
-  ["Druckzeit", "00:35 Std."],
-  ["Operator", "Noch nicht zugewiesen"],
-];
+function getPrintSpecs(order: PrintPilotOrder) {
+  return [
+    ["Maschine", order.machine],
+    ["Druckverfahren", order.machineTypeLabel],
+    ["Duplex/Seiten", order.pages],
+    [
+      "Profil",
+      order.machineType === "wide-format"
+        ? "Roland VG3 · Medienprofil"
+        : "Coated FOGRA39",
+    ],
+    [
+      "Auflösung",
+      order.machineType === "wide-format"
+        ? "1200 × 900 dpi"
+        : "2400 × 2400 dpi",
+    ],
+    [
+      "Papierbedarf",
+      order.rawFormat === "SRA3"
+        ? "aus Auflage berechnen"
+        : "Rollenbedarf prüfen",
+    ],
+    [
+      "Klicks",
+      order.machineType === "wide-format"
+        ? "nicht relevant"
+        : "aus Auflage berechnen",
+    ],
+    ["Druckzeit", "noch kalkulieren"],
+    ["Operator", order.owner],
+  ];
+}
 
-const scheduleRows = [
-  {
-    tone: "green",
-    label: "Auftrag erfasst",
-    date: "30.05.2026",
-    time: "10:15",
-    state: "erledigt",
-  },
-  {
-    tone: "green",
-    label: "Datenprüfung",
-    date: "30.05.2026",
-    time: "11:30",
-    state: "erledigt",
-  },
-  {
-    tone: "green",
-    label: "Kundenfreigabe",
-    date: "30.05.2026",
-    time: "14:20",
-    state: "erledigt",
-  },
-  {
-    tone: "orange",
-    label: "Produktionsstart",
-    date: "02.06.2026",
-    time: "08:00",
-    state: "geplant",
-  },
-  {
-    tone: "gray",
-    label: "Weiterverarbeitung",
-    date: "02.06.2026",
-    time: "13:30",
-    state: "geplant",
-  },
-  {
-    tone: "gray",
-    label: "Versand / Abholung",
-    date: "03.06.2026",
-    time: "10:00",
-    state: "offen",
-  },
-];
+function getScheduleRows(order: PrintPilotOrder) {
+  return [
+    {
+      tone: "green" as const,
+      label: "Auftrag erfasst",
+      date: order.orderDate,
+      time: "10:15",
+      state: "erledigt",
+    },
+    {
+      tone: order.data.tone,
+      label: "Datenprüfung",
+      date: order.orderDate,
+      time: order.fileTime,
+      state: order.data.label,
+    },
+    {
+      tone: order.approval.tone,
+      label: "Kundenfreigabe",
+      date: order.orderDate,
+      time: "14:20",
+      state: order.approval.label,
+    },
+    {
+      tone: order.production.tone,
+      label: "Produktionsstart",
+      date: order.scheduleStart,
+      time: order.scheduleStartTime,
+      state: order.production.label,
+    },
+    {
+      tone: "gray" as const,
+      label: "Weiterverarbeitung",
+      date: order.dueDate,
+      time: "13:30",
+      state: "geplant",
+    },
+    {
+      tone: "gray" as const,
+      label: "Versand / Abholung",
+      date: order.dueDate,
+      time: order.dueMeta.replace(/^.*·\s*/, ""),
+      state: "offen",
+    },
+  ];
+}
 
-const impositionStats = [
-  ["Bogenformat", "SRA3 · 450 × 320 mm"],
-  ["Nutzen", "8 Nutzen"],
-  ["Druckbogen", "375 Bg. + 50 Ausschuss"],
-];
+function getImpositionStats(order: PrintPilotOrder) {
+  return [
+    [
+      "Bogenformat",
+      order.rawFormat === "SRA3" ? "SRA3 · 450 × 320 mm" : order.rawFormat,
+    ],
+    ["Nutzen", order.imposition],
+    ["Druckbogen", `${order.quantity} · ${order.waste}`],
+  ];
+}
 
-const impositionDetails = [
-  ["Endformat", "210 × 99 mm"],
-  ["Anordnung", "4 × 2 Nutzen · schematisch"],
-  ["Beschnitt", "3 mm umlaufend"],
-  ["Wendeart", "Längswende"],
-];
+function getImpositionDetails(order: PrintPilotOrder) {
+  return [
+    ["Endformat", order.endFormat],
+    ["Anordnung", `${order.imposition} · schematisch`],
+    ["Beschnitt", `${order.bleed} umlaufend`],
+    [
+      "Wendeart",
+      order.pages.includes("2") || order.pages.includes("4/4")
+        ? "Längswende / prüfen"
+        : "einseitig",
+    ],
+  ];
+}
 
-const previewSpecs = [
-  ["Format", "DIN Lang"],
-  ["Seiten", "2"],
-  ["Beschnitt", "3 mm"],
-];
+function getPreviewSpecs(order: PrintPilotOrder) {
+  return [
+    ["Format", order.endFormat],
+    ["Seiten", order.pages],
+    ["Beschnitt", order.bleed],
+  ];
+}
 
-const files = [
-  ["PDF", "flyer_druck.pdf", "Druckdaten", "30.05.2026", "10:10", "8,2 MB"],
-  ["PDF", "flyer_freigabe.pdf", "Freigabe", "30.05.2026", "14:20", "1,3 MB"],
-  ["JPG", "flyer_ansicht.jpg", "Ansicht", "30.05.2026", "10:10", "2,1 MB"],
-  ["PDF", "nutzenplan.pdf", "Nutzenplan", "30.05.2026", "10:12", "0,6 MB"],
-];
+function getFiles(order: PrintPilotOrder) {
+  return [
+    [
+      "PDF",
+      order.preview.filename,
+      order.fileCategory,
+      order.fileDate,
+      order.fileTime,
+      order.fileSize,
+    ],
+    [
+      "PDF",
+      `${order.id.toLowerCase()}_freigabe.pdf`,
+      "Freigabe",
+      order.orderDate,
+      "14:20",
+      "1,3 MB",
+    ],
+    [
+      "JPG",
+      `${order.id.toLowerCase()}_ansicht.jpg`,
+      "Ansicht",
+      order.fileDate,
+      order.fileTime,
+      "2,1 MB",
+    ],
+    [
+      "PDF",
+      `${order.id.toLowerCase()}_nutzenplan.pdf`,
+      "Nutzenplan",
+      order.fileDate,
+      order.fileTime,
+      "0,6 MB",
+    ],
+  ];
+}
 
-const noteRows = [
-  {
-    tone: "blue",
-    label: "Lieferung",
-    text: "Kunde wünscht Lieferung bis spätestens Mittwoch.",
-    meta: "Admin · 30.05.2026 · 14:22",
-  },
-  {
-    tone: "gray",
-    label: "Verpackung",
-    text: "Kartons mit Aufkleber „Messeaktion Juni“ kennzeichnen.",
-    meta: "Admin · 30.05.2026 · 14:18",
-  },
-  {
-    tone: "gray",
-    label: "Rückfrage",
-    text: "Rückfragen an Max Mustermann.",
-    meta: "Sarah K. · 30.05.2026 · 11:40",
-  },
-];
+function getNoteRows(order: PrintPilotOrder) {
+  return [
+    {
+      tone: "blue" as const,
+      label: "Lieferung",
+      text: `${order.customer} benötigt den Auftrag bis ${order.dueDate}.`,
+      meta: `${order.owner} · ${order.orderDate} · 14:22`,
+    },
+    {
+      tone: "gray" as const,
+      label: "Produktion",
+      text: order.nextStep,
+      meta: `PrintPilot · ${order.fileDate} · ${order.fileTime}`,
+    },
+    {
+      tone: "gray" as const,
+      label: "Rückfrage",
+      text: `Rückfragen an ${order.contactName}.`,
+      meta: `${order.owner} · ${order.orderDate} · 11:40`,
+    },
+  ];
+}
 
 const historyRows = [
   {
@@ -184,17 +269,6 @@ const machineFallbacks: Record<MachineType, string> = {
   "wide-format": wideFormatMachine,
   inkjet: inkjetMachine,
   finishing: finishingMachine,
-};
-
-const selectedMachine: MachineCardData = {
-  id: "xerox-iridesse-1",
-  name: "Xerox® Iridesse 1",
-  type: "digital-color",
-  typeLabel: "Digitaldruck Farbe",
-  status: "Verfügbar",
-  location: "Halle 1",
-  specs: ["SRA3", "CMYK", "Sonderfarbe möglich"],
-  service: "12.05.2026",
 };
 
 type PocketIconName =
@@ -437,14 +511,16 @@ function TopInfoCard({
   );
 }
 
-function ProductCard() {
+function ProductCard({ order }: { order: PrintPilotOrder }) {
+  const productHighlights = getProductHighlights(order);
+  const productDetails = getProductDetails(order);
   return (
     <div className="pp-product-card">
       <div className="pp-product-hero">
         <div>
           <span>Produkt</span>
-          <h3>Flyer DIN Lang</h3>
-          <p>2-seitiger Werbeflyer für Messeaktion Juni</p>
+          <h3>{order.product}</h3>
+          <p>{order.productDescription}</p>
         </div>
         <div className="pp-product-sheet" aria-label="Produktmotiv">
           <span>
@@ -478,14 +554,19 @@ function ProductCard() {
   );
 }
 
-function PrintDataCard() {
+function PrintDataCard({ order }: { order: PrintPilotOrder }) {
+  const printStatusItems = getPrintStatusItems(order);
+  const printSpecs = getPrintSpecs(order);
   return (
     <div className="pp-printdata-card">
       <div className="pp-printdata-file">
         <span className="pp-printdata-file__type">PDF</span>
         <div>
-          <b>flyer_druck.pdf</b>
-          <small>Druck-PDF · 30.05.2026 · 10:10 · 8,2 MB</small>
+          <b>{order.preview.filename}</b>
+          <small>
+            {order.fileCategory} · {order.fileDate} · {order.fileTime} ·{" "}
+            {order.fileSize}
+          </small>
         </div>
       </div>
 
@@ -513,17 +594,22 @@ function PrintDataCard() {
   );
 }
 
-function ScheduleCard() {
+function ScheduleCard({ order }: { order: PrintPilotOrder }) {
+  const scheduleRows = getScheduleRows(order);
   return (
     <div className="pp-schedule-card">
       <div className="pp-schedule-summary">
         <span>
           <small>Start</small>
-          <strong>02.06.2026 · 08:00</strong>
+          <strong>
+            {order.scheduleStart} · {order.scheduleStartTime}
+          </strong>
         </span>
         <span>
           <small>Lieferung</small>
-          <strong>03.06.2026 · 10:00</strong>
+          <strong>
+            {order.dueDate} · {order.dueMeta.replace(/^.*·\s*/, "")}
+          </strong>
         </span>
       </div>
 
@@ -549,7 +635,9 @@ function ScheduleCard() {
   );
 }
 
-function ImpositionPlanCard() {
+function ImpositionPlanCard({ order }: { order: PrintPilotOrder }) {
+  const impositionStats = getImpositionStats(order);
+  const impositionDetails = getImpositionDetails(order);
   return (
     <div className="pp-imposition-card">
       <div className="pp-imposition-stats">
@@ -563,7 +651,7 @@ function ImpositionPlanCard() {
 
       <div
         className="pp-imposition-sheet"
-        aria-label="Nutzenplan 4 mal 2 auf SRA3"
+        aria-label={`Nutzenplan ${order.imposition} auf ${order.rawFormat}`}
       >
         {Array.from({ length: 8 }, (_, index) => (
           <span key={index}>
@@ -584,7 +672,8 @@ function ImpositionPlanCard() {
   );
 }
 
-function PreviewCard() {
+function PreviewCard({ order }: { order: PrintPilotOrder }) {
+  const previewSpecs = getPreviewSpecs(order);
   return (
     <div className="pp-preview-card">
       <div className="pp-preview-stage" aria-label="PDF-Druckvorschau">
@@ -607,8 +696,10 @@ function PreviewCard() {
       </div>
 
       <div className="pp-preview-meta">
-        <b>flyer_druck.pdf</b>
-        <span>Druck-PDF · CMYK · 300 dpi</span>
+        <b>{order.preview.filename}</b>
+        <span>
+          {order.fileCategory} · {order.color} · {order.preview.meta}
+        </span>
       </div>
 
       <div className="pp-preview-specs">
@@ -655,7 +746,20 @@ function MachineCard({ machine }: { machine: MachineCardData }) {
   );
 }
 
-export function OrderPocketPage() {
+export function OrderPocketPage({ order }: { order: PrintPilotOrder }) {
+  const files = getFiles(order);
+  const noteRows = getNoteRows(order);
+  const selectedMachine: MachineCardData = {
+    id: order.machine.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
+    name: order.machine,
+    type: order.machineType,
+    typeLabel: order.machineTypeLabel,
+    status: "Verfügbar",
+    location: order.machineType === "wide-format" ? "Großformat" : "Halle 1",
+    specs: [order.rawFormat, order.color, order.imposition],
+    service: "12.05.2026",
+  };
+
   return (
     <div className="pp-order-pocket">
       <header className="pp-master-header">
@@ -674,18 +778,18 @@ export function OrderPocketPage() {
 
         <div className="pp-header-job" aria-label="Auftragsnummer">
           <span>Auftragsnummer</span>
-          <strong>PP-2026-00481</strong>
+          <strong>{order.id}</strong>
         </div>
 
         <div className="pp-header-qr">
           <img
             className="pp-qr-code"
             src={orderQrCode}
-            alt="QR-Code für Auftrag PP-2026-00481"
+            alt={`QR-Code für Auftrag ${order.id}`}
           />
           <span className="pp-header-qr-text">
             <strong>Auftrag scannen</strong>
-            <small>PP-2026-00481</small>
+            <small>{order.id}</small>
             <em>in PrintPilot öffnen</em>
           </span>
         </div>
@@ -695,45 +799,52 @@ export function OrderPocketPage() {
         <TopInfoCard
           icon={<PocketIcon name="customer" />}
           label="Kunde"
-          title="Muster GmbH"
+          title={order.customer}
         >
-          Industriestraße 12
-          <br />
-          69151 Neckargemünd
+          {order.customerAddress.map((line) => (
+            <span key={line}>
+              {line}
+              <br />
+            </span>
+          ))}
           <br />
           <a>Kundendetails anzeigen →</a>
         </TopInfoCard>
         <TopInfoCard
           icon={<PocketIcon name="contact" />}
           label="Ansprechpartner"
-          title="Max Mustermann"
+          title={order.contactName}
         >
-          06222 / 123456
+          {order.contactPhone}
           <br />
-          max@muster.de
+          {order.contactEmail}
         </TopInfoCard>
         <TopInfoCard
           icon={<PocketIcon name="date" />}
           label="Auftragsdatum"
-          title="30.05.2026"
+          title={order.orderDate}
         >
           &nbsp;
         </TopInfoCard>
         <TopInfoCard
           icon={<PocketIcon name="delivery" />}
           label="Liefertermin"
-          title="03.06.2026"
+          title={order.dueDate}
         >
-          KW 23 / Mittwoch
+          {order.deliveryMeta}
         </TopInfoCard>
         <article className="pp-status-overview">
           <div className="pp-eyebrow">Status Übersicht</div>
           <div className="pp-status-flow">
-            <StatusPill tone="green">Daten geprüft</StatusPill>
+            <StatusPill tone={order.data.tone}>{order.data.label}</StatusPill>
             <b>›</b>
-            <StatusPill tone="green">Freigabe erteilt</StatusPill>
+            <StatusPill tone={order.approval.tone}>
+              {order.approval.label}
+            </StatusPill>
             <b>›</b>
-            <StatusPill tone="orange">Produktion</StatusPill>
+            <StatusPill tone={order.production.tone}>
+              {order.production.label}
+            </StatusPill>
             <b>›</b>
             <StatusPill>Weiterverarbeitung</StatusPill>
             <b>›</b>
@@ -748,7 +859,7 @@ export function OrderPocketPage() {
           icon={<PocketIcon name="product" />}
           className="pp-product-panel"
         >
-          <ProductCard />
+          <ProductCard order={order} />
         </Panel>
 
         <Panel
@@ -756,11 +867,11 @@ export function OrderPocketPage() {
           icon={<PocketIcon name="print-data" />}
           className="pp-printdata-panel"
         >
-          <PrintDataCard />
+          <PrintDataCard order={order} />
         </Panel>
 
         <Panel title="Termine" icon={<PocketIcon name="timeline" />}>
-          <ScheduleCard />
+          <ScheduleCard order={order} />
         </Panel>
 
         <Panel
@@ -802,11 +913,11 @@ export function OrderPocketPage() {
         </Panel>
 
         <Panel title="Nutzenplan" icon={<PocketIcon name="imposition" />}>
-          <ImpositionPlanCard />
+          <ImpositionPlanCard order={order} />
         </Panel>
 
         <Panel title="Vorschau" icon={<PocketIcon name="preview" />}>
-          <PreviewCard />
+          <PreviewCard order={order} />
         </Panel>
 
         <Panel

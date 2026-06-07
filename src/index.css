@@ -1572,3 +1572,182 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   .pp-imposition-sheet { grid-template-columns: repeat(2, 1fr); min-height: 190px; }
   .pp-imposition-details { grid-template-columns: 1fr; }
 }
+
+/* Design Sprint 34: Auftragstasche Final Polish */
+.pp-order-pocket {
+  padding-bottom: 128px;
+}
+
+.pp-pocket-grid {
+  gap: 18px;
+}
+
+.pp-panel {
+  padding: 19px;
+  border-radius: 15px;
+}
+
+.pp-panel__header {
+  gap: 11px;
+  margin-bottom: 13px;
+}
+
+.pp-panel__header h2,
+.pp-eyebrow {
+  font-weight: 880;
+  letter-spacing: .13em;
+}
+
+.pp-status-pill,
+.pp-product-highlights span,
+.pp-printdata-check,
+.pp-schedule-summary span,
+.pp-imposition-stats span,
+.pp-machine-specs span,
+.pp-file-type,
+.pp-check-section__head span {
+  border-radius: 6px;
+}
+
+.pp-product-hero,
+.pp-printdata-file,
+.pp-preview-stage,
+.pp-imposition-sheet,
+.pp-machine-visual {
+  border-radius: 13px;
+}
+
+.pp-product-highlights strong,
+.pp-printdata-check strong,
+.pp-imposition-stats strong,
+.pp-preview-specs strong,
+.pp-schedule-summary strong {
+  font-weight: 780;
+}
+
+.pp-compact-data-list div,
+.pp-file-row,
+.pp-imposition-details div {
+  border-color: #e7edf5;
+}
+
+.pp-schedule-step__main,
+.pp-activity-item > div {
+  border-radius: 8px;
+}
+
+.pp-activity-item strong,
+.pp-schedule-step__main strong,
+.pp-check-label {
+  font-weight: 700;
+}
+
+.pp-machine-card {
+  grid-template-columns: minmax(144px, 170px) minmax(0, 1fr);
+  gap: 18px;
+}
+
+.pp-machine-visual {
+  min-height: 150px;
+}
+
+.pp-machine-visual__label {
+  border-radius: 6px;
+  font-weight: 680;
+}
+
+.pp-machine-details {
+  align-content: center;
+  gap: 10px;
+}
+
+.pp-machine-details__head {
+  display: grid;
+  justify-items: start;
+  gap: 4px;
+}
+
+.pp-machine-details__head span {
+  margin: 0;
+  color: #64748b;
+  font-size: 9.5px;
+  font-weight: 760;
+  letter-spacing: .065em;
+  text-transform: uppercase;
+}
+
+.pp-machine-details__head b {
+  display: block;
+  max-width: 100%;
+  color: #06163a;
+  font-size: 17px;
+  font-weight: 820;
+  line-height: 1.08;
+  letter-spacing: -.028em;
+}
+
+.pp-machine-details__head small {
+  color: #52637d;
+  font-size: 11.5px;
+  font-weight: 620;
+  line-height: 1.3;
+}
+
+.pp-machine-details .pp-status-pill {
+  justify-self: start;
+  min-height: 24px;
+  margin-top: 2px;
+  padding: 5px 9px;
+  font-size: 10px;
+  font-weight: 740;
+}
+
+.pp-machine-service {
+  margin: 0;
+  color: #52637d;
+  font-size: 11.5px;
+  font-weight: 620;
+  line-height: 1.35;
+}
+
+.pp-file-row {
+  padding: 9px 0;
+}
+
+.pp-card-link {
+  color: #0759d6;
+  font-size: 12.5px;
+  font-weight: 720;
+}
+
+.pp-check-section h4 {
+  font-weight: 780;
+  letter-spacing: .06em;
+}
+
+.pp-check-item {
+  border-radius: 7px;
+}
+
+@media (max-width: 1500px) {
+  .pp-pocket-grid {
+    gap: 15px;
+  }
+
+  .pp-panel {
+    padding: 17px;
+  }
+
+  .pp-machine-card {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+
+  .pp-machine-visual {
+    min-height: 132px;
+  }
+
+  .pp-machine-visual img {
+    width: 144px;
+  }
+}

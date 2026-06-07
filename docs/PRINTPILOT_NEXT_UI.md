@@ -235,3 +235,13 @@ Der CMY-Diagonalstreifen-Hintergrund aus Sprint 21 wurde wieder entfernt. Der Lo
 - Druckbogen erhält Rasterhintergrund, Beschnitt-Andeutung und 4 × 2 Nutzenflächen.
 - Endformat, Anordnung, Beschnitt und Wendeart sind als ruhige Produktionsdetails gruppiert.
 - Header, Logo-Verlauf, Footer, Produkt, Druckdaten, Vorschau, Checkliste, Dateien, Notizen und Verlauf nicht verändert.
+
+## Design Sprint 34 – Auftragstasche Final Polish
+
+- Abstände zwischen Karten, Kartenköpfen und Inhaltsgruppen final geglättet.
+- Badge-/Chip-Rundungen einheitlicher auf die kantigere PrintPilot-Formsprache abgestimmt.
+- Schriftgewichte in Karten, Timelines, Statusfeldern und kleinen Kennzahlen beruhigt.
+- Maschinenkarte final auf die ruhigere Variante gesetzt: Status unter dem Maschinennamen, Typ/Standort als Textzeile, keine Mini-Meta-Kacheln mehr.
+- Dateien, Notizen, Verlauf, Checkliste, Termine und Nutzenplan optisch weiter vereinheitlicht.
+- Responsive-Verhalten der Maschinenkarte bei schmaleren Fenstern verbessert.
+- Header, Logo-Verlauf, Footer und zentrale Kartenstruktur nicht verändert.

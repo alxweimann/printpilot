@@ -636,10 +636,11 @@ function MachineCard({ machine }: { machine: MachineCardData }) {
       </div>
       <div className="pp-machine-details">
         <div className="pp-machine-details__head">
-          <div>
-            <span>Ausgewählte Maschine</span>
-            <b>{machine.name}</b>
-          </div>
+          <span>Ausgewählte Maschine</span>
+          <b>{machine.name}</b>
+          <small>
+            {machine.typeLabel} · {machine.location}
+          </small>
           <StatusPill tone="green">{machine.status}</StatusPill>
         </div>
         <div className="pp-machine-specs">
@@ -647,20 +648,7 @@ function MachineCard({ machine }: { machine: MachineCardData }) {
             <span key={spec}>{spec}</span>
           ))}
         </div>
-        <dl className="pp-machine-meta">
-          <div>
-            <dt>Typ</dt>
-            <dd>{machine.typeLabel}</dd>
-          </div>
-          <div>
-            <dt>Standort</dt>
-            <dd>{machine.location}</dd>
-          </div>
-          <div>
-            <dt>Service</dt>
-            <dd>{machine.service}</dd>
-          </div>
-        </dl>
+        <p className="pp-machine-service">Letzter Service: {machine.service}</p>
       </div>
     </div>
   );

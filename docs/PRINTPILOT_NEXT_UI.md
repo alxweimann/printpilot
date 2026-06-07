@@ -110,3 +110,32 @@ Als nächstes sollte die Auftragstasche einmal lokal im Browser geprüft werden:
 - Aktuell verwendet `Xerox® Iridesse 1` den Fallback `digital-color`; später kann per `image` ein echtes Maschinenfoto gesetzt werden.
 - Header, Footer, Logo, Top-Info-Bereich und übrige Karten wurden nicht verändert.
 - ZIP-Dateien sollen weiterhin nicht ins Repository committed werden.
+
+## Design Sprint 17 – Maschinenkarte veredelt
+
+- Die Maschinenkarte wurde optisch hochwertiger aufgebaut, ohne Header, Footer oder übrige Karten anzufassen.
+- Die Maschinen-Illustration sitzt jetzt in einer größeren, ruhigeren Bildfläche mit dezenter Tiefenwirkung.
+- Maschinentyp wird als kleiner Label-Badge direkt in der Bildfläche angezeigt.
+- Maschinenname, Status und technische Merkmale wurden klarer gegliedert.
+- Merkmale wie `SRA3`, `CMYK` und `Sonderfarbe möglich` werden als kompakte Chips dargestellt.
+- Typ, Standort und letzter Service sind als ruhige Meta-Felder vorbereitet.
+- Die Hybrid-Logik bleibt bestehen: später kann ein echtes Maschinenbild per `image` gesetzt werden, ansonsten wird die Fallback-Illustration verwendet.
+
+## Design Sprint 18 – Maschinen-Badges vereinheitlicht
+
+- Die Badges/Chips in der Maschinenkarte wurden an die Formsprache der Status-Pills angepasst.
+- Maschinentyp-Label und technische Merkmale sind jetzt weniger rund und wirken technischer.
+- Schriftgewicht in diesen kleinen Badges wurde reduziert, damit sie weniger massiv erscheinen.
+- Meta-Felder in der Maschinenkarte wurden minimal kantiger abgestimmt.
+- Header, Footer, Maschinenaufbau und übrige Karten wurden nicht verändert.
+
+
+## Design Sprint 19 – Maschinenkarte responsiv beruhigt
+
+- Die Maschinenkarte wurde für unterschiedliche Fensterbreiten robuster aufgebaut.
+- Auf breiteren Ansichten bleibt die Darstellung zweispaltig mit Illustration links und Maschinendaten rechts.
+- Auf schmaleren Ansichten wechselt die Karte automatisch in eine einspaltige Darstellung mit Bild oben und Daten darunter.
+- Die vorherigen Mini-Meta-Kacheln für Typ, Standort und Service wurden entfernt, damit die Karte weniger kleinteilig wirkt.
+- Typ und Standort erscheinen jetzt als ruhige Textzeile unter dem Maschinennamen; der letzte Service steht als dezente Servicezeile darunter.
+- Status-Badge und technische Merkmale bleiben erhalten, sind aber weniger dominant und dürfen sauber umbrechen.
+- Header, Footer, Logo, Top-Info-Bereich und übrige Karten wurden nicht verändert.

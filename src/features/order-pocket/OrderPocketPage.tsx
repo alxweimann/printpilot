@@ -190,16 +190,22 @@ function MachineCard({ machine }: { machine: MachineCardData }) {
   return (
     <div className="pp-machine-card">
       <div className="pp-machine-visual" aria-label={`${machine.name} Illustration`}>
+        <span className="pp-machine-visual__label">{machine.typeLabel}</span>
         <img src={imageSource} alt="" />
       </div>
       <div className="pp-machine-details">
-        <div className="pp-machine-details__head">
-          <b>{machine.name}</b>
+        <div className="pp-machine-kicker">Ausgewählte Maschine</div>
+        <div className="pp-machine-title-row">
+          <div>
+            <b>{machine.name}</b>
+            <p>{machine.typeLabel} · {machine.location}</p>
+          </div>
           <StatusPill tone="green">{machine.status}</StatusPill>
         </div>
-        <p>{machine.typeLabel} · {machine.specs.join(' · ')}</p>
-        <small>Standort: {machine.location}</small>
-        <small>Letzter Service: {machine.service}</small>
+        <div className="pp-machine-specs">
+          {machine.specs.map((spec) => <span key={spec}>{spec}</span>)}
+        </div>
+        <p className="pp-machine-service">Letzter Service: <strong>{machine.service}</strong></p>
       </div>
     </div>
   )

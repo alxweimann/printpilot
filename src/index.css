@@ -62,7 +62,17 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   padding: 0 26px 0 28px;
   color: var(--pp-navy);
   background: #ffffff;
-  border-right: 1px solid #e7edf5;
+}
+
+.pp-header-brand::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  right: 0;
+  width: 1px;
+  height: 62px;
+  transform: translateY(-50%);
+  background: #e1e8f2;
 }
 
 .pp-brand-logo {

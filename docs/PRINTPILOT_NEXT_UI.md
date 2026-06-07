@@ -1,6 +1,6 @@
 # PrintPilot Next UI
 
-## Stand: Design Sprint 9
+## Stand: Design Sprint 11
 
 Aktueller Fokus: Auftragstaschen-Header mit freigestelltem PrintPilot-Logo stabilisieren und die offiziellen PrintPilot-Farbwerte im UI-Stand verankern.
 
@@ -64,3 +64,10 @@ Als nächstes sollte die Auftragstasche einmal lokal im Browser geprüft werden:
 - Unteres Content-Padding erhöht, damit die feste Bottom-Navigation keine Karteninhalte mehr überdeckt.
 - Temporäre Logo-Dateien entfernt; aktive Logo-Datei bleibt `src/assets/logo/printpilot-logo-transparent.png`.
 - ZIP-Dateien sollen nicht ins Repository committed werden.
+
+
+## Design Sprint 11 – Header-Trennlinie korrigiert
+
+- Die Trennlinie zwischen Logo-Bereich und Auftragstaschen-Titel wurde von voller Headerhöhe auf die gleiche optische Höhe wie die QR-Trennlinie reduziert.
+- Umsetzung über eine kurze, vertikal zentrierte Pseudo-Element-Linie am Logo-Bereich.
+- Header-Logo, Headerhöhe und QR-Bereich bleiben unverändert.

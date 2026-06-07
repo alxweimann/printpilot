@@ -96,3 +96,11 @@ Als nächstes sollte die Auftragstasche einmal lokal im Browser geprüft werden:
 - Schriftgewicht in den Status-Pills reduziert, damit die Buttons weniger massiv wirken.
 - Weiterverarbeitungs-Pills kompakter gemacht und Spaltenbreite reduziert.
 - Header, Logo, Trennlinien und Karten-Icons aus Sprint 13 unverändert gelassen.
+
+
+## Design Sprint 15 – Footer-/Scroll-Fix
+
+- Bottom-Navigation bleibt unten fixiert, liegt aber nicht mehr über dem scrollbaren Inhalt.
+- Hauptbereich nutzt nun einen definierten Scrollbereich oberhalb der Navigation.
+- Body/App verhindern zusätzliches Browser-Scrolling; gescrollt wird innerhalb des PrintPilot-Arbeitsbereichs.
+- Auftragstaschen-Header, Logo, Trennlinien, Karten-Icons und Pill-Styling wurden nicht verändert.

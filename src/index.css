@@ -61,7 +61,7 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   align-items: center;
   padding: 0 36px 0 28px;
   color: #ffffff;
-  background: linear-gradient(90deg, #082957 0%, #082957 72%, rgba(8, 41, 87, .74) 83%, rgba(8, 41, 87, .28) 93%, rgba(8, 41, 87, 0) 100%);
+  background: linear-gradient(90deg, #082957 0%, #082957 66%, rgba(8, 41, 87, .86) 75%, rgba(8, 41, 87, .58) 84%, rgba(8, 41, 87, .26) 93%, rgba(8, 41, 87, 0) 100%);
   box-shadow: none;
 }
 

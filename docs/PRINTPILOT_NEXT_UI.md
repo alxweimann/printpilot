@@ -156,3 +156,9 @@ Der CMY-Diagonalstreifen-Hintergrund aus Sprint 21 wurde wieder entfernt. Der Lo
 - Die zuvor zu weit in den Header laufende graue/helle Verlaufsfläche wurde entfernt.
 - Keine Änderungen an Karten, Footer, QR-Bereich oder Maschinen-/Timeline-Karten.
 
+## Design Sprint 25 – Weicherer Logo-Verlauf
+
+- Logo-Hintergrund im Auftragstaschen-Header bleibt auf den Brand-Bereich begrenzt.
+- Verlauf von Footer-Blau zu Weiß wurde länger und weicher abgestuft.
+- Titelbereich, Auftragsnummer, QR-Bereich, Karten und Footer bleiben unverändert.
+

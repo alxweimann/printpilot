@@ -1,10 +1,10 @@
 import { AppShell } from './app/AppShell'
-import { OrderPocketPage } from './features/order-pocket/OrderPocketPage'
+import { OrdersOverviewPage } from './features/orders/OrdersOverviewPage'
 
 export default function App() {
   return (
     <AppShell>
-      <OrderPocketPage />
+      <OrdersOverviewPage />
     </AppShell>
   )
 }

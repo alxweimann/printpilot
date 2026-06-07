@@ -5,6 +5,7 @@ export type PrintPilotPatternCategory =
   | 'timeline'
   | 'production'
   | 'media'
+  | 'list'
 
 export type PrintPilotPattern = {
   id: string
@@ -17,6 +18,24 @@ export type PrintPilotPattern = {
 }
 
 export const printPilotUiPatterns: PrintPilotPattern[] = [
+
+  {
+    id: 'orders-overview-list',
+    category: 'list',
+    name: 'Aufträge-Übersichtsliste',
+    purpose:
+      'Überträgt die technische Auftragstaschen-Formsprache auf verdichtete Auftragskarten mit gruppierten Status-Pills, Freigabe, Datenstatus, Termin, Kunde, Produkt und Maschine.',
+    reference: 'Aufträge · Übersicht',
+    classNames: [
+      'pp-orders-overview',
+      'pp-orders-hero',
+      'pp-orders-workbench',
+      'pp-order-row-card',
+      'pp-orders-mini-info',
+      'pp-order-specs',
+    ],
+    reuseFor: ['Aufträge', 'Produktionsplanung', 'Kundenaufträge', 'Detail-Drawer-Einstiege'],
+  },
   {
     id: 'order-pocket-header',
     category: 'layout',

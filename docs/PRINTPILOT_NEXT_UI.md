@@ -323,3 +323,77 @@ Diese Registry ist bewusst leichtgewichtig und greift noch nicht aktiv ins Rende
 
 Auf Basis dieser Referenz kann als nächstes die **Aufträge-Übersicht** oder das **Maschinen-Modul** im gleichen Stil aufgebaut werden. Die Auftragstasche sollte dabei nicht mehr als Experimentierfläche genutzt werden, sondern als stabiler UI-Maßstab.
 
+## Design Sprint 39 – Aufträge-Übersicht im PrintPilot-Stil
+
+Sprint 39 leitet die neue Aufträge-Übersicht aus der stabilisierten Auftragstasche ab. Die Auftragstasche selbst wurde nicht verändert; sie bleibt Referenzscreen.
+
+### Umgesetzt
+
+- Neue Feature-Seite ergänzt: `src/features/orders/OrdersOverviewPage.tsx`.
+- `src/App.tsx` zeigt jetzt die Aufträge-Übersicht als aktuelle Hauptansicht.
+- Auftragskarten übernehmen die technische Kartenlogik der Auftragstasche:
+  - ruhiger weißer Rahmen,
+  - kompakte Inhalte,
+  - kantige Status-Pills,
+  - Icon-Kacheln für Termin, Maschine und Auftragsdaten.
+- Sichtbare Produktionsinformationen je Auftrag:
+  - Auftragsnummer,
+  - Kunde,
+  - Produkt,
+  - Auflage / Format,
+  - Maschine,
+  - Priorität,
+  - Termin,
+  - Produktionsstatus,
+  - Freigabestatus,
+  - Datenstatus,
+  - nächster Schritt,
+  - Verantwortlicher.
+- Übersichtskopf mit Sprint-/Modulkontext, Aktionen für neuen Auftrag und spätere Auftragstaschen-Verknüpfung.
+- Kennzahlenzeile für heute fällige Aufträge, Produktion, offene Freigaben und zu prüfende Daten.
+- Linke Filter-/Statusspalte vorbereitet für Daten/Freigabe, Produktion, Weiterverarbeitung und Versandbereit.
+- Detail-Drawer-/Auftragstaschen-Verknüpfung vorbereitet: Karten und Aktionsbutton sind als Einstiegspunkte angelegt, aktuell noch ohne Routing/Drawer-Logik.
+- `src/design-system/ui-patterns.ts` um Pattern `orders-overview-list` erweitert.
+- CSS für die neue Übersicht in `src/index.css` ergänzt, ohne bestehende Auftragstaschen-Klassen umzubauen.
+
+### Nicht verändert
+
+- `src/features/order-pocket/OrderPocketPage.tsx` blieb unverändert.
+- Auftragstaschen-Header, QR-Code, Nutzenplan, Maschinenkarte und bestehende Referenzkarten wurden nicht angefasst.
+
+### Nächster sinnvoller Schritt
+
+Als nächstes kann Sprint 40 den Detail-Drawer vorbereiten: Klick auf einen Auftrag öffnet rechts eine kompakte Detailansicht mit den wichtigsten Auftragstaschen-Daten und einem klaren Button „Auftragstasche öffnen“.
+
+
+
+## Design Sprint 39.1 – Aufträge-Übersicht verdichtet
+
+Sprint 39.1 schärft die erste Aufträge-Übersicht optisch nach. Ziel war, die starke horizontale Streuung auf großen Monitoren zu reduzieren und die Karten klarer als Produktionskarten statt als breite Tabelle wirken zu lassen.
+
+### Umgesetzt
+
+- Tabellenkopf der Auftragsliste entfernt, weil die Darstellung jetzt eindeutig kartenbasiert ist.
+- Auftragskarten kompakter aufgebaut:
+  - Auftragsnummer und Statusgruppe oben,
+  - Produkt/Kunde/Format links,
+  - Termin, Maschine und Auflage als besser lesbare Infokacheln rechts,
+  - nächster Schritt, Verantwortlicher und Aktion unten.
+- Status-Pills enger zusammengeführt:
+  - Produktionsstatus,
+  - Freigabe,
+  - Datenstatus,
+  - Priorität.
+- Schriftgrößen für produktionsrelevante Werte leicht angehoben.
+- Kennzahlen, Filterspalte und Header in Höhe und Abständen reduziert.
+- Die linke Filterspalte bleibt erhalten, wirkt aber kompakter und rückt visuell näher an die Liste.
+- `orders-overview-list` in der UI-Pattern-Registry auf die verdichtete Kartenlogik angepasst.
+
+### Nicht verändert
+
+- `src/features/order-pocket/OrderPocketPage.tsx` blieb unverändert.
+- Es wurde weiterhin kein echter Drawer oder Routing eingeführt. Die Auftragskarten bleiben nur vorbereitet.
+
+### Nächster sinnvoller Schritt
+
+Sprint 40 kann den Detail-Drawer technisch vorbereiten: Klick auf eine Auftragskarte öffnet rechts eine kompakte Detailansicht mit Auftrag, Kunde, Freigabe, Datenstatus, Termin, Maschine und Button zur Auftragstasche.

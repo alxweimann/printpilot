@@ -533,3 +533,35 @@ Sprint 40.2 korrigiert das im Testvideo sichtbare Problem, dass die untere Drawe
 ### Nächster sinnvoller Schritt
 
 Sprint 41 kann jetzt auf einem stabileren Drawer aufbauen und Status, Freigabe, Datenprüfung und Priorität als auswählbare Controls mit lokalem UI-State vorbereiten.
+
+## Design Sprint 40.3 – Auftragstasche als echte Detailansicht
+
+Sprint 40.3 korrigiert die Navigationslogik der Aufträge-Übersicht: Der Detail-Drawer wird nicht weiter als zentrale Auftragsansicht ausgebaut. Die Aufträge-Übersicht bleibt das Produktionscockpit, während `Auftrag öffnen` direkt zur Auftragstasche führt.
+
+### Umgesetzt
+
+- `src/App.tsx` um einfache View-Umschaltung erweitert:
+  - Standardansicht: Aufträge-Übersicht,
+  - Detailansicht: Auftragstasche.
+- `Auftrag öffnen` in der Auftragskarte öffnet jetzt die Auftragstasche statt den rechten Detail-Drawer.
+- Der separate Button `Auftragstasche` in jeder Auftragskarte wurde entfernt, weil `Auftrag öffnen` diese Rolle übernimmt.
+- Auftragstaschen-Ansicht erhält eine kleine Rücknavigation `Zur Aufträge-Übersicht` oberhalb der bestehenden Auftragstasche.
+- Auftragskarten bekommen eine kompakte Druckdatei-Preview:
+  - stilisierter Papierbogen,
+  - Schnitt-/Beschnittmarken,
+  - Dateiname,
+  - Preview-/Preflight-Kurzstatus.
+- Filter-Hinweis und Header wurden auf die neue Logik angepasst.
+- Pattern `orders-overview-list` wurde auf Druckdatei-Preview und Auftragstaschen-Einstieg aktualisiert.
+- Neues Pattern `order-file-preview` dokumentiert die vorbereitete Vorschau-Struktur für spätere echte PDF-/Bild-Previews.
+
+### Nicht verändert
+
+- `src/features/order-pocket/OrderPocketPage.tsx` blieb unverändert.
+- Die Auftragstasche zeigt weiterhin den bestehenden Demo-Auftrag `PP-2026-00481`.
+- Es wurde noch kein echtes Routing, keine Datenbanklogik und keine dynamische Übergabe der ausgewählten Auftragsdaten an die Auftragstasche eingebaut.
+- Der alte Drawer-Code wurde aus der aktiven UI entfernt; vorhandene alte Drawer-Styles können später im Cleanup-Sprint bereinigt oder für Quick-Status-Funktionen neu bewertet werden.
+
+### Nächster sinnvoller Schritt
+
+Sprint 41 sollte entweder die Auftragstasche dynamisch mit dem ausgewählten Auftrag verbinden oder zuerst einen kleinen Cleanup-Sprint durchführen, der nicht mehr benötigte Drawer-Styles und Dummy-Logik entfernt.

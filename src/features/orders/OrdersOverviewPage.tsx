@@ -1,4 +1,4 @@
-import { useState, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { StatusPill } from "../../components/ui/StatusPill";
 
 type OrderTone = "green" | "orange" | "gray" | "blue";
@@ -6,6 +6,13 @@ type OrderTone = "green" | "orange" | "gray" | "blue";
 type OrderStatus = {
   label: string;
   tone: OrderTone;
+};
+
+type OrderPreview = {
+  kind: "flyer" | "business-card" | "brochure" | "poster" | "sticker";
+  label: string;
+  filename: string;
+  meta: string;
 };
 
 type OrderRow = {
@@ -24,13 +31,7 @@ type OrderRow = {
   nextStep: string;
   owner: string;
   progress: number;
-  contact: string;
-  department: string;
-  delivery: string;
-  preflight: string;
-  material: string;
-  finishing: string;
-  note: string;
+  preview: OrderPreview;
 };
 
 const orderSummary = [
@@ -57,13 +58,12 @@ const orderRows: OrderRow[] = [
     nextStep: "Druckstart vorbereiten",
     owner: "Sarah K.",
     progress: 58,
-    contact: "Einkauf / Frau Schneider",
-    department: "Digitaldruck Farbe",
-    delivery: "Abholung heute ab 16:00 Uhr",
-    preflight: "PDF/X-4 geprüft · Beschnitt vorhanden · RGB-Warnung 0",
-    material: "135 g/m² Bilderdruck matt · SRA3",
-    finishing: "Schneiden auf Endformat · keine Falzung",
-    note: "Freigabe liegt vor. Produktion kann nach Maschinenbelegung gestartet werden.",
+    preview: {
+      kind: "flyer",
+      label: "PDF-Preview",
+      filename: "flyer_dinlang_druck.pdf",
+      meta: "2 Seiten · 8,2 MB",
+    },
   },
   {
     id: "PP-2026-00482",
@@ -81,13 +81,12 @@ const orderRows: OrderRow[] = [
     nextStep: "Freigabe beim Kunden einholen",
     owner: "Max M.",
     progress: 32,
-    contact: "Praxisleitung / Herr Neumann",
-    department: "Druckvorstufe",
-    delivery: "Versand per Paketdienst",
-    preflight: "Preflight OK · Kundendruckfreigabe fehlt",
-    material: "300 g/m² Bilderdruck matt · SRA3",
-    finishing: "Schneiden · Ecken unverändert",
-    note: "Daten sind technisch bereit. Ohne Kundenfreigabe keine Übergabe an Produktion.",
+    preview: {
+      kind: "business-card",
+      label: "PDF-Preview",
+      filename: "visitenkarten_set.pdf",
+      meta: "4/4 · 3 Nutzen",
+    },
   },
   {
     id: "PP-2026-00483",
@@ -105,13 +104,12 @@ const orderRows: OrderRow[] = [
     nextStep: "Innenteil-PDF nachfordern",
     owner: "Admin",
     progress: 24,
-    contact: "Marketing / Frau Bender",
-    department: "Druckvorstufe",
-    delivery: "Lieferung an Zentrale",
-    preflight: "Umschlag vorhanden · Innenteil fehlt",
-    material: "Umschlag 250 g/m² · Inhalt 135 g/m² geplant",
-    finishing: "Rückenheftung · Endbeschnitt A5",
-    note: "Auftrag bleibt blockiert, bis das finale Innenteil-PDF vorliegt.",
+    preview: {
+      kind: "brochure",
+      label: "Preview fehlt",
+      filename: "umschlag_a5.pdf",
+      meta: "Innenteil offen",
+    },
   },
   {
     id: "PP-2026-00484",
@@ -129,13 +127,12 @@ const orderRows: OrderRow[] = [
     nextStep: "Rolle prüfen und RIP vorbereiten",
     owner: "Julia P.",
     progress: 46,
-    contact: "Filialleitung / Herr König",
-    department: "Großformat",
-    delivery: "Filiallieferung vormittags",
-    preflight: "PDF geprüft · 5 mm Beschnitt · CMYK",
-    material: "Plakatpapier matt · Rolle 914 mm",
-    finishing: "Formatzuschnitt · flach verpacken",
-    note: "Rolle vor Produktionsstart prüfen. Motivserie nach Sortierung ausgeben.",
+    preview: {
+      kind: "poster",
+      label: "PDF-Preview",
+      filename: "plakat_a2_motivserie.pdf",
+      meta: "A2 · CMYK",
+    },
   },
   {
     id: "PP-2026-00485",
@@ -153,13 +150,12 @@ const orderRows: OrderRow[] = [
     nextStep: "Konturschnitt und Verpackung",
     owner: "Sarah K.",
     progress: 74,
-    contact: "Service / Herr Adler",
-    department: "Großformat / Weiterverarbeitung",
-    delivery: "Kurier bis 17:00 Uhr",
-    preflight: "Druckdaten und CutContour geprüft",
-    material: "Orajet 3164XG · matt laminiert",
-    finishing: "Konturschnitt · Bogenweise verpacken",
-    note: "Druck ist erledigt. Weiterverarbeitung priorisieren, weil Abholung heute geplant ist.",
+    preview: {
+      kind: "sticker",
+      label: "Druck-/Cut-Preview",
+      filename: "aufkleberbogen_cutcontour.pdf",
+      meta: "CutContour geprüft",
+    },
   },
 ];
 
@@ -170,7 +166,7 @@ const laneGroups = [
   { title: "Versandbereit", count: 2, tone: "green" },
 ] satisfies Array<{ title: string; count: number; tone: OrderTone }>;
 
-type OrdersIconName = "orders" | "calendar" | "customer" | "machine" | "data" | "drawer" | "close" | "check" | "pocket";
+type OrdersIconName = "orders" | "calendar" | "customer" | "machine" | "data" | "preview" | "pocket";
 
 function OrdersIcon({ name }: { name: OrdersIconName }) {
   const common = {
@@ -221,24 +217,12 @@ function OrdersIcon({ name }: { name: OrdersIconName }) {
           <path d="M7.3 13.8h9.4v5.4H7.3z" />
         </svg>
       );
-    case "drawer":
+    case "preview":
       return (
         <svg {...common}>
-          <path d="M5 5h14v14H5z" />
-          <path d="M13 5v14" />
-          <path d="m8.5 9.5 2.5 2.5-2.5 2.5" />
-        </svg>
-      );
-    case "close":
-      return (
-        <svg {...common}>
-          <path d="M7 7l10 10M17 7 7 17" />
-        </svg>
-      );
-    case "check":
-      return (
-        <svg {...common}>
-          <path d="m5.5 12.5 4 4 9-9" />
+          <path d="M6 4.8h9.5L18 7.3v11.9H6z" />
+          <path d="M15.5 4.8v3H18" />
+          <path d="M8.5 13.2h7M8.5 16h4.8" />
         </svg>
       );
     case "pocket":
@@ -276,40 +260,33 @@ function MiniInfo({ icon, label, value }: { icon: ReactNode; label: string; valu
   );
 }
 
-function DrawerFact({ label, value }: { label: string; value: string }) {
+function OrderPreviewCard({ preview, product }: { preview: OrderPreview; product: string }) {
   return (
-    <span className="pp-orders-drawer-fact">
-      <small>{label}</small>
-      <b>{value}</b>
-    </span>
+    <div className={`pp-order-preview pp-order-preview--${preview.kind}`} aria-label={`Druckdatei Vorschau ${preview.filename}`}>
+      <div className="pp-order-preview__sheet">
+        <span className="pp-order-preview__mark pp-order-preview__mark--tl" />
+        <span className="pp-order-preview__mark pp-order-preview__mark--tr" />
+        <span className="pp-order-preview__mark pp-order-preview__mark--bl" />
+        <span className="pp-order-preview__mark pp-order-preview__mark--br" />
+        <div className="pp-order-preview__art">
+          <span />
+          <strong>{product.slice(0, 2).toUpperCase()}</strong>
+          <em />
+        </div>
+      </div>
+      <div className="pp-order-preview__caption">
+        <span>{preview.label}</span>
+        <b>{preview.filename}</b>
+        <small>{preview.meta}</small>
+      </div>
+    </div>
   );
 }
 
-function DrawerStatusTile({ label, status }: { label: string; status: OrderStatus }) {
+function OrderCard({ order, onOpenOrderPocket }: { order: OrderRow; onOpenOrderPocket: (order: OrderRow) => void }) {
   return (
-    <span className="pp-orders-drawer-status-tile">
-      <small>{label}</small>
-      <StatusPill tone={status.tone}>{status.label}</StatusPill>
-    </span>
-  );
-}
-
-function DrawerAction({ icon, title, helper, tone = "default" }: { icon: ReactNode; title: string; helper: string; tone?: "default" | "primary" }) {
-  return (
-    <button type="button" className={`pp-orders-drawer-action pp-orders-drawer-action--${tone}`}>
-      <span className="pp-panel__icon">{icon}</span>
-      <span>
-        <b>{title}</b>
-        <small>{helper}</small>
-      </span>
-    </button>
-  );
-}
-
-function OrderCard({ order, isSelected, onOpen }: { order: OrderRow; isSelected: boolean; onOpen: (order: OrderRow) => void }) {
-  return (
-    <article className={`pp-order-row-card${isSelected ? " pp-order-row-card--selected" : ""}`}>
-      <button type="button" className="pp-order-row-card__hitarea" onClick={() => onOpen(order)} aria-label={`${order.id} öffnen`} />
+    <article className="pp-order-row-card">
+      <button type="button" className="pp-order-row-card__hitarea" onClick={() => onOpenOrderPocket(order)} aria-label={`${order.id} Auftragstasche öffnen`} />
       <div className="pp-order-row-card__topline">
         <span className="pp-order-id">{order.id}</span>
         <div className="pp-order-row-card__status" aria-label="Auftragsstatus">
@@ -320,7 +297,9 @@ function OrderCard({ order, isSelected, onOpen }: { order: OrderRow; isSelected:
         </div>
       </div>
 
-      <div className="pp-order-row-card__body">
+      <div className="pp-order-row-card__body pp-order-row-card__body--with-preview">
+        <OrderPreviewCard preview={order.preview} product={order.product} />
+
         <div className="pp-order-row-card__main">
           <h2>{order.product}</h2>
           <p>{order.customer}</p>
@@ -348,146 +327,28 @@ function OrderCard({ order, isSelected, onOpen }: { order: OrderRow; isSelected:
           <b>{order.nextStep}</b>
         </span>
         <div className="pp-order-row-card__actions">
-          <button type="button" onClick={() => onOpen(order)}>Auftrag öffnen →</button>
-          <button type="button" onClick={() => onOpen(order)}>Auftragstasche</button>
+          <button type="button" onClick={() => onOpenOrderPocket(order)}>Auftrag öffnen →</button>
         </div>
       </div>
     </article>
   );
 }
 
-function OrderDetailDrawer({ order, onClose }: { order: OrderRow | null; onClose: () => void }) {
+export function OrdersOverviewPage({ onOpenOrderPocket }: { onOpenOrderPocket: (order: OrderRow) => void }) {
   return (
-    <div className={`pp-orders-drawer-shell${order ? " pp-orders-drawer-shell--open" : ""}`} aria-hidden={!order}>
-      <div className="pp-orders-drawer-backdrop" onClick={onClose} />
-      <aside className="pp-orders-detail-drawer" aria-label="Auftragsdetails" aria-modal="true" role="dialog">
-        {order ? (
-          <>
-            <header className="pp-orders-drawer-header">
-              <div className="pp-orders-drawer-header__main">
-                <span className="pp-panel__icon"><OrdersIcon name="drawer" /></span>
-                <div>
-                  <p className="pp-eyebrow">Sprint 40.2 · Detail-Drawer</p>
-                  <h2>{order.product}</h2>
-                  <span>{order.id} · {order.customer}</span>
-                </div>
-              </div>
-              <button type="button" className="pp-orders-drawer-close" onClick={onClose} aria-label="Detail-Drawer schließen">
-                <OrdersIcon name="close" />
-              </button>
-            </header>
-
-            <section className="pp-orders-drawer-primary-action" aria-label="Primäre Aktion">
-              <button type="button">
-                <span className="pp-panel__icon"><OrdersIcon name="pocket" /></span>
-                <span>
-                  <b>Auftragstasche öffnen</b>
-                  <small>UI vorbereitet · spätere Verknüpfung zur produktiven Auftragstasche</small>
-                </span>
-              </button>
-            </section>
-
-            <div className="pp-orders-drawer-scrollbody">
-              <section className="pp-orders-drawer-section pp-orders-drawer-section--accent pp-orders-drawer-section--compact">
-                <div className="pp-panel__header">
-                  <span className="pp-panel__icon"><OrdersIcon name="check" /></span>
-                  <h3>Status und Prüfung</h3>
-                </div>
-                <div className="pp-orders-drawer-status-grid" aria-label="Statusübersicht">
-                  <DrawerStatusTile label="Produktion" status={order.production} />
-                  <DrawerStatusTile label="Freigabe" status={order.approval} />
-                  <DrawerStatusTile label="Daten" status={order.data} />
-                  <DrawerStatusTile label="Priorität" status={order.priority} />
-                </div>
-                <p className="pp-orders-drawer-hint">Vorbereitete Controls: Statuswechsel werden später mit Speicherlogik und Historie verbunden.</p>
-              </section>
-
-              <section className="pp-orders-drawer-section">
-                <div className="pp-panel__header">
-                  <span className="pp-panel__icon"><OrdersIcon name="orders" /></span>
-                  <h3>Auftragskopf</h3>
-                </div>
-                <div className="pp-orders-drawer-facts">
-                  <DrawerFact label="Kunde" value={order.customer} />
-                  <DrawerFact label="Ansprechpartner" value={order.contact} />
-                  <DrawerFact label="Produkt" value={order.product} />
-                  <DrawerFact label="Format" value={order.format} />
-                  <DrawerFact label="Auflage" value={order.quantity} />
-                  <DrawerFact label="Lieferung" value={order.delivery} />
-                </div>
-              </section>
-
-              <section className="pp-orders-drawer-section">
-                <div className="pp-panel__header">
-                  <span className="pp-panel__icon"><OrdersIcon name="calendar" /></span>
-                  <h3>Produktion</h3>
-                </div>
-                <div className="pp-orders-drawer-facts pp-orders-drawer-facts--two">
-                  <DrawerFact label="Termin" value={`${order.dueDate} · ${order.dueMeta}`} />
-                  <DrawerFact label="Maschine" value={order.machine} />
-                  <DrawerFact label="Bereich" value={order.department} />
-                  <DrawerFact label="Verantwortlich" value={order.owner} />
-                </div>
-                <div className="pp-orders-drawer-progress">
-                  <span>
-                    <small>Produktionsstand</small>
-                    <b>{order.progress}%</b>
-                  </span>
-                  <div className="pp-order-progress" aria-label={`Fortschritt ${order.progress} Prozent`}>
-                    <span style={{ width: `${order.progress}%` }}></span>
-                  </div>
-                </div>
-              </section>
-
-              <section className="pp-orders-drawer-section">
-                <div className="pp-panel__header">
-                  <span className="pp-panel__icon"><OrdersIcon name="data" /></span>
-                  <h3>Druckdaten und Weiterverarbeitung</h3>
-                </div>
-                <div className="pp-orders-drawer-note-grid">
-                  <p><small>Preflight</small>{order.preflight}</p>
-                  <p><small>Material</small>{order.material}</p>
-                  <p><small>Weiterverarbeitung</small>{order.finishing}</p>
-                </div>
-              </section>
-
-              <section className="pp-orders-drawer-section pp-orders-drawer-section--note">
-                <small>Nächster Schritt</small>
-                <strong>{order.nextStep}</strong>
-                <p>{order.note}</p>
-              </section>
-            </div>
-
-            <footer className="pp-orders-drawer-actions" aria-label="Vorbereitete Drawer-Aktionen">
-              <DrawerAction icon={<OrdersIcon name="check" />} title="Freigabe markieren" helper="UI-Dummy · später Status speichern" />
-              <DrawerAction icon={<OrdersIcon name="data" />} title="Daten prüfen" helper="UI-Dummy · Preflight verbinden" />
-              <DrawerAction icon={<OrdersIcon name="machine" />} title="Status ändern" helper="UI-Dummy · Produktionsstatus wählen" />
-              <DrawerAction icon={<OrdersIcon name="calendar" />} title="Termin planen" helper="UI-Dummy · Kalender später" />
-            </footer>
-          </>
-        ) : null}
-      </aside>
-    </div>
-  );
-}
-
-export function OrdersOverviewPage() {
-  const [selectedOrder, setSelectedOrder] = useState<OrderRow | null>(null);
-
-  return (
-    <div className={`pp-orders-overview${selectedOrder ? " pp-orders-overview--drawer-open" : ""}`}>
+    <div className="pp-orders-overview">
       <header className="pp-orders-hero">
         <div className="pp-orders-hero__title">
           <span className="pp-panel__icon"><OrdersIcon name="orders" /></span>
           <div>
-            <p className="pp-eyebrow">Sprint 40.2 · Aufträge</p>
+            <p className="pp-eyebrow">Sprint 40.3 · Aufträge</p>
             <h1>Aufträge-Übersicht</h1>
-            <span>Produktionsnahe Übersicht mit korrigiertem Detail-Drawer-Footer.</span>
+            <span>Produktionscockpit mit Druckdatei-Preview und direktem Einstieg in die Auftragstasche.</span>
           </div>
         </div>
         <div className="pp-orders-hero__actions">
           <button type="button">+ Neuer Auftrag</button>
-          <button type="button" onClick={() => setSelectedOrder(orderRows[0])}>Auftragstasche öffnen</button>
+          <button type="button" onClick={() => onOpenOrderPocket(orderRows[0])}>Auftragstasche öffnen</button>
         </div>
       </header>
 
@@ -512,9 +373,9 @@ export function OrdersOverviewPage() {
             ))}
           </div>
           <div className="pp-orders-next-panel">
-            <span className="pp-panel__icon"><OrdersIcon name="drawer" /></span>
-            <strong>Detail-Drawer Footer korrigiert</strong>
-            <p>„Auftrag öffnen“ fährt rechts eine kompakte Detailansicht auf. Die Aktionsleiste besitzt jetzt einen eigenen Footer und überdeckt keine Inhalte.</p>
+            <span className="pp-panel__icon"><OrdersIcon name="preview" /></span>
+            <strong>Auftragstasche ist Detailansicht</strong>
+            <p>„Auftrag öffnen“ führt direkt in die Auftragstasche. Die Übersicht bleibt das schnelle Produktionscockpit mit Druckdatei-Preview.</p>
           </div>
         </aside>
 
@@ -527,19 +388,17 @@ export function OrdersOverviewPage() {
             <div className="pp-orders-list-head__badges">
               <StatusPill tone="green">Freigabe sichtbar</StatusPill>
               <StatusPill tone="orange">Datenstatus sichtbar</StatusPill>
-              <StatusPill tone="blue">Drawer vorbereitet</StatusPill>
+              <StatusPill tone="blue">Preview vorbereitet</StatusPill>
             </div>
           </div>
 
           <div className="pp-orders-card-list">
             {orderRows.map((order) => (
-              <OrderCard key={order.id} order={order} isSelected={selectedOrder?.id === order.id} onOpen={setSelectedOrder} />
+              <OrderCard key={order.id} order={order} onOpenOrderPocket={onOpenOrderPocket} />
             ))}
           </div>
         </main>
       </section>
-
-      <OrderDetailDrawer order={selectedOrder} onClose={() => setSelectedOrder(null)} />
     </div>
   );
 }

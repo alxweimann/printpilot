@@ -224,3 +224,14 @@ Der CMY-Diagonalstreifen-Hintergrund aus Sprint 21 wurde wieder entfernt. Der Lo
 - Preflight, Farbmodus und Beschnittprüfung werden als kleine Statusfelder dargestellt.
 - Druckdaten-Spezifikationen wurden von einer Roh-Tabelle auf eine kompakte Produktionsliste umgestellt.
 - Header, Logo-Verlauf, Footer, Vorschau, Maschine, Dateien, Notizen, Verlauf und Checkliste nicht verändert.
+
+## Design Sprint 33 – Termine und Nutzenplan verfeinert
+
+- Termine-Karte von einfacher Zeilenliste auf eine ruhige Produktions-Timeline umgestellt.
+- Start- und Liefertermin werden als kompakte Kopfdaten angezeigt.
+- Produktionsschritte unterscheiden erledigt, geplant und offen über dezente Marker und Statuslabels.
+- Nutzenplan stärker als Druckbogen-/Ausschieß-Ansicht aufgebaut.
+- Bogenformat, Nutzen und Druckbogenbedarf werden als kompakte Kennzahlen dargestellt.
+- Druckbogen erhält Rasterhintergrund, Beschnitt-Andeutung und 4 × 2 Nutzenflächen.
+- Endformat, Anordnung, Beschnitt und Wendeart sind als ruhige Produktionsdetails gruppiert.
+- Header, Logo-Verlauf, Footer, Produkt, Druckdaten, Vorschau, Checkliste, Dateien, Notizen und Verlauf nicht verändert.

@@ -1277,3 +1277,298 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   padding-top: 7px;
   padding-bottom: 7px;
 }
+
+/* Design Sprint 33: Termine + Nutzenplan */
+.pp-schedule-card {
+  display: grid;
+  gap: 14px;
+}
+
+.pp-schedule-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.pp-schedule-summary span {
+  min-width: 0;
+  padding: 9px 10px;
+  border: 1px solid #e1e9f3;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #fbfdff 0%, #f6f9fd 100%);
+}
+
+.pp-schedule-summary small,
+.pp-schedule-summary strong {
+  display: block;
+}
+
+.pp-schedule-summary small {
+  margin-bottom: 3px;
+  color: #64748b;
+  font-size: 9.5px;
+  font-weight: 760;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.pp-schedule-summary strong {
+  overflow: hidden;
+  color: #06163a;
+  font-size: 11.5px;
+  font-weight: 780;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-schedule-timeline {
+  position: relative;
+  display: grid;
+  gap: 8px;
+}
+
+.pp-schedule-timeline::before {
+  content: '';
+  position: absolute;
+  top: 16px;
+  bottom: 16px;
+  left: 8px;
+  width: 1px;
+  background: linear-gradient(180deg, rgba(0, 159, 227, .30), rgba(148, 163, 184, .18));
+}
+
+.pp-schedule-step {
+  position: relative;
+  display: grid;
+  grid-template-columns: 20px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  min-height: 42px;
+}
+
+.pp-schedule-marker {
+  position: relative;
+  z-index: 1;
+  width: 16px;
+  height: 16px;
+  border: 2px solid #ffffff;
+  border-radius: 999px;
+  background: #94a3b8;
+  box-shadow: 0 0 0 1px rgba(148, 163, 184, .38), 0 5px 12px rgba(7, 31, 72, .10);
+}
+
+.pp-schedule-step--green .pp-schedule-marker {
+  background: #10b981;
+  box-shadow: 0 0 0 1px rgba(16, 185, 129, .34), 0 5px 12px rgba(7, 31, 72, .10);
+}
+
+.pp-schedule-step--orange .pp-schedule-marker {
+  background: #f97316;
+  box-shadow: 0 0 0 1px rgba(249, 115, 22, .34), 0 5px 12px rgba(7, 31, 72, .10);
+}
+
+.pp-schedule-step--gray .pp-schedule-marker {
+  background: #94a3b8;
+}
+
+.pp-schedule-step__main {
+  min-width: 0;
+  padding: 8px 10px;
+  border: 1px solid #e2eaf4;
+  border-radius: 9px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+
+.pp-schedule-step--orange .pp-schedule-step__main {
+  border-color: rgba(249, 115, 22, .22);
+  background: linear-gradient(180deg, #fffaf4 0%, #fff7ed 100%);
+}
+
+.pp-schedule-step__main strong {
+  display: block;
+  overflow: hidden;
+  color: #06163a;
+  font-size: 12px;
+  font-weight: 760;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-schedule-step__main small {
+  display: block;
+  margin-top: 3px;
+  color: #64748b;
+  font-size: 9.5px;
+  font-weight: 760;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+}
+
+.pp-schedule-step--green .pp-schedule-step__main small { color: #079261; }
+.pp-schedule-step--orange .pp-schedule-step__main small { color: #f36b05; }
+
+.pp-schedule-step time {
+  display: grid;
+  justify-items: end;
+  color: #52637d;
+  font-size: 10.5px;
+  font-weight: 680;
+  line-height: 1.2;
+  white-space: nowrap;
+}
+
+.pp-schedule-step time b {
+  margin-top: 2px;
+  color: #06163a;
+  font-size: 11.5px;
+  font-weight: 820;
+}
+
+.pp-imposition-card {
+  display: grid;
+  gap: 12px;
+}
+
+.pp-imposition-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.pp-imposition-stats span {
+  min-width: 0;
+  padding: 8px 9px;
+  border: 1px solid #e1e9f3;
+  border-radius: 8px;
+  background: linear-gradient(180deg, #fbfdff 0%, #f6f9fd 100%);
+}
+
+.pp-imposition-stats small,
+.pp-imposition-stats strong {
+  display: block;
+}
+
+.pp-imposition-stats small {
+  margin-bottom: 3px;
+  color: #64748b;
+  font-size: 9px;
+  font-weight: 760;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+}
+
+.pp-imposition-stats strong {
+  overflow: hidden;
+  color: #06163a;
+  font-size: 11.5px;
+  font-weight: 800;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-imposition-sheet {
+  position: relative;
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+  min-height: 138px;
+  padding: 16px;
+  overflow: hidden;
+  border: 1px solid #dbe7f4;
+  border-radius: 14px;
+  background:
+    linear-gradient(90deg, rgba(22, 39, 81, .035) 1px, transparent 1px) 0 0 / 18px 18px,
+    linear-gradient(180deg, #fbfdff 0%, #f2f7fc 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.70);
+}
+
+.pp-imposition-sheet::before,
+.pp-imposition-sheet::after {
+  content: '';
+  position: absolute;
+  pointer-events: none;
+}
+
+.pp-imposition-sheet::before {
+  inset: 9px;
+  border: 1px dashed rgba(0, 159, 227, .42);
+  border-radius: 10px;
+}
+
+.pp-imposition-sheet::after {
+  left: 28px;
+  right: 28px;
+  bottom: 16px;
+  height: 1px;
+  background: linear-gradient(90deg, transparent, rgba(22, 39, 81, .18), transparent);
+}
+
+.pp-imposition-sheet span {
+  position: relative;
+  z-index: 1;
+  display: grid;
+  place-items: center;
+  min-height: 48px;
+  border: 1px solid rgba(0, 159, 227, .32);
+  border-radius: 7px;
+  background: rgba(255,255,255,.82);
+  color: #162751;
+  box-shadow: 0 6px 14px rgba(7, 31, 72, .06);
+}
+
+.pp-imposition-sheet span:nth-child(even) {
+  background: rgba(242, 249, 255, .88);
+}
+
+.pp-imposition-sheet b {
+  display: grid;
+  place-items: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 6px;
+  background: #eef7ff;
+  color: #009fe3;
+  font-size: 12px;
+  font-weight: 820;
+}
+
+.pp-imposition-details {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 8px 12px;
+}
+
+.pp-imposition-details div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e6edf6;
+}
+
+.pp-imposition-details span {
+  color: #64748b;
+  font-size: 9.5px;
+  font-weight: 760;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+}
+
+.pp-imposition-details strong {
+  overflow: hidden;
+  color: #06163a;
+  font-size: 11.5px;
+  font-weight: 780;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1500px) {
+  .pp-schedule-summary { grid-template-columns: 1fr; }
+  .pp-schedule-step { grid-template-columns: 20px minmax(0, 1fr); }
+  .pp-schedule-step time { justify-items: start; grid-column: 2; margin-top: -4px; }
+  .pp-imposition-stats { grid-template-columns: 1fr; }
+  .pp-imposition-sheet { grid-template-columns: repeat(2, 1fr); min-height: 190px; }
+  .pp-imposition-details { grid-template-columns: 1fr; }
+}

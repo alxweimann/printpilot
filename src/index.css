@@ -26,12 +26,12 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 
 .pp-main {
   min-height: 100vh;
-  padding-bottom: 76px;
+  padding-bottom: 118px;
   background: #ffffff;
 }
 
 .pp-order-pocket {
-  padding: 0 26px 30px;
+  padding: 0 26px 112px;
   background: #ffffff;
 }
 
@@ -40,7 +40,7 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   height: 102px;
   margin: 0 -26px 20px;
   display: grid;
-  grid-template-columns: 340px 372px 1fr 282px;
+  grid-template-columns: 320px 372px 1fr 282px;
   align-items: stretch;
   overflow: hidden;
   isolation: isolate;
@@ -59,17 +59,17 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   z-index: 4;
   display: flex;
   align-items: center;
-  padding: 0 22px;
+  padding: 0 26px 0 28px;
   color: var(--pp-navy);
   background: #ffffff;
-  border-right: 1px solid #d9e4f1;
+  border-right: 1px solid #e7edf5;
 }
 
 .pp-brand-logo {
   display: block;
   width: auto;
-  height: 86px;
-  max-width: 296px;
+  height: 72px;
+  max-width: 254px;
   object-fit: contain;
 }
 
@@ -176,7 +176,7 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   gap: 14px;
   padding-left: 24px;
   color: #07183a;
-  border-left: 1px solid #ccd9e9;
+  border-left: 1px solid #e1e8f2;
 }
 
 .pp-qr-code {
@@ -413,9 +413,9 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 .pp-bottom-nav button.is-active span { color: #20d4ff; }
 
 @media (max-width: 1500px) {
-  .pp-master-header { grid-template-columns: 302px 338px 1fr 238px; }
-  .pp-header-brand { padding-left: 18px; padding-right: 18px; }
-  .pp-brand-logo { height: 76px; max-width: 260px; }
+  .pp-master-header { grid-template-columns: 282px 338px 1fr 238px; }
+  .pp-header-brand { padding-left: 22px; padding-right: 22px; }
+  .pp-brand-logo { height: 66px; max-width: 232px; }
   .pp-header-title-shape { padding-left: 24px; }
   .pp-header-title-shape h1 { font-size: 23px; }
   .pp-header-order { font-size: 23px; }

@@ -55,3 +55,12 @@ Als nächstes sollte die Auftragstasche einmal lokal im Browser geprüft werden:
 - Der weiße `PRINT`-Schriftzug wurde in `#162751` umgefärbt, damit das Logo auf weißem App-Hintergrund lesbar ist.
 - Das offizielle Blau `#009FE3` wurde in CSS und Design-Tokens übernommen.
 - Die Header-Maße wurden auf das freigestellte Logo angepasst.
+
+
+## Design Sprint 10 – Header-Feinschliff und Asset-Aufräumung
+
+- Auftragstaschen-Logo im Header kompakter gesetzt und mit mehr Innenabstand versehen.
+- Vertikale Trennlinien im Header dezenter abgestimmt.
+- Unteres Content-Padding erhöht, damit die feste Bottom-Navigation keine Karteninhalte mehr überdeckt.
+- Temporäre Logo-Dateien entfernt; aktive Logo-Datei bleibt `src/assets/logo/printpilot-logo-transparent.png`.
+- ZIP-Dateien sollen nicht ins Repository committed werden.

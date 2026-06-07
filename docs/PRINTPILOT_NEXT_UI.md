@@ -253,3 +253,12 @@ Der CMY-Diagonalstreifen-Hintergrund aus Sprint 21 wurde wieder entfernt. Der Lo
 - QR-Platzhalter durch echten QR-Code für `printpilot://orders/PP-2026-00481` ersetzt.
 - QR-Bereich zeigt jetzt direkt, welcher Auftrag beim Scannen geöffnet wird.
 - Logo-Verlauf, Kartenraster, Footer und alle Inhaltskarten nicht verändert.
+
+## Design Sprint 36 – Header-Balance und QR-Bereich
+
+- Auftragsnummer im Header stärker gewichtet.
+- Label „Auftragsnummer“ besser lesbar gesetzt.
+- QR-Code im rechten Headerbereich vergrößert.
+- QR-Text hierarchisch gegliedert: Aktion, Auftragsnummer, Zielsystem.
+- Header-Spalten neu gewichtet, damit Logo, Titel, Auftragsnummer und QR-Bereich ausgewogener wirken.
+- Auftragstaschen-Karten und übrige Bereiche unverändert gelassen.

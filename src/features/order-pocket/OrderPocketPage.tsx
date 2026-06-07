@@ -683,12 +683,10 @@ export function OrderPocketPage() {
             src={orderQrCode}
             alt="QR-Code für Auftrag PP-2026-00481"
           />
-          <span>
-            Auftrag scannen
-            <br />
-            PP-2026-00481
-            <br />
-            in PrintPilot öffnen
+          <span className="pp-header-qr-text">
+            <strong>Auftrag scannen</strong>
+            <small>PP-2026-00481</small>
+            <em>in PrintPilot öffnen</em>
           </span>
         </div>
       </header>

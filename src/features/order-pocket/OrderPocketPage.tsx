@@ -1,6 +1,11 @@
 import type { ReactNode } from 'react'
 import { Panel } from '../../components/ui/Panel'
 import printPilotLogo from '../../assets/logo/printpilot-logo-transparent.png'
+import digitalColorMachine from '../../assets/machines/machine-digital-color.svg'
+import digitalMonoMachine from '../../assets/machines/machine-digital-mono.svg'
+import wideFormatMachine from '../../assets/machines/machine-wide-format.svg'
+import inkjetMachine from '../../assets/machines/machine-inkjet.svg'
+import finishingMachine from '../../assets/machines/machine-finishing.svg'
 import { StatusPill } from '../../components/ui/StatusPill'
 
 const productRows = [
@@ -46,6 +51,39 @@ const files = [
   ['JPG', 'flyer_ansicht.jpg', '30.05.2026', '10:10', '2,1 MB'],
   ['PDF', 'nutzenplan.pdf', '30.05.2026', '10:12', '0,6 MB'],
 ]
+
+type MachineType = 'digital-color' | 'digital-mono' | 'wide-format' | 'inkjet' | 'finishing'
+
+type MachineCardData = {
+  id: string
+  name: string
+  type: MachineType
+  typeLabel: string
+  status: 'Verfügbar' | 'Belegt' | 'Wartung'
+  location: string
+  specs: string[]
+  service: string
+  image?: string
+}
+
+const machineFallbacks: Record<MachineType, string> = {
+  'digital-color': digitalColorMachine,
+  'digital-mono': digitalMonoMachine,
+  'wide-format': wideFormatMachine,
+  inkjet: inkjetMachine,
+  finishing: finishingMachine,
+}
+
+const selectedMachine: MachineCardData = {
+  id: 'xerox-iridesse-1',
+  name: 'Xerox® Iridesse 1',
+  type: 'digital-color',
+  typeLabel: 'Digitaldruck Farbe',
+  status: 'Verfügbar',
+  location: 'Halle 1',
+  specs: ['SRA3', 'CMYK', 'Sonderfarbe möglich'],
+  service: '12.05.2026',
+}
 
 type PocketIconName =
   | 'customer'
@@ -143,6 +181,27 @@ function TopInfoCard({ icon, label, title, children }: { icon: ReactNode; label:
         <p>{children}</p>
       </div>
     </article>
+  )
+}
+
+function MachineCard({ machine }: { machine: MachineCardData }) {
+  const imageSource = machine.image ?? machineFallbacks[machine.type]
+
+  return (
+    <div className="pp-machine-card">
+      <div className="pp-machine-visual" aria-label={`${machine.name} Illustration`}>
+        <img src={imageSource} alt="" />
+      </div>
+      <div className="pp-machine-details">
+        <div className="pp-machine-details__head">
+          <b>{machine.name}</b>
+          <StatusPill tone="green">{machine.status}</StatusPill>
+        </div>
+        <p>{machine.typeLabel} · {machine.specs.join(' · ')}</p>
+        <small>Standort: {machine.location}</small>
+        <small>Letzter Service: {machine.service}</small>
+      </div>
+    </div>
   )
 }
 
@@ -289,10 +348,7 @@ export function OrderPocketPage() {
         </Panel>
 
         <Panel title="Maschine" icon={<PocketIcon name="machine" />}>
-          <div className="pp-machine-card">
-            <div className="pp-machine-visual"></div>
-            <div><b>Xerox® Iridesse 1</b><StatusPill tone="green">Verfügbar</StatusPill><p>Standort: Halle 1</p><small>Letzter Service: 12.05.2026</small></div>
-          </div>
+          <MachineCard machine={selectedMachine} />
           <a className="pp-card-link">Maschinendetails anzeigen →</a>
         </Panel>
 

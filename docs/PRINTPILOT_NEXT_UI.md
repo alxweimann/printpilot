@@ -97,10 +97,16 @@ Als nächstes sollte die Auftragstasche einmal lokal im Browser geprüft werden:
 - Weiterverarbeitungs-Pills kompakter gemacht und Spaltenbreite reduziert.
 - Header, Logo, Trennlinien und Karten-Icons aus Sprint 13 unverändert gelassen.
 
+## Design Sprint 16 – Maschinenbilder als Hybrid/Fallback vorbereitet
 
-## Design Sprint 15 – Footer-/Scroll-Fix
-
-- Bottom-Navigation bleibt unten fixiert, liegt aber nicht mehr über dem scrollbaren Inhalt.
-- Hauptbereich nutzt nun einen definierten Scrollbereich oberhalb der Navigation.
-- Body/App verhindern zusätzliches Browser-Scrolling; gescrollt wird innerhalb des PrintPilot-Arbeitsbereichs.
-- Auftragstaschen-Header, Logo, Trennlinien, Karten-Icons und Pill-Styling wurden nicht verändert.
+- Für Maschinen wurde Option C vorbereitet: echte Maschinenbilder können später verwendet werden, ansonsten greift automatisch eine neutrale SVG-Illustration je Maschinentyp.
+- Neuer Asset-Ordner `src/assets/machines/` mit einheitlichen Fallback-Illustrationen:
+  - `machine-digital-color.svg`,
+  - `machine-digital-mono.svg`,
+  - `machine-wide-format.svg`,
+  - `machine-inkjet.svg`,
+  - `machine-finishing.svg`.
+- Die Maschinenkarte in der Auftragstasche wurde auf eine strukturierte `MachineCard` umgestellt.
+- Aktuell verwendet `Xerox® Iridesse 1` den Fallback `digital-color`; später kann per `image` ein echtes Maschinenfoto gesetzt werden.
+- Header, Footer, Logo, Top-Info-Bereich und übrige Karten wurden nicht verändert.
+- ZIP-Dateien sollen weiterhin nicht ins Repository committed werden.

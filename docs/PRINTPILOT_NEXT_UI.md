@@ -802,33 +802,55 @@ Sprint 41.5 korrigiert die Produktions-Meta-Zeile in der Aufträge-Übersicht. L
 - Keine Änderung an der Auftragstasche.
 - Keine Änderung an den Demo-Auftragsdaten.
 
+## Design Sprint 42.1 – Auftragstaschen-Preview verbessern
 
-## Design Sprint 42 – Auftragstasche dynamisch weiter angleichen
-
-Sprint 42 baut auf Sprint 41 auf und macht die Auftragstasche deutlich stärker auftragsabhängig. Die Übersicht bleibt das Produktionscockpit; die Auftragstasche übernimmt nun mehr produktionsrelevante Detaildaten aus `order-data.ts` statt statischer Flyer-Demo-Bausteine.
+Sprint 42.1 macht die Preview-Darstellung in der Auftragstasche deutlich druckdateinaher. Produktkarte und Vorschaukarte verwenden jetzt dieselben fotorealistischen Preview-Bilddaten wie die Aufträge-Übersicht, statt statischer Demo-Grafiken.
 
 ### Umgesetzt
 
-- `PrintPilotOrder` in `src/features/orders/order-data.ts` erweitert um:
-  - `impositionCount` für dynamischere Nutzenplan-Darstellung,
-  - `finishing` für auftragsspezifische Weiterverarbeitungsschritte,
-  - `checklist` für auftragsspezifische Produktions-Checklisten,
-  - `history` für auftragsspezifischen Verlauf.
-- Auftragstasche nutzt die Preview-Bilddaten des geöffneten Auftrags nun auch in Produkt- und Vorschaukarte.
-- Statische Flyer-Motivgrafik in Produkt/Vorschau wurde entfernt.
-- Nutzenplan rendert die Anzahl der Nutzen aus dem Auftrag und ist nicht mehr fest auf 8 Felder begrenzt.
-- Produktions-Checkliste berechnet erledigte/offene Pflichtpunkte aus den Auftragsdaten.
-- Weiterverarbeitung zeigt pro Auftrag passende Schritte mit Status und Hinweistext.
-- Kommentare/Verlauf übernimmt jetzt die auftragsspezifischen History-Einträge.
-- Dateien, Druckdaten, Termine, Maschine und Notizen bleiben weiterhin an den ausgewählten Auftrag gekoppelt.
-- Keine Änderung an Kartenklick, Rücknavigation oder grundlegender Auftragstaschen-Struktur.
+- Produktkarte zeigt das auftragsspezifische Preview-Asset aus `order.preview.imageSrc`.
+- Vorschaukarte nutzt ebenfalls das echte Preview-Asset des ausgewählten Auftrags.
+- Statische Demo-Elemente im Stil des alten Flyer-Motivs wurden aus Produkt- und Vorschaukarte entfernt.
+- Preview-Darstellung ist größer, kontrastreicher und stärker als PDF-/Druckdatei-Thumbnail gerahmt.
+- Dateiname in der Vorschau kann mehrzeilig laufen und wird weniger hart abgeschnitten.
+- Nutzenplan wurde optisch je Produktart vorbereitet:
+  - Visitenkarten mit dichterem Mehrnutzen-Raster
+  - Plakat mit großflächiger Rollen-/Bogen-Andeutung
+  - Aufkleberbogen mit runder Kontur-Andeutung
+  - Broschüre/Flyer weiterhin mit ruhigem Bogenraster
+- Navigation, Kartenklick und Datenübergabe bleiben unverändert.
+- Neues Pattern `order-pocket-preview-assets` dokumentiert.
 
 ### Nicht verändert
 
-- Keine Persistenz, keine Datenbank und kein Router.
-- QR-Code bleibt weiterhin Demo-Asset und ist noch nicht je Auftrag generiert.
-- Kalkulierte Werte wie Klicks, Druckzeit und Papierbedarf bleiben vorbereitete Platzhalter.
+- Noch keine echte PDF-Thumbnail-Generierung.
+- Keine Persistenz, kein Router und keine Datenbanklogik.
+- Keine fachliche Änderung an Status, Freigabe oder Produktionslogik.
 
 ### Nächster sinnvoller Schritt
 
-Sprint 42.1 sollte die Auftragstasche visuell prüfen: besonders Produkt-/Vorschaukarte, Nutzenplan bei 24 Nutzen und Großformat/Rollenlayout. Danach kann entschieden werden, ob zuerst ein QR-Code-/Barcode-Konzept oder die Bearbeitung von Status/Freigabe/Datenprüfung vorbereitet wird.
+Als nächstes kann die Auftragstasche weiter produktspezifisch geschärft werden: Nutzenplan und Checkliste sollten stärker zwischen Flyer, Visitenkarten, Broschüre, Plakat und Aufkleberbogen unterscheiden.
+
+## Design Sprint 42.2 – Auftragstaschen-Preview sauber skalieren
+
+Sprint 42.2 korrigiert die Preview-Skalierung in der Auftragstasche. Die auftragsspezifischen Preview-Bilddaten bleiben erhalten, werden aber in Produktkarte und Vorschaukarte konsequent als vollständige Druckdatei-Thumbnails dargestellt.
+
+### Umgesetzt
+
+- Produktkarte zeigt das Preview nicht mehr als schmalen, vertikal wirkenden Ausschnitt.
+- Produkt-Preview ist jetzt als kompaktes vollständiges Thumbnail gerahmt.
+- Vorschaukarte verwendet konsequent `contain`-Skalierung statt sichtbarem Cropping.
+- Asset-Frame in der Vorschaukarte ist in der Breite begrenzt, damit er nicht vom Panel abgeschnitten wird.
+- Poster-, Visitenkarten- und Aufkleber-Previews bekommen produktspezifisch passende Maximalgrößen.
+- Dateiname in der Vorschau bleibt zweizeilig möglich.
+- Neues Pattern `order-pocket-preview-contain-scaling` dokumentiert.
+
+### Nicht verändert
+
+- Keine Änderung an Auftragsdaten, Navigation oder Kartenklick.
+- Keine Änderung an der Aufträge-Übersicht.
+- Keine echte PDF-Thumbnail-Generierung; weiterhin Demo-Preview-Assets.
+
+### Nächster sinnvoller Schritt
+
+Die Auftragstasche kann danach produktspezifisch weiter geschärft werden: Nutzenplan, Checkliste und Weiterverarbeitung sollten fachlich stärker zwischen Flyer, Visitenkarten, Broschüre, Plakat und Aufkleberbogen unterscheiden.

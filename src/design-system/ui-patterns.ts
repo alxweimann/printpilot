@@ -185,31 +185,6 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
-
-  {
-    id: "order-pocket-dynamic-production-data",
-    category: "production",
-    name: "Dynamische Auftragstaschen-Produktionsdaten",
-    purpose:
-      "Lässt die Auftragstasche produkt-, datei- und weiterverarbeitungsspezifische Informationen aus dem ausgewählten Auftrag übernehmen: Preview-Bild, Nutzenanzahl, Checkliste, Weiterverarbeitung und Verlauf sind nicht mehr feste Flyer-Demo-Bausteine.",
-    reference: "Auftragstasche · Sprint 42",
-    classNames: [
-      "pp-product-sheet",
-      "pp-preview-artwork-image",
-      "pp-imposition-sheet",
-      "pp-checklist-summary",
-      "pp-finishing-list",
-      "pp-activity-list--history",
-    ],
-    reuseFor: [
-      "Auftragstaschen",
-      "Produktionsdaten",
-      "Checklisten",
-      "Weiterverarbeitung",
-      "Druckdatei-Previews",
-      "Datenbank-Vorbereitung",
-    ],
-  },
   {
     id: "selected-order-state",
     category: "production",
@@ -394,6 +369,55 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       "PDF-Prüfung",
     ],
   },
+  {
+    id: "order-pocket-preview-assets",
+    category: "media",
+    name: "Auftragstaschen-Preview mit echten Bilddaten",
+    purpose:
+      "Verwendet dieselben fotorealistischen Preview-Assets aus der Aufträge-Übersicht in Produkt- und Vorschaukarte der Auftragstasche. Die Vorschau wird größer, kontrastreicher und als Druckdatei-Thumbnail statt als statisches Demo-Motiv dargestellt.",
+    reference: "Auftragstasche · Sprint 42.1",
+    classNames: [
+      "pp-product-preview",
+      "pp-preview-card--asset",
+      "pp-preview-stage--asset",
+      "pp-preview-asset-frame",
+      "pp-imposition-card--business-card",
+      "pp-imposition-card--poster",
+      "pp-imposition-card--sticker",
+    ],
+    reuseFor: [
+      "Auftragstaschen",
+      "Druckdaten",
+      "PDF-Thumbnail-Vorbereitung",
+      "Produktkarten",
+      "Vorschaukarten",
+      "Nutzenplan-Vorbereitung",
+    ],
+  },
+  {
+    id: "order-pocket-preview-contain-scaling",
+    category: "media",
+    name: "Auftragstaschen-Preview ohne Cropping",
+    purpose:
+      "Skaliert Produkt- und Vorschau-Previews in der Auftragstasche mit contain-Logik, damit Druckdatei-Thumbnails vollständig sichtbar bleiben und nicht als schmale Streifen oder gecroppte Ausschnitte erscheinen.",
+    reference: "Auftragstasche · Sprint 42.2",
+    classNames: [
+      "pp-product-hero--with-preview",
+      "pp-product-preview",
+      "pp-preview-stage--asset",
+      "pp-preview-asset-frame",
+      "pp-preview-meta",
+    ],
+    reuseFor: [
+      "Auftragstaschen",
+      "Druckdatei-Vorschau",
+      "PDF-Thumbnail-Vorbereitung",
+      "Produktkarten",
+      "Vorschaukarten",
+    ],
+  },
+
+
 ];
 
 export const printPilotReferenceScreen = {

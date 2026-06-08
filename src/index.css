@@ -3887,80 +3887,257 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   }
 }
 
-/* Design Sprint 42 · Auftragstasche dynamischer aus Auftragsdaten */
-.pp-product-sheet {
+/* Sprint 42.1 – Auftragstaschen-Preview aus echten Auftrags-Preview-Assets */
+.pp-product-hero--with-preview {
+  grid-template-columns: minmax(0, 1fr) minmax(142px, 34%);
+  align-items: stretch;
+  gap: 16px;
+}
+
+.pp-product-preview {
+  position: relative;
   display: grid;
-  place-items: center;
-  padding: 8px;
-  background: linear-gradient(180deg, #f8fbff 0%, #eef4fb 100%);
+  align-content: center;
+  gap: 7px;
+  min-height: 132px;
+  margin: 0;
+  padding: 10px;
+  overflow: hidden;
+  border: 1px solid #d7e2ef;
+  border-radius: 11px;
+  background:
+    linear-gradient(90deg, rgba(22, 39, 81, .035) 1px, transparent 1px) 0 0 / 14px 14px,
+    linear-gradient(180deg, #ffffff 0%, #eef4fb 100%);
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.72), 0 13px 24px rgba(10, 31, 68, .12);
 }
 
-.pp-product-sheet img {
-  display: block;
-  width: 100%;
-  height: 100%;
-  max-height: 138px;
-  object-fit: contain;
-  border-radius: 7px;
-  box-shadow: 0 10px 20px rgba(10, 31, 68, .14);
+.pp-product-preview::before,
+.pp-preview-asset-frame::before {
+  content: '';
+  position: absolute;
+  inset: 7px;
+  border: 1px dashed rgba(0, 159, 227, .34);
+  border-radius: 8px;
+  pointer-events: none;
 }
 
-.pp-preview-stage {
-  min-height: 190px;
-}
-
-.pp-preview-page {
-  display: grid;
-  place-items: center;
-  width: min(238px, 88%);
-  padding: 9px;
-  aspect-ratio: 1.42 / 1;
-}
-
-.pp-preview-artwork-image {
+.pp-product-preview img {
   position: relative;
   z-index: 1;
   display: block;
   width: 100%;
-  height: 100%;
+  height: 96px;
   object-fit: contain;
-  border-radius: 4px;
+  filter: saturate(1.08) contrast(1.06);
 }
 
-.pp-imposition-sheet {
-  grid-template-columns: repeat(auto-fit, minmax(42px, 1fr));
-  grid-auto-rows: minmax(38px, 1fr);
-  align-content: center;
+.pp-product-preview figcaption {
+  position: relative;
+  z-index: 1;
+  color: #63738d;
+  font-size: 9px;
+  font-weight: 780;
+  letter-spacing: .075em;
+  text-transform: uppercase;
 }
 
-.pp-imposition-sheet span {
-  min-height: 38px;
+.pp-preview-card--asset {
+  gap: 13px;
 }
 
-.pp-finishing-list div {
-  grid-template-columns: minmax(0, 1fr) 138px;
-  align-items: start;
+.pp-preview-stage--asset {
+  min-height: 220px;
+  padding: 18px;
+  background:
+    radial-gradient(circle at 50% 34%, rgba(0,159,227,.10), transparent 36%),
+    linear-gradient(90deg, rgba(22, 39, 81, .035) 1px, transparent 1px) 0 0 / 18px 18px,
+    linear-gradient(180deg, #ffffff 0%, #f2f7fc 100%);
 }
 
-.pp-finishing-list div > span {
+.pp-preview-stage--asset::after {
+  left: 42px;
+  right: 42px;
+  bottom: 22px;
+}
+
+.pp-preview-asset-frame {
+  position: relative;
   display: grid;
-  gap: 3px;
-  min-width: 0;
+  place-items: center;
+  width: min(100%, 330px);
+  min-height: 160px;
+  padding: 14px;
+  border: 1px solid #d4dfec;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 18px 32px rgba(10, 31, 68, .16);
+  transform: rotate(-.7deg);
 }
 
-.pp-finishing-list div > span small {
-  color: #708096;
-  font-size: 11px;
-  font-weight: 650;
-  line-height: 1.25;
+.pp-preview-asset-frame img {
+  position: relative;
+  z-index: 1;
+  display: block;
+  width: 100%;
+  max-height: 150px;
+  object-fit: contain;
+  filter: saturate(1.1) contrast(1.07);
 }
 
-@media (max-width: 760px) {
-  .pp-finishing-list div {
+.pp-preview-stage--business-card .pp-preview-asset-frame,
+.pp-preview-stage--poster .pp-preview-asset-frame,
+.pp-preview-stage--sticker .pp-preview-asset-frame {
+  width: min(100%, 340px);
+}
+
+.pp-preview-stage--poster .pp-preview-asset-frame img {
+  max-height: 168px;
+}
+
+.pp-preview-stage--sticker .pp-preview-asset-frame img,
+.pp-preview-stage--business-card .pp-preview-asset-frame img {
+  max-height: 140px;
+}
+
+.pp-preview-meta b {
+  white-space: normal;
+  line-height: 1.24;
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+}
+
+.pp-imposition-card--poster .pp-imposition-sheet {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: 1fr;
+}
+
+.pp-imposition-card--sticker .pp-imposition-sheet {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(3, minmax(0, 1fr));
+}
+
+.pp-imposition-card--brochure .pp-imposition-sheet {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(2, minmax(0, 1fr));
+}
+
+.pp-imposition-card--poster .pp-imposition-sheet span,
+.pp-imposition-card--sticker .pp-imposition-sheet span {
+  border-color: rgba(249, 115, 22, .28);
+}
+
+.pp-imposition-card--sticker .pp-imposition-sheet span {
+  border-radius: 999px;
+}
+
+@media (max-width: 980px) {
+  .pp-product-hero--with-preview {
     grid-template-columns: 1fr;
   }
 
-  .pp-preview-page {
-    width: min(220px, 92%);
+  .pp-product-preview {
+    max-width: 260px;
+  }
+}
+
+/* Sprint 42.2 – Auftragstaschen-Previews sauber skalieren */
+.pp-product-hero--with-preview {
+  grid-template-columns: minmax(0, 1fr) 172px;
+  align-items: start;
+}
+
+.pp-product-preview {
+  justify-self: end;
+  align-self: start;
+  width: 172px;
+  min-height: 0;
+  height: auto;
+  aspect-ratio: 1.48 / 1;
+  align-content: initial;
+  grid-template-rows: minmax(0, 1fr) auto;
+  gap: 6px;
+  padding: 9px;
+}
+
+.pp-product-preview::before {
+  inset: 6px;
+}
+
+.pp-product-preview img {
+  width: 100%;
+  height: 78px;
+  max-height: 78px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.pp-product-preview figcaption {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  line-height: 1.1;
+}
+
+.pp-preview-stage--asset {
+  min-height: 236px;
+  padding: 20px;
+}
+
+.pp-preview-asset-frame {
+  width: min(100%, 300px);
+  max-width: calc(100% - 10px);
+  min-height: 0;
+  padding: 12px;
+  overflow: visible;
+  transform: none;
+}
+
+.pp-preview-asset-frame img,
+.pp-preview-stage--poster .pp-preview-asset-frame img,
+.pp-preview-stage--sticker .pp-preview-asset-frame img,
+.pp-preview-stage--business-card .pp-preview-asset-frame img {
+  width: 100%;
+  height: auto;
+  max-height: 178px;
+  object-fit: contain;
+  object-position: center;
+}
+
+.pp-preview-stage--business-card .pp-preview-asset-frame,
+.pp-preview-stage--poster .pp-preview-asset-frame,
+.pp-preview-stage--sticker .pp-preview-asset-frame {
+  width: min(100%, 304px);
+}
+
+.pp-preview-stage--business-card .pp-preview-asset-frame img {
+  max-height: 168px;
+}
+
+.pp-preview-stage--poster .pp-preview-asset-frame {
+  width: min(100%, 260px);
+}
+
+.pp-preview-stage--poster .pp-preview-asset-frame img {
+  max-height: 190px;
+}
+
+.pp-preview-meta b {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+@media (max-width: 980px) {
+  .pp-product-hero--with-preview {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-product-preview {
+    justify-self: start;
+    width: min(100%, 220px);
   }
 }

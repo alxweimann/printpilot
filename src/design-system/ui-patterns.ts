@@ -168,6 +168,23 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+
+  {
+    id: "orders-overview-meta-baseline",
+    category: "list",
+    name: "Aufträge-Übersicht Meta-Zeile Grundlinie",
+    purpose:
+      "Richtet Label und Wert der Produktions-Meta-Zeile auf einer gemeinsamen typografischen Höhe aus und trennt Termin, Maschine, Auflage und Verantwortlichkeit mit feinen senkrechten Linien.",
+    reference: "Aufträge · Produktionscockpit · Sprint 41.5",
+    classNames: ["pp-order-meta-line", "pp-orders-meta-item"],
+    reuseFor: [
+      "Auftragslisten",
+      "Produktionscockpits",
+      "Terminlisten",
+      "Maschinenplanung",
+    ],
+  },
+
   {
     id: "selected-order-state",
     category: "production",

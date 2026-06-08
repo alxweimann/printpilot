@@ -783,3 +783,21 @@ Sprint 41.4 korrigiert die Preview-Richtung aus Sprint 41.3: Die Auftragsübersi
 ### Nächster sinnvoller Schritt
 
 Die Demo-PNGs können später durch echte automatisch generierte PDF-/Bild-Thumbnails ersetzt werden. Die bestehende Struktur `imageSrc`/`imageAlt` ist dafür bereits vorbereitet.
+
+## Design Sprint 41.5 – Meta-Zeile typografisch ausrichten
+
+Sprint 41.5 korrigiert die Produktions-Meta-Zeile in der Aufträge-Übersicht. Labels und Werte sitzen jetzt auf einer gemeinsamen Grundlinie, damit Termin, Maschine, Auflage und Verantwortlichkeit ruhiger und technischer wirken.
+
+### Umgesetzt
+
+- Meta-Zeile in den Auftragskarten typografisch vereinheitlicht.
+- Labels wie `TERMIN`, `MASCHINE`, `AUFLAGE` und `VERANTW.` verwenden jetzt dieselbe Grundhöhe wie die Werte.
+- Werte wie `03.06.2026 · Mi · 10:00` sind nicht mehr sichtbar größer oder vertikal versetzt.
+- Feine senkrechte Trenner bleiben erhalten und sind mittig zur Zeile ausgerichtet.
+- Keine Änderung an Kartenklick, Auftragstaschen-Navigation, Datenübergabe oder Preview-Bilddaten.
+
+### Nicht verändert
+
+- Keine neue Logik.
+- Keine Änderung an der Auftragstasche.
+- Keine Änderung an den Demo-Auftragsdaten.

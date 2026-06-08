@@ -3771,8 +3771,13 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
 
 .pp-orders-meta-item {
   position: relative;
-  gap: 6px;
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  min-height: 16px;
   padding: 0 13px;
+  line-height: 1;
+  white-space: nowrap;
 }
 
 .pp-orders-meta-item:first-child {
@@ -3783,8 +3788,8 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   content: "";
   position: absolute;
   left: 0;
-  top: 2px;
-  bottom: 2px;
+  top: 1px;
+  bottom: 1px;
   width: 1px;
   background: #d8e3ef;
 }
@@ -3793,16 +3798,29 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   display: none;
 }
 
+.pp-orders-meta-item span,
+.pp-orders-meta-item b {
+  display: inline-flex;
+  align-items: center;
+  min-height: 16px;
+  font-size: 11px;
+  line-height: 1;
+}
+
 .pp-orders-meta-item span {
   color: #7a899d;
-  font-size: 9.5px;
-  letter-spacing: .085em;
+  font-weight: 800;
+  letter-spacing: .075em;
+  text-transform: uppercase;
 }
 
 .pp-orders-meta-item b {
+  overflow: hidden;
   max-width: 245px;
-  font-size: 11.8px;
-  font-weight: 790;
+  color: #102642;
+  font-weight: 760;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .pp-order-row-card--quiet .pp-order-row-card__foot {

@@ -881,3 +881,32 @@ Sprint 42.3 balanciert die Auftragstasche optisch weiter aus. Der Fokus liegt au
 ### Nächster sinnvoller Schritt
 
 Als nächstes kann Sprint 43 die Auftragstasche um erste vorbereitete Status-Aktionen erweitern, zum Beispiel Freigabe markieren, Datenprüfung setzen oder Produktionsstatus ändern – zunächst weiterhin ohne echte Persistenz.
+
+## Design Sprint 42.4 – Auftragstasche Grid-Zonen finalisieren
+
+Sprint 42.4 strukturiert die Auftragstasche stärker in klar erkennbare Arbeitszonen. Der Fokus liegt auf Layout-Balance, weniger optischem Leerlauf und einer ruhigeren Gruppierung der Produktionsmodule. Navigation, Auftragsauswahl und Datenübergabe bleiben unverändert.
+
+### Umgesetzt
+
+- Auftragstasche in drei visuelle Zonen gegliedert:
+  - **Auftragsdaten**: Produkt, Druckdaten, Termine und Produktions-Checkliste
+  - **Produktion**: Nutzenplan, Vorschau und Weiterverarbeitung
+  - **Auftragsbegleitung**: Dateien, Notizen, Maschine und Kommentare/Verlauf
+- Neues Zonenraster `pp-pocket-zones` mit eigenen Grid-Varianten eingeführt.
+- Untere Module werden kompakter und bewusster gruppiert.
+- Checkliste ist nicht mehr als implizit über mehrere Grid-Zeilen gespannte Seitenkarte angelegt, sondern als Bestandteil der Auftragsdaten-Zone geführt.
+- Produktionsmodule stehen als eigene mittlere Zone zusammen und wirken weniger zufällig verteilt.
+- Dateien, Notizen, Maschine und Verlauf bilden eine kompakte Begleitzone unterhalb der Produktion.
+- Responsive Verhalten der Zonen für mittlere und kleine Bildschirmbreiten ergänzt.
+- Neues Pattern `order-pocket-grid-zones` dokumentiert.
+
+### Nicht verändert
+
+- Keine Änderung an Aufträge-Übersicht, Kartenklick oder Rücknavigation.
+- Keine Änderung an Status-, Freigabe- oder Datenlogik.
+- Keine Persistenz, kein Router und keine Datenbanklogik.
+- Keine echte Ausschießlogik; der Nutzenplan bleibt weiterhin UI-vorbereitend.
+
+### Nächster sinnvoller Schritt
+
+Als nächstes kann Sprint 43 erste vorbereitete Status-Aktionen in der Auftragstasche aufbauen: Freigabe markieren, Datenprüfung setzen oder Produktionsstatus ändern – zunächst als lokaler UI-State ohne Persistenz.

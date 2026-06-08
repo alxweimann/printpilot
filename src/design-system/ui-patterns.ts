@@ -51,7 +51,6 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
-
   {
     id: "orders-overview-quiet-list",
     category: "list",
@@ -122,7 +121,6 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
-
   {
     id: "orders-overview-real-preview-assets",
     category: "production",
@@ -167,7 +165,6 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       "Meta-Zeilen",
     ],
   },
-
 
   {
     id: "orders-overview-meta-baseline",
@@ -417,8 +414,6 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
-
-
   {
     id: "order-pocket-layout-balance",
     category: "production",
@@ -442,6 +437,31 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       "Druckdaten-Ansichten",
       "Checklisten",
       "Weiterverarbeitung",
+    ],
+  },
+
+  {
+    id: "order-pocket-grid-zones",
+    category: "production",
+    name: "Auftragstasche Grid-Zonen",
+    purpose:
+      "Gliedert die Auftragstasche in klar lesbare Produktionszonen: Auftragsdaten, Produktion und Auftragsbegleitung. Dadurch werden Leerräume reduziert und Produkt-, Druckdaten-, Termine-, Checklisten-, Vorschau-, Nutzenplan- und Verlaufsbereiche ruhiger gruppiert.",
+    reference: "Auftragstasche · Sprint 42.4",
+    classNames: [
+      "pp-pocket-zones",
+      "pp-pocket-zone",
+      "pp-pocket-zone__head",
+      "pp-pocket-zone-grid",
+      "pp-pocket-zone-grid--order-data",
+      "pp-pocket-zone-grid--production",
+      "pp-pocket-zone-grid--support",
+    ],
+    reuseFor: [
+      "Auftragstaschen",
+      "Produktionsdetails",
+      "Maschinenansichten",
+      "Produktionsplanung",
+      "Mehrspaltige Arbeitsbereiche",
     ],
   },
 ];

@@ -401,7 +401,9 @@ function PocketIcon({ name }: { name: PocketIconName }) {
 
 type CheckStatus = "done" | "open" | "required";
 
-function getChecklistSectionStats(section: PrintPilotOrder["checklist"][number]) {
+function getChecklistSectionStats(
+  section: PrintPilotOrder["checklist"][number],
+) {
   const done = section.items.filter((item) => item.status === "done").length;
   return { done, total: section.items.length };
 }
@@ -409,7 +411,9 @@ function getChecklistSectionStats(section: PrintPilotOrder["checklist"][number])
 function getChecklistSummary(order: PrintPilotOrder) {
   const allItems = order.checklist.flatMap((section) => section.items);
   const done = allItems.filter((item) => item.status === "done").length;
-  const requiredOpen = allItems.filter((item) => item.status === "required").length;
+  const requiredOpen = allItems.filter(
+    (item) => item.status === "required",
+  ).length;
 
   return {
     done,
@@ -608,7 +612,9 @@ function ImpositionPlanCard({ order }: { order: PrintPilotOrder }) {
   const impositionDetails = getImpositionDetails(order);
   const cellCount = getImpositionCellCount(order);
   return (
-    <div className={`pp-imposition-card pp-imposition-card--${order.preview.kind}`}>
+    <div
+      className={`pp-imposition-card pp-imposition-card--${order.preview.kind}`}
+    >
       <div className="pp-imposition-stats">
         {impositionStats.map(([label, value]) => (
           <span key={label}>
@@ -817,173 +823,212 @@ export function OrderPocketPage({ order }: { order: PrintPilotOrder }) {
         </article>
       </section>
 
-      <div className="pp-pocket-grid">
-        <Panel
-          title="Produkt"
-          icon={<PocketIcon name="product" />}
-          className="pp-product-panel"
+      <div className="pp-pocket-zones">
+        <section
+          className="pp-pocket-zone pp-pocket-zone--order-data"
+          aria-label="Auftragsdaten"
         >
-          <ProductCard order={order} />
-        </Panel>
-
-        <Panel
-          title="Druckdaten"
-          icon={<PocketIcon name="print-data" />}
-          className="pp-printdata-panel"
-        >
-          <PrintDataCard order={order} />
-        </Panel>
-
-        <Panel title="Termine" icon={<PocketIcon name="timeline" />}>
-          <ScheduleCard order={order} />
-        </Panel>
-
-        <Panel
-          title="Produktions-Checkliste"
-          icon={<PocketIcon name="checklist" />}
-          className="pp-checklist-panel"
-        >
-          <div className="pp-checklist-summary">
-            <strong>
-              {checklistSummary.done} / {checklistSummary.total} erledigt
-            </strong>
-            <span>
-              {checklistSummary.requiredOpen} Pflichtpunkt
-              {checklistSummary.requiredOpen === 1 ? "" : "e"} offen
-            </span>
+          <div className="pp-pocket-zone__head">
+            <span>Auftragsdaten</span>
+            <small>Produkt · Druckdaten · Termine · Prüfstand</small>
           </div>
+          <div className="pp-pocket-zone-grid pp-pocket-zone-grid--order-data">
+            <Panel
+              title="Produkt"
+              icon={<PocketIcon name="product" />}
+              className="pp-product-panel"
+            >
+              <ProductCard order={order} />
+            </Panel>
 
-          <div className="pp-checklist-sections">
-            {order.checklist.map((section) => {
-              const stats = getChecklistSectionStats(section);
+            <Panel
+              title="Druckdaten"
+              icon={<PocketIcon name="print-data" />}
+              className="pp-printdata-panel"
+            >
+              <PrintDataCard order={order} />
+            </Panel>
 
-              return (
-                <section className="pp-check-section" key={section.title}>
-                  <div className="pp-check-section__head">
-                    <h4>{section.title}</h4>
-                    <span>
-                      {stats.done}/{stats.total}
-                    </span>
-                  </div>
-                  <div className="pp-check-section__items">
-                    {section.items.map((item) => (
-                      <CheckItem
-                        key={item.label}
-                        status={item.status}
-                        label={item.label}
-                      />
-                    ))}
-                  </div>
-                </section>
-              );
-            })}
-          </div>
+            <Panel title="Termine" icon={<PocketIcon name="timeline" />}>
+              <ScheduleCard order={order} />
+            </Panel>
 
-          <div className="pp-signature">
-            <b>Geprüft von / am</b>
-            <span>Unterschrift</span>
-          </div>
-        </Panel>
-
-        <Panel
-          title="Nutzenplan"
-          icon={<PocketIcon name="imposition" />}
-          className="pp-imposition-panel"
-        >
-          <ImpositionPlanCard order={order} />
-        </Panel>
-
-        <Panel title="Vorschau" icon={<PocketIcon name="preview" />} className="pp-preview-panel">
-          <PreviewCard order={order} />
-        </Panel>
-
-        <Panel
-          title="Weiterverarbeitung"
-          icon={<PocketIcon name="finishing" />}
-          className="pp-finishing-panel"
-        >
-          <div className="pp-finishing-list">
-            {order.finishing.map((step) => (
-              <div key={step.label}>
+            <Panel
+              title="Produktions-Checkliste"
+              icon={<PocketIcon name="checklist" />}
+              className="pp-checklist-panel"
+            >
+              <div className="pp-checklist-summary">
+                <strong>
+                  {checklistSummary.done} / {checklistSummary.total} erledigt
+                </strong>
                 <span>
-                  <b>{step.label}</b>
-                  <small>{step.note}</small>
+                  {checklistSummary.requiredOpen} Pflichtpunkt
+                  {checklistSummary.requiredOpen === 1 ? "" : "e"} offen
                 </span>
-                <StatusPill tone={step.status.tone}>{step.status.label}</StatusPill>
               </div>
-            ))}
-          </div>
-        </Panel>
 
-        <Panel title="Dateien" icon={<PocketIcon name="files" />}>
-          <div className="pp-files-list">
-            {files.map(([type, name, category, date, time, size]) => (
-              <div className="pp-file-row" key={name}>
-                <span
-                  className={`pp-file-type pp-file-type--${type.toLowerCase()}`}
-                >
-                  {type}
-                </span>
-                <div className="pp-file-main">
-                  <b>{name}</b>
-                  <small>
-                    {category} · {date} · {time}
-                  </small>
-                </div>
-                <strong>{size}</strong>
+              <div className="pp-checklist-sections">
+                {order.checklist.map((section) => {
+                  const stats = getChecklistSectionStats(section);
+
+                  return (
+                    <section className="pp-check-section" key={section.title}>
+                      <div className="pp-check-section__head">
+                        <h4>{section.title}</h4>
+                        <span>
+                          {stats.done}/{stats.total}
+                        </span>
+                      </div>
+                      <div className="pp-check-section__items">
+                        {section.items.map((item) => (
+                          <CheckItem
+                            key={item.label}
+                            status={item.status}
+                            label={item.label}
+                          />
+                        ))}
+                      </div>
+                    </section>
+                  );
+                })}
               </div>
-            ))}
+
+              <div className="pp-signature">
+                <b>Geprüft von / am</b>
+                <span>Unterschrift</span>
+              </div>
+            </Panel>
           </div>
-          <a className="pp-card-link">Alle Dateien im Auftrag anzeigen →</a>
-        </Panel>
+        </section>
 
-        <Panel title="Notizen" icon={<PocketIcon name="notes" />}>
-          <div className="pp-activity-list pp-activity-list--notes">
-            {noteRows.map((note) => (
-              <article className="pp-activity-item" key={note.label}>
-                <span
-                  className={`pp-activity-dot pp-activity-dot--${note.tone}`}
-                ></span>
-                <div>
-                  <strong>{note.label}</strong>
-                  <p>{note.text}</p>
-                  <small>{note.meta}</small>
-                </div>
-              </article>
-            ))}
-          </div>
-        </Panel>
-
-        <Panel title="Maschine" icon={<PocketIcon name="machine" />}>
-          <MachineCard machine={selectedMachine} />
-          <a className="pp-card-link">Maschinendetails anzeigen →</a>
-        </Panel>
-
-        <Panel
-          title="Kommentare / Verlauf"
-          icon={<PocketIcon name="history" />}
+        <section
+          className="pp-pocket-zone pp-pocket-zone--production"
+          aria-label="Produktion"
         >
-          <div className="pp-activity-list pp-activity-list--history">
-            {order.history.map((entry) => (
-              <article
-                className="pp-activity-item"
-                key={`${entry.date}-${entry.time}-${entry.title}`}
-              >
-                <span
-                  className={`pp-activity-dot pp-activity-dot--${entry.tone}`}
-                ></span>
-                <div>
-                  <small>
-                    {entry.date} · {entry.time}
-                  </small>
-                  <strong>{entry.title}</strong>
-                  <p>{entry.user}</p>
-                </div>
-              </article>
-            ))}
+          <div className="pp-pocket-zone__head">
+            <span>Produktion</span>
+            <small>Nutzenplan · Vorschau · Weiterverarbeitung</small>
           </div>
-          <a className="pp-card-link">Gesamten Verlauf anzeigen →</a>
-        </Panel>
+          <div className="pp-pocket-zone-grid pp-pocket-zone-grid--production">
+            <Panel
+              title="Nutzenplan"
+              icon={<PocketIcon name="imposition" />}
+              className="pp-imposition-panel"
+            >
+              <ImpositionPlanCard order={order} />
+            </Panel>
+
+            <Panel
+              title="Vorschau"
+              icon={<PocketIcon name="preview" />}
+              className="pp-preview-panel"
+            >
+              <PreviewCard order={order} />
+            </Panel>
+
+            <Panel
+              title="Weiterverarbeitung"
+              icon={<PocketIcon name="finishing" />}
+              className="pp-finishing-panel"
+            >
+              <div className="pp-finishing-list">
+                {order.finishing.map((step) => (
+                  <div key={step.label}>
+                    <span>
+                      <b>{step.label}</b>
+                      <small>{step.note}</small>
+                    </span>
+                    <StatusPill tone={step.status.tone}>
+                      {step.status.label}
+                    </StatusPill>
+                  </div>
+                ))}
+              </div>
+            </Panel>
+          </div>
+        </section>
+
+        <section
+          className="pp-pocket-zone pp-pocket-zone--support"
+          aria-label="Auftragsbegleitung"
+        >
+          <div className="pp-pocket-zone__head">
+            <span>Auftragsbegleitung</span>
+            <small>Dateien · Notizen · Maschine · Verlauf</small>
+          </div>
+          <div className="pp-pocket-zone-grid pp-pocket-zone-grid--support">
+            <Panel title="Dateien" icon={<PocketIcon name="files" />}>
+              <div className="pp-files-list">
+                {files.map(([type, name, category, date, time, size]) => (
+                  <div className="pp-file-row" key={name}>
+                    <span
+                      className={`pp-file-type pp-file-type--${type.toLowerCase()}`}
+                    >
+                      {type}
+                    </span>
+                    <div className="pp-file-main">
+                      <b>{name}</b>
+                      <small>
+                        {category} · {date} · {time}
+                      </small>
+                    </div>
+                    <strong>{size}</strong>
+                  </div>
+                ))}
+              </div>
+              <a className="pp-card-link">Alle Dateien im Auftrag anzeigen →</a>
+            </Panel>
+
+            <Panel title="Notizen" icon={<PocketIcon name="notes" />}>
+              <div className="pp-activity-list pp-activity-list--notes">
+                {noteRows.map((note) => (
+                  <article className="pp-activity-item" key={note.label}>
+                    <span
+                      className={`pp-activity-dot pp-activity-dot--${note.tone}`}
+                    ></span>
+                    <div>
+                      <strong>{note.label}</strong>
+                      <p>{note.text}</p>
+                      <small>{note.meta}</small>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </Panel>
+
+            <Panel title="Maschine" icon={<PocketIcon name="machine" />}>
+              <MachineCard machine={selectedMachine} />
+              <a className="pp-card-link">Maschinendetails anzeigen →</a>
+            </Panel>
+
+            <Panel
+              title="Kommentare / Verlauf"
+              icon={<PocketIcon name="history" />}
+            >
+              <div className="pp-activity-list pp-activity-list--history">
+                {order.history.map((entry) => (
+                  <article
+                    className="pp-activity-item"
+                    key={`${entry.date}-${entry.time}-${entry.title}`}
+                  >
+                    <span
+                      className={`pp-activity-dot pp-activity-dot--${entry.tone}`}
+                    ></span>
+                    <div>
+                      <small>
+                        {entry.date} · {entry.time}
+                      </small>
+                      <strong>{entry.title}</strong>
+                      <p>{entry.user}</p>
+                    </div>
+                  </article>
+                ))}
+              </div>
+              <a className="pp-card-link">Gesamten Verlauf anzeigen →</a>
+            </Panel>
+          </div>
+        </section>
       </div>
     </div>
   );

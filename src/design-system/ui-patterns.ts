@@ -185,6 +185,31 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+
+  {
+    id: "order-pocket-dynamic-production-data",
+    category: "production",
+    name: "Dynamische Auftragstaschen-Produktionsdaten",
+    purpose:
+      "Lässt die Auftragstasche produkt-, datei- und weiterverarbeitungsspezifische Informationen aus dem ausgewählten Auftrag übernehmen: Preview-Bild, Nutzenanzahl, Checkliste, Weiterverarbeitung und Verlauf sind nicht mehr feste Flyer-Demo-Bausteine.",
+    reference: "Auftragstasche · Sprint 42",
+    classNames: [
+      "pp-product-sheet",
+      "pp-preview-artwork-image",
+      "pp-imposition-sheet",
+      "pp-checklist-summary",
+      "pp-finishing-list",
+      "pp-activity-list--history",
+    ],
+    reuseFor: [
+      "Auftragstaschen",
+      "Produktionsdaten",
+      "Checklisten",
+      "Weiterverarbeitung",
+      "Druckdatei-Previews",
+      "Datenbank-Vorbereitung",
+    ],
+  },
   {
     id: "selected-order-state",
     category: "production",

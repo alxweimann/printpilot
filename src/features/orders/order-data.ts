@@ -5,6 +5,7 @@ import posterPreview from "../../assets/order-previews/plakat-a2.png";
 import stickerPreview from "../../assets/order-previews/aufkleberbogen.png";
 
 export type OrderTone = "green" | "orange" | "gray" | "blue";
+export type CheckStatus = "done" | "open" | "required";
 
 export type OrderStatus = {
   label: string;
@@ -18,6 +19,25 @@ export type OrderPreview = {
   meta: string;
   imageSrc: string;
   imageAlt: string;
+};
+
+export type FinishingStep = {
+  label: string;
+  status: OrderStatus;
+  note: string;
+};
+
+export type ChecklistSection = {
+  title: string;
+  items: Array<{ status: CheckStatus; label: string }>;
+};
+
+export type HistoryEntry = {
+  tone: OrderTone;
+  date: string;
+  time: string;
+  title: string;
+  user: string;
 };
 
 export type PrintPilotOrder = {
@@ -37,6 +57,7 @@ export type PrintPilotOrder = {
   color: string;
   rawFormat: string;
   imposition: string;
+  impositionCount: number;
   bleed: string;
   waste: string;
   totalWeight: string;
@@ -68,6 +89,9 @@ export type PrintPilotOrder = {
   bleedStatus: OrderStatus;
   scheduleStart: string;
   scheduleStartTime: string;
+  finishing: FinishingStep[];
+  checklist: ChecklistSection[];
+  history: HistoryEntry[];
 };
 
 export const orderSummary = [
@@ -81,6 +105,36 @@ export const orderSummary = [
   helper: string;
   tone: OrderTone;
 }>;
+
+const history = (
+  orderDate: string,
+  fileTime: string,
+  owner: string,
+  dataLabel: string,
+  approvalLabel: string,
+): HistoryEntry[] => [
+  {
+    tone: "blue",
+    date: orderDate,
+    time: "10:15",
+    title: "Auftrag angelegt",
+    user: "Admin",
+  },
+  {
+    tone: dataLabel.includes("fehlen") ? "orange" : "green",
+    date: orderDate,
+    time: fileTime,
+    title: `Datenprüfung: ${dataLabel}`,
+    user: owner,
+  },
+  {
+    tone: approvalLabel.includes("offen") ? "orange" : "green",
+    date: orderDate,
+    time: "14:20",
+    title: `Kundenfreigabe: ${approvalLabel}`,
+    user: owner,
+  },
+];
 
 export const orderRows: PrintPilotOrder[] = [
   {
@@ -100,6 +154,7 @@ export const orderRows: PrintPilotOrder[] = [
     color: "4/4-farbig CMYK",
     rawFormat: "SRA3",
     imposition: "8 Nutzen",
+    impositionCount: 8,
     bleed: "3 mm",
     waste: "ca. 50 Bogen",
     totalWeight: "ca. 48,6 kg",
@@ -133,6 +188,70 @@ export const orderRows: PrintPilotOrder[] = [
     bleedStatus: { label: "prüfen", tone: "orange" },
     scheduleStart: "02.06.2026",
     scheduleStartTime: "08:00",
+    finishing: [
+      {
+        label: "Schneiden",
+        status: { label: "Geplant", tone: "orange" },
+        note: "DIN Lang auf Endformat schneiden",
+      },
+      {
+        label: "Falzen",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "2-seitiger Flyer ohne Falz",
+      },
+      {
+        label: "Rillen",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "135 g ohne Rillung",
+      },
+      {
+        label: "Heften",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "Einzelblatt",
+      },
+      {
+        label: "Verpacken",
+        status: { label: "Geplant", tone: "orange" },
+        note: "3 Pakete à 1.000 Stück",
+      },
+    ],
+    checklist: [
+      {
+        title: "Druck",
+        items: [
+          { status: "done", label: "Datei geprüft" },
+          { status: "done", label: "Preflight OK" },
+          { status: "done", label: "Farben geprüft" },
+          { status: "required", label: "Ausschießung 8 Nutzen prüfen" },
+          { status: "open", label: "Bilderdruck matt 135 g einlegen" },
+          { status: "open", label: "Testdruck OK" },
+          { status: "open", label: "Druck fertig" },
+        ],
+      },
+      {
+        title: "Weiterverarbeitung",
+        items: [
+          { status: "open", label: "Schneiden" },
+          { status: "open", label: "Auflage bündeln" },
+          { status: "open", label: "Verpacken" },
+        ],
+      },
+      {
+        title: "Versand",
+        items: [
+          { status: "open", label: "Auflage geprüft" },
+          { status: "open", label: "Karton beschriftet" },
+          { status: "open", label: "Abholung bereit" },
+        ],
+      },
+    ],
+    history: history(
+      "30.05.2026",
+      "10:10",
+      "Sarah K.",
+      "Daten geprüft",
+      "Freigabe erteilt",
+    ),
   },
   {
     id: "PP-2026-00482",
@@ -152,6 +271,7 @@ export const orderRows: PrintPilotOrder[] = [
     color: "4/4-farbig CMYK",
     rawFormat: "SRA3",
     imposition: "24 Nutzen",
+    impositionCount: 24,
     bleed: "3 mm",
     waste: "ca. 20 Bogen",
     totalWeight: "ca. 6,4 kg",
@@ -185,6 +305,67 @@ export const orderRows: PrintPilotOrder[] = [
     bleedStatus: { label: "OK", tone: "green" },
     scheduleStart: "03.06.2026",
     scheduleStartTime: "10:30",
+    finishing: [
+      {
+        label: "Schneiden",
+        status: { label: "Geplant", tone: "orange" },
+        note: "Karten auf 85 × 55 mm schneiden",
+      },
+      {
+        label: "Falzen",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "Kartenprodukt",
+      },
+      {
+        label: "Rillen",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "Keine Rillung",
+      },
+      {
+        label: "Heften",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "Einzelkarten",
+      },
+      {
+        label: "Verpacken",
+        status: { label: "Wartet", tone: "gray" },
+        note: "Nach Freigabe nach Ansprechpartnern bündeln",
+      },
+    ],
+    checklist: [
+      {
+        title: "Druck",
+        items: [
+          { status: "done", label: "Preflight OK" },
+          { status: "required", label: "Kundenfreigabe offen" },
+          { status: "open", label: "Personalisierungen abgleichen" },
+          { status: "open", label: "Munken Lynx 300 g einlegen" },
+          { status: "open", label: "Testdruck je Ansprechpartner" },
+        ],
+      },
+      {
+        title: "Weiterverarbeitung",
+        items: [
+          { status: "open", label: "Schneiden" },
+          { status: "open", label: "Sätze trennen" },
+          { status: "open", label: "Verpacken" },
+        ],
+      },
+      {
+        title: "Versand",
+        items: [
+          { status: "open", label: "Auflage je Ansprechpartner prüfen" },
+          { status: "open", label: "Übergabe an Praxis vorbereiten" },
+        ],
+      },
+    ],
+    history: history(
+      "31.05.2026",
+      "09:40",
+      "Max M.",
+      "Preflight OK",
+      "Freigabe offen",
+    ),
   },
   {
     id: "PP-2026-00483",
@@ -204,6 +385,7 @@ export const orderRows: PrintPilotOrder[] = [
     color: "4/4-farbig CMYK",
     rawFormat: "SRA3",
     imposition: "2 × 8 Seiten",
+    impositionCount: 8,
     bleed: "3 mm",
     waste: "ca. 80 Bogen",
     totalWeight: "ca. 96,0 kg",
@@ -237,6 +419,68 @@ export const orderRows: PrintPilotOrder[] = [
     bleedStatus: { label: "offen", tone: "orange" },
     scheduleStart: "04.06.2026",
     scheduleStartTime: "08:00",
+    finishing: [
+      {
+        label: "Schneiden",
+        status: { label: "Geplant", tone: "orange" },
+        note: "A5 nach Heftung final schneiden",
+      },
+      {
+        label: "Falzen",
+        status: { label: "Geplant", tone: "orange" },
+        note: "Bogen für Rückenheftung falzen",
+      },
+      {
+        label: "Rillen",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "Rückenheftung ohne Rillung",
+      },
+      {
+        label: "Heften",
+        status: { label: "Wartet", tone: "gray" },
+        note: "Rückenheftung nach Innenteil",
+      },
+      {
+        label: "Verpacken",
+        status: { label: "Offen", tone: "gray" },
+        note: "Nach Endkontrolle bündeln",
+      },
+    ],
+    checklist: [
+      {
+        title: "Druck",
+        items: [
+          { status: "done", label: "Umschlag geprüft" },
+          { status: "required", label: "Innenteil-PDF fehlt" },
+          { status: "required", label: "Seitenreihenfolge prüfen" },
+          { status: "open", label: "Ausschießung 16 Seiten prüfen" },
+          { status: "open", label: "Umschlag-/Innenteilpapier einlegen" },
+        ],
+      },
+      {
+        title: "Weiterverarbeitung",
+        items: [
+          { status: "open", label: "Falzen" },
+          { status: "open", label: "Rückenheftung" },
+          { status: "open", label: "3-Seiten-Schnitt" },
+          { status: "open", label: "Verpacken" },
+        ],
+      },
+      {
+        title: "Versand",
+        items: [
+          { status: "open", label: "Exemplarprüfung" },
+          { status: "open", label: "Kartons etikettieren" },
+        ],
+      },
+    ],
+    history: history(
+      "31.05.2026",
+      "15:25",
+      "Admin",
+      "Daten fehlen",
+      "Freigabe erteilt",
+    ),
   },
   {
     id: "PP-2026-00484",
@@ -256,6 +500,7 @@ export const orderRows: PrintPilotOrder[] = [
     color: "4/0-farbig CMYK",
     rawFormat: "Rolle 540 mm",
     imposition: "Rollenlayout",
+    impositionCount: 1,
     bleed: "5 mm",
     waste: "ca. 2 Laufmeter",
     totalWeight: "ca. 5,8 kg",
@@ -289,6 +534,67 @@ export const orderRows: PrintPilotOrder[] = [
     bleedStatus: { label: "OK", tone: "green" },
     scheduleStart: "05.06.2026",
     scheduleStartTime: "07:30",
+    finishing: [
+      {
+        label: "Schneiden",
+        status: { label: "Geplant", tone: "orange" },
+        note: "A2 auf Endformat schneiden",
+      },
+      {
+        label: "Falzen",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "Plakat ungerillt",
+      },
+      {
+        label: "Rillen",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "Nicht erforderlich",
+      },
+      {
+        label: "Heften",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "Einzelplakate",
+      },
+      {
+        label: "Verpacken",
+        status: { label: "Geplant", tone: "orange" },
+        note: "Flach verpacken / Knickschutz",
+      },
+    ],
+    checklist: [
+      {
+        title: "Druck",
+        items: [
+          { status: "done", label: "Daten geprüft" },
+          { status: "done", label: "Beschnitt OK" },
+          { status: "open", label: "Rollenmaterial prüfen" },
+          { status: "open", label: "Medienprofil VG3 wählen" },
+          { status: "open", label: "RIP-Vorschau prüfen" },
+        ],
+      },
+      {
+        title: "Weiterverarbeitung",
+        items: [
+          { status: "open", label: "Trocknung beachten" },
+          { status: "open", label: "A2 schneiden" },
+          { status: "open", label: "Flach verpacken" },
+        ],
+      },
+      {
+        title: "Versand",
+        items: [
+          { status: "open", label: "Abholung Freitag vormittag" },
+          { status: "open", label: "Motivserie vollständig prüfen" },
+        ],
+      },
+    ],
+    history: history(
+      "01.06.2026",
+      "12:10",
+      "Julia P.",
+      "Daten geprüft",
+      "Freigabe erteilt",
+    ),
   },
   {
     id: "PP-2026-00485",
@@ -308,6 +614,7 @@ export const orderRows: PrintPilotOrder[] = [
     color: "4/0-farbig CMYK + CutContour",
     rawFormat: "Rolle 540 mm",
     imposition: "Bogenlayout mit Konturschnitt",
+    impositionCount: 12,
     bleed: "2 mm",
     waste: "ca. 4 Laufmeter",
     totalWeight: "ca. 12,3 kg",
@@ -341,6 +648,67 @@ export const orderRows: PrintPilotOrder[] = [
     bleedStatus: { label: "OK", tone: "green" },
     scheduleStart: "05.06.2026",
     scheduleStartTime: "11:30",
+    finishing: [
+      {
+        label: "Schneiden",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "Konturschnitt übernimmt Schnittlinie",
+      },
+      {
+        label: "Falzen",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "Aufkleberbogen",
+      },
+      {
+        label: "Konturschnitt",
+        status: { label: "In Arbeit", tone: "orange" },
+        note: "CutContour nach Druck ausführen",
+      },
+      {
+        label: "Entgittern",
+        status: { label: "Geplant", tone: "orange" },
+        note: "Aktionsaufkleber entgittern",
+      },
+      {
+        label: "Verpacken",
+        status: { label: "Geplant", tone: "orange" },
+        note: "Bogen plan einlegen",
+      },
+    ],
+    checklist: [
+      {
+        title: "Druck",
+        items: [
+          { status: "done", label: "Druckdaten geprüft" },
+          { status: "done", label: "CutContour erkannt" },
+          { status: "open", label: "Orajet 3164XG einlegen" },
+          { status: "open", label: "Trocknungszeit einplanen" },
+        ],
+      },
+      {
+        title: "Weiterverarbeitung",
+        items: [
+          { status: "required", label: "Konturschnitt prüfen" },
+          { status: "open", label: "Entgittern" },
+          { status: "open", label: "Bogen zählen" },
+          { status: "open", label: "Verpacken" },
+        ],
+      },
+      {
+        title: "Versand",
+        items: [
+          { status: "open", label: "Aufkleberbogen gegenknicken vermeiden" },
+          { status: "open", label: "Übergabe ans Autohaus" },
+        ],
+      },
+    ],
+    history: history(
+      "01.06.2026",
+      "16:05",
+      "Sarah K.",
+      "Daten geprüft",
+      "Freigabe erteilt",
+    ),
   },
 ];
 

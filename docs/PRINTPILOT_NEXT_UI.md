@@ -801,3 +801,34 @@ Sprint 41.5 korrigiert die Produktions-Meta-Zeile in der Aufträge-Übersicht. L
 - Keine neue Logik.
 - Keine Änderung an der Auftragstasche.
 - Keine Änderung an den Demo-Auftragsdaten.
+
+
+## Design Sprint 42 – Auftragstasche dynamisch weiter angleichen
+
+Sprint 42 baut auf Sprint 41 auf und macht die Auftragstasche deutlich stärker auftragsabhängig. Die Übersicht bleibt das Produktionscockpit; die Auftragstasche übernimmt nun mehr produktionsrelevante Detaildaten aus `order-data.ts` statt statischer Flyer-Demo-Bausteine.
+
+### Umgesetzt
+
+- `PrintPilotOrder` in `src/features/orders/order-data.ts` erweitert um:
+  - `impositionCount` für dynamischere Nutzenplan-Darstellung,
+  - `finishing` für auftragsspezifische Weiterverarbeitungsschritte,
+  - `checklist` für auftragsspezifische Produktions-Checklisten,
+  - `history` für auftragsspezifischen Verlauf.
+- Auftragstasche nutzt die Preview-Bilddaten des geöffneten Auftrags nun auch in Produkt- und Vorschaukarte.
+- Statische Flyer-Motivgrafik in Produkt/Vorschau wurde entfernt.
+- Nutzenplan rendert die Anzahl der Nutzen aus dem Auftrag und ist nicht mehr fest auf 8 Felder begrenzt.
+- Produktions-Checkliste berechnet erledigte/offene Pflichtpunkte aus den Auftragsdaten.
+- Weiterverarbeitung zeigt pro Auftrag passende Schritte mit Status und Hinweistext.
+- Kommentare/Verlauf übernimmt jetzt die auftragsspezifischen History-Einträge.
+- Dateien, Druckdaten, Termine, Maschine und Notizen bleiben weiterhin an den ausgewählten Auftrag gekoppelt.
+- Keine Änderung an Kartenklick, Rücknavigation oder grundlegender Auftragstaschen-Struktur.
+
+### Nicht verändert
+
+- Keine Persistenz, keine Datenbank und kein Router.
+- QR-Code bleibt weiterhin Demo-Asset und ist noch nicht je Auftrag generiert.
+- Kalkulierte Werte wie Klicks, Druckzeit und Papierbedarf bleiben vorbereitete Platzhalter.
+
+### Nächster sinnvoller Schritt
+
+Sprint 42.1 sollte die Auftragstasche visuell prüfen: besonders Produkt-/Vorschaukarte, Nutzenplan bei 24 Nutzen und Großformat/Rollenlayout. Danach kann entschieden werden, ob zuerst ein QR-Code-/Barcode-Konzept oder die Bearbeitung von Status/Freigabe/Datenprüfung vorbereitet wird.

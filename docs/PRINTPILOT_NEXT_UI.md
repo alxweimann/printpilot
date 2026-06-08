@@ -720,3 +720,66 @@ Sprint 41.1 reduziert die visuelle Last der Aufträge-Übersicht. Die fachliche 
 ### Nächster sinnvoller Schritt
 
 Nach der visuellen Beruhigung sollte die Auftragstasche auf dynamische Bereiche geprüft werden, die noch zu statisch wirken, etwa Motivgrafik, Nutzenplan, Checkliste und QR-Kontext.
+
+
+## Design Sprint 41.3 – Echte Preview-Bilddaten in der Aufträge-Übersicht
+
+Sprint 41.3 ersetzt die rein schematischen CSS-Platzhalter der Auftragskarten durch echte eingebundene SVG-Bilddaten. Die Übersicht bleibt ruhig und kompakt, bekommt aber eine deutlich bessere Druckdatei-Anmutung.
+
+### Umgesetzt
+
+- Neue Preview-Assets unter `src/assets/order-previews/` ergänzt:
+  - `flyer-dinlang.svg`
+  - `visitenkarten-set.svg`
+  - `broschuere-a5.svg`
+  - `plakat-a2.svg`
+  - `aufkleberbogen.svg`
+- `OrderPreview` in `src/features/orders/order-data.ts` um `imageSrc` und `imageAlt` erweitert.
+- Jede Demo-Auftragszeile referenziert jetzt ein eigenes Preview-Asset.
+- Auftragskarten rendern die Preview jetzt über ein echtes `<img>` statt über generische CSS-Balken.
+- Preview-Spalte links bleibt größer und bekommt echte Bilddaten mit Dateiname und technischer Meta-Info.
+- Die ruhige Meta-Zeile mit Termin, Maschine, Auflage und Verantwortlichkeit bleibt erhalten.
+- Kartenklick und Datenübergabe zur Auftragstasche bleiben unverändert.
+- Neues Pattern `orders-overview-real-preview-assets` dokumentiert.
+
+### Nicht verändert
+
+- Noch keine echte PDF-Thumbnail-Generierung.
+- Keine Persistenz, kein Router und keine Datenbanklogik.
+- Auftragstaschen-Layout und Datenübergabe bleiben unverändert.
+
+### Nächster sinnvoller Schritt
+
+Später können die Demo-SVGs durch echte generierte PDF-Thumbnails ersetzt werden. Dafür sollte die Preview-Struktur `imageSrc`/`imageAlt` beibehalten werden, damit echte Vorschau-Bilder ohne Umbau der Kartenkomponente austauschbar sind.
+
+## Design Sprint 41.4 – Fotorealistische Preview-Thumbnails und Meta-Trenner
+
+Sprint 41.4 korrigiert die Preview-Richtung aus Sprint 41.3: Die Auftragsübersicht nutzt jetzt fotorealistischere PNG-Demo-Thumbnails statt schematischer SVG-Grafiken. Gleichzeitig wurde die Meta-Zeile wieder auf die ruhigere typografische Darstellung mit feinen senkrechten Trennern zurückgeführt.
+
+### Umgesetzt
+
+- Neue PNG-Preview-Assets unter `src/assets/order-previews/` ergänzt:
+  - `flyer-dinlang.png`
+  - `visitenkarten-set.png`
+  - `broschuere-a5.png`
+  - `plakat-a2.png`
+  - `aufkleberbogen.png`
+- `order-data.ts` referenziert jetzt die neuen PNG-Bilddaten.
+- Preview-Fläche links nochmals leicht vergrößert.
+- Previews wirken stärker wie gerenderte Druckdatei-Thumbnails mit Papierfläche, Schatten, Motivflächen, Textblöcken und Druck-/Beschnitt-Andeutung.
+- Dateiname in der Preview-Caption kann jetzt zweizeilig laufen und wird weniger hart abgeschnitten.
+- Meta-Zeile wieder ohne Icons umgesetzt.
+- Termin, Maschine, Auflage und Verantwortlicher werden wieder mit feinen senkrechten Trennern separiert.
+- `Nächster Schritt` sitzt näher an den Auftragsdaten und nicht mehr als isolierter rechter Block.
+- Kartenklick zur Auftragstasche und Datenübergabe aus Sprint 41 bleiben unverändert.
+- Neues Pattern `orders-overview-photoreal-preview-assets` dokumentiert.
+
+### Nicht verändert
+
+- Noch keine echte PDF-Thumbnail-Generierung aus hochgeladenen Dateien.
+- Keine Router-, Persistenz- oder Datenbanklogik.
+- Auftragstasche und dynamische Datenübergabe bleiben fachlich unverändert.
+
+### Nächster sinnvoller Schritt
+
+Die Demo-PNGs können später durch echte automatisch generierte PDF-/Bild-Thumbnails ersetzt werden. Die bestehende Struktur `imageSrc`/`imageAlt` ist dafür bereits vorbereitet.

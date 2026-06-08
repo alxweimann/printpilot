@@ -1,4 +1,4 @@
-import type { KeyboardEvent, ReactNode } from "react";
+import type { KeyboardEvent } from "react";
 import { StatusPill } from "../../components/ui/StatusPill";
 import printPilotLogo from "../../assets/logo/printpilot-logo-on-navy.png";
 import { laneGroups, orderRows, orderSummary } from "./order-data";
@@ -95,17 +95,14 @@ function OverviewMetric({
 }
 
 function MetaItem({
-  icon,
   label,
   value,
 }: {
-  icon: ReactNode;
   label: string;
   value: string;
 }) {
   return (
     <span className="pp-orders-meta-item">
-      {icon}
       <span>{label}</span>
       <b>{value}</b>
     </span>
@@ -114,10 +111,8 @@ function MetaItem({
 
 function OrderPreviewCard({
   preview,
-  product,
 }: {
   preview: OrderPreview;
-  product: string;
 }) {
   return (
     <div
@@ -129,15 +124,17 @@ function OrderPreviewCard({
         <span className="pp-order-preview__mark pp-order-preview__mark--tr" />
         <span className="pp-order-preview__mark pp-order-preview__mark--bl" />
         <span className="pp-order-preview__mark pp-order-preview__mark--br" />
-        <div className="pp-order-preview__art">
-          <span />
-          <strong>{product.slice(0, 2).toUpperCase()}</strong>
-          <em />
-        </div>
+        <img
+          className="pp-order-preview__image"
+          src={preview.imageSrc}
+          alt={preview.imageAlt}
+          loading="lazy"
+        />
       </div>
       <div className="pp-order-preview__caption">
         <span>{preview.label}</span>
         <b>{preview.filename}</b>
+        <small>{preview.meta}</small>
       </div>
     </div>
   );
@@ -168,7 +165,7 @@ function OrderCard({
       onKeyDown={handleKeyDown}
       aria-label={`${order.id} Auftragstasche öffnen`}
     >
-      <OrderPreviewCard preview={order.preview} product={order.product} />
+      <OrderPreviewCard preview={order.preview} />
 
       <div className="pp-order-row-card__content">
         <div className="pp-order-row-card__topline">
@@ -188,26 +185,10 @@ function OrderCard({
         </div>
 
         <div className="pp-order-meta-line" aria-label="Auftragsdaten">
-          <MetaItem
-            icon={<OrdersIcon name="calendar" />}
-            label="Termin"
-            value={`${order.dueDate} · ${order.dueMeta}`}
-          />
-          <MetaItem
-            icon={<OrdersIcon name="machine" />}
-            label="Maschine"
-            value={order.machine}
-          />
-          <MetaItem
-            icon={<OrdersIcon name="orders" />}
-            label="Auflage"
-            value={order.quantity}
-          />
-          <MetaItem
-            icon={<OrdersIcon name="customer" />}
-            label="Verantw."
-            value={order.owner}
-          />
+          <MetaItem label="Termin" value={`${order.dueDate} · ${order.dueMeta}`} />
+          <MetaItem label="Maschine" value={order.machine} />
+          <MetaItem label="Auflage" value={order.quantity} />
+          <MetaItem label="Verantw." value={order.owner} />
         </div>
 
         <div className="pp-order-row-card__foot">

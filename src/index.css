@@ -3637,3 +3637,234 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
     grid-template-columns: 1fr;
   }
 }
+
+/* Sprint 41.3: echte Bilddaten für Druckdatei-Previews */
+.pp-order-row-card--quiet {
+  grid-template-columns: 156px minmax(0, 1fr);
+  gap: 18px;
+}
+
+.pp-order-row-card--quiet .pp-order-preview {
+  grid-template-columns: 1fr;
+  gap: 7px;
+  width: 144px;
+  padding: 8px;
+}
+
+.pp-order-row-card--quiet .pp-order-preview__sheet,
+.pp-order-row-card--quiet .pp-order-preview--business-card .pp-order-preview__sheet,
+.pp-order-row-card--quiet .pp-order-preview--poster .pp-order-preview__sheet {
+  position: relative;
+  width: 128px;
+  height: 82px;
+  overflow: hidden;
+  border-radius: 7px;
+  background: #f8fbff;
+}
+
+.pp-order-row-card--quiet .pp-order-preview--business-card .pp-order-preview__sheet,
+.pp-order-row-card--quiet .pp-order-preview--sticker .pp-order-preview__sheet {
+  height: 82px;
+}
+
+.pp-order-preview__image {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.pp-order-row-card--quiet .pp-order-preview__caption {
+  min-width: 0;
+}
+
+.pp-order-row-card--quiet .pp-order-preview__caption b {
+  display: block;
+  overflow: hidden;
+  max-width: 100%;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-order-row-card--quiet .pp-order-preview__caption small {
+  display: block;
+  margin-top: 2px;
+  color: #5f718b;
+  font-size: 10px;
+  font-weight: 720;
+  line-height: 1.2;
+}
+
+.pp-order-row-card--quiet .pp-order-preview__art {
+  display: none;
+}
+
+@media (max-width: 760px) {
+  .pp-order-row-card--quiet {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-order-row-card--quiet .pp-order-preview {
+    width: min(100%, 220px);
+  }
+
+  .pp-order-row-card--quiet .pp-order-preview__sheet,
+  .pp-order-row-card--quiet .pp-order-preview--business-card .pp-order-preview__sheet,
+  .pp-order-row-card--quiet .pp-order-preview--poster .pp-order-preview__sheet {
+    width: 100%;
+    height: 112px;
+  }
+}
+
+/* Sprint 41.4 · fotorealistischere Previews und Meta-Trenner finalisiert */
+.pp-order-row-card--quiet {
+  grid-template-columns: 182px minmax(0, 1fr);
+  gap: 20px;
+  min-height: 128px;
+}
+
+.pp-order-row-card--quiet .pp-order-preview {
+  width: 170px;
+  padding: 9px;
+  background: linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+}
+
+.pp-order-row-card--quiet .pp-order-preview__sheet,
+.pp-order-row-card--quiet .pp-order-preview--business-card .pp-order-preview__sheet,
+.pp-order-row-card--quiet .pp-order-preview--poster .pp-order-preview__sheet,
+.pp-order-row-card--quiet .pp-order-preview--sticker .pp-order-preview__sheet {
+  width: 152px;
+  height: 94px;
+  border: 1px solid #d6e3f1;
+  border-radius: 8px;
+  background: #eef4fa;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,.75);
+}
+
+.pp-order-preview__image {
+  filter: saturate(1.03) contrast(1.02);
+}
+
+.pp-order-row-card--quiet .pp-order-preview__caption b {
+  display: -webkit-box;
+  overflow: hidden;
+  margin: 3px 0 2px;
+  color: #172b49;
+  font-size: 10.8px;
+  font-weight: 790;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: normal;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.pp-order-row-card--quiet .pp-order-preview__caption small {
+  font-size: 9.8px;
+  line-height: 1.15;
+}
+
+.pp-order-meta-line {
+  gap: 0;
+  padding: 7px 0;
+}
+
+.pp-orders-meta-item {
+  position: relative;
+  gap: 6px;
+  padding: 0 13px;
+}
+
+.pp-orders-meta-item:first-child {
+  padding-left: 0;
+}
+
+.pp-orders-meta-item:not(:first-child)::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 2px;
+  bottom: 2px;
+  width: 1px;
+  background: #d8e3ef;
+}
+
+.pp-orders-meta-item .pp-pocket-icon {
+  display: none;
+}
+
+.pp-orders-meta-item span {
+  color: #7a899d;
+  font-size: 9.5px;
+  letter-spacing: .085em;
+}
+
+.pp-orders-meta-item b {
+  max-width: 245px;
+  font-size: 11.8px;
+  font-weight: 790;
+}
+
+.pp-order-row-card--quiet .pp-order-row-card__foot {
+  grid-template-columns: minmax(0, 1fr);
+  gap: 6px;
+  align-items: start;
+}
+
+.pp-order-row-card--quiet .pp-order-row-card__foot > span:last-child {
+  display: grid;
+  gap: 2px;
+  justify-items: start;
+}
+
+.pp-order-row-card--quiet .pp-order-row-card__foot small {
+  color: #7a899d;
+}
+
+.pp-order-row-card--quiet .pp-order-row-card__foot b {
+  color: #071f48;
+  font-size: 12.8px;
+}
+
+@media (max-width: 1480px) {
+  .pp-order-meta-line {
+    row-gap: 6px;
+  }
+
+  .pp-orders-meta-item:nth-child(3)::before {
+    display: none;
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-order-row-card--quiet {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-order-row-card--quiet .pp-order-preview {
+    width: min(100%, 260px);
+  }
+
+  .pp-order-row-card--quiet .pp-order-preview__sheet,
+  .pp-order-row-card--quiet .pp-order-preview--business-card .pp-order-preview__sheet,
+  .pp-order-row-card--quiet .pp-order-preview--poster .pp-order-preview__sheet,
+  .pp-order-row-card--quiet .pp-order-preview--sticker .pp-order-preview__sheet {
+    width: 100%;
+    height: 140px;
+  }
+
+  .pp-order-meta-line {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 6px;
+  }
+
+  .pp-orders-meta-item,
+  .pp-orders-meta-item:first-child {
+    padding: 0;
+  }
+
+  .pp-orders-meta-item::before {
+    display: none !important;
+  }
+}

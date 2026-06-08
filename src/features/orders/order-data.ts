@@ -1,3 +1,9 @@
+import flyerPreview from "../../assets/order-previews/flyer-dinlang.png";
+import businessCardPreview from "../../assets/order-previews/visitenkarten-set.png";
+import brochurePreview from "../../assets/order-previews/broschuere-a5.png";
+import posterPreview from "../../assets/order-previews/plakat-a2.png";
+import stickerPreview from "../../assets/order-previews/aufkleberbogen.png";
+
 export type OrderTone = "green" | "orange" | "gray" | "blue";
 
 export type OrderStatus = {
@@ -10,6 +16,8 @@ export type OrderPreview = {
   label: string;
   filename: string;
   meta: string;
+  imageSrc: string;
+  imageAlt: string;
 };
 
 export type PrintPilotOrder = {
@@ -114,6 +122,8 @@ export const orderRows: PrintPilotOrder[] = [
       label: "PDF-Preview",
       filename: "flyer_dinlang_druck.pdf",
       meta: "2 Seiten · 8,2 MB",
+      imageSrc: flyerPreview,
+      imageAlt: "Druckdatei-Vorschau Flyer DIN Lang mit grünem Aktionsmotiv",
     },
     fileSize: "8,2 MB",
     fileCategory: "Druckdaten",
@@ -164,6 +174,8 @@ export const orderRows: PrintPilotOrder[] = [
       label: "PDF-Preview",
       filename: "visitenkarten_set.pdf",
       meta: "4/4 · 3 Nutzen",
+      imageSrc: businessCardPreview,
+      imageAlt: "Druckdatei-Vorschau Visitenkarten Set mit zwei Kartenmotiven",
     },
     fileSize: "3,1 MB",
     fileCategory: "Freigabe/Druckdaten",
@@ -214,6 +226,8 @@ export const orderRows: PrintPilotOrder[] = [
       label: "Preview fehlt",
       filename: "umschlag_a5.pdf",
       meta: "Innenteil offen",
+      imageSrc: brochurePreview,
+      imageAlt: "Druckdatei-Vorschau Broschüre A5 als Doppelseitenmotiv",
     },
     fileSize: "5,6 MB",
     fileCategory: "Umschlag",
@@ -264,6 +278,8 @@ export const orderRows: PrintPilotOrder[] = [
       label: "PDF-Preview",
       filename: "plakat_a2_motivserie.pdf",
       meta: "A2 · CMYK",
+      imageSrc: posterPreview,
+      imageAlt: "Druckdatei-Vorschau Plakat A2 mit farbigem Motiv",
     },
     fileSize: "42,0 MB",
     fileCategory: "Druckdaten",
@@ -314,6 +330,8 @@ export const orderRows: PrintPilotOrder[] = [
       label: "Druck-/Cut-Preview",
       filename: "aufkleberbogen_cutcontour.pdf",
       meta: "CutContour geprüft",
+      imageSrc: stickerPreview,
+      imageAlt: "Druckdatei-Vorschau Aufkleberbogen mit CutContour-Stickern",
     },
     fileSize: "18,7 MB",
     fileCategory: "Druck-/Cutdaten",

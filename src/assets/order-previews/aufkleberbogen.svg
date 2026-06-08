@@ -1,0 +1,16 @@
+<svg width="420" height="260" viewBox="0 0 420 260" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="420" height="260" rx="18" fill="#F7FBFF"/>
+  <rect x="42" y="26" width="336" height="208" rx="12" fill="#FFFFFF" stroke="#BFD7EA" stroke-width="2"/>
+  <g stroke="#FF7A1A" stroke-width="3" stroke-dasharray="7 5" fill="#FDFEFE">
+    <rect x="71" y="56" width="90" height="58" rx="14"/>
+    <rect x="174" y="56" width="90" height="58" rx="14"/>
+    <rect x="277" y="56" width="70" height="58" rx="14"/>
+    <circle cx="119" cy="164" r="35"/>
+    <circle cx="219" cy="164" r="35"/>
+    <circle cx="319" cy="164" r="35"/>
+  </g>
+  <path d="M83 82H149M186 82H252M287 82H338" stroke="#00AEEF" stroke-width="5" stroke-linecap="round"/>
+  <path d="M96 163H142M196 163H242M296 163H342" stroke="#2FB673" stroke-width="5" stroke-linecap="round"/>
+  <text x="90" y="102" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="800" fill="#0A1F44">SALE</text>
+  <text x="191" y="102" font-family="Arial, Helvetica, sans-serif" font-size="14" font-weight="800" fill="#0A1F44">AUTO</text>
+</svg>

@@ -122,6 +122,52 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+
+  {
+    id: "orders-overview-real-preview-assets",
+    category: "production",
+    name: "Echte Preview-Bilddaten in Auftragskarten",
+    purpose:
+      "Ersetzt generische CSS-Platzhalter durch konkrete eingebundene SVG-Preview-Assets pro Auftrag. Die Aufträge-Übersicht wirkt dadurch druckdateinah, ohne die ruhige Produktionslisten-Optik aufzugeben.",
+    reference: "Aufträge · Produktionscockpit · Sprint 41.3",
+    classNames: [
+      "pp-order-preview",
+      "pp-order-preview__sheet",
+      "pp-order-preview__image",
+      "pp-order-preview__caption",
+    ],
+    reuseFor: [
+      "Aufträge",
+      "Druckdatei-Previews",
+      "PDF-Thumbnail-Vorbereitung",
+      "Produktionslisten",
+    ],
+  },
+
+  {
+    id: "orders-overview-photoreal-preview-assets",
+    category: "media",
+    name: "Fotorealistische Druckdatei-Previews",
+    purpose:
+      "Nutzt gerenderte PNG-Demo-Previews mit Papierfläche, Schatten, Motivflächen und drucknaher Anmutung. Die Meta-Zeile bleibt bewusst typografisch: ohne Icons, mit feinen senkrechten Trennern zwischen Termin, Maschine, Auflage und Verantwortlichkeit.",
+    reference: "Aufträge · Produktionscockpit · Sprint 41.4",
+    classNames: [
+      "pp-order-preview",
+      "pp-order-preview__sheet",
+      "pp-order-preview__image",
+      "pp-order-preview__caption",
+      "pp-order-meta-line",
+      "pp-orders-meta-item",
+    ],
+    reuseFor: [
+      "Aufträge",
+      "PDF-Thumbnail-Vorbereitung",
+      "Druckdatei-Previews",
+      "Produktionslisten",
+      "Meta-Zeilen",
+    ],
+  },
+
   {
     id: "selected-order-state",
     category: "production",

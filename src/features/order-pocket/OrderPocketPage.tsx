@@ -220,30 +220,6 @@ function getNoteRows(order: PrintPilotOrder) {
   ];
 }
 
-const historyRows = [
-  {
-    tone: "green",
-    date: "30.05.2026",
-    time: "14:20",
-    title: "Kundenfreigabe erteilt",
-    user: "Max M.",
-  },
-  {
-    tone: "green",
-    date: "30.05.2026",
-    time: "11:30",
-    title: "Datenprüfung abgeschlossen",
-    user: "Sarah K.",
-  },
-  {
-    tone: "blue",
-    date: "30.05.2026",
-    time: "10:15",
-    title: "Auftrag angelegt",
-    user: "Admin",
-  },
-];
-
 type MachineType =
   | "digital-color"
   | "digital-mono"
@@ -425,49 +401,22 @@ function PocketIcon({ name }: { name: PocketIconName }) {
 
 type CheckStatus = "done" | "open" | "required";
 
-const checklistSections = [
-  {
-    title: "Druck",
-    done: 3,
-    total: 7,
-    items: [
-      { status: "done", label: "Datei geprüft" },
-      { status: "done", label: "Preflight OK" },
-      { status: "done", label: "Farben geprüft" },
-      { status: "required", label: "Ausschießung prüfen" },
-      { status: "open", label: "Papier eingelegt" },
-      { status: "open", label: "Testdruck OK" },
-      { status: "open", label: "Druck fertig" },
-    ],
-  },
-  {
-    title: "Weiterverarbeitung",
-    done: 0,
-    total: 5,
-    items: [
-      { status: "open", label: "Schneiden" },
-      { status: "open", label: "Falzen" },
-      { status: "open", label: "Rillen" },
-      { status: "open", label: "Heften" },
-      { status: "open", label: "Verpacken" },
-    ],
-  },
-  {
-    title: "Versand",
-    done: 0,
-    total: 3,
-    items: [
-      { status: "open", label: "Auflage geprüft" },
-      { status: "open", label: "Verpackung OK" },
-      { status: "open", label: "Versendet / Abgeholt" },
-    ],
-  },
-] satisfies Array<{
-  title: string;
-  done: number;
-  total: number;
-  items: Array<{ status: CheckStatus; label: string }>;
-}>;
+function getChecklistSectionStats(section: PrintPilotOrder["checklist"][number]) {
+  const done = section.items.filter((item) => item.status === "done").length;
+  return { done, total: section.items.length };
+}
+
+function getChecklistSummary(order: PrintPilotOrder) {
+  const allItems = order.checklist.flatMap((section) => section.items);
+  const done = allItems.filter((item) => item.status === "done").length;
+  const requiredOpen = allItems.filter((item) => item.status === "required").length;
+
+  return {
+    done,
+    total: allItems.length,
+    requiredOpen,
+  };
+}
 
 function CheckItem({ status, label }: { status: CheckStatus; label: string }) {
   const stateLabel =
@@ -763,6 +712,7 @@ function MachineCard({ machine }: { machine: MachineCardData }) {
 export function OrderPocketPage({ order }: { order: PrintPilotOrder }) {
   const files = getFiles(order);
   const noteRows = getNoteRows(order);
+  const checklistSummary = getChecklistSummary(order);
   const selectedMachine: MachineCardData = {
     id: order.machine.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
     name: order.machine,
@@ -894,30 +844,39 @@ export function OrderPocketPage({ order }: { order: PrintPilotOrder }) {
           className="pp-checklist-panel"
         >
           <div className="pp-checklist-summary">
-            <strong>3 / 15 erledigt</strong>
-            <span>1 Pflichtpunkt offen</span>
+            <strong>
+              {checklistSummary.done} / {checklistSummary.total} erledigt
+            </strong>
+            <span>
+              {checklistSummary.requiredOpen} Pflichtpunkt
+              {checklistSummary.requiredOpen === 1 ? "" : "e"} offen
+            </span>
           </div>
 
           <div className="pp-checklist-sections">
-            {checklistSections.map((section) => (
-              <section className="pp-check-section" key={section.title}>
-                <div className="pp-check-section__head">
-                  <h4>{section.title}</h4>
-                  <span>
-                    {section.done}/{section.total}
-                  </span>
-                </div>
-                <div className="pp-check-section__items">
-                  {section.items.map((item) => (
-                    <CheckItem
-                      key={item.label}
-                      status={item.status}
-                      label={item.label}
-                    />
-                  ))}
-                </div>
-              </section>
-            ))}
+            {order.checklist.map((section) => {
+              const stats = getChecklistSectionStats(section);
+
+              return (
+                <section className="pp-check-section" key={section.title}>
+                  <div className="pp-check-section__head">
+                    <h4>{section.title}</h4>
+                    <span>
+                      {stats.done}/{stats.total}
+                    </span>
+                  </div>
+                  <div className="pp-check-section__items">
+                    {section.items.map((item) => (
+                      <CheckItem
+                        key={item.label}
+                        status={item.status}
+                        label={item.label}
+                      />
+                    ))}
+                  </div>
+                </section>
+              );
+            })}
           </div>
 
           <div className="pp-signature">
@@ -926,31 +885,33 @@ export function OrderPocketPage({ order }: { order: PrintPilotOrder }) {
           </div>
         </Panel>
 
-        <Panel title="Nutzenplan" icon={<PocketIcon name="imposition" />}>
+        <Panel
+          title="Nutzenplan"
+          icon={<PocketIcon name="imposition" />}
+          className="pp-imposition-panel"
+        >
           <ImpositionPlanCard order={order} />
         </Panel>
 
-        <Panel title="Vorschau" icon={<PocketIcon name="preview" />}>
+        <Panel title="Vorschau" icon={<PocketIcon name="preview" />} className="pp-preview-panel">
           <PreviewCard order={order} />
         </Panel>
 
         <Panel
           title="Weiterverarbeitung"
           icon={<PocketIcon name="finishing" />}
+          className="pp-finishing-panel"
         >
           <div className="pp-finishing-list">
-            {["Schneiden", "Falzen", "Rillen", "Heften", "Verpacken"].map(
-              (item, index) => (
-                <div key={item}>
-                  <b>{item}</b>
-                  <StatusPill
-                    tone={index === 0 || index === 4 ? "orange" : "gray"}
-                  >
-                    {index === 0 || index === 4 ? "Geplant" : "Nicht notwendig"}
-                  </StatusPill>
-                </div>
-              ),
-            )}
+            {order.finishing.map((step) => (
+              <div key={step.label}>
+                <span>
+                  <b>{step.label}</b>
+                  <small>{step.note}</small>
+                </span>
+                <StatusPill tone={step.status.tone}>{step.status.label}</StatusPill>
+              </div>
+            ))}
           </div>
         </Panel>
 
@@ -1003,7 +964,7 @@ export function OrderPocketPage({ order }: { order: PrintPilotOrder }) {
           icon={<PocketIcon name="history" />}
         >
           <div className="pp-activity-list pp-activity-list--history">
-            {historyRows.map((entry) => (
+            {order.history.map((entry) => (
               <article
                 className="pp-activity-item"
                 key={`${entry.date}-${entry.time}-${entry.title}`}

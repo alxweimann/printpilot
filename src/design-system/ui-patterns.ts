@@ -418,6 +418,32 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
   },
 
 
+
+  {
+    id: "order-pocket-layout-balance",
+    category: "production",
+    name: "Auftragstasche Layout-Balance",
+    purpose:
+      "Balanciert die Auftragstaschen-Karten ohne neue Fachlogik: kompaktere Panelhöhen, dynamische Checkliste/Weiterverarbeitung/Verlauf aus Auftragsdaten und ruhigere Kartenverteilung für Produkt, Druckdaten, Termine, Vorschau und Nutzenplan.",
+    reference: "Auftragstasche · Sprint 42.3",
+    classNames: [
+      "pp-pocket-grid",
+      "pp-product-panel",
+      "pp-printdata-panel",
+      "pp-imposition-panel",
+      "pp-preview-panel",
+      "pp-finishing-panel",
+      "pp-checklist-panel",
+      "pp-finishing-list",
+    ],
+    reuseFor: [
+      "Auftragstaschen",
+      "Produktionsdetails",
+      "Druckdaten-Ansichten",
+      "Checklisten",
+      "Weiterverarbeitung",
+    ],
+  },
 ];
 
 export const printPilotReferenceScreen = {

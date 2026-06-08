@@ -4141,3 +4141,183 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
     width: min(100%, 220px);
   }
 }
+
+/* Sprint 42.3 – Auftragstasche Layout-Balance */
+.pp-pocket-grid {
+  grid-template-columns: minmax(340px, 1.22fr) minmax(310px, 1.04fr) minmax(310px, 1.04fr) minmax(270px, .88fr);
+  align-items: start;
+  gap: 16px;
+}
+
+.pp-panel {
+  min-height: 0;
+}
+
+.pp-product-panel,
+.pp-printdata-panel,
+.pp-imposition-panel,
+.pp-preview-panel,
+.pp-finishing-panel {
+  min-height: 0;
+}
+
+.pp-product-card,
+.pp-printdata-card,
+.pp-preview-card,
+.pp-imposition-card {
+  height: 100%;
+}
+
+.pp-product-hero--with-preview {
+  min-height: 112px;
+  padding: 12px;
+}
+
+.pp-product-hero h3 {
+  font-size: 19px;
+}
+
+.pp-product-hero p {
+  max-width: 260px;
+  margin-top: 6px;
+  line-height: 1.32;
+}
+
+.pp-product-preview {
+  width: 158px;
+  aspect-ratio: 1.55 / 1;
+  padding: 8px;
+}
+
+.pp-product-preview img {
+  height: 70px;
+  max-height: 70px;
+}
+
+.pp-product-highlights span,
+.pp-printdata-check,
+.pp-imposition-stats span,
+.pp-schedule-summary span {
+  padding: 7px 8px;
+}
+
+.pp-compact-data-list div {
+  min-height: 25px;
+  font-size: 11.5px;
+}
+
+.pp-printdata-file {
+  padding: 10px;
+}
+
+.pp-printdata-status {
+  gap: 7px;
+}
+
+.pp-schedule-summary {
+  gap: 8px;
+}
+
+.pp-schedule-step {
+  min-height: 42px;
+}
+
+.pp-checklist-panel {
+  grid-row: span 2;
+}
+
+.pp-checklist-sections {
+  gap: 10px;
+}
+
+.pp-check-section {
+  padding-top: 9px;
+}
+
+.pp-check-section__head {
+  margin-bottom: 6px;
+}
+
+.pp-check-section__items {
+  gap: 4px;
+}
+
+.pp-check-item {
+  min-height: 25px;
+  padding-block: 3px;
+}
+
+.pp-imposition-sheet {
+  width: min(100%, 430px);
+  padding: 14px;
+  gap: 6px;
+}
+
+.pp-imposition-details {
+  gap: 7px 11px;
+}
+
+.pp-preview-stage--asset {
+  min-height: 216px;
+  padding: 18px;
+}
+
+.pp-preview-asset-frame {
+  width: min(100%, 286px);
+}
+
+.pp-preview-stage--poster .pp-preview-asset-frame {
+  width: min(100%, 238px);
+}
+
+.pp-finishing-list {
+  gap: 8px;
+  margin-top: 8px;
+}
+
+.pp-finishing-list div {
+  grid-template-columns: minmax(0, 1fr) minmax(118px, 132px);
+  min-height: 44px;
+  padding: 8px 0;
+  gap: 12px;
+}
+
+.pp-finishing-list div span {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.pp-finishing-list div small {
+  overflow: hidden;
+  color: #64748b;
+  font-size: 10.5px;
+  font-weight: 620;
+  line-height: 1.25;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-finishing-list .pp-status-pill {
+  justify-self: stretch;
+  min-height: 28px;
+}
+
+.pp-activity-list--notes,
+.pp-activity-list--history {
+  gap: 9px;
+}
+
+.pp-activity-item > div {
+  padding: 9px 10px;
+}
+
+@media (max-width: 1500px) {
+  .pp-pocket-grid {
+    grid-template-columns: minmax(0, 1.1fr) minmax(0, 1fr) minmax(0, 1fr) minmax(250px, .86fr);
+  }
+
+  .pp-product-preview {
+    width: 148px;
+  }
+}

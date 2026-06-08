@@ -854,3 +854,30 @@ Sprint 42.2 korrigiert die Preview-Skalierung in der Auftragstasche. Die auftrag
 ### Nächster sinnvoller Schritt
 
 Die Auftragstasche kann danach produktspezifisch weiter geschärft werden: Nutzenplan, Checkliste und Weiterverarbeitung sollten fachlich stärker zwischen Flyer, Visitenkarten, Broschüre, Plakat und Aufkleberbogen unterscheiden.
+
+
+## Design Sprint 42.3 – Auftragstasche Layout-Balance verbessern
+
+Sprint 42.3 balanciert die Auftragstasche optisch weiter aus. Der Fokus liegt auf ruhigeren Kartenhöhen, weniger leeren Panel-Flächen und stärker auftragsbezogenen Detailbereichen. Navigation, Kartenklick und Datenübergabe bleiben unverändert.
+
+### Umgesetzt
+
+- Kartenraster der Auftragstasche feiner ausbalanciert.
+- Produkt-, Druckdaten-, Vorschau-, Nutzenplan- und Weiterverarbeitungs-Panels kompakter gesetzt.
+- Produkt-Preview bleibt vollständig sichtbar, wirkt aber weniger dominant.
+- Vorschaukarte bleibt auf `contain`-Skalierung und wurde in der Höhe leicht harmonisiert.
+- Weiterverarbeitung nutzt jetzt die auftragsspezifischen Schritte aus `order-data.ts` inklusive Hinweistext.
+- Checkliste nutzt jetzt die auftragsspezifischen Checklisten aus `order-data.ts`; erledigt/offen wird dynamisch berechnet.
+- Kommentare/Verlauf nutzen jetzt den auftragsspezifischen Verlauf aus `order-data.ts`.
+- Checklisten-Spalte wurde etwas kompakter gegliedert.
+- Neues Pattern `order-pocket-layout-balance` dokumentiert.
+
+### Nicht verändert
+
+- Keine Änderung an Aufträge-Übersicht, Kartenklick oder Rücknavigation.
+- Keine Persistenz, kein Router und keine Datenbanklogik.
+- Keine echte Ausschießlogik; Nutzenplan bleibt weiterhin UI-vorbereitend.
+
+### Nächster sinnvoller Schritt
+
+Als nächstes kann Sprint 43 die Auftragstasche um erste vorbereitete Status-Aktionen erweitern, zum Beispiel Freigabe markieren, Datenprüfung setzen oder Produktionsstatus ändern – zunächst weiterhin ohne echte Persistenz.

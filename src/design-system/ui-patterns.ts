@@ -24,7 +24,7 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     category: "list",
     name: "Aufträge-Übersichtsliste",
     purpose:
-      "Überträgt die technische Auftragstaschen-Formsprache auf fokussierte Auftragskarten mit sauber umbrechenden Status-Pills, integrierter Verantwortlichkeit, Freigabe, Datenstatus, Termin, Kunde, Produkt, Maschine, Druckdatei-Preview und direktem Kartenklick in die Auftragstasche.",
+      "Beruhigt die Aufträge-Übersicht zu einer kompakten Produktionsliste: dezente Druckdatei-Preview, reduzierte Status-Badges, Meta-Zeile für Termin/Maschine/Auflage/Verantwortlichkeit und direkter Kartenklick in die Auftragstasche.",
     reference: "Aufträge · Übersicht",
     classNames: [
       "pp-orders-overview",
@@ -32,10 +32,11 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       "pp-header-overview-status",
       "pp-orders-workbench",
       "pp-order-row-card",
-      "pp-orders-mini-info",
+      "pp-order-meta-line",
+      "pp-orders-meta-item",
       "pp-order-specs",
-      "pp-order-row-card__open-hint",
       "pp-order-row-card--clickable",
+      "pp-order-row-card--quiet",
       "pp-order-preview",
       "pp-pocket-route-toolbar",
     ],
@@ -47,6 +48,32 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       "Auftragstaschen-Einstiege",
       "Kartenklick-Navigation",
       "Rücknavigation",
+    ],
+  },
+
+
+  {
+    id: "orders-overview-quiet-list",
+    category: "list",
+    name: "Beruhigte Aufträge-Übersicht",
+    purpose:
+      "Reduziert die visuelle Last der Auftragsübersicht: weniger Farbsignale, keine wiederholten Öffnen-Hinweise, keine großen Meta-Kacheln, stattdessen kompakte Meta-Zeile und dezente Preview. Die Karte bleibt die primäre Navigation zur Auftragstasche.",
+    reference: "Aufträge · Übersicht",
+    classNames: [
+      "pp-orders-overview--quiet",
+      "pp-orders-master-header--quiet",
+      "pp-orders-summary--quiet",
+      "pp-orders-workbench--quiet",
+      "pp-order-row-card--quiet",
+      "pp-order-meta-line",
+      "pp-orders-meta-item",
+    ],
+    reuseFor: [
+      "Aufträge",
+      "Produktionscockpit",
+      "Listenansichten",
+      "Druckdatei-Previews",
+      "Statusreduzierung",
     ],
   },
 

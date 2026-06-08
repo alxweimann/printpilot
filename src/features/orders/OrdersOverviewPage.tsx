@@ -10,8 +10,7 @@ type OrdersIconName =
   | "customer"
   | "machine"
   | "data"
-  | "preview"
-  | "pocket";
+  | "preview";
 
 function OrdersIcon({ name }: { name: OrdersIconName }) {
   const common = {
@@ -70,14 +69,6 @@ function OrdersIcon({ name }: { name: OrdersIconName }) {
           <path d="M8.5 13.2h7M8.5 16h4.8" />
         </svg>
       );
-    case "pocket":
-      return (
-        <svg {...common}>
-          <path d="M5 6h14v13H5z" />
-          <path d="M5 9h14" />
-          <path d="M8 13h4M8 16h7" />
-        </svg>
-      );
     default:
       return null;
   }
@@ -103,7 +94,7 @@ function OverviewMetric({
   );
 }
 
-function MiniInfo({
+function MetaItem({
   icon,
   label,
   value,
@@ -113,12 +104,10 @@ function MiniInfo({
   value: string;
 }) {
   return (
-    <span className="pp-orders-mini-info">
-      <span className="pp-panel__icon">{icon}</span>
-      <span>
-        <small>{label}</small>
-        <b>{value}</b>
-      </span>
+    <span className="pp-orders-meta-item">
+      {icon}
+      <span>{label}</span>
+      <b>{value}</b>
     </span>
   );
 }
@@ -149,7 +138,6 @@ function OrderPreviewCard({
       <div className="pp-order-preview__caption">
         <span>{preview.label}</span>
         <b>{preview.filename}</b>
-        <small>{preview.meta}</small>
       </div>
     </div>
   );
@@ -173,83 +161,65 @@ function OrderCard({
 
   return (
     <article
-      className="pp-order-row-card pp-order-row-card--clickable"
+      className="pp-order-row-card pp-order-row-card--clickable pp-order-row-card--quiet"
       role="button"
       tabIndex={0}
       onClick={openOrderPocket}
       onKeyDown={handleKeyDown}
       aria-label={`${order.id} Auftragstasche öffnen`}
     >
-      <div className="pp-order-row-card__topline">
-        <span className="pp-order-id">{order.id}</span>
-        <div className="pp-order-row-card__status" aria-label="Auftragsstatus">
-          <StatusPill tone={order.production.tone}>
-            {order.production.label}
-          </StatusPill>
-          <StatusPill tone={order.approval.tone}>
-            {order.approval.label}
-          </StatusPill>
-          <StatusPill tone={order.data.tone}>{order.data.label}</StatusPill>
-          <StatusPill tone={order.priority.tone}>
-            {order.priority.label}
-          </StatusPill>
-        </div>
-      </div>
+      <OrderPreviewCard preview={order.preview} product={order.product} />
 
-      <div className="pp-order-row-card__body pp-order-row-card__body--with-preview">
-        <OrderPreviewCard preview={order.preview} product={order.product} />
-
-        <div className="pp-order-row-card__main">
-          <h2>{order.product}</h2>
-          <p>{order.customer}</p>
-          <div className="pp-order-specs">
-            <span>{order.format}</span>
-            <span>{order.quantity}</span>
+      <div className="pp-order-row-card__content">
+        <div className="pp-order-row-card__topline">
+          <div>
+            <span className="pp-order-id">{order.id}</span>
+            <h2>{order.product}</h2>
+            <p>{order.customer}</p>
+          </div>
+          <div className="pp-order-row-card__status" aria-label="Auftragsstatus">
+            <StatusPill tone={order.production.tone}>{order.production.label}</StatusPill>
+            <StatusPill tone={order.approval.tone}>{order.approval.label}</StatusPill>
+            <StatusPill tone={order.data.tone}>{order.data.label}</StatusPill>
+            {order.priority.tone === "orange" ? (
+              <StatusPill tone={order.priority.tone}>{order.priority.label}</StatusPill>
+            ) : null}
           </div>
         </div>
 
-        <div className="pp-order-row-card__meta">
-          <MiniInfo
+        <div className="pp-order-meta-line" aria-label="Auftragsdaten">
+          <MetaItem
             icon={<OrdersIcon name="calendar" />}
             label="Termin"
             value={`${order.dueDate} · ${order.dueMeta}`}
           />
-          <MiniInfo
+          <MetaItem
             icon={<OrdersIcon name="machine" />}
             label="Maschine"
             value={order.machine}
           />
-          <MiniInfo
+          <MetaItem
             icon={<OrdersIcon name="orders" />}
             label="Auflage"
             value={order.quantity}
           />
-          <MiniInfo
+          <MetaItem
             icon={<OrdersIcon name="customer" />}
-            label="Verantwortlich"
+            label="Verantw."
             value={order.owner}
           />
         </div>
-      </div>
 
-      <div
-        className="pp-order-progress"
-        aria-label={`Fortschritt ${order.progress} Prozent`}
-      >
-        <span style={{ width: `${order.progress}%` }}></span>
-      </div>
-
-      <div className="pp-order-row-card__foot">
-        <span>
-          <small>Nächster Schritt</small>
-          <b>{order.nextStep}</b>
-        </span>
-        <span className="pp-order-row-card__open-hint">
-          <span className="pp-panel__icon">
-            <OrdersIcon name="pocket" />
+        <div className="pp-order-row-card__foot">
+          <span className="pp-order-specs pp-order-specs--quiet">
+            <span>{order.format}</span>
+            <span>{order.preview.meta}</span>
           </span>
-          <span>Karte öffnet Auftragstasche</span>
-        </span>
+          <span>
+            <small>Nächster Schritt</small>
+            <b>{order.nextStep}</b>
+          </span>
+        </div>
       </div>
     </article>
   );
@@ -261,8 +231,8 @@ export function OrdersOverviewPage({
   onOpenOrderPocket: (order: PrintPilotOrder) => void;
 }) {
   return (
-    <div className="pp-orders-overview">
-      <header className="pp-master-header pp-orders-master-header">
+    <div className="pp-orders-overview pp-orders-overview--quiet">
+      <header className="pp-master-header pp-orders-master-header pp-orders-master-header--quiet">
         <div className="pp-header-brand">
           <img
             className="pp-brand-logo"
@@ -273,7 +243,7 @@ export function OrdersOverviewPage({
 
         <div className="pp-header-title-shape">
           <h1>AUFTRÄGE-ÜBERSICHT</h1>
-          <p>Produktionscockpit</p>
+          <p>Produktionscockpit · Freigaben · Termine</p>
         </div>
 
         <div
@@ -283,66 +253,44 @@ export function OrdersOverviewPage({
           <span>Aktive Aufträge</span>
           <strong>{orderRows.length}</strong>
         </div>
-
-        <div
-          className="pp-header-overview-status"
-          aria-label="Übersichtsstatus"
-        >
-          <span>Sprint 41 · Aufträge</span>
-          <div>
-            <StatusPill tone="green">Freigaben</StatusPill>
-            <StatusPill tone="orange">Datenstatus</StatusPill>
-            <StatusPill tone="blue">Preview</StatusPill>
-          </div>
-          <small>Karte anklicken, um die Auftragstasche zu öffnen.</small>
-        </div>
       </header>
 
-      <section className="pp-orders-summary" aria-label="Auftragskennzahlen">
+      <section className="pp-orders-summary pp-orders-summary--quiet" aria-label="Auftragskennzahlen">
         {orderSummary.map((item) => (
           <OverviewMetric key={item.label} {...item} />
         ))}
       </section>
 
-      <section className="pp-orders-workbench">
-        <aside className="pp-orders-filter-panel">
+      <section className="pp-orders-workbench pp-orders-workbench--quiet">
+        <aside className="pp-orders-filter-panel pp-orders-filter-panel--quiet">
           <div className="pp-panel__header">
             <span className="pp-panel__icon">
               <OrdersIcon name="data" />
             </span>
             <h2>Filter</h2>
           </div>
-          <div className="pp-orders-filter-list">
+          <div className="pp-orders-filter-list pp-orders-filter-list--quiet">
             {laneGroups.map((lane) => (
               <button type="button" key={lane.title}>
                 <span>{lane.title}</span>
-                <StatusPill tone={lane.tone}>{String(lane.count)}</StatusPill>
+                <b>{String(lane.count)}</b>
               </button>
             ))}
           </div>
-          <div className="pp-orders-next-panel">
+          <div className="pp-orders-next-panel pp-orders-next-panel--quiet">
             <span className="pp-panel__icon">
               <OrdersIcon name="preview" />
             </span>
             <strong>Auftragstasche ist Detailansicht</strong>
-            <p>
-              Die komplette Auftragskarte führt direkt in die Auftragstasche.
-              Die Übersicht bleibt das schnelle Produktionscockpit mit
-              Druckdatei-Preview.
-            </p>
+            <p>Karten öffnen direkt die Auftragstasche. Die Übersicht bleibt bewusst kompakt.</p>
           </div>
         </aside>
 
-        <main className="pp-orders-list-panel">
-          <div className="pp-orders-list-head">
+        <main className="pp-orders-list-panel pp-orders-list-panel--quiet">
+          <div className="pp-orders-list-head pp-orders-list-head--quiet">
             <div>
               <p className="pp-eyebrow">Aktive Aufträge</p>
               <h2>Produktion und Freigaben</h2>
-            </div>
-            <div className="pp-orders-list-head__badges">
-              <StatusPill tone="green">Freigabe sichtbar</StatusPill>
-              <StatusPill tone="orange">Datenstatus sichtbar</StatusPill>
-              <StatusPill tone="blue">Preview vorbereitet</StatusPill>
             </div>
           </div>
 

@@ -691,3 +691,32 @@ Sprint 41 verbindet die Aufträge-Übersicht erstmals fachlich mit der Auftragst
 ### Nächster sinnvoller Schritt
 
 Sprint 41.1 sollte prüfen, welche Auftragstaschen-Bereiche noch zu statisch wirken, zum Beispiel Motivgrafik, Nutzenplan-Raster, Checklistenpunkte und QR-Code. Danach kann ein kleiner Cleanup-Sprint folgen, der alte Drawer-Reste aus Sprint 40 bis 40.2 entfernt.
+
+## Design Sprint 41.1 – Aufträge-Übersicht visuell beruhigt
+
+Sprint 41.1 reduziert die visuelle Last der Aufträge-Übersicht. Die fachliche Richtung aus Sprint 41 bleibt erhalten: Die Übersicht ist das Produktionscockpit, der Kartenklick öffnet die Auftragstasche und die Auftragstasche nutzt weiterhin die ausgewählten Auftragsdaten.
+
+### Umgesetzt
+
+- Auftragskarten kompakter und ruhiger gestaltet.
+- Große Meta-Kacheln für Termin, Maschine, Auflage und Verantwortlichkeit durch eine kompakte Meta-Zeile ersetzt.
+- Wiederholten Hinweis `Karte öffnet Auftragstasche` aus jeder Karte entfernt.
+- Status-Badges optisch entschärft:
+  - keine starken Farbflächen mehr in der Übersicht,
+  - grüne/orange/blaue/graue Zustände erscheinen als helle, ruhige Badges,
+  - Priorität `Normal` wird nicht mehr als zusätzliche Pill angezeigt.
+- Druckdatei-Preview kleiner und dezenter integriert.
+- Header der Übersicht beruhigt: weniger Statuschips, klare Modul-/Cockpit-Bezeichnung.
+- Kennzahlen und Filter optisch reduziert, damit die Auftragsliste mehr Gewicht bekommt.
+- Karten bleiben vollständig klickbar und öffnen weiterhin die Auftragstasche.
+- Neues Pattern `orders-overview-quiet-list` dokumentiert.
+
+### Nicht verändert
+
+- Keine Änderung an der Datenübergabe aus Sprint 41.
+- Keine Änderung an der Auftragstaschen-Logik.
+- Keine Persistenz, kein Router und keine echte PDF-Preview-Anbindung.
+
+### Nächster sinnvoller Schritt
+
+Nach der visuellen Beruhigung sollte die Auftragstasche auf dynamische Bereiche geprüft werden, die noch zu statisch wirken, etwa Motivgrafik, Nutzenplan, Checkliste und QR-Kontext.

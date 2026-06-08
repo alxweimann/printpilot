@@ -910,3 +910,30 @@ Sprint 42.4 strukturiert die Auftragstasche stärker in klar erkennbare Arbeitsz
 ### Nächster sinnvoller Schritt
 
 Als nächstes kann Sprint 43 erste vorbereitete Status-Aktionen in der Auftragstasche aufbauen: Freigabe markieren, Datenprüfung setzen oder Produktionsstatus ändern – zunächst als lokaler UI-State ohne Persistenz.
+
+
+## Design Sprint 42.5 – Auftragstaschen-Kartenhöhen vereinheitlichen
+
+Sprint 42.5 beruhigt die Auftragstasche weiter, indem Karten innerhalb derselben Zone eine einheitlichere Höhe bekommen. Der Fokus liegt ausschließlich auf Layout-Balance und Lesbarkeit; Fachlogik, Navigation und Datenübergabe bleiben unverändert.
+
+### Umgesetzt
+
+- Panels innerhalb der Zone **Auftragsdaten** werden zeilenweise gleichmäßiger gestreckt.
+- Panels innerhalb der Zone **Produktion** – Nutzenplan, Vorschau und Weiterverarbeitung – wirken jetzt wie eine zusammengehörige Reihe.
+- Panels innerhalb der Zone **Auftragsbegleitung** – Dateien, Notizen, Maschine und Kommentare/Verlauf – sind gleichmäßiger ausgerichtet.
+- Inhalte bleiben oben ausgerichtet; leere Fläche entsteht bewusst innerhalb der Karten statt zufällig zwischen Karten.
+- Vorschau, Nutzenplan und Weiterverarbeitung werden nicht verzerrt.
+- Kartenlinks in der Begleitzone sitzen ruhiger am unteren Kartenabschluss.
+- Responsive Verhalten bleibt erhalten: auf kleinen Breiten werden die festen Mindesthöhen zurückgenommen.
+- Neues Pattern `order-pocket-equal-card-heights` dokumentiert.
+
+### Nicht verändert
+
+- Keine Änderung an Aufträge-Übersicht, Kartenklick oder Rücknavigation.
+- Keine Änderung an Status-, Freigabe-, Daten- oder Produktionslogik.
+- Keine Änderung an `order-data.ts`.
+- Keine Persistenz, kein Router und keine Datenbanklogik.
+
+### Nächster sinnvoller Schritt
+
+Als nächstes kann Sprint 43 erste vorbereitete Status-Aktionen in der Auftragstasche aufbauen, zum Beispiel Freigabe markieren, Datenprüfung setzen oder Produktionsstatus ändern – zunächst als lokaler UI-State ohne Persistenz.

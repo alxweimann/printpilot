@@ -4924,3 +4924,81 @@ a {
     grid-template-columns: 1fr;
   }
 }
+
+/* Sprint 42.5 – Auftragstasche Kartenhöhen vereinheitlichen */
+.pp-pocket-zone-grid {
+  align-items: stretch;
+}
+
+.pp-pocket-zone-grid > .pp-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 100%;
+}
+
+.pp-pocket-zone-grid--order-data,
+.pp-pocket-zone-grid--production,
+.pp-pocket-zone-grid--support {
+  grid-auto-rows: 1fr;
+}
+
+.pp-pocket-zone-grid--order-data > .pp-panel {
+  min-height: 352px;
+}
+
+.pp-pocket-zone-grid--production > .pp-panel {
+  min-height: 420px;
+}
+
+.pp-pocket-zone-grid--support > .pp-panel {
+  min-height: 286px;
+}
+
+.pp-pocket-zone-grid > .pp-panel > :not(.pp-panel__header) {
+  flex: 0 0 auto;
+}
+
+.pp-pocket-zone-grid--production .pp-imposition-card,
+.pp-pocket-zone-grid--production .pp-preview-card,
+.pp-pocket-zone-grid--production .pp-finishing-list {
+  flex: 1 1 auto;
+}
+
+.pp-pocket-zone-grid--production .pp-finishing-list {
+  display: grid;
+  align-content: start;
+}
+
+.pp-pocket-zone-grid--support .pp-files-list,
+.pp-pocket-zone-grid--support .pp-activity-list,
+.pp-pocket-zone-grid--support .pp-machine-card {
+  flex: 1 1 auto;
+}
+
+.pp-pocket-zone-grid--support .pp-card-link {
+  margin-top: auto;
+  padding-top: 12px;
+}
+
+.pp-pocket-zone-grid--support .pp-panel:has(.pp-card-link) {
+  gap: 0;
+}
+
+.pp-pocket-zone-grid--support .pp-panel:has(.pp-card-link) > .pp-card-link {
+  align-self: flex-start;
+}
+
+@media (max-width: 1100px) {
+  .pp-pocket-zone-grid--order-data,
+  .pp-pocket-zone-grid--production,
+  .pp-pocket-zone-grid--support {
+    grid-auto-rows: auto;
+  }
+
+  .pp-pocket-zone-grid--order-data > .pp-panel,
+  .pp-pocket-zone-grid--production > .pp-panel,
+  .pp-pocket-zone-grid--support > .pp-panel {
+    min-height: 0;
+  }
+}

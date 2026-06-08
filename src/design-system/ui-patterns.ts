@@ -464,6 +464,29 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       "Mehrspaltige Arbeitsbereiche",
     ],
   },
+
+  {
+    id: "order-pocket-equal-card-heights",
+    category: "layout",
+    name: "Auftragstasche gleiche Kartenhöhen",
+    purpose:
+      "Vereinheitlicht die Kartenhöhen innerhalb der Auftragstaschen-Zonen. Panels in Auftragsdaten, Produktion und Auftragsbegleitung werden zeilenweise gleich hoch gestreckt, ohne Preview, Nutzenplan oder Fachinhalte zu verzerren.",
+    reference: "Auftragstasche · Sprint 42.5",
+    classNames: [
+      "pp-pocket-zone-grid",
+      "pp-pocket-zone-grid--order-data",
+      "pp-pocket-zone-grid--production",
+      "pp-pocket-zone-grid--support",
+      "pp-panel",
+    ],
+    reuseFor: [
+      "Auftragstaschen",
+      "Produktionsdetails",
+      "Mehrspaltige Arbeitsbereiche",
+      "Dashboard-Zonen",
+    ],
+  },
+
 ];
 
 export const printPilotReferenceScreen = {

@@ -4628,3 +4628,207 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
     grid-column: 1 / -1;
   }
 }
+
+/* Sprint 43.2 – Schnellaktionen als Statuskette und kompaktere Checkliste */
+.pp-pocket-actionbar {
+  grid-template-columns: minmax(180px, .34fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  padding: 9px 11px;
+}
+
+.pp-pocket-actionbar__intro {
+  gap: 1px;
+}
+
+.pp-pocket-actionbar strong {
+  font-size: 12.5px;
+}
+
+.pp-pocket-actionbar p {
+  font-size: 9.8px;
+  line-height: 1.2;
+}
+
+.pp-pocket-actionbar__controls {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  min-width: 0;
+}
+
+.pp-pocket-actionbar__chain {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 7px;
+  min-width: 0;
+  overflow: hidden;
+}
+
+.pp-pocket-actionbar__chain > b {
+  color: #071f48;
+  font-size: 18px;
+  font-weight: 900;
+  line-height: 1;
+}
+
+.pp-pocket-chain-button.pp-status-pill {
+  appearance: none;
+  border: 0;
+  cursor: pointer;
+  gap: 7px;
+  min-height: 28px;
+  padding: 6px 11px;
+  border-radius: 6px;
+  font-family: inherit;
+  text-align: left;
+  transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+}
+
+.pp-pocket-chain-button.pp-status-pill:hover {
+  transform: translateY(-1px);
+  filter: saturate(1.03);
+}
+
+.pp-pocket-chain-button.pp-status-pill:focus-visible,
+.pp-pocket-actionbar__reset:focus-visible {
+  outline: 3px solid rgba(0, 159, 227, .22);
+  outline-offset: 2px;
+}
+
+.pp-pocket-chain-button span {
+  color: currentColor;
+  font-size: 8.5px;
+  font-weight: 900;
+  letter-spacing: .09em;
+  line-height: 1;
+  opacity: .72;
+  text-transform: uppercase;
+}
+
+.pp-pocket-chain-button strong {
+  color: currentColor;
+  font-size: 10.8px;
+  font-weight: 850;
+  line-height: 1;
+  letter-spacing: -.01em;
+  white-space: nowrap;
+}
+
+.pp-pocket-actionbar__reset {
+  min-height: 28px;
+  padding: 5px 10px;
+  border: 1px dashed #cbd8e8;
+  border-radius: 6px;
+  color: #66748b;
+  background: #f9fbfe;
+  font-size: 10px;
+  font-weight: 820;
+  letter-spacing: .035em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.pp-pocket-actionbar__reset:hover {
+  color: #071f48;
+  background: #ffffff;
+  border-color: #9fb3ca;
+}
+
+.pp-checklist-summary {
+  padding: 7px 9px;
+  margin-bottom: 9px;
+}
+
+.pp-checklist-summary strong {
+  font-size: 10.8px;
+}
+
+.pp-checklist-summary span {
+  font-size: 8.8px;
+}
+
+.pp-check-section {
+  padding-top: 8px;
+  margin-top: 8px;
+}
+
+.pp-check-section__head {
+  margin-bottom: 5px;
+}
+
+.pp-check-section h4 {
+  font-size: 10.6px;
+  letter-spacing: .045em;
+}
+
+.pp-check-section__head span {
+  min-height: 18px;
+  padding: 2px 7px;
+  font-size: 9px;
+}
+
+.pp-check-section__items {
+  gap: 2px;
+}
+
+.pp-check-item {
+  min-height: 21px;
+  gap: 6px;
+  padding: 2px 4px;
+  border-radius: 6px;
+  font-size: 10px;
+  line-height: 1.15;
+}
+
+.pp-check-box {
+  width: 13px;
+  height: 13px;
+  min-width: 13px;
+  border-radius: 3px;
+}
+
+.pp-check-label {
+  font-size: 10.2px;
+  font-weight: 650;
+  letter-spacing: -.005em;
+}
+
+.pp-check-item small {
+  min-width: 46px;
+  font-size: 7.8px;
+  font-weight: 850;
+  letter-spacing: .055em;
+}
+
+.pp-check-item--done {
+  background: rgba(16, 185, 129, .032);
+}
+
+.pp-check-item--required {
+  background: rgba(255, 247, 237, .34);
+}
+
+@media (max-width: 1120px) {
+  .pp-pocket-actionbar {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-pocket-actionbar__controls,
+  .pp-pocket-actionbar__chain {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 780px) {
+  .pp-pocket-actionbar__controls {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pp-pocket-actionbar__chain {
+    flex-wrap: wrap;
+  }
+}

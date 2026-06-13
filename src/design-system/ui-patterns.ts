@@ -492,6 +492,31 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+  {
+    id: "order-pocket-action-chain",
+    category: "production",
+    name: "Auftragstasche Schnellaktionen als Statuskette",
+    purpose:
+      "Stellt lokale Auftragstaschen-Schnellaktionen im Duktus der Statusübersicht dar: rechteckige Statusflächen mit Trennern statt Pill-Buttons sowie deutlich kompaktere Checklisten-Typografie für Produktionslisten.",
+    reference: "Auftragstasche · Sprint 43.2",
+    classNames: [
+      "pp-pocket-actionbar",
+      "pp-pocket-actionbar__controls",
+      "pp-pocket-actionbar__chain",
+      "pp-pocket-chain-button",
+      "pp-pocket-actionbar__reset",
+      "pp-check-item",
+      "pp-check-label",
+    ],
+    reuseFor: [
+      "Auftragstaschen",
+      "Schnellaktionen",
+      "Statusketten",
+      "Produktions-Checklisten",
+      "Lokaler UI-State",
+    ],
+  },
+
 ];
 
 export const printPilotReferenceScreen = {

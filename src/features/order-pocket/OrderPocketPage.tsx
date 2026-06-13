@@ -799,22 +799,38 @@ function PocketActionBar({
         <strong>Lokaler UI-State</strong>
         <p>UI-Vorschau ohne persistente Speicherung.</p>
       </div>
-      <div className="pp-pocket-actionbar__buttons">
-        <button type="button" onClick={onMarkDataChecked}>
-          <span>Daten</span>
-          <b>{actionState.data.label}</b>
-        </button>
-        <button type="button" onClick={onMarkApprovalGranted}>
-          <span>Freigabe</span>
-          <b>{actionState.approval.label}</b>
-        </button>
-        <button type="button" onClick={onCycleProduction}>
-          <span>Status</span>
-          <b>{actionState.production.label}</b>
-        </button>
+      <div className="pp-pocket-actionbar__controls">
+        <div className="pp-pocket-actionbar__chain" aria-label="Lokale Schnellaktionen">
+          <button
+            type="button"
+            className={`pp-pocket-chain-button pp-status-pill pp-status-pill--${actionState.data.tone}`}
+            onClick={onMarkDataChecked}
+          >
+            <span>Daten</span>
+            <strong>{actionState.data.label}</strong>
+          </button>
+          <b aria-hidden="true">›</b>
+          <button
+            type="button"
+            className={`pp-pocket-chain-button pp-status-pill pp-status-pill--${actionState.approval.tone}`}
+            onClick={onMarkApprovalGranted}
+          >
+            <span>Freigabe</span>
+            <strong>{actionState.approval.label}</strong>
+          </button>
+          <b aria-hidden="true">›</b>
+          <button
+            type="button"
+            className={`pp-pocket-chain-button pp-status-pill pp-status-pill--${actionState.production.tone}`}
+            onClick={onCycleProduction}
+          >
+            <span>Status</span>
+            <strong>{actionState.production.label}</strong>
+          </button>
+        </div>
         <button
           type="button"
-          className="pp-pocket-actionbar__ghost"
+          className="pp-pocket-actionbar__reset"
           onClick={onReset}
         >
           Zurücksetzen

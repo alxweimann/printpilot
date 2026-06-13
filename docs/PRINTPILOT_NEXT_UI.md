@@ -942,28 +942,48 @@ Als nächstes können die lokalen Aktionen fachlich konsistenter gekoppelt werde
 
 ## Design Sprint 43.2 – Schnellaktionen als Statuskette und kompaktere Checkliste
 
-Sprint 43.2 korrigiert die visuelle Sprache der lokalen Auftragstaschen-Aktionen. Die Schnellaktionen wirken jetzt näher an der Statusübersicht im Auftragskopf und nicht mehr wie Filter-Pills. Gleichzeitig wurde die Checkliste typografisch verdichtet.
+Sprint 43.2 richtet die Schnellaktionen optisch an der Statusübersicht aus und reduziert die Checklisten-Typografie weiter. Die Aktionen bleiben lokaler UI-State ohne Persistenz.
 
 ### Umgesetzt
 
-- Schnellaktionen werden nicht mehr als Pill-Buttons dargestellt.
-- Daten, Freigabe und Status erscheinen jetzt als kompakte Statuskette mit rechteckigen Statusflächen und Trennern.
-- Die Statusflächen übernehmen die vorhandenen Statusfarben aus der Auftragstasche.
-- „Zurücksetzen“ bleibt als kleine sekundäre Aktion separat rechts daneben.
-- Checklisten-Schrift deutlich verkleinert.
-- Checklisten-Zeilen kompakter gesetzt.
-- Checkbox, Label und Status sind enger und ruhiger ausgerichtet.
+- Schnellaktionen sind nicht mehr als Pill-Leiste dargestellt.
+- Datenprüfung, Freigabe und Produktionsstatus werden als kompakte Statuskette geführt.
+- Rechteckige Statusflächen mit Trennern ersetzen die vorherige Pill-Optik.
+- „Zurücksetzen“ bleibt separat als kleine sekundäre Aktion.
+- Checklisten-Schrift und Zeilenhöhe wurden reduziert.
 - Pflicht-/Offen-/Erledigt-Zustände bleiben erkennbar, wirken aber weniger flächig.
-- Neues Pattern `order-pocket-action-chain` dokumentiert.
+- Neues Pattern `order-pocket-compact-actions` bleibt Grundlage für die ruhigere Interaktionsleiste.
 
 ### Nicht verändert
 
-- Keine neue Fachlogik.
-- Keine Persistenz, Datenbank-, API- oder Router-Anbindung.
+- Keine neue Persistenzlogik.
+- Keine Änderung an Übersicht, Kartenklick oder Rücknavigation.
+- Keine große Layout-Umstellung.
+
+## Design Sprint 43.3 – Statuslogik sprachlich bereinigen
+
+Sprint 43.3 trennt den aktuellen Auftragsstatus klar von der Prozesskette. Dadurch wird vermieden, dass Begriffe wie „Weiterverarbeitung“ gleichzeitig als aktueller Status und als feste Prozessphase doppelt oder irritierend erscheinen.
+
+### Umgesetzt
+
+- Statusübersicht zeigt jetzt oben einen separaten aktuellen Status, z. B. „Aktuell: In Weiterverarbeitung“.
+- Die Prozesskette verwendet feste Phasen: Daten, Freigabe, Druck, Weiterverarbeitung, Versand.
+- Produktionsstatus wird sprachlich normalisiert:
+  - „Produktion“ wird als „Im Druck“ angezeigt.
+  - „Weiterverarbeitung“ wird als „In Weiterverarbeitung“ angezeigt.
+  - „Fertig“ wird als „Versandbereit“ angezeigt.
+- Die Prozessphasen zeigen Zustände wie „geplant“, „läuft“, „erledigt“, „bereit“ oder „offen“.
+- Schnellaktionen nutzen dieselbe Prozessketten-Komponente wie die Statusübersicht.
+- „Zurücksetzen“ bleibt als separate sekundäre Aktion.
+- Neues Pattern `order-pocket-process-language` dokumentiert.
+
+### Nicht verändert
+
+- Keine echte Persistenz.
 - Keine Änderung an Aufträge-Übersicht, Kartenklick oder Rücknavigation.
-- Keine Änderung an der dynamischen Datenübergabe aus der Übersicht.
+- Keine Änderung an der Datenübergabe aus der Übersicht.
+- Keine Datenbank-, API- oder Router-Anbindung.
 
 ### Nächster sinnvoller Schritt
 
-Als nächstes kann Sprint 43.3 die Statusbegriffe und Prozesskette fachlich schärfen, damit aktueller Produktionsstatus und Prozessphasen nicht doppelt oder missverständlich erscheinen.
-
+Als nächstes kann Sprint 43.4 die Abhängigkeiten zwischen Datenprüfung, Freigabe, Druckstatus, Checkliste und Weiterverarbeitung fachlich vorbereiten, weiterhin zunächst als lokaler UI-State.

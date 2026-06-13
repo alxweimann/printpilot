@@ -490,6 +490,149 @@ function getChecklistSummary(checklist: PocketChecklistSection[]) {
   };
 }
 
+type PocketProcessStep = {
+  key: string;
+  label: string;
+  value: string;
+  tone: PocketStatus["tone"];
+  isActive?: boolean;
+};
+
+function getCurrentProductionLabel(status: PocketStatus) {
+  switch (status.label) {
+    case "Produktion":
+      return "Im Druck";
+    case "Weiterverarbeitung":
+      return "In Weiterverarbeitung";
+    case "Fertig":
+      return "Versandbereit";
+    case "Geplant":
+      return "Geplant";
+    default:
+      return status.label;
+  }
+}
+
+function getProcessStepState(
+  productionStatus: PocketStatus,
+  phase: "print" | "finishing" | "shipping",
+): PocketProcessStep {
+  const currentLabel = productionStatus.label;
+
+  if (phase === "print") {
+    if (currentLabel === "Produktion") {
+      return { key: "print", label: "Druck", value: "läuft", tone: "orange", isActive: true };
+    }
+    if (currentLabel === "Weiterverarbeitung" || currentLabel === "Fertig") {
+      return { key: "print", label: "Druck", value: "erledigt", tone: "green" };
+    }
+    return { key: "print", label: "Druck", value: "geplant", tone: "blue" };
+  }
+
+  if (phase === "finishing") {
+    if (currentLabel === "Weiterverarbeitung") {
+      return { key: "finishing", label: "Weiterverarbeitung", value: "läuft", tone: "orange", isActive: true };
+    }
+    if (currentLabel === "Fertig") {
+      return { key: "finishing", label: "Weiterverarbeitung", value: "erledigt", tone: "green" };
+    }
+    return { key: "finishing", label: "Weiterverarbeitung", value: "geplant", tone: "gray" };
+  }
+
+  if (currentLabel === "Fertig") {
+    return { key: "shipping", label: "Versand", value: "bereit", tone: "green", isActive: true };
+  }
+
+  return { key: "shipping", label: "Versand", value: "offen", tone: "gray" };
+}
+
+function getProcessFlowSteps(actionState: PocketActionState): PocketProcessStep[] {
+  return [
+    {
+      key: "data",
+      label: "Daten",
+      value: actionState.data.label,
+      tone: actionState.data.tone,
+      isActive: actionState.data.label !== "Daten geprüft",
+    },
+    {
+      key: "approval",
+      label: "Freigabe",
+      value: actionState.approval.label,
+      tone: actionState.approval.tone,
+      isActive: actionState.approval.label !== "Freigabe erteilt",
+    },
+    getProcessStepState(actionState.production, "print"),
+    getProcessStepState(actionState.production, "finishing"),
+    getProcessStepState(actionState.production, "shipping"),
+  ];
+}
+
+function ProcessFlow({
+  steps,
+  interactive = false,
+  onDataClick,
+  onApprovalClick,
+  onProductionClick,
+}: {
+  steps: PocketProcessStep[];
+  interactive?: boolean;
+  onDataClick?: () => void;
+  onApprovalClick?: () => void;
+  onProductionClick?: () => void;
+}) {
+  const getClickHandler = (step: PocketProcessStep) => {
+    if (!interactive) return undefined;
+    if (step.key === "data") return onDataClick;
+    if (step.key === "approval") return onApprovalClick;
+    if (step.key === "print" || step.key === "finishing") return onProductionClick;
+    return undefined;
+  };
+
+  return (
+    <div className="pp-process-flow" role={interactive ? "group" : undefined}>
+      {steps.map((step, index) => {
+        const clickHandler = getClickHandler(step);
+        const content = (
+          <>
+            <span>{step.label}</span>
+            <b>{step.value}</b>
+          </>
+        );
+
+        return (
+          <div className="pp-process-flow__part" key={step.key}>
+            {clickHandler ? (
+              <button
+                type="button"
+                className={`pp-process-step pp-process-step--${step.tone} ${
+                  step.isActive ? "pp-process-step--active" : ""
+                }`}
+                onClick={clickHandler}
+              >
+                {content}
+              </button>
+            ) : (
+              <span
+                className={`pp-process-step pp-process-step--${step.tone} ${
+                  step.isActive ? "pp-process-step--active" : ""
+                }`}
+              >
+                {content}
+              </span>
+            )}
+            {index < steps.length - 1 ? (
+              <span className="pp-process-separator" aria-hidden="true">
+                ›
+              </span>
+            ) : null}
+          </div>
+        );
+      })}
+    </div>
+  );
+}
+
 function CheckItem({
   status,
   label,
@@ -789,48 +932,29 @@ function PocketActionBar({
   onCycleProduction: () => void;
   onReset: () => void;
 }) {
+  const processSteps = getProcessFlowSteps(actionState);
+
   return (
     <section
-      className="pp-pocket-actionbar"
+      className="pp-pocket-actionbar pp-pocket-actionbar--process"
       aria-label="Vorbereitete Auftragsaktionen"
     >
       <div className="pp-pocket-actionbar__intro">
         <span className="pp-eyebrow">Schnellaktionen</span>
-        <strong>Lokaler UI-State</strong>
+        <strong>Prozesskette lokal testen</strong>
         <p>UI-Vorschau ohne persistente Speicherung.</p>
       </div>
-      <div className="pp-pocket-actionbar__controls">
-        <div className="pp-pocket-actionbar__chain" aria-label="Lokale Schnellaktionen">
-          <button
-            type="button"
-            className={`pp-pocket-chain-button pp-status-pill pp-status-pill--${actionState.data.tone}`}
-            onClick={onMarkDataChecked}
-          >
-            <span>Daten</span>
-            <strong>{actionState.data.label}</strong>
-          </button>
-          <b aria-hidden="true">›</b>
-          <button
-            type="button"
-            className={`pp-pocket-chain-button pp-status-pill pp-status-pill--${actionState.approval.tone}`}
-            onClick={onMarkApprovalGranted}
-          >
-            <span>Freigabe</span>
-            <strong>{actionState.approval.label}</strong>
-          </button>
-          <b aria-hidden="true">›</b>
-          <button
-            type="button"
-            className={`pp-pocket-chain-button pp-status-pill pp-status-pill--${actionState.production.tone}`}
-            onClick={onCycleProduction}
-          >
-            <span>Status</span>
-            <strong>{actionState.production.label}</strong>
-          </button>
-        </div>
+      <div className="pp-pocket-actionbar__process">
+        <ProcessFlow
+          steps={processSteps}
+          interactive
+          onDataClick={onMarkDataChecked}
+          onApprovalClick={onMarkApprovalGranted}
+          onProductionClick={onCycleProduction}
+        />
         <button
           type="button"
-          className="pp-pocket-actionbar__reset"
+          className="pp-pocket-actionbar__ghost"
           onClick={onReset}
         >
           Zurücksetzen
@@ -884,6 +1008,8 @@ export function OrderPocketPage({ order }: { order: PrintPilotOrder }) {
   const files = useMemo(() => getFiles(order), [order]);
   const noteRows = useMemo(() => getNoteRows(order), [order]);
   const checklistSummary = getChecklistSummary(actionState.checklist);
+  const processSteps = getProcessFlowSteps(actionState);
+  const currentProductionLabel = getCurrentProductionLabel(actionState.production);
   const selectedMachine: MachineCardData = {
     id: order.machine.toLowerCase().replace(/[^a-z0-9]+/g, "-"),
     name: order.machine,
@@ -1025,25 +1151,20 @@ export function OrderPocketPage({ order }: { order: PrintPilotOrder }) {
         >
           {order.deliveryMeta}
         </TopInfoCard>
-        <article className="pp-status-overview">
-          <div className="pp-eyebrow">Status Übersicht</div>
-          <div className="pp-status-flow">
-            <StatusPill tone={actionState.data.tone}>
-              {actionState.data.label}
-            </StatusPill>
-            <b>›</b>
-            <StatusPill tone={actionState.approval.tone}>
-              {actionState.approval.label}
-            </StatusPill>
-            <b>›</b>
-            <StatusPill tone={actionState.production.tone}>
-              {actionState.production.label}
-            </StatusPill>
-            <b>›</b>
-            <StatusPill>Weiterverarbeitung</StatusPill>
-            <b>›</b>
-            <StatusPill>Versand</StatusPill>
+        <article className="pp-status-overview pp-status-overview--process">
+          <div className="pp-status-overview__head">
+            <div>
+              <div className="pp-eyebrow">Prozesskette</div>
+              <strong>Auftragsstatus getrennt von Prozessphasen</strong>
+            </div>
+            <div className="pp-status-current">
+              <small>Aktuell</small>
+              <StatusPill tone={actionState.production.tone}>
+                {currentProductionLabel}
+              </StatusPill>
+            </div>
           </div>
+          <ProcessFlow steps={processSteps} />
         </article>
       </section>
 

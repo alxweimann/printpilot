@@ -4629,28 +4629,156 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   }
 }
 
-/* Sprint 43.2 – Schnellaktionen als Statuskette und kompaktere Checkliste */
-.pp-pocket-actionbar {
-  grid-template-columns: minmax(180px, .34fr) minmax(0, 1fr);
+/* Sprint 43.3 – Statuslogik und Prozesskette sprachlich bereinigen */
+.pp-status-overview--process {
+  display: grid;
+  gap: 11px;
+  padding-left: 22px;
+}
+
+.pp-status-overview__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
   gap: 14px;
-  align-items: center;
-  padding: 9px 11px;
 }
 
-.pp-pocket-actionbar__intro {
-  gap: 1px;
-}
-
-.pp-pocket-actionbar strong {
-  font-size: 12.5px;
-}
-
-.pp-pocket-actionbar p {
-  font-size: 9.8px;
+.pp-status-overview__head strong {
+  display: block;
+  margin-top: 4px;
+  font-size: 12px;
+  font-weight: 780;
   line-height: 1.2;
+  color: #071f48;
+  letter-spacing: -.01em;
 }
 
-.pp-pocket-actionbar__controls {
+.pp-status-current {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  min-width: max-content;
+  padding: 5px 6px 5px 9px;
+  border: 1px solid #dce7f3;
+  border-radius: 10px;
+  background: #f8fbff;
+}
+
+.pp-status-current small {
+  font-size: 9px;
+  font-weight: 850;
+  letter-spacing: .075em;
+  text-transform: uppercase;
+  color: #617089;
+}
+
+.pp-process-flow {
+  display: flex;
+  align-items: stretch;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 0;
+  white-space: normal;
+}
+
+.pp-process-flow__part {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.pp-process-step {
+  display: inline-grid;
+  grid-template-columns: 1fr;
+  align-content: center;
+  min-height: 38px;
+  min-width: 92px;
+  padding: 7px 10px;
+  border: 1px solid #dce7f3;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #071f48;
+  text-align: left;
+  box-shadow: 0 8px 18px rgba(9, 31, 68, .035);
+}
+
+button.pp-process-step {
+  cursor: pointer;
+  appearance: none;
+  font: inherit;
+}
+
+button.pp-process-step:hover {
+  border-color: #b9d7ee;
+  background: #f8fcff;
+  transform: translateY(-1px);
+}
+
+.pp-process-step span {
+  display: block;
+  font-size: 8.5px;
+  font-weight: 850;
+  line-height: 1.05;
+  letter-spacing: .075em;
+  text-transform: uppercase;
+  color: #617089;
+}
+
+.pp-process-step b {
+  display: block;
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 780;
+  line-height: 1.12;
+  color: #071f48;
+}
+
+.pp-process-step--green {
+  border-color: rgba(16, 185, 129, .26);
+  background: linear-gradient(180deg, #ffffff 0%, #f3fbf7 100%);
+}
+
+.pp-process-step--green b { color: #05734f; }
+
+.pp-process-step--orange {
+  border-color: rgba(249, 115, 22, .28);
+  background: linear-gradient(180deg, #ffffff 0%, #fff8f1 100%);
+}
+
+.pp-process-step--orange b { color: #b94b00; }
+
+.pp-process-step--blue {
+  border-color: rgba(0, 159, 227, .24);
+  background: linear-gradient(180deg, #ffffff 0%, #f2f9ff 100%);
+}
+
+.pp-process-step--blue b { color: #0759d6; }
+
+.pp-process-step--gray {
+  border-color: #dce7f3;
+  background: #f8fbff;
+}
+
+.pp-process-step--active {
+  box-shadow: inset 3px 0 0 rgba(0, 159, 227, .82), 0 8px 18px rgba(9, 31, 68, .045);
+}
+
+.pp-process-separator {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #9aa9bb;
+  font-size: 17px;
+  font-weight: 850;
+  line-height: 1;
+}
+
+.pp-pocket-actionbar--process {
+  grid-template-columns: minmax(190px, .34fr) minmax(0, 1fr);
+  align-items: center;
+}
+
+.pp-pocket-actionbar__process {
   display: flex;
   align-items: center;
   justify-content: flex-end;
@@ -4658,177 +4786,73 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
   min-width: 0;
 }
 
-.pp-pocket-actionbar__chain {
-  display: flex;
-  align-items: center;
+.pp-pocket-actionbar__process .pp-process-flow {
   justify-content: flex-end;
-  gap: 7px;
-  min-width: 0;
-  overflow: hidden;
 }
 
-.pp-pocket-actionbar__chain > b {
-  color: #071f48;
-  font-size: 18px;
-  font-weight: 900;
-  line-height: 1;
+.pp-pocket-actionbar__process .pp-process-step {
+  min-height: 34px;
+  min-width: 88px;
+  padding: 6px 9px;
 }
 
-.pp-pocket-chain-button.pp-status-pill {
-  appearance: none;
-  border: 0;
-  cursor: pointer;
-  gap: 7px;
-  min-height: 28px;
-  padding: 6px 11px;
-  border-radius: 6px;
-  font-family: inherit;
-  text-align: left;
-  transition: transform .16s ease, box-shadow .16s ease, filter .16s ease;
+.pp-pocket-actionbar__process .pp-process-step b {
+  font-size: 10.5px;
 }
 
-.pp-pocket-chain-button.pp-status-pill:hover {
-  transform: translateY(-1px);
-  filter: saturate(1.03);
-}
-
-.pp-pocket-chain-button.pp-status-pill:focus-visible,
-.pp-pocket-actionbar__reset:focus-visible {
-  outline: 3px solid rgba(0, 159, 227, .22);
-  outline-offset: 2px;
-}
-
-.pp-pocket-chain-button span {
-  color: currentColor;
-  font-size: 8.5px;
-  font-weight: 900;
-  letter-spacing: .09em;
-  line-height: 1;
-  opacity: .72;
-  text-transform: uppercase;
-}
-
-.pp-pocket-chain-button strong {
-  color: currentColor;
-  font-size: 10.8px;
-  font-weight: 850;
-  line-height: 1;
-  letter-spacing: -.01em;
-  white-space: nowrap;
-}
-
-.pp-pocket-actionbar__reset {
-  min-height: 28px;
-  padding: 5px 10px;
-  border: 1px dashed #cbd8e8;
-  border-radius: 6px;
-  color: #66748b;
-  background: #f9fbfe;
-  font-size: 10px;
-  font-weight: 820;
-  letter-spacing: .035em;
-  text-transform: uppercase;
-  cursor: pointer;
-}
-
-.pp-pocket-actionbar__reset:hover {
-  color: #071f48;
+.pp-pocket-actionbar__process .pp-pocket-actionbar__ghost {
+  flex: 0 0 auto;
+  min-height: 32px;
+  padding: 7px 11px;
+  border-radius: 8px;
+  border: 1px solid #dce7f3;
   background: #ffffff;
-  border-color: #9fb3ca;
-}
-
-.pp-checklist-summary {
-  padding: 7px 9px;
-  margin-bottom: 9px;
-}
-
-.pp-checklist-summary strong {
-  font-size: 10.8px;
-}
-
-.pp-checklist-summary span {
-  font-size: 8.8px;
-}
-
-.pp-check-section {
-  padding-top: 8px;
-  margin-top: 8px;
-}
-
-.pp-check-section__head {
-  margin-bottom: 5px;
-}
-
-.pp-check-section h4 {
-  font-size: 10.6px;
-  letter-spacing: .045em;
-}
-
-.pp-check-section__head span {
-  min-height: 18px;
-  padding: 2px 7px;
+  color: #52637d;
   font-size: 9px;
-}
-
-.pp-check-section__items {
-  gap: 2px;
-}
-
-.pp-check-item {
-  min-height: 21px;
-  gap: 6px;
-  padding: 2px 4px;
-  border-radius: 6px;
-  font-size: 10px;
-  line-height: 1.15;
-}
-
-.pp-check-box {
-  width: 13px;
-  height: 13px;
-  min-width: 13px;
-  border-radius: 3px;
-}
-
-.pp-check-label {
-  font-size: 10.2px;
-  font-weight: 650;
-  letter-spacing: -.005em;
-}
-
-.pp-check-item small {
-  min-width: 46px;
-  font-size: 7.8px;
   font-weight: 850;
-  letter-spacing: .055em;
+  letter-spacing: .06em;
+  text-transform: uppercase;
 }
 
-.pp-check-item--done {
-  background: rgba(16, 185, 129, .032);
+.pp-pocket-actionbar__process .pp-pocket-actionbar__ghost:hover {
+  background: #f8fbff;
+  border-color: #c8d6e8;
 }
 
-.pp-check-item--required {
-  background: rgba(255, 247, 237, .34);
-}
-
-@media (max-width: 1120px) {
-  .pp-pocket-actionbar {
-    grid-template-columns: 1fr;
-  }
-
-  .pp-pocket-actionbar__controls,
-  .pp-pocket-actionbar__chain {
-    justify-content: flex-start;
-  }
-}
-
-@media (max-width: 780px) {
-  .pp-pocket-actionbar__controls {
+@media (max-width: 1180px) {
+  .pp-status-overview__head,
+  .pp-pocket-actionbar__process {
     align-items: flex-start;
     flex-direction: column;
   }
 
-  .pp-pocket-actionbar__chain {
-    flex-wrap: wrap;
+  .pp-pocket-actionbar__process .pp-process-flow {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-status-overview--process {
+    padding-left: 0;
+  }
+
+  .pp-process-flow,
+  .pp-pocket-actionbar__process .pp-process-flow {
+    display: grid;
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
+  .pp-process-flow__part {
+    width: 100%;
+  }
+
+  .pp-process-step,
+  .pp-pocket-actionbar__process .pp-process-step {
+    width: 100%;
+  }
+
+  .pp-process-separator {
+    display: none;
   }
 }

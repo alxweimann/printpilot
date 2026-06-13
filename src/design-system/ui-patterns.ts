@@ -51,6 +51,7 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+
   {
     id: "orders-overview-quiet-list",
     category: "list",
@@ -121,6 +122,7 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+
   {
     id: "orders-overview-real-preview-assets",
     category: "production",
@@ -165,6 +167,7 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       "Meta-Zeilen",
     ],
   },
+
 
   {
     id: "orders-overview-meta-baseline",
@@ -414,6 +417,8 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+
+
   {
     id: "order-pocket-layout-balance",
     category: "production",
@@ -441,52 +446,27 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
   },
 
   {
-    id: "order-pocket-grid-zones",
+    id: "order-pocket-local-actions",
     category: "production",
-    name: "Auftragstasche Grid-Zonen",
+    name: "Auftragstasche lokale Aktionen",
     purpose:
-      "Gliedert die Auftragstasche in klar lesbare Produktionszonen: Auftragsdaten, Produktion und Auftragsbegleitung. Dadurch werden Leerräume reduziert und Produkt-, Druckdaten-, Termine-, Checklisten-, Vorschau-, Nutzenplan- und Verlaufsbereiche ruhiger gruppiert.",
-    reference: "Auftragstasche · Sprint 42.4",
+      "Bereitet klickbare Auftragstaschen-Aktionen ohne Persistenz vor: Statusänderung, Datenprüfung, Freigabe, Checklistenpunkte und Weiterverarbeitungsschritte reagieren lokal im UI und sind später an Speicherung oder Datenbank anschließbar.",
+    reference: "Auftragstasche · Sprint 43",
     classNames: [
-      "pp-pocket-zones",
-      "pp-pocket-zone",
-      "pp-pocket-zone__head",
-      "pp-pocket-zone-grid",
-      "pp-pocket-zone-grid--order-data",
-      "pp-pocket-zone-grid--production",
-      "pp-pocket-zone-grid--support",
+      "pp-pocket-actionbar",
+      "pp-pocket-actionbar__buttons",
+      "pp-check-item",
+      "pp-finishing-status-button",
+      "pp-status-flow",
     ],
     reuseFor: [
       "Auftragstaschen",
-      "Produktionsdetails",
-      "Maschinenansichten",
-      "Produktionsplanung",
-      "Mehrspaltige Arbeitsbereiche",
+      "Statusänderungen",
+      "Produktions-Checklisten",
+      "Weiterverarbeitung",
+      "Freigabe-Workflows",
     ],
   },
-
-  {
-    id: "order-pocket-equal-card-heights",
-    category: "layout",
-    name: "Auftragstasche gleiche Kartenhöhen",
-    purpose:
-      "Vereinheitlicht die Kartenhöhen innerhalb der Auftragstaschen-Zonen. Panels in Auftragsdaten, Produktion und Auftragsbegleitung werden zeilenweise gleich hoch gestreckt, ohne Preview, Nutzenplan oder Fachinhalte zu verzerren.",
-    reference: "Auftragstasche · Sprint 42.5",
-    classNames: [
-      "pp-pocket-zone-grid",
-      "pp-pocket-zone-grid--order-data",
-      "pp-pocket-zone-grid--production",
-      "pp-pocket-zone-grid--support",
-      "pp-panel",
-    ],
-    reuseFor: [
-      "Auftragstaschen",
-      "Produktionsdetails",
-      "Mehrspaltige Arbeitsbereiche",
-      "Dashboard-Zonen",
-    ],
-  },
-
 ];
 
 export const printPilotReferenceScreen = {

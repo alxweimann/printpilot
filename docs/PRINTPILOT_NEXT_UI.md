@@ -882,58 +882,34 @@ Sprint 42.3 balanciert die Auftragstasche optisch weiter aus. Der Fokus liegt au
 
 Als nächstes kann Sprint 43 die Auftragstasche um erste vorbereitete Status-Aktionen erweitern, zum Beispiel Freigabe markieren, Datenprüfung setzen oder Produktionsstatus ändern – zunächst weiterhin ohne echte Persistenz.
 
-## Design Sprint 42.4 – Auftragstasche Grid-Zonen finalisieren
 
-Sprint 42.4 strukturiert die Auftragstasche stärker in klar erkennbare Arbeitszonen. Der Fokus liegt auf Layout-Balance, weniger optischem Leerlauf und einer ruhigeren Gruppierung der Produktionsmodule. Navigation, Auftragsauswahl und Datenübergabe bleiben unverändert.
+## Design Sprint 43 – Auftragstasche Aktionen vorbereiten
 
-### Umgesetzt
-
-- Auftragstasche in drei visuelle Zonen gegliedert:
-  - **Auftragsdaten**: Produkt, Druckdaten, Termine und Produktions-Checkliste
-  - **Produktion**: Nutzenplan, Vorschau und Weiterverarbeitung
-  - **Auftragsbegleitung**: Dateien, Notizen, Maschine und Kommentare/Verlauf
-- Neues Zonenraster `pp-pocket-zones` mit eigenen Grid-Varianten eingeführt.
-- Untere Module werden kompakter und bewusster gruppiert.
-- Checkliste ist nicht mehr als implizit über mehrere Grid-Zeilen gespannte Seitenkarte angelegt, sondern als Bestandteil der Auftragsdaten-Zone geführt.
-- Produktionsmodule stehen als eigene mittlere Zone zusammen und wirken weniger zufällig verteilt.
-- Dateien, Notizen, Maschine und Verlauf bilden eine kompakte Begleitzone unterhalb der Produktion.
-- Responsive Verhalten der Zonen für mittlere und kleine Bildschirmbreiten ergänzt.
-- Neues Pattern `order-pocket-grid-zones` dokumentiert.
-
-### Nicht verändert
-
-- Keine Änderung an Aufträge-Übersicht, Kartenklick oder Rücknavigation.
-- Keine Änderung an Status-, Freigabe- oder Datenlogik.
-- Keine Persistenz, kein Router und keine Datenbanklogik.
-- Keine echte Ausschießlogik; der Nutzenplan bleibt weiterhin UI-vorbereitend.
-
-### Nächster sinnvoller Schritt
-
-Als nächstes kann Sprint 43 erste vorbereitete Status-Aktionen in der Auftragstasche aufbauen: Freigabe markieren, Datenprüfung setzen oder Produktionsstatus ändern – zunächst als lokaler UI-State ohne Persistenz.
-
-
-## Design Sprint 42.5 – Auftragstaschen-Kartenhöhen vereinheitlichen
-
-Sprint 42.5 beruhigt die Auftragstasche weiter, indem Karten innerhalb derselben Zone eine einheitlichere Höhe bekommen. Der Fokus liegt ausschließlich auf Layout-Balance und Lesbarkeit; Fachlogik, Navigation und Datenübergabe bleiben unverändert.
+Sprint 43 ergänzt erste vorbereitete Bedienaktionen in der Auftragstasche. Die Aktionen verändern bewusst nur lokalen UI-State und sind noch nicht persistent. Damit ist die spätere Anbindung an Speicherung, Router oder Datenbank vorbereitet, ohne die bestehende Navigation oder Datenübergabe zu verändern.
 
 ### Umgesetzt
 
-- Panels innerhalb der Zone **Auftragsdaten** werden zeilenweise gleichmäßiger gestreckt.
-- Panels innerhalb der Zone **Produktion** – Nutzenplan, Vorschau und Weiterverarbeitung – wirken jetzt wie eine zusammengehörige Reihe.
-- Panels innerhalb der Zone **Auftragsbegleitung** – Dateien, Notizen, Maschine und Kommentare/Verlauf – sind gleichmäßiger ausgerichtet.
-- Inhalte bleiben oben ausgerichtet; leere Fläche entsteht bewusst innerhalb der Karten statt zufällig zwischen Karten.
-- Vorschau, Nutzenplan und Weiterverarbeitung werden nicht verzerrt.
-- Kartenlinks in der Begleitzone sitzen ruhiger am unteren Kartenabschluss.
-- Responsive Verhalten bleibt erhalten: auf kleinen Breiten werden die festen Mindesthöhen zurückgenommen.
-- Neues Pattern `order-pocket-equal-card-heights` dokumentiert.
+- Neue Aktionsleiste direkt unter den Auftragskopfdaten ergänzt.
+- Aktionen sind als lokaler UI-State vorbereitet:
+  - Datenprüfung auf „Daten geprüft“ setzen
+  - Freigabe auf „Freigabe erteilt“ setzen
+  - Produktionsstatus durch vorbereitete Stati schalten
+  - lokalen UI-State zurücksetzen
+- Statusübersicht, Druckdaten-Preflight und Termine reagieren auf den lokalen UI-State.
+- Checklistenpunkte sind anklickbar und wechseln zwischen offen/erledigt.
+- Pflichtpunkte können per Klick als erledigt markiert werden.
+- Weiterverarbeitungsschritte sind klickbar, sofern sie nicht „Nicht notwendig“ sind.
+- Weiterverarbeitungsschritte wechseln lokal zwischen geplant/wartet und erledigt.
+- Fokus- und Hover-Zustände für Checkliste, Weiterverarbeitung und Aktionsleiste ergänzt.
+- Neues Pattern `order-pocket-local-actions` dokumentiert.
 
 ### Nicht verändert
 
-- Keine Änderung an Aufträge-Übersicht, Kartenklick oder Rücknavigation.
-- Keine Änderung an Status-, Freigabe-, Daten- oder Produktionslogik.
-- Keine Änderung an `order-data.ts`.
-- Keine Persistenz, kein Router und keine Datenbanklogik.
+- Keine echte Persistenz.
+- Keine Änderung an der Aufträge-Übersicht.
+- Keine Änderung an Kartenklick, Rücknavigation oder Datenübergabe.
+- Keine Datenbank-, API- oder Router-Anbindung.
 
 ### Nächster sinnvoller Schritt
 
-Als nächstes kann Sprint 43 erste vorbereitete Status-Aktionen in der Auftragstasche aufbauen, zum Beispiel Freigabe markieren, Datenprüfung setzen oder Produktionsstatus ändern – zunächst als lokaler UI-State ohne Persistenz.
+Als nächstes kann Sprint 43.1 die Interaktionslogik fachlich verfeinern: Statuswechsel sollten konsistenter mit Checkliste, Freigabe, Datenprüfung und Weiterverarbeitung gekoppelt werden.

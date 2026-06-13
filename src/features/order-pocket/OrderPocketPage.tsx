@@ -932,32 +932,52 @@ function PocketActionBar({
   onCycleProduction: () => void;
   onReset: () => void;
 }) {
-  const processSteps = getProcessFlowSteps(actionState);
-
   return (
     <section
-      className="pp-pocket-actionbar pp-pocket-actionbar--process"
+      className="pp-pocket-actionbar pp-pocket-actionbar--workbench"
       aria-label="Vorbereitete Auftragsaktionen"
     >
       <div className="pp-pocket-actionbar__intro">
         <span className="pp-eyebrow">Schnellaktionen</span>
-        <strong>Prozesskette lokal testen</strong>
+        <strong>Arbeitsleiste</strong>
         <p>UI-Vorschau ohne persistente Speicherung.</p>
       </div>
-      <div className="pp-pocket-actionbar__process">
-        <ProcessFlow
-          steps={processSteps}
-          interactive
-          onDataClick={onMarkDataChecked}
-          onApprovalClick={onMarkApprovalGranted}
-          onProductionClick={onCycleProduction}
-        />
+      <div className="pp-pocket-actionbar__actions">
         <button
           type="button"
-          className="pp-pocket-actionbar__ghost"
+          className="pp-action-button pp-action-button--data"
+          onClick={onMarkDataChecked}
+        >
+          <span>Daten</span>
+          <b>prüfen</b>
+          <small>{actionState.data.label}</small>
+        </button>
+        <button
+          type="button"
+          className="pp-action-button pp-action-button--approval"
+          onClick={onMarkApprovalGranted}
+        >
+          <span>Freigabe</span>
+          <b>erteilen</b>
+          <small>{actionState.approval.label}</small>
+        </button>
+        <button
+          type="button"
+          className="pp-action-button pp-action-button--status"
+          onClick={onCycleProduction}
+        >
+          <span>Status</span>
+          <b>weiter</b>
+          <small>{actionState.production.label}</small>
+        </button>
+        <button
+          type="button"
+          className="pp-action-button pp-action-button--reset"
           onClick={onReset}
         >
-          Zurücksetzen
+          <span>Reset</span>
+          <b>zurücksetzen</b>
+          <small>lokal</small>
         </button>
       </div>
     </section>

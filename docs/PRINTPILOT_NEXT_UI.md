@@ -987,3 +987,37 @@ Sprint 43.3 trennt den aktuellen Auftragsstatus klar von der Prozesskette. Dadur
 ### Nächster sinnvoller Schritt
 
 Als nächstes kann Sprint 43.4 die Abhängigkeiten zwischen Datenprüfung, Freigabe, Druckstatus, Checkliste und Weiterverarbeitung fachlich vorbereiten, weiterhin zunächst als lokaler UI-State.
+
+## Design Sprint 43.4 – Schnellaktionen als Arbeitsleiste und Checkliste weiter verdichten
+
+Sprint 43.4 nimmt die Rückmeldung zur Sprint-43.3-Ansicht auf: Die Schnellaktionen sollen nicht wie eine zweite Prozesskette wirken, sondern wie eine kompakte Arbeitsleiste für konkrete lokale Aktionen. Zusätzlich wird die Produktions-Checkliste typografisch weiter verdichtet.
+
+### Umgesetzt
+
+- Schnellaktionen werden jetzt als Arbeitsleiste statt als zweite Status-/Prozesskette geführt.
+- Aktionen sind als klare rechteckige Buttons aufgebaut:
+  - Daten prüfen
+  - Freigabe erteilen
+  - Status weiter
+  - Zurücksetzen
+- Die Buttons zeigen weiterhin den aktuellen lokalen UI-State als kleine Zusatzinformation.
+- „Zurücksetzen“ bleibt eine sekundäre, dezente Aktion.
+- Checklistenpunkte sind nochmals kompakter:
+  - kleinere Schrift
+  - kleinere Checkbox
+  - geringere Zeilenhöhe
+  - dezenterer Status rechts
+- Pflichtpunkte bleiben sichtbar, werden aber weniger flächig hervorgehoben.
+- Neues Pattern `order-pocket-action-workbar` dokumentiert.
+
+### Nicht verändert
+
+- Keine Persistenzlogik.
+- Keine Änderung an Aufträge-Übersicht, Kartenklick oder Rücknavigation.
+- Keine Änderung an der dynamischen Datenübergabe.
+- Keine fachliche Abhängigkeitslogik zwischen Checkliste, Datenprüfung, Freigabe und Produktion.
+
+### Nächster sinnvoller Schritt
+
+Als nächstes können die lokalen Aktionen fachlich gekoppelt werden, z. B. Freigabe erst sinnvoll nach Datenprüfung, Druckstatus abhängig von Pflichtpunkten und Weiterverarbeitung abhängig vom Produktionsstatus.
+

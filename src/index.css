@@ -4856,3 +4856,212 @@ button.pp-process-step:hover {
     display: none;
   }
 }
+
+/* Sprint 43.4 – Schnellaktionen als Arbeitsleiste und Checkliste weiter verdichten */
+.pp-pocket-actionbar--workbench {
+  grid-template-columns: minmax(170px, .28fr) minmax(0, 1fr);
+  gap: 14px;
+  align-items: center;
+  margin: 10px 0 12px;
+  padding: 9px 11px;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  box-shadow: 0 6px 16px rgba(9, 31, 68, .035);
+}
+
+.pp-pocket-actionbar--workbench .pp-pocket-actionbar__intro strong {
+  font-size: 12.5px;
+  letter-spacing: -.01em;
+}
+
+.pp-pocket-actionbar--workbench .pp-pocket-actionbar__intro p {
+  max-width: 260px;
+  font-size: 10px;
+  line-height: 1.25;
+}
+
+.pp-pocket-actionbar__actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 7px;
+  min-width: 0;
+}
+
+.pp-action-button {
+  display: grid;
+  grid-template-columns: auto;
+  align-content: center;
+  gap: 1px;
+  min-width: 92px;
+  min-height: 36px;
+  padding: 6px 9px;
+  border: 1px solid #dbe7f4;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #06163a;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  box-shadow: none;
+  transition: border-color .16s ease, background .16s ease, box-shadow .16s ease, transform .16s ease;
+}
+
+.pp-action-button:hover {
+  transform: translateY(-1px);
+  background: #f8fbff;
+  border-color: rgba(0, 159, 227, .32);
+  box-shadow: 0 8px 16px rgba(0, 91, 150, .07);
+}
+
+.pp-action-button:focus-visible {
+  outline: 3px solid rgba(0, 159, 227, .22);
+  outline-offset: 2px;
+}
+
+.pp-action-button span {
+  color: #66758d;
+  font-size: 8.5px;
+  font-weight: 860;
+  letter-spacing: .075em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.pp-action-button b {
+  color: #06163a;
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1.05;
+}
+
+.pp-action-button small {
+  overflow: hidden;
+  color: #6b7890;
+  font-size: 8.5px;
+  font-weight: 750;
+  line-height: 1.05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-action-button--data {
+  border-left: 3px solid #10b981;
+}
+
+.pp-action-button--approval,
+.pp-action-button--status {
+  border-left: 3px solid #f97316;
+}
+
+.pp-action-button--reset {
+  min-width: 82px;
+  border-style: dashed;
+  border-left: 1px dashed #dbe7f4;
+  background: #fbfdff;
+  color: #52637d;
+}
+
+.pp-action-button--reset b {
+  color: #52637d;
+}
+
+.pp-checklist-panel {
+  --pp-check-font-size: 12px;
+  --pp-check-meta-size: 8px;
+}
+
+.pp-checklist-summary {
+  padding: 6px 8px;
+  margin-bottom: 9px;
+  border-radius: 9px;
+}
+
+.pp-checklist-summary strong {
+  font-size: 10.5px;
+}
+
+.pp-checklist-summary span {
+  font-size: 8.5px;
+}
+
+.pp-check-section {
+  padding-top: 8px;
+  margin-top: 6px;
+}
+
+.pp-check-section__head {
+  margin-bottom: 4px;
+}
+
+.pp-check-section h4 {
+  font-size: 9.5px;
+  letter-spacing: .075em;
+}
+
+.pp-check-section__head span {
+  padding: 2px 6px;
+  font-size: 8.5px;
+}
+
+.pp-check-section__items {
+  gap: 2px;
+}
+
+.pp-check-item {
+  min-height: 22px;
+  padding: 2px 4px;
+  gap: 5px;
+  border-radius: 6px;
+  font-size: var(--pp-check-font-size);
+  line-height: 1.1;
+}
+
+.pp-check-box {
+  width: 13px;
+  height: 13px;
+  border-radius: 3px;
+  font-size: 9px;
+}
+
+.pp-check-label {
+  font-size: var(--pp-check-font-size);
+  font-weight: 610;
+  line-height: 1.12;
+}
+
+.pp-check-item small {
+  font-size: var(--pp-check-meta-size);
+  font-weight: 820;
+  letter-spacing: .055em;
+}
+
+.pp-check-item--done {
+  background: rgba(16, 185, 129, .035);
+}
+
+.pp-check-item--required {
+  border-color: rgba(249, 115, 22, .16);
+  background: rgba(255, 247, 237, .36);
+}
+
+@media (max-width: 1120px) {
+  .pp-pocket-actionbar--workbench {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-pocket-actionbar__actions {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 680px) {
+  .pp-pocket-actionbar__actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pp-action-button {
+    width: 100%;
+  }
+}

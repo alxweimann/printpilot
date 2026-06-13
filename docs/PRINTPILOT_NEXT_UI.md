@@ -913,3 +913,29 @@ Sprint 43 ergänzt erste vorbereitete Bedienaktionen in der Auftragstasche. Die 
 ### Nächster sinnvoller Schritt
 
 Als nächstes kann Sprint 43.1 die Interaktionslogik fachlich verfeinern: Statuswechsel sollten konsistenter mit Checkliste, Freigabe, Datenprüfung und Weiterverarbeitung gekoppelt werden.
+
+## Design Sprint 43.1 – Aktionsleiste und Checklisten-UI beruhigen
+
+Sprint 43.1 verfeinert die in Sprint 43 eingeführten lokalen Auftragstaschen-Aktionen. Die Interaktion bleibt erhalten, wird aber visuell kompakter und weniger dominant dargestellt.
+
+### Umgesetzt
+
+- Aktionsleiste unter den Auftragskopfdaten kompakter gestaltet.
+- Aktionen werden jetzt als kleine Schnellaktions-Buttons statt als große Karten dargestellt.
+- „Zurücksetzen“ ist nur noch eine sekundäre, kleine Aktion.
+- Hinweis auf lokalen UI-State wurde dezenter formuliert und platziert.
+- Checklisten-Zeilen wirken leichter und weniger grau/flächig.
+- Erledigte und verpflichtende Checklistenpunkte bleiben erkennbar, ohne die Checklisten-Spalte optisch zu beschweren.
+- Hover-/Focus-Zustände bleiben vorhanden, wirken aber ruhiger.
+- Neues Pattern `order-pocket-compact-actions` dokumentiert.
+
+### Nicht verändert
+
+- Keine neue Fachlogik.
+- Keine Persistenz, Datenbank-, API- oder Router-Anbindung.
+- Keine Änderung an Aufträge-Übersicht, Kartenklick oder Rücknavigation.
+- Keine Änderung an der dynamischen Datenübergabe aus der Übersicht.
+
+### Nächster sinnvoller Schritt
+
+Als nächstes können die lokalen Aktionen fachlich konsistenter gekoppelt werden, zum Beispiel Datenprüfung/Freigabe/Produktionsstatus/Checkliste in sinnvolle Abhängigkeiten bringen.

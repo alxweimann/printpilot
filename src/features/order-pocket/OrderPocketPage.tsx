@@ -794,10 +794,10 @@ function PocketActionBar({
       className="pp-pocket-actionbar"
       aria-label="Vorbereitete Auftragsaktionen"
     >
-      <div>
-        <span className="pp-eyebrow">Aktionen vorbereitet</span>
+      <div className="pp-pocket-actionbar__intro">
+        <span className="pp-eyebrow">Schnellaktionen</span>
         <strong>Lokaler UI-State</strong>
-        <p>Änderungen sind klickbar, aber noch nicht persistent gespeichert.</p>
+        <p>UI-Vorschau ohne persistente Speicherung.</p>
       </div>
       <div className="pp-pocket-actionbar__buttons">
         <button type="button" onClick={onMarkDataChecked}>
@@ -809,7 +809,7 @@ function PocketActionBar({
           <b>{actionState.approval.label}</b>
         </button>
         <button type="button" onClick={onCycleProduction}>
-          <span>Status ändern</span>
+          <span>Status</span>
           <b>{actionState.production.label}</b>
         </button>
         <button

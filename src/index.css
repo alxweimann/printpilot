@@ -4470,3 +4470,161 @@ a { color: #006dff; text-decoration: none; cursor: pointer; }
     grid-template-columns: 1fr;
   }
 }
+
+/* Sprint 43.1 – Aktionsleiste und Checklisten-UI beruhigen */
+.pp-pocket-actionbar {
+  grid-template-columns: minmax(190px, .42fr) minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  margin: 12px 0 14px;
+  padding: 10px 12px;
+  border-color: #dce7f3;
+  border-radius: 13px;
+  background: linear-gradient(180deg, #ffffff 0%, #f9fcff 100%);
+  box-shadow: 0 8px 20px rgba(9, 31, 68, .045);
+}
+
+.pp-pocket-actionbar__intro {
+  display: grid;
+  gap: 2px;
+}
+
+.pp-pocket-actionbar strong {
+  margin-top: 0;
+  font-size: 13px;
+  font-weight: 820;
+  letter-spacing: -.015em;
+}
+
+.pp-pocket-actionbar p {
+  margin: 1px 0 0;
+  font-size: 10.5px;
+  font-weight: 620;
+  line-height: 1.25;
+}
+
+.pp-pocket-actionbar__buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 7px;
+}
+
+.pp-pocket-actionbar__buttons button {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  min-height: 32px;
+  width: auto;
+  min-width: 0;
+  padding: 6px 9px;
+  border-radius: 999px;
+  box-shadow: none;
+  text-align: center;
+}
+
+.pp-pocket-actionbar__buttons button:hover {
+  transform: none;
+  box-shadow: 0 8px 16px rgba(0, 91, 150, .08);
+}
+
+.pp-pocket-actionbar__buttons span,
+.pp-pocket-actionbar__ghost {
+  font-size: 9px;
+  letter-spacing: .055em;
+}
+
+.pp-pocket-actionbar__buttons b {
+  margin-top: 0;
+  max-width: 150px;
+  font-size: 11px;
+  line-height: 1.1;
+}
+
+.pp-pocket-actionbar__buttons .pp-pocket-actionbar__ghost {
+  min-height: 30px;
+  padding-inline: 11px;
+  color: #52637d;
+  background: #f8fbff;
+}
+
+.pp-checklist-summary {
+  padding: 8px 10px;
+  margin-bottom: 11px;
+  background: #fbfdff;
+  box-shadow: none;
+}
+
+.pp-checklist-summary strong {
+  font-size: 11.5px;
+}
+
+.pp-checklist-summary span {
+  font-size: 9.5px;
+  letter-spacing: .035em;
+}
+
+.pp-check-section__items {
+  gap: 3px;
+}
+
+.pp-check-item {
+  min-height: 25px;
+  padding: 3px 5px;
+  border-radius: 7px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.pp-check-item--done {
+  background: rgba(16, 185, 129, .04);
+}
+
+.pp-check-item--required {
+  border-color: rgba(249, 115, 22, .18);
+  background: rgba(255, 247, 237, .46);
+}
+
+.pp-check-item:hover {
+  transform: none;
+  background: rgba(0, 159, 227, .035);
+}
+
+.pp-check-box {
+  width: 15px;
+  height: 15px;
+  border-radius: 4px;
+}
+
+.pp-check-label {
+  font-weight: 640;
+}
+
+.pp-check-item small {
+  font-size: 9px;
+}
+
+@media (max-width: 1120px) {
+  .pp-pocket-actionbar {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-pocket-actionbar__buttons {
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 680px) {
+  .pp-pocket-actionbar__buttons {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pp-pocket-actionbar__buttons button {
+    justify-content: center;
+  }
+
+  .pp-pocket-actionbar__buttons .pp-pocket-actionbar__ghost {
+    grid-column: 1 / -1;
+  }
+}

@@ -467,6 +467,31 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       "Freigabe-Workflows",
     ],
   },
+
+  {
+    id: "order-pocket-compact-actions",
+    category: "production",
+    name: "Auftragstasche kompakte Aktionen",
+    purpose:
+      "Beruhigt die lokalen Auftragstaschen-Aktionen aus Sprint 43: Schnellaktionen werden als kompakte Buttons statt großer Karten geführt, Zurücksetzen wird sekundär und Checklisten-Zeilen bleiben anklickbar, aber visuell leichter.",
+    reference: "Auftragstasche · Sprint 43.1",
+    classNames: [
+      "pp-pocket-actionbar",
+      "pp-pocket-actionbar__intro",
+      "pp-pocket-actionbar__buttons",
+      "pp-pocket-actionbar__ghost",
+      "pp-check-item",
+      "pp-checklist-summary",
+    ],
+    reuseFor: [
+      "Auftragstaschen",
+      "Schnellaktionen",
+      "Lokaler UI-State",
+      "Produktions-Checklisten",
+      "Interaktionsleisten",
+    ],
+  },
+
 ];
 
 export const printPilotReferenceScreen = {

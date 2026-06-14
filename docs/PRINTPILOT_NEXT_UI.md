@@ -1212,3 +1212,34 @@ Sprint 44.2 verbindet zwei kleinere, aber wichtige Korrekturen: Die Statusbegrif
 ### Nächster sinnvoller Schritt
 
 Als nächstes kann die Dateistruktur für echte Kundendruckdaten weiter vorbereitet werden: Originaldatei, Preview, Preflight-Ergebnis, Seitenanzahl und Versionierung sollten später pro Auftrag sauber gespeichert werden.
+
+
+## Design Sprint 44.3 – Echte Druckdatei-Previews im Nutzenplan
+
+Sprint 44.3 verbessert die visuelle Produktionsnähe der Auftragstasche. Der Nutzenplan zeigt jetzt nicht mehr nur nummerierte Platzhalter, sondern nutzt die tatsächlichen Preview-Bilder der Druckdateien als kleine Motiv-Wiederholungen auf dem Druckbogen.
+
+### Umgesetzt
+
+- Nutzenplan-Kacheln rendern jetzt das echte `order.preview.imageSrc` des jeweiligen Auftrags.
+- Die Nutzennummer bleibt als dezente Überlagerung erhalten.
+- Visitenkarten zeigen im Nutzenplan mehrere kleine Kartenmotive statt leerer Nummernfelder.
+- Briefbogen wird im Nutzenplan als 2-fach A4-Hochformat auf SRA3 vorbereitet.
+- Briefbogen-Preview wurde in Produkt- und Vorschaukarte größer und lesbarer behandelt.
+- Produktarten behalten eigene Nutzenplan-Raster:
+  - Visitenkarten: dichter Mehrnutzenbogen
+  - Briefbogen: 2 Nutzen Hochformat
+  - Flyer/Broschüre: Mehrnutzenraster
+  - Plakat: großflächiger Bogen
+  - Aufkleberbogen: motivbasierte Kacheln
+- Neues Pattern `real-file-imposition-preview` dokumentiert.
+
+### Nicht verändert
+
+- Keine echte Ausschieß-Engine.
+- Keine echte PDF-Rendering-Logik im Browser.
+- Keine Persistenz, kein LocalStorage und keine Datenbank.
+- Keine Änderung an Übersicht, Kartenklick, Rücknavigation oder zentralem UI-State.
+
+### Nächster sinnvoller Schritt
+
+Als nächstes kann der Nutzenplan weiter fachlich verfeinert werden: Bogenformat, Drehung, Greiferrand, Beschnitt, Zwischenschnitt und Nutzenanordnung sollten später aus echten Produktionsparametern berechnet werden.

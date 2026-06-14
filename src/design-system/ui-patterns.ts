@@ -698,6 +698,29 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+  {
+    id: "real-file-imposition-preview",
+    category: "production",
+    name: "Echte Datei-Previews im Nutzenplan",
+    purpose:
+      "Ersetzt rein nummerierte Nutzenplan-Kacheln durch kleine Wiederholungen des echten Druckdatei-Previews. Der Nutzenplan zeigt dadurch nicht nur die Anzahl der Nutzen, sondern visuell auch das Motiv auf dem Druckbogen; Briefbogen wird als A4-Hochformat separat behandelt.",
+    reference: "Auftragstasche · Nutzenplan · Sprint 44.3",
+    classNames: [
+      "pp-imposition-sheet",
+      "pp-imposition-tile",
+      "pp-imposition-card--business-card",
+      "pp-imposition-card--letterhead",
+      "pp-preview-stage--letterhead",
+    ],
+    reuseFor: [
+      "Nutzenplan",
+      "Druckbogen-Vorschau",
+      "PDF-Previews",
+      "Ausschießen",
+      "Produktionsansicht",
+    ],
+  },
+
 ];
 
 export const printPilotReferenceScreen = {

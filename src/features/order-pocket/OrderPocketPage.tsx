@@ -911,7 +911,8 @@ function ImpositionPlanCard({ order }: { order: PrintPilotOrder }) {
         aria-label={`Nutzenplan ${order.imposition} auf ${order.rawFormat}`}
       >
         {Array.from({ length: cellCount }, (_, index) => (
-          <span key={index}>
+          <span className="pp-imposition-tile" key={index}>
+            <img src={order.preview.imageSrc} alt="" />
             <b>{index + 1}</b>
           </span>
         ))}

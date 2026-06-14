@@ -803,3 +803,11 @@ export const sprint4410Pattern = {
   description:
     "Visitenkarten-Nutzenpläne verwenden eine vollständige 24er-Anordnung im 6x4-Druckbogenraster. Leere 5x5-Rasterplätze werden vermieden, Motive bleiben flach und nicht gestapelt.",
 };
+
+export const sprint4411Pattern = {
+  id: "business-card-imposition-readable-scale",
+  sprint: "44.11",
+  description:
+    "Visitenkarten-Nutzenpläne behalten das vollständige 6x4-Raster, nutzen die verfügbare Bogenfläche aber stärker aus. Motive werden kontrastreicher und etwas größer dargestellt, ohne Cropping am Druckbogen oder Rückkehr zur Kacheloptik.",
+};
+

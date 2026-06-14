@@ -1365,3 +1365,26 @@ Nicht geändert:
 - keine PDF-Rendering-Logik
 - keine Datenlogik
 - keine Änderung an Übersicht, Rücknavigation, UI-State oder Auftragstaschen-Navigation
+
+## Sprint 44.11 – Visitenkarten-Druckbogen lesbarer skalieren
+
+Sprint 44.11 verfeinert den Visitenkarten-Nutzenplan nach Sprint 44.10. Das 6×4-Raster bleibt erhalten, der Bogen nutzt aber mehr der verfügbaren Kartenbreite und die Motive werden lesbarer dargestellt.
+
+Umgesetzt:
+
+- Vollständiges 24er-Raster im 6×4-Prinzip bleibt erhalten.
+- Nutzenplan-Card gibt dem Druckbogen mehr Breite.
+- Innenränder und Abstände im Bogen wurden reduziert.
+- Visitenkarten-Motive werden etwas größer und kontrastreicher dargestellt.
+- Bogengrenze und Sicherheitsrahmen bleiben sichtbar.
+- Nutzennummern bleiben sehr dezent.
+- Keine Rückkehr zur Kachel-/Stapeloptik.
+- Briefbogen und andere Produktarten werden nicht fachlich verändert.
+
+Nicht geändert:
+
+- keine echte Ausschieß-Engine
+- keine PDF-Rendering-Logik
+- keine Datenlogik
+- keine Änderung an Übersicht, Rücknavigation oder UI-State
+

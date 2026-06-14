@@ -1085,3 +1085,33 @@ Sprint 43.6 nimmt die Rückmeldung auf, dass die Cards nach dem Arbeitsleisten-U
 ### Nächster sinnvoller Schritt
 
 Als nächstes kann die lokale Interaktionslogik fachlich gekoppelt werden: Datenprüfung, Freigabe, Pflichtpunkte, Produktionsstatus und Weiterverarbeitung sollten dann in sinnvollen Abhängigkeiten reagieren.
+
+
+## Design Sprint 43.7 – Statusleiste als interaktive Prozessleiste
+
+Sprint 43.7 nimmt die Rückmeldung auf, dass Statusleiste und Schnellaktionen doppelt wirkten. Die separate Schnellaktions-/Arbeitsleiste wurde deshalb entfernt. Die zentrale Prozessleiste in der Auftragstasche übernimmt jetzt Anzeige und lokale Bedienung.
+
+### Umgesetzt
+
+- Separate Schnellaktionsleiste entfernt.
+- Status-/Prozessleiste ist jetzt die zentrale Bedienfläche für lokalen UI-State.
+- Prozessschritte sind direkt klickbar:
+  - Daten anklicken setzt lokal „Daten geprüft“.
+  - Freigabe anklicken setzt lokal „Freigabe erteilt“.
+  - Druck / Weiterverarbeitung anklicken schaltet den Produktionsstatus weiter.
+- Aktueller Auftragsstatus bleibt separat sichtbar, z. B. „Aktuell: In Weiterverarbeitung“.
+- „Zurücksetzen“ bleibt als kleine sekundäre Aktion neben dem aktuellen Status.
+- Hinweis „UI-Vorschau ohne persistente Speicherung“ ist in die Statusleiste integriert.
+- Auftragstasche wirkt dadurch ruhiger, weil keine zweite Aktions-/Statuszeile mehr vorhanden ist.
+- Neues Pattern `order-pocket-interactive-process-bar` dokumentiert.
+
+### Nicht verändert
+
+- Keine Persistenzlogik.
+- Keine Änderung an Aufträge-Übersicht, Kartenklick oder Rücknavigation.
+- Keine Änderung an dynamischen Auftragsdaten.
+- Keine fachliche Abhängigkeitslogik zwischen Checkliste, Datenprüfung, Freigabe und Produktion.
+
+### Nächster sinnvoller Schritt
+
+Als nächstes kann Sprint 44 lokale UI-Änderungen zwischen Auftragstasche und Aufträge-Übersicht zentraler halten, damit Statusänderungen nach der Rückkehr in der Übersicht sichtbar bleiben.

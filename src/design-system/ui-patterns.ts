@@ -586,6 +586,29 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+
+  {
+    id: "order-pocket-interactive-process-bar",
+    category: "production",
+    name: "Auftragstasche interaktive Prozessleiste",
+    purpose:
+      "Entfernt die redundante Schnellaktionsleiste und macht die zentrale Prozessleiste der Auftragstasche direkt bedienbar. Daten, Freigabe, Druck und Weiterverarbeitung können lokal über die Statusleiste geändert werden; Zurücksetzen bleibt als dezente Sekundäraktion erhalten.",
+    reference: "Auftragstasche · Sprint 43.7",
+    classNames: [
+      "pp-status-overview--interactive",
+      "pp-process-flow",
+      "pp-process-step",
+      "pp-status-current--with-reset",
+    ],
+    reuseFor: [
+      "Auftragstaschen",
+      "interaktive Statusleisten",
+      "Prozessketten",
+      "Lokaler UI-State",
+      "Produktionsstatus",
+    ],
+  },
+
 ];
 
 export const printPilotReferenceScreen = {

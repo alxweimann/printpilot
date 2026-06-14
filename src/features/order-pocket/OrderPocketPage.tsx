@@ -950,67 +950,6 @@ function PreviewCard({ order }: { order: PrintPilotOrder }) {
   );
 }
 
-function PocketActionBar({
-  actionState,
-  onMarkDataChecked,
-  onMarkApprovalGranted,
-  onCycleProduction,
-  onReset,
-}: {
-  actionState: PocketActionState;
-  onMarkDataChecked: () => void;
-  onMarkApprovalGranted: () => void;
-  onCycleProduction: () => void;
-  onReset: () => void;
-}) {
-  return (
-    <section
-      className="pp-pocket-actionbar pp-pocket-actionbar--workbench"
-      aria-label="Vorbereitete Auftragsaktionen"
-    >
-      <div className="pp-pocket-actionbar__intro">
-        <span className="pp-eyebrow">Schnellaktionen</span>
-        <strong>Arbeitsleiste</strong>
-        <p>UI-Vorschau ohne persistente Speicherung.</p>
-      </div>
-      <div className="pp-pocket-actionbar__actions">
-        <button
-          type="button"
-          className="pp-action-button pp-action-button--data"
-          onClick={onMarkDataChecked}
-        >
-          <b>Daten prüfen</b>
-          <small>{actionState.data.label}</small>
-        </button>
-        <button
-          type="button"
-          className="pp-action-button pp-action-button--approval"
-          onClick={onMarkApprovalGranted}
-        >
-          <b>Freigabe erteilen</b>
-          <small>{actionState.approval.label}</small>
-        </button>
-        <button
-          type="button"
-          className="pp-action-button pp-action-button--status"
-          onClick={onCycleProduction}
-        >
-          <b>Status weiter</b>
-          <small>{actionState.production.label}</small>
-        </button>
-        <button
-          type="button"
-          className="pp-action-button pp-action-button--reset"
-          onClick={onReset}
-        >
-          <b>Zurücksetzen</b>
-          <small>lokal</small>
-        </button>
-      </div>
-    </section>
-  );
-}
-
 function MachineCard({ machine }: { machine: MachineCardData }) {
   const imageSource = machine.image ?? machineFallbacks[machine.type];
 
@@ -1200,30 +1139,37 @@ export function OrderPocketPage({ order }: { order: PrintPilotOrder }) {
         >
           {order.deliveryMeta}
         </TopInfoCard>
-        <article className="pp-status-overview pp-status-overview--process">
+        <article className="pp-status-overview pp-status-overview--process pp-status-overview--interactive">
           <div className="pp-status-overview__head">
             <div>
-              <div className="pp-eyebrow">Prozesskette</div>
-              <strong>Auftragsstatus getrennt von Prozessphasen</strong>
+              <div className="pp-eyebrow">Interaktive Prozessleiste</div>
+              <strong>Auftragsstatus und Prozessphasen direkt bearbeiten</strong>
+              <p className="pp-status-overview__note">
+                UI-Vorschau ohne persistente Speicherung. Schritte anklicken,
+                um Datenprüfung, Freigabe und Produktionsphase lokal zu ändern.
+              </p>
             </div>
-            <div className="pp-status-current">
-              <small>Aktuell</small>
-              <StatusPill tone={actionState.production.tone}>
-                {currentProductionLabel}
-              </StatusPill>
+            <div className="pp-status-current pp-status-current--with-reset">
+              <span>
+                <small>Aktuell</small>
+                <StatusPill tone={actionState.production.tone}>
+                  {currentProductionLabel}
+                </StatusPill>
+              </span>
+              <button type="button" onClick={handleResetActions}>
+                Zurücksetzen
+              </button>
             </div>
           </div>
-          <ProcessFlow steps={processSteps} />
+          <ProcessFlow
+            steps={processSteps}
+            interactive
+            onDataClick={handleMarkDataChecked}
+            onApprovalClick={handleMarkApprovalGranted}
+            onProductionClick={handleCycleProduction}
+          />
         </article>
       </section>
-
-      <PocketActionBar
-        actionState={actionState}
-        onMarkDataChecked={handleMarkDataChecked}
-        onMarkApprovalGranted={handleMarkApprovalGranted}
-        onCycleProduction={handleCycleProduction}
-        onReset={handleResetActions}
-      />
 
       <div className="pp-pocket-zones">
         <section

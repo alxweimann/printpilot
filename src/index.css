@@ -5387,3 +5387,124 @@ button.pp-process-step:hover {
     min-height: 0;
   }
 }
+
+/* Sprint 43.7 – Statusleiste als interaktive Prozessleiste */
+.pp-status-overview--interactive {
+  gap: 10px;
+}
+
+.pp-status-overview--interactive .pp-status-overview__head {
+  align-items: center;
+}
+
+.pp-status-overview__note {
+  max-width: 620px;
+  margin: 5px 0 0;
+  color: #617089;
+  font-size: 10px;
+  font-weight: 680;
+  line-height: 1.35;
+}
+
+.pp-status-current--with-reset {
+  gap: 10px;
+  padding: 5px 6px 5px 9px;
+}
+
+.pp-status-current--with-reset > span {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.pp-status-current--with-reset button {
+  min-height: 28px;
+  padding: 6px 9px;
+  border: 1px dashed #cfdbe9;
+  border-radius: 8px;
+  background: #ffffff;
+  color: #607089;
+  font: inherit;
+  font-size: 8.5px;
+  font-weight: 860;
+  letter-spacing: .06em;
+  line-height: 1;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition: border-color .16s ease, background .16s ease, color .16s ease;
+}
+
+.pp-status-current--with-reset button:hover {
+  border-color: #aebfd2;
+  background: #f8fbff;
+  color: #071f48;
+}
+
+.pp-status-current--with-reset button:focus-visible,
+.pp-status-overview--interactive .pp-process-step:focus-visible {
+  outline: 3px solid rgba(0, 159, 227, .22);
+  outline-offset: 2px;
+}
+
+.pp-status-overview--interactive .pp-process-flow {
+  margin-top: 1px;
+}
+
+.pp-status-overview--interactive .pp-process-step {
+  min-height: 39px;
+}
+
+.pp-status-overview--interactive button.pp-process-step {
+  position: relative;
+}
+
+.pp-status-overview--interactive button.pp-process-step::after {
+  content: "ändern";
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  opacity: 0;
+  color: #8a9bb0;
+  font-size: 7px;
+  font-weight: 850;
+  letter-spacing: .06em;
+  line-height: 1;
+  text-transform: uppercase;
+  transition: opacity .16s ease;
+}
+
+.pp-status-overview--interactive button.pp-process-step:hover::after,
+.pp-status-overview--interactive button.pp-process-step:focus-visible::after {
+  opacity: 1;
+}
+
+.pp-status-overview--interactive button.pp-process-step:hover {
+  box-shadow: inset 3px 0 0 rgba(0, 159, 227, .82), 0 9px 18px rgba(0, 91, 150, .07);
+}
+
+@media (max-width: 1180px) {
+  .pp-status-overview--interactive .pp-status-overview__head {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .pp-status-current--with-reset {
+    width: 100%;
+    justify-content: space-between;
+  }
+}
+
+@media (max-width: 680px) {
+  .pp-status-current--with-reset {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .pp-status-current--with-reset > span {
+    justify-content: space-between;
+  }
+
+  .pp-status-current--with-reset button {
+    width: 100%;
+  }
+}

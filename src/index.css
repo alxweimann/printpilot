@@ -6025,3 +6025,161 @@ button.pp-process-step:hover {
     padding: 16px;
   }
 }
+
+/* Sprint 44.7 – Druckbogen-Nutzenplan realistischer darstellen */
+.pp-imposition-card {
+  --pp-sheet-paper: #ffffff;
+  --pp-sheet-edge: rgba(22, 39, 81, .22);
+  --pp-sheet-grid: rgba(22, 39, 81, .09);
+  --pp-sheet-cut: rgba(0, 159, 227, .28);
+}
+
+.pp-imposition-sheet {
+  position: relative;
+  border: 1px solid var(--pp-sheet-edge);
+  border-radius: 8px;
+  background:
+    linear-gradient(90deg, var(--pp-sheet-grid) 1px, transparent 1px) 0 0 / 24px 24px,
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow:
+    inset 0 0 0 1px rgba(255,255,255,.86),
+    0 16px 30px rgba(10,31,68,.07);
+}
+
+.pp-imposition-sheet::before {
+  inset: 12px;
+  border: 1px dashed rgba(0, 159, 227, .34);
+  border-radius: 6px;
+}
+
+.pp-imposition-sheet::after {
+  content: 'SRA3 Druckbogen · flache Datei-Vorschau · schematischer Stand';
+  left: 16px;
+  right: auto;
+  top: auto;
+  bottom: 7px;
+  width: auto;
+  height: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  color: rgba(78, 95, 128, .68);
+  font-size: 7.5px;
+  font-weight: 850;
+  letter-spacing: .075em;
+  text-transform: uppercase;
+}
+
+.pp-imposition-sheet .pp-imposition-tile {
+  border-radius: 2px;
+  border: 1px solid var(--pp-sheet-cut);
+  background: #fff;
+  box-shadow: none;
+  overflow: hidden;
+}
+
+.pp-imposition-sheet .pp-imposition-tile::before {
+  inset: -1px;
+  border: 1px solid rgba(22,39,81,.08);
+  border-radius: 2px;
+}
+
+.pp-imposition-sheet .pp-imposition-tile::after {
+  display: none;
+}
+
+.pp-imposition-tile img {
+  border-radius: 0;
+  box-shadow: none;
+  background: #fff;
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(6, minmax(0, 1fr));
+  gap: 2px 3px;
+  padding: 17px 18px 23px;
+  background:
+    linear-gradient(90deg, rgba(22, 39, 81, .04) 1px, transparent 1px) 0 0 / 28px 28px,
+    linear-gradient(180deg, #ffffff 0%, #f7fbff 100%);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile {
+  padding: 0;
+  border-color: rgba(0, 159, 227, .26);
+  background: #fff;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile::before {
+  inset: 0;
+  border: 1px solid rgba(22, 39, 81, .06);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: none;
+  filter: saturate(.98) contrast(1.02);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile b {
+  top: 1px;
+  right: 1px;
+  min-width: 10px;
+  height: 10px;
+  padding: 0 2px;
+  border: 0;
+  background: rgba(255,255,255,.48);
+  color: rgba(22,39,81,.38);
+  font-size: 6px;
+  line-height: 10px;
+  opacity: .18;
+  backdrop-filter: none;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile:hover b {
+  opacity: .62;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-sheet {
+  gap: 10px;
+  padding: 18px 26px 25px;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-tile {
+  padding: 0;
+  border-color: rgba(0, 159, 227, .24);
+  background: #fff;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-tile::before {
+  inset: 0;
+  border-color: rgba(22, 39, 81, .07);
+}
+
+.pp-imposition-card--letterhead .pp-imposition-tile img {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  object-fit: cover;
+  object-position: center;
+  border-radius: 0;
+  box-shadow: none;
+}
+
+.pp-imposition-card--poster .pp-imposition-tile,
+.pp-imposition-card--flyer .pp-imposition-tile,
+.pp-imposition-card--brochure .pp-imposition-tile {
+  padding: 0;
+}
+
+.pp-imposition-card--poster .pp-imposition-tile img,
+.pp-imposition-card--flyer .pp-imposition-tile img,
+.pp-imposition-card--brochure .pp-imposition-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  box-shadow: none;
+}

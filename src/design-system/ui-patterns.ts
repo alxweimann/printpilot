@@ -761,6 +761,14 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     reference: "Auftragstasche · Nutzenplan · Sprint 44.6",
   },
 
+
+  {
+    id: "realistic-flat-imposition-sheet",
+    title: "Realistischer Druckbogen-Nutzenplan",
+    description:
+      "Nutzenplan zeigt echte Druckdatei-Motive flach auf einem technischen Bogen statt als UI-Kacheln mit Schatten. Schnitt-/Beschnittlinien bleiben dezent sichtbar.",
+    status: "stable",
+  },
 ];
 
 export const printPilotReferenceScreen = {

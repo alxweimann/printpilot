@@ -1308,3 +1308,12 @@ Umgesetzt:
 Neues Pattern:
 
 - `business-card-imposition-deoverlap`
+
+## Sprint 44.7 – Druckbogen-Nutzenplan realistischer darstellen
+
+- Visitenkarten-Nutzenplan von künstlichen UI-Kacheln weiter Richtung flacher Druckbogen-Vorschau verschoben.
+- Einzelne Nutzen besitzen keine Card-Shadows/Stapelanmutung mehr.
+- Echte Druckdatei-Motive liegen flacher auf dem Bogen; Schnitt- und Beschnittlinien bleiben dezent sichtbar.
+- Bogengrenze, Sicherheitsrahmen und technisches Raster sind ruhiger und produktionsnäher gestaltet.
+- Briefbogen, Flyer, Broschüre und Plakat nutzen dieselbe flachere Druckbogen-Anmutung, ohne neue Ausschießlogik einzuführen.
+- Keine Änderung an PDF-Rendering, Datenlogik, UI-State, Übersicht oder Navigation.

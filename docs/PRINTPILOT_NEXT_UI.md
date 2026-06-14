@@ -1272,3 +1272,21 @@ Sprint 44.4 verfeinert die in Sprint 44.3 eingeführten echten Datei-Previews im
 ### Nächster sinnvoller Schritt
 
 Als nächstes kann der Nutzenplan fachlich weiter vorbereitet werden: Produktart, Bogenformat, Drehung, Zwischenschnitt, Greiferrand und tatsächliche Nutzenpositionen sollten später aus Produktionsparametern berechnet werden.
+
+## Design Sprint 44.5 – Nutzennummern und Motivruhe im Nutzenplan optimieren
+
+Sprint 44.5 verfeinert die echten Datei-Previews im Nutzenplan. Die Druckmotive bleiben im Vordergrund; Nutzennummern dienen nur noch als dezente Orientierung und konkurrieren nicht mehr mit den Motiven.
+
+Umgesetzt:
+
+- Nutzennummern im Nutzenplan deutlich verkleinert und transparenter gestaltet.
+- Nummern sitzen ruhiger am Nutzenrand statt dominant auf dem Motiv.
+- Hover-Zustand hebt die Nummern bei Bedarf stärker hervor.
+- Visitenkarten-Nutzenplan optisch beruhigt, damit die 24 Motive weniger kleinteilig wirken.
+- Motivfilter reduziert, um die echten PDF-Previews weniger künstlich wirken zu lassen.
+- Briefbogen- und Plakat-Nutzen behalten die größere, ruhige Aussenpositionierung der Nutzennummern.
+- Keine Änderung an Ausschießlogik, zentralem UI-State, Rücknavigation oder PDF-Asset-Struktur.
+
+Neues Pattern:
+
+- `quiet-imposition-numbering`

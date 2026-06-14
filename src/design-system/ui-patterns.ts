@@ -745,6 +745,14 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+  {
+    id: "quiet-imposition-numbering",
+    title: "Dezente Nutzennummern im Nutzenplan",
+    description:
+      "Nutzennummern werden bei echten Druckdatei-Previews nur als leise Orientierung am Nutzenrand gezeigt. Die Motive bleiben dominant; Nummern werden erst im Hover deutlicher.",
+    reference: "Auftragstasche · Nutzenplan · Sprint 44.5",
+  },
+
 ];
 
 export const printPilotReferenceScreen = {

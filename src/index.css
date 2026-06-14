@@ -5883,3 +5883,95 @@ button.pp-process-step:hover {
     max-height: 218px;
   }
 }
+
+/* Sprint 44.5 – Nutzennummern und Motivruhe im Nutzenplan optimieren */
+.pp-imposition-sheet .pp-imposition-tile {
+  isolation: isolate;
+}
+
+.pp-imposition-tile img {
+  filter: saturate(1.01) contrast(1.01);
+}
+
+.pp-imposition-tile b {
+  right: 3px;
+  top: 3px;
+  width: auto;
+  min-width: 13px;
+  height: 13px;
+  padding: 0 3px;
+  border: 1px solid rgba(0, 159, 227, .10);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, .58);
+  color: rgba(4, 90, 140, .58);
+  font-size: 7px;
+  font-weight: 760;
+  line-height: 11px;
+  opacity: .42;
+  box-shadow: none;
+  backdrop-filter: blur(2px);
+  transition: opacity .16s ease, background .16s ease, color .16s ease;
+}
+
+.pp-imposition-tile:hover b,
+.pp-imposition-tile:focus-within b {
+  opacity: .92;
+  background: rgba(255, 255, 255, .86);
+  color: rgba(0, 111, 185, .88);
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet {
+  gap: 6px 8px;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile {
+  padding: 4px;
+  background: rgba(255, 255, 255, .78);
+  box-shadow: 0 5px 12px rgba(10, 31, 68, .035);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile::before {
+  inset: 2px;
+  border-color: rgba(0, 159, 227, .14);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile img {
+  filter: saturate(.98) contrast(.98);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile b {
+  top: 2px;
+  right: 2px;
+  min-width: 11px;
+  height: 11px;
+  padding: 0 2px;
+  font-size: 6.5px;
+  line-height: 9px;
+  opacity: .30;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile:hover b {
+  opacity: .86;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-tile b,
+.pp-imposition-card--poster .pp-imposition-tile b {
+  top: 7px;
+  right: 7px;
+  opacity: .34;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-tile:hover b,
+.pp-imposition-card--poster .pp-imposition-tile:hover b {
+  opacity: .84;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-tile img {
+  filter: saturate(1) contrast(1.01);
+}
+
+@media (max-width: 760px) {
+  .pp-imposition-tile b {
+    opacity: .62;
+  }
+}

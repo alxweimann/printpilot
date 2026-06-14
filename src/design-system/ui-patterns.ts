@@ -654,6 +654,49 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       "Persistenz-Vorbereitung",
     ],
   },
+  {
+    id: "real-pdf-preview-assets",
+    category: "production",
+    name: "Echte PDF-Preview-Assets",
+    purpose:
+      "Bindet angelieferte Kundendruckdaten als Original-PDFs und daraus gerenderte PNG-Vorschauen in die Demo-Auftragsdaten ein. Übersicht und Auftragstasche nutzen dieselbe Preview-Quelle; Original-PDF und Thumbnail sind im Datenmodell getrennt vorbereitet.",
+    reference: "Aufträge · Übersicht ↔ Auftragstasche · Sprint 44.2",
+    classNames: [
+      "pp-order-preview",
+      "pp-order-preview--letterhead",
+      "pp-product-preview",
+      "pp-preview-stage--asset",
+      "pp-preview-asset-frame",
+    ],
+    reuseFor: [
+      "Druckdatei-Previews",
+      "PDF-Thumbnails",
+      "Auftragsdaten",
+      "Aufträge-Übersicht",
+      "Auftragstasche",
+    ],
+  },
+
+  {
+    id: "unified-process-status-labels",
+    category: "production",
+    name: "Einheitliche Prozessstatus-Begriffe",
+    purpose:
+      "Vereinheitlicht die Statusbegriffe zwischen Auftragstasche und Aufträge-Übersicht. Der interne Endzustand wird als Versandbereit geführt, damit Prozessleiste, Auftragskarte und Kennzahlen denselben Begriff verwenden.",
+    reference: "Aufträge · Statuslogik · Sprint 44.2",
+    classNames: [
+      "pp-process-flow",
+      "pp-process-step",
+      "pp-order-row-card",
+      "pp-status-pill",
+    ],
+    reuseFor: [
+      "Prozessketten",
+      "Auftragsstatus",
+      "Übersichtsbadges",
+      "Kennzahlen",
+    ],
+  },
 
 ];
 

@@ -5508,3 +5508,47 @@ button.pp-process-step:hover {
     width: 100%;
   }
 }
+
+/* Sprint 44.2 – echte PDF-Preview-Assets und Briefbogen-Thumbnail */
+.pp-order-preview--letterhead .pp-order-preview__sheet {
+  width: 104px;
+  height: 134px;
+  margin-inline: auto;
+  background: #ffffff;
+}
+
+.pp-order-preview--letterhead .pp-order-preview__image,
+.pp-order-preview--business-card .pp-order-preview__image {
+  object-fit: contain;
+  object-position: center;
+  background: #ffffff;
+}
+
+.pp-product-preview--letterhead img {
+  width: auto;
+  max-width: 82px;
+  height: 104px;
+  margin-inline: auto;
+  object-fit: contain;
+  background: #ffffff;
+}
+
+.pp-preview-stage--letterhead .pp-preview-asset-frame {
+  width: min(100%, 250px);
+  min-height: 220px;
+}
+
+.pp-preview-stage--letterhead .pp-preview-asset-frame img {
+  width: auto;
+  max-width: 142px;
+  max-height: 204px;
+  object-fit: contain;
+  background: #ffffff;
+}
+
+@media (max-width: 760px) {
+  .pp-order-row-card--quiet .pp-order-preview--letterhead .pp-order-preview__sheet {
+    width: 118px;
+    height: 150px;
+  }
+}

@@ -419,7 +419,7 @@ const productionStatusCycle: PocketStatus[] = [
   { label: "Geplant", tone: "blue" },
   { label: "Produktion", tone: "orange" },
   { label: "Weiterverarbeitung", tone: "orange" },
-  { label: "Fertig", tone: "green" },
+  { label: "Versandbereit", tone: "green" },
 ];
 
 function cloneChecklist(
@@ -519,7 +519,7 @@ function getCurrentProductionLabel(status: PocketStatus) {
       return "Im Druck";
     case "Weiterverarbeitung":
       return "In Weiterverarbeitung";
-    case "Fertig":
+    case "Versandbereit":
       return "Versandbereit";
     case "Geplant":
       return "Geplant";
@@ -544,7 +544,7 @@ function getProcessStepState(
         isActive: true,
       };
     }
-    if (currentLabel === "Weiterverarbeitung" || currentLabel === "Fertig") {
+    if (currentLabel === "Weiterverarbeitung" || currentLabel === "Versandbereit") {
       return { key: "print", label: "Druck", value: "erledigt", tone: "green" };
     }
     return { key: "print", label: "Druck", value: "geplant", tone: "blue" };
@@ -560,7 +560,7 @@ function getProcessStepState(
         isActive: true,
       };
     }
-    if (currentLabel === "Fertig") {
+    if (currentLabel === "Versandbereit") {
       return {
         key: "finishing",
         label: "Weiterverarbeitung",
@@ -576,7 +576,7 @@ function getProcessStepState(
     };
   }
 
-  if (currentLabel === "Fertig") {
+  if (currentLabel === "Versandbereit") {
     return {
       key: "shipping",
       label: "Versand",

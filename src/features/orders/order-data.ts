@@ -1,5 +1,8 @@
 import flyerPreview from "../../assets/order-previews/flyer-dinlang.png";
-import businessCardPreview from "../../assets/order-previews/visitenkarten-set.png";
+import realBusinessCardPreview from "../../assets/order-previews/wohlstandsmeister-vika.png";
+import letterheadPreview from "../../assets/order-previews/aw-briefbogen.png";
+import realBusinessCardPdf from "../../assets/order-files/wohlstandsmeister-vika.pdf";
+import letterheadPdf from "../../assets/order-files/aw-briefbogen.pdf";
 import brochurePreview from "../../assets/order-previews/broschuere-a5.png";
 import posterPreview from "../../assets/order-previews/plakat-a2.png";
 import stickerPreview from "../../assets/order-previews/aufkleberbogen.png";
@@ -13,12 +16,13 @@ export type OrderStatus = {
 };
 
 export type OrderPreview = {
-  kind: "flyer" | "business-card" | "brochure" | "poster" | "sticker";
+  kind: "flyer" | "business-card" | "brochure" | "poster" | "sticker" | "letterhead";
   label: string;
   filename: string;
   meta: string;
   imageSrc: string;
   imageAlt: string;
+  sourcePdf?: string;
 };
 
 export type FinishingStep = {
@@ -292,10 +296,11 @@ export const orderRows: PrintPilotOrder[] = [
     preview: {
       kind: "business-card",
       label: "PDF-Preview",
-      filename: "visitenkarten_set.pdf",
-      meta: "4/4 · 3 Nutzen",
-      imageSrc: businessCardPreview,
-      imageAlt: "Druckdatei-Vorschau Visitenkarten Set mit zwei Kartenmotiven",
+      filename: "Wohlstandsmeister-ViKa.pdf",
+      meta: "6 Seiten · 3,1 MB",
+      imageSrc: realBusinessCardPreview,
+      imageAlt: "PDF-Vorschau Wohlstandsmeister Visitenkarte mit QR-Code und Beschnittmarken",
+      sourcePdf: realBusinessCardPdf,
     },
     fileSize: "3,1 MB",
     fileCategory: "Freigabe/Druckdaten",
@@ -710,11 +715,125 @@ export const orderRows: PrintPilotOrder[] = [
       "Freigabe erteilt",
     ),
   },
+  {
+    id: "PP-2026-00486",
+    customer: "Weimann Print",
+    customerAddress: ["Druckstraße 1", "67071 Ludwigshafen"],
+    contactName: "Alex Weimann",
+    contactPhone: "0621 / 000000",
+    contactEmail: "info@weimann-print.de",
+    product: "Briefbogen A4",
+    productDescription: "Geschäftsbriefbogen mit Logo, Servicezeile und farbigem Abschluss",
+    format: "A4 · 4/0",
+    endFormat: "A4",
+    pages: "1-seitig",
+    quantity: "1.000 Stück",
+    paper: "Offset weiß 90 g",
+    color: "4/0-farbig CMYK",
+    rawFormat: "SRA3",
+    imposition: "2 Nutzen",
+    impositionCount: 2,
+    bleed: "3 mm",
+    waste: "ca. 25 Bogen",
+    totalWeight: "ca. 9,0 kg",
+    machine: "Xerox® Iridesse 1",
+    machineType: "digital-color",
+    machineTypeLabel: "Digitaldruck Farbe",
+    priority: { label: "Normal", tone: "blue" },
+    production: { label: "Geplant", tone: "blue" },
+    approval: { label: "Freigabe erteilt", tone: "green" },
+    data: { label: "Daten geprüft", tone: "green" },
+    orderDate: "02.06.2026",
+    dueDate: "06.06.2026",
+    dueMeta: "Sa · 11:00",
+    deliveryMeta: "KW 23 / Samstag",
+    nextStep: "Papier prüfen und Druckbogen vorbereiten",
+    owner: "Sarah K.",
+    progress: 18,
+    preview: {
+      kind: "letterhead",
+      label: "PDF-Preview",
+      filename: "aw_briefbogen.pdf",
+      meta: "1 Seite · 583 KB",
+      imageSrc: letterheadPreview,
+      imageAlt: "PDF-Vorschau Briefbogen Weimann Print mit Logo und pinkem Verlauf",
+      sourcePdf: letterheadPdf,
+    },
+    fileSize: "583 KB",
+    fileCategory: "Druckdaten",
+    fileDate: "02.06.2026",
+    fileTime: "13:20",
+    preflightValue: "OK",
+    bleedStatus: { label: "OK", tone: "green" },
+    scheduleStart: "06.06.2026",
+    scheduleStartTime: "08:00",
+    finishing: [
+      {
+        label: "Schneiden",
+        status: { label: "Geplant", tone: "orange" },
+        note: "SRA3 auf A4 endschneiden",
+      },
+      {
+        label: "Falzen",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "Briefbogen ungefalzt",
+      },
+      {
+        label: "Rillen",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "90 g Offset ohne Rillung",
+      },
+      {
+        label: "Heften",
+        status: { label: "Nicht notwendig", tone: "gray" },
+        note: "Einzelblatt",
+      },
+      {
+        label: "Verpacken",
+        status: { label: "Geplant", tone: "orange" },
+        note: "Plan in Karton einlegen",
+      },
+    ],
+    checklist: [
+      {
+        title: "Druck",
+        items: [
+          { status: "done", label: "PDF-Vorschau geprüft" },
+          { status: "done", label: "Preflight OK" },
+          { status: "open", label: "Offset weiß 90 g einlegen" },
+          { status: "open", label: "Logo und Fußverlauf prüfen" },
+          { status: "open", label: "Druckbogen freigeben" },
+        ],
+      },
+      {
+        title: "Weiterverarbeitung",
+        items: [
+          { status: "open", label: "A4 schneiden" },
+          { status: "open", label: "Auflage zählen" },
+          { status: "open", label: "Plan verpacken" },
+        ],
+      },
+      {
+        title: "Versand",
+        items: [
+          { status: "open", label: "Karton beschriften" },
+          { status: "open", label: "Übergabe vorbereiten" },
+        ],
+      },
+    ],
+    history: history(
+      "02.06.2026",
+      "13:20",
+      "Sarah K.",
+      "Daten geprüft",
+      "Freigabe erteilt",
+    ),
+  },
 ];
 
 export const laneGroups = [
   { title: "Daten / Freigabe", count: 3, tone: "blue" },
-  { title: "Produktion", count: 5, tone: "orange" },
+  { title: "Produktion", count: 6, tone: "orange" },
   { title: "Weiterverarbeitung", count: 2, tone: "gray" },
   { title: "Versandbereit", count: 2, tone: "green" },
 ] satisfies Array<{ title: string; count: number; tone: OrderTone }>;

@@ -1178,3 +1178,37 @@ Sprint 44.1 korrigiert die Rückmeldung aus der Auftragstasche in die Aufträge-
 ### Nächster sinnvoller Schritt
 
 Als nächstes kann geprüft werden, ob aus den geänderten Zuständen zusätzliche abgeleitete Werte entstehen sollen, z. B. aktualisierter nächster Schritt, Fortschritt, Verlaufseinträge oder Kennzahlen in der Übersicht.
+
+
+## Design Sprint 44.2 – Statusbegriffe vereinheitlichen und echte PDF-Previews einbauen
+
+Sprint 44.2 verbindet zwei kleinere, aber wichtige Korrekturen: Die Statusbegriffe zwischen Auftragstasche und Aufträge-Übersicht werden vereinheitlicht, und zwei angelieferte PDF-Druckdateien werden als echte Preview-Quelle in die Demo-Daten aufgenommen.
+
+### Umgesetzt
+
+- Der bisherige Endzustand `Fertig` wurde in der Prozesslogik auf `Versandbereit` vereinheitlicht.
+- Auftragstasche und Aufträge-Übersicht zeigen dadurch denselben Begriff für den letzten Produktions-/Versandzustand.
+- Die Prozesskette bleibt fachlich getrennt in Daten, Freigabe, Druck, Weiterverarbeitung und Versand.
+- `OrderPreview` wurde um eine optionale `sourcePdf`-Referenz erweitert.
+- Die angelieferten PDFs wurden als Originaldateien abgelegt:
+  - `src/assets/order-files/wohlstandsmeister-vika.pdf`
+  - `src/assets/order-files/aw-briefbogen.pdf`
+- Aus den PDFs wurden PNG-Preview-Bilder erzeugt und eingebunden:
+  - `src/assets/order-previews/wohlstandsmeister-vika.png`
+  - `src/assets/order-previews/aw-briefbogen.png`
+- Der Auftrag `PP-2026-00482 · Visitenkarten Set` nutzt jetzt die echte Wohlstandsmeister-Visitenkarten-PDF-Vorschau.
+- Ein zusätzlicher Demo-Auftrag `PP-2026-00486 · Briefbogen A4` nutzt die echte Briefbogen-PDF-Vorschau.
+- Preview-CSS wurde um den Typ `letterhead` ergänzt, damit Briefbogen als hochformatiges PDF-Thumbnail sauber dargestellt wird.
+- Neues Pattern `real-pdf-preview-assets` dokumentiert.
+- Neues Pattern `unified-process-status-labels` dokumentiert.
+
+### Nicht verändert
+
+- Keine echte PDF-Rendering-Logik im Browser. Die App nutzt weiterhin vorberechnete PNG-Thumbnails.
+- Keine Persistenz, kein LocalStorage und keine Datenbank.
+- Keine Änderung an Kartenklick, Rücknavigation oder zentralem UI-State.
+- Keine Änderung am grundsätzlichen Layout der Auftragstasche.
+
+### Nächster sinnvoller Schritt
+
+Als nächstes kann die Dateistruktur für echte Kundendruckdaten weiter vorbereitet werden: Originaldatei, Preview, Preflight-Ergebnis, Seitenanzahl und Versionierung sollten später pro Auftrag sauber gespeichert werden.

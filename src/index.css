@@ -6183,3 +6183,109 @@ button.pp-process-step:hover {
   object-fit: cover;
   box-shadow: none;
 }
+
+
+/* Sprint 44.8 – Druckbogen größer und produktionsnäher darstellen */
+.pp-imposition-card--business-card .pp-imposition-sheet,
+.pp-imposition-card--letterhead .pp-imposition-sheet {
+  width: min(100%, 520px);
+  max-width: 100%;
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet {
+  gap: 1px 2px;
+  padding: 11px 13px 14px;
+  border-radius: 7px;
+  background:
+    linear-gradient(90deg, rgba(22, 39, 81, .035) 1px, transparent 1px) 0 0 / 32px 32px,
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet::before {
+  inset: 8px;
+  border-color: rgba(0, 159, 227, .25);
+  border-radius: 5px;
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet::after {
+  content: '';
+  display: none;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile {
+  border-color: rgba(0, 159, 227, .18);
+  background: #ffffff;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile::before {
+  border-color: rgba(22, 39, 81, .045);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile img {
+  object-fit: cover;
+  object-position: center;
+  filter: saturate(1.02) contrast(1.03);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile b {
+  top: auto;
+  right: 2px;
+  bottom: 1px;
+  min-width: 8px;
+  height: 8px;
+  color: rgba(22, 39, 81, .30);
+  font-size: 5.5px;
+  line-height: 8px;
+  opacity: .12;
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet:hover .pp-imposition-tile b {
+  opacity: .38;
+}
+
+.pp-imposition-card--business-card .pp-imposition-details,
+.pp-imposition-card--letterhead .pp-imposition-details {
+  margin-top: -2px;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-sheet {
+  padding: 12px 20px 14px;
+  gap: 12px;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-sheet::after {
+  content: '';
+  display: none;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-tile img {
+  object-fit: cover;
+  object-position: center;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-tile b {
+  opacity: .16;
+}
+
+@media (max-width: 1500px) {
+  .pp-imposition-card--business-card .pp-imposition-sheet,
+  .pp-imposition-card--letterhead .pp-imposition-sheet {
+    width: min(100%, 485px);
+  }
+
+  .pp-imposition-card--business-card .pp-imposition-sheet {
+    gap: 1px 2px;
+    padding: 10px 12px 13px;
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-imposition-card--business-card .pp-imposition-sheet,
+  .pp-imposition-card--letterhead .pp-imposition-sheet {
+    width: 100%;
+  }
+
+  .pp-imposition-card--business-card .pp-imposition-sheet {
+    padding: 10px;
+  }
+}

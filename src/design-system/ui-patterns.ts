@@ -769,6 +769,15 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       "Nutzenplan zeigt echte Druckdatei-Motive flach auf einem technischen Bogen statt als UI-Kacheln mit Schatten. Schnitt-/Beschnittlinien bleiben dezent sichtbar.",
     status: "stable",
   },
+
+  {
+    id: "larger-production-imposition-sheet",
+    title: "Größerer produktionsnaher Druckbogen",
+    description:
+      "Nutzenplan skaliert den Druckbogen stärker aus, reduziert Randabstände und entfernt technischen Hilfstext aus der Bogenfläche. Visitenkarten- und Briefbogen-Motive wirken dadurch größer und näher an einem echten Druckbogen.",
+    status: "stable",
+  },
+
 ];
 
 export const printPilotReferenceScreen = {

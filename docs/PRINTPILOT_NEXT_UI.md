@@ -1317,3 +1317,22 @@ Neues Pattern:
 - Bogengrenze, Sicherheitsrahmen und technisches Raster sind ruhiger und produktionsnäher gestaltet.
 - Briefbogen, Flyer, Broschüre und Plakat nutzen dieselbe flachere Druckbogen-Anmutung, ohne neue Ausschießlogik einzuführen.
 - Keine Änderung an PDF-Rendering, Datenlogik, UI-State, Übersicht oder Navigation.
+
+## Sprint 44.8 – Druckbogen größer und produktionsnäher darstellen
+
+Sprint 44.8 verfeinert den in Sprint 44.7 eingeführten flachen Druckbogen-Look. Der Nutzenplan soll stärker wie ein echter Produktionsbogen wirken und weniger wie eine verkleinerte UI-Vorschau innerhalb der Karte.
+
+Umgesetzt:
+
+- Druckbogen im Nutzenplan größer skaliert.
+- Randabstände im Bogen reduziert, damit Visitenkarten- und Briefbogen-Motive besser erkennbar sind.
+- Technischer Hilfstext aus der Bogenfläche entfernt, damit die Druckmotive ruhiger wirken.
+- Visitenkarten-Nutzenplan bleibt flach und produktionsnah, ohne Rückkehr zur Kachel-/Stapeloptik.
+- Nutzennummern bleiben sehr dezent und treten nur als Orientierung auf.
+- Briefbogen-Nutzenplan wird ebenfalls größer dargestellt, aber nur zurückhaltend verändert.
+- Keine Änderung an Ausschießlogik, PDF-Rendering, Datenmodell, zentralem UI-State, Übersicht oder Navigation.
+
+Neues Pattern:
+
+- `larger-production-imposition-sheet`
+

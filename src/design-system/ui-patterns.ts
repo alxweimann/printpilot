@@ -789,3 +789,10 @@ export const printPilotReferenceScreen = {
     "Die Auftragstasche ist die visuelle Referenz für zukünftige PrintPilot-Module und bündelt die wichtigsten UI-Patterns.",
   patterns: printPilotUiPatterns.map((pattern) => pattern.id),
 } as const;
+
+export const sprint449Pattern = {
+  id: "contained-imposition-sheet",
+  sprint: "44.9",
+  description:
+    "Druckbogen-Vorschauen müssen vollständig sichtbar bleiben. Visitenkarten nutzen eine ruhigere 5x5-Bogenlogik mit 24 platzierten Motiven, enthaltene PDF-Previews werden per contain eingepasst statt zugeschnitten.",
+};

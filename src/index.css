@@ -6289,3 +6289,88 @@ button.pp-process-step:hover {
     padding: 10px;
   }
 }
+
+/* Sprint 44.9 – Druckbogen vollständig sichtbar einpassen */
+.pp-imposition-sheet {
+  box-sizing: border-box;
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet {
+  width: min(100%, 500px);
+  max-width: 100%;
+  aspect-ratio: 450 / 320;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  grid-template-rows: repeat(5, minmax(0, 1fr));
+  gap: 3px 4px;
+  padding: 14px 16px;
+  align-content: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile {
+  min-width: 0;
+  min-height: 0;
+  aspect-ratio: 85 / 55;
+  padding: 1px;
+  border-color: rgba(0, 159, 227, .16);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile img {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+  transform: none;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile b {
+  right: 1px;
+  bottom: 1px;
+  background: rgba(255, 255, 255, .56);
+}
+
+.pp-imposition-card--letterhead .pp-imposition-sheet {
+  width: min(100%, 500px);
+  aspect-ratio: 450 / 320;
+  padding: 14px 22px;
+  overflow: hidden;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-tile {
+  min-width: 0;
+  min-height: 0;
+  padding: 2px;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-tile img {
+  width: 100%;
+  height: 100%;
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+  object-position: center;
+}
+
+@media (max-width: 1500px) {
+  .pp-imposition-card--business-card .pp-imposition-sheet,
+  .pp-imposition-card--letterhead .pp-imposition-sheet {
+    width: min(100%, 470px);
+  }
+
+  .pp-imposition-card--business-card .pp-imposition-sheet {
+    gap: 3px;
+    padding: 13px 14px;
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-imposition-card--business-card .pp-imposition-sheet {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(6, minmax(0, 1fr));
+    gap: 3px;
+    padding: 12px;
+  }
+}

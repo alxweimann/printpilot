@@ -1336,3 +1336,11 @@ Neues Pattern:
 
 - `larger-production-imposition-sheet`
 
+
+## Sprint 44.9 – Druckbogen vollständig sichtbar einpassen
+
+- Nutzenplan-Druckbogen bleibt vollständig sichtbar; keine Motive werden am Rand abgeschnitten.
+- Visitenkarten-Nutzenplan wurde von der zu engen 4x6-Darstellung auf eine ruhigere 5x5-Bogenlogik umgestellt, damit 24 Nutzen auf dem SRA3-Bogen klarer und produktionsnäher wirken.
+- PDF-/Preview-Motive werden im Nutzenplan mit `contain` eingepasst statt mit `cover` beschnitten.
+- Briefbogen-Nutzenplan behält den A4-Hochformat-Charakter und wird ebenfalls ohne Cropping dargestellt.
+- Keine Änderung an Ausschießlogik, Datenmodell, Übersicht, Rücknavigation oder UI-State.

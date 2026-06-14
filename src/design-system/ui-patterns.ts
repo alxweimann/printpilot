@@ -561,6 +561,31 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+  {
+    id: "order-pocket-zone-equal-heights",
+    category: "layout",
+    name: "Auftragstasche Zonen mit harmonisierten Kartenhöhen",
+    purpose:
+      "Gliedert die Auftragstasche in Auftragsdaten, Produktion und Auftragsbegleitung und harmonisiert die Kartenhöhen innerhalb jeder Zone. Dadurch bleiben Produkt, Druckdaten, Termine, Checkliste sowie Produktions- und Begleitmodule ruhiger ausgerichtet, ohne Inhalte zu verzerren.",
+    reference: "Auftragstasche · Sprint 43.6",
+    classNames: [
+      "pp-pocket-zones",
+      "pp-pocket-zone",
+      "pp-pocket-zone__header",
+      "pp-pocket-zone-grid",
+      "pp-pocket-zone-grid--overview",
+      "pp-pocket-zone-grid--production",
+      "pp-pocket-zone-grid--support",
+    ],
+    reuseFor: [
+      "Auftragstaschen",
+      "Produktionszonen",
+      "Kartenraster",
+      "Grid-Balance",
+      "gleichmäßige Kartenhöhen",
+    ],
+  },
+
 ];
 
 export const printPilotReferenceScreen = {

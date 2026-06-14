@@ -1055,3 +1055,33 @@ Sprint 43.5 finalisiert die lokale Schnellaktionsleiste aus Sprint 43.4. Die Akt
 ### Nächster sinnvoller Schritt
 
 Als nächstes kann die lokale Interaktionslogik fachlich gekoppelt werden: Datenprüfung/Freigabe/Produktionsstatus sollten sinnvolle Abhängigkeiten bekommen, bevor später echte Speicherung oder Datenbank-Anbindung ergänzt wird.
+
+## Design Sprint 43.6 – Auftragstaschen-Kartenhöhen harmonisieren
+
+Sprint 43.6 nimmt die Rückmeldung auf, dass die Cards nach dem Arbeitsleisten-Umbau wieder unterschiedlich hoch wirkten. Die Auftragstasche ist deshalb wieder konsequent in Zonen gegliedert und die Kartenhöhen werden innerhalb dieser Zonen harmonisiert.
+
+### Umgesetzt
+
+- Auftragstasche erhält eine klare Zonenstruktur:
+  - Auftragsdaten: Produkt, Druckdaten, Termine, Produktions-Checkliste
+  - Produktion: Nutzenplan, Vorschau, Weiterverarbeitung
+  - Auftragsbegleitung: Dateien, Notizen, Maschine, Kommentare / Verlauf
+- Neues Raster `pp-pocket-zones` / `pp-pocket-zone-grid` eingeführt.
+- Karten innerhalb einer Zone werden gleichmäßiger hochgezogen.
+- Inhalte bleiben oben ausgerichtet; freie Fläche entsteht ruhiger innerhalb der Cards statt zwischen unterschiedlich hohen Cards.
+- Produktionszone richtet Nutzenplan, Vorschau und Weiterverarbeitung wieder ruhiger aus.
+- Auftragsbegleitung richtet Dateien, Notizen, Maschine und Verlauf gleichmäßiger aus.
+- Checkliste bleibt kompakt, wird aber wieder sauber in die obere Auftragsdaten-Zone integriert.
+- Responsive Verhalten bleibt erhalten; auf kleineren Breiten werden feste Mindesthöhen zurückgenommen.
+- Neues Pattern `order-pocket-zone-equal-heights` dokumentiert.
+
+### Nicht verändert
+
+- Keine Änderung an Aufträge-Übersicht, Kartenklick oder Rücknavigation.
+- Keine neue Persistenzlogik.
+- Keine fachliche Änderung an Schnellaktionen, Checkliste, Weiterverarbeitung oder Statuslogik.
+- Keine Änderung an den dynamischen Auftragsdaten.
+
+### Nächster sinnvoller Schritt
+
+Als nächstes kann die lokale Interaktionslogik fachlich gekoppelt werden: Datenprüfung, Freigabe, Pflichtpunkte, Produktionsstatus und Weiterverarbeitung sollten dann in sinnvollen Abhängigkeiten reagieren.

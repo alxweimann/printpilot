@@ -5689,3 +5689,197 @@ button.pp-process-step:hover {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Sprint 44.4 – Nutzenplan-Preview finalisiert */
+.pp-imposition-card {
+  --pp-imposition-bleed: rgba(0, 159, 227, .46);
+  --pp-imposition-cut: rgba(22, 39, 81, .22);
+}
+
+.pp-imposition-sheet {
+  align-items: stretch;
+  justify-items: stretch;
+  gap: 8px;
+  padding: 18px;
+  border-color: #d4e3f2;
+  background:
+    linear-gradient(90deg, rgba(22, 39, 81, .035) 1px, transparent 1px) 0 0 / 18px 18px,
+    linear-gradient(180deg, #ffffff 0%, #f5f9fd 100%);
+}
+
+.pp-imposition-sheet::before {
+  inset: 10px;
+  border-color: var(--pp-imposition-bleed);
+  border-radius: 11px;
+}
+
+.pp-imposition-sheet::after {
+  left: 18px;
+  right: 18px;
+  top: 18px;
+  bottom: 18px;
+  height: auto;
+  border: 1px solid rgba(22, 39, 81, .08);
+  border-radius: 9px;
+  background: none;
+}
+
+.pp-imposition-sheet .pp-imposition-tile {
+  display: grid;
+  place-items: center;
+  min-width: 0;
+  min-height: 0;
+  overflow: visible;
+  border-color: rgba(0, 159, 227, .24);
+  background: rgba(255,255,255,.88);
+  box-shadow: 0 8px 16px rgba(10, 31, 68, .05);
+}
+
+.pp-imposition-tile::before,
+.pp-imposition-tile::after {
+  content: '';
+  position: absolute;
+  z-index: 2;
+  pointer-events: none;
+  opacity: .54;
+}
+
+.pp-imposition-tile::before {
+  inset: 3px;
+  border: 1px dashed rgba(0, 159, 227, .25);
+  border-radius: inherit;
+}
+
+.pp-imposition-tile::after {
+  left: 50%;
+  top: 50%;
+  width: 1px;
+  height: 1px;
+  background: transparent;
+  box-shadow:
+    -999px 0 0 rgba(0,0,0,0),
+    0 -999px 0 rgba(0,0,0,0);
+}
+
+.pp-imposition-tile img {
+  z-index: 1;
+  width: 100%;
+  height: 100%;
+  border-radius: 4px;
+  background: #ffffff;
+  box-shadow: 0 7px 14px rgba(10, 31, 68, .09);
+}
+
+.pp-imposition-tile b {
+  left: auto;
+  right: 4px;
+  top: 4px;
+  width: 16px;
+  height: 16px;
+  border: 1px solid rgba(0, 159, 227, .16);
+  background: rgba(255,255,255,.86);
+  color: rgba(0, 159, 227, .72);
+  font-size: 8.5px;
+  font-weight: 820;
+  box-shadow: 0 3px 8px rgba(10, 31, 68, .05);
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-rows: repeat(6, minmax(0, 1fr));
+  gap: 5px 7px;
+  padding: 16px 18px;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile {
+  padding: 3px;
+  border-radius: 6px;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  transform: none;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile b {
+  opacity: .55;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-sheet {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  grid-template-rows: 1fr;
+  gap: 18px;
+  padding: 20px 34px;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-tile {
+  padding: 10px;
+  border-color: rgba(0, 159, 227, .22);
+  background: rgba(255,255,255,.70);
+}
+
+.pp-imposition-card--letterhead .pp-imposition-tile::before {
+  inset: 5px;
+  border-radius: 5px;
+}
+
+.pp-imposition-card--letterhead .pp-imposition-tile img {
+  width: auto;
+  height: 100%;
+  max-width: 100%;
+  max-height: 238px;
+  object-fit: contain;
+  border-radius: 3px;
+  box-shadow: 0 10px 20px rgba(10, 31, 68, .10);
+}
+
+.pp-imposition-card--flyer .pp-imposition-tile img,
+.pp-imposition-card--brochure .pp-imposition-tile img {
+  object-fit: cover;
+  object-position: center;
+  transform: none;
+}
+
+.pp-imposition-card--poster .pp-imposition-tile img {
+  width: auto;
+  max-width: 100%;
+  height: 100%;
+  object-fit: contain;
+  transform: none;
+}
+
+.pp-imposition-card--sticker .pp-imposition-sheet {
+  gap: 8px;
+}
+
+.pp-imposition-card--sticker .pp-imposition-tile {
+  border-radius: 12px;
+  padding: 5px;
+}
+
+.pp-imposition-card--sticker .pp-imposition-tile::before {
+  border-radius: 10px;
+}
+
+.pp-imposition-card--sticker .pp-imposition-tile img {
+  object-fit: contain;
+  transform: none;
+}
+
+@media (max-width: 1500px) {
+  .pp-imposition-sheet {
+    padding: 15px;
+  }
+
+  .pp-imposition-card--letterhead .pp-imposition-sheet {
+    gap: 14px;
+    padding-inline: 24px;
+  }
+
+  .pp-imposition-card--letterhead .pp-imposition-tile img {
+    max-height: 218px;
+  }
+}

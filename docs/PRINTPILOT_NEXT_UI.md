@@ -1243,3 +1243,32 @@ Sprint 44.3 verbessert die visuelle Produktionsnähe der Auftragstasche. Der Nut
 ### Nächster sinnvoller Schritt
 
 Als nächstes kann der Nutzenplan weiter fachlich verfeinert werden: Bogenformat, Drehung, Greiferrand, Beschnitt, Zwischenschnitt und Nutzenanordnung sollten später aus echten Produktionsparametern berechnet werden.
+
+
+## Design Sprint 44.4 – Nutzenplan-Preview finalisieren
+
+Sprint 44.4 verfeinert die in Sprint 44.3 eingeführten echten Datei-Previews im Nutzenplan. Der Druckbogen soll dadurch stärker wie ein Produktionsbogen wirken und weniger wie ein Raster aus Bildkacheln.
+
+### Umgesetzt
+
+- Nutzenplan-Bogen optisch präziser gefasst:
+  - klarere Bogengrenze
+  - dezenter Beschnitt-/Sicherheitsrahmen
+  - ruhigere Innenfläche mit technischem Raster
+- Nutzennummern sind jetzt kleiner und weniger dominant.
+- Visitenkarten-Nutzenplan wurde weiter an einen echten Mehrnutzenbogen angenähert.
+- Briefbogen-Nutzenplan behandelt A4-Hochformat separat und zeigt zwei ruhig platzierte Nutzen auf SRA3.
+- Flyer/Broschüre/Plakat/Sticker behalten eigene Produktart-Regeln, ohne die Motive unnötig zu verzerren.
+- Die echten Preview-Bilder aus den PDF-Assets bleiben die Grundlage für die Darstellung.
+- Neues Pattern `finalized-imposition-preview` dokumentiert.
+
+### Nicht verändert
+
+- Keine echte Ausschieß-Engine.
+- Keine Berechnung von Greiferrand, Bundsteg, Zwischenschnitt oder Laufrichtung.
+- Keine Browser-PDF-Rendering-Logik.
+- Keine Änderung an Übersicht, Kartenklick, Rücknavigation, zentralem UI-State oder Persistenz.
+
+### Nächster sinnvoller Schritt
+
+Als nächstes kann der Nutzenplan fachlich weiter vorbereitet werden: Produktart, Bogenformat, Drehung, Zwischenschnitt, Greiferrand und tatsächliche Nutzenpositionen sollten später aus Produktionsparametern berechnet werden.

@@ -721,6 +721,30 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+  {
+    id: "finalized-imposition-preview",
+    category: "production",
+    name: "Finalisierte Nutzenplan-Preview",
+    purpose:
+      "Verfeinert die echten Druckdatei-Previews im Nutzenplan: Bogenbegrenzung, Beschnitt-/Sicherheitsrahmen, dezentere Nutzennummern und eigene Darstellungsregeln für Visitenkarten, Briefbogen, Flyer, Broschüren, Plakate und Sticker.",
+    reference: "Auftragstasche · Nutzenplan · Sprint 44.4",
+    classNames: [
+      "pp-imposition-sheet",
+      "pp-imposition-tile",
+      "pp-imposition-card--business-card",
+      "pp-imposition-card--letterhead",
+      "pp-imposition-card--poster",
+      "pp-imposition-card--sticker",
+    ],
+    reuseFor: [
+      "Nutzenplan",
+      "Druckbogen-Vorschau",
+      "Beschnittdarstellung",
+      "PDF-Previews",
+      "Ausschieß-Vorbereitung",
+    ],
+  },
+
 ];
 
 export const printPilotReferenceScreen = {

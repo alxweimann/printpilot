@@ -796,3 +796,10 @@ export const sprint449Pattern = {
   description:
     "Druckbogen-Vorschauen müssen vollständig sichtbar bleiben. Visitenkarten nutzen eine ruhigere 5x5-Bogenlogik mit 24 platzierten Motiven, enthaltene PDF-Previews werden per contain eingepasst statt zugeschnitten.",
 };
+
+export const sprint4410Pattern = {
+  id: "business-card-imposition-24-up",
+  sprint: "44.10",
+  description:
+    "Visitenkarten-Nutzenpläne verwenden eine vollständige 24er-Anordnung im 6x4-Druckbogenraster. Leere 5x5-Rasterplätze werden vermieden, Motive bleiben flach und nicht gestapelt.",
+};

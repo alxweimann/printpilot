@@ -6374,3 +6374,81 @@ button.pp-process-step:hover {
     padding: 12px;
   }
 }
+
+/* Sprint 44.10 – Visitenkarten-Nutzenplan als sauberer 24er-Druckbogen */
+.pp-imposition-card--business-card .pp-imposition-sheet {
+  width: min(100%, 520px);
+  max-width: 100%;
+  aspect-ratio: 450 / 320;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+  gap: 4px 5px;
+  padding: 18px 17px 16px;
+  overflow: hidden;
+  align-content: center;
+  justify-content: center;
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet::before {
+  inset: 10px;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 85 / 55;
+  align-self: center;
+  justify-self: stretch;
+  padding: 0;
+  overflow: hidden;
+  border-radius: 2px;
+  border-color: rgba(0, 159, 227, .18);
+  background: #fff;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile::before {
+  inset: 0;
+  border-color: rgba(22, 39, 81, .035);
+  border-radius: 2px;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 1px;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile b {
+  right: 2px;
+  bottom: 2px;
+  min-width: 7px;
+  height: 7px;
+  line-height: 7px;
+  color: rgba(22, 39, 81, .22);
+  background: rgba(255, 255, 255, .42);
+  font-size: 5px;
+  opacity: .10;
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet:hover .pp-imposition-tile b {
+  opacity: .30;
+}
+
+@media (max-width: 1500px) {
+  .pp-imposition-card--business-card .pp-imposition-sheet {
+    width: min(100%, 500px);
+    gap: 3px 4px;
+    padding: 16px 15px 15px;
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-imposition-card--business-card .pp-imposition-sheet {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(6, minmax(0, 1fr));
+    gap: 4px;
+    padding: 13px;
+  }
+}

@@ -1344,3 +1344,24 @@ Neues Pattern:
 - PDF-/Preview-Motive werden im Nutzenplan mit `contain` eingepasst statt mit `cover` beschnitten.
 - Briefbogen-Nutzenplan behält den A4-Hochformat-Charakter und wird ebenfalls ohne Cropping dargestellt.
 - Keine Änderung an Ausschießlogik, Datenmodell, Übersicht, Rücknavigation oder UI-State.
+
+## Sprint 44.10 – Visitenkarten-Nutzenplan als sauberer 24er-Druckbogen
+
+Sprint 44.10 korrigiert die Nutzenplan-Darstellung für Visitenkarten nach Sprint 44.9. Das vorherige 5×5-Raster zeigte alle Nutzen vollständig, wirkte aber durch die unvollständig gefüllte letzte Reihe nicht wie ein sauber geplanter Druckbogen.
+
+Umgesetzt:
+
+- Visitenkarten-Nutzenplan nutzt wieder eine vollständige 24er-Anordnung.
+- Desktop-Darstellung verwendet ein ruhiges 6×4-Druckbogenraster.
+- Die 24 Nutzen füllen den Bogen vollständig ohne leere Rasterplätze.
+- Motive bleiben flach auf dem Bogen und kehren nicht zur Kachel-/Stapeloptik zurück.
+- Bogengrenze und Sicherheitsrahmen bleiben sichtbar.
+- Nutzennummern bleiben sehr dezent.
+- Mobile Darstellung darf weiter auf 4×6 umbrechen, damit die Vorschau lesbar bleibt.
+
+Nicht geändert:
+
+- keine echte Ausschieß-Engine
+- keine PDF-Rendering-Logik
+- keine Datenlogik
+- keine Änderung an Übersicht, Rücknavigation, UI-State oder Auftragstaschen-Navigation

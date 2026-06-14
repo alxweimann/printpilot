@@ -1,7 +1,7 @@
 import type { KeyboardEvent } from "react";
 import { StatusPill } from "../../components/ui/StatusPill";
 import printPilotLogo from "../../assets/logo/printpilot-logo-on-navy.png";
-import { laneGroups, orderRows, orderSummary } from "./order-data";
+import { laneGroups } from "./order-data";
 import type { OrderPreview, OrderTone, PrintPilotOrder } from "./order-data";
 
 type OrdersIconName =
@@ -72,6 +72,53 @@ function OrdersIcon({ name }: { name: OrdersIconName }) {
     default:
       return null;
   }
+}
+
+
+function getOverviewMetrics(orders: PrintPilotOrder[]) {
+  const dueSoon = orders.filter((order) => order.priority.tone === "orange").length;
+  const inProduction = orders.filter((order) =>
+    ["Produktion", "Weiterverarbeitung"].includes(order.production.label),
+  ).length;
+  const approvalOpen = orders.filter(
+    (order) => order.approval.label !== "Freigabe erteilt",
+  ).length;
+  const dataOpen = orders.filter(
+    (order) =>
+      !order.data.label.includes("geprüft") && !order.data.label.includes("OK"),
+  ).length;
+
+  return [
+    {
+      label: "Priorität",
+      value: String(dueSoon),
+      helper: dueSoon === 1 ? "Auftrag kritisch" : "Aufträge kritisch",
+      tone: dueSoon > 0 ? "orange" : "gray",
+    },
+    {
+      label: "In Produktion",
+      value: String(inProduction),
+      helper: "Druck / Weiterverarbeitung",
+      tone: inProduction > 0 ? "blue" : "gray",
+    },
+    {
+      label: "Freigabe offen",
+      value: String(approvalOpen),
+      helper: "Kunde",
+      tone: approvalOpen > 0 ? "orange" : "green",
+    },
+    {
+      label: "Daten prüfen",
+      value: String(dataOpen),
+      helper: "Preflight",
+      tone: dataOpen > 0 ? "orange" : "green",
+    },
+  ] satisfies Array<{
+    label: string;
+    value: string;
+    helper: string;
+    tone: OrderTone;
+  }>;
 }
 
 function OverviewMetric({
@@ -207,10 +254,14 @@ function OrderCard({
 }
 
 export function OrdersOverviewPage({
+  orders,
   onOpenOrderPocket,
 }: {
+  orders: PrintPilotOrder[];
   onOpenOrderPocket: (order: PrintPilotOrder) => void;
 }) {
+  const overviewMetrics = getOverviewMetrics(orders);
+
   return (
     <div className="pp-orders-overview pp-orders-overview--quiet">
       <header className="pp-master-header pp-orders-master-header pp-orders-master-header--quiet">
@@ -232,12 +283,12 @@ export function OrdersOverviewPage({
           aria-label="Aktive Aufträge"
         >
           <span>Aktive Aufträge</span>
-          <strong>{orderRows.length}</strong>
+          <strong>{orders.length}</strong>
         </div>
       </header>
 
       <section className="pp-orders-summary pp-orders-summary--quiet" aria-label="Auftragskennzahlen">
-        {orderSummary.map((item) => (
+        {overviewMetrics.map((item) => (
           <OverviewMetric key={item.label} {...item} />
         ))}
       </section>
@@ -276,7 +327,7 @@ export function OrdersOverviewPage({
           </div>
 
           <div className="pp-orders-card-list">
-            {orderRows.map((order) => (
+            {orders.map((order) => (
               <OrderCard
                 key={order.id}
                 order={order}

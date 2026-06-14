@@ -1115,3 +1115,34 @@ Sprint 43.7 nimmt die Rückmeldung auf, dass Statusleiste und Schnellaktionen do
 ### Nächster sinnvoller Schritt
 
 Als nächstes kann Sprint 44 lokale UI-Änderungen zwischen Auftragstasche und Aufträge-Übersicht zentraler halten, damit Statusänderungen nach der Rückkehr in der Übersicht sichtbar bleiben.
+
+
+## Design Sprint 44 – Lokalen UI-State in die Übersicht zurückspiegeln
+
+Sprint 44 verbindet die lokalen Auftragstaschen-Aktionen stärker mit der Aufträge-Übersicht. Änderungen bleiben weiterhin reine UI-Vorschau ohne echte Persistenz, werden aber im zentralen App-State gehalten, sodass die Übersicht nach der Rückkehr den geänderten Auftragszustand zeigt.
+
+### Umgesetzt
+
+- `App.tsx` hält die Demo-Aufträge jetzt als zentralen UI-State.
+- Die Aufträge-Übersicht erhält die aktuellen Auftragsdaten aus dem App-State statt direkt aus den statischen Demo-Daten.
+- Die Auftragstasche meldet lokale Änderungen an den zentralen App-State zurück.
+- Nach Rückkehr in die Übersicht werden aktualisierte Werte sichtbar:
+  - Datenstatus
+  - Freigabestatus
+  - Produktionsstatus
+  - Checklistenstand
+  - Weiterverarbeitungsschritte
+- Der Button `Zurücksetzen` stellt den gewählten Auftrag wieder aus den ursprünglichen Demo-Daten her.
+- Die Kennzahlen in der Aufträge-Übersicht werden aus dem aktuellen UI-State abgeleitet.
+- Neues Pattern `central-order-ui-state` dokumentiert.
+
+### Nicht verändert
+
+- Keine echte Persistenz.
+- Keine Datenbank- oder LocalStorage-Anbindung.
+- Keine Änderung an Navigation, Kartenklick oder Rücknavigation.
+- Keine Änderung am visuellen Grundlayout der Übersicht oder Auftragstasche.
+
+### Nächster sinnvoller Schritt
+
+Als nächstes kann Sprint 44.1 die fachlichen Abhängigkeiten ergänzen: Produktion sollte z. B. erst sinnvoll weiterlaufen, wenn Pflichtpunkte, Datenprüfung und Freigabe erfüllt sind. Danach kann echte Speicherung vorbereitet werden.

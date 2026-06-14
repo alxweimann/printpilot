@@ -609,6 +609,29 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+  {
+    id: "central-order-ui-state",
+    category: "production",
+    name: "Zentraler Auftrags-UI-State",
+    purpose:
+      "Hält lokale Auftragstaschen-Änderungen in App.tsx zentral, damit Datenprüfung, Freigabe, Produktionsstatus, Checkliste und Weiterverarbeitung nach der Rückkehr in der Aufträge-Übersicht sichtbar bleiben. Noch ohne Persistenz oder Backend.",
+    reference: "Aufträge · Übersicht ↔ Auftragstasche · Sprint 44",
+    classNames: [
+      "pp-order-row-card",
+      "pp-status-overview--interactive",
+      "pp-process-flow",
+      "pp-check-item",
+      "pp-finishing-status-button",
+    ],
+    reuseFor: [
+      "Aufträge",
+      "Auftragstasche",
+      "lokaler UI-State",
+      "Statusänderungen",
+      "Persistenz-Vorbereitung",
+    ],
+  },
+
 ];
 
 export const printPilotReferenceScreen = {

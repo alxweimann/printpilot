@@ -450,6 +450,21 @@ function createPocketActionState(order: PrintPilotOrder): PocketActionState {
   };
 }
 
+
+function createOrderFromActionState(
+  order: PrintPilotOrder,
+  actionState: PocketActionState,
+): PrintPilotOrder {
+  return {
+    ...order,
+    data: { ...actionState.data },
+    approval: { ...actionState.approval },
+    production: { ...actionState.production },
+    checklist: cloneChecklist(actionState.checklist),
+    finishing: cloneFinishing(actionState.finishing),
+  };
+}
+
 function getNextProductionStatus(status: PocketStatus): PocketStatus {
   const currentIndex = productionStatusCycle.findIndex(
     (item) => item.label === status.label,
@@ -982,7 +997,15 @@ function MachineCard({ machine }: { machine: MachineCardData }) {
   );
 }
 
-export function OrderPocketPage({ order }: { order: PrintPilotOrder }) {
+export function OrderPocketPage({
+  order,
+  onOrderChange,
+  onOrderReset,
+}: {
+  order: PrintPilotOrder;
+  onOrderChange?: (order: PrintPilotOrder) => void;
+  onOrderReset?: () => void;
+}) {
   const [actionState, setActionState] = useState<PocketActionState>(() =>
     createPocketActionState(order),
   );
@@ -1009,36 +1032,46 @@ export function OrderPocketPage({ order }: { order: PrintPilotOrder }) {
     service: "12.05.2026",
   };
 
+  const applyActionState = (
+    updater: (current: PocketActionState) => PocketActionState,
+  ) => {
+    setActionState((current) => {
+      const next = updater(current);
+      onOrderChange?.(createOrderFromActionState(order, next));
+      return next;
+    });
+  };
+
   const handleMarkDataChecked = () => {
-    setActionState((current) => ({
+    applyActionState((current) => ({
       ...current,
       data: { label: "Daten geprüft", tone: "green" },
     }));
   };
 
   const handleMarkApprovalGranted = () => {
-    setActionState((current) => ({
+    applyActionState((current) => ({
       ...current,
       approval: { label: "Freigabe erteilt", tone: "green" },
     }));
   };
 
   const handleCycleProduction = () => {
-    setActionState((current) => ({
+    applyActionState((current) => ({
       ...current,
       production: getNextProductionStatus(current.production),
     }));
   };
 
   const handleResetActions = () => {
-    setActionState(createPocketActionState(order));
+    onOrderReset?.();
   };
 
   const handleToggleChecklistItem = (
     sectionIndex: number,
     itemIndex: number,
   ) => {
-    setActionState((current) => ({
+    applyActionState((current) => ({
       ...current,
       checklist: current.checklist.map((section, currentSectionIndex) =>
         currentSectionIndex !== sectionIndex
@@ -1056,7 +1089,7 @@ export function OrderPocketPage({ order }: { order: PrintPilotOrder }) {
   };
 
   const handleToggleFinishingStep = (stepIndex: number) => {
-    setActionState((current) => ({
+    applyActionState((current) => ({
       ...current,
       finishing: current.finishing.map((step, currentStepIndex) =>
         currentStepIndex !== stepIndex

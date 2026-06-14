@@ -753,6 +753,14 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     reference: "Auftragstasche · Nutzenplan · Sprint 44.5",
   },
 
+  {
+    id: "business-card-imposition-deoverlap",
+    title: "Entzerrter Visitenkarten-Nutzenplan",
+    description:
+      "Visitenkarten werden im Nutzenplan als klar getrennte Einzelnutzen dargestellt. Schatten, Überlagerungswirkung und dominante Nutzennummern werden reduziert, damit die echten PDF-Previews nicht wie gestapelte Karten wirken.",
+    reference: "Auftragstasche · Nutzenplan · Sprint 44.6",
+  },
+
 ];
 
 export const printPilotReferenceScreen = {

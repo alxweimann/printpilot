@@ -1290,3 +1290,21 @@ Umgesetzt:
 Neues Pattern:
 
 - `quiet-imposition-numbering`
+
+## Design Sprint 44.6 – Visitenkarten-Nutzenplan entzerren
+
+Sprint 44.6 korrigiert die Darstellung der echten Visitenkarten-Previews im Nutzenplan. Die Nutzen sollen nicht wie übereinanderliegende Miniaturkarten wirken, sondern als sauber getrennte Einzelnutzen auf dem Druckbogen lesbar bleiben.
+
+Umgesetzt:
+
+- Visitenkarten-Nutzenplan bekommt mehr Abstand zwischen den einzelnen Nutzen.
+- Kachelschatten und starke Motivschatten wurden für Visitenkarten im Nutzenplan reduziert.
+- Visitenkarten-Preview wird innerhalb jeder Nutzenzelle mit `contain` statt mit einer stapelartig wirkenden Füllung dargestellt.
+- Einzelzellen wirken klarer voneinander getrennt.
+- Nutzennummern bleiben dezent und treten weiter in den Hintergrund.
+- Briefbogen, Plakat, Flyer, Broschüre und Sticker bleiben unverändert.
+- Keine Änderung an Ausschießlogik, Datenmodell, PDF-Assets oder UI-State.
+
+Neues Pattern:
+
+- `business-card-imposition-deoverlap`

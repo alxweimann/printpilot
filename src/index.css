@@ -5975,3 +5975,53 @@ button.pp-process-step:hover {
     opacity: .62;
   }
 }
+
+/* Sprint 44.6 – Visitenkarten-Nutzenplan: klare Einzelkacheln statt Stapelwirkung */
+.pp-imposition-card--business-card .pp-imposition-sheet {
+  gap: 8px 10px;
+  padding: 18px 20px;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile {
+  overflow: hidden;
+  padding: 2px;
+  border-color: rgba(0, 159, 227, .18);
+  background: rgba(255, 255, 255, .96);
+  box-shadow: none;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile::before {
+  inset: 2px;
+  border-color: rgba(0, 159, 227, .10);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  object-position: center;
+  border-radius: 3px;
+  box-shadow: none;
+  filter: saturate(.98) contrast(1);
+  transform: scale(.96);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile b {
+  top: 3px;
+  right: 3px;
+  background: rgba(255, 255, 255, .72);
+  opacity: .24;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile:hover,
+.pp-imposition-card--business-card .pp-imposition-tile:focus-within {
+  border-color: rgba(0, 159, 227, .30);
+  box-shadow: 0 5px 12px rgba(10, 31, 68, .045);
+}
+
+@media (max-width: 1500px) {
+  .pp-imposition-card--business-card .pp-imposition-sheet {
+    gap: 7px 8px;
+    padding: 16px;
+  }
+}

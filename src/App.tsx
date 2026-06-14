@@ -49,16 +49,26 @@ export default function App() {
   }
 
   const updateSelectedOrder = (updatedOrder: PrintPilotOrder) => {
+    const nextOrder = cloneOrder(updatedOrder)
+    setSelectedOrderId(nextOrder.id)
     setOrders((currentOrders) =>
       currentOrders.map((order) =>
-        order.id === updatedOrder.id ? cloneOrder(updatedOrder) : order,
+        order.id === nextOrder.id ? nextOrder : order,
       ),
     )
   }
 
   const resetSelectedOrder = () => {
-    const baseOrder = orderRows.find((order) => order.id === selectedOrder.id) ?? getFallbackOrder()
-    updateSelectedOrder(cloneOrder(baseOrder))
+    const baseOrder =
+      orderRows.find((order) => order.id === selectedOrderId) ?? getFallbackOrder()
+    const resetOrder = cloneOrder(baseOrder)
+
+    setSelectedOrderId(resetOrder.id)
+    setOrders((currentOrders) =>
+      currentOrders.map((order) =>
+        order.id === resetOrder.id ? resetOrder : order,
+      ),
+    )
   }
 
   return (

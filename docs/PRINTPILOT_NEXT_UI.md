@@ -1146,3 +1146,35 @@ Sprint 44 verbindet die lokalen Auftragstaschen-Aktionen stärker mit der Auftr�
 ### Nächster sinnvoller Schritt
 
 Als nächstes kann Sprint 44.1 die fachlichen Abhängigkeiten ergänzen: Produktion sollte z. B. erst sinnvoll weiterlaufen, wenn Pflichtpunkte, Datenprüfung und Freigabe erfüllt sind. Danach kann echte Speicherung vorbereitet werden.
+
+
+## Design Sprint 44.1 – UI-State-Rückspiegelung korrigieren
+
+Sprint 44.1 korrigiert die Rückmeldung aus der Auftragstasche in die Aufträge-Übersicht. Der zentrale Demo-State bleibt weiterhin reine UI-Vorschau ohne Persistenz, wird aber jetzt konsequenter als Single Source of Truth verwendet.
+
+### Umgesetzt
+
+- `App.tsx` schreibt aktualisierte Aufträge robuster in das zentrale `orders`-Array zurück.
+- Der aktualisierte Auftrag setzt auch die aktive Auftrags-ID, damit Übersicht und Auftragstasche denselben Datensatz verfolgen.
+- `Zurücksetzen` nutzt die aktuelle Auftrags-ID und schreibt den ursprünglichen Demo-Auftrag direkt in den zentralen State zurück.
+- `OrderPocketPage` unterscheidet jetzt zwischen zentralem State aus `App.tsx` und lokalem Fallback-State.
+- Wenn `onOrderChange` vorhanden ist, liest die Auftragstasche den aktuellen Aktionszustand direkt aus dem übergebenen Auftrag.
+- Prozessleiste, Checkliste und Weiterverarbeitung schreiben Änderungen sofort in den zentralen Auftragszustand.
+- Nach Rückkehr in die Übersicht sollen geänderte Werte sichtbar bleiben:
+  - Datenstatus
+  - Freigabestatus
+  - Produktionsstatus
+  - Checklistenpunkte
+  - Weiterverarbeitungsschritte
+- Neues Pattern `central-order-ui-state-feedback-fix` dokumentiert.
+
+### Nicht verändert
+
+- Keine echte Persistenz.
+- Keine LocalStorage-, Datenbank- oder Backend-Anbindung.
+- Keine Layout-Änderung an Übersicht oder Auftragstasche.
+- Keine Änderung an Kartenklick, Rücknavigation oder Preview-Darstellung.
+
+### Nächster sinnvoller Schritt
+
+Als nächstes kann geprüft werden, ob aus den geänderten Zuständen zusätzliche abgeleitete Werte entstehen sollen, z. B. aktualisierter nächster Schritt, Fortschritt, Verlaufseinträge oder Kennzahlen in der Übersicht.

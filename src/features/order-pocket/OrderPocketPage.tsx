@@ -1006,13 +1006,17 @@ export function OrderPocketPage({
   onOrderChange?: (order: PrintPilotOrder) => void;
   onOrderReset?: () => void;
 }) {
-  const [actionState, setActionState] = useState<PocketActionState>(() =>
+  const [localActionState, setLocalActionState] = useState<PocketActionState>(() =>
     createPocketActionState(order),
   );
 
   useEffect(() => {
-    setActionState(createPocketActionState(order));
+    setLocalActionState(createPocketActionState(order));
   }, [order]);
+
+  const hasCentralOrderState = typeof onOrderChange === "function";
+  const centralActionState = useMemo(() => createPocketActionState(order), [order]);
+  const actionState = hasCentralOrderState ? centralActionState : localActionState;
 
   const files = useMemo(() => getFiles(order), [order]);
   const noteRows = useMemo(() => getNoteRows(order), [order]);
@@ -1035,11 +1039,9 @@ export function OrderPocketPage({
   const applyActionState = (
     updater: (current: PocketActionState) => PocketActionState,
   ) => {
-    setActionState((current) => {
-      const next = updater(current);
-      onOrderChange?.(createOrderFromActionState(order, next));
-      return next;
-    });
+    const next = updater(actionState);
+    setLocalActionState(next);
+    onOrderChange?.(createOrderFromActionState(order, next));
   };
 
   const handleMarkDataChecked = () => {

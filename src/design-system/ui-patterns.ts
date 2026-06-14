@@ -632,6 +632,29 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+  {
+    id: "central-order-ui-state-feedback-fix",
+    category: "production",
+    name: "Zentraler Auftrags-State mit Rückspiegelung",
+    purpose:
+      "Korrigiert die Rückspiegelung lokaler Auftragstaschen-Aktionen: Die Auftragstasche liest bei zentralem App-State direkt aus dem übergebenen Auftrag und schreibt Änderungen sofort in das zentrale Orders-Array zurück. Dadurch sind Datenprüfung, Freigabe, Produktionsstatus, Checkliste und Weiterverarbeitung nach der Rückkehr in der Übersicht sichtbar.",
+    reference: "Aufträge · Übersicht ↔ Auftragstasche · Sprint 44.1",
+    classNames: [
+      "pp-status-overview--interactive",
+      "pp-process-flow",
+      "pp-check-item",
+      "pp-finishing-status-button",
+      "pp-order-row-card",
+    ],
+    reuseFor: [
+      "Aufträge",
+      "Auftragstasche",
+      "zentraler UI-State",
+      "Rückspiegelung",
+      "Persistenz-Vorbereitung",
+    ],
+  },
+
 ];
 
 export const printPilotReferenceScreen = {

@@ -1021,3 +1021,37 @@ Sprint 43.4 nimmt die Rückmeldung zur Sprint-43.3-Ansicht auf: Die Schnellaktio
 
 Als nächstes können die lokalen Aktionen fachlich gekoppelt werden, z. B. Freigabe erst sinnvoll nach Datenprüfung, Druckstatus abhängig von Pflichtpunkten und Weiterverarbeitung abhängig vom Produktionsstatus.
 
+
+## Design Sprint 43.5 – Arbeitsleiste finalisieren
+
+Sprint 43.5 finalisiert die lokale Schnellaktionsleiste aus Sprint 43.4. Die Aktionen bleiben weiterhin nur UI-State ohne Persistenz, wirken aber jetzt stärker wie eine kompakte Arbeitsleiste und weniger wie kleine gestapelte Infokarten.
+
+### Umgesetzt
+
+- Schnellaktions-Buttons wurden breiter und lesbarer gestaltet.
+- Buttontexte laufen jetzt einzeilig:
+  - Daten prüfen
+  - Freigabe erteilen
+  - Status weiter
+  - Zurücksetzen
+- Der lokale Zustand wird nur noch als kleine Zusatzinformation im Button gezeigt.
+- Der Schnellaktionen-Bereich nutzt links weniger optisches Gewicht.
+- Hinweistext zur nicht persistenten Speicherung wurde weiter reduziert.
+- Produktions-Checkliste weiter verdichtet:
+  - kleinere Checkboxen
+  - geringere Zeilenhöhe
+  - etwas kleinere Labels
+  - dezenterer Status rechts
+  - Pflichtpunkte bleiben erkennbar, wirken aber weniger laut
+- Neues Pattern `order-pocket-workbar-final` dokumentiert.
+
+### Nicht verändert
+
+- Keine Persistenzlogik.
+- Keine Änderung an Aufträge-Übersicht, Kartenklick oder Rücknavigation.
+- Keine Änderung an der dynamischen Datenübergabe.
+- Keine fachliche Abhängigkeitslogik zwischen Checkliste, Datenprüfung, Freigabe und Produktion.
+
+### Nächster sinnvoller Schritt
+
+Als nächstes kann die lokale Interaktionslogik fachlich gekoppelt werden: Datenprüfung/Freigabe/Produktionsstatus sollten sinnvolle Abhängigkeiten bekommen, bevor später echte Speicherung oder Datenbank-Anbindung ergänzt wird.

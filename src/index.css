@@ -5065,3 +5065,158 @@ button.pp-process-step:hover {
     width: 100%;
   }
 }
+
+/* Sprint 43.5 – Arbeitsleiste finalisieren */
+.pp-pocket-actionbar--workbench {
+  grid-template-columns: minmax(190px, 0.22fr) minmax(0, 1fr);
+  gap: 12px;
+  padding: 8px 10px;
+}
+
+.pp-pocket-actionbar--workbench .pp-pocket-actionbar__intro {
+  gap: 1px;
+}
+
+.pp-pocket-actionbar--workbench .pp-pocket-actionbar__intro strong {
+  font-size: 12px;
+}
+
+.pp-pocket-actionbar--workbench .pp-pocket-actionbar__intro p {
+  max-width: 220px;
+  font-size: 9px;
+  line-height: 1.18;
+}
+
+.pp-pocket-actionbar__actions {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.pp-action-button {
+  display: flex;
+  min-width: 132px;
+  min-height: 32px;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  text-align: left;
+}
+
+.pp-action-button b {
+  min-width: 0;
+  color: #06163a;
+  font-size: 11px;
+  font-weight: 850;
+  line-height: 1;
+  white-space: nowrap;
+}
+
+.pp-action-button small {
+  flex: 0 0 auto;
+  max-width: 86px;
+  padding: 2px 6px;
+  border-radius: 999px;
+  background: rgba(225, 234, 245, .7);
+  color: #607088;
+  font-size: 7.5px;
+  font-weight: 780;
+  letter-spacing: .025em;
+  line-height: 1.05;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-action-button--data small {
+  background: rgba(16, 185, 129, .08);
+  color: #07835c;
+}
+
+.pp-action-button--approval small,
+.pp-action-button--status small {
+  background: rgba(249, 115, 22, .08);
+  color: #c85608;
+}
+
+.pp-action-button--reset {
+  min-width: 118px;
+  justify-content: center;
+  gap: 6px;
+}
+
+.pp-action-button--reset small {
+  max-width: none;
+  background: rgba(226, 232, 240, .65);
+  color: #6b7890;
+}
+
+.pp-checklist-panel {
+  --pp-check-font-size: 10.5px;
+  --pp-check-meta-size: 7.25px;
+}
+
+.pp-checklist-summary {
+  padding: 5px 7px;
+  margin-bottom: 7px;
+}
+
+.pp-check-section {
+  padding-top: 7px;
+  margin-top: 5px;
+}
+
+.pp-check-section h4 {
+  font-size: 8.75px;
+}
+
+.pp-check-section__items {
+  gap: 1px;
+}
+
+.pp-check-item {
+  min-height: 19px;
+  padding: 1px 3px;
+  gap: 4px;
+  border-radius: 5px;
+}
+
+.pp-check-box {
+  width: 11px;
+  height: 11px;
+  border-radius: 3px;
+  font-size: 7.5px;
+}
+
+.pp-check-label {
+  font-size: var(--pp-check-font-size);
+  font-weight: 600;
+  line-height: 1.08;
+}
+
+.pp-check-item small {
+  min-width: 44px;
+  font-size: var(--pp-check-meta-size);
+  font-weight: 780;
+  letter-spacing: .045em;
+}
+
+.pp-check-item--required {
+  background: rgba(255, 247, 237, .24);
+}
+
+@media (max-width: 1120px) {
+  .pp-action-button {
+    min-width: 128px;
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-pocket-actionbar__actions {
+    justify-content: stretch;
+  }
+
+  .pp-action-button {
+    width: 100%;
+  }
+}

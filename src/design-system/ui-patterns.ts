@@ -538,6 +538,29 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
+  {
+    id: "order-pocket-workbar-final",
+    category: "production",
+    name: "Auftragstasche finale Arbeitsleiste",
+    purpose:
+      "Finalisiert die lokalen Schnellaktionen als ruhige Arbeitsleiste mit einzeiligen, besser lesbaren Aktionsbuttons und weiter verdichteter Produktions-Checkliste. Der UI-State bleibt lokal und nicht persistent.",
+    reference: "Auftragstasche · Sprint 43.5",
+    classNames: [
+      "pp-pocket-actionbar--workbench",
+      "pp-pocket-actionbar__actions",
+      "pp-action-button",
+      "pp-check-item",
+      "pp-check-label",
+    ],
+    reuseFor: [
+      "Auftragstaschen",
+      "Arbeitsleisten",
+      "Lokaler UI-State",
+      "Produktions-Checklisten",
+      "Schnellaktionen",
+    ],
+  },
+
 ];
 
 export const printPilotReferenceScreen = {

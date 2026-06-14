@@ -948,8 +948,7 @@ function PocketActionBar({
           className="pp-action-button pp-action-button--data"
           onClick={onMarkDataChecked}
         >
-          <span>Daten</span>
-          <b>prüfen</b>
+          <b>Daten prüfen</b>
           <small>{actionState.data.label}</small>
         </button>
         <button
@@ -957,8 +956,7 @@ function PocketActionBar({
           className="pp-action-button pp-action-button--approval"
           onClick={onMarkApprovalGranted}
         >
-          <span>Freigabe</span>
-          <b>erteilen</b>
+          <b>Freigabe erteilen</b>
           <small>{actionState.approval.label}</small>
         </button>
         <button
@@ -966,8 +964,7 @@ function PocketActionBar({
           className="pp-action-button pp-action-button--status"
           onClick={onCycleProduction}
         >
-          <span>Status</span>
-          <b>weiter</b>
+          <b>Status weiter</b>
           <small>{actionState.production.label}</small>
         </button>
         <button
@@ -975,8 +972,7 @@ function PocketActionBar({
           className="pp-action-button pp-action-button--reset"
           onClick={onReset}
         >
-          <span>Reset</span>
-          <b>zurücksetzen</b>
+          <b>Zurücksetzen</b>
           <small>lokal</small>
         </button>
       </div>

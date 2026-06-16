@@ -9078,31 +9078,7 @@ button.pp-process-step:hover {
   }
 }
 
-/* Sprint 46.10 – Kalkulationsarbeitsfläche beruhigen */
-.pp-main--calculation .pp-bottom-nav {
-  --pp-calculation-nav-height: 54px;
-  height: calc(var(--pp-calculation-nav-height) + env(safe-area-inset-bottom, 0px));
-  padding-inline: 96px;
-  background: linear-gradient(180deg, rgba(8, 41, 87, .96) 0%, rgba(3, 23, 56, .96) 100%);
-  box-shadow: 0 -8px 18px rgba(4, 22, 52, .16);
-}
-
-.pp-main--calculation .pp-bottom-nav button {
-  gap: 7px;
-  font-size: 12.5px;
-  font-weight: 680;
-}
-
-.pp-main--calculation .pp-bottom-nav span {
-  font-size: 16px;
-}
-
-.pp-main--calculation .pp-bottom-nav button.is-active::before {
-  left: 34px;
-  right: 34px;
-  height: 2px;
-}
-
+/* Sprint 46.10/46.11 – Kalkulationsarbeitsfläche beruhigen, Navigation konsistent halten */
 .pp-calculation-page {
   padding: 18px 34px calc(var(--pp-page-bottom-safe) + 62px);
 }
@@ -9237,8 +9213,19 @@ button.pp-process-step:hover {
   .pp-calculation-contract-list {
     grid-template-columns: 1fr;
   }
+}
 
-  .pp-main--calculation .pp-bottom-nav {
-    padding-inline: 24px;
-  }
+
+/* Sprint 46.11 – Bottom-Navigation konsistent wie Aufträge */
+.pp-main--calculation {
+  padding-bottom: var(--pp-page-bottom-safe);
+}
+
+.pp-calculation-page {
+  padding-bottom: calc(var(--pp-page-bottom-safe) + 84px);
+  scroll-padding-bottom: calc(var(--pp-page-bottom-safe) + 84px);
+}
+
+.pp-calculation-result-panel {
+  margin-bottom: 28px;
 }

@@ -957,3 +957,10 @@ export const sprint4610Pattern = {
   description:
     "Die Kalkulationsarbeitsfläche wird beruhigt: Die Eingabemaske erhält mehr Abstand zum Header und zur unteren Navigation, die Bottom-Navigation wird im Kalkulationskontext kompakter und die Auswertung unten wird mit breiterem Nutzenplan, klareren Produktionsdaten und kleinerem technischem Datenvertrag ausbalanciert.",
 };
+
+export const sprint4611Pattern = {
+  id: "calculation-bottom-nav-consistent-with-orders",
+  sprint: "46.11",
+  description:
+    "Die Bottom-Navigation wird in der Kalkulation wieder konsistent wie in der Auftragsübersicht behandelt. Die kalkulationsspezifische Kompakt-Navigation entfällt; stattdessen erhält die scrollbar bleibende Kalkulationsseite ausreichend unteren Sicherheitsabstand.",
+};

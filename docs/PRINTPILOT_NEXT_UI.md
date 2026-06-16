@@ -1791,3 +1791,13 @@ Umgesetzt:
 - Die Bottom-Navigation wird im Kalkulationskontext kompakter und visuell zurückgenommen, damit sie die Formulararbeit weniger stört.
 - Die Auswertung unter der Maske wird ruhiger verteilt: Der Nutzenplan bekommt mehr Breite, Produktionsdaten bleiben klar lesbar, der Datenvertrag wird kleiner und technischer geführt.
 - Keine neue Berechnungslogik, keine Änderung am Datenvertrag.
+
+## Sprint 46.11 – Bottom-Navigation konsistent wie Aufträge
+
+Die Sonderbehandlung der Bottom-Navigation im Kalkulationskontext wurde zurückgenommen. Die Navigation bleibt nun optisch und funktional konsistent zur Auftragsübersicht; die Kalkulationsseite bleibt scrollbar und erhält unten zusätzlichen Sicherheitsabstand, damit Auswertung und Aktionsbereich nicht an der festen Navigation kleben.
+
+- Kalkulationsspezifische Kompakt-Navigation entfernt
+- Bottom-Navigation wieder identisch zur Auftragsansicht
+- Scrollfläche der Kalkulation unten abgesichert
+- Eingabemaske und MIS-Look unverändert beibehalten
+- Keine neue Berechnungslogik

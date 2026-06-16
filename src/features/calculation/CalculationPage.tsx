@@ -158,24 +158,30 @@ function FinishingMatrixRow({
   fields: Array<{ label: string; value: string }>;
   note?: string;
 }) {
+  const [typeField, amountField, productionField] = fields;
+
   return (
-    <article className={active ? "pp-calc-finishing-row is-active" : "pp-calc-finishing-row"}>
-      <div className="pp-calc-finishing-row__service">
+    <tr className={active ? "is-active" : undefined}>
+      <td className="pp-calc-finishing-table__active">
         <input type="checkbox" checked={active} readOnly aria-label={label} />
-        <div>
-          <b>{label}</b>
-          {note ? <small>{note}</small> : null}
-        </div>
-      </div>
-      <div className="pp-calc-finishing-row__fields">
-        {fields.map((field) => (
-          <label key={`${label}-${field.label}`}>
-            <span>{field.label}</span>
-            <input value={field.value} readOnly />
-          </label>
-        ))}
-      </div>
-    </article>
+      </td>
+      <th scope="row">
+        <b>{label}</b>
+        {note ? <small>{note}</small> : null}
+      </th>
+      <td>
+        <span>{typeField?.label ?? "Art"}</span>
+        <strong>{typeField?.value ?? "—"}</strong>
+      </td>
+      <td>
+        <span>{amountField?.label ?? "Menge"}</span>
+        <strong>{amountField?.value ?? "—"}</strong>
+      </td>
+      <td>
+        <span>{productionField?.label ?? "intern/extern"}</span>
+        <strong>{productionField?.value ?? "—"}</strong>
+      </td>
+    </tr>
   );
 }
 
@@ -306,12 +312,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           <div className="pp-calculation-form__intro">
             <div>
               <p className="pp-eyebrow">Arbeitsmaske</p>
-              <h2>Kalkulationsdaten erfassen</h2>
-              <span>
-                Eine zusammenhängende Eingabemaske für Produkt, Format, Auflage,
-                Material, Produktionsart und Weiterverarbeitung. Das Ergebnis
-                rechts bleibt die vorbereitete Produktionsdaten-Zusammenfassung.
-              </span>
+              <h2>Kalkulationsdaten</h2>
             </div>
             <div
               className="pp-calculation-form__meta"
@@ -556,6 +557,17 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
 
           <CalculationSection eyebrow="07" title="Weiterverarbeitung">
             <div className="pp-calc-finishing-matrix" aria-label="Weiterverarbeitungs-Matrix">
+              <table className="pp-calc-finishing-table">
+                <thead>
+                  <tr>
+                    <th>Aktiv</th>
+                    <th>Leistung</th>
+                    <th>Art / Parameter</th>
+                    <th>Menge / Anzahl</th>
+                    <th>Produktion</th>
+                  </tr>
+                </thead>
+                <tbody>
               <FinishingMatrixRow
                 label="Schneiden"
                 active
@@ -656,6 +668,8 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                   { label: "Lieferung", value: "eine Adresse" },
                 ]}
               />
+                </tbody>
+              </table>
             </div>
           </CalculationSection>
 

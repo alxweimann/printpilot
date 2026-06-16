@@ -1695,3 +1695,31 @@ Nicht geändert:
 - keine Persistenz/DB/LocalStorage
 - keine Änderung an Aufträge-Übersicht, Auftragstasche oder zentralem UI-State
 
+
+## Sprint 46.5 – Kalkulationsmaske verdichtet
+
+Sprint 46.5 reduziert die aufgeblasene Formularoptik der Kalkulation. Die Auftragstaschen-Ästhetik bleibt für Produktionsansichten sinnvoll, die Kalkulation wird aber stärker als produktive MIS-/ERP-Eingabemaske geführt.
+
+Umgesetzt:
+
+- Eingabemaske deutlich kompakter gesetzt.
+- Formularhöhe, Abschnittsabstände, Feldhöhen und Rahmenwirkung reduziert.
+- Pflicht-/Optional-/Später-Kennzeichnungen kleiner und weniger dominant dargestellt.
+- Produktionsart-Auswahl kompakter gemacht, ohne die Unterscheidung Eigenproduktion/Fremdproduktion/Kombination zu entfernen.
+- Ergebnisbereich rechts schmaler und nüchterner geführt.
+- Weiterverarbeitung von großen Matrixblöcken in eine kompakte Tabelle überführt:
+  - Aktiv,
+  - Leistung,
+  - Art / Parameter,
+  - Menge / Anzahl,
+  - Produktion.
+- Detailinformationen wie Falzart, Rillungen, Klebebindung, Fadenheftung, Bohren/Ösen und Versand bleiben erhalten, beanspruchen aber deutlich weniger Höhe.
+- Neues Pattern `calculation-compact-mis-input-mask` ergänzt.
+
+Nicht geändert:
+
+- keine echte Kalkulationsberechnung
+- keine neue Ausschießlogik
+- keine Lieferantenverwaltung
+- keine Persistenz/DB/LocalStorage
+- keine Änderung an Aufträge-Übersicht, Auftragstasche oder zentralem UI-State

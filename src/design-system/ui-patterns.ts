@@ -896,3 +896,10 @@ export const sprint464Pattern = {
     "Die Kalkulationsmaske wird nach MIS-typischen Pflicht-/Optionalfeldern erweitert. Kopfdaten, Produktdetails, Format, Auflage/Staffeln, Material, Produktion, detaillierte Weiterverarbeitung und Kosten werden in einer großen Eingabemaske geführt.",
 };
 
+
+export const sprint465Pattern = {
+  id: "calculation-compact-mis-input-mask",
+  sprint: "46.5",
+  description:
+    "Die Kalkulationsmaske wird für produktives Erfassen verdichtet. Feldhöhen, Abschnittsabstände und Pflicht-/Optionalmarkierungen werden reduziert; die Weiterverarbeitung wird als tabellarische MIS-Matrix mit Leistung, Aktiv, Parametern, Menge und Produktionsweg geführt.",
+};

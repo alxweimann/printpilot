@@ -155,6 +155,23 @@ function getImpositionDetails(order: PrintPilotOrder) {
   ];
 }
 
+
+function getImpositionLegend(order: PrintPilotOrder) {
+  const spacing =
+    order.preview.kind === "business-card"
+      ? "ca. 3–5 mm"
+      : order.preview.kind === "letterhead"
+        ? "A4-Stand auf SRA3"
+        : "schematisch";
+
+  return [
+    ["Bogen", order.rawFormat === "SRA3" ? "450 × 320 mm" : order.rawFormat],
+    ["Nutzen", order.endFormat],
+    ["Beschnitt", order.bleed],
+    ["Abstand", spacing],
+  ];
+}
+
 function getPreviewSpecs(order: PrintPilotOrder) {
   return [
     ["Format", order.endFormat],
@@ -892,6 +909,7 @@ function getImpositionCellCount(order: PrintPilotOrder) {
 function ImpositionPlanCard({ order }: { order: PrintPilotOrder }) {
   const impositionStats = getImpositionStats(order);
   const impositionDetails = getImpositionDetails(order);
+  const impositionLegend = getImpositionLegend(order);
   const cellCount = getImpositionCellCount(order);
   return (
     <div
@@ -925,6 +943,16 @@ function ImpositionPlanCard({ order }: { order: PrintPilotOrder }) {
             <strong>{value}</strong>
           </div>
         ))}
+      </div>
+
+      <div className="pp-imposition-legend" aria-label="Technische Nutzenplan-Legende">
+        {impositionLegend.map(([label, value]) => (
+          <span key={label}>
+            <small>{label}</small>
+            <strong>{value}</strong>
+          </span>
+        ))}
+        <em>schematische Produktionsvorschau</em>
       </div>
     </div>
   );

@@ -824,3 +824,11 @@ export const sprint4413Pattern = {
   description:
     "Visitenkarten-Nutzenpläne behalten das 6x4-Raster, simulieren aber praxisnähere Zwischenräume von ca. 3–5 mm. Die Grid-Zeilen werden als geschlossener Produktionsblock geführt, damit der Bogen nicht wie eine UI-Galerie wirkt.",
 };
+
+export const sprint4414Pattern = {
+  id: "imposition-technical-legend",
+  sprint: "44.14",
+  description:
+    "Nutzenplan-Vorschauen führen technische Angaben wie Bogenformat, Nutzenformat, Beschnitt und Abstand als dezente Legende. Der Hinweis auf die schematische Produktionsvorschau wird weniger dominant platziert.",
+};
+

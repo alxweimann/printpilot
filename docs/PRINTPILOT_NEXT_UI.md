@@ -1430,3 +1430,24 @@ Nicht geändert:
 - keine PDF-Rendering-Logik
 - keine Datenlogik
 - keine Änderung an Übersicht, Rücknavigation oder UI-State
+
+## Sprint 44.14 – Nutzenplan fachliche Kennzeichnung finalisieren
+
+Sprint 44.14 ergänzt die Nutzenplan-Vorschau um eine ruhigere technische Kennzeichnung. Die eigentliche Visitenkarten-Bogenlogik aus Sprint 44.13 bleibt unverändert; es wird nur die Legende fachlich sauberer und weniger dominant geführt.
+
+Umgesetzt:
+
+- Explizite technische Legende unter dem Nutzenplan ergänzt.
+- Kennzeichnung für Bogenformat, Nutzenformat, Beschnitt und Abstand eingeführt.
+- Hinweis `schematische Produktionsvorschau` aus der dominanten Inline-Beschriftung gelöst und dezenter platziert.
+- Visitenkarten zeigen weiterhin den praxisnahen Zwischenraum von ca. 3–5 mm.
+- Briefbogen erhält eine passendere Kennzeichnung für A4-Stand auf SRA3.
+- Legende ist responsive und bricht auf kleineren Breiten ruhiger um.
+
+Nicht geändert:
+
+- keine neue Ausschießlogik
+- keine Berechnung von Greiferrand, Zwischenschnitt oder Laufrichtung
+- keine PDF-Rendering-Logik
+- keine Datenlogik
+- keine Änderung an Übersicht, Rücknavigation oder UI-State

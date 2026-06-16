@@ -964,3 +964,10 @@ export const sprint4611Pattern = {
   description:
     "Die Bottom-Navigation wird in der Kalkulation wieder konsistent wie in der Auftragsübersicht behandelt. Die kalkulationsspezifische Kompakt-Navigation entfällt; stattdessen erhält die scrollbar bleibende Kalkulationsseite ausreichend unteren Sicherheitsabstand.",
 };
+
+export const sprint4612Pattern = {
+  id: "calculation-editable-local-state-mask",
+  sprint: "46.12",
+  description:
+    "Die Kalkulationsmaske bleibt im Oldschool-MIS-Look, wird aber funktional editierbar. Produkt, Format, Auflage, Material, Produktionsart, Weiterverarbeitung und Ergebnisvorgaben liegen in lokalem State; der Auftrag-Entwurf nutzt die aktuellen Maskenwerte statt ausschließlich Demo-Daten.",
+};

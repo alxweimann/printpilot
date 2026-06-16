@@ -1801,3 +1801,14 @@ Die Sonderbehandlung der Bottom-Navigation im Kalkulationskontext wurde zurückg
 - Scrollfläche der Kalkulation unten abgesichert
 - Eingabemaske und MIS-Look unverändert beibehalten
 - Keine neue Berechnungslogik
+
+## Sprint 46.12 – Kalkulationsmaske editierbar machen
+
+- Die Kalkulationsseite bleibt optisch im Oldschool-MIS-Look und behält die volle Eingabebreite.
+- Demo-/Readonly-Felder wurden in echte lokale Formularfelder überführt.
+- Produkt, Format, Auflage, Material/Papier, Produktion, Weiterverarbeitung und Kosten-/Ergebnisvorgaben werden jetzt in lokalem State geführt.
+- Die Produktionsart bleibt umschaltbar zwischen Eigenproduktion, Fremdproduktion und Kombination; die sichtbaren Felder reagieren weiter auf die Auswahl.
+- Die Weiterverarbeitungstabelle ist editierbar: Leistungen können aktiviert/deaktiviert und Parameter/Mengen/Produktionshinweise angepasst werden.
+- Der Ergebnisbereich unten nutzt die aktuellen Maskenwerte für Produkt, Menge, Bogenanzahl, Produktionsweg und aktive Weiterverarbeitungshinweise.
+- Der Button „Auftrag aus Kalkulation erzeugen“ erstellt den Entwurf aus den aktuellen Maskenwerten.
+- Noch keine vollständige Preislogik, keine Persistenz und keine echte Ausschieß-Berechnung; der Datenfluss ist vorbereitet.

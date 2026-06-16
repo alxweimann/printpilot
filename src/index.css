@@ -9229,3 +9229,47 @@ button.pp-process-step:hover {
 .pp-calculation-result-panel {
   margin-bottom: 28px;
 }
+
+/* Sprint 46.12 – editierbare Kalkulationsmaske */
+.pp-calc-input-field input:not(:read-only),
+.pp-calc-input-field select:not(:disabled) {
+  background: #ffffff;
+  color: #061733;
+  cursor: text;
+}
+
+.pp-calc-input-field select:not(:disabled) {
+  cursor: pointer;
+}
+
+.pp-calc-input-field input:not(:read-only):focus,
+.pp-calc-input-field select:not(:disabled):focus,
+.pp-calc-finishing-table input[type="text"]:focus,
+.pp-calc-finishing-table td input:not([type="checkbox"]):focus {
+  border-color: #1a7fb8;
+  box-shadow: inset 0 0 0 1px rgba(26, 127, 184, 0.28);
+  outline: none;
+}
+
+.pp-calc-finishing-table td input:not([type="checkbox"]) {
+  width: 100%;
+  min-height: 25px;
+  border: 1px solid #c4ced8;
+  background: #ffffff;
+  color: #07172f;
+  font: inherit;
+  font-weight: 700;
+  padding: 3px 6px;
+}
+
+.pp-calc-finishing-table td input:not([type="checkbox"]):hover,
+.pp-calc-input-field input:not(:read-only):hover,
+.pp-calc-input-field select:not(:disabled):hover {
+  border-color: #91a6ba;
+}
+
+.pp-calculation-create-note.is-active {
+  background: #eef9f1;
+  border-color: #9dcfae;
+  color: #173d22;
+}

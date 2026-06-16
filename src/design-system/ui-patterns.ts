@@ -741,50 +741,68 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
 
   {
     id: "quiet-imposition-numbering",
-    title: "Dezente Nutzennummern im Nutzenplan",
-    description:
+    category: "production",
+    name: "Dezente Nutzennummern im Nutzenplan",
+    purpose:
       "Nutzennummern werden bei echten Druckdatei-Previews nur als leise Orientierung am Nutzenrand gezeigt. Die Motive bleiben dominant; Nummern werden erst im Hover deutlicher.",
     reference: "Auftragstasche · Nutzenplan · Sprint 44.5",
+    classNames: ["pp-imposition-use__number", "pp-imposition-use__number--quiet"],
+    reuseFor: ["Nutzenplan", "Druckbogen-Vorschau", "PDF-Previews"],
   },
 
   {
     id: "business-card-imposition-deoverlap",
-    title: "Entzerrter Visitenkarten-Nutzenplan",
-    description:
+    category: "production",
+    name: "Entzerrter Visitenkarten-Nutzenplan",
+    purpose:
       "Visitenkarten werden im Nutzenplan als klar getrennte Einzelnutzen dargestellt. Schatten, Überlagerungswirkung und dominante Nutzennummern werden reduziert, damit die echten PDF-Previews nicht wie gestapelte Karten wirken.",
     reference: "Auftragstasche · Nutzenplan · Sprint 44.6",
+    classNames: ["pp-imposition-sheet--business-card", "pp-imposition-use--flat"],
+    reuseFor: ["Nutzenplan", "Visitenkarten", "Druckbogen-Vorschau"],
   },
 
   {
     id: "realistic-flat-imposition-sheet",
-    title: "Realistischer Druckbogen-Nutzenplan",
-    description:
+    category: "production",
+    name: "Realistischer Druckbogen-Nutzenplan",
+    purpose:
       "Nutzenplan zeigt echte Druckdatei-Motive flach auf einem technischen Bogen statt als UI-Kacheln mit Schatten. Schnitt-/Beschnittlinien bleiben dezent sichtbar.",
-    status: "stable",
+    reference: "Auftragstasche · Nutzenplan · Sprint 44.7",
+    classNames: ["pp-imposition-sheet", "pp-imposition-use", "pp-imposition-use--flat"],
+    reuseFor: ["Nutzenplan", "Druckbogen-Vorschau", "Ausschießen"],
   },
 
   {
     id: "larger-production-imposition-sheet",
-    title: "Größerer produktionsnaher Druckbogen",
-    description:
+    category: "production",
+    name: "Größerer produktionsnaher Druckbogen",
+    purpose:
       "Nutzenplan skaliert den Druckbogen stärker aus, reduziert Randabstände und entfernt technischen Hilfstext aus der Bogenfläche. Visitenkarten- und Briefbogen-Motive wirken dadurch größer und näher an einem echten Druckbogen.",
-    status: "stable",
+    reference: "Auftragstasche · Nutzenplan · Sprint 44.8",
+    classNames: ["pp-imposition-card", "pp-imposition-sheet", "pp-imposition-sheet--large"],
+    reuseFor: ["Nutzenplan", "Druckbogen-Vorschau", "Produktionsbogen"],
   },
 
   {
     id: "professional-print-file-data-model",
-    title: "Professionalisierte Druckdaten-Struktur",
-    description:
+    category: "production",
+    name: "Professionalisierte Druckdaten-Struktur",
+    purpose:
       "Druckdaten werden fachlich getrennt in Original-PDF, Preview-Bild, Produktdaten, Nutzenplan-Parameter, Bogenformat, Nutzenformat, Beschnitt und Abstand vorbereitet. Die UI bleibt demohaft, aber die Datenstruktur ist näher an späterer Persistenz und Ausschieß-Engine.",
-    status: "stable",
+    reference: "Auftragstasche · Druckdaten · Sprint 45",
+    classNames: ["pp-file-card", "pp-imposition-card", "pp-production-data"],
+    reuseFor: ["Druckdaten", "Auftragstasche", "Ausschieß-Engine"],
   },
 
   {
     id: "calculation-production-contract",
-    title: "Schnittstelle Kalkulation zu Produktionsdaten",
-    description:
+    category: "production",
+    name: "Schnittstelle Kalkulation zu Produktionsdaten",
+    purpose:
       "Definiert den Datenvertrag, über den der Kalkulations-Nutzenrechner später Produktformat, Bogenformat, Raster, Nutzenanzahl, Beschnitt, Abstand, Bogenmenge und optionale Maschinenempfehlung an Auftragstasche und Nutzenplan übergibt.",
-    status: "draft",
+    reference: "Kalkulation · Produktionsdaten · Sprint 45.1",
+    classNames: ["pp-calculation-contract-box", "pp-calculation-output-card"],
+    reuseFor: ["Kalkulation", "Auftragstasche", "Produktionsdaten"],
   },
 ];
 
@@ -910,4 +928,11 @@ export const sprint466Pattern = {
   sprint: "46.6",
   description:
     "Die Kalkulation nutzt die komplette Inhaltsbreite für die Eingabemaske. Ergebnis, Nutzenrechner und Datenvertrag stehen kompakt unterhalb der Maske, damit die Formulareingabe nicht seitlich eingeengt wird.",
+};
+
+export const sprint467Pattern = {
+  id: "calculation-readable-compact-mask",
+  sprint: "46.7",
+  description:
+    "Die volle Kalkulationsmaske bleibt produktiv verdichtet, wird aber lesbarer: Feldtexte, Tabellenwerte, Abschnittsüberschriften und Ergebniszone werden größer gesetzt, ohne zur aufgeblasenen Card-Optik zurückzukehren. Zusätzlich werden ältere Pattern-Einträge typkonform repariert.",
 };

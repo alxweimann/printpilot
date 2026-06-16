@@ -1736,3 +1736,12 @@ Umgesetzt:
 - Weiterverarbeitungstabelle erhält mehr horizontale Arbeitsfläche.
 - Ergebniszone unten ist kompakt als Auswertungsbereich aufgebaut.
 - Keine neue Berechnungslogik.
+
+## Sprint 46.7 – Kalkulationsmaske lesbarer und Build-Fix
+
+- Die volle Breite der Kalkulationsmaske aus Sprint 46.6 bleibt erhalten.
+- Feldtexte, Formularwerte, Abschnittsüberschriften und Tabellenwerte wurden wieder größer gesetzt.
+- Die Maske bleibt kompakt und produktiv, wandert aber nicht zurück in die große Auftragstaschen-/Card-Optik.
+- Die Weiterverarbeitungstabelle erhält mehr Mindestbreite und größere Zeilenwerte.
+- Der Ergebnisbereich unten bleibt erhalten, wird aber besser lesbar.
+- TypeScript-Buildfehler in `src/design-system/ui-patterns.ts` wurden behoben: ältere Pattern-Einträge nutzen wieder die gültigen Felder `category`, `name`, `purpose`, `reference`, `classNames` und `reuseFor` statt nicht typkonformer Zusatzfelder.

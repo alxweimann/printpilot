@@ -8251,3 +8251,170 @@ button.pp-process-step:hover {
     padding-bottom: 8px;
   }
 }
+
+/* Sprint 46.7 – Kalkulationsmaske lesbarer, ohne wieder aufzublähen */
+.pp-calculation-form {
+  padding: 16px 18px 18px;
+}
+
+.pp-calculation-form__intro h2,
+.pp-calculation-result-panel__head h2 {
+  font-size: 19px;
+  line-height: 1.18;
+}
+
+.pp-calculation-form__meta {
+  padding: 9px 11px;
+}
+
+.pp-calculation-form__meta b {
+  font-size: 13px;
+}
+
+.pp-calculation-form__meta small {
+  font-size: 10.5px;
+}
+
+.pp-calc-form-section {
+  padding: 12px 0 13px;
+}
+
+.pp-calc-form-section__head {
+  margin-bottom: 9px;
+}
+
+.pp-calc-form-section__head > span {
+  width: 21px;
+  height: 21px;
+  font-size: 10px;
+}
+
+.pp-calc-form-section__head h2 {
+  font-size: 14px;
+  letter-spacing: -0.01em;
+}
+
+.pp-calc-input-grid {
+  gap: 9px 10px;
+}
+
+.pp-calc-input-field {
+  gap: 4px;
+}
+
+.pp-calc-input-field span {
+  font-size: 9.5px;
+  letter-spacing: .055em;
+}
+
+.pp-calc-input-field span em {
+  padding: 1px 5px;
+  font-size: 7.5px;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select {
+  height: 34px;
+  padding: 0 10px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.pp-calc-production-mode {
+  gap: 6px;
+  padding: 5px;
+}
+
+.pp-calc-production-mode button {
+  min-height: 44px;
+  padding: 8px 10px;
+}
+
+.pp-calc-production-mode b {
+  font-size: 12.5px;
+}
+
+.pp-calc-production-mode span {
+  font-size: 10px;
+  line-height: 1.22;
+}
+
+.pp-calc-finishing-table {
+  min-width: 920px;
+}
+
+.pp-calc-finishing-table th,
+.pp-calc-finishing-table td {
+  padding: 8px 10px;
+}
+
+.pp-calc-finishing-table thead th {
+  font-size: 9.5px;
+}
+
+.pp-calc-finishing-table input[type="checkbox"] {
+  width: 14px;
+  height: 14px;
+}
+
+.pp-calc-finishing-table th b {
+  font-size: 12px;
+  line-height: 1.15;
+}
+
+.pp-calc-finishing-table th small {
+  font-size: 9.5px;
+  line-height: 1.22;
+}
+
+.pp-calc-finishing-table td span {
+  font-size: 9px;
+}
+
+.pp-calc-finishing-table td strong {
+  font-size: 11.5px;
+  line-height: 1.18;
+}
+
+.pp-calculation-result-panel {
+  gap: 12px;
+  padding: 14px;
+}
+
+.pp-calculation-result-panel__head span {
+  display: block;
+  font-size: 0.78rem;
+}
+
+.pp-calculation-output-card h3,
+.pp-calculation-contract-box h3 {
+  font-size: 0.86rem;
+}
+
+.pp-calc-result-line span {
+  font-size: 9.5px;
+}
+
+.pp-calc-result-line b {
+  font-size: 12px;
+}
+
+.pp-calculation-contract-box p,
+.pp-calculation-create-note p {
+  font-size: 11px;
+}
+
+.pp-calculation-contract-list span,
+.pp-calculation-contract-list small {
+  font-size: 9px;
+}
+
+.pp-calculation-contract-list b {
+  font-size: 11px;
+}
+
+.pp-calculation-create-button {
+  min-height: 42px;
+  font-size: 12px;
+}

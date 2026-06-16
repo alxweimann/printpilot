@@ -878,3 +878,10 @@ export const sprint46Pattern = {
     "Das Kalkulationsmodul wird als neue UI-Fläche vorbereitet. Produktparameter, Bogenparameter, ein visueller Nutzenrechner-Ergebnisbereich und ein Demo-Übergang zur Auftragstasche nutzen den Datenvertrag aus Sprint 45.1/45.2, ohne bereits eine echte Kalkulationslogik oder Persistenz einzuführen.",
 };
 
+
+export const sprint461Pattern = {
+  id: "navigation-domain-order",
+  sprint: "46.1",
+  description:
+    "Die Hauptnavigation folgt der fachlichen PrintPilot-Reihenfolge: Dashboard, Kalkulation, Aufträge. Kalkulation steht damit als Angebots-/Auftragsvorstufe direkt nach dem Dashboard; die bestehende Modul-Logik bleibt unverändert.",
+};

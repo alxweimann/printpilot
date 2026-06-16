@@ -1582,3 +1582,21 @@ Nicht geändert:
 - keine echte Ausschieß-Engine
 - keine Persistenz/DB/LocalStorage
 - keine Änderung an Auftragstaschen-Preview, Nutzenplan-Rendering oder PDF-Preview-Assets
+
+## Sprint 46.1 – Navigation fachlich sortiert
+
+Sprint 46.1 korrigiert die fachliche Reihenfolge der Bottom-Navigation. Das Kalkulationsmodul steht jetzt direkt nach dem Dashboard, weil es im PrintPilot-Workflow vor Angebot, Auftrag und Produktion liegt.
+
+Umgesetzt:
+
+- Bottom-Navigation von `Dashboard → Aufträge → Kalkulation` auf `Dashboard → Kalkulation → Aufträge` umgestellt.
+- Aktive Zustände für `Kalkulation` und `Aufträge` bleiben unverändert erhalten.
+- Navigation bleibt bewusst klein gehalten: Dashboard und weitere Module sind weiterhin vorbereitet, aber noch nicht produktiv angebunden.
+- Neues Pattern `navigation-domain-order` ergänzt.
+
+Nicht geändert:
+
+- keine Änderung an Kalkulationslogik
+- keine Änderung an Aufträge-Übersicht
+- keine Änderung an Auftragstasche, Kartenklick, Rücknavigation oder zentralem UI-State
+- keine Änderung an Datenmodell, Persistenz oder Nutzenrechner-Vertrag

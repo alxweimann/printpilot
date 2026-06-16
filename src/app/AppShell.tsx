@@ -4,8 +4,8 @@ export type PrintPilotNavTarget = 'orders' | 'calculation'
 
 const bottomNav: Array<[string, string, PrintPilotNavTarget | undefined]> = [
   ['▦', 'Dashboard', undefined],
-  ['▤', 'Aufträge', 'orders'],
   ['◫', 'Kalkulation', 'calculation'],
+  ['▤', 'Aufträge', 'orders'],
   ['▣', 'Kalender', undefined],
   ['▣', 'Maschinen', undefined],
   ['⌘', 'Produktion', undefined],

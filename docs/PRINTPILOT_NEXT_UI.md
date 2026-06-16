@@ -1451,3 +1451,35 @@ Nicht geändert:
 - keine PDF-Rendering-Logik
 - keine Datenlogik
 - keine Änderung an Übersicht, Rücknavigation oder UI-State
+
+
+## Sprint 45 – PDF-/Preview-Datenstruktur professionalisieren
+
+Sprint 45 professionalisiert die Druckdaten- und Preview-Struktur, ohne bereits eine echte Ausschieß-Engine oder Persistenz einzuführen. Ziel ist ein sauberer fachlicher Übergang von der aktuellen Demo-UI zu späteren echten Auftragsdaten.
+
+Umgesetzt:
+
+- Neue abgeleitete Struktur `OrderProductionData` in `order-data.ts` eingeführt.
+- Fachliche Trennung vorbereitet zwischen:
+  - Original-PDF
+  - generiertem Preview-Bild
+  - Produktart
+  - Produkt-/Nutzenformat
+  - Bogenformat
+  - Nutzenplan-Typ
+  - Raster/Anordnung
+  - Beschnitt
+  - Abstand/Zwischenschnitt
+  - Preflight-/Datenstatus
+- Visitenkarten verwenden im Datenmodell explizit den Typ `business-card-24up` mit 6×4, 24 Nutzen und ca. 3–5 mm Abstand.
+- Briefbogen verwendet den Typ `letterhead-2up` mit A4-Stand auf SRA3.
+- Auftragstasche liest Produktdetails, Dateiliste, Preview-Spezifikation, Nutzenplan-Stats und Legende bevorzugt aus der neuen Struktur.
+- Bestehende Felder bleiben aus Kompatibilitätsgründen erhalten, damit Übersicht, zentraler UI-State und aktuelle Demo-Interaktion unverändert funktionieren.
+- Neues Pattern `professional-print-file-data-model` ergänzt.
+
+Nicht geändert:
+
+- keine echte Ausschieß-Engine
+- keine PDF-Rendering-Logik im Browser
+- keine Persistenz, kein LocalStorage, keine Datenbank
+- keine Änderung an Übersicht, Kartenklick, Rücknavigation oder UI-State

@@ -8,23 +8,26 @@ import wideFormatMachine from "../../assets/machines/machine-wide-format.svg";
 import inkjetMachine from "../../assets/machines/machine-inkjet.svg";
 import finishingMachine from "../../assets/machines/machine-finishing.svg";
 import { StatusPill } from "../../components/ui/StatusPill";
-import type { PrintPilotOrder } from "../orders/order-data";
+import { getOrderProductionData, type PrintPilotOrder } from "../orders/order-data";
 
 function getProductHighlights(order: PrintPilotOrder) {
+  const { product } = getOrderProductionData(order);
   return [
-    ["Auflage", order.quantity],
-    ["Endformat", order.endFormat],
-    ["Seiten", order.pages],
+    ["Auflage", product.quantity],
+    ["Endformat", product.finalFormat],
+    ["Seiten", product.pages],
   ];
 }
 
 function getProductDetails(order: PrintPilotOrder) {
+  const { product, imposition } = getOrderProductionData(order);
   return [
-    ["Papier", order.paper],
-    ["Farbigkeit", order.color],
-    ["Rohformat", order.rawFormat],
-    ["Nutzen", order.imposition],
-    ["Beschnitt", order.bleed],
+    ["Produktart", product.label],
+    ["Papier", product.substrate],
+    ["Farbigkeit", product.colorMode],
+    ["Rohformat", product.productionFormat],
+    ["Nutzen", imposition.label],
+    ["Beschnitt", product.bleed],
     ["Ausschuss", order.waste],
     ["Gewicht gesamt", order.totalWeight],
   ];
@@ -130,65 +133,95 @@ function getScheduleRows(
   ];
 }
 
+function formatSheetSize(widthMm?: number, heightMm?: number) {
+  return widthMm && heightMm ? `${widthMm} × ${heightMm} mm` : "schematisch";
+}
+
 function getImpositionStats(order: PrintPilotOrder) {
+  const productionData = getOrderProductionData(order);
+  const { imposition } = productionData;
   return [
     [
       "Bogenformat",
-      order.rawFormat === "SRA3" ? "SRA3 · 450 × 320 mm" : order.rawFormat,
+      `${imposition.sheet.name}${
+        imposition.sheet.widthMm && imposition.sheet.heightMm
+          ? ` · ${formatSheetSize(imposition.sheet.widthMm, imposition.sheet.heightMm)}`
+          : ""
+      }`,
     ],
-    ["Nutzen", order.imposition],
+    ["Nutzen", imposition.label],
     ["Druckbogen", `${order.quantity} · ${order.waste}`],
   ];
 }
 
 function getImpositionDetails(order: PrintPilotOrder) {
+  const { imposition } = getOrderProductionData(order);
   return [
-    ["Endformat", order.endFormat],
-    ["Anordnung", `${order.imposition} · schematisch`],
-    ["Beschnitt", `${order.bleed} umlaufend`],
+    ["Endformat", imposition.item.finalFormat],
+    [
+      "Anordnung",
+      `${imposition.layout.columns} × ${imposition.layout.rows} · ${imposition.layout.usedSlots} Nutzen`,
+    ],
+    ["Beschnitt", `${imposition.bleed} umlaufend`],
     [
       "Wendeart",
-      order.pages.includes("2") || order.pages.includes("4/4")
-        ? "Längswende / prüfen"
-        : "einseitig",
+      imposition.type === "wide-format-single"
+        ? "Rolle / einseitig"
+        : order.pages.includes("2") || order.pages.includes("4/4")
+          ? "Längswende / prüfen"
+          : "einseitig",
     ],
   ];
 }
 
-
 function getImpositionLegend(order: PrintPilotOrder) {
-  const spacing =
-    order.preview.kind === "business-card"
-      ? "ca. 3–5 mm"
-      : order.preview.kind === "letterhead"
-        ? "A4-Stand auf SRA3"
-        : "schematisch";
+  const { imposition } = getOrderProductionData(order);
 
   return [
-    ["Bogen", order.rawFormat === "SRA3" ? "450 × 320 mm" : order.rawFormat],
-    ["Nutzen", order.endFormat],
-    ["Beschnitt", order.bleed],
-    ["Abstand", spacing],
+    ["Bogen", formatSheetSize(imposition.sheet.widthMm, imposition.sheet.heightMm)],
+    ["Nutzen", imposition.item.finalFormat],
+    ["Beschnitt", imposition.bleed],
+    ["Abstand", imposition.layout.gapMm ?? "schematisch"],
   ];
 }
 
 function getPreviewSpecs(order: PrintPilotOrder) {
+  const { product, files } = getOrderProductionData(order);
   return [
-    ["Format", order.endFormat],
-    ["Seiten", order.pages],
-    ["Beschnitt", order.bleed],
+    ["Format", product.finalFormat],
+    ["Seiten", product.pages],
+    ["Beschnitt", product.bleed],
+    ["Quelle", files.original ? "Original-PDF" : "Demo-Preview"],
   ];
 }
 
 function getFiles(order: PrintPilotOrder) {
-  return [
+  const productionData = getOrderProductionData(order);
+  const files = [
+    productionData.files.original
+      ? [
+          "PDF",
+          productionData.files.original.filename,
+          productionData.files.original.category,
+          productionData.files.original.createdAt.date,
+          productionData.files.original.createdAt.time,
+          productionData.files.original.size,
+        ]
+      : [
+          "PNG",
+          productionData.files.preview.filename,
+          productionData.files.preview.category,
+          productionData.files.preview.createdAt.date,
+          productionData.files.preview.createdAt.time,
+          productionData.files.preview.size,
+        ],
     [
-      "PDF",
-      order.preview.filename,
-      order.fileCategory,
-      order.fileDate,
-      order.fileTime,
-      order.fileSize,
+      "PNG",
+      productionData.files.preview.filename,
+      "Generiertes Preview",
+      productionData.files.preview.createdAt.date,
+      productionData.files.preview.createdAt.time,
+      productionData.files.preview.size,
     ],
     [
       "PDF",
@@ -199,14 +232,6 @@ function getFiles(order: PrintPilotOrder) {
       "1,3 MB",
     ],
     [
-      "JPG",
-      `${order.id.toLowerCase()}_ansicht.jpg`,
-      "Ansicht",
-      order.fileDate,
-      order.fileTime,
-      "2,1 MB",
-    ],
-    [
       "PDF",
       `${order.id.toLowerCase()}_nutzenplan.pdf`,
       "Nutzenplan",
@@ -215,6 +240,8 @@ function getFiles(order: PrintPilotOrder) {
       "0,6 MB",
     ],
   ];
+
+  return files;
 }
 
 function getNoteRows(order: PrintPilotOrder) {
@@ -886,30 +913,15 @@ function ScheduleCard({
 }
 
 function getImpositionCellCount(order: PrintPilotOrder) {
-  const parsedCount = Number.parseInt(order.imposition, 10);
-  if (Number.isFinite(parsedCount) && parsedCount > 0) {
-    return Math.min(parsedCount, 24);
-  }
-
-  switch (order.preview.kind) {
-    case "business-card":
-      return 12;
-    case "brochure":
-      return 8;
-    case "poster":
-      return 2;
-    case "sticker":
-      return 15;
-    case "flyer":
-    default:
-      return 8;
-  }
+  const { imposition } = getOrderProductionData(order);
+  return Math.max(1, Math.min(imposition.layout.usedSlots, 24));
 }
 
 function ImpositionPlanCard({ order }: { order: PrintPilotOrder }) {
   const impositionStats = getImpositionStats(order);
   const impositionDetails = getImpositionDetails(order);
   const impositionLegend = getImpositionLegend(order);
+  const productionData = getOrderProductionData(order);
   const cellCount = getImpositionCellCount(order);
   return (
     <div
@@ -926,7 +938,7 @@ function ImpositionPlanCard({ order }: { order: PrintPilotOrder }) {
 
       <div
         className="pp-imposition-sheet"
-        aria-label={`Nutzenplan ${order.imposition} auf ${order.rawFormat}`}
+        aria-label={`Nutzenplan ${productionData.imposition.label} auf ${productionData.imposition.sheet.name}`}
       >
         {Array.from({ length: cellCount }, (_, index) => (
           <span className="pp-imposition-tile" key={index}>
@@ -952,7 +964,7 @@ function ImpositionPlanCard({ order }: { order: PrintPilotOrder }) {
             <strong>{value}</strong>
           </span>
         ))}
-        <em>schematische Produktionsvorschau</em>
+        <em>{productionData.imposition.previewNote}</em>
       </div>
     </div>
   );
@@ -960,6 +972,7 @@ function ImpositionPlanCard({ order }: { order: PrintPilotOrder }) {
 
 function PreviewCard({ order }: { order: PrintPilotOrder }) {
   const previewSpecs = getPreviewSpecs(order);
+  const productionData = getOrderProductionData(order);
   return (
     <div className="pp-preview-card pp-preview-card--asset">
       <div
@@ -976,9 +989,9 @@ function PreviewCard({ order }: { order: PrintPilotOrder }) {
       </div>
 
       <div className="pp-preview-meta">
-        <b>{order.preview.filename}</b>
+        <b>{productionData.files.original?.filename ?? order.preview.filename}</b>
         <span>
-          {order.fileCategory} · {order.color} · {order.preview.meta}
+          {productionData.product.label} · {productionData.product.colorMode} · {order.preview.meta}
         </span>
       </div>
 
@@ -1061,7 +1074,7 @@ export function OrderPocketPage({
     typeLabel: order.machineTypeLabel,
     status: "Verfügbar",
     location: order.machineType === "wide-format" ? "Großformat" : "Halle 1",
-    specs: [order.rawFormat, order.color, order.imposition],
+    specs: [order.rawFormat, order.color, getOrderProductionData(order).imposition.label],
     service: "12.05.2026",
   };
 

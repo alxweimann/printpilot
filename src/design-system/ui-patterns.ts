@@ -778,6 +778,14 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     status: "stable",
   },
 
+  {
+    id: "professional-print-file-data-model",
+    title: "Professionalisierte Druckdaten-Struktur",
+    description:
+      "Druckdaten werden fachlich getrennt in Original-PDF, Preview-Bild, Produktdaten, Nutzenplan-Parameter, Bogenformat, Nutzenformat, Beschnitt und Abstand vorbereitet. Die UI bleibt demohaft, aber die Datenstruktur ist näher an späterer Persistenz und Ausschieß-Engine.",
+    status: "stable",
+  },
+
 ];
 
 export const printPilotReferenceScreen = {
@@ -832,3 +840,10 @@ export const sprint4414Pattern = {
     "Nutzenplan-Vorschauen führen technische Angaben wie Bogenformat, Nutzenformat, Beschnitt und Abstand als dezente Legende. Der Hinweis auf die schematische Produktionsvorschau wird weniger dominant platziert.",
 };
 
+
+export const sprint45Pattern = {
+  id: "professional-print-file-data-model",
+  sprint: "45",
+  description:
+    "Original-PDF, generiertes Preview, Produktdaten und Nutzenplan-Parameter werden in einem abgeleiteten OrderProductionData-Modell gebündelt. Bestehende UI-Felder bleiben kompatibel, aber Auftragstasche und Dateiliste lesen bevorzugt aus der neuen Struktur.",
+};

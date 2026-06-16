@@ -97,6 +97,305 @@ export type PrintPilotOrder = {
   checklist: ChecklistSection[];
   history: HistoryEntry[];
 };
+export type SourceFileType = "pdf" | "image" | "generated-preview";
+export type ProductKind = OrderPreview["kind"];
+
+export type PrintFileAsset = {
+  type: SourceFileType;
+  role: "original" | "preview" | "approval" | "imposition";
+  filename: string;
+  label: string;
+  href?: string;
+  imageSrc?: string;
+  alt?: string;
+  category: string;
+  size: string;
+  createdAt: {
+    date: string;
+    time: string;
+  };
+};
+
+export type ProductSpecification = {
+  kind: ProductKind;
+  label: string;
+  finalFormat: string;
+  pages: string;
+  quantity: string;
+  substrate: string;
+  colorMode: string;
+  bleed: string;
+  productionFormat: string;
+};
+
+export type SheetSpecification = {
+  name: string;
+  widthMm?: number;
+  heightMm?: number;
+  orientation: "landscape" | "portrait" | "roll" | "unknown";
+};
+
+export type ImpositionPlanType =
+  | "sheet-repeat"
+  | "business-card-24up"
+  | "letterhead-2up"
+  | "brochure-signature"
+  | "wide-format-single"
+  | "sticker-sheet";
+
+export type ImpositionPlan = {
+  type: ImpositionPlanType;
+  label: string;
+  sheet: SheetSpecification;
+  item: {
+    finalFormat: string;
+    widthMm?: number;
+    heightMm?: number;
+  };
+  layout: {
+    columns: number;
+    rows: number;
+    usedSlots: number;
+    totalSlots: number;
+    gapMm?: string;
+    marginMm?: string;
+    orientation: "upright" | "rotated" | "mixed" | "roll";
+  };
+  bleed: string;
+  previewNote: string;
+};
+
+export type OrderProductionData = {
+  product: ProductSpecification;
+  files: {
+    original?: PrintFileAsset;
+    preview: PrintFileAsset;
+  };
+  imposition: ImpositionPlan;
+  preflight: {
+    value: string;
+    dataStatus: OrderStatus;
+    bleedStatus: OrderStatus;
+  };
+};
+
+const productKindLabels: Record<ProductKind, string> = {
+  flyer: "Flyer",
+  "business-card": "Visitenkarte",
+  brochure: "Broschüre",
+  poster: "Plakat",
+  sticker: "Aufkleberbogen",
+  letterhead: "Briefbogen",
+};
+
+const sheetSpecs: Record<string, SheetSpecification> = {
+  SRA3: { name: "SRA3", widthMm: 450, heightMm: 320, orientation: "landscape" },
+};
+
+function getSheetSpecification(order: PrintPilotOrder): SheetSpecification {
+  if (order.rawFormat === "SRA3") {
+    return sheetSpecs.SRA3;
+  }
+
+  if (order.rawFormat.toLowerCase().includes("rolle")) {
+    return { name: order.rawFormat, orientation: "roll" };
+  }
+
+  return { name: order.rawFormat, orientation: "unknown" };
+}
+
+function getItemSize(order: PrintPilotOrder) {
+  switch (order.preview.kind) {
+    case "business-card":
+      return { widthMm: 85, heightMm: 55 };
+    case "flyer":
+      return { widthMm: 210, heightMm: 99 };
+    case "letterhead":
+      return { widthMm: 210, heightMm: 297 };
+    case "poster":
+      return { widthMm: 420, heightMm: 594 };
+    case "brochure":
+      return { widthMm: 148, heightMm: 210 };
+    case "sticker":
+      return { widthMm: 210, heightMm: 297 };
+    default:
+      return {};
+  }
+}
+
+function getImpositionPlan(order: PrintPilotOrder): ImpositionPlan {
+  const sheet = getSheetSpecification(order);
+  const itemSize = getItemSize(order);
+
+  switch (order.preview.kind) {
+    case "business-card":
+      return {
+        type: "business-card-24up",
+        label: "24 Nutzen · 6 × 4",
+        sheet,
+        item: { finalFormat: order.endFormat, ...itemSize },
+        layout: {
+          columns: 6,
+          rows: 4,
+          usedSlots: 24,
+          totalSlots: 24,
+          gapMm: "ca. 3–5 mm",
+          marginMm: "produktionsnah",
+          orientation: "upright",
+        },
+        bleed: order.bleed,
+        previewNote: "schematische Produktionsvorschau, noch keine echte Ausschieß-Engine",
+      };
+    case "letterhead":
+      return {
+        type: "letterhead-2up",
+        label: "2 Nutzen · A4 auf SRA3",
+        sheet,
+        item: { finalFormat: order.endFormat, ...itemSize },
+        layout: {
+          columns: 2,
+          rows: 1,
+          usedSlots: 2,
+          totalSlots: 2,
+          gapMm: "A4-Stand auf SRA3",
+          marginMm: "schematisch",
+          orientation: "upright",
+        },
+        bleed: order.bleed,
+        previewNote: "A4-Hochformat schematisch auf Druckbogen platziert",
+      };
+    case "brochure":
+      return {
+        type: "brochure-signature",
+        label: order.imposition,
+        sheet,
+        item: { finalFormat: order.endFormat, ...itemSize },
+        layout: {
+          columns: 4,
+          rows: 2,
+          usedSlots: Math.min(order.impositionCount, 8),
+          totalSlots: 8,
+          gapMm: "schematisch",
+          marginMm: "schematisch",
+          orientation: "mixed",
+        },
+        bleed: order.bleed,
+        previewNote: "Signaturdarstellung ohne echte Seitenreihenfolge",
+      };
+    case "poster":
+      return {
+        type: "wide-format-single",
+        label: order.imposition,
+        sheet,
+        item: { finalFormat: order.endFormat, ...itemSize },
+        layout: {
+          columns: 1,
+          rows: 1,
+          usedSlots: 1,
+          totalSlots: 1,
+          gapMm: "Rollenlayout",
+          marginMm: "Medienrand prüfen",
+          orientation: "roll",
+        },
+        bleed: order.bleed,
+        previewNote: "Rollenlayout schematisch dargestellt",
+      };
+    case "sticker":
+      return {
+        type: "sticker-sheet",
+        label: order.imposition,
+        sheet,
+        item: { finalFormat: order.endFormat, ...itemSize },
+        layout: {
+          columns: 5,
+          rows: 3,
+          usedSlots: Math.min(order.impositionCount, 15),
+          totalSlots: 15,
+          gapMm: "schematisch",
+          marginMm: "Konturabstand prüfen",
+          orientation: "upright",
+        },
+        bleed: order.bleed,
+        previewNote: "Kontur-/Stickerbogen schematisch dargestellt",
+      };
+    case "flyer":
+    default:
+      return {
+        type: "sheet-repeat",
+        label: order.imposition,
+        sheet,
+        item: { finalFormat: order.endFormat, ...itemSize },
+        layout: {
+          columns: 4,
+          rows: 2,
+          usedSlots: Math.min(order.impositionCount, 8),
+          totalSlots: 8,
+          gapMm: "schematisch",
+          marginMm: "schematisch",
+          orientation: "upright",
+        },
+        bleed: order.bleed,
+        previewNote: "schematische Produktionsvorschau, noch keine echte Ausschieß-Engine",
+      };
+  }
+}
+
+export function getOrderProductionData(order: PrintPilotOrder): OrderProductionData {
+  const previewFile: PrintFileAsset = {
+    type: "generated-preview",
+    role: "preview",
+    filename: order.preview.filename.replace(/\.pdf$/i, ".png"),
+    label: order.preview.label,
+    imageSrc: order.preview.imageSrc,
+    alt: order.preview.imageAlt,
+    category: "Preview-Bild",
+    size: order.preview.meta,
+    createdAt: {
+      date: order.fileDate,
+      time: order.fileTime,
+    },
+  };
+
+  const originalFile: PrintFileAsset | undefined = order.preview.sourcePdf
+    ? {
+        type: "pdf",
+        role: "original",
+        filename: order.preview.filename,
+        label: "Original-PDF",
+        href: order.preview.sourcePdf,
+        category: order.fileCategory,
+        size: order.fileSize,
+        createdAt: {
+          date: order.fileDate,
+          time: order.fileTime,
+        },
+      }
+    : undefined;
+
+  return {
+    product: {
+      kind: order.preview.kind,
+      label: productKindLabels[order.preview.kind],
+      finalFormat: order.endFormat,
+      pages: order.pages,
+      quantity: order.quantity,
+      substrate: order.paper,
+      colorMode: order.color,
+      bleed: order.bleed,
+      productionFormat: order.rawFormat,
+    },
+    files: {
+      original: originalFile,
+      preview: previewFile,
+    },
+    imposition: getImpositionPlan(order),
+    preflight: {
+      value: order.preflightValue,
+      dataStatus: order.data,
+      bleedStatus: order.bleedStatus,
+    },
+  };
+}
 
 export const orderSummary = [
   { label: "Heute fällig", value: "4", helper: "2 kritisch", tone: "orange" },

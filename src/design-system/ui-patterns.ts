@@ -943,3 +943,10 @@ export const sprint468Pattern = {
   description:
     "Die Kalkulationsseite erhält einen eigenständigen Oldschool-MIS-Look: flachere Rahmen, graue Abschnittsbalken, tabellarische Feldblöcke, weniger Rundungen und keine Card-/Dashboard-Anmutung. Auftragstasche und Auftragsübersicht bleiben davon unberührt.",
 };
+
+export const sprint469Pattern = {
+  id: "calculation-oldschool-readable-mask",
+  sprint: "46.9",
+  description:
+    "Der Oldschool-MIS-Look der Kalkulation wird lesbarer abgestimmt: größere Feldwerte, ruhigere Labels, höhere Tabellenzeilen, dezente Pflicht-Badges und mehr Abstand zur unteren Navigation, ohne zurück zur Card-Optik zu wechseln.",
+};

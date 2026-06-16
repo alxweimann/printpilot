@@ -1767,3 +1767,19 @@ Nicht geändert:
 - keine neue Persistenz
 - keine Änderung am Datenvertrag zwischen Kalkulation und Auftragstasche
 - keine Änderung am Produktionsdatenmodell
+
+## Sprint 46.9 – Oldschool-MIS-Look lesbarer machen
+
+Die Kalkulationsmaske bleibt im eigenständigen Oldschool-MIS-/ERP-Look, wird aber für produktive Eingabe besser lesbar abgestimmt.
+
+Umgesetzt:
+
+- Schriftgrößen in der Kalkulation leicht erhöht.
+- Feldwerte kräftiger und besser lesbar gesetzt.
+- Labels bleiben sachlich, treten aber weniger gegen die Werte an.
+- Pflicht-/Optional-/Später-Markierungen dezenter gehalten.
+- Formularzeilen und Eingabefelder leicht höher gesetzt.
+- Weiterverarbeitungstabelle mit höheren Zeilen und größeren Tabellenwerten versehen.
+- Auswertungsbereich unter der Maske lesbarer gegliedert.
+- Mehr Abstand zur unteren Navigation geschaffen.
+- Keine neue Berechnungslogik ergänzt.

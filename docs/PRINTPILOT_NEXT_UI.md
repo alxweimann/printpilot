@@ -1723,3 +1723,16 @@ Nicht geändert:
 - keine Lieferantenverwaltung
 - keine Persistenz/DB/LocalStorage
 - keine Änderung an Aufträge-Übersicht, Auftragstasche oder zentralem UI-State
+
+
+## Sprint 46.6 – Kalkulation volle Eingabebreite
+
+Die Kalkulationsmaske wurde weiter in Richtung produktive MIS-/ERP-Eingabe verdichtet. Die rechte Ergebnis-/Info-Spalte wurde entfernt, weil sie der eigentlichen Eingabemaske zu viel Breite genommen hat.
+
+Umgesetzt:
+
+- Kalkulationsformular läuft über die volle Inhaltsbreite.
+- Ergebnis, Nutzenrechner und Datenvertrag stehen jetzt unter der Eingabemaske.
+- Weiterverarbeitungstabelle erhält mehr horizontale Arbeitsfläche.
+- Ergebniszone unten ist kompakt als Auswertungsbereich aufgebaut.
+- Keine neue Berechnungslogik.

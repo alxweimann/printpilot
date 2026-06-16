@@ -903,3 +903,11 @@ export const sprint465Pattern = {
   description:
     "Die Kalkulationsmaske wird für produktives Erfassen verdichtet. Feldhöhen, Abschnittsabstände und Pflicht-/Optionalmarkierungen werden reduziert; die Weiterverarbeitung wird als tabellarische MIS-Matrix mit Leistung, Aktiv, Parametern, Menge und Produktionsweg geführt.",
 };
+
+
+export const sprint466Pattern = {
+  id: "calculation-full-width-input-results-below",
+  sprint: "46.6",
+  description:
+    "Die Kalkulation nutzt die komplette Inhaltsbreite für die Eingabemaske. Ergebnis, Nutzenrechner und Datenvertrag stehen kompakt unterhalb der Maske, damit die Formulareingabe nicht seitlich eingeengt wird.",
+};

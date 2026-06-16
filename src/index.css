@@ -8127,3 +8127,127 @@ button.pp-process-step:hover {
     grid-template-columns: 1fr;
   }
 }
+
+
+/* Sprint 46.6 – Kalkulation volle Eingabebreite, Ergebnis nach unten */
+.pp-calculation-layout {
+  display: block;
+  width: min(100%, 1480px);
+  max-width: 1480px;
+  margin-inline: auto;
+}
+
+.pp-calculation-form {
+  width: 100%;
+  max-width: none;
+}
+
+.pp-calculation-result-panel {
+  position: static;
+  width: 100%;
+  max-width: none;
+  margin-top: 14px;
+  display: grid;
+  grid-template-columns: 220px minmax(240px, 1fr) minmax(300px, 1.2fr) 220px;
+  align-items: stretch;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 18px;
+}
+
+.pp-calculation-result-panel__head {
+  min-width: 0;
+  padding-right: 8px;
+  border-right: 1px solid rgba(15, 23, 42, 0.08);
+}
+
+.pp-calculation-result-panel__head h2 {
+  margin: 3px 0 5px;
+  font-size: 1.04rem;
+  line-height: 1.15;
+}
+
+.pp-calculation-result-panel__head span {
+  font-size: 0.72rem;
+  line-height: 1.35;
+}
+
+.pp-calculation-result-panel .pp-calc-sheet-preview {
+  min-height: 0;
+  padding: 10px;
+}
+
+.pp-calculation-result-panel .pp-calc-sheet-preview__sheet {
+  height: 124px;
+}
+
+.pp-calculation-output-card,
+.pp-calculation-contract-box {
+  min-height: 0;
+  padding: 10px;
+  border-radius: 14px;
+}
+
+.pp-calculation-output-card h3,
+.pp-calculation-contract-box h3 {
+  font-size: 0.78rem;
+  margin-bottom: 7px;
+}
+
+.pp-calculation-contract-box p {
+  margin-bottom: 7px;
+  font-size: 0.72rem;
+}
+
+.pp-calculation-contract-list {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px;
+}
+
+.pp-calculation-contract-list article {
+  padding: 7px;
+}
+
+.pp-calculation-create-button {
+  align-self: start;
+  min-height: 38px;
+  padding: 9px 12px;
+  border-radius: 12px;
+}
+
+.pp-calculation-create-note {
+  grid-column: 4;
+  align-self: end;
+  margin-top: 8px;
+  padding: 9px;
+  border-radius: 12px;
+}
+
+.pp-calc-finishing-table th:nth-child(3),
+.pp-calc-finishing-table td:nth-child(3) {
+  width: 42%;
+}
+
+@media (max-width: 1320px) {
+  .pp-calculation-result-panel {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pp-calculation-create-button,
+  .pp-calculation-create-note {
+    grid-column: auto;
+  }
+}
+
+@media (max-width: 900px) {
+  .pp-calculation-result-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-calculation-result-panel__head {
+    border-right: 0;
+    border-bottom: 1px solid rgba(15, 23, 42, 0.08);
+    padding-right: 0;
+    padding-bottom: 8px;
+  }
+}

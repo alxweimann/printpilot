@@ -293,7 +293,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         </div>
         <div className="pp-header-title-shape">
           <h1>KALKULATION</h1>
-          <p>Große Eingabemaske · Produktionsart · Nutzenrechner</p>
+          <p>Volle Eingabebreite · Ergebnis unten · Nutzenrechner</p>
         </div>
         <div
           className="pp-header-job pp-header-job--overview"
@@ -693,8 +693,8 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         >
           <div className="pp-calculation-result-panel__head">
             <p className="pp-eyebrow">Ergebnis</p>
-            <h2>Nutzenrechner</h2>
-            <span>Vorbereitete Produktionsdaten aus dem Datenvertrag.</span>
+            <h2>Auswertung / Nutzenrechner</h2>
+            <span>Ergebnis, Produktionsdaten und Datenvertrag unter der Eingabemaske.</span>
           </div>
 
           <CalculationSheetPreview payload={payload} />

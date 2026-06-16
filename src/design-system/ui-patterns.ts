@@ -870,3 +870,11 @@ export const sprint452Pattern = {
   description:
     "Ein Demo-Adapter bildet CalculationToProductionPayload auf OrderProductionData und einen PrintPilotOrder-Entwurf ab. Die Kalkulation bleibt fachlicher Provider; Auftragstasche und Übersicht bleiben Consumer der vorbereiteten Produktionsdaten.",
 };
+
+export const sprint46Pattern = {
+  id: "calculation-module-scaffold",
+  sprint: "46",
+  description:
+    "Das Kalkulationsmodul wird als neue UI-Fläche vorbereitet. Produktparameter, Bogenparameter, ein visueller Nutzenrechner-Ergebnisbereich und ein Demo-Übergang zur Auftragstasche nutzen den Datenvertrag aus Sprint 45.1/45.2, ohne bereits eine echte Kalkulationslogik oder Persistenz einzuführen.",
+};
+

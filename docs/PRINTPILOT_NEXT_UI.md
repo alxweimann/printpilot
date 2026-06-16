@@ -1553,3 +1553,32 @@ Wichtig:
 - Die Kalkulationsseite wird noch nicht angebunden.
 - Keine Persistenz, kein LocalStorage, keine Datenbank.
 - Der Nutzenplan wird weiterhin nur visualisiert; die fachlichen Werte kommen später aus dem Nutzenrechner.
+
+## Sprint 46 – Kalkulationsmodul als UI-Fläche vorbereiten
+
+Sprint 46 führt die erste sichtbare Kalkulationsseite im PrintPilot-Next-Stil ein. Ziel ist noch keine echte Kalkulationslogik, sondern eine belastbare UI-Struktur, die den Datenvertrag aus Sprint 45.1 und den Demo-Adapter aus Sprint 45.2 sichtbar macht.
+
+Umgesetzt:
+
+- Neue Seite `src/features/calculation/CalculationPage.tsx` ergänzt.
+- Bottom-Navigation um **Kalkulation** erweitert.
+- `App.tsx` kann jetzt zwischen Aufträge-Übersicht, Auftragstasche und Kalkulation wechseln.
+- Kalkulationsseite zeigt:
+  - Produktparameter,
+  - Bogenparameter,
+  - Auflage,
+  - Raster/Nutzenanzahl,
+  - Bogenanzahl/Zuschuss/Restmenge,
+  - Maschinenempfehlung,
+  - vorbereiteten Nutzenrechner-Ergebnisbereich.
+- Demo-Aktion **Aus Kalkulation Auftrag erzeugen** nutzt `createOrderDraftFromCalculation(...)` und übernimmt den Entwurf in den zentralen UI-State.
+- Der erzeugte Demo-Auftrag öffnet direkt die Auftragstasche und kann dort wie ein normaler Auftrag geprüft werden.
+- Datenvertrag-Felder aus `calculationProductionContract` werden als rechte Infospalte sichtbar gemacht.
+- Neues Pattern `calculation-module-scaffold` ergänzt.
+
+Nicht geändert:
+
+- keine echte Kalkulationsberechnung
+- keine echte Ausschieß-Engine
+- keine Persistenz/DB/LocalStorage
+- keine Änderung an Auftragstaschen-Preview, Nutzenplan-Rendering oder PDF-Preview-Assets

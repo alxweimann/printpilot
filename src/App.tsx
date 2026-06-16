@@ -1,11 +1,13 @@
 import { useMemo, useState } from 'react'
 import { AppShell } from './app/AppShell'
+import type { PrintPilotNavTarget } from './app/AppShell'
+import { CalculationPage } from './features/calculation/CalculationPage'
 import { OrderPocketPage } from './features/order-pocket/OrderPocketPage'
 import { OrdersOverviewPage } from './features/orders/OrdersOverviewPage'
 import { getFallbackOrder, orderRows } from './features/orders/order-data'
 import type { PrintPilotOrder } from './features/orders/order-data'
 
-type PrintPilotView = 'orders' | 'order-pocket'
+type PrintPilotView = 'orders' | 'order-pocket' | 'calculation'
 
 function cloneOrder(order: PrintPilotOrder): PrintPilotOrder {
   return {
@@ -43,6 +45,8 @@ export default function App() {
     [orders, selectedOrderId],
   )
 
+  const activeTarget: PrintPilotNavTarget = activeView === 'calculation' ? 'calculation' : 'orders'
+
   const openOrderPocket = (order: PrintPilotOrder) => {
     setSelectedOrderId(order.id)
     setActiveView('order-pocket')
@@ -58,6 +62,21 @@ export default function App() {
     )
   }
 
+  const upsertOrder = (nextOrderDraft: PrintPilotOrder) => {
+    const nextOrder = cloneOrder(nextOrderDraft)
+
+    setOrders((currentOrders) => {
+      const orderExists = currentOrders.some((order) => order.id === nextOrder.id)
+
+      return orderExists
+        ? currentOrders.map((order) => (order.id === nextOrder.id ? nextOrder : order))
+        : [nextOrder, ...currentOrders]
+    })
+
+    setSelectedOrderId(nextOrder.id)
+    setActiveView('order-pocket')
+  }
+
   const resetSelectedOrder = () => {
     const baseOrder =
       orderRows.find((order) => order.id === selectedOrderId) ?? getFallbackOrder()
@@ -71,10 +90,16 @@ export default function App() {
     )
   }
 
+  const navigate = (target: PrintPilotNavTarget) => {
+    setActiveView(target)
+  }
+
   return (
-    <AppShell>
+    <AppShell activeTarget={activeTarget} onNavigate={navigate}>
       {activeView === 'orders' ? (
         <OrdersOverviewPage orders={orders} onOpenOrderPocket={openOrderPocket} />
+      ) : activeView === 'calculation' ? (
+        <CalculationPage onCreateOrderDraft={upsertOrder} />
       ) : (
         <div className="pp-pocket-route-shell">
           <div className="pp-pocket-route-toolbar" aria-label="Auftragstaschen-Navigation">

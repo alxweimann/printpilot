@@ -786,6 +786,14 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     status: "stable",
   },
 
+  {
+    id: "calculation-production-contract",
+    title: "Schnittstelle Kalkulation zu Produktionsdaten",
+    description:
+      "Definiert den Datenvertrag, über den der Kalkulations-Nutzenrechner später Produktformat, Bogenformat, Raster, Nutzenanzahl, Beschnitt, Abstand, Bogenmenge und optionale Maschinenempfehlung an Auftragstasche und Nutzenplan übergibt.",
+    status: "draft",
+  },
+
 ];
 
 export const printPilotReferenceScreen = {
@@ -846,4 +854,12 @@ export const sprint45Pattern = {
   sprint: "45",
   description:
     "Original-PDF, generiertes Preview, Produktdaten und Nutzenplan-Parameter werden in einem abgeleiteten OrderProductionData-Modell gebündelt. Bestehende UI-Felder bleiben kompatibel, aber Auftragstasche und Dateiliste lesen bevorzugt aus der neuen Struktur.",
+};
+
+
+export const sprint451Pattern = {
+  id: "calculation-production-contract",
+  sprint: "45.1",
+  description:
+    "Der Datenvertrag zwischen Kalkulation und Auftragstasche ist als TypeScript-Struktur vorbereitet. Der Nutzenrechner liefert später fachliche Werte; Auftragstasche und Übersicht visualisieren diese Werte ohne eigene Neuberechnung.",
 };

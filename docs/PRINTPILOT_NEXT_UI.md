@@ -1483,3 +1483,39 @@ Nicht geändert:
 - keine PDF-Rendering-Logik im Browser
 - keine Persistenz, kein LocalStorage, keine Datenbank
 - keine Änderung an Übersicht, Kartenklick, Rücknavigation oder UI-State
+
+
+## Sprint 45.1 – Schnittstelle Kalkulation → Produktionsdaten planen
+
+Sprint 45.1 definiert den Datenvertrag zwischen Kalkulation/Nutzenrechner und Auftragstasche, ohne bereits eine echte Integration einzubauen. Ziel ist, dass der spätere Nutzenrechner fachlich entscheidet und die Auftragstasche das Ergebnis nur produktionsnah visualisiert.
+
+Umgesetzt:
+
+- Neuer TypeScript-Vertrag `CalculationToProductionPayload` in `order-data.ts` ergänzt.
+- Neue Struktur `CalculationImpositionResult` vorbereitet für Ergebnisse des Nutzenrechners.
+- Neues Feldschema `calculationProductionContract` dokumentiert die wichtigsten Übergabefelder.
+- Trennung vorbereitet zwischen:
+  - Kalkulationswerten, z. B. Auflage, Bogenanzahl, Zuschuss, Restmenge
+  - Produktionswerten, z. B. Bogenformat, Raster, Beschnitt, Zwischenschnitt, Maschine
+  - Datei-/Preview-Werten, z. B. Original-PDF und gerendertes Thumbnail
+- Der Nutzenrechner soll später liefern:
+  - Produktart und Endformat
+  - Bogenformat
+  - Nutzenformat
+  - Raster/Anordnung
+  - Nutzenanzahl
+  - Beschnitt
+  - Abstand/Zwischenschnitt
+  - Bogenanzahl
+  - Zuschuss/Überdruck
+  - Restmenge
+  - optionale Maschinenempfehlung
+- Auftragstasche und Übersicht bleiben Consumer dieser Daten und berechnen den Nutzenplan nicht eigenständig neu.
+- Neues Pattern `calculation-production-contract` ergänzt.
+
+Nicht geändert:
+
+- keine echte Verbindung zur Kalkulation
+- keine Ausschieß-Engine
+- keine Persistenz/DB/LocalStorage
+- keine Änderung an UI-State, Übersicht, Rücknavigation oder Preview-Rendering

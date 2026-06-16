@@ -179,6 +179,154 @@ export type OrderProductionData = {
   };
 };
 
+export type CalculationValueSource = "calculation" | "production-override" | "manual" | "system";
+
+export type CalculationProductionFormat = {
+  label: string;
+  widthMm?: number;
+  heightMm?: number;
+  orientation?: "portrait" | "landscape" | "roll" | "unknown";
+};
+
+export type CalculationImpositionResult = {
+  planType: ImpositionPlanType;
+  sheet: SheetSpecification;
+  item: {
+    finalFormat: string;
+    widthMm?: number;
+    heightMm?: number;
+  };
+  layout: {
+    columns: number;
+    rows: number;
+    usedSlots: number;
+    totalSlots: number;
+    gapMm?: number | string;
+    marginMm?: number | string;
+    orientation: "upright" | "rotated" | "mixed" | "roll";
+  };
+  production: {
+    orderedQuantity: number;
+    sheetsRequired?: number;
+    overs?: number;
+    netQuantity?: number;
+    restQuantity?: number;
+  };
+  finishingHints?: string[];
+  notes?: string[];
+};
+
+export type CalculationToProductionPayload = {
+  version: "printpilot-calculation-v1";
+  source: "calculation";
+  calculationId?: string;
+  quoteId?: string;
+  orderId?: string;
+  product: {
+    kind: ProductKind;
+    label: string;
+    finalFormat: CalculationProductionFormat;
+    pages: string;
+    quantity: number;
+    substrate?: string;
+    colorMode?: string;
+    bleedMm?: number;
+  };
+  imposition: CalculationImpositionResult;
+  machine?: {
+    label: string;
+    type?: PrintPilotOrder["machineType"];
+  };
+  preview?: {
+    originalPdf?: PrintFileAsset;
+    generatedPreview?: PrintFileAsset;
+  };
+  valueSources?: Partial<Record<
+    | "product"
+    | "sheet"
+    | "imposition"
+    | "machine"
+    | "preview",
+    CalculationValueSource
+  >>;
+};
+
+export type ProductionDataContractField = {
+  group: "Produkt" | "Druckbogen" | "Nutzenplan" | "Menge" | "Maschine" | "Dateien";
+  field: string;
+  required: boolean;
+  provider: "Kalkulation" | "Auftrag" | "Druckdaten" | "System";
+  consumer: "Auftragstasche" | "Übersicht" | "spätere Ausschieß-Engine";
+  note: string;
+};
+
+export const calculationProductionContract = [
+  {
+    group: "Produkt",
+    field: "product.kind / product.label",
+    required: true,
+    provider: "Kalkulation",
+    consumer: "Auftragstasche",
+    note: "Steuert Produktdarstellung, Preview-Typ und spätere produktabhängige Nutzenplan-Templates.",
+  },
+  {
+    group: "Produkt",
+    field: "product.finalFormat",
+    required: true,
+    provider: "Kalkulation",
+    consumer: "Auftragstasche",
+    note: "Endformat inklusive mm-Werten; Grundlage für Nutzenformat und technische Legende.",
+  },
+  {
+    group: "Druckbogen",
+    field: "imposition.sheet",
+    required: true,
+    provider: "Kalkulation",
+    consumer: "Auftragstasche",
+    note: "Bogenformat, z. B. SRA3 450 × 320 mm oder Rollenmaterial.",
+  },
+  {
+    group: "Nutzenplan",
+    field: "imposition.layout.columns / rows / usedSlots",
+    required: true,
+    provider: "Kalkulation",
+    consumer: "Auftragstasche",
+    note: "Raster und Nutzenanzahl; wird in der Auftragstasche nur visualisiert, nicht neu berechnet.",
+  },
+  {
+    group: "Nutzenplan",
+    field: "imposition.layout.gapMm / marginMm / bleedMm",
+    required: false,
+    provider: "Kalkulation",
+    consumer: "spätere Ausschieß-Engine",
+    note: "Zwischenschnitt, Rand und Beschnitt. Aktuell Anzeige-/Legendenwert, später produktionsrelevant.",
+  },
+  {
+    group: "Menge",
+    field: "imposition.production.sheetsRequired / overs / restQuantity",
+    required: false,
+    provider: "Kalkulation",
+    consumer: "Auftragstasche",
+    note: "Bogenanzahl, Zuschuss und Restmenge für spätere Produktionsplanung.",
+  },
+  {
+    group: "Maschine",
+    field: "machine.label / machine.type",
+    required: false,
+    provider: "Kalkulation",
+    consumer: "Übersicht",
+    note: "Maschinenempfehlung aus Kalkulation; kann im Auftrag später manuell überschrieben werden.",
+  },
+  {
+    group: "Dateien",
+    field: "preview.originalPdf / generatedPreview",
+    required: false,
+    provider: "Druckdaten",
+    consumer: "Auftragstasche",
+    note: "Originaldatei und gerendertes Thumbnail bleiben getrennt, damit echte PDF-Preview später austauschbar ist.",
+  },
+] satisfies ProductionDataContractField[];
+
 const productKindLabels: Record<ProductKind, string> = {
   flyer: "Flyer",
   "business-card": "Visitenkarte",

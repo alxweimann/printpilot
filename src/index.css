@@ -9077,3 +9077,168 @@ button.pp-process-step:hover {
     grid-template-columns: 1fr 1fr;
   }
 }
+
+/* Sprint 46.10 – Kalkulationsarbeitsfläche beruhigen */
+.pp-main--calculation .pp-bottom-nav {
+  --pp-calculation-nav-height: 54px;
+  height: calc(var(--pp-calculation-nav-height) + env(safe-area-inset-bottom, 0px));
+  padding-inline: 96px;
+  background: linear-gradient(180deg, rgba(8, 41, 87, .96) 0%, rgba(3, 23, 56, .96) 100%);
+  box-shadow: 0 -8px 18px rgba(4, 22, 52, .16);
+}
+
+.pp-main--calculation .pp-bottom-nav button {
+  gap: 7px;
+  font-size: 12.5px;
+  font-weight: 680;
+}
+
+.pp-main--calculation .pp-bottom-nav span {
+  font-size: 16px;
+}
+
+.pp-main--calculation .pp-bottom-nav button.is-active::before {
+  left: 34px;
+  right: 34px;
+  height: 2px;
+}
+
+.pp-calculation-page {
+  padding: 18px 34px calc(var(--pp-page-bottom-safe) + 62px);
+}
+
+.pp-calculation-master-header {
+  margin-bottom: 18px;
+}
+
+.pp-calculation-layout {
+  width: min(100%, 1580px);
+  max-width: 1580px;
+}
+
+.pp-calculation-form {
+  margin-top: 0;
+}
+
+.pp-calculation-form__intro {
+  min-height: 36px;
+}
+
+.pp-calculation-result-panel {
+  margin-top: 16px;
+  margin-bottom: 24px;
+  grid-template-columns: 190px minmax(380px, 1.18fr) minmax(360px, 1fr) 205px;
+  background: #f5f6f7;
+}
+
+.pp-calculation-result-panel__head {
+  background: #d9dee4;
+}
+
+.pp-calculation-result-panel__head h2 {
+  margin-bottom: 5px;
+}
+
+.pp-calculation-result-panel .pp-calc-sheet-preview {
+  padding: 12px 14px;
+}
+
+.pp-calculation-result-panel .pp-calc-sheet-preview__sheet {
+  height: 156px;
+}
+
+.pp-calculation-result-panel .pp-calc-sheet-preview p {
+  margin-top: 9px;
+  font-size: 12px;
+}
+
+.pp-calculation-output-card {
+  padding: 12px 14px;
+}
+
+.pp-calculation-contract-box {
+  padding: 10px;
+  background: #fbfcfd;
+}
+
+.pp-calculation-contract-box h3 {
+  margin-bottom: 5px;
+  font-size: 12.5px;
+}
+
+.pp-calculation-contract-box p {
+  margin-bottom: 8px;
+  font-size: 11px;
+  line-height: 1.3;
+}
+
+.pp-calculation-contract-list {
+  grid-template-columns: 1fr;
+  gap: 5px;
+  max-height: 170px;
+  overflow: auto;
+}
+
+.pp-calculation-contract-list article {
+  padding: 6px 7px;
+  background: #ffffff;
+}
+
+.pp-calculation-contract-list span,
+.pp-calculation-contract-list small {
+  font-size: 8.5px;
+}
+
+.pp-calculation-contract-list b {
+  font-size: 10.5px;
+}
+
+.pp-calculation-create-button {
+  margin: 10px;
+  min-height: 40px;
+}
+
+.pp-calculation-create-note {
+  margin: 0 10px 10px;
+}
+
+@media (max-width: 1420px) {
+  .pp-calculation-result-panel {
+    grid-template-columns: 180px minmax(320px, 1fr) minmax(320px, 1fr);
+  }
+
+  .pp-calculation-contract-box,
+  .pp-calculation-create-button,
+  .pp-calculation-create-note {
+    grid-column: span 3;
+  }
+
+  .pp-calculation-contract-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    max-height: none;
+  }
+}
+
+@media (max-width: 980px) {
+  .pp-calculation-page {
+    padding-inline: 16px;
+  }
+
+  .pp-calculation-result-panel {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-calculation-contract-box,
+  .pp-calculation-create-button,
+  .pp-calculation-create-note {
+    grid-column: auto;
+  }
+
+  .pp-calculation-contract-list {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-main--calculation .pp-bottom-nav {
+    padding-inline: 24px;
+  }
+}

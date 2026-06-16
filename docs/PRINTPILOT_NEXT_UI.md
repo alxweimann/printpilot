@@ -1783,3 +1783,11 @@ Umgesetzt:
 - Auswertungsbereich unter der Maske lesbarer gegliedert.
 - Mehr Abstand zur unteren Navigation geschaffen.
 - Keine neue Berechnungslogik ergänzt.
+
+## Sprint 46.10 – Kalkulationsarbeitsfläche beruhigen
+
+- Die Kalkulationsseite behält den Oldschool-MIS-Look aus Sprint 46.8/46.9 bei.
+- Die Eingabemaske erhält mehr Abstand zum Header und mehr Sicherheitsabstand zur unteren Navigation.
+- Die Bottom-Navigation wird im Kalkulationskontext kompakter und visuell zurückgenommen, damit sie die Formulararbeit weniger stört.
+- Die Auswertung unter der Maske wird ruhiger verteilt: Der Nutzenplan bekommt mehr Breite, Produktionsdaten bleiben klar lesbar, der Datenvertrag wird kleiner und technischer geführt.
+- Keine neue Berechnungslogik, keine Änderung am Datenvertrag.

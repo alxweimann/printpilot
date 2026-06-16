@@ -20,9 +20,14 @@ type AppShellProps = {
 }
 
 export function AppShell({ children, activeTarget = 'orders', onNavigate }: AppShellProps) {
+  const mainClassName =
+    activeTarget === 'calculation'
+      ? 'pp-main pp-main--console pp-main--calculation'
+      : 'pp-main pp-main--console'
+
   return (
     <div className="pp-app pp-app--console">
-      <main className="pp-main pp-main--console">
+      <main className={mainClassName}>
         {children}
         <nav className="pp-bottom-nav" aria-label="Schnellnavigation">
           {bottomNav.map(([icon, label, target]) => (

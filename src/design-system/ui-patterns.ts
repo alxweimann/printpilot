@@ -950,3 +950,10 @@ export const sprint469Pattern = {
   description:
     "Der Oldschool-MIS-Look der Kalkulation wird lesbarer abgestimmt: größere Feldwerte, ruhigere Labels, höhere Tabellenzeilen, dezente Pflicht-Badges und mehr Abstand zur unteren Navigation, ohne zurück zur Card-Optik zu wechseln.",
 };
+
+export const sprint4610Pattern = {
+  id: "calculation-workspace-calm-results-zone",
+  sprint: "46.10",
+  description:
+    "Die Kalkulationsarbeitsfläche wird beruhigt: Die Eingabemaske erhält mehr Abstand zum Header und zur unteren Navigation, die Bottom-Navigation wird im Kalkulationskontext kompakter und die Auswertung unten wird mit breiterem Nutzenplan, klareren Produktionsdaten und kleinerem technischem Datenvertrag ausbalanciert.",
+};

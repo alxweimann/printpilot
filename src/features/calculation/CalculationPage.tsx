@@ -293,7 +293,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         </div>
         <div className="pp-header-title-shape">
           <h1>KALKULATION</h1>
-          <p>Volle Eingabebreite · Ergebnis unten · Nutzenrechner</p>
+          <p>MIS-Maske · Tabellenlayout · Ergebnis unten</p>
         </div>
         <div
           className="pp-header-job pp-header-job--overview"
@@ -312,7 +312,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           <div className="pp-calculation-form__intro">
             <div>
               <p className="pp-eyebrow">Arbeitsmaske</p>
-              <h2>Kalkulationsdaten</h2>
+              <h2>Eingabeformular</h2>
             </div>
             <div
               className="pp-calculation-form__meta"
@@ -694,7 +694,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           <div className="pp-calculation-result-panel__head">
             <p className="pp-eyebrow">Ergebnis</p>
             <h2>Auswertung / Nutzenrechner</h2>
-            <span>Ergebnis, Produktionsdaten und Datenvertrag unter der Eingabemaske.</span>
+            <span>Nüchterne Auswertung unter der Eingabemaske.</span>
           </div>
 
           <CalculationSheetPreview payload={payload} />

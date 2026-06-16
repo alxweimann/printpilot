@@ -1745,3 +1745,25 @@ Umgesetzt:
 - Die Weiterverarbeitungstabelle erhält mehr Mindestbreite und größere Zeilenwerte.
 - Der Ergebnisbereich unten bleibt erhalten, wird aber besser lesbar.
 - TypeScript-Buildfehler in `src/design-system/ui-patterns.ts` wurden behoben: ältere Pattern-Einträge nutzen wieder die gültigen Felder `category`, `name`, `purpose`, `reference`, `classNames` und `reuseFor` statt nicht typkonformer Zusatzfelder.
+
+## Sprint 46.8 – Kalkulation im Oldschool-MIS-Look
+
+Die Kalkulationsmaske wurde optisch stärker von Auftragstasche und Auftragsübersicht getrennt. Ziel ist eine sachliche, produktive MIS-/ERP-Eingabemaske statt eines modernen Card-/Dashboard-Looks.
+
+Umgesetzt:
+
+- Kalkulationsformular erhält flache, rechteckige Rahmen statt weicher Cards.
+- Abschnittsüberschriften werden als graue MIS-Leisten geführt.
+- Feldgruppen wirken tabellarischer: Labelspalte links, Wertfeld rechts.
+- Rundungen, Schatten und moderne Akzentflächen wurden in der Kalkulation deutlich reduziert.
+- Produktionsart-Auswahl wurde nüchterner und leistenartiger gesetzt.
+- Weiterverarbeitungstabelle bleibt erhalten, wirkt aber mehr wie eine klassische ERP-Tabelle.
+- Ergebnis-/Nutzenbereich unten wurde ebenfalls sachlicher und tabellarischer gestaltet.
+- Auftragstasche, Auftragsübersicht und zentrale Navigation bleiben unverändert.
+
+Nicht geändert:
+
+- keine neue Berechnungslogik
+- keine neue Persistenz
+- keine Änderung am Datenvertrag zwischen Kalkulation und Auftragstasche
+- keine Änderung am Produktionsdatenmodell

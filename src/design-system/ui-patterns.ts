@@ -936,3 +936,10 @@ export const sprint467Pattern = {
   description:
     "Die volle Kalkulationsmaske bleibt produktiv verdichtet, wird aber lesbarer: Feldtexte, Tabellenwerte, Abschnittsüberschriften und Ergebniszone werden größer gesetzt, ohne zur aufgeblasenen Card-Optik zurückzukehren. Zusätzlich werden ältere Pattern-Einträge typkonform repariert.",
 };
+
+export const sprint468Pattern = {
+  id: "calculation-oldschool-mis-look",
+  sprint: "46.8",
+  description:
+    "Die Kalkulationsseite erhält einen eigenständigen Oldschool-MIS-Look: flachere Rahmen, graue Abschnittsbalken, tabellarische Feldblöcke, weniger Rundungen und keine Card-/Dashboard-Anmutung. Auftragstasche und Auftragsübersicht bleiben davon unberührt.",
+};

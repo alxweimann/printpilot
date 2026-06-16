@@ -1388,3 +1388,23 @@ Nicht geändert:
 - keine Datenlogik
 - keine Änderung an Übersicht, Rücknavigation oder UI-State
 
+
+## Sprint 44.12 – Visitenkarten-Nutzenplan praxisnäher setzen
+
+Sprint 44.12 korrigiert die horizontale Wirkung des Visitenkarten-Nutzenplans nach Sprint 44.11. Das 6×4-Raster bleibt bestehen, die Nutzen stehen aber deutlich enger und produktionstypischer auf dem Bogen.
+
+Umgesetzt:
+
+- Horizontale und vertikale Abstände zwischen den Visitenkarten-Nutzen deutlich reduziert.
+- Innenränder des SRA3-Bogens zurückgenommen, ohne die Bogengrenze zu verlieren.
+- Visitenkarten-Motive etwas stärker skaliert und kontrastreicher dargestellt.
+- Nutzen bleiben flach auf dem Druckbogen; keine Rückkehr zu Kachel-/Stapeloptik.
+- Nutzennummern bleiben extrem dezent.
+- Briefbogen und andere Produktarten bleiben unverändert.
+
+Nicht geändert:
+
+- keine echte Ausschieß-Engine
+- keine PDF-Rendering-Logik
+- keine Datenlogik
+- keine Änderung an Übersicht, Rücknavigation oder UI-State

@@ -811,3 +811,9 @@ export const sprint4411Pattern = {
     "Visitenkarten-Nutzenpläne behalten das vollständige 6x4-Raster, nutzen die verfügbare Bogenfläche aber stärker aus. Motive werden kontrastreicher und etwas größer dargestellt, ohne Cropping am Druckbogen oder Rückkehr zur Kacheloptik.",
 };
 
+export const sprint4412Pattern = {
+  id: "business-card-imposition-practical-spacing",
+  sprint: "44.12",
+  description:
+    "Visitenkarten-Nutzenpläne behalten das vollständige 6x4-Raster, reduzieren aber horizontale und vertikale Abstände. Die Motive wirken enger und produktionstypischer auf dem SRA3-Bogen, ohne Kachel- oder Stapeloptik.",
+};

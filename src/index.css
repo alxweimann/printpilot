@@ -6563,3 +6563,69 @@ button.pp-process-step:hover {
     transform: none;
   }
 }
+
+/* Sprint 44.12 – Visitenkarten-Nutzenplan praxisnäher setzen */
+.pp-imposition-card--business-card .pp-imposition-sheet {
+  gap: 1px;
+  padding: 8px 7px 8px;
+  background:
+    linear-gradient(90deg, rgba(22, 39, 81, .022) 1px, transparent 1px) 0 0 / 30px 30px,
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet::before {
+  inset: 5px;
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet::after {
+  inset: 8px;
+  border-color: rgba(22, 39, 81, .055);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile {
+  border-color: rgba(0, 159, 227, .12);
+  border-radius: 1.5px;
+  background: #fff;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile::before {
+  inset: 0;
+  border-color: rgba(22, 39, 81, .018);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile img {
+  transform: scale(1.14);
+  filter: saturate(1.08) contrast(1.12);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile b {
+  right: 1px;
+  bottom: 1px;
+  opacity: .055;
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet:hover .pp-imposition-tile b {
+  opacity: .18;
+}
+
+@media (max-width: 1500px) {
+  .pp-imposition-card--business-card .pp-imposition-sheet {
+    gap: 1px;
+    padding: 7px;
+  }
+
+  .pp-imposition-card--business-card .pp-imposition-tile img {
+    transform: scale(1.12);
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-imposition-card--business-card .pp-imposition-sheet {
+    gap: 2px;
+    padding: 9px;
+  }
+
+  .pp-imposition-card--business-card .pp-imposition-tile img {
+    transform: none;
+  }
+}

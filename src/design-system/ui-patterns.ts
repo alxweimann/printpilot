@@ -885,3 +885,10 @@ export const sprint461Pattern = {
   description:
     "Die Hauptnavigation folgt der fachlichen PrintPilot-Reihenfolge: Dashboard, Kalkulation, Aufträge. Kalkulation steht damit als Angebots-/Auftragsvorstufe direkt nach dem Dashboard; die bestehende Modul-Logik bleibt unverändert.",
 };
+
+export const sprint462Pattern = {
+  id: "calculation-input-mask-production-mode",
+  sprint: "46.2",
+  description:
+    "Die Kalkulationsseite wird als klare Eingabemaske geführt. Produkt, Format, Auflage, Material, Produktionsart, Weiterverarbeitung und Ergebnis sind getrennte Arbeitsbereiche; Eigenproduktion, Fremdproduktion und Kombination werden als zentrale Produktionsart vorbereitet.",
+};

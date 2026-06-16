@@ -1600,3 +1600,37 @@ Nicht geändert:
 - keine Änderung an Aufträge-Übersicht
 - keine Änderung an Auftragstasche, Kartenklick, Rücknavigation oder zentralem UI-State
 - keine Änderung an Datenmodell, Persistenz oder Nutzenrechner-Vertrag
+
+## Sprint 46.2 – Kalkulation als klare Eingabemaske mit Produktionsart
+
+Sprint 46.2 stellt die Kalkulationsseite vom Demo-/Dashboard-Aufbau auf eine echte Arbeitsmaske um. Die Eingabe steht im Vordergrund, das Ergebnis wird separat rechts als vorbereiteter Nutzenrechner-/Produktionsdatenbereich angezeigt.
+
+Umgesetzt:
+
+- Kalkulationsseite als klare Eingabemaske neu strukturiert.
+- Eingabegruppen in fachlicher Reihenfolge:
+  - Produkt
+  - Format
+  - Auflage
+  - Material / Papier
+  - Produktionsart
+  - Weiterverarbeitung
+  - Ergebnis / Nutzenrechner
+- Produktionsart als zentrale Auswahl ergänzt:
+  - Eigenproduktion
+  - Fremdproduktion
+  - Kombination
+- Eigenproduktion zeigt vorbereitete Felder für Maschine, Druckart, Wendung und Nutzenrechner.
+- Fremdproduktion zeigt vorbereitete Felder für Lieferant, Einkaufspreis, Lieferzeit, Marge/Aufschlag, Angebotsnummer, Fracht und Handling.
+- Kombination bereitet die spätere Aufteilung von internen und externen Produktionsschritten vor.
+- Ergebnisbereich bleibt getrennt von der Eingabe und zeigt Produktionsweg, Nutzen, Bogenanzahl und Zwischenschnitt.
+- Button „Auftrag aus Kalkulation erzeugen“ liegt jetzt im Ergebnisbereich.
+- Keine echte Berechnungslogik ergänzt.
+- Datenvertrag aus Sprint 45.1/45.2 bleibt Grundlage.
+
+Nicht umgesetzt:
+
+- keine echte Kostenkalkulation
+- keine Lieferantenverwaltung
+- keine Persistenz/DB/LocalStorage
+- keine echte Nutzenrechner-Integration

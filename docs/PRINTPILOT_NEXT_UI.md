@@ -1408,3 +1408,25 @@ Nicht geändert:
 - keine PDF-Rendering-Logik
 - keine Datenlogik
 - keine Änderung an Übersicht, Rücknavigation oder UI-State
+
+## Sprint 44.13 – Nutzenplan mit praxisnahen 3–5-mm-Abständen
+
+Sprint 44.13 präzisiert den Visitenkarten-Nutzenplan nach Sprint 44.12. Der Bogen bleibt als vollständiger 24er-Druckbogen im 6×4-Raster aufgebaut, die Zwischenräume werden aber technisch plausibler als ca. 3–5 mm simuliert.
+
+Umgesetzt:
+
+- 6×4-Raster für Visitenkarten bleibt erhalten.
+- Zwischenräume werden über ein eigenes CSS-Token `--pp-bc-practical-gap` auf ca. 3–5 mm simuliert.
+- Die Grid-Zeilen werden nicht mehr künstlich über die komplette Bogenhöhe gestreckt; die Nutzen stehen als geschlossener Produktionsblock auf dem Bogen.
+- Innenränder und Sicherheitsrahmen bleiben sichtbar, wirken aber nicht mehr wie UI-Abstände.
+- Visitenkarten-Motive bleiben flach, ohne Kachel- oder Stapeloptik.
+- Technische Legende ergänzt: `Zwischenraum ca. 3–5 mm · schematische Produktionsvorschau`.
+- Briefbogen und andere Produktarten bleiben unverändert.
+
+Nicht geändert:
+
+- keine echte Ausschieß-Engine
+- keine Berechnung von Greiferrand, Zwischenschnitt oder Laufrichtung
+- keine PDF-Rendering-Logik
+- keine Datenlogik
+- keine Änderung an Übersicht, Rücknavigation oder UI-State

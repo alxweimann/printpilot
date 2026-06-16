@@ -6629,3 +6629,87 @@ button.pp-process-step:hover {
     transform: none;
   }
 }
+
+/* Sprint 44.13 – Nutzenplan mit praxisnahen 3–5-mm-Abständen */
+.pp-imposition-card--business-card {
+  --pp-bc-practical-gap: clamp(3px, .48vw, 5px);
+  --pp-bc-sheet-padding-x: clamp(7px, .85vw, 12px);
+  --pp-bc-sheet-padding-y: clamp(10px, 1vw, 15px);
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet {
+  aspect-ratio: 450 / 320;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  grid-template-rows: repeat(4, auto);
+  gap: var(--pp-bc-practical-gap);
+  padding: var(--pp-bc-sheet-padding-y) var(--pp-bc-sheet-padding-x);
+  align-content: center;
+  justify-content: stretch;
+  background:
+    linear-gradient(90deg, rgba(22, 39, 81, .018) 1px, transparent 1px) 0 0 / 30px 30px,
+    linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet::before {
+  inset: clamp(5px, .7vw, 9px);
+  border-color: rgba(0, 159, 227, .20);
+}
+
+.pp-imposition-card--business-card .pp-imposition-sheet::after {
+  inset: clamp(7px, .9vw, 12px);
+  border-color: rgba(22, 39, 81, .045);
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile {
+  width: 100%;
+  height: auto;
+  aspect-ratio: 85 / 55;
+  align-self: center;
+  justify-self: stretch;
+  border-color: rgba(0, 159, 227, .13);
+  background: #fff;
+}
+
+.pp-imposition-card--business-card .pp-imposition-tile img {
+  object-fit: cover;
+  object-position: center;
+  transform: scale(1.08);
+  filter: saturate(1.08) contrast(1.10);
+}
+
+.pp-imposition-card--business-card .pp-imposition-details::after {
+  content: 'Zwischenraum ca. 3–5 mm · schematische Produktionsvorschau';
+  display: block;
+  grid-column: 1 / -1;
+  margin-top: 3px;
+  color: rgba(78, 95, 128, .68);
+  font-size: 8px;
+  font-weight: 820;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 1500px) {
+  .pp-imposition-card--business-card {
+    --pp-bc-practical-gap: 3px;
+    --pp-bc-sheet-padding-x: 7px;
+    --pp-bc-sheet-padding-y: 9px;
+  }
+
+  .pp-imposition-card--business-card .pp-imposition-tile img {
+    transform: scale(1.06);
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-imposition-card--business-card .pp-imposition-sheet {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    grid-template-rows: repeat(6, auto);
+    gap: 3px;
+    padding: 10px;
+  }
+
+  .pp-imposition-card--business-card .pp-imposition-tile img {
+    transform: none;
+  }
+}

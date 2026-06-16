@@ -817,3 +817,10 @@ export const sprint4412Pattern = {
   description:
     "Visitenkarten-Nutzenpläne behalten das vollständige 6x4-Raster, reduzieren aber horizontale und vertikale Abstände. Die Motive wirken enger und produktionstypischer auf dem SRA3-Bogen, ohne Kachel- oder Stapeloptik.",
 };
+
+export const sprint4413Pattern = {
+  id: "business-card-imposition-3-5mm-spacing",
+  sprint: "44.13",
+  description:
+    "Visitenkarten-Nutzenpläne behalten das 6x4-Raster, simulieren aber praxisnähere Zwischenräume von ca. 3–5 mm. Die Grid-Zeilen werden als geschlossener Produktionsblock geführt, damit der Bogen nicht wie eine UI-Galerie wirkt.",
+};

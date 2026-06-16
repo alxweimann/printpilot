@@ -7700,3 +7700,126 @@ button.pp-process-step:hover {
     justify-items: start;
   }
 }
+
+/* Sprint 46.4 – MIS-erweiterte Kalkulationsmaske */
+.pp-calc-input-field span {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.pp-calc-input-field span em {
+  flex: 0 0 auto;
+  padding: 2px 6px;
+  border-radius: 999px;
+  color: #7b899c;
+  background: #f3f7fb;
+  font-size: 8px;
+  line-height: 1;
+  font-style: normal;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.pp-calc-input-field span em:first-letter {
+  text-transform: uppercase;
+}
+
+.pp-calc-finishing-matrix {
+  display: grid;
+  gap: 8px;
+}
+
+.pp-calc-finishing-row {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(210px, .85fr) minmax(0, 1.7fr);
+  gap: 12px;
+  align-items: stretch;
+  padding: 10px;
+  border: 1px solid #e1e9f3;
+  border-radius: 15px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+}
+
+.pp-calc-finishing-row.is-active {
+  border-color: rgba(0, 159, 227, .28);
+  box-shadow: inset 3px 0 0 rgba(0, 159, 227, .82);
+}
+
+.pp-calc-finishing-row__service {
+  min-width: 0;
+  display: flex;
+  align-items: flex-start;
+  gap: 9px;
+}
+
+.pp-calc-finishing-row__service input {
+  width: 13px;
+  height: 13px;
+  margin-top: 2px;
+  flex: 0 0 auto;
+  accent-color: var(--pp-blue);
+}
+
+.pp-calc-finishing-row__service b {
+  display: block;
+  color: #10213f;
+  font-size: 12px;
+  line-height: 1.15;
+  font-weight: 950;
+  letter-spacing: -.01em;
+}
+
+.pp-calc-finishing-row__service small {
+  display: block;
+  margin-top: 3px;
+  color: #6a7b92;
+  font-size: 10px;
+  line-height: 1.25;
+  font-weight: 650;
+}
+
+.pp-calc-finishing-row__fields {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.pp-calc-finishing-row__fields label {
+  min-width: 0;
+  display: grid;
+  gap: 4px;
+}
+
+.pp-calc-finishing-row__fields span {
+  color: #78879a;
+  font-size: 9px;
+  line-height: 1;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.pp-calc-finishing-row__fields input {
+  width: 100%;
+  min-width: 0;
+  height: 32px;
+  padding: 0 10px;
+  border: 1px solid #dfe8f2;
+  border-radius: 10px;
+  color: #172843;
+  background: #ffffff;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 800;
+}
+
+@media (max-width: 1180px) {
+  .pp-calc-finishing-row {
+    grid-template-columns: 1fr;
+  }
+}

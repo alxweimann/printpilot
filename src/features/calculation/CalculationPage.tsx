@@ -71,11 +71,13 @@ function CalculationField({
   label,
   value,
   hint,
+  badge,
   wide = false,
 }: {
   label: string;
   value: string;
   hint?: string;
+  badge?: "Pflicht" | "optional" | "später";
   wide?: boolean;
 }) {
   return (
@@ -86,7 +88,10 @@ function CalculationField({
           : "pp-calc-input-field"
       }
     >
-      <span>{label}</span>
+      <span>
+        {label}
+        {badge ? <em>{badge}</em> : null}
+      </span>
       <input value={value} readOnly />
       {hint ? <small>{hint}</small> : null}
     </label>
@@ -98,15 +103,20 @@ function CalculationSelect({
   value,
   options,
   hint,
+  badge,
 }: {
   label: string;
   value: string;
   options: string[];
   hint?: string;
+  badge?: "Pflicht" | "optional" | "später";
 }) {
   return (
     <label className="pp-calc-input-field">
-      <span>{label}</span>
+      <span>
+        {label}
+        {badge ? <em>{badge}</em> : null}
+      </span>
       <select value={value} disabled>
         {options.map((option) => (
           <option key={option}>{option}</option>
@@ -134,6 +144,38 @@ function CalculationSection({
       </div>
       {children}
     </section>
+  );
+}
+
+function FinishingMatrixRow({
+  label,
+  active,
+  fields,
+  note,
+}: {
+  label: string;
+  active: boolean;
+  fields: Array<{ label: string; value: string }>;
+  note?: string;
+}) {
+  return (
+    <article className={active ? "pp-calc-finishing-row is-active" : "pp-calc-finishing-row"}>
+      <div className="pp-calc-finishing-row__service">
+        <input type="checkbox" checked={active} readOnly aria-label={label} />
+        <div>
+          <b>{label}</b>
+          {note ? <small>{note}</small> : null}
+        </div>
+      </div>
+      <div className="pp-calc-finishing-row__fields">
+        {fields.map((field) => (
+          <label key={`${label}-${field.label}`}>
+            <span>{field.label}</span>
+            <input value={field.value} readOnly />
+          </label>
+        ))}
+      </div>
+    </article>
   );
 }
 
@@ -281,52 +323,87 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             </div>
           </div>
 
-          <CalculationSection eyebrow="01" title="Produkt">
+          <CalculationSection eyebrow="01" title="Kopfdaten">
+            <div className="pp-calc-input-grid pp-calc-input-grid--four">
+              <CalculationField label="Kunde" value="Wohlstandsmeister GmbH" badge="Pflicht" />
+              <CalculationField label="Ansprechpartner" value="Lutz Humbert" badge="Pflicht" />
+              <CalculationField label="Projekt / Jobname" value="Visitenkarten Relaunch" badge="Pflicht" />
+              <CalculationField label="Kalkulationsnummer" value={payload.calculationId ?? "CALC-2026-0001"} badge="Pflicht" />
+              <CalculationField label="Liefertermin" value="04.06.2026 · 11:00" badge="Pflicht" />
+              <CalculationField label="Bearbeiter" value="Max M." badge="Pflicht" />
+              <CalculationField label="Kundenreferenz" value="WM-VK-2026" badge="optional" />
+              <CalculationField label="Interne Notiz" value="Daten aus PDF-Preview prüfen" badge="optional" />
+            </div>
+          </CalculationSection>
+
+          <CalculationSection eyebrow="02" title="Produktdetails">
             <div className="pp-calc-input-grid">
               <CalculationSelect
                 label="Produktart"
                 value={productKindLabels[payload.product.kind]}
                 options={Object.values(productKindLabels)}
+                badge="Pflicht"
               />
               <CalculationField
                 label="Bezeichnung"
                 value={payload.product.label}
                 wide
+                badge="Pflicht"
               />
               <CalculationField
-                label="Seiten / Farbigkeit"
+                label="Seiten / Umfang"
                 value={payload.product.pages}
+                badge="Pflicht"
               />
               <CalculationField
-                label="Motive / Varianten"
-                value="1 Motiv · ein Datensatz"
+                label="Farbigkeit"
+                value="4/4-farbig · Skala"
+                badge="Pflicht"
+              />
+              <CalculationField
+                label="Motive / Sorten"
+                value="6 Varianten · Sammelauftrag"
+                badge="optional"
+              />
+              <CalculationField
+                label="Personalisierung"
+                value="keine Personalisierung"
+                badge="später"
               />
             </div>
           </CalculationSection>
 
-          <CalculationSection eyebrow="02" title="Format">
+          <CalculationSection eyebrow="03" title="Format">
             <div className="pp-calc-input-grid pp-calc-input-grid--four">
               <CalculationField
                 label="Endformat"
                 value={formatFormatLabel(payload.product.finalFormat)}
+                badge="Pflicht"
               />
-              <CalculationField label="Ausrichtung" value="Querformat" />
+              <CalculationField label="Offenes Format" value="identisch" badge="optional" />
+              <CalculationField label="Ausrichtung" value="Querformat" badge="Pflicht" />
               <CalculationField
                 label="Beschnitt"
                 value={formatMm(payload.product.bleedMm)}
+                badge="Pflicht"
               />
+              <CalculationField label="Sicherheitsabstand" value="3 mm" badge="optional" />
+              <CalculationField label="Nutzenformat" value="85 × 55 mm + Beschnitt" badge="Pflicht" />
+              <CalculationField label="Sonderform / Stanze" value="keine" badge="optional" />
               <CalculationField
                 label="Datenprüfung"
                 value="Preflight erforderlich"
+                badge="Pflicht"
               />
             </div>
           </CalculationSection>
 
-          <CalculationSection eyebrow="03" title="Auflage">
+          <CalculationSection eyebrow="04" title="Auflage / Staffeln">
             <div className="pp-calc-input-grid pp-calc-input-grid--four">
               <CalculationField
-                label="Menge"
+                label="Hauptauflage"
                 value={`${formatNumber(payload.product.quantity)} Stück`}
+                badge="Pflicht"
               />
               <CalculationField
                 label="Zuschuss"
@@ -335,6 +412,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     ? `${formatNumber(result.production.overs)} Stück`
                     : "offen"
                 }
+                badge="Pflicht"
               />
               <CalculationField
                 label="Netto-Menge"
@@ -343,6 +421,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     ? `${formatNumber(result.production.netQuantity)} Stück`
                     : "offen"
                 }
+                badge="optional"
               />
               <CalculationField
                 label="Restmenge"
@@ -351,26 +430,41 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     ? `${formatNumber(result.production.restQuantity)} Stück`
                     : "0"
                 }
+                badge="optional"
               />
+              <CalculationField label="Staffel 1" value="500 Stück" badge="optional" />
+              <CalculationField label="Staffel 2" value="1.000 Stück" badge="optional" />
+              <CalculationField label="Staffel 3" value="2.500 Stück" badge="optional" />
+              <CalculationField label="Varianten" value="6 Sorten zusammen" badge="optional" />
             </div>
           </CalculationSection>
 
-          <CalculationSection eyebrow="04" title="Material / Papier">
+          <CalculationSection eyebrow="05" title="Material / Papier">
             <div className="pp-calc-input-grid pp-calc-input-grid--four">
               <CalculationField
-                label="Material"
-                value={payload.product.substrate ?? "noch offen"}
+                label="Materialgruppe"
+                value="Bilderdruck / Karton"
+                badge="Pflicht"
               />
-              <CalculationField label="Grammatur" value="350 g/m²" />
+              <CalculationField
+                label="Artikel"
+                value={payload.product.substrate ?? "noch offen"}
+                badge="Pflicht"
+              />
+              <CalculationField label="Grammatur" value="350 g/m²" badge="Pflicht" />
               <CalculationField
                 label="Bogenformat"
                 value={`${result.sheet.name} · ${result.sheet.widthMm ?? "?"} × ${result.sheet.heightMm ?? "?"} mm`}
+                badge="Pflicht"
               />
-              <CalculationField label="Laufrichtung" value="offen" />
+              <CalculationField label="Laufrichtung" value="offen" badge="optional" />
+              <CalculationField label="Lagerstatus" value="Lagerware prüfen" badge="Pflicht" />
+              <CalculationField label="Lieferant" value="OVOL / IGEPA / Berberich" badge="optional" />
+              <CalculationField label="Preisstand" value="manuell / CSV später" badge="später" />
             </div>
           </CalculationSection>
 
-          <CalculationSection eyebrow="05" title="Produktionsart">
+          <CalculationSection eyebrow="06" title="Produktion">
             <div
               className="pp-calc-production-mode"
               role="radiogroup"
@@ -396,16 +490,23 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                   <CalculationField
                     label="Maschine"
                     value={payload.machine?.label ?? "noch offen"}
+                    badge="Pflicht"
                   />
-                  <CalculationField label="Druckart" value="Digitaldruck 4/4" />
+                  <CalculationField label="Druckart" value="Digitaldruck 4/4" badge="Pflicht" />
                   <CalculationField
                     label="Wendung"
                     value="einseitig / aufrecht"
+                    badge="Pflicht"
                   />
                   <CalculationField
                     label="Nutzenrechner"
                     value={`${result.layout.columns} × ${result.layout.rows} · ${result.layout.usedSlots} Nutzen`}
+                    badge="Pflicht"
                   />
+                  <CalculationField label="Rüstzeit" value="12 min" badge="später" />
+                  <CalculationField label="Laufzeit" value="automatisch später" badge="später" />
+                  <CalculationField label="Klickkosten" value="Maschinenstamm" badge="später" />
+                  <CalculationField label="Makulatur" value="Zuschuss aus Kalkulation" badge="optional" />
                 </div>
               ) : null}
 
@@ -414,61 +515,160 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                   <CalculationField
                     label="Lieferant"
                     value="Fremddruckerei auswählen"
+                    badge="Pflicht"
                   />
-                  <CalculationField label="Einkaufspreis" value="0,00 €" />
+                  <CalculationField label="Einkaufspreis" value="0,00 €" badge="Pflicht" />
                   <CalculationField
                     label="Lieferzeit"
                     value="3–5 Arbeitstage"
+                    badge="Pflicht"
                   />
-                  <CalculationField label="Marge / Aufschlag" value="35 %" />
-                  <CalculationField label="Angebotsnummer" value="noch offen" />
-                  <CalculationField label="Fracht / Versand" value="0,00 €" />
-                  <CalculationField
-                    label="Handling"
-                    value="Datencheck + Bestellabwicklung"
-                    wide
-                  />
+                  <CalculationField label="Marge / Aufschlag" value="35 %" badge="Pflicht" />
+                  <CalculationField label="Angebotsnummer" value="noch offen" badge="optional" />
+                  <CalculationField label="Fracht / Versand" value="0,00 €" badge="optional" />
+                  <CalculationField label="Handling-Aufwand" value="15 min" badge="optional" />
+                  <CalculationField label="Interne Prüfung" value="Datencheck bleibt intern" badge="Pflicht" />
                 </div>
               ) : null}
 
               {productionMode === "combined" ? (
                 <div className="pp-calc-input-grid pp-calc-input-grid--four">
-                  <CalculationField label="Druck" value="Eigenproduktion" />
+                  <CalculationField label="Druck" value="Eigenproduktion" badge="Pflicht" />
                   <CalculationField
                     label="Veredelung"
                     value="extern vorbereiten"
+                    badge="optional"
                   />
                   <CalculationField
                     label="Weiterverarbeitung"
                     value="intern schneiden / verpacken"
+                    badge="Pflicht"
                   />
                   <CalculationField
                     label="Fremdleistung"
                     value="Lieferant + Einkauf noch offen"
+                    badge="optional"
                   />
                 </div>
               ) : null}
             </div>
           </CalculationSection>
 
-          <CalculationSection eyebrow="06" title="Weiterverarbeitung">
-            <div className="pp-calc-check-grid">
-              {[
-                "Schneiden",
-                "Rillen / Falzen",
-                "Heften",
-                "Verpacken",
-                "Externe Veredelung",
-              ].map((item, index) => (
-                <label key={item} className="pp-calc-check-item">
-                  <input
-                    type="checkbox"
-                    checked={index === 0 || index === 3}
-                    readOnly
-                  />
-                  <span>{item}</span>
-                </label>
-              ))}
+          <CalculationSection eyebrow="07" title="Weiterverarbeitung">
+            <div className="pp-calc-finishing-matrix" aria-label="Weiterverarbeitungs-Matrix">
+              <FinishingMatrixRow
+                label="Schneiden"
+                active
+                note="Planschnitt / Endschnitt / Zwischenschnitt"
+                fields={[
+                  { label: "Schnittart", value: "Endschnitt" },
+                  { label: "Schnitte", value: "4" },
+                  { label: "intern/extern", value: "intern" },
+                ]}
+              />
+              <FinishingMatrixRow
+                label="Falzen"
+                active={false}
+                note="Falzart und Anzahl Brüche für Folder/Beilagen"
+                fields={[
+                  { label: "Falzart", value: "Wickelfalz" },
+                  { label: "Brüche", value: "2" },
+                  { label: "Maschine", value: "Falzmaschine" },
+                ]}
+              />
+              <FinishingMatrixRow
+                label="Rillen / Nuten"
+                active={false}
+                note="Wichtig bei starken Grammaturen und Foldern"
+                fields={[
+                  { label: "Rillungen", value: "2" },
+                  { label: "Seite", value: "einseitig" },
+                  { label: "Positionen", value: "später" },
+                ]}
+              />
+              <FinishingMatrixRow
+                label="Heften"
+                active={false}
+                note="Broschüren und gelochte Ringösenheftung"
+                fields={[
+                  { label: "Art", value: "Rückstich" },
+                  { label: "Klammern", value: "2" },
+                  { label: "Ösen", value: "nein" },
+                ]}
+              />
+              <FinishingMatrixRow
+                label="Klebebindung"
+                active={false}
+                note="PUR/Hotmelt, Rückenbreite und Umschlagrillung"
+                fields={[
+                  { label: "Art", value: "PUR" },
+                  { label: "Rücken", value: "automatisch" },
+                  { label: "Umschlag", value: "4-seitig" },
+                ]}
+              />
+              <FinishingMatrixRow
+                label="Fadenheftung"
+                active={false}
+                note="Meist Sonderleistung oder Fremdproduktion"
+                fields={[
+                  { label: "Lagen", value: "offen" },
+                  { label: "Seiten/Lage", value: "16" },
+                  { label: "Produktion", value: "extern" },
+                ]}
+              />
+              <FinishingMatrixRow
+                label="Bohren / Lochen / Ösen"
+                active={false}
+                note="Bohrbild, Durchmesser und Position"
+                fields={[
+                  { label: "Anzahl", value: "2" },
+                  { label: "Ø", value: "6 mm" },
+                  { label: "Ösen", value: "optional" },
+                ]}
+              />
+              <FinishingMatrixRow
+                label="Laminieren / Kaschieren"
+                active={false}
+                note="Matt, Glanz, Softtouch, ein- oder beidseitig"
+                fields={[
+                  { label: "Oberfläche", value: "matt" },
+                  { label: "Seite", value: "1/0" },
+                  { label: "Art", value: "Folie" },
+                ]}
+              />
+              <FinishingMatrixRow
+                label="Stanzen / Plotten"
+                active={false}
+                note="Konturschnitt, Stanzform oder digitale Weiterverarbeitung"
+                fields={[
+                  { label: "Art", value: "Kontur" },
+                  { label: "Konturen", value: "offen" },
+                  { label: "Stanze", value: "später" },
+                ]}
+              />
+              <FinishingMatrixRow
+                label="Verpacken / Versand"
+                active
+                note="Bündeln, Kartonieren, Etikettieren, Teillieferung"
+                fields={[
+                  { label: "Verpackung", value: "Karton" },
+                  { label: "Bündel", value: "100er" },
+                  { label: "Lieferung", value: "eine Adresse" },
+                ]}
+              />
+            </div>
+          </CalculationSection>
+
+          <CalculationSection eyebrow="08" title="Kosten / Ergebnisvorgaben">
+            <div className="pp-calc-input-grid pp-calc-input-grid--four">
+              <CalculationField label="Materialkosten" value="aus Papierstamm später" badge="später" />
+              <CalculationField label="Druckkosten" value="Maschinenstamm später" badge="später" />
+              <CalculationField label="Weiterverarbeitung" value="Matrix × Tarife später" badge="später" />
+              <CalculationField label="Fremdleistung" value="0,00 €" badge="optional" />
+              <CalculationField label="Handling" value="15 min" badge="optional" />
+              <CalculationField label="Versand" value="0,00 €" badge="optional" />
+              <CalculationField label="Marge" value="35 %" badge="Pflicht" />
+              <CalculationField label="Verkaufspreis netto" value="automatisch später" badge="später" />
             </div>
           </CalculationSection>
         </main>

@@ -1658,3 +1658,40 @@ Nicht geändert:
 - keine Lieferantenverwaltung
 - keine Persistenz/DB/LocalStorage
 - keine Änderung an Aufträge-Übersicht, Auftragstasche oder zentralem UI-State
+
+## Sprint 46.4 – Kalkulationsmaske nach MIS-Vergleich erweitert
+
+Sprint 46.4 erweitert die große Kalkulationsmaske fachlich in Richtung einer realistischeren Print-MIS-Eingabe. Die Maske bleibt bewusst eine zusammenhängende Formularfläche; es werden keine vielen kleinen Cards zurückgeführt.
+
+Umgesetzt:
+
+- Abschnitt **Kopfdaten** ergänzt mit Kunde, Ansprechpartner, Projekt/Jobname, Kalkulationsnummer, Liefertermin, Bearbeiter, Kundenreferenz und interner Notiz.
+- Abschnitt **Produktdetails** erweitert um Produktart, Bezeichnung, Umfang, Farbigkeit, Motive/Sorten und spätere Personalisierung.
+- Abschnitt **Format** erweitert um Endformat, offenes Format, Ausrichtung, Beschnitt, Sicherheitsabstand, Nutzenformat, Sonderform/Stanze und Datenprüfung.
+- Abschnitt **Auflage / Staffeln** ergänzt mit Hauptauflage, Zuschuss, Netto-Menge, Restmenge, Staffel-Vorbereitung und Varianten.
+- Abschnitt **Material / Papier** erweitert um Materialgruppe, Artikel, Grammatur, Bogenformat, Laufrichtung, Lagerstatus, Lieferant und Preisstand.
+- Abschnitt **Produktion** bleibt mit Eigenproduktion, Fremdproduktion und Kombination erhalten, wurde aber um MIS-typische Felder wie Rüstzeit, Laufzeit, Klickkosten, Makulatur, interne Prüfung und Handling-Aufwand erweitert.
+- Abschnitt **Weiterverarbeitung** wurde als kompakte Matrix aufgebaut statt als einfache Checkbox-Liste.
+- Weiterverarbeitungs-Matrix enthält vorbereitete Detailfelder für:
+  - Schneiden mit Schnittart und Schnitten,
+  - Falzen mit Falzart und Anzahl Brüche,
+  - Rillen/Nuten mit Anzahl Rillungen und Positionen,
+  - Heften mit Rückstich/Ringösen/Klammern,
+  - Klebebindung mit PUR/Hotmelt, Rücken und Umschlag,
+  - Fadenheftung mit Lagen und Seiten je Lage,
+  - Bohren/Lochen/Ösen mit Anzahl, Durchmesser und Ösen,
+  - Laminieren/Kaschieren mit Oberfläche und Seite,
+  - Stanzen/Plotten mit Kontur/Stanze/Fremdleistung,
+  - Verpacken/Versand mit Bündeln, Kartonieren und Lieferart.
+- Abschnitt **Kosten / Ergebnisvorgaben** ergänzt mit Materialkosten, Druckkosten, Weiterverarbeitung, Fremdleistung, Handling, Versand, Marge und Verkaufspreis netto.
+- Felder sind visuell als **Pflicht**, **optional** oder **später** gekennzeichnet.
+- Neues Pattern `calculation-mis-input-mask` ergänzt.
+
+Nicht geändert:
+
+- keine echte Kalkulationsberechnung
+- keine neue Ausschießlogik
+- keine Lieferantenverwaltung
+- keine Persistenz/DB/LocalStorage
+- keine Änderung an Aufträge-Übersicht, Auftragstasche oder zentralem UI-State
+

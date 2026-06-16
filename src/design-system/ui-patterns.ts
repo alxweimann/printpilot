@@ -888,3 +888,11 @@ export const sprint463Pattern = {
   description:
     "Die Kalkulationsseite nutzt eine große zusammenhängende Formularfläche statt vieler einzelner Cards. Fachliche Abschnitte werden durch Überschriften und feine Trennlinien geführt; Ergebnis und Nutzenrechner bleiben als separate rechte Zusammenfassung erhalten.",
 };
+
+export const sprint464Pattern = {
+  id: "calculation-mis-input-mask",
+  sprint: "46.4",
+  description:
+    "Die Kalkulationsmaske wird nach MIS-typischen Pflicht-/Optionalfeldern erweitert. Kopfdaten, Produktdetails, Format, Auflage/Staffeln, Material, Produktion, detaillierte Weiterverarbeitung und Kosten werden in einer großen Eingabemaske geführt.",
+};
+

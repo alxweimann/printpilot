@@ -51,7 +51,6 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
-
   {
     id: "orders-overview-quiet-list",
     category: "list",
@@ -122,7 +121,6 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
-
   {
     id: "orders-overview-real-preview-assets",
     category: "production",
@@ -167,7 +165,6 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       "Meta-Zeilen",
     ],
   },
-
 
   {
     id: "orders-overview-meta-baseline",
@@ -417,8 +414,6 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     ],
   },
 
-
-
   {
     id: "order-pocket-layout-balance",
     category: "production",
@@ -585,7 +580,6 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       "gleichmäßige Kartenhöhen",
     ],
   },
-
 
   {
     id: "order-pocket-interactive-process-bar",
@@ -761,7 +755,6 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
     reference: "Auftragstasche · Nutzenplan · Sprint 44.6",
   },
 
-
   {
     id: "realistic-flat-imposition-sheet",
     title: "Realistischer Druckbogen-Nutzenplan",
@@ -793,7 +786,6 @@ export const printPilotUiPatterns: PrintPilotPattern[] = [
       "Definiert den Datenvertrag, über den der Kalkulations-Nutzenrechner später Produktformat, Bogenformat, Raster, Nutzenanzahl, Beschnitt, Abstand, Bogenmenge und optionale Maschinenempfehlung an Auftragstasche und Nutzenplan übergibt.",
     status: "draft",
   },
-
 ];
 
 export const printPilotReferenceScreen = {
@@ -848,14 +840,12 @@ export const sprint4414Pattern = {
     "Nutzenplan-Vorschauen führen technische Angaben wie Bogenformat, Nutzenformat, Beschnitt und Abstand als dezente Legende. Der Hinweis auf die schematische Produktionsvorschau wird weniger dominant platziert.",
 };
 
-
 export const sprint45Pattern = {
   id: "professional-print-file-data-model",
   sprint: "45",
   description:
     "Original-PDF, generiertes Preview, Produktdaten und Nutzenplan-Parameter werden in einem abgeleiteten OrderProductionData-Modell gebündelt. Bestehende UI-Felder bleiben kompatibel, aber Auftragstasche und Dateiliste lesen bevorzugt aus der neuen Struktur.",
 };
-
 
 export const sprint451Pattern = {
   id: "calculation-production-contract",
@@ -878,7 +868,6 @@ export const sprint46Pattern = {
     "Das Kalkulationsmodul wird als neue UI-Fläche vorbereitet. Produktparameter, Bogenparameter, ein visueller Nutzenrechner-Ergebnisbereich und ein Demo-Übergang zur Auftragstasche nutzen den Datenvertrag aus Sprint 45.1/45.2, ohne bereits eine echte Kalkulationslogik oder Persistenz einzuführen.",
 };
 
-
 export const sprint461Pattern = {
   id: "navigation-domain-order",
   sprint: "46.1",
@@ -891,4 +880,11 @@ export const sprint462Pattern = {
   sprint: "46.2",
   description:
     "Die Kalkulationsseite wird als klare Eingabemaske geführt. Produkt, Format, Auflage, Material, Produktionsart, Weiterverarbeitung und Ergebnis sind getrennte Arbeitsbereiche; Eigenproduktion, Fremdproduktion und Kombination werden als zentrale Produktionsart vorbereitet.",
+};
+
+export const sprint463Pattern = {
+  id: "calculation-large-input-mask",
+  sprint: "46.3",
+  description:
+    "Die Kalkulationsseite nutzt eine große zusammenhängende Formularfläche statt vieler einzelner Cards. Fachliche Abschnitte werden durch Überschriften und feine Trennlinien geführt; Ergebnis und Nutzenrechner bleiben als separate rechte Zusammenfassung erhalten.",
 };

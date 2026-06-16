@@ -1634,3 +1634,27 @@ Nicht umgesetzt:
 - keine Lieferantenverwaltung
 - keine Persistenz/DB/LocalStorage
 - keine echte Nutzenrechner-Integration
+
+## Sprint 46.3 – Kalkulation als große Eingabemaske
+
+Sprint 46.3 beruhigt die Kalkulationsseite weiter. Die fachlichen Gruppen aus Sprint 46.2 bleiben erhalten, werden aber nicht mehr als viele einzelne Cards geführt. Stattdessen steht eine große, zusammenhängende Eingabemaske im Vordergrund.
+
+Umgesetzt:
+
+- Kalkulations-Eingabe als eine große Formularfläche gestaltet.
+- Produkt, Format, Auflage, Material, Produktionsart und Weiterverarbeitung bleiben in fachlicher Reihenfolge erhalten.
+- Abschnitte werden nur noch über Zwischenüberschriften, Nummern und feine Trennlinien geführt.
+- Viele kleine Card-Rahmen wurden aus der Eingabe entfernt.
+- Feldraster und Eingabehöhen wurden kompakter gesetzt.
+- Produktionsart bleibt zentral in der Maske und unterscheidet weiterhin Eigenproduktion, Fremdproduktion und Kombination.
+- Fremdproduktionsfelder bleiben vorbereitet: Lieferant, Einkaufspreis, Lieferzeit, Marge, Angebotsnummer, Fracht und Handling.
+- Ergebnis-/Nutzenrechner-Bereich bleibt rechts als separate Zusammenfassung erhalten.
+- Neues Pattern `calculation-large-input-mask` ergänzt.
+
+Nicht geändert:
+
+- keine echte Kalkulationsberechnung
+- keine neue Ausschießlogik
+- keine Lieferantenverwaltung
+- keine Persistenz/DB/LocalStorage
+- keine Änderung an Aufträge-Übersicht, Auftragstasche oder zentralem UI-State

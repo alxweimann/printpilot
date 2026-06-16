@@ -7526,3 +7526,177 @@ button.pp-process-step:hover {
     grid-column: auto;
   }
 }
+
+/* Sprint 46.3 – Kalkulation als große zusammenhängende Eingabemaske */
+.pp-calculation-layout {
+  grid-template-columns: minmax(0, 1fr) 388px;
+  gap: 20px;
+}
+
+.pp-calculation-form {
+  padding: 18px 20px 20px;
+  gap: 0;
+  border: 1px solid #dfe8f2;
+  border-radius: 24px;
+  background: #ffffff;
+  box-shadow: 0 16px 36px rgba(12, 31, 68, .06);
+}
+
+.pp-calculation-form__intro {
+  padding: 0 0 18px;
+  margin-bottom: 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.pp-calculation-form__meta {
+  min-width: 170px;
+  padding: 10px 12px;
+  display: grid;
+  justify-items: end;
+  gap: 2px;
+  border: 1px solid #e1e9f2;
+  border-radius: 16px;
+  background: linear-gradient(180deg, #fbfdff 0%, #ffffff 100%);
+}
+
+.pp-calculation-form__meta span {
+  color: #6a7890;
+  font-size: 10px;
+  line-height: 1.1;
+  font-weight: 900;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.pp-calculation-form__meta b {
+  color: #0c1d3c;
+  font-size: 13px;
+  line-height: 1.1;
+  font-weight: 950;
+}
+
+.pp-calculation-form__meta small {
+  color: #596a82;
+  font-size: 11px;
+  line-height: 1.15;
+  font-weight: 750;
+}
+
+.pp-calc-form-section {
+  padding: 15px 0 17px;
+  border: 0;
+  border-top: 1px solid #edf2f7;
+  border-radius: 0;
+  background: transparent;
+  box-shadow: none;
+}
+
+.pp-calc-form-section:last-child {
+  padding-bottom: 2px;
+}
+
+.pp-calc-form-section__head {
+  margin-bottom: 11px;
+  gap: 9px;
+}
+
+.pp-calc-form-section__head > span {
+  width: 24px;
+  height: 24px;
+  border-radius: 9px;
+  background: #eef7fd;
+  color: #007fc4;
+  box-shadow: inset 0 0 0 1px rgba(0, 127, 196, .14);
+  font-size: 10px;
+}
+
+.pp-calc-form-section__head h2 {
+  font-size: 14px;
+  letter-spacing: -.01em;
+}
+
+.pp-calc-input-grid {
+  gap: 10px 12px;
+}
+
+.pp-calc-input-grid--four {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.pp-calc-input-field {
+  gap: 5px;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select {
+  height: 36px;
+  border-radius: 10px;
+  font-size: 12px;
+}
+
+.pp-calc-production-mode {
+  padding: 6px;
+  gap: 6px;
+  border: 1px solid #e2eaf3;
+  border-radius: 16px;
+  background: #f8fbfe;
+}
+
+.pp-calc-production-mode button {
+  padding: 10px 11px;
+  border-radius: 12px;
+  background: transparent;
+  box-shadow: none;
+}
+
+.pp-calc-production-mode button.is-active {
+  background: #ffffff;
+  box-shadow: 0 8px 18px rgba(0, 127, 196, .08), inset 0 0 0 1px rgba(0, 159, 227, .22);
+}
+
+.pp-calc-production-detail {
+  margin-top: 11px;
+}
+
+.pp-calc-check-grid {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 7px;
+}
+
+.pp-calc-check-item {
+  min-height: 34px;
+  padding: 8px 9px;
+  border-radius: 10px;
+  font-size: 10.5px;
+}
+
+.pp-calculation-result-panel {
+  border-radius: 24px;
+}
+
+@media (max-width: 1320px) {
+  .pp-calculation-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 720px) {
+  .pp-calculation-form {
+    padding: 16px;
+  }
+
+  .pp-calculation-form__intro {
+    display: grid;
+  }
+
+  .pp-calculation-form__meta {
+    justify-items: start;
+  }
+}

@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useState } from "react";
 import printPilotLogo from "../../assets/logo/printpilot-logo-on-navy.png";
 import {
   calculationProductionContract,
@@ -17,13 +17,6 @@ type CalculationPageProps = {
 };
 
 type ProductionMode = "internal" | "external" | "combined";
-
-type CalculationMetric = {
-  label: string;
-  value: string;
-  helper: string;
-  tone: "blue" | "green" | "orange" | "gray";
-};
 
 const productKindLabels: Record<ProductKind, string> = {
   flyer: "Flyer",
@@ -64,22 +57,14 @@ function formatMm(value?: number) {
   return typeof value === "number" ? `${value} mm` : "offen";
 }
 
-function formatFormatLabel(format: CalculationToProductionPayload["product"]["finalFormat"]) {
+function formatFormatLabel(
+  format: CalculationToProductionPayload["product"]["finalFormat"],
+) {
   if (format.widthMm && format.heightMm) {
     return `${format.widthMm} × ${format.heightMm} mm`;
   }
 
   return format.label;
-}
-
-function CalculationMetricCard({ label, value, helper, tone }: CalculationMetric) {
-  return (
-    <article className={`pp-calc-metric pp-calc-metric--${tone}`}>
-      <span>{label}</span>
-      <strong>{value}</strong>
-      <small>{helper}</small>
-    </article>
-  );
 }
 
 function CalculationField({
@@ -94,7 +79,13 @@ function CalculationField({
   wide?: boolean;
 }) {
   return (
-    <label className={wide ? "pp-calc-input-field pp-calc-input-field--wide" : "pp-calc-input-field"}>
+    <label
+      className={
+        wide
+          ? "pp-calc-input-field pp-calc-input-field--wide"
+          : "pp-calc-input-field"
+      }
+    >
       <span>{label}</span>
       <input value={value} readOnly />
       {hint ? <small>{hint}</small> : null}
@@ -146,14 +137,25 @@ function CalculationSection({
   );
 }
 
-function CalculationSheetPreview({ payload }: { payload: CalculationToProductionPayload }) {
+function CalculationSheetPreview({
+  payload,
+}: {
+  payload: CalculationToProductionPayload;
+}) {
   const { imposition } = payload;
-  const cells = Array.from({ length: imposition.layout.totalSlots }, (_, index) => index + 1);
+  const cells = Array.from(
+    { length: imposition.layout.totalSlots },
+    (_, index) => index + 1,
+  );
   const previewImage = payload.preview?.generatedPreview?.imageSrc;
-  const previewAlt = payload.preview?.generatedPreview?.alt ?? "Druckdatei-Preview";
+  const previewAlt =
+    payload.preview?.generatedPreview?.alt ?? "Druckdatei-Preview";
 
   return (
-    <div className="pp-calc-sheet-preview" aria-label="Nutzenrechner Ergebnisvorschau">
+    <div
+      className="pp-calc-sheet-preview"
+      aria-label="Nutzenrechner Ergebnisvorschau"
+    >
       <div className="pp-calc-sheet-preview__bar">
         <span>{imposition.sheet.name}</span>
         <b>{imposition.layout.usedSlots} Nutzen</b>
@@ -169,10 +171,16 @@ function CalculationSheetPreview({ payload }: { payload: CalculationToProduction
           return (
             <span
               key={cell}
-              className={isUsed ? "pp-calc-sheet-preview__item" : "pp-calc-sheet-preview__item is-empty"}
+              className={
+                isUsed
+                  ? "pp-calc-sheet-preview__item"
+                  : "pp-calc-sheet-preview__item is-empty"
+              }
               aria-label={isUsed ? `Nutzen ${cell}` : `leerer Platz ${cell}`}
             >
-              {isUsed && previewImage ? <img src={previewImage} alt={previewAlt} loading="lazy" /> : null}
+              {isUsed && previewImage ? (
+                <img src={previewImage} alt={previewAlt} loading="lazy" />
+              ) : null}
             </span>
           );
         })}
@@ -201,41 +209,18 @@ function ResultLine({ label, value }: { label: string; value: string }) {
 
 export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   const [draftWasCreated, setDraftWasCreated] = useState(false);
-  const [productionMode, setProductionMode] = useState<ProductionMode>("internal");
+  const [productionMode, setProductionMode] =
+    useState<ProductionMode>("internal");
   const payload = demoCalculationPayload;
   const result = payload.imposition;
-
-  const metrics = useMemo<CalculationMetric[]>(() => [
-    {
-      label: "Auflage",
-      value: formatNumber(payload.product.quantity),
-      helper: productKindLabels[payload.product.kind],
-      tone: "blue",
-    },
-    {
-      label: "Produktionsart",
-      value: productionMode === "internal" ? "Intern" : productionMode === "external" ? "Extern" : "Kombi",
-      helper: productionModes.find((mode) => mode.id === productionMode)?.label ?? "Eigenproduktion",
-      tone: productionMode === "external" ? "orange" : productionMode === "combined" ? "gray" : "green",
-    },
-    {
-      label: "Nutzen/Bogen",
-      value: String(result.layout.usedSlots),
-      helper: `${result.layout.columns} × ${result.layout.rows}`,
-      tone: "blue",
-    },
-    {
-      label: "Bogen",
-      value: result.production.sheetsRequired ? formatNumber(result.production.sheetsRequired) : "offen",
-      helper: result.sheet.name,
-      tone: "green",
-    },
-  ], [payload, productionMode, result]);
 
   const handleCreateOrderDraft = () => {
     const draft = createOrderDraftFromCalculation(payload, getFallbackOrder(), {
       customer: "Wohlstandsmeister GmbH",
-      customerAddress: ["Pleidelsheimer Straße 9", "74321 Bietigheim-Bissingen"],
+      customerAddress: [
+        "Pleidelsheimer Straße 9",
+        "74321 Bietigheim-Bissingen",
+      ],
       contactName: "Lutz Humbert",
       contactPhone: "07142 35799-91",
       contactEmail: "lutz.humbert@wohlstandsmeister.de",
@@ -252,33 +237,47 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     <div className="pp-calculation-page">
       <header className="pp-master-header pp-calculation-master-header">
         <div className="pp-header-brand">
-          <img className="pp-brand-logo" src={printPilotLogo} alt="PrintPilot" />
+          <img
+            className="pp-brand-logo"
+            src={printPilotLogo}
+            alt="PrintPilot"
+          />
         </div>
         <div className="pp-header-title-shape">
           <h1>KALKULATION</h1>
-          <p>Eingabemaske · Produktionsart · Nutzenrechner</p>
+          <p>Große Eingabemaske · Produktionsart · Nutzenrechner</p>
         </div>
-        <div className="pp-header-job pp-header-job--overview" aria-label="Kalkulationsnummer">
+        <div
+          className="pp-header-job pp-header-job--overview"
+          aria-label="Kalkulationsnummer"
+        >
           <span>Demo-Kalkulation</span>
           <strong>{payload.calculationId ?? "CALC"}</strong>
         </div>
       </header>
 
-      <section className="pp-calculation-summary" aria-label="Kalkulationskennzahlen">
-        {metrics.map((metric) => (
-          <CalculationMetricCard key={metric.label} {...metric} />
-        ))}
-      </section>
-
       <section className="pp-calculation-layout">
-        <main className="pp-calculation-form" aria-label="Kalkulation Eingabemaske">
+        <main
+          className="pp-calculation-form"
+          aria-label="Kalkulation Eingabemaske"
+        >
           <div className="pp-calculation-form__intro">
             <div>
               <p className="pp-eyebrow">Arbeitsmaske</p>
               <h2>Kalkulationsdaten erfassen</h2>
               <span>
-                Die Maske sammelt Produkt-, Material- und Produktionsdaten. Der Nutzenrechner liefert später daraus die Produktionsdaten für die Auftragstasche.
+                Eine zusammenhängende Eingabemaske für Produkt, Format, Auflage,
+                Material, Produktionsart und Weiterverarbeitung. Das Ergebnis
+                rechts bleibt die vorbereitete Produktionsdaten-Zusammenfassung.
               </span>
+            </div>
+            <div
+              className="pp-calculation-form__meta"
+              aria-label="Kalkulationsstatus"
+            >
+              <span>{payload.calculationId ?? "CALC"}</span>
+              <b>{productKindLabels[payload.product.kind]}</b>
+              <small>{formatNumber(payload.product.quantity)} Stück</small>
             </div>
           </div>
 
@@ -289,41 +288,94 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                 value={productKindLabels[payload.product.kind]}
                 options={Object.values(productKindLabels)}
               />
-              <CalculationField label="Bezeichnung" value={payload.product.label} wide />
-              <CalculationField label="Seiten / Farbigkeit" value={payload.product.pages} />
-              <CalculationField label="Motive / Varianten" value="1 Motiv · ein Datensatz" />
+              <CalculationField
+                label="Bezeichnung"
+                value={payload.product.label}
+                wide
+              />
+              <CalculationField
+                label="Seiten / Farbigkeit"
+                value={payload.product.pages}
+              />
+              <CalculationField
+                label="Motive / Varianten"
+                value="1 Motiv · ein Datensatz"
+              />
             </div>
           </CalculationSection>
 
           <CalculationSection eyebrow="02" title="Format">
             <div className="pp-calc-input-grid pp-calc-input-grid--four">
-              <CalculationField label="Endformat" value={formatFormatLabel(payload.product.finalFormat)} />
+              <CalculationField
+                label="Endformat"
+                value={formatFormatLabel(payload.product.finalFormat)}
+              />
               <CalculationField label="Ausrichtung" value="Querformat" />
-              <CalculationField label="Beschnitt" value={formatMm(payload.product.bleedMm)} />
-              <CalculationField label="Datenprüfung" value="Preflight erforderlich" />
+              <CalculationField
+                label="Beschnitt"
+                value={formatMm(payload.product.bleedMm)}
+              />
+              <CalculationField
+                label="Datenprüfung"
+                value="Preflight erforderlich"
+              />
             </div>
           </CalculationSection>
 
           <CalculationSection eyebrow="03" title="Auflage">
             <div className="pp-calc-input-grid pp-calc-input-grid--four">
-              <CalculationField label="Menge" value={`${formatNumber(payload.product.quantity)} Stück`} />
-              <CalculationField label="Zuschuss" value={result.production.overs ? `${formatNumber(result.production.overs)} Stück` : "offen"} />
-              <CalculationField label="Netto-Menge" value={result.production.netQuantity ? `${formatNumber(result.production.netQuantity)} Stück` : "offen"} />
-              <CalculationField label="Restmenge" value={result.production.restQuantity ? `${formatNumber(result.production.restQuantity)} Stück` : "0"} />
+              <CalculationField
+                label="Menge"
+                value={`${formatNumber(payload.product.quantity)} Stück`}
+              />
+              <CalculationField
+                label="Zuschuss"
+                value={
+                  result.production.overs
+                    ? `${formatNumber(result.production.overs)} Stück`
+                    : "offen"
+                }
+              />
+              <CalculationField
+                label="Netto-Menge"
+                value={
+                  result.production.netQuantity
+                    ? `${formatNumber(result.production.netQuantity)} Stück`
+                    : "offen"
+                }
+              />
+              <CalculationField
+                label="Restmenge"
+                value={
+                  result.production.restQuantity
+                    ? `${formatNumber(result.production.restQuantity)} Stück`
+                    : "0"
+                }
+              />
             </div>
           </CalculationSection>
 
           <CalculationSection eyebrow="04" title="Material / Papier">
             <div className="pp-calc-input-grid pp-calc-input-grid--four">
-              <CalculationField label="Material" value={payload.product.substrate ?? "noch offen"} />
+              <CalculationField
+                label="Material"
+                value={payload.product.substrate ?? "noch offen"}
+              />
               <CalculationField label="Grammatur" value="350 g/m²" />
-              <CalculationField label="Bogenformat" value={`${result.sheet.name} · ${result.sheet.widthMm ?? "?"} × ${result.sheet.heightMm ?? "?"} mm`} />
+              <CalculationField
+                label="Bogenformat"
+                value={`${result.sheet.name} · ${result.sheet.widthMm ?? "?"} × ${result.sheet.heightMm ?? "?"} mm`}
+              />
               <CalculationField label="Laufrichtung" value="offen" />
             </div>
           </CalculationSection>
 
           <CalculationSection eyebrow="05" title="Produktionsart">
-            <div className="pp-calc-production-mode" role="radiogroup" aria-label="Produktionsart wählen">
+            <div
+              className="pp-calc-production-mode"
+              role="radiogroup"
+              aria-label="Produktionsart wählen"
+            >
               {productionModes.map((mode) => (
                 <button
                   key={mode.id}
@@ -341,31 +393,59 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             <div className="pp-calc-production-detail">
               {productionMode === "internal" ? (
                 <div className="pp-calc-input-grid pp-calc-input-grid--four">
-                  <CalculationField label="Maschine" value={payload.machine?.label ?? "noch offen"} />
+                  <CalculationField
+                    label="Maschine"
+                    value={payload.machine?.label ?? "noch offen"}
+                  />
                   <CalculationField label="Druckart" value="Digitaldruck 4/4" />
-                  <CalculationField label="Wendung" value="einseitig / aufrecht" />
-                  <CalculationField label="Nutzenrechner" value={`${result.layout.columns} × ${result.layout.rows} · ${result.layout.usedSlots} Nutzen`} />
+                  <CalculationField
+                    label="Wendung"
+                    value="einseitig / aufrecht"
+                  />
+                  <CalculationField
+                    label="Nutzenrechner"
+                    value={`${result.layout.columns} × ${result.layout.rows} · ${result.layout.usedSlots} Nutzen`}
+                  />
                 </div>
               ) : null}
 
               {productionMode === "external" ? (
                 <div className="pp-calc-input-grid pp-calc-input-grid--four">
-                  <CalculationField label="Lieferant" value="Fremddruckerei auswählen" />
+                  <CalculationField
+                    label="Lieferant"
+                    value="Fremddruckerei auswählen"
+                  />
                   <CalculationField label="Einkaufspreis" value="0,00 €" />
-                  <CalculationField label="Lieferzeit" value="3–5 Arbeitstage" />
+                  <CalculationField
+                    label="Lieferzeit"
+                    value="3–5 Arbeitstage"
+                  />
                   <CalculationField label="Marge / Aufschlag" value="35 %" />
                   <CalculationField label="Angebotsnummer" value="noch offen" />
                   <CalculationField label="Fracht / Versand" value="0,00 €" />
-                  <CalculationField label="Handling" value="Datencheck + Bestellabwicklung" wide />
+                  <CalculationField
+                    label="Handling"
+                    value="Datencheck + Bestellabwicklung"
+                    wide
+                  />
                 </div>
               ) : null}
 
               {productionMode === "combined" ? (
                 <div className="pp-calc-input-grid pp-calc-input-grid--four">
                   <CalculationField label="Druck" value="Eigenproduktion" />
-                  <CalculationField label="Veredelung" value="extern vorbereiten" />
-                  <CalculationField label="Weiterverarbeitung" value="intern schneiden / verpacken" />
-                  <CalculationField label="Fremdleistung" value="Lieferant + Einkauf noch offen" />
+                  <CalculationField
+                    label="Veredelung"
+                    value="extern vorbereiten"
+                  />
+                  <CalculationField
+                    label="Weiterverarbeitung"
+                    value="intern schneiden / verpacken"
+                  />
+                  <CalculationField
+                    label="Fremdleistung"
+                    value="Lieferant + Einkauf noch offen"
+                  />
                 </div>
               ) : null}
             </div>
@@ -381,7 +461,11 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                 "Externe Veredelung",
               ].map((item, index) => (
                 <label key={item} className="pp-calc-check-item">
-                  <input type="checkbox" checked={index === 0 || index === 3} readOnly />
+                  <input
+                    type="checkbox"
+                    checked={index === 0 || index === 3}
+                    readOnly
+                  />
                   <span>{item}</span>
                 </label>
               ))}
@@ -389,7 +473,10 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           </CalculationSection>
         </main>
 
-        <aside className="pp-calculation-result-panel" aria-label="Kalkulation Ergebnis">
+        <aside
+          className="pp-calculation-result-panel"
+          aria-label="Kalkulation Ergebnis"
+        >
           <div className="pp-calculation-result-panel__head">
             <p className="pp-eyebrow">Ergebnis</p>
             <h2>Nutzenrechner</h2>
@@ -401,11 +488,30 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           <div className="pp-calculation-output-card">
             <h3>Produktionsdaten</h3>
             <div className="pp-calc-result-list">
-              <ResultLine label="Produktionsweg" value={productionModes.find((mode) => mode.id === productionMode)?.label ?? "Eigenproduktion"} />
+              <ResultLine
+                label="Produktionsweg"
+                value={
+                  productionModes.find((mode) => mode.id === productionMode)
+                    ?.label ?? "Eigenproduktion"
+                }
+              />
               <ResultLine label="Plan" value={result.planType} />
-              <ResultLine label="Nutzen" value={`${result.layout.usedSlots} von ${result.layout.totalSlots}`} />
-              <ResultLine label="Bogenanzahl" value={result.production.sheetsRequired ? `${formatNumber(result.production.sheetsRequired)} Bogen` : "offen"} />
-              <ResultLine label="Zwischenschnitt" value={String(result.layout.gapMm ?? "offen")} />
+              <ResultLine
+                label="Nutzen"
+                value={`${result.layout.usedSlots} von ${result.layout.totalSlots}`}
+              />
+              <ResultLine
+                label="Bogenanzahl"
+                value={
+                  result.production.sheetsRequired
+                    ? `${formatNumber(result.production.sheetsRequired)} Bogen`
+                    : "offen"
+                }
+              />
+              <ResultLine
+                label="Zwischenschnitt"
+                value={String(result.layout.gapMm ?? "offen")}
+              />
             </div>
             <div className="pp-calculation-hints">
               {(result.finishingHints ?? []).map((hint) => (
@@ -428,14 +534,29 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             </div>
           </div>
 
-          <button className="pp-calculation-create-button" type="button" onClick={handleCreateOrderDraft}>
+          <button
+            className="pp-calculation-create-button"
+            type="button"
+            onClick={handleCreateOrderDraft}
+          >
             Auftrag aus Kalkulation erzeugen
           </button>
 
-          <div className={draftWasCreated ? "pp-calculation-create-note is-active" : "pp-calculation-create-note"}>
-            <strong>{draftWasCreated ? "Auftragsentwurf erzeugt" : "Noch nicht gespeichert"}</strong>
+          <div
+            className={
+              draftWasCreated
+                ? "pp-calculation-create-note is-active"
+                : "pp-calculation-create-note"
+            }
+          >
+            <strong>
+              {draftWasCreated
+                ? "Auftragsentwurf erzeugt"
+                : "Noch nicht gespeichert"}
+            </strong>
             <p>
-              Demo-State ohne Persistenz. Beim Erzeugen wird der Entwurf in die aktuelle Auftragsliste übernommen und die Auftragstasche geöffnet.
+              Demo-State ohne Persistenz. Beim Erzeugen wird der Entwurf in die
+              aktuelle Auftragsliste übernommen und die Auftragstasche geöffnet.
             </p>
           </div>
         </aside>

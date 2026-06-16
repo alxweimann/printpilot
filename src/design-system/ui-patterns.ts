@@ -863,3 +863,10 @@ export const sprint451Pattern = {
   description:
     "Der Datenvertrag zwischen Kalkulation und Auftragstasche ist als TypeScript-Struktur vorbereitet. Der Nutzenrechner liefert später fachliche Werte; Auftragstasche und Übersicht visualisieren diese Werte ohne eigene Neuberechnung.",
 };
+
+export const sprint452Pattern = {
+  id: "calculation-to-order-adapter",
+  sprint: "45.2",
+  description:
+    "Ein Demo-Adapter bildet CalculationToProductionPayload auf OrderProductionData und einen PrintPilotOrder-Entwurf ab. Die Kalkulation bleibt fachlicher Provider; Auftragstasche und Übersicht bleiben Consumer der vorbereiteten Produktionsdaten.",
+};

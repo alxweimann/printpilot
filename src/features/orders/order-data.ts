@@ -1286,3 +1286,301 @@ export const laneGroups = [
 ] satisfies Array<{ title: string; count: number; tone: OrderTone }>;
 
 export const getFallbackOrder = () => orderRows[0];
+export type CalculationToOrderDraftOptions = {
+  id?: string;
+  customer?: string;
+  customerAddress?: string[];
+  contactName?: string;
+  contactPhone?: string;
+  contactEmail?: string;
+  dueDate?: string;
+  dueMeta?: string;
+  owner?: string;
+  priority?: OrderStatus;
+  orderDate?: string;
+};
+
+function formatMmValue(value?: number | string) {
+  if (value === undefined || value === null || value === "") {
+    return undefined;
+  }
+
+  return typeof value === "number" ? `${value} mm` : value;
+}
+
+function formatCalculationFormat(format: CalculationProductionFormat) {
+  if (format.widthMm && format.heightMm) {
+    return `${format.widthMm} × ${format.heightMm} mm`;
+  }
+
+  return format.label;
+}
+
+function formatCalculationGap(gap?: number | string) {
+  if (gap === undefined || gap === null || gap === "") {
+    return undefined;
+  }
+
+  return typeof gap === "number" ? `${gap} mm` : gap;
+}
+
+function formatCalculationQuantity(quantity: number, kind: ProductKind) {
+  const suffix = kind === "letterhead" || kind === "sticker" ? "Bogen" : "Stück";
+  return `${quantity.toLocaleString("de-DE")} ${suffix}`;
+}
+
+function formatCalculationSheets(value?: number) {
+  if (!value) {
+    return "noch offen";
+  }
+
+  return `${value.toLocaleString("de-DE")} Bogen`;
+}
+
+function buildCalculationPreview(payload: CalculationToProductionPayload, fallback: PrintPilotOrder): OrderPreview {
+  const generatedPreview = payload.preview?.generatedPreview;
+  const originalPdf = payload.preview?.originalPdf;
+
+  return {
+    kind: payload.product.kind,
+    label: generatedPreview?.label ?? fallback.preview.label,
+    filename: originalPdf?.filename ?? generatedPreview?.filename ?? fallback.preview.filename,
+    meta: generatedPreview?.size ?? fallback.preview.meta,
+    imageSrc: generatedPreview?.imageSrc ?? fallback.preview.imageSrc,
+    imageAlt: generatedPreview?.alt ?? fallback.preview.imageAlt,
+    sourcePdf: originalPdf?.href ?? fallback.preview.sourcePdf,
+  };
+}
+
+export function createProductionDataFromCalculation(
+  payload: CalculationToProductionPayload,
+  fallbackOrder: PrintPilotOrder = getFallbackOrder(),
+): OrderProductionData {
+  const fallbackProductionData = getOrderProductionData(fallbackOrder);
+  const generatedPreview = payload.preview?.generatedPreview ?? fallbackProductionData.files.preview;
+  const originalPdf = payload.preview?.originalPdf ?? fallbackProductionData.files.original;
+  const bleed = formatMmValue(payload.product.bleedMm) ?? fallbackProductionData.product.bleed;
+  const gap = formatCalculationGap(payload.imposition.layout.gapMm);
+  const margin = formatCalculationGap(payload.imposition.layout.marginMm);
+
+  return {
+    product: {
+      kind: payload.product.kind,
+      label: payload.product.label,
+      finalFormat: formatCalculationFormat(payload.product.finalFormat),
+      pages: payload.product.pages,
+      quantity: formatCalculationQuantity(payload.product.quantity, payload.product.kind),
+      substrate: payload.product.substrate ?? fallbackProductionData.product.substrate,
+      colorMode: payload.product.colorMode ?? fallbackProductionData.product.colorMode,
+      bleed,
+      productionFormat: payload.imposition.sheet.name,
+    },
+    files: {
+      original: originalPdf,
+      preview: generatedPreview,
+    },
+    imposition: {
+      type: payload.imposition.planType,
+      label: `${payload.imposition.layout.usedSlots} Nutzen · ${payload.imposition.layout.columns} × ${payload.imposition.layout.rows}`,
+      sheet: payload.imposition.sheet,
+      item: payload.imposition.item,
+      layout: {
+        columns: payload.imposition.layout.columns,
+        rows: payload.imposition.layout.rows,
+        usedSlots: payload.imposition.layout.usedSlots,
+        totalSlots: payload.imposition.layout.totalSlots,
+        gapMm: gap,
+        marginMm: margin,
+        orientation: payload.imposition.layout.orientation,
+      },
+      bleed,
+      previewNote: payload.imposition.notes?.[0] ?? "aus Kalkulation übernommene Produktionsdaten",
+    },
+    preflight: {
+      value: fallbackProductionData.preflight.value,
+      dataStatus: fallbackProductionData.preflight.dataStatus,
+      bleedStatus: fallbackProductionData.preflight.bleedStatus,
+    },
+  };
+}
+
+export function createOrderDraftFromCalculation(
+  payload: CalculationToProductionPayload,
+  baseOrder: PrintPilotOrder = getFallbackOrder(),
+  options: CalculationToOrderDraftOptions = {},
+): PrintPilotOrder {
+  const productionData = createProductionDataFromCalculation(payload, baseOrder);
+  const preview = buildCalculationPreview(payload, baseOrder);
+  const sheetCount = payload.imposition.production.sheetsRequired;
+  const overs = payload.imposition.production.overs;
+  const restQuantity = payload.imposition.production.restQuantity;
+  const gap = formatCalculationGap(payload.imposition.layout.gapMm);
+
+  return {
+    ...baseOrder,
+    id: options.id ?? payload.orderId ?? baseOrder.id,
+    customer: options.customer ?? baseOrder.customer,
+    customerAddress: options.customerAddress ?? baseOrder.customerAddress,
+    contactName: options.contactName ?? baseOrder.contactName,
+    contactPhone: options.contactPhone ?? baseOrder.contactPhone,
+    contactEmail: options.contactEmail ?? baseOrder.contactEmail,
+    product: payload.product.label,
+    productDescription: `${payload.product.label} aus Kalkulation ${payload.calculationId ?? "Demo"}`,
+    format: `${productionData.product.finalFormat} · ${payload.product.pages}`,
+    endFormat: productionData.product.finalFormat,
+    pages: payload.product.pages,
+    quantity: productionData.product.quantity,
+    paper: productionData.product.substrate,
+    color: productionData.product.colorMode,
+    rawFormat: payload.imposition.sheet.name,
+    imposition: productionData.imposition.label,
+    impositionCount: payload.imposition.layout.usedSlots,
+    bleed: productionData.product.bleed,
+    waste: overs ? `${overs.toLocaleString("de-DE")} Zuschuss` : baseOrder.waste,
+    totalWeight: restQuantity ? `${restQuantity.toLocaleString("de-DE")} Restmenge` : baseOrder.totalWeight,
+    machine: payload.machine?.label ?? baseOrder.machine,
+    machineType: payload.machine?.type ?? baseOrder.machineType,
+    machineTypeLabel: payload.machine?.type ? baseOrder.machineTypeLabel : baseOrder.machineTypeLabel,
+    production: { label: "Kalkuliert", tone: "blue" },
+    approval: { label: "Freigabe offen", tone: "orange" },
+    data: { label: "Daten prüfen", tone: "orange" },
+    orderDate: options.orderDate ?? baseOrder.orderDate,
+    dueDate: options.dueDate ?? baseOrder.dueDate,
+    dueMeta: options.dueMeta ?? baseOrder.dueMeta,
+    nextStep: "Produktionsdaten aus Kalkulation prüfen",
+    owner: options.owner ?? baseOrder.owner,
+    progress: 18,
+    preview,
+    fileSize: productionData.files.original?.size ?? productionData.files.preview.size,
+    fileCategory: productionData.files.original?.category ?? productionData.files.preview.category,
+    fileDate: productionData.files.original?.createdAt.date ?? productionData.files.preview.createdAt.date,
+    fileTime: productionData.files.original?.createdAt.time ?? productionData.files.preview.createdAt.time,
+    preflightValue: "offen",
+    bleedStatus: { label: "prüfen", tone: "orange" },
+    scheduleStart: options.dueDate ?? baseOrder.scheduleStart,
+    scheduleStartTime: options.dueMeta?.split("·").at(-1)?.trim() ?? baseOrder.scheduleStartTime,
+    finishing: payload.imposition.finishingHints?.length
+      ? payload.imposition.finishingHints.map((label) => ({
+          label,
+          status: { label: "Geplant", tone: "orange" },
+          note: "aus Kalkulation übernommen",
+        }))
+      : baseOrder.finishing,
+    checklist: [
+      {
+        title: "Kalkulation",
+        items: [
+          { status: "done", label: "Produktionsdaten übernommen" },
+          { status: "done", label: `${payload.imposition.layout.usedSlots} Nutzen / ${formatCalculationSheets(sheetCount)}` },
+          { status: gap ? "done" : "open", label: gap ? `Zwischenraum ${gap}` : "Zwischenraum prüfen" },
+          { status: "required", label: "Druckdaten gegen Kalkulation prüfen" },
+        ],
+      },
+      ...baseOrder.checklist.slice(1),
+    ],
+    history: [
+      {
+        tone: "blue",
+        date: options.orderDate ?? baseOrder.orderDate,
+        time: "09:00",
+        title: "Aus Kalkulation erzeugt",
+        user: "Kalkulation",
+      },
+      {
+        tone: "orange",
+        date: options.orderDate ?? baseOrder.orderDate,
+        time: "09:05",
+        title: "Produktionsdaten prüfen",
+        user: options.owner ?? baseOrder.owner,
+      },
+    ],
+  };
+}
+
+export const demoCalculationPayload: CalculationToProductionPayload = {
+  version: "printpilot-calculation-v1",
+  source: "calculation",
+  calculationId: "CALC-2026-00017",
+  quoteId: "ANG-2026-00112",
+  orderId: "PP-2026-CALC-DEMO",
+  product: {
+    kind: "business-card",
+    label: "Visitenkarten aus Kalkulation",
+    finalFormat: { label: "85 × 55 mm", widthMm: 85, heightMm: 55, orientation: "landscape" },
+    pages: "4/4-farbig",
+    quantity: 1000,
+    substrate: "Munken Lynx 300 g",
+    colorMode: "4/4-farbig CMYK",
+    bleedMm: 3,
+  },
+  imposition: {
+    planType: "business-card-24up",
+    sheet: { name: "SRA3", widthMm: 450, heightMm: 320, orientation: "landscape" },
+    item: { finalFormat: "85 × 55 mm", widthMm: 85, heightMm: 55 },
+    layout: {
+      columns: 6,
+      rows: 4,
+      usedSlots: 24,
+      totalSlots: 24,
+      gapMm: "ca. 3–5 mm",
+      marginMm: "produktionsnah",
+      orientation: "upright",
+    },
+    production: {
+      orderedQuantity: 1000,
+      sheetsRequired: 42,
+      overs: 3,
+      netQuantity: 1008,
+      restQuantity: 8,
+    },
+    finishingHints: ["Schneiden", "Sätze trennen", "Verpacken"],
+    notes: ["Demo-Adapter: Werte kommen später direkt aus dem Nutzenrechner."],
+  },
+  machine: { label: "Xerox® Iridesse 2", type: "digital-color" },
+  preview: {
+    originalPdf: {
+      type: "pdf",
+      role: "original",
+      filename: "Wohlstandsmeister-ViKa.pdf",
+      label: "Original-PDF",
+      href: realBusinessCardPdf,
+      category: "Freigabe/Druckdaten",
+      size: "3,1 MB",
+      createdAt: { date: "31.05.2026", time: "09:40" },
+    },
+    generatedPreview: {
+      type: "generated-preview",
+      role: "preview",
+      filename: "wohlstandsmeister-vika.png",
+      label: "PDF-Preview",
+      imageSrc: realBusinessCardPreview,
+      alt: "PDF-Vorschau Wohlstandsmeister Visitenkarte mit QR-Code und Beschnittmarken",
+      category: "Preview-Bild",
+      size: "6 Seiten · 3,1 MB",
+      createdAt: { date: "31.05.2026", time: "09:40" },
+    },
+  },
+  valueSources: {
+    product: "calculation",
+    sheet: "calculation",
+    imposition: "calculation",
+    machine: "calculation",
+    preview: "production-override",
+  },
+};
+
+export const demoOrderFromCalculation = createOrderDraftFromCalculation(
+  demoCalculationPayload,
+  orderRows[1] ?? getFallbackOrder(),
+  {
+    customer: "Wohlstandsmeister GmbH",
+    customerAddress: ["Pleidelsheimer Straße 9", "74321 Bietigheim-Bissingen"],
+    contactName: "Lutz Humbert",
+    contactPhone: "07142 35799-91",
+    contactEmail: "lutz.humbert@wohlstandsmeister.de",
+    dueDate: "04.06.2026",
+    dueMeta: "Do · 11:00",
+    owner: "Max M.",
+  },
+);
+

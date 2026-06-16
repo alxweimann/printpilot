@@ -1519,3 +1519,37 @@ Nicht geändert:
 - keine Ausschieß-Engine
 - keine Persistenz/DB/LocalStorage
 - keine Änderung an UI-State, Übersicht, Rücknavigation oder Preview-Rendering
+
+
+## Sprint 45.2 – Demo-Adapter Kalkulation → Auftrag vorbereiten
+
+Sprint 45.2 ergänzt den in Sprint 45.1 definierten Datenvertrag um einen ersten Demo-Adapter. Ziel ist noch nicht die echte Anbindung der Kalkulationsseite, sondern ein sauberer Mapping-Pfad von einem späteren Nutzenrechner-Ergebnis in Auftrag und Produktionsdaten.
+
+Umgesetzt:
+
+- Neuer TypeScript-Typ `CalculationToOrderDraftOptions` für optionale Auftragskopfdaten.
+- Neue Funktion `createProductionDataFromCalculation(payload, fallbackOrder)`.
+- Neue Funktion `createOrderDraftFromCalculation(payload, baseOrder, options)`.
+- Demo-Payload `demoCalculationPayload` ergänzt.
+- Demo-Auftrag `demoOrderFromCalculation` ergänzt.
+- Der Adapter mappt unter anderem:
+  - Produktart und Produktbezeichnung
+  - Endformat / Nutzenformat
+  - Auflage
+  - Bogenformat
+  - Raster / Nutzenanzahl
+  - Beschnitt
+  - Abstand / Zwischenschnitt
+  - Bogenanzahl / Zuschuss / Restmenge
+  - Maschinenempfehlung
+  - Original-PDF / Preview-Bild
+  - erste Checklisten- und Verlaufseinträge
+- Neues Pattern `calculation-to-order-adapter` ergänzt.
+
+Wichtig:
+
+- Der Adapter ist noch nicht in die UI eingebunden.
+- Die bestehende Aufträge-Übersicht und Auftragstasche bleiben unverändert.
+- Die Kalkulationsseite wird noch nicht angebunden.
+- Keine Persistenz, kein LocalStorage, keine Datenbank.
+- Der Nutzenplan wird weiterhin nur visualisiert; die fachlichen Werte kommen später aus dem Nutzenrechner.

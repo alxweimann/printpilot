@@ -1837,3 +1837,11 @@ Umgesetzt:
 - Nüchterne Status-/Aktionsleiste mit aktivem Bereich, Nutzen/Bogen und Button „Auftrag aus Kalkulation erzeugen“ ergänzt.
 - Bottom-Navigation bleibt unverändert konsistent wie bei Aufträge.
 - Keine neue Preislogik, keine Persistenz und keine echte Ausschieß-Berechnung.
+
+## Sprint 46.14 – Reiter gleich breit und Eingabefelder klarer
+
+- Die Reiter der Kalkulationsmaske werden als gleich breite Raster-Reiter geführt, damit die Navigation ruhiger und produktiver wirkt.
+- Aktive und editierbare Eingabefelder sind stärker als Felder erkennbar: klarere Rahmen, hellere Eingabefläche, dezenter Innenkontrast und deutlicherer Fokuszustand.
+- Labels bleiben im Oldschool-MIS-Stil, erhalten aber eine ruhigere, abgegrenzte Label-Fläche.
+- Die Reiterlogik, der lokale State, die Weiterverarbeitungstabelle und die Ergebnisübergabe bleiben unverändert.
+- Keine neue Preislogik, keine Persistenz und keine echte Ausschieß-Berechnung.

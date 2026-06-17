@@ -978,3 +978,10 @@ export const sprint4613Pattern = {
   description:
     "Die Kalkulationsmaske wird von der langen Eingabeseite in eine produktive Reitermaske überführt. Kunde, Auftrag, Produkt, Format, Papier, Druck, Weiterverarbeitung, Fremdproduktion und Preise sind als Arbeitsbereiche organisiert; ein kompakter Kalkulationskopf und eine nüchterne Status-/Aktionsleiste bleiben sichtbar.",
 };
+
+export const sprint4614Pattern = {
+  id: "calculation-equal-tabs-clear-input-fields",
+  sprint: "46.14",
+  description:
+    "Die Kalkulations-Reitermaske erhält gleich breite Reiter und klarer erkennbare Eingabefelder. Labels, Feldrahmen, editierbare Flächen und Fokuszustände werden im Oldschool-MIS-Stil präziser gezeichnet, ohne die Reiterlogik oder Berechnung zu ändern.",
+};

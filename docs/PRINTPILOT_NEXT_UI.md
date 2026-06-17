@@ -1812,3 +1812,28 @@ Die Sonderbehandlung der Bottom-Navigation im Kalkulationskontext wurde zurückg
 - Der Ergebnisbereich unten nutzt die aktuellen Maskenwerte für Produkt, Menge, Bogenanzahl, Produktionsweg und aktive Weiterverarbeitungshinweise.
 - Der Button „Auftrag aus Kalkulation erzeugen“ erstellt den Entwurf aus den aktuellen Maskenwerten.
 - Noch keine vollständige Preislogik, keine Persistenz und keine echte Ausschieß-Berechnung; der Datenfluss ist vorbereitet.
+
+## Sprint 46.13 – Kalkulation als produktive Reitermaske
+
+Die Kalkulationsmaske wurde von einer langen Scroll-Eingabeseite in eine produktive MIS-Reitermaske überführt. Ziel ist maximale Eingabegeschwindigkeit und Benutzerfreundlichkeit statt Show-UI.
+
+Umgesetzt:
+
+- Reiterstruktur für die fachlichen Kalkulationsbereiche eingeführt:
+  - Kunde
+  - Auftrag
+  - Produkt
+  - Format
+  - Papier
+  - Druck
+  - Weiterverarbeitung
+  - Fremdproduktion
+  - Preise
+- Kompakter Kalkulationskopf mit Kunde, Produkt, Auflage, Format und Produktionsweg ergänzt.
+- Pro Reiter werden nur die relevanten Felder angezeigt; dadurch weniger Scrollen und weniger visuelle Überforderung.
+- Der lokale State aus Sprint 46.12 bleibt erhalten; die Felder bleiben editierbar.
+- Weiterverarbeitung bleibt als produktive Tabelle erhalten.
+- Ergebnisbereich wurde zur kompakten Kurzübersicht unterhalb der Reitermaske reduziert.
+- Nüchterne Status-/Aktionsleiste mit aktivem Bereich, Nutzen/Bogen und Button „Auftrag aus Kalkulation erzeugen“ ergänzt.
+- Bottom-Navigation bleibt unverändert konsistent wie bei Aufträge.
+- Keine neue Preislogik, keine Persistenz und keine echte Ausschieß-Berechnung.

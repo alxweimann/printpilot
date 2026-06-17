@@ -971,3 +971,10 @@ export const sprint4612Pattern = {
   description:
     "Die Kalkulationsmaske bleibt im Oldschool-MIS-Look, wird aber funktional editierbar. Produkt, Format, Auflage, Material, Produktionsart, Weiterverarbeitung und Ergebnisvorgaben liegen in lokalem State; der Auftrag-Entwurf nutzt die aktuellen Maskenwerte statt ausschließlich Demo-Daten.",
 };
+
+export const sprint4613Pattern = {
+  id: "calculation-productive-tabbed-mis-mask",
+  sprint: "46.13",
+  description:
+    "Die Kalkulationsmaske wird von der langen Eingabeseite in eine produktive Reitermaske überführt. Kunde, Auftrag, Produkt, Format, Papier, Druck, Weiterverarbeitung, Fremdproduktion und Preise sind als Arbeitsbereiche organisiert; ein kompakter Kalkulationskopf und eine nüchterne Status-/Aktionsleiste bleiben sichtbar.",
+};

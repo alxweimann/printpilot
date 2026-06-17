@@ -9273,3 +9273,196 @@ button.pp-process-step:hover {
   border-color: #9dcfae;
   color: #173d22;
 }
+
+/* Sprint 46.13 – produktive Kalkulations-Reitermaske */
+.pp-calculation-layout--tabs {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 14px;
+}
+
+.pp-calculation-tabs-intro {
+  border-bottom: 1px solid #aeb8c4;
+}
+
+.pp-calculation-quick-head {
+  display: grid;
+  grid-template-columns: 1.25fr 1.45fr .85fr .85fr 1fr;
+  gap: 0;
+  border-bottom: 1px solid #aeb8c4;
+  background: #ffffff;
+}
+
+.pp-calculation-quick-head div {
+  min-width: 0;
+  padding: 7px 10px;
+  border-right: 1px solid #c8d0da;
+}
+
+.pp-calculation-quick-head div:last-child {
+  border-right: 0;
+}
+
+.pp-calculation-quick-head span {
+  display: block;
+  margin-bottom: 2px;
+  color: #5b6675;
+  font-size: 10.5px;
+  font-weight: 800;
+  line-height: 1.1;
+}
+
+.pp-calculation-quick-head b {
+  display: block;
+  overflow: hidden;
+  color: #111827;
+  font-size: 13.5px;
+  font-weight: 800;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-calculation-tabs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0;
+  border-bottom: 1px solid #9da8b5;
+  background: #cfd6de;
+}
+
+.pp-calculation-tabs button {
+  min-height: 34px;
+  padding: 6px 12px;
+  border: 0;
+  border-right: 1px solid #aeb8c4;
+  border-bottom: 3px solid transparent;
+  background: linear-gradient(180deg, #eef1f4 0%, #d7dde4 100%);
+  color: #263345;
+  font-size: 13px;
+  font-weight: 850;
+  line-height: 1.1;
+  cursor: pointer;
+}
+
+.pp-calculation-tabs button span {
+  margin-right: 6px;
+  color: #657184;
+  font-size: 10.5px;
+  font-weight: 850;
+}
+
+.pp-calculation-tabs button:hover,
+.pp-calculation-tabs button:focus-visible {
+  background: #f6f8fa;
+  outline: none;
+}
+
+.pp-calculation-tabs button.is-active {
+  border-bottom-color: #007fc4;
+  background: #ffffff;
+  color: #08172e;
+}
+
+.pp-calculation-tabs button.is-active span {
+  color: #0071ac;
+}
+
+.pp-calculation-tab-panel {
+  min-height: 310px;
+  padding-bottom: 9px;
+  background: #f6f7f8;
+}
+
+.pp-calculation-tab-panel .pp-calc-form-section__head {
+  border-top: 0;
+}
+
+.pp-calculation-statusbar {
+  display: grid;
+  grid-template-columns: minmax(160px, .7fr) minmax(160px, .7fr) minmax(260px, 1.2fr) 260px;
+  align-items: center;
+  gap: 0;
+  border-top: 1px solid #aeb8c4;
+  background: #dfe4ea;
+}
+
+.pp-calculation-statusbar div {
+  min-height: 43px;
+  padding: 6px 10px;
+  border-right: 1px solid #c1cad4;
+}
+
+.pp-calculation-statusbar span {
+  display: block;
+  margin-bottom: 2px;
+  color: #556171;
+  font-size: 10.5px;
+  font-weight: 800;
+}
+
+.pp-calculation-statusbar b {
+  display: block;
+  overflow: hidden;
+  color: #111827;
+  font-size: 13px;
+  font-weight: 820;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-calculation-create-button--bar {
+  margin: 6px 8px;
+  width: auto;
+  min-height: 34px;
+}
+
+.pp-calculation-result-panel--compact {
+  grid-template-columns: 170px minmax(420px, 1.2fr) minmax(320px, 1fr) minmax(220px, .65fr);
+  margin-top: 0;
+}
+
+.pp-calculation-result-panel--compact .pp-calculation-create-note {
+  align-self: stretch;
+  margin: 0;
+  border: 0;
+  border-left: 1px solid #c8d0da;
+  background: #fffdf2;
+}
+
+.pp-calculation-result-panel--compact .pp-calc-sheet-preview__sheet {
+  height: 118px;
+}
+
+@media (max-width: 1420px) {
+  .pp-calculation-quick-head {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pp-calculation-statusbar,
+  .pp-calculation-result-panel--compact {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .pp-calculation-create-button--bar,
+  .pp-calculation-result-panel--compact .pp-calculation-create-note {
+    grid-column: span 2;
+  }
+}
+
+@media (max-width: 860px) {
+  .pp-calculation-tabs button {
+    flex: 1 1 33.333%;
+  }
+
+  .pp-calculation-quick-head,
+  .pp-calculation-statusbar,
+  .pp-calculation-result-panel--compact {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-calculation-create-button--bar,
+  .pp-calculation-result-panel--compact .pp-calculation-create-note {
+    grid-column: auto;
+  }
+}

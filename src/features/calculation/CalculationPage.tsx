@@ -1,7 +1,6 @@
 import { useMemo, useState } from "react";
 import printPilotLogo from "../../assets/logo/printpilot-logo-on-navy.png";
 import {
-  calculationProductionContract,
   createOrderDraftFromCalculation,
   demoCalculationPayload,
   getFallbackOrder,
@@ -18,6 +17,16 @@ type CalculationPageProps = {
 
 type ProductionMode = "internal" | "external" | "combined";
 type FieldBadge = "Pflicht" | "optional" | "später";
+type CalculationTabId =
+  | "customer"
+  | "order"
+  | "product"
+  | "format"
+  | "paper"
+  | "print"
+  | "finishing"
+  | "external"
+  | "prices";
 
 type CalculationDraft = {
   customer: string;
@@ -98,6 +107,23 @@ type FinishingDraftRow = {
   productionLabel: string;
   productionValue: string;
 };
+
+
+const calculationTabs: Array<{
+  id: CalculationTabId;
+  label: string;
+  shortcut: string;
+}> = [
+  { id: "customer", label: "Kunde", shortcut: "01" },
+  { id: "order", label: "Auftrag", shortcut: "02" },
+  { id: "product", label: "Produkt", shortcut: "03" },
+  { id: "format", label: "Format", shortcut: "04" },
+  { id: "paper", label: "Papier", shortcut: "05" },
+  { id: "print", label: "Druck", shortcut: "06" },
+  { id: "finishing", label: "Weiterverarbeitung", shortcut: "07" },
+  { id: "external", label: "Fremdproduktion", shortcut: "08" },
+  { id: "prices", label: "Preise", shortcut: "09" },
+];
 
 const productKindLabels: Record<ProductKind, string> = {
   flyer: "Flyer",
@@ -329,9 +355,6 @@ function formatNumber(value: number) {
   return value.toLocaleString("de-DE");
 }
 
-function formatMm(value?: number) {
-  return typeof value === "number" ? `${value} mm` : "offen";
-}
 
 function parseGermanNumber(value: string, fallback: number) {
   const normalized = value.replace(/[^0-9,.-]/g, "").replace(/\./g, "").replace(",", ".");
@@ -647,6 +670,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   const [draft, setDraft] = useState<CalculationDraft>(initialDraft);
   const [productionMode, setProductionMode] = useState<ProductionMode>("internal");
   const [finishingRows, setFinishingRows] = useState<FinishingDraftRow[]>(initialFinishingRows);
+  const [activeTab, setActiveTab] = useState<CalculationTabId>("customer");
 
   const payload = useMemo(
     () => buildPayloadFromDraft(draft, productionMode, finishingRows),
@@ -706,139 +730,204 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         </div>
       </header>
 
-      <section className="pp-calculation-layout">
-        <main
-          className="pp-calculation-form"
-          aria-label="Kalkulation Eingabemaske"
-        >
-          <div className="pp-calculation-form__intro">
+      <section className="pp-calculation-layout pp-calculation-layout--tabs">
+        <div className="pp-calculation-form" aria-label="Kalkulation Reitermaske">
+          <div className="pp-calculation-form__intro pp-calculation-tabs-intro">
             <div>
               <p className="pp-eyebrow">Arbeitsmaske</p>
-              <h2>Eingabeformular</h2>
+              <h2>Produktive Reitermaske</h2>
             </div>
-            <div
-              className="pp-calculation-form__meta"
-              aria-label="Kalkulationsstatus"
-            >
+            <div className="pp-calculation-form__meta" aria-label="Kalkulationsstatus">
               <span>{payload.calculationId ?? "CALC"}</span>
-              <b>{productKindLabels[payload.product.kind]}</b>
+              <b>{draft.customer}</b>
               <small>{formatNumber(payload.product.quantity)} Stück</small>
             </div>
           </div>
 
-          <CalculationSection eyebrow="01" title="Kopfdaten">
-            <div className="pp-calc-input-grid pp-calc-input-grid--four">
-              <CalculationField label="Kunde" value={draft.customer} onValueChange={updateDraft("customer")} badge="Pflicht" />
-              <CalculationField label="Ansprechpartner" value={draft.contactName} onValueChange={updateDraft("contactName")} badge="Pflicht" />
-              <CalculationField label="Projekt / Jobname" value={draft.projectName} onValueChange={updateDraft("projectName")} badge="Pflicht" />
-              <CalculationField label="Kalkulationsnummer" value={draft.calculationId} onValueChange={updateDraft("calculationId")} badge="Pflicht" />
-              <CalculationField label="Liefertermin" value={draft.dueDate} onValueChange={updateDraft("dueDate")} badge="Pflicht" />
-              <CalculationField label="Bearbeiter" value={draft.owner} onValueChange={updateDraft("owner")} badge="Pflicht" />
-              <CalculationField label="Kundenreferenz" value={draft.customerReference} onValueChange={updateDraft("customerReference")} badge="optional" />
-              <CalculationField label="Interne Notiz" value={draft.internalNote} onValueChange={updateDraft("internalNote")} badge="optional" />
+          <div className="pp-calculation-quick-head" aria-label="Kalkulationskopf">
+            <div>
+              <span>Kunde</span>
+              <b>{draft.customer}</b>
             </div>
-          </CalculationSection>
-
-          <CalculationSection eyebrow="02" title="Produktdetails">
-            <div className="pp-calc-input-grid">
-              <CalculationSelect
-                label="Produktart"
-                value={draft.productKind}
-                options={productKindOptions}
-                onValueChange={(value) => updateDraft("productKind")(value as ProductKind)}
-                badge="Pflicht"
-              />
-              <CalculationField
-                label="Bezeichnung"
-                value={draft.productLabel}
-                onValueChange={updateDraft("productLabel")}
-                wide
-                badge="Pflicht"
-              />
-              <CalculationField label="Seiten / Umfang" value={draft.pages} onValueChange={updateDraft("pages")} badge="Pflicht" />
-              <CalculationField label="Farbigkeit" value={draft.colorMode} onValueChange={updateDraft("colorMode")} badge="Pflicht" />
-              <CalculationField label="Motive / Sorten" value={draft.versions} onValueChange={updateDraft("versions")} badge="optional" />
-              <CalculationField label="Personalisierung" value={draft.personalization} onValueChange={updateDraft("personalization")} badge="später" />
+            <div>
+              <span>Produkt</span>
+              <b>{payload.product.label}</b>
             </div>
-          </CalculationSection>
-
-          <CalculationSection eyebrow="03" title="Format">
-            <div className="pp-calc-input-grid pp-calc-input-grid--four">
-              <CalculationField label="Endformat" value={draft.finalFormat} onValueChange={updateDraft("finalFormat")} badge="Pflicht" />
-              <CalculationField label="Offenes Format" value={draft.openFormat} onValueChange={updateDraft("openFormat")} badge="optional" />
-              <CalculationField label="Ausrichtung" value={draft.orientation} onValueChange={updateDraft("orientation")} badge="Pflicht" />
-              <CalculationField label="Beschnitt" value={formatMm(payload.product.bleedMm)} onValueChange={updateDraft("bleedMm")} badge="Pflicht" />
-              <CalculationField label="Sicherheitsabstand" value={draft.safetyMarginMm} onValueChange={updateDraft("safetyMarginMm")} badge="optional" />
-              <CalculationField label="Nutzenformat" value={draft.productionFormat} onValueChange={updateDraft("productionFormat")} badge="Pflicht" />
-              <CalculationField label="Sonderform / Stanze" value={draft.specialShape} onValueChange={updateDraft("specialShape")} badge="optional" />
-              <CalculationField label="Datenprüfung" value={draft.preflight} onValueChange={updateDraft("preflight")} badge="Pflicht" />
+            <div>
+              <span>Auflage</span>
+              <b>{formatNumber(payload.product.quantity)} Stück</b>
             </div>
-          </CalculationSection>
-
-          <CalculationSection eyebrow="04" title="Auflage / Staffeln">
-            <div className="pp-calc-input-grid pp-calc-input-grid--four">
-              <CalculationField label="Hauptauflage" value={draft.quantity} onValueChange={updateDraft("quantity")} badge="Pflicht" />
-              <CalculationField label="Zuschuss" value={draft.overs} onValueChange={updateDraft("overs")} badge="Pflicht" />
-              <CalculationField label="Netto-Menge" value={`${formatNumber(result.production.netQuantity ?? 0)} Stück`} badge="optional" />
-              <CalculationField label="Restmenge" value={`${formatNumber(result.production.restQuantity ?? 0)} Stück`} badge="optional" />
-              <CalculationField label="Staffel 1" value={draft.tier1} onValueChange={updateDraft("tier1")} badge="optional" />
-              <CalculationField label="Staffel 2" value={draft.tier2} onValueChange={updateDraft("tier2")} badge="optional" />
-              <CalculationField label="Staffel 3" value={draft.tier3} onValueChange={updateDraft("tier3")} badge="optional" />
-              <CalculationField label="Varianten" value={draft.variants} onValueChange={updateDraft("variants")} badge="optional" />
+            <div>
+              <span>Format</span>
+              <b>{draft.finalFormat}</b>
             </div>
-          </CalculationSection>
-
-          <CalculationSection eyebrow="05" title="Material / Papier">
-            <div className="pp-calc-input-grid pp-calc-input-grid--four">
-              <CalculationField label="Materialgruppe" value={draft.materialGroup} onValueChange={updateDraft("materialGroup")} badge="Pflicht" />
-              <CalculationField label="Artikel" value={draft.substrate} onValueChange={updateDraft("substrate")} badge="Pflicht" />
-              <CalculationField label="Grammatur" value={draft.grammage} onValueChange={updateDraft("grammage")} badge="Pflicht" />
-              <CalculationField label="Bogenformat" value={draft.sheetFormat} onValueChange={updateDraft("sheetFormat")} badge="Pflicht" />
-              <CalculationField label="Laufrichtung" value={draft.grainDirection} onValueChange={updateDraft("grainDirection")} badge="optional" />
-              <CalculationField label="Lagerstatus" value={draft.stockStatus} onValueChange={updateDraft("stockStatus")} badge="Pflicht" />
-              <CalculationField label="Lieferant" value={draft.supplier} onValueChange={updateDraft("supplier")} badge="optional" />
-              <CalculationField label="Preisstand" value={draft.priceStatus} onValueChange={updateDraft("priceStatus")} badge="später" />
+            <div>
+              <span>Produktion</span>
+              <b>{productionModes.find((mode) => mode.id === productionMode)?.label ?? "Eigenproduktion"}</b>
             </div>
-          </CalculationSection>
+          </div>
 
-          <CalculationSection eyebrow="06" title="Produktion">
-            <div
-              className="pp-calc-production-mode"
-              role="radiogroup"
-              aria-label="Produktionsart wählen"
-            >
-              {productionModes.map((mode) => (
-                <button
-                  key={mode.id}
-                  type="button"
-                  className={mode.id === productionMode ? "is-active" : ""}
-                  onClick={() => {
-                    setProductionMode(mode.id);
-                    setDraftWasCreated(false);
-                  }}
-                  aria-pressed={mode.id === productionMode}
-                >
-                  <b>{mode.label}</b>
-                  <span>{mode.helper}</span>
-                </button>
-              ))}
-            </div>
+          <nav className="pp-calculation-tabs" aria-label="Kalkulationsbereiche">
+            {calculationTabs.map((tab) => (
+              <button
+                key={tab.id}
+                type="button"
+                className={activeTab === tab.id ? "is-active" : ""}
+                onClick={() => setActiveTab(tab.id)}
+                aria-current={activeTab === tab.id ? "page" : undefined}
+              >
+                <span>{tab.shortcut}</span>
+                {tab.label}
+              </button>
+            ))}
+          </nav>
 
-            <div className="pp-calc-production-detail">
-              {productionMode === "internal" ? (
+          <div className="pp-calculation-tab-panel">
+            {activeTab === "customer" ? (
+              <CalculationSection eyebrow="01" title="Kunde / Adresse">
                 <div className="pp-calc-input-grid pp-calc-input-grid--four">
-                  <CalculationField label="Maschine" value={draft.machine} onValueChange={updateDraft("machine")} badge="Pflicht" />
-                  <CalculationField label="Druckart" value={draft.printType} onValueChange={updateDraft("printType")} badge="Pflicht" />
-                  <CalculationField label="Wendung" value={draft.turning} onValueChange={updateDraft("turning")} badge="Pflicht" />
-                  <CalculationField label="Nutzenrechner" value={draft.impositionLabel} onValueChange={updateDraft("impositionLabel")} badge="Pflicht" />
-                  <CalculationField label="Rüstzeit" value={draft.setupTime} onValueChange={updateDraft("setupTime")} badge="später" />
-                  <CalculationField label="Laufzeit" value={draft.runTime} onValueChange={updateDraft("runTime")} badge="später" />
-                  <CalculationField label="Klickkosten" value={draft.clickCosts} onValueChange={updateDraft("clickCosts")} badge="später" />
-                  <CalculationField label="Makulatur" value={draft.wasteMode} onValueChange={updateDraft("wasteMode")} badge="optional" />
+                  <CalculationField label="Kunde" value={draft.customer} onValueChange={updateDraft("customer")} badge="Pflicht" />
+                  <CalculationField label="Ansprechpartner" value={draft.contactName} onValueChange={updateDraft("contactName")} badge="Pflicht" />
+                  <CalculationField label="Kundenreferenz" value={draft.customerReference} onValueChange={updateDraft("customerReference")} badge="optional" />
+                  <CalculationField label="Bearbeiter" value={draft.owner} onValueChange={updateDraft("owner")} badge="Pflicht" />
+                  <CalculationField label="Rechnung an" value={draft.customer} onValueChange={updateDraft("customer")} badge="später" wide />
+                  <CalculationField label="Lieferadresse" value="wie Kunde / später eigene Adresse" badge="später" wide />
                 </div>
-              ) : null}
+              </CalculationSection>
+            ) : null}
 
-              {productionMode === "external" ? (
+            {activeTab === "order" ? (
+              <CalculationSection eyebrow="02" title="Auftrag / Anfrage">
+                <div className="pp-calc-input-grid pp-calc-input-grid--four">
+                  <CalculationField label="Projekt / Jobname" value={draft.projectName} onValueChange={updateDraft("projectName")} badge="Pflicht" wide />
+                  <CalculationField label="Kalkulationsnummer" value={draft.calculationId} onValueChange={updateDraft("calculationId")} badge="Pflicht" />
+                  <CalculationField label="Liefertermin" value={draft.dueDate} onValueChange={updateDraft("dueDate")} badge="Pflicht" />
+                  <CalculationField label="Interne Notiz" value={draft.internalNote} onValueChange={updateDraft("internalNote")} badge="optional" wide />
+                  <CalculationField label="Hauptauflage" value={draft.quantity} onValueChange={updateDraft("quantity")} badge="Pflicht" />
+                  <CalculationField label="Zuschuss" value={draft.overs} onValueChange={updateDraft("overs")} badge="Pflicht" />
+                  <CalculationField label="Netto-Menge" value={`${formatNumber(result.production.netQuantity ?? 0)} Stück`} badge="optional" />
+                  <CalculationField label="Restmenge" value={`${formatNumber(result.production.restQuantity ?? 0)} Stück`} badge="optional" />
+                  <CalculationField label="Staffel 1" value={draft.tier1} onValueChange={updateDraft("tier1")} badge="optional" />
+                  <CalculationField label="Staffel 2" value={draft.tier2} onValueChange={updateDraft("tier2")} badge="optional" />
+                  <CalculationField label="Staffel 3" value={draft.tier3} onValueChange={updateDraft("tier3")} badge="optional" />
+                  <CalculationField label="Varianten" value={draft.variants} onValueChange={updateDraft("variants")} badge="optional" />
+                </div>
+              </CalculationSection>
+            ) : null}
+
+            {activeTab === "product" ? (
+              <CalculationSection eyebrow="03" title="Produkt">
+                <div className="pp-calc-input-grid">
+                  <CalculationSelect
+                    label="Produktart"
+                    value={draft.productKind}
+                    options={productKindOptions}
+                    onValueChange={(value) => updateDraft("productKind")(value as ProductKind)}
+                    badge="Pflicht"
+                  />
+                  <CalculationField label="Bezeichnung" value={draft.productLabel} onValueChange={updateDraft("productLabel")} wide badge="Pflicht" />
+                  <CalculationField label="Seiten / Umfang" value={draft.pages} onValueChange={updateDraft("pages")} badge="Pflicht" />
+                  <CalculationField label="Farbigkeit" value={draft.colorMode} onValueChange={updateDraft("colorMode")} badge="Pflicht" />
+                  <CalculationField label="Motive / Sorten" value={draft.versions} onValueChange={updateDraft("versions")} badge="optional" />
+                  <CalculationField label="Personalisierung" value={draft.personalization} onValueChange={updateDraft("personalization")} badge="später" />
+                </div>
+              </CalculationSection>
+            ) : null}
+
+            {activeTab === "format" ? (
+              <CalculationSection eyebrow="04" title="Format / Datenprüfung">
+                <div className="pp-calc-input-grid pp-calc-input-grid--four">
+                  <CalculationField label="Endformat" value={draft.finalFormat} onValueChange={updateDraft("finalFormat")} badge="Pflicht" />
+                  <CalculationField label="Offenes Format" value={draft.openFormat} onValueChange={updateDraft("openFormat")} badge="optional" />
+                  <CalculationField label="Ausrichtung" value={draft.orientation} onValueChange={updateDraft("orientation")} badge="Pflicht" />
+                  <CalculationField label="Beschnitt" value={draft.bleedMm} onValueChange={updateDraft("bleedMm")} badge="Pflicht" />
+                  <CalculationField label="Sicherheitsabstand" value={draft.safetyMarginMm} onValueChange={updateDraft("safetyMarginMm")} badge="optional" />
+                  <CalculationField label="Nutzenformat" value={draft.productionFormat} onValueChange={updateDraft("productionFormat")} badge="Pflicht" />
+                  <CalculationField label="Sonderform / Stanze" value={draft.specialShape} onValueChange={updateDraft("specialShape")} badge="optional" />
+                  <CalculationField label="Datenprüfung" value={draft.preflight} onValueChange={updateDraft("preflight")} badge="Pflicht" />
+                </div>
+              </CalculationSection>
+            ) : null}
+
+            {activeTab === "paper" ? (
+              <CalculationSection eyebrow="05" title="Papier / Material">
+                <div className="pp-calc-input-grid pp-calc-input-grid--four">
+                  <CalculationField label="Materialgruppe" value={draft.materialGroup} onValueChange={updateDraft("materialGroup")} badge="Pflicht" />
+                  <CalculationField label="Artikel" value={draft.substrate} onValueChange={updateDraft("substrate")} badge="Pflicht" wide />
+                  <CalculationField label="Grammatur" value={draft.grammage} onValueChange={updateDraft("grammage")} badge="Pflicht" />
+                  <CalculationField label="Bogenformat" value={draft.sheetFormat} onValueChange={updateDraft("sheetFormat")} badge="Pflicht" />
+                  <CalculationField label="Laufrichtung" value={draft.grainDirection} onValueChange={updateDraft("grainDirection")} badge="optional" />
+                  <CalculationField label="Lagerstatus" value={draft.stockStatus} onValueChange={updateDraft("stockStatus")} badge="Pflicht" />
+                  <CalculationField label="Lieferant" value={draft.supplier} onValueChange={updateDraft("supplier")} badge="optional" />
+                  <CalculationField label="Preisstand" value={draft.priceStatus} onValueChange={updateDraft("priceStatus")} badge="später" />
+                </div>
+              </CalculationSection>
+            ) : null}
+
+            {activeTab === "print" ? (
+              <CalculationSection eyebrow="06" title="Druck / Maschine">
+                <div className="pp-calc-production-mode" role="radiogroup" aria-label="Produktionsart wählen">
+                  {productionModes.map((mode) => (
+                    <button
+                      key={mode.id}
+                      type="button"
+                      className={mode.id === productionMode ? "is-active" : ""}
+                      onClick={() => {
+                        setProductionMode(mode.id);
+                        setDraftWasCreated(false);
+                      }}
+                      aria-pressed={mode.id === productionMode}
+                    >
+                      <b>{mode.label}</b>
+                      <span>{mode.helper}</span>
+                    </button>
+                  ))}
+                </div>
+                <div className="pp-calc-production-detail">
+                  <div className="pp-calc-input-grid pp-calc-input-grid--four">
+                    <CalculationField label="Maschine" value={draft.machine} onValueChange={updateDraft("machine")} badge="Pflicht" />
+                    <CalculationField label="Druckart" value={draft.printType} onValueChange={updateDraft("printType")} badge="Pflicht" />
+                    <CalculationField label="Wendung" value={draft.turning} onValueChange={updateDraft("turning")} badge="Pflicht" />
+                    <CalculationField label="Nutzenrechner" value={draft.impositionLabel} onValueChange={updateDraft("impositionLabel")} badge="Pflicht" />
+                    <CalculationField label="Rüstzeit" value={draft.setupTime} onValueChange={updateDraft("setupTime")} badge="später" />
+                    <CalculationField label="Laufzeit" value={draft.runTime} onValueChange={updateDraft("runTime")} badge="später" />
+                    <CalculationField label="Klickkosten" value={draft.clickCosts} onValueChange={updateDraft("clickCosts")} badge="später" />
+                    <CalculationField label="Makulatur" value={draft.wasteMode} onValueChange={updateDraft("wasteMode")} badge="optional" />
+                  </div>
+                </div>
+              </CalculationSection>
+            ) : null}
+
+            {activeTab === "finishing" ? (
+              <CalculationSection eyebrow="07" title="Weiterverarbeitung">
+                <div className="pp-calc-finishing-matrix" aria-label="Weiterverarbeitungs-Matrix">
+                  <table className="pp-calc-finishing-table">
+                    <thead>
+                      <tr>
+                        <th>Aktiv</th>
+                        <th>Leistung</th>
+                        <th>Art / Parameter</th>
+                        <th>Menge / Anzahl</th>
+                        <th>Produktion</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {finishingRows.map((row) => (
+                        <FinishingMatrixRow
+                          key={row.id}
+                          row={row}
+                          onToggle={(active) => updateFinishingRow(row.id, { active })}
+                          onChange={(updates) => updateFinishingRow(row.id, updates)}
+                        />
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </CalculationSection>
+            ) : null}
+
+            {activeTab === "external" ? (
+              <CalculationSection eyebrow="08" title="Fremdproduktion / Kombination">
                 <div className="pp-calc-input-grid pp-calc-input-grid--four">
                   <CalculationField label="Lieferant" value={draft.externalSupplier} onValueChange={updateDraft("externalSupplier")} badge="Pflicht" />
                   <CalculationField label="Einkaufspreis" value={draft.externalPrice} onValueChange={updateDraft("externalPrice")} badge="Pflicht" />
@@ -848,68 +937,54 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                   <CalculationField label="Fracht / Versand" value={draft.externalFreight} onValueChange={updateDraft("externalFreight")} badge="optional" />
                   <CalculationField label="Handling-Aufwand" value={draft.handlingTime} onValueChange={updateDraft("handlingTime")} badge="optional" />
                   <CalculationField label="Interne Prüfung" value={draft.internalCheck} onValueChange={updateDraft("internalCheck")} badge="Pflicht" />
-                </div>
-              ) : null}
-
-              {productionMode === "combined" ? (
-                <div className="pp-calc-input-grid pp-calc-input-grid--four">
                   <CalculationField label="Druck" value={draft.combinationPrint} onValueChange={updateDraft("combinationPrint")} badge="Pflicht" />
                   <CalculationField label="Veredelung" value={draft.combinationFinishing} onValueChange={updateDraft("combinationFinishing")} badge="optional" />
                   <CalculationField label="Weiterverarbeitung" value={draft.combinationPostpress} onValueChange={updateDraft("combinationPostpress")} badge="Pflicht" />
                   <CalculationField label="Fremdleistung" value={draft.combinationExternal} onValueChange={updateDraft("combinationExternal")} badge="optional" />
                 </div>
-              ) : null}
-            </div>
-          </CalculationSection>
+              </CalculationSection>
+            ) : null}
 
-          <CalculationSection eyebrow="07" title="Weiterverarbeitung">
-            <div className="pp-calc-finishing-matrix" aria-label="Weiterverarbeitungs-Matrix">
-              <table className="pp-calc-finishing-table">
-                <thead>
-                  <tr>
-                    <th>Aktiv</th>
-                    <th>Leistung</th>
-                    <th>Art / Parameter</th>
-                    <th>Menge / Anzahl</th>
-                    <th>Produktion</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {finishingRows.map((row) => (
-                    <FinishingMatrixRow
-                      key={row.id}
-                      row={row}
-                      onToggle={(active) => updateFinishingRow(row.id, { active })}
-                      onChange={(updates) => updateFinishingRow(row.id, updates)}
-                    />
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </CalculationSection>
+            {activeTab === "prices" ? (
+              <CalculationSection eyebrow="09" title="Preise / Ergebnisvorgaben">
+                <div className="pp-calc-input-grid pp-calc-input-grid--four">
+                  <CalculationField label="Materialkosten" value={draft.materialCosts} onValueChange={updateDraft("materialCosts")} badge="später" />
+                  <CalculationField label="Druckkosten" value={draft.printCosts} onValueChange={updateDraft("printCosts")} badge="später" />
+                  <CalculationField label="Weiterverarbeitung" value={draft.finishingCosts} onValueChange={updateDraft("finishingCosts")} badge="später" />
+                  <CalculationField label="Fremdleistung" value={draft.externalCosts} onValueChange={updateDraft("externalCosts")} badge="optional" />
+                  <CalculationField label="Handling" value={draft.handlingTime} onValueChange={updateDraft("handlingTime")} badge="optional" />
+                  <CalculationField label="Versand" value={draft.shippingCosts} onValueChange={updateDraft("shippingCosts")} badge="optional" />
+                  <CalculationField label="Marge" value={draft.margin} onValueChange={updateDraft("margin")} badge="Pflicht" />
+                  <CalculationField label="Verkaufspreis netto" value={draft.salePriceNet} onValueChange={updateDraft("salePriceNet")} badge="später" />
+                </div>
+              </CalculationSection>
+            ) : null}
+          </div>
 
-          <CalculationSection eyebrow="08" title="Kosten / Ergebnisvorgaben">
-            <div className="pp-calc-input-grid pp-calc-input-grid--four">
-              <CalculationField label="Materialkosten" value={draft.materialCosts} onValueChange={updateDraft("materialCosts")} badge="später" />
-              <CalculationField label="Druckkosten" value={draft.printCosts} onValueChange={updateDraft("printCosts")} badge="später" />
-              <CalculationField label="Weiterverarbeitung" value={draft.finishingCosts} onValueChange={updateDraft("finishingCosts")} badge="später" />
-              <CalculationField label="Fremdleistung" value={draft.externalCosts} onValueChange={updateDraft("externalCosts")} badge="optional" />
-              <CalculationField label="Handling" value={draft.handlingTime} onValueChange={updateDraft("handlingTime")} badge="optional" />
-              <CalculationField label="Versand" value={draft.shippingCosts} onValueChange={updateDraft("shippingCosts")} badge="optional" />
-              <CalculationField label="Marge" value={draft.margin} onValueChange={updateDraft("margin")} badge="Pflicht" />
-              <CalculationField label="Verkaufspreis netto" value={draft.salePriceNet} onValueChange={updateDraft("salePriceNet")} badge="später" />
+          <div className="pp-calculation-statusbar" aria-label="Kalkulationsstatus und Aktionen">
+            <div>
+              <span>Pflichtfelder</span>
+              <b>Demo · offen</b>
             </div>
-          </CalculationSection>
-        </main>
+            <div>
+              <span>Aktiver Bereich</span>
+              <b>{calculationTabs.find((tab) => tab.id === activeTab)?.label ?? "Kunde"}</b>
+            </div>
+            <div>
+              <span>Nutzen / Bogen</span>
+              <b>{result.layout.usedSlots} Nutzen · {result.production.sheetsRequired ? formatNumber(result.production.sheetsRequired) : "offen"} Bogen</b>
+            </div>
+            <button className="pp-calculation-create-button pp-calculation-create-button--bar" type="button" onClick={handleCreateOrderDraft}>
+              Auftrag aus Kalkulation erzeugen
+            </button>
+          </div>
+        </div>
 
-        <aside
-          className="pp-calculation-result-panel"
-          aria-label="Kalkulation Ergebnis"
-        >
+        <aside className="pp-calculation-result-panel pp-calculation-result-panel--compact" aria-label="Kalkulation Ergebnis">
           <div className="pp-calculation-result-panel__head">
             <p className="pp-eyebrow">Ergebnis</p>
-            <h2>Auswertung / Nutzenrechner</h2>
-            <span>Aktualisiert sich aus den Eingabewerten der Maske.</span>
+            <h2>Auswertung</h2>
+            <span>Kurzübersicht zur aktuellen Kalkulation.</span>
           </div>
 
           <CalculationSheetPreview payload={payload} />
@@ -917,77 +992,19 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           <div className="pp-calculation-output-card">
             <h3>Produktionsdaten</h3>
             <div className="pp-calc-result-list">
-              <ResultLine
-                label="Produktionsweg"
-                value={
-                  productionModes.find((mode) => mode.id === productionMode)
-                    ?.label ?? "Eigenproduktion"
-                }
-              />
+              <ResultLine label="Produktionsweg" value={productionModes.find((mode) => mode.id === productionMode)?.label ?? "Eigenproduktion"} />
               <ResultLine label="Produkt" value={payload.product.label} />
-              <ResultLine label="Plan" value={result.planType} />
-              <ResultLine
-                label="Nutzen"
-                value={`${result.layout.usedSlots} von ${result.layout.totalSlots}`}
-              />
-              <ResultLine
-                label="Bogenanzahl"
-                value={
-                  result.production.sheetsRequired
-                    ? `${formatNumber(result.production.sheetsRequired)} Bogen`
-                    : "offen"
-                }
-              />
-              <ResultLine
-                label="Zwischenschnitt"
-                value={String(result.layout.gapMm ?? "offen")}
-              />
+              <ResultLine label="Nutzen" value={`${result.layout.usedSlots} von ${result.layout.totalSlots}`} />
+              <ResultLine label="Bogenanzahl" value={result.production.sheetsRequired ? `${formatNumber(result.production.sheetsRequired)} Bogen` : "offen"} />
             </div>
             <div className="pp-calculation-hints">
-              {(result.finishingHints ?? []).map((hint) => (
-                <span key={hint}>{hint}</span>
-              ))}
+              {(result.finishingHints ?? []).map((hint) => <span key={hint}>{hint}</span>)}
             </div>
           </div>
 
-          <div className="pp-calculation-contract-box">
-            <h3>Datenvertrag</h3>
-            <p>Auszug der Felder, die später der Nutzenrechner liefert.</p>
-            <div className="pp-calculation-contract-list">
-              {calculationProductionContract.slice(0, 6).map((field) => (
-                <article key={`${field.group}-${field.field}`}>
-                  <span>{field.group}</span>
-                  <b>{field.field}</b>
-                  <small>{field.required ? "Pflichtfeld" : "optional"}</small>
-                </article>
-              ))}
-            </div>
-          </div>
-
-          <button
-            className="pp-calculation-create-button"
-            type="button"
-            onClick={handleCreateOrderDraft}
-          >
-            Auftrag aus Kalkulation erzeugen
-          </button>
-
-          <div
-            className={
-              draftWasCreated
-                ? "pp-calculation-create-note is-active"
-                : "pp-calculation-create-note"
-            }
-          >
-            <strong>
-              {draftWasCreated
-                ? "Auftragsentwurf erzeugt"
-                : "Noch nicht gespeichert"}
-            </strong>
-            <p>
-              Lokaler Demo-State ohne Persistenz. Beim Erzeugen werden die aktuellen
-              Maskenwerte in den Auftragsentwurf übernommen und die Auftragstasche geöffnet.
-            </p>
+          <div className={draftWasCreated ? "pp-calculation-create-note is-active" : "pp-calculation-create-note"}>
+            <strong>{draftWasCreated ? "Auftragsentwurf erzeugt" : "Noch nicht gespeichert"}</strong>
+            <p>Reitermaske mit lokalem Demo-State. Die aktuellen Werte werden beim Erzeugen übernommen.</p>
           </div>
         </aside>
       </section>

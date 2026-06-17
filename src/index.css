@@ -10114,3 +10114,52 @@ button.pp-process-step:hover {
     min-width: 1180px;
   }
 }
+
+/* Sprint 46.22 – Kalkulationsmaske: minimale Zeilenhöhe für Badge-Lesbarkeit */
+.pp-calc-input-field {
+  min-height: 32px;
+}
+
+.pp-calc-input-field span {
+  min-height: 32px;
+  padding-top: 3px;
+  padding-bottom: 3px;
+  align-content: center;
+}
+
+.pp-calc-input-field span strong {
+  line-height: 1.18;
+}
+
+.pp-calc-input-field span em {
+  align-self: center;
+  line-height: 1.15;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select {
+  height: 32px;
+  line-height: 1.28;
+}
+
+.pp-calc-finishing-table th,
+.pp-calc-finishing-table td {
+  padding-top: 7px;
+  padding-bottom: 7px;
+}
+
+.pp-calc-finishing-check {
+  width: 26px;
+  height: 26px;
+}
+
+.pp-calc-finishing-table input[type="checkbox"] {
+  width: 13px;
+  height: 13px;
+}
+
+@media (max-width: 760px) {
+  .pp-calc-input-field span {
+    min-height: 28px;
+  }
+}

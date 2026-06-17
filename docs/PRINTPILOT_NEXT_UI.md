@@ -2079,3 +2079,26 @@ Nicht geändert:
 - keine Maschinen-/Tariflogik
 - keine Persistenz
 - keine große Designänderung
+
+## Sprint 46.22 – Kalkulationsmaske: Zeilenhöhe minimal entspannen
+
+Status: umgesetzt.
+
+Auslöser war die Sichtprüfung nach Sprint 46.21: Die Maske war fachlich vollständiger und lesbarer, aber die Feldzeilen waren für die Pflicht-/Optional-/Später-Badges noch einen Tick zu knapp.
+
+Umgesetzt:
+
+- Die Feldzeilen der MIS-Eingabemaske wurden minimal erhöht.
+- Eingabefelder und Selects haben jetzt etwas mehr Höhe, ohne die Reitermaske wieder großflächig zu machen.
+- Labelbereiche haben mehr vertikale Luft, damit lange Begriffe und Badges sauberer sitzen.
+- Badges werden vertikal mittiger ausgerichtet.
+- Die Weiterverarbeitungstabelle erhält ebenfalls minimal mehr Zeilenhöhe, damit Checkboxen und Parameter ruhiger wirken.
+- Die Aktiv-/Haken-Spalte bleibt weiterhin schmal; die zusätzliche Höhe ersetzt keine Breite.
+
+Nicht geändert:
+
+- keine neuen Fachfelder
+- keine Änderung an der Pflichtfeldlogik
+- keine Preislogik
+- keine Persistenz
+- keine große Designänderung

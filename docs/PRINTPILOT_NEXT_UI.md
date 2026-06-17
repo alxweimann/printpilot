@@ -1871,3 +1871,68 @@ Umgesetzt:
 - Pflicht-/optional-/später-Badges wurden geprüft und optisch entschärft: Pflichtfelder sind klar erkennbar, optionale Felder neutral und spätere Felder bewusst zurückhaltend.
 - Aktive Weiterverarbeitungszeilen werden in der Tabelle besser markiert.
 - Keine neue Preislogik, keine Persistenz und keine echte Ausschieß-Berechnung.
+
+## Sprint 46.17 – Kalkulations-Feldcheck und Feldbestand komplettieren
+
+Die Kalkulationsmaske wurde fachlich gegen typische Druckerei-/MIS-Anforderungen geprüft. Ziel war keine neue Preislogik und kein weiterer Designumbau, sondern die Frage: Sind die Felder vorhanden, die für eine reale Druckkalkulation und spätere Übergabe an Auftragstasche/Produktion benötigt werden?
+
+Ergänzt bzw. vorbereitet:
+
+- **Kunde & Auftrag**
+  - Telefon und E-Mail des Ansprechpartners
+  - Rechnungsadresse und Lieferadresse als eigene Felder
+  - Bestellnummer/Kundenauftrag
+  - Korrekturtermin
+  - Auftragsart
+  - detaillierter Datenstatus
+  - Kundenhinweis
+  - Überlieferungsregel
+  - Teillieferungen
+  - Muster/Belegexemplare
+
+- **Produkt & Format**
+  - Farben Vorderseite
+  - Farben Rückseite
+  - Sonderfarben
+  - Datenquelle
+  - Sonderform/Stanze bleibt vorbereitet
+
+- **Papier & Druck**
+  - Rohbogenformat
+  - Druckbogenformat
+  - Papier-Nutzen
+  - Nettobogen
+  - Zuschussbogen
+  - Bruttobogen
+  - Papierquelle: am Lager / bestellt / gestellt
+  - Papierbestellstatus
+  - Zähler-/Klickmodus
+  - Produktionshinweis
+
+- **Weiterverarbeitung**
+  - Ecken abrunden
+  - Perforieren
+  - Nummerieren
+  - bestehende Matrix für Schneiden, Falzen, Rillen/Nuten, Heften, Klebebindung, Fadenheftung, Bohren/Ösen, Laminieren/Kaschieren, Stanzen/Plotten und Verpacken bleibt erhalten
+
+- **Preise & Ergebnis**
+  - Verpackungskosten
+  - Gemeinkosten
+  - Mindestpreis
+  - Rabatt
+  - Deckungsbeitrag
+  - Abrechnungsmodus
+  - Mengenabrechnung
+  - Provision
+  - Rechnungskontrolle
+
+- **Fachlicher Feldcheck**
+  - Im Reiter „Preise & Ergebnis“ wurde eine kompakte Feldcheck-Übersicht ergänzt: bereits abgedeckte Bereiche, produktionsrelevant ergänzte Felder und später logisch anzubindende Themen.
+
+Nicht geändert:
+
+- keine neue Preislogik
+- keine Persistenz
+- keine echte Ausschieß-Berechnung
+- keine grundsätzliche Änderung am Reiterlayout
+- keine Änderung an Auftragstasche/Auftragsübersicht

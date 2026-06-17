@@ -9808,3 +9808,74 @@ button.pp-process-step:hover {
   line-height: 1.1;
   font-weight: 500;
 }
+
+/* Sprint 46.17 – fachlicher Feldcheck der Kalkulationsmaske */
+.pp-calculation-field-audit {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0;
+  margin: 0 10px 10px;
+  border: 1px solid #b8c2cd;
+  background: #ffffff;
+}
+
+.pp-calculation-field-audit article {
+  min-width: 0;
+  padding: 9px 10px;
+  border-right: 1px solid #c8d0da;
+}
+
+.pp-calculation-field-audit article:last-child {
+  border-right: 0;
+}
+
+.pp-calculation-field-audit h3 {
+  margin: 0 0 6px;
+  color: #1b293c;
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 600;
+}
+
+.pp-calculation-field-audit ul {
+  display: grid;
+  gap: 3px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pp-calculation-field-audit li {
+  position: relative;
+  padding-left: 12px;
+  color: #39475a;
+  font-size: 11.5px;
+  line-height: 1.25;
+  font-weight: 420;
+}
+
+.pp-calculation-field-audit li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: .5em;
+  width: 5px;
+  height: 5px;
+  border: 1px solid #8b98a8;
+  background: #edf1f5;
+}
+
+@media (max-width: 980px) {
+  .pp-calculation-field-audit {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-calculation-field-audit article {
+    border-right: 0;
+    border-bottom: 1px solid #c8d0da;
+  }
+
+  .pp-calculation-field-audit article:last-child {
+    border-bottom: 0;
+  }
+}

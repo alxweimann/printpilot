@@ -999,3 +999,10 @@ export const sprint4616Pattern = {
   description:
     "Die Kalkulations-Reitermaske erhält eine erste Bedienfluss-Führung. Reiter zeigen offene Mindestdaten, die Statusleiste fasst den Pflichtstatus zusammen, der Auftrag-Button wird bei fehlenden Mindestdaten gesperrt und Pflicht-/optional-/später-Badges werden ruhiger und eindeutiger gezeichnet.",
 };
+
+export const sprint4617Pattern = {
+  id: "calculation-field-inventory-complete-mask",
+  sprint: "46.17",
+  description:
+    "Die Kalkulations-Reitermaske wird fachlich gegen typische Druckerei-/MIS-Anforderungen geprüft und ergänzt. Fehlende Felder für Korrekturtermin, Datenstatus, Überlieferung, Teillieferung, Sonderfarben, Papierstatus, Nettobogen/Zuschuss/Bruttobogen, Ecken abrunden, Perforation, Nummerierung, Mindestpreis, Rabatt, Deckungsbeitrag und Abrechnung werden vorbereitet, ohne Preislogik oder Layoutprinzip zu ändern.",
+};

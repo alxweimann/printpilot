@@ -1006,3 +1006,10 @@ export const sprint4617Pattern = {
   description:
     "Die Kalkulations-Reitermaske wird fachlich gegen typische Druckerei-/MIS-Anforderungen geprüft und ergänzt. Fehlende Felder für Korrekturtermin, Datenstatus, Überlieferung, Teillieferung, Sonderfarben, Papierstatus, Nettobogen/Zuschuss/Bruttobogen, Ecken abrunden, Perforation, Nummerierung, Mindestpreis, Rabatt, Deckungsbeitrag und Abrechnung werden vorbereitet, ohne Preislogik oder Layoutprinzip zu ändern.",
 };
+
+export const sprint4618Pattern = {
+  id: "calculation-field-inventory-cleanup",
+  sprint: "46.18",
+  description:
+    "Die Kalkulationsmaske wird fachlich aufgeräumt, ohne neue Preislogik oder große Designänderung. Pflichtfelder werden auf echte Mindestdaten reduziert, optionale und spätere Felder blockieren den Auftrag nicht mehr und die Felder werden in den sechs Hauptreitern klarer nach Kontakt, Auftrag, Menge, Produkt, Format, Material, Druck, Fremdproduktion und Abrechnung sortiert.",
+};

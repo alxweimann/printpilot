@@ -175,47 +175,28 @@ const requiredFieldsByTab: Record<CalculationTabId, Array<keyof CalculationDraft
     "contactName",
     "owner",
     "projectName",
-    "calculationId",
     "dueDate",
-    "correctionDeadline",
-    "dataStatus",
     "quantity",
-    "overs",
   ],
   "product-format": [
+    "productKind",
     "productLabel",
     "pages",
     "colorMode",
-    "frontColors",
-    "backColors",
     "finalFormat",
-    "orientation",
     "bleedMm",
-    "productionFormat",
-    "preflight",
   ],
   "paper-print": [
-    "materialGroup",
     "substrate",
     "grammage",
     "sheetFormat",
-    "stockStatus",
-    "paperSource",
     "machine",
     "printType",
-    "turning",
     "impositionLabel",
   ],
   finishing: [],
-  external: [
-    "externalSupplier",
-    "externalPrice",
-    "externalLeadTime",
-    "margin",
-    "externalFreight",
-    "handlingTime",
-  ],
-  prices: ["margin", "billingMode"],
+  external: ["externalSupplier", "externalPrice", "externalLeadTime"],
+  prices: [],
 };
 
 function isDraftValueMissing(value: string) {
@@ -856,9 +837,39 @@ function ResultLine({ label, value }: { label: string; value: string }) {
 
 function CalculationFieldAudit() {
   const groups = [
-    { title: "Jetzt in der Maske", items: ["Kunde/Auftrag", "Produkt/Format", "Papier/Druck", "Weiterverarbeitung", "Fremdproduktion", "Preise/Abrechnung"] },
-    { title: "Produktionsrelevant ergänzt", items: ["Korrektur bis", "Überlieferung", "Papierstatus", "Nettobogen/Zuschuss/Brutto", "Sonderfarben", "Muster/Teillieferung"] },
-    { title: "Später logisch anbinden", items: ["echte Tariflogik", "Papierpreisimport", "Maschinenzeiten", "Deckungsbeitrag", "Persistenz", "Druck-PDF"] },
+    {
+      title: "Pflicht bewusst reduziert",
+      items: [
+        "Kunde, Ansprechpartner, Bearbeiter",
+        "Projekt, Liefertermin, Hauptauflage",
+        "Produktart, Bezeichnung, Umfang",
+        "Endformat, Beschnitt",
+        "Artikel, Grammatur, Bogenformat",
+        "Maschine, Druckart, Nutzenrechner",
+      ],
+    },
+    {
+      title: "Richtig einsortiert",
+      items: [
+        "Adressen und Kontakt im Kundenblock",
+        "Bestellnummer, Datenstatus und Termine im Auftrag",
+        "Mengen, Staffel und Lieferung zusammen",
+        "Farbigkeit beim Produkt, Datenquelle beim Format",
+        "Papierbogen, Lagerstatus und Bestellung im Materialblock",
+        "Kosten-/Abrechnungsfelder im Ergebnisreiter",
+      ],
+    },
+    {
+      title: "Später bewusst nicht blockierend",
+      items: [
+        "Papierpreisimport und Preisstände",
+        "Maschinenzeiten, Klickkosten und Zählermodus",
+        "automatische Netto-/Restmengen",
+        "Deckungsbeitrag und Mindestpreislogik",
+        "Provision und Rechnungskontrolle",
+        "Persistenz, Tariflogik und Druck-PDF",
+      ],
+    },
   ];
 
   return (
@@ -894,10 +905,6 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         counts[tab.id] = requiredFields.filter((field) =>
           isDraftValueMissing(String(draft[field] ?? "")),
         ).length;
-
-        if (tab.id === "finishing") {
-          counts[tab.id] = finishingRows.some((row) => row.active) ? 0 : 1;
-        }
 
         return counts;
       },
@@ -1077,7 +1084,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           <div className="pp-calculation-tab-panel">
             {activeTab === "customer-order" ? (
               <>
-                <CalculationSection eyebrow="01" title="Kunde / Adresse">
+                <CalculationSection eyebrow="01" title="Kunde / Kontakt">
                   <div className="pp-calc-input-grid pp-calc-input-grid--four">
                     <CalculationField
                       label="Kunde"
@@ -1104,18 +1111,6 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       badge="optional"
                     />
                     <CalculationField
-                      label="Kundenreferenz"
-                      value={draft.customerReference}
-                      onValueChange={updateDraft("customerReference")}
-                      badge="optional"
-                    />
-                    <CalculationField
-                      label="Bestellnummer"
-                      value={draft.customerOrderNumber}
-                      onValueChange={updateDraft("customerOrderNumber")}
-                      badge="optional"
-                    />
-                    <CalculationField
                       label="Bearbeiter"
                       value={draft.owner}
                       onValueChange={updateDraft("owner")}
@@ -1138,7 +1133,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                   </div>
                 </CalculationSection>
 
-                <CalculationSection eyebrow="02" title="Auftrag / Anfrage">
+                <CalculationSection eyebrow="02" title="Auftrag / Status">
                   <div className="pp-calc-input-grid pp-calc-input-grid--four">
                     <CalculationField
                       label="Projekt / Jobname"
@@ -1151,7 +1146,13 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       label="Kalkulationsnummer"
                       value={draft.calculationId}
                       onValueChange={updateDraft("calculationId")}
-                      badge="Pflicht"
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Auftragsart"
+                      value={draft.orderType}
+                      onValueChange={updateDraft("orderType")}
+                      badge="optional"
                     />
                     <CalculationField
                       label="Liefertermin"
@@ -1163,19 +1164,25 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       label="Korrektur bis"
                       value={draft.correctionDeadline}
                       onValueChange={updateDraft("correctionDeadline")}
-                      badge="Pflicht"
-                    />
-                    <CalculationField
-                      label="Auftragsart"
-                      value={draft.orderType}
-                      onValueChange={updateDraft("orderType")}
-                      badge="Pflicht"
+                      badge="optional"
                     />
                     <CalculationField
                       label="Datenstatus"
                       value={draft.dataStatus}
                       onValueChange={updateDraft("dataStatus")}
-                      badge="Pflicht"
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Kundenreferenz"
+                      value={draft.customerReference}
+                      onValueChange={updateDraft("customerReference")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Bestellnummer"
+                      value={draft.customerOrderNumber}
+                      onValueChange={updateDraft("customerOrderNumber")}
+                      badge="optional"
                     />
                     <CalculationField
                       label="Kundenhinweis"
@@ -1191,6 +1198,11 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       badge="optional"
                       wide
                     />
+                  </div>
+                </CalculationSection>
+
+                <CalculationSection eyebrow="03" title="Menge / Lieferung">
+                  <div className="pp-calc-input-grid pp-calc-input-grid--four">
                     <CalculationField
                       label="Hauptauflage"
                       value={draft.quantity}
@@ -1201,17 +1213,17 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       label="Zuschuss"
                       value={draft.overs}
                       onValueChange={updateDraft("overs")}
-                      badge="Pflicht"
+                      badge="optional"
                     />
                     <CalculationField
                       label="Netto-Menge"
                       value={`${formatNumber(result.production.netQuantity ?? 0)} Stück`}
-                      badge="optional"
+                      badge="später"
                     />
                     <CalculationField
                       label="Restmenge"
                       value={`${formatNumber(result.production.restQuantity ?? 0)} Stück`}
-                      badge="optional"
+                      badge="später"
                     />
                     <CalculationField
                       label="Überlieferung"
@@ -1232,6 +1244,12 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       badge="optional"
                     />
                     <CalculationField
+                      label="Varianten"
+                      value={draft.variants}
+                      onValueChange={updateDraft("variants")}
+                      badge="optional"
+                    />
+                    <CalculationField
                       label="Staffel 1"
                       value={draft.tier1}
                       onValueChange={updateDraft("tier1")}
@@ -1249,12 +1267,6 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       onValueChange={updateDraft("tier3")}
                       badge="optional"
                     />
-                    <CalculationField
-                      label="Varianten"
-                      value={draft.variants}
-                      onValueChange={updateDraft("variants")}
-                      badge="optional"
-                    />
                   </div>
                 </CalculationSection>
               </>
@@ -1262,7 +1274,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
 
             {activeTab === "product-format" ? (
               <>
-                <CalculationSection eyebrow="03" title="Produkt">
+                <CalculationSection eyebrow="04" title="Produkt / Farbigkeit">
                   <div className="pp-calc-input-grid">
                     <CalculationSelect
                       label="Produktart"
@@ -1296,13 +1308,13 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       label="Farben Vorderseite"
                       value={draft.frontColors}
                       onValueChange={updateDraft("frontColors")}
-                      badge="Pflicht"
+                      badge="optional"
                     />
                     <CalculationField
                       label="Farben Rückseite"
                       value={draft.backColors}
                       onValueChange={updateDraft("backColors")}
-                      badge="Pflicht"
+                      badge="optional"
                     />
                     <CalculationField
                       label="Sonderfarben"
@@ -1325,7 +1337,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                   </div>
                 </CalculationSection>
 
-                <CalculationSection eyebrow="04" title="Format / Datenprüfung">
+                <CalculationSection eyebrow="05" title="Format / Druckdaten">
                   <div className="pp-calc-input-grid pp-calc-input-grid--four">
                     <CalculationField
                       label="Endformat"
@@ -1343,7 +1355,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       label="Ausrichtung"
                       value={draft.orientation}
                       onValueChange={updateDraft("orientation")}
-                      badge="Pflicht"
+                      badge="optional"
                     />
                     <CalculationField
                       label="Beschnitt"
@@ -1361,7 +1373,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       label="Nutzenformat"
                       value={draft.productionFormat}
                       onValueChange={updateDraft("productionFormat")}
-                      badge="Pflicht"
+                      badge="später"
                     />
                     <CalculationField
                       label="Sonderform / Stanze"
@@ -1379,7 +1391,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       label="Datenprüfung"
                       value={draft.preflight}
                       onValueChange={updateDraft("preflight")}
-                      badge="Pflicht"
+                      badge="optional"
                     />
                   </div>
                 </CalculationSection>
@@ -1388,13 +1400,13 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
 
             {activeTab === "paper-print" ? (
               <>
-                <CalculationSection eyebrow="05" title="Papier / Material">
+                <CalculationSection eyebrow="06" title="Papier / Material">
                   <div className="pp-calc-input-grid pp-calc-input-grid--four">
                     <CalculationField
                       label="Materialgruppe"
                       value={draft.materialGroup}
                       onValueChange={updateDraft("materialGroup")}
-                      badge="Pflicht"
+                      badge="optional"
                     />
                     <CalculationField
                       label="Artikel"
@@ -1461,13 +1473,13 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       label="Lagerstatus"
                       value={draft.stockStatus}
                       onValueChange={updateDraft("stockStatus")}
-                      badge="Pflicht"
+                      badge="optional"
                     />
                     <CalculationField
                       label="Papierquelle"
                       value={draft.paperSource}
                       onValueChange={updateDraft("paperSource")}
-                      badge="Pflicht"
+                      badge="optional"
                     />
                     <CalculationField
                       label="Papierbestellung"
@@ -1490,7 +1502,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                   </div>
                 </CalculationSection>
 
-                <CalculationSection eyebrow="06" title="Druck / Maschine">
+                <CalculationSection eyebrow="07" title="Druck / Maschine">
                   <div
                     className="pp-calc-production-mode"
                     role="radiogroup"
@@ -1532,7 +1544,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                         label="Wendung"
                         value={draft.turning}
                         onValueChange={updateDraft("turning")}
-                        badge="Pflicht"
+                        badge="optional"
                       />
                       <CalculationField
                         label="Nutzenrechner"
@@ -1584,7 +1596,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             ) : null}
 
             {activeTab === "finishing" ? (
-              <CalculationSection eyebrow="07" title="Weiterverarbeitung">
+              <CalculationSection eyebrow="08" title="Weiterverarbeitung">
                 <div
                   className="pp-calc-finishing-matrix"
                   aria-label="Weiterverarbeitungs-Matrix"
@@ -1620,7 +1632,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
 
             {activeTab === "external" ? (
               <CalculationSection
-                eyebrow="08"
+                eyebrow="09"
                 title="Fremdproduktion / Kombination"
               >
                 <div className="pp-calc-input-grid pp-calc-input-grid--four">
@@ -1646,7 +1658,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     label="Marge / Aufschlag"
                     value={draft.margin}
                     onValueChange={updateDraft("margin")}
-                    badge="Pflicht"
+                    badge="optional"
                   />
                   <CalculationField
                     label="Angebotsnummer"
@@ -1670,13 +1682,13 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     label="Interne Prüfung"
                     value={draft.internalCheck}
                     onValueChange={updateDraft("internalCheck")}
-                    badge="Pflicht"
+                    badge="optional"
                   />
                   <CalculationField
                     label="Druck"
                     value={draft.combinationPrint}
                     onValueChange={updateDraft("combinationPrint")}
-                    badge="Pflicht"
+                    badge="optional"
                   />
                   <CalculationField
                     label="Veredelung"
@@ -1688,7 +1700,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     label="Weiterverarbeitung"
                     value={draft.combinationPostpress}
                     onValueChange={updateDraft("combinationPostpress")}
-                    badge="Pflicht"
+                    badge="optional"
                   />
                   <CalculationField
                     label="Fremdleistung"
@@ -1703,7 +1715,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             {activeTab === "prices" ? (
               <>
               <CalculationSection
-                eyebrow="09"
+                eyebrow="10"
                 title="Preise / Ergebnisvorgaben"
               >
                 <div className="pp-calc-input-grid pp-calc-input-grid--four">
@@ -1777,7 +1789,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     label="Marge"
                     value={draft.margin}
                     onValueChange={updateDraft("margin")}
-                    badge="Pflicht"
+                    badge="optional"
                   />
                   <CalculationField
                     label="Verkaufspreis netto"
@@ -1789,7 +1801,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     label="Abrechnung"
                     value={draft.billingMode}
                     onValueChange={updateDraft("billingMode")}
-                    badge="Pflicht"
+                    badge="optional"
                     wide
                   />
                   <CalculationField

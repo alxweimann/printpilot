@@ -1936,3 +1936,47 @@ Nicht geändert:
 - keine echte Ausschieß-Berechnung
 - keine grundsätzliche Änderung am Reiterlayout
 - keine Änderung an Auftragstasche/Auftragsübersicht
+
+## Sprint 46.18 – Feldbestand prüfen und Maske fachlich aufräumen
+
+Die Kalkulationsmaske wurde nicht weiter mit neuen Feldern aufgefüllt, sondern fachlich sortiert und entschärft. Ziel ist weiterhin eine produktive MIS-/ERP-artige Arbeitsmaske mit schnellem Bedienfluss, nicht eine Dashboard-Optik und keine Printy-Kopie.
+
+Geändert:
+
+- **Pflichtfelder reduziert**
+  - Mindestdaten blockieren den Auftrag nur noch dort, wo sie für einen sinnvollen Auftragsentwurf wirklich notwendig sind.
+  - `Kalkulationsnummer`, `Korrektur bis`, `Auftragsart`, `Datenstatus`, `Zuschuss`, Lager-/Papierstatus, Wendung, Preis-/Abrechnungsfelder und Weiterverarbeitung blockieren den Auftrag nicht mehr.
+  - Die Weiterverarbeitung darf leer bleiben, weil es real auch reine Druck-/Schneid- oder Vorstufenaufträge geben kann.
+
+- **Kunde & Auftrag fachlich aufgeräumt**
+  - Kontakt- und Adressfelder stehen zusammen im Block `Kunde / Kontakt`.
+  - Jobname, Status, Termine, Bestellnummer und Hinweise stehen im Block `Auftrag / Status`.
+  - Auflage, Zuschuss, Netto-/Restmenge, Überlieferung, Teillieferungen, Muster, Varianten und Staffeln stehen im Block `Menge / Lieferung`.
+
+- **Produkt & Format sauberer getrennt**
+  - Produktart, Bezeichnung, Umfang und Farbigkeit liegen im Produktblock.
+  - Endformat, offenes Format, Beschnitt, Datenquelle und Datenprüfung liegen im Format-/Druckdatenblock.
+  - Vorder-/Rückseitenfarben bleiben sichtbar, sind aber nicht mehr doppelt pflichtig, weil die Grundfarbigkeit bereits ein Pflichtfeld ist.
+
+- **Papier & Druck entschärft**
+  - Artikel, Grammatur, Bogenformat, Maschine, Druckart und Nutzenrechner bleiben echte Mindestdaten.
+  - Papierquelle, Lagerstatus, Papierbestellung, Preisstand, Netto-/Zuschuss-/Bruttobogen, Maschinenzeiten, Klickkosten und Zählermodus bleiben vorbereitet, aber blockieren nicht.
+
+- **Fremdproduktion und Preise bleiben erreichbar, aber nicht übergriffig**
+  - Bei Eigenproduktion bleibt der Reiter Fremdproduktion zurückgenommen.
+  - Bei Fremdproduktion sind nur Lieferant, Einkaufspreis und Lieferzeit echte Mindestdaten.
+  - Preis-/Ergebnisfelder bleiben als fachliche Vorgaben vorbereitet, aber ohne Pflichtzwang und ohne neue Preislogik.
+
+- **Fachlicher Feldcheck aktualisiert**
+  - Die Übersicht im Reiter `Preise & Ergebnis` zeigt jetzt klarer:
+    - welche Pflichtfelder bewusst bleiben,
+    - welche Felder korrekt einsortiert wurden,
+    - welche Themen später bewusst nicht blockierend angebunden werden.
+
+Nicht geändert:
+
+- keine neue Preislogik
+- keine Persistenz
+- keine echte Ausschieß-Berechnung
+- keine große Designänderung
+- keine Änderung an Auftragstasche oder Auftragsübersicht

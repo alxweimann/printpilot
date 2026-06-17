@@ -425,6 +425,78 @@ const initialFinishingRows: FinishingDraftRow[] = [
     productionValue: "variabel",
   },
   {
+    id: "gathering",
+    label: "Zusammentragen / Sortieren",
+    active: false,
+    note: "Sätze, Varianten, Reihenfolge oder sortierte Sammelaufträge",
+    typeLabel: "Art",
+    typeValue: "sortiert",
+    amountLabel: "Sätze",
+    amountValue: "automatisch",
+    productionLabel: "Kontrolle",
+    productionValue: "nach Auftrag",
+  },
+  {
+    id: "padding",
+    label: "Ableimen / Blockleimung",
+    active: false,
+    note: "Blöcke, SD-Sätze, Schreibblocks oder kopf-/seitengeleimte Produkte",
+    typeLabel: "Leimung",
+    typeValue: "Kopfleimung",
+    amountLabel: "Blöcke",
+    amountValue: "offen",
+    productionLabel: "Trocknung",
+    productionValue: "einplanen",
+  },
+  {
+    id: "wire-binding",
+    label: "Spiral- / Drahtkammbindung",
+    active: false,
+    note: "Kalender, Manuals, Präsentationen oder Kleinauflagen",
+    typeLabel: "Bindung",
+    typeValue: "Drahtkamm",
+    amountLabel: "Exemplare",
+    amountValue: "Auflage",
+    productionLabel: "Produktion",
+    productionValue: "intern/extern",
+  },
+  {
+    id: "inserting",
+    label: "Einlegen / Beilegen",
+    active: false,
+    note: "Beilagen, Karten, Deckblätter, Umschläge oder Sets",
+    typeLabel: "Art",
+    typeValue: "Beilage",
+    amountLabel: "Teile",
+    amountValue: "1",
+    productionLabel: "Prüfung",
+    productionValue: "Vollständigkeit",
+  },
+  {
+    id: "manual-work",
+    label: "Handarbeiten / Konfektionieren",
+    active: false,
+    note: "Kleben, Montieren, Sortieren, Zählen, Sonderhandling",
+    typeLabel: "Tätigkeit",
+    typeValue: "offen beschreiben",
+    amountLabel: "Zeit / Menge",
+    amountValue: "offen",
+    productionLabel: "Arbeitsplatz",
+    productionValue: "Handarbeit",
+  },
+  {
+    id: "mailing",
+    label: "Kuvertieren / Mailing",
+    active: false,
+    note: "Kuverts, Anschreiben, Porto, Adressen und Übergabe",
+    typeLabel: "Art",
+    typeValue: "kuvertieren",
+    amountLabel: "Sendungen",
+    amountValue: "Auflage",
+    productionLabel: "Daten",
+    productionValue: "Adressliste",
+  },
+  {
     id: "packing",
     label: "Verpacken / Versand",
     active: true,
@@ -771,12 +843,13 @@ function FinishingMatrixRow({
   return (
     <tr className={row.active ? "is-active" : undefined}>
       <td className="pp-calc-finishing-table__active">
-        <input
-          type="checkbox"
-          checked={row.active}
-          onChange={(event) => onToggle(event.target.checked)}
-          aria-label={row.label}
-        />
+        <label className="pp-calc-finishing-check" aria-label={`${row.label} aktivieren`}>
+          <input
+            type="checkbox"
+            checked={row.active}
+            onChange={(event) => onToggle(event.target.checked)}
+          />
+        </label>
       </td>
       <th scope="row">
         <b>{row.label}</b>
@@ -1688,6 +1761,13 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                   aria-label="Weiterverarbeitungs-Matrix"
                 >
                   <table className="pp-calc-finishing-table">
+                    <colgroup>
+                      <col className="pp-calc-finishing-table__col-active" />
+                      <col className="pp-calc-finishing-table__col-service" />
+                      <col className="pp-calc-finishing-table__col-param" />
+                      <col className="pp-calc-finishing-table__col-amount" />
+                      <col className="pp-calc-finishing-table__col-production" />
+                    </colgroup>
                     <thead>
                       <tr>
                         <th>Aktiv</th>

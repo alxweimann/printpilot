@@ -2042,3 +2042,40 @@ Fachliche Bewertung nach Sprint 46.20:
 - Pflichtfelder bleiben bewusst reduziert.
 - „Später“-Felder sind weiterhin sichtbar, aber nicht blockierend.
 - Nächster sinnvoller Schritt: Reiter Papier & Druck fachlich weiter entlasten, zum Beispiel Material/Bogen/Bestand klarer trennen, ohne Felder hinzuzufügen.
+
+## Sprint 46.21 – Kalkulationsmaske: Lesbarkeit und Weiterverarbeitung prüfen
+
+Status: umgesetzt.
+
+Auslöser waren die Sichtprüfung nach Sprint 46.20 und der Hinweis, dass einzelne Feldbezeichnungen wie `Bestellnummer` nicht vollständig lesbar waren und die Aktiv-Spalte im Reiter `Weiterverarbeitung` zu viel Tabellenbreite blockiert hat.
+
+Umgesetzt:
+
+- **Feldlesbarkeit verbessert**
+  - Die Labelspalte der MIS-Felder wurde verbreitert.
+  - Lange Labels werden nicht mehr per Ellipse abgeschnitten, sondern dürfen sauber umbrechen.
+  - Pflicht-/Optional-/Später-Badges bleiben rechts im Labelbereich und laufen nicht in Werte hinein.
+  - Eingabewerte behalten weiterhin die kompakte Ein-Zeilen-Logik.
+
+- **Weiterverarbeitung produktiver gemacht**
+  - Die Aktiv-/Haken-Spalte wurde auf eine schmale Kontrollspalte reduziert.
+  - Die dadurch frei werdende Breite geht in Leistungsnamen, Parameter und Produktionsangaben.
+  - Die Tabelle nutzt feste Spaltenbreiten, damit die Haken-Spalte nicht mehr unkontrolliert wächst.
+
+- **Fachlicher Feldbestand Weiterverarbeitung ergänzt**
+  - Ergänzt wurden typische Leistungen, die für Druckerei-/Digitaldruck-Workflows fehlen würden:
+    - `Zusammentragen / Sortieren`
+    - `Ableimen / Blockleimung`
+    - `Spiral- / Drahtkammbindung`
+    - `Einlegen / Beilegen`
+    - `Handarbeiten / Konfektionieren`
+    - `Kuvertieren / Mailing`
+  - Bestehende Leistungen wie Schneiden, Falzen, Rillen/Nuten, Heften, Klebebindung, Fadenheftung, Bohren/Lochen/Ösen, Laminieren/Kaschieren, Stanzen/Plotten, Ecken abrunden, Perforieren, Nummerieren und Verpacken/Versand bleiben erhalten.
+
+Nicht geändert:
+
+- keine neue Preislogik
+- keine automatische Zeitberechnung
+- keine Maschinen-/Tariflogik
+- keine Persistenz
+- keine große Designänderung

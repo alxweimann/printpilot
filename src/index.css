@@ -10007,3 +10007,110 @@ button.pp-process-step:hover {
     grid-template-columns: minmax(0, 1fr) auto;
   }
 }
+
+/* Sprint 46.21 – Lesbarkeit und Weiterverarbeitung fachlich verbreitern */
+.pp-calc-input-field {
+  grid-template-columns: 158px minmax(0, 1fr);
+}
+
+.pp-calc-input-field span {
+  grid-template-columns: minmax(0, 1fr) auto;
+  column-gap: 6px;
+}
+
+.pp-calc-input-field span strong {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+  word-break: normal;
+  hyphens: auto;
+  line-height: 1.12;
+}
+
+.pp-calc-input-field span em {
+  align-self: start;
+  max-width: 58px;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select {
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.pp-calc-finishing-table {
+  min-width: 1240px;
+  table-layout: fixed;
+}
+
+.pp-calc-finishing-table__col-active {
+  width: 38px;
+}
+
+.pp-calc-finishing-table__col-service {
+  width: 240px;
+}
+
+.pp-calc-finishing-table__col-param {
+  width: auto;
+}
+
+.pp-calc-finishing-table__col-amount {
+  width: 180px;
+}
+
+.pp-calc-finishing-table__col-production {
+  width: 190px;
+}
+
+.pp-calc-finishing-table__active {
+  width: 38px;
+  min-width: 38px;
+  max-width: 38px;
+  padding-inline: 5px;
+  text-align: center;
+}
+
+.pp-calc-finishing-check {
+  display: inline-grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  cursor: pointer;
+}
+
+.pp-calc-finishing-table th:nth-child(2),
+.pp-calc-finishing-table td:nth-child(2) {
+  width: 240px;
+}
+
+.pp-calc-finishing-table th b {
+  white-space: normal;
+  overflow: visible;
+  text-overflow: clip;
+}
+
+.pp-calc-finishing-table th small {
+  max-width: none;
+  white-space: normal;
+  overflow: hidden;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+}
+
+.pp-calc-finishing-table td span {
+  overflow: visible;
+  text-overflow: clip;
+  white-space: normal;
+}
+
+@media (max-width: 1280px) {
+  .pp-calc-input-field {
+    grid-template-columns: 150px minmax(0, 1fr);
+  }
+
+  .pp-calc-finishing-table {
+    min-width: 1180px;
+  }
+}

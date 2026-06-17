@@ -1980,3 +1980,42 @@ Nicht geändert:
 - keine echte Ausschieß-Berechnung
 - keine große Designänderung
 - keine Änderung an Auftragstasche oder Auftragsübersicht
+
+## Sprint 46.19 – Bedienfluss und Pflichtfeld-Logik schärfen
+
+Die Kalkulationsmaske wurde fachlich weiter entschärft. Der Schwerpunkt liegt jetzt auf einem klaren Bedienfluss zwischen `kalkulierbar`, `angebotsfähig` und `auftragsfähig`, ohne neue Preislogik und ohne große Designänderung.
+
+Geändert:
+
+- **Drei Reifegrade eingeführt**
+  - `Kalkulierbar`: Mindestdaten für eine interne Kalkulation sind vorhanden.
+  - `Angebotsfähig`: zusätzlich sind kunden- und angebotsrelevante Angaben vorhanden.
+  - `Auftragsfähig`: zusätzlich sind auftragsrelevante Angaben wie Projekt, Bearbeiter und Liefertermin vorhanden.
+  - Die Statuszeile zeigt diese drei Zustände direkt sichtbar an.
+
+- **Pflichtfeld-Logik reduziert und fachlich getrennt**
+  - Für die reine Kalkulation zählen vor allem Auflage, Produkt, Format, Material, Maschine und Druckart.
+  - Für Angebot und Auftrag werden zusätzliche Felder geprüft, aber nicht alle vorbereiteten Felder blockieren pauschal.
+  - Bei Eigenproduktion blockiert der Reiter `Fremdproduktion` weiterhin nicht.
+  - Bei Fremdproduktion oder Kombination bleiben Lieferant, Einkaufspreis und Lieferzeit relevant.
+
+- **Auftrag-erzeugen-Button präzisiert**
+  - Der Button bleibt gesperrt, solange echte Auftragsdaten fehlen.
+  - Die Beschriftung unterscheidet jetzt deutlicher zwischen fehlenden Auftragsdaten und einer generell unvollständigen Maske.
+
+- **Badges weiter bereinigt**
+  - `Beschnitt`, `Grammatur`, `Bogenformat` und `Nutzenrechner` blockieren nicht mehr pauschal.
+  - `Nutzenrechner` ist als späterer Automatik-/Engine-Bereich markiert.
+  - Pflicht-Pills stehen stärker nur noch an Feldern, die für den nächsten Workflow-Schritt wirklich kritisch sind.
+
+- **Fachlicher Feldcheck aktualisiert**
+  - Die Übersicht in `Preise & Ergebnis` dokumentiert jetzt die drei Reifegrade und den bereinigten Bedienfluss.
+  - Spätere Themen wie Preisimport, Zuschussautomatik, Deckungsbeitrag, Mindestpreis, Provision, Persistenz und Druck-PDF bleiben bewusst nicht blockierend.
+
+Nicht geändert:
+
+- keine Preislogik
+- keine Persistenz
+- keine echte Ausschieß-Berechnung
+- keine große Designänderung
+- keine Änderung an Auftragstasche oder Auftragsübersicht

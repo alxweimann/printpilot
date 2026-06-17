@@ -17,6 +17,7 @@ type CalculationPageProps = {
 
 type ProductionMode = "internal" | "external" | "combined";
 type FieldBadge = "Pflicht" | "optional" | "später";
+type ReadinessState = "ready" | "blocked";
 type CalculationTabId =
   | "customer-order"
   | "product-format"
@@ -169,7 +170,28 @@ const productKindOptions = Object.entries(productKindLabels).map(
   }),
 );
 
-const requiredFieldsByTab: Record<CalculationTabId, Array<keyof CalculationDraft>> = {
+const calculationRequiredFields: Array<keyof CalculationDraft> = [
+  "quantity",
+  "productKind",
+  "productLabel",
+  "finalFormat",
+  "substrate",
+  "machine",
+  "printType",
+];
+
+const offerRequiredFields: Array<keyof CalculationDraft> = [
+  ...calculationRequiredFields,
+  "customer",
+  "contactName",
+  "pages",
+  "colorMode",
+];
+
+const requiredFieldsByTab: Record<
+  CalculationTabId,
+  Array<keyof CalculationDraft>
+> = {
   "customer-order": [
     "customer",
     "contactName",
@@ -178,22 +200,8 @@ const requiredFieldsByTab: Record<CalculationTabId, Array<keyof CalculationDraft
     "dueDate",
     "quantity",
   ],
-  "product-format": [
-    "productKind",
-    "productLabel",
-    "pages",
-    "colorMode",
-    "finalFormat",
-    "bleedMm",
-  ],
-  "paper-print": [
-    "substrate",
-    "grammage",
-    "sheetFormat",
-    "machine",
-    "printType",
-    "impositionLabel",
-  ],
+  "product-format": ["productKind", "productLabel", "pages", "finalFormat"],
+  "paper-print": ["substrate", "machine", "printType"],
   finishing: [],
   external: ["externalSupplier", "externalPrice", "externalLeadTime"],
   prices: [],
@@ -220,6 +228,33 @@ function getRequiredFieldsForTab(
   }
 
   return requiredFieldsByTab[tabId];
+}
+
+function getOrderRequiredFields(productionMode: ProductionMode) {
+  return calculationTabs.flatMap((tab) =>
+    getRequiredFieldsForTab(tab.id, productionMode),
+  );
+}
+
+function getProductionModeRequiredFields(productionMode: ProductionMode) {
+  return productionMode === "internal" ? [] : requiredFieldsByTab.external;
+}
+
+function countMissingFields(
+  draft: CalculationDraft,
+  fields: Array<keyof CalculationDraft>,
+) {
+  return fields.filter((field) =>
+    isDraftValueMissing(String(draft[field] ?? "")),
+  ).length;
+}
+
+function getReadinessLabel(missingCount: number) {
+  return missingCount === 0 ? "bereit" : `${missingCount} offen`;
+}
+
+function getReadinessState(missingCount: number): ReadinessState {
+  return missingCount === 0 ? "ready" : "blocked";
 }
 
 const productionModes: Array<{
@@ -643,7 +678,13 @@ function CalculationField({
     >
       <span>
         {label}
-        {badge ? <em className={`pp-field-badge pp-field-badge--${badge.toLowerCase()}`}>{badge}</em> : null}
+        {badge ? (
+          <em
+            className={`pp-field-badge pp-field-badge--${badge.toLowerCase()}`}
+          >
+            {badge}
+          </em>
+        ) : null}
       </span>
       <input
         value={value}
@@ -674,7 +715,13 @@ function CalculationSelect({
     <label className="pp-calc-input-field">
       <span>
         {label}
-        {badge ? <em className={`pp-field-badge pp-field-badge--${badge.toLowerCase()}`}>{badge}</em> : null}
+        {badge ? (
+          <em
+            className={`pp-field-badge pp-field-badge--${badge.toLowerCase()}`}
+          >
+            {badge}
+          </em>
+        ) : null}
       </span>
       <select
         value={value}
@@ -838,42 +885,41 @@ function ResultLine({ label, value }: { label: string; value: string }) {
 function CalculationFieldAudit() {
   const groups = [
     {
-      title: "Pflicht bewusst reduziert",
+      title: "Pflichtfelder geschärft",
       items: [
-        "Kunde, Ansprechpartner, Bearbeiter",
-        "Projekt, Liefertermin, Hauptauflage",
-        "Produktart, Bezeichnung, Umfang",
-        "Endformat, Beschnitt",
-        "Artikel, Grammatur, Bogenformat",
-        "Maschine, Druckart, Nutzenrechner",
+        "Kalkulierbar: Auflage, Produkt, Format, Material, Maschine und Druckart",
+        "Angebotsfähig: zusätzlich Kunde, Ansprechpartner, Umfang und Farbigkeit",
+        "Auftragsfähig: zusätzlich Projekt, Bearbeiter und Liefertermin",
+        "Beschnitt, Bogenformat, Nutzen und Grammatur blockieren nicht mehr pauschal",
       ],
     },
     {
-      title: "Richtig einsortiert",
+      title: "Bedienfluss bereinigt",
       items: [
-        "Adressen und Kontakt im Kundenblock",
-        "Bestellnummer, Datenstatus und Termine im Auftrag",
-        "Mengen, Staffel und Lieferung zusammen",
-        "Farbigkeit beim Produkt, Datenquelle beim Format",
-        "Papierbogen, Lagerstatus und Bestellung im Materialblock",
-        "Kosten-/Abrechnungsfelder im Ergebnisreiter",
+        "Kunde, Kontakt, Adressen und Auftrag bleiben im Startreiter",
+        "Produkt, Format, Farben, Datenquelle und Auflage führen in einem Block zur Kalkulation",
+        "Papier, Maschine, Druckart und Bogeninformationen stehen vor Weiterverarbeitung",
+        "Fremdproduktion ist nur bei externem oder kombiniertem Produktionsweg blockierend",
+        "Preise & Ergebnis bleibt Prüf- und Abschlussreiter ohne neue Preislogik",
       ],
     },
     {
       title: "Später bewusst nicht blockierend",
       items: [
-        "Papierpreisimport und Preisstände",
-        "Maschinenzeiten, Klickkosten und Zählermodus",
-        "automatische Netto-/Restmengen",
-        "Deckungsbeitrag und Mindestpreislogik",
-        "Provision und Rechnungskontrolle",
-        "Persistenz, Tariflogik und Druck-PDF",
+        "Papierpreisimport, Preisstände und Lieferantenkataloge",
+        "Maschinenzeiten, Klickkosten, Zählermodus und Zuschussautomatiken",
+        "automatische Netto-/Restmengen und Sammelauftragslogik",
+        "Deckungsbeitrag, Mindestpreis, Rabattregeln und Provision",
+        "Rechnungskontrolle, Persistenz, Tariflogik und Druck-PDF",
       ],
     },
   ];
 
   return (
-    <div className="pp-calculation-field-audit" aria-label="Fachlicher Feldcheck">
+    <div
+      className="pp-calculation-field-audit"
+      aria-label="Fachlicher Feldcheck"
+    >
       {groups.map((group) => (
         <article key={group.title}>
           <h3>{group.title}</h3>
@@ -919,12 +965,46 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     );
   }, [draft, finishingRows, productionMode]);
 
+  const productionModeRequiredFields = useMemo(
+    () => getProductionModeRequiredFields(productionMode),
+    [productionMode],
+  );
+
+  const calculationOpenFields = useMemo(
+    () =>
+      countMissingFields(draft, [
+        ...calculationRequiredFields,
+        ...productionModeRequiredFields,
+      ]),
+    [draft, productionModeRequiredFields],
+  );
+
+  const offerOpenFields = useMemo(
+    () =>
+      countMissingFields(draft, [
+        ...offerRequiredFields,
+        ...productionModeRequiredFields,
+      ]),
+    [draft, productionModeRequiredFields],
+  );
+
+  const orderRequiredFields = useMemo(
+    () => getOrderRequiredFields(productionMode),
+    [productionMode],
+  );
+
   const openRequiredFields = Object.values(missingRequiredByTab).reduce(
     (sum, count) => sum + count,
     0,
   );
   const activeTabOpenRequiredFields = missingRequiredByTab[activeTab];
   const canCreateOrderDraft = openRequiredFields === 0;
+  const orderOpenFields = countMissingFields(draft, orderRequiredFields);
+  const readinessSummary = [
+    `Kalkulierbar ${getReadinessLabel(calculationOpenFields)}`,
+    `Angebotsfähig ${getReadinessLabel(offerOpenFields)}`,
+    `Auftragsfähig ${getReadinessLabel(orderOpenFields)}`,
+  ];
 
   const payload = useMemo(
     () => buildPayloadFromDraft(draft, productionMode, finishingRows),
@@ -958,7 +1038,9 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
       getFallbackOrder(),
       {
         customer: draft.customer,
-        customerAddress: draft.deliveryAddress.split("·").map((line) => line.trim()),
+        customerAddress: draft.deliveryAddress
+          .split("·")
+          .map((line) => line.trim()),
         contactName: draft.contactName,
         contactPhone: draft.contactPhone,
         contactEmail: draft.contactEmail,
@@ -1041,6 +1123,10 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                 {productionModes.find((mode) => mode.id === productionMode)
                   ?.label ?? "Eigenproduktion"}
               </b>
+            </div>
+            <div>
+              <span>Status</span>
+              <b>{readinessSummary.join(" · ")}</b>
             </div>
           </div>
 
@@ -1302,7 +1388,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       label="Farbigkeit"
                       value={draft.colorMode}
                       onValueChange={updateDraft("colorMode")}
-                      badge="Pflicht"
+                      badge="optional"
                     />
                     <CalculationField
                       label="Farben Vorderseite"
@@ -1361,7 +1447,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       label="Beschnitt"
                       value={draft.bleedMm}
                       onValueChange={updateDraft("bleedMm")}
-                      badge="Pflicht"
+                      badge="optional"
                     />
                     <CalculationField
                       label="Sicherheitsabstand"
@@ -1419,13 +1505,13 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       label="Grammatur"
                       value={draft.grammage}
                       onValueChange={updateDraft("grammage")}
-                      badge="Pflicht"
+                      badge="optional"
                     />
                     <CalculationField
                       label="Bogenformat"
                       value={draft.sheetFormat}
                       onValueChange={updateDraft("sheetFormat")}
-                      badge="Pflicht"
+                      badge="optional"
                     />
                     <CalculationField
                       label="Laufrichtung"
@@ -1550,7 +1636,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                         label="Nutzenrechner"
                         value={draft.impositionLabel}
                         onValueChange={updateDraft("impositionLabel")}
-                        badge="Pflicht"
+                        badge="später"
                       />
                       <CalculationField
                         label="Rüstzeit"
@@ -1714,118 +1800,118 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
 
             {activeTab === "prices" ? (
               <>
-              <CalculationSection
-                eyebrow="10"
-                title="Preise / Ergebnisvorgaben"
-              >
-                <div className="pp-calc-input-grid pp-calc-input-grid--four">
-                  <CalculationField
-                    label="Materialkosten"
-                    value={draft.materialCosts}
-                    onValueChange={updateDraft("materialCosts")}
-                    badge="später"
-                  />
-                  <CalculationField
-                    label="Druckkosten"
-                    value={draft.printCosts}
-                    onValueChange={updateDraft("printCosts")}
-                    badge="später"
-                  />
-                  <CalculationField
-                    label="Weiterverarbeitung"
-                    value={draft.finishingCosts}
-                    onValueChange={updateDraft("finishingCosts")}
-                    badge="später"
-                  />
-                  <CalculationField
-                    label="Fremdleistung"
-                    value={draft.externalCosts}
-                    onValueChange={updateDraft("externalCosts")}
-                    badge="optional"
-                  />
-                  <CalculationField
-                    label="Handling"
-                    value={draft.handlingTime}
-                    onValueChange={updateDraft("handlingTime")}
-                    badge="optional"
-                  />
-                  <CalculationField
-                    label="Versand"
-                    value={draft.shippingCosts}
-                    onValueChange={updateDraft("shippingCosts")}
-                    badge="optional"
-                  />
-                  <CalculationField
-                    label="Verpackung"
-                    value={draft.packagingCosts}
-                    onValueChange={updateDraft("packagingCosts")}
-                    badge="optional"
-                  />
-                  <CalculationField
-                    label="Gemeinkosten"
-                    value={draft.overheadRate}
-                    onValueChange={updateDraft("overheadRate")}
-                    badge="später"
-                  />
-                  <CalculationField
-                    label="Mindestpreis"
-                    value={draft.minPrice}
-                    onValueChange={updateDraft("minPrice")}
-                    badge="optional"
-                  />
-                  <CalculationField
-                    label="Rabatt"
-                    value={draft.discount}
-                    onValueChange={updateDraft("discount")}
-                    badge="optional"
-                  />
-                  <CalculationField
-                    label="Deckungsbeitrag"
-                    value={draft.contributionMargin}
-                    onValueChange={updateDraft("contributionMargin")}
-                    badge="später"
-                  />
-                  <CalculationField
-                    label="Marge"
-                    value={draft.margin}
-                    onValueChange={updateDraft("margin")}
-                    badge="optional"
-                  />
-                  <CalculationField
-                    label="Verkaufspreis netto"
-                    value={draft.salePriceNet}
-                    onValueChange={updateDraft("salePriceNet")}
-                    badge="später"
-                  />
-                  <CalculationField
-                    label="Abrechnung"
-                    value={draft.billingMode}
-                    onValueChange={updateDraft("billingMode")}
-                    badge="optional"
-                    wide
-                  />
-                  <CalculationField
-                    label="Mengenabrechnung"
-                    value={draft.settlementNote}
-                    onValueChange={updateDraft("settlementNote")}
-                    badge="optional"
-                  />
-                  <CalculationField
-                    label="Provision"
-                    value={draft.commission}
-                    onValueChange={updateDraft("commission")}
-                    badge="optional"
-                  />
-                  <CalculationField
-                    label="Rechnungskontrolle"
-                    value={draft.invoiceControl}
-                    onValueChange={updateDraft("invoiceControl")}
-                    badge="optional"
-                    wide
-                  />
-                </div>
-              </CalculationSection>
-              <CalculationFieldAudit />
+                <CalculationSection
+                  eyebrow="10"
+                  title="Preise / Ergebnisvorgaben"
+                >
+                  <div className="pp-calc-input-grid pp-calc-input-grid--four">
+                    <CalculationField
+                      label="Materialkosten"
+                      value={draft.materialCosts}
+                      onValueChange={updateDraft("materialCosts")}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="Druckkosten"
+                      value={draft.printCosts}
+                      onValueChange={updateDraft("printCosts")}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="Weiterverarbeitung"
+                      value={draft.finishingCosts}
+                      onValueChange={updateDraft("finishingCosts")}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="Fremdleistung"
+                      value={draft.externalCosts}
+                      onValueChange={updateDraft("externalCosts")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Handling"
+                      value={draft.handlingTime}
+                      onValueChange={updateDraft("handlingTime")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Versand"
+                      value={draft.shippingCosts}
+                      onValueChange={updateDraft("shippingCosts")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Verpackung"
+                      value={draft.packagingCosts}
+                      onValueChange={updateDraft("packagingCosts")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Gemeinkosten"
+                      value={draft.overheadRate}
+                      onValueChange={updateDraft("overheadRate")}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="Mindestpreis"
+                      value={draft.minPrice}
+                      onValueChange={updateDraft("minPrice")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Rabatt"
+                      value={draft.discount}
+                      onValueChange={updateDraft("discount")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Deckungsbeitrag"
+                      value={draft.contributionMargin}
+                      onValueChange={updateDraft("contributionMargin")}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="Marge"
+                      value={draft.margin}
+                      onValueChange={updateDraft("margin")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Verkaufspreis netto"
+                      value={draft.salePriceNet}
+                      onValueChange={updateDraft("salePriceNet")}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="Abrechnung"
+                      value={draft.billingMode}
+                      onValueChange={updateDraft("billingMode")}
+                      badge="optional"
+                      wide
+                    />
+                    <CalculationField
+                      label="Mengenabrechnung"
+                      value={draft.settlementNote}
+                      onValueChange={updateDraft("settlementNote")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Provision"
+                      value={draft.commission}
+                      onValueChange={updateDraft("commission")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Rechnungskontrolle"
+                      value={draft.invoiceControl}
+                      onValueChange={updateDraft("invoiceControl")}
+                      badge="optional"
+                      wide
+                    />
+                  </div>
+                </CalculationSection>
+                <CalculationFieldAudit />
               </>
             ) : null}
           </div>
@@ -1835,18 +1921,29 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             aria-label="Kalkulationsstatus und Aktionen"
           >
             <div>
-              <span>Pflichtfelder</span>
-              <b>
-                {openRequiredFields > 0
-                  ? `${openRequiredFields} offen · Bereich ${activeTabOpenRequiredFields}`
-                  : "vollständig"}
+              <span>Kalkulierbar</span>
+              <b
+                className={`pp-readiness pp-readiness--${getReadinessState(calculationOpenFields)}`}
+              >
+                {getReadinessLabel(calculationOpenFields)}
               </b>
             </div>
             <div>
-              <span>Aktiver Bereich</span>
-              <b>
-                {calculationTabs.find((tab) => tab.id === activeTab)?.label ??
-                  "Kunde & Auftrag"}
+              <span>Angebotsfähig</span>
+              <b
+                className={`pp-readiness pp-readiness--${getReadinessState(offerOpenFields)}`}
+              >
+                {getReadinessLabel(offerOpenFields)}
+              </b>
+            </div>
+            <div>
+              <span>Auftragsfähig</span>
+              <b
+                className={`pp-readiness pp-readiness--${getReadinessState(orderOpenFields)}`}
+              >
+                {orderOpenFields > 0
+                  ? `${orderOpenFields} offen · Bereich ${activeTabOpenRequiredFields}`
+                  : "bereit"}
               </b>
             </div>
             <div>
@@ -1867,7 +1964,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             >
               {canCreateOrderDraft
                 ? "Auftrag aus Kalkulation erzeugen"
-                : "Mindestdaten fehlen"}
+                : "Auftragsdaten fehlen"}
             </button>
           </div>
         </div>

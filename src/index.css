@@ -9287,7 +9287,7 @@ button.pp-process-step:hover {
 
 .pp-calculation-quick-head {
   display: grid;
-  grid-template-columns: 1.25fr 1.45fr .85fr .85fr 1fr;
+  grid-template-columns: 1.15fr 1.35fr .8fr .8fr .9fr 1.3fr;
   gap: 0;
   border-bottom: 1px solid #aeb8c4;
   background: #ffffff;
@@ -9380,7 +9380,7 @@ button.pp-process-step:hover {
 
 .pp-calculation-statusbar {
   display: grid;
-  grid-template-columns: minmax(160px, .7fr) minmax(160px, .7fr) minmax(260px, 1.2fr) 260px;
+  grid-template-columns: minmax(135px, .65fr) minmax(135px, .65fr) minmax(165px, .8fr) minmax(230px, 1fr) 250px;
   align-items: center;
   gap: 0;
   border-top: 1px solid #aeb8c4;
@@ -9446,6 +9446,10 @@ button.pp-process-step:hover {
 
   .pp-calculation-create-button--bar,
   .pp-calculation-result-panel--compact .pp-calculation-create-note {
+    grid-column: span 2;
+  }
+
+  .pp-calculation-statusbar .pp-calculation-create-button--bar {
     grid-column: span 2;
   }
 }
@@ -9780,6 +9784,14 @@ button.pp-process-step:hover {
 
 .pp-calculation-statusbar b {
   color: #0d1b2f;
+}
+
+.pp-readiness--ready {
+  color: #165b35;
+}
+
+.pp-readiness--blocked {
+  color: #8b2f25;
 }
 
 .pp-calculation-create-button:disabled,

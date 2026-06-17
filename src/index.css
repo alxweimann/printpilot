@@ -10163,3 +10163,101 @@ button.pp-process-step:hover {
     min-height: 28px;
   }
 }
+
+/* Sprint 46.23 – Kalkulationsmaske: finaler Lesbarkeits-Check */
+.pp-calc-input-field {
+  grid-template-columns: 150px minmax(0, 1fr);
+}
+
+.pp-calc-input-field span {
+  gap: 6px;
+  padding-left: 8px;
+  padding-right: 6px;
+}
+
+.pp-calc-input-field span strong {
+  min-width: 0;
+  flex: 1 1 auto;
+}
+
+.pp-calc-input-field span em {
+  flex: 0 0 auto;
+  max-width: 52px;
+  padding-inline: 3px;
+  font-size: 7.5px;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select {
+  padding-left: 9px;
+  padding-right: 9px;
+}
+
+.pp-calc-finishing-table {
+  width: 100%;
+  min-width: 1280px;
+}
+
+.pp-calc-finishing-table__col-active {
+  width: 32px;
+}
+
+.pp-calc-finishing-table__col-service {
+  width: 285px;
+}
+
+.pp-calc-finishing-table__col-param {
+  width: auto;
+}
+
+.pp-calc-finishing-table__col-amount {
+  width: 190px;
+}
+
+.pp-calc-finishing-table__col-production {
+  width: 220px;
+}
+
+.pp-calc-finishing-table th:first-child,
+.pp-calc-finishing-table td:first-child {
+  width: 32px;
+  min-width: 32px;
+  max-width: 32px;
+  padding-left: 3px;
+  padding-right: 3px;
+  text-align: center;
+}
+
+.pp-calc-finishing-table th:nth-child(2),
+.pp-calc-finishing-table td:nth-child(2) {
+  width: 285px;
+}
+
+.pp-calc-finishing-table th,
+.pp-calc-finishing-table td {
+  vertical-align: middle;
+}
+
+.pp-calc-finishing-table th small {
+  line-height: 1.22;
+}
+
+.pp-calc-finishing-check {
+  width: 22px;
+  height: 22px;
+}
+
+.pp-calc-finishing-table input[type="checkbox"] {
+  width: 12px;
+  height: 12px;
+}
+
+@media (max-width: 1280px) {
+  .pp-calc-input-field {
+    grid-template-columns: 145px minmax(0, 1fr);
+  }
+
+  .pp-calc-finishing-table {
+    min-width: 1240px;
+  }
+}

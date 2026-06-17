@@ -2102,3 +2102,33 @@ Nicht geändert:
 - keine Preislogik
 - keine Persistenz
 - keine große Designänderung
+
+## Sprint 46.23 – Kalkulationsmaske: Lesbarkeit final prüfen
+
+Status: umgesetzt.
+
+Ziel war ein finaler visueller Check der sechs Kalkulationsreiter nach Sprint 46.22. Der Fokus lag auf Lesbarkeit, stabiler Badge-Position und einer fachlich runden Weiterverarbeitungs-Matrix. Es wurde keine Preislogik ergänzt und kein größerer Designwechsel vorgenommen.
+
+Umgesetzt:
+
+- **MIS-Felder lesbarer gemacht**
+  - Die Labelspalte wurde final auf eine produktivere Breite gebracht.
+  - Lange Bezeichnungen wie `Bestellnummer`, `Kalkulationsnummer`, `Sicherheitsabstand`, `Papierbestellung` und `Weiterverarbeitung` haben mehr Platz.
+  - Badges bleiben kompakt rechts im Labelbereich und nehmen dem eigentlichen Label weniger Raum weg.
+  - Eingabewerte behalten die kompakte Ein-Zeilen-Logik.
+
+- **Weiterverarbeitung final geglättet**
+  - Die Aktiv-/Haken-Spalte wurde nochmals schmaler und explizit fixiert.
+  - Die freie Breite wird stärker für Leistungsbezeichnung, Parameter und Produktionsangaben genutzt.
+  - Die Reihenfolge der Leistungen wurde stärker am Produktionsablauf ausgerichtet: Schneiden/Falzen/Rillen/Perforieren/Lochen/Formgebung/Veredelung, danach Zusammentragen/Binden/Leimen/Sonderarbeiten/Mailing/Versand.
+  - Ergänzt wurde `Banderolieren / Bündeln`, weil dies in der Praxis zwischen Weiterverarbeitung und Verpackung häufig separat kalkulationsrelevant ist.
+  - `Ableimen / Blockleimung` und `Handarbeiten / Konfektionieren` bleiben ausdrücklich als eigene Leistungen enthalten.
+
+Nicht geändert:
+
+- keine neue Preislogik
+- keine automatische Zeitberechnung
+- keine Maschinen-/Tariflogik
+- keine Persistenz
+- keine neue Pflichtfeldlogik
+- keine große Designänderung

@@ -2019,3 +2019,26 @@ Nicht geändert:
 - keine echte Ausschieß-Berechnung
 - keine große Designänderung
 - keine Änderung an Auftragstasche oder Auftragsübersicht
+
+
+## Sprint 46.20 – Kalkulationsmaske: Reiter produktiv verdichten
+
+Status: umgesetzt.
+
+Ziel war keine neue Preislogik und keine große Designänderung, sondern eine produktivere und stabilere Reitermaske nach Sichtprüfung der aktuellen Screens.
+
+Umgesetzt:
+
+- Feldlabel und Pflicht-/Optional-/Später-Badges technisch getrennt, damit Badges nicht mehr in Eingabewerte hineinlaufen.
+- Labelspalte in MIS-Feldern leicht verbreitert und robuster gegen lange Bezeichnungen gemacht.
+- Produkt-/Farbigkeitsblock nutzt wieder die produktive Vier-Spalten-Logik.
+- Statusbar und Ergebnisbereich bekommen mehr Sicherheitsabstand zur fixen Bottom-Navigation.
+- Weiterverarbeitungs-Matrix bleibt tabellarisch, erhält aber mehr horizontale Arbeitsbreite und überdeckt die Bottom-Navigation nicht mehr.
+- Keine neuen Fachfelder, keine neue Preislogik, keine grundlegende Layoutänderung.
+
+Fachliche Bewertung nach Sprint 46.20:
+
+- Die sechs Hauptreiter bleiben stabil.
+- Pflichtfelder bleiben bewusst reduziert.
+- „Später“-Felder sind weiterhin sichtbar, aber nicht blockierend.
+- Nächster sinnvoller Schritt: Reiter Papier & Druck fachlich weiter entlasten, zum Beispiel Material/Bogen/Bestand klarer trennen, ohne Felder hinzuzufügen.

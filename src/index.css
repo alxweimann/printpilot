@@ -9891,3 +9891,119 @@ button.pp-process-step:hover {
     border-bottom: 0;
   }
 }
+
+
+/* Sprint 46.20 – Kalkulationsreiter produktiv verdichten und Überlagerungen bereinigen */
+.pp-calculation-page {
+  padding-bottom: calc(var(--pp-page-bottom-safe) + 150px);
+  scroll-padding-bottom: calc(var(--pp-page-bottom-safe) + 150px);
+}
+
+.pp-calculation-form {
+  margin-bottom: 18px;
+}
+
+.pp-calc-input-field {
+  grid-template-columns: 142px minmax(0, 1fr);
+}
+
+.pp-calc-input-field span {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: center;
+  column-gap: 5px;
+}
+
+.pp-calc-input-field span strong {
+  min-width: 0;
+  overflow: hidden;
+  font: inherit;
+  text-overflow: ellipsis;
+  white-space: normal;
+}
+
+.pp-calc-input-field span em {
+  margin-left: 0;
+  justify-self: end;
+  max-width: 54px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select {
+  min-width: 0;
+}
+
+.pp-calc-input-field--wide {
+  grid-column: span 2;
+}
+
+.pp-calculation-tab-panel .pp-calc-input-grid {
+  align-items: stretch;
+}
+
+.pp-calculation-tab-panel .pp-calc-form-section + .pp-calc-form-section {
+  margin-top: 9px;
+}
+
+.pp-calculation-statusbar {
+  position: relative;
+  z-index: 2;
+}
+
+.pp-calculation-statusbar div {
+  min-width: 0;
+}
+
+.pp-calculation-create-button--bar {
+  min-width: 0;
+  padding-inline: 10px;
+  line-height: 1.15;
+}
+
+.pp-calc-finishing-matrix {
+  max-height: none;
+  overflow: auto;
+}
+
+.pp-calc-finishing-table {
+  min-width: 1180px;
+}
+
+.pp-calc-finishing-table th,
+.pp-calc-finishing-table td {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+.pp-calc-finishing-table th small {
+  max-width: 260px;
+}
+
+.pp-calc-finishing-table__active {
+  width: 48px;
+}
+
+.pp-calculation-result-panel--compact {
+  margin-bottom: 54px;
+}
+
+@media (max-width: 1280px) {
+  .pp-calc-input-field {
+    grid-template-columns: 136px minmax(0, 1fr);
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-calc-input-field,
+  .pp-calc-input-field--wide {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-calc-input-field span {
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+}

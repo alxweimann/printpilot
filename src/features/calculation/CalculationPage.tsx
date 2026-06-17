@@ -677,7 +677,7 @@ function CalculationField({
       }
     >
       <span>
-        {label}
+        <strong>{label}</strong>
         {badge ? (
           <em
             className={`pp-field-badge pp-field-badge--${badge.toLowerCase()}`}
@@ -714,7 +714,7 @@ function CalculationSelect({
   return (
     <label className="pp-calc-input-field">
       <span>
-        {label}
+        <strong>{label}</strong>
         {badge ? (
           <em
             className={`pp-field-badge pp-field-badge--${badge.toLowerCase()}`}
@@ -1361,7 +1361,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             {activeTab === "product-format" ? (
               <>
                 <CalculationSection eyebrow="04" title="Produkt / Farbigkeit">
-                  <div className="pp-calc-input-grid">
+                  <div className="pp-calc-input-grid pp-calc-input-grid--four">
                     <CalculationSelect
                       label="Produktart"
                       value={draft.productKind}

@@ -134,6 +134,73 @@ const productKindOptions = Object.entries(productKindLabels).map(
   }),
 );
 
+const requiredFieldsByTab: Record<CalculationTabId, Array<keyof CalculationDraft>> = {
+  "customer-order": [
+    "customer",
+    "contactName",
+    "owner",
+    "projectName",
+    "calculationId",
+    "dueDate",
+    "quantity",
+    "overs",
+  ],
+  "product-format": [
+    "productLabel",
+    "pages",
+    "colorMode",
+    "finalFormat",
+    "orientation",
+    "bleedMm",
+    "productionFormat",
+    "preflight",
+  ],
+  "paper-print": [
+    "materialGroup",
+    "substrate",
+    "grammage",
+    "sheetFormat",
+    "stockStatus",
+    "machine",
+    "printType",
+    "turning",
+    "impositionLabel",
+  ],
+  finishing: [],
+  external: [
+    "externalSupplier",
+    "externalPrice",
+    "externalLeadTime",
+    "margin",
+    "externalFreight",
+    "handlingTime",
+  ],
+  prices: ["margin"],
+};
+
+function isDraftValueMissing(value: string) {
+  const normalized = value.trim().toLowerCase();
+
+  return (
+    normalized.length === 0 ||
+    normalized === "offen" ||
+    normalized === "noch offen" ||
+    normalized === "automatisch später" ||
+    normalized === "0,00 €"
+  );
+}
+
+function getRequiredFieldsForTab(
+  tabId: CalculationTabId,
+  productionMode: ProductionMode,
+) {
+  if (tabId === "external" && productionMode === "internal") {
+    return [];
+  }
+
+  return requiredFieldsByTab[tabId];
+}
+
 const productionModes: Array<{
   id: ProductionMode;
   label: string;
@@ -484,7 +551,7 @@ function CalculationField({
     >
       <span>
         {label}
-        {badge ? <em>{badge}</em> : null}
+        {badge ? <em className={`pp-field-badge pp-field-badge--${badge.toLowerCase()}`}>{badge}</em> : null}
       </span>
       <input
         value={value}
@@ -515,7 +582,7 @@ function CalculationSelect({
     <label className="pp-calc-input-field">
       <span>
         {label}
-        {badge ? <em>{badge}</em> : null}
+        {badge ? <em className={`pp-field-badge pp-field-badge--${badge.toLowerCase()}`}>{badge}</em> : null}
       </span>
       <select
         value={value}
@@ -686,6 +753,38 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   const [activeTab, setActiveTab] =
     useState<CalculationTabId>("customer-order");
 
+  const missingRequiredByTab = useMemo(() => {
+    return calculationTabs.reduce<Record<CalculationTabId, number>>(
+      (counts, tab) => {
+        const requiredFields = getRequiredFieldsForTab(tab.id, productionMode);
+        counts[tab.id] = requiredFields.filter((field) =>
+          isDraftValueMissing(String(draft[field] ?? "")),
+        ).length;
+
+        if (tab.id === "finishing") {
+          counts[tab.id] = finishingRows.some((row) => row.active) ? 0 : 1;
+        }
+
+        return counts;
+      },
+      {
+        "customer-order": 0,
+        "product-format": 0,
+        "paper-print": 0,
+        finishing: 0,
+        external: 0,
+        prices: 0,
+      },
+    );
+  }, [draft, finishingRows, productionMode]);
+
+  const openRequiredFields = Object.values(missingRequiredByTab).reduce(
+    (sum, count) => sum + count,
+    0,
+  );
+  const activeTabOpenRequiredFields = missingRequiredByTab[activeTab];
+  const canCreateOrderDraft = openRequiredFields === 0;
+
   const payload = useMemo(
     () => buildPayloadFromDraft(draft, productionMode, finishingRows),
     [draft, finishingRows, productionMode],
@@ -708,6 +807,10 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   };
 
   const handleCreateOrderDraft = () => {
+    if (!canCreateOrderDraft) {
+      return;
+    }
+
     const dueDateParts = draft.dueDate.split("·").map((part) => part.trim());
     const draftOrder = createOrderDraftFromCalculation(
       payload,
@@ -743,7 +846,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         </div>
         <div className="pp-header-title-shape">
           <h1>KALKULATION</h1>
-          <p>MIS-Maske · 6 Arbeitsbereiche · ruhige Typografie</p>
+          <p>MIS-Maske · 6 Arbeitsbereiche · geführter Bedienfluss</p>
         </div>
         <div
           className="pp-header-job pp-header-job--overview"
@@ -807,18 +910,37 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             className="pp-calculation-tabs"
             aria-label="Kalkulationsbereiche"
           >
-            {calculationTabs.map((tab) => (
-              <button
-                key={tab.id}
-                type="button"
-                className={activeTab === tab.id ? "is-active" : ""}
-                onClick={() => setActiveTab(tab.id)}
-                aria-current={activeTab === tab.id ? "page" : undefined}
-              >
-                <span>{tab.shortcut}</span>
-                {tab.label}
-              </button>
-            ))}
+            {calculationTabs.map((tab) => {
+              const missingCount = missingRequiredByTab[tab.id];
+              const isExternalMuted =
+                tab.id === "external" && productionMode === "internal";
+
+              return (
+                <button
+                  key={tab.id}
+                  type="button"
+                  className={[
+                    activeTab === tab.id ? "is-active" : "",
+                    missingCount > 0 ? "has-open-required" : "",
+                    isExternalMuted ? "is-muted" : "",
+                  ]
+                    .filter(Boolean)
+                    .join(" ")}
+                  onClick={() => setActiveTab(tab.id)}
+                  aria-current={activeTab === tab.id ? "page" : undefined}
+                >
+                  <span>{tab.shortcut}</span>
+                  <b>{tab.label}</b>
+                  <small>
+                    {missingCount > 0
+                      ? `${missingCount} offen`
+                      : isExternalMuted
+                        ? "nicht aktiv"
+                        : "ok"}
+                  </small>
+                </button>
+              );
+            })}
           </nav>
 
           <div className="pp-calculation-tab-panel">
@@ -1365,7 +1487,11 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           >
             <div>
               <span>Pflichtfelder</span>
-              <b>Demo · offen</b>
+              <b>
+                {openRequiredFields > 0
+                  ? `${openRequiredFields} offen · Bereich ${activeTabOpenRequiredFields}`
+                  : "vollständig"}
+              </b>
             </div>
             <div>
               <span>Aktiver Bereich</span>
@@ -1388,8 +1514,11 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
               className="pp-calculation-create-button pp-calculation-create-button--bar"
               type="button"
               onClick={handleCreateOrderDraft}
+              disabled={!canCreateOrderDraft}
             >
-              Auftrag aus Kalkulation erzeugen
+              {canCreateOrderDraft
+                ? "Auftrag aus Kalkulation erzeugen"
+                : "Mindestdaten fehlen"}
             </button>
           </div>
         </div>

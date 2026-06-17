@@ -992,3 +992,10 @@ export const sprint4615Pattern = {
   description:
     "Die Kalkulations-Reitermaske wird auf sechs produktive Hauptreiter zusammengeführt: Kunde & Auftrag, Produkt & Format, Papier & Druck, Weiterverarbeitung, Fremdproduktion sowie Preise & Ergebnis. Gleichzeitig wird die Typografie entschärft: weniger fette Kleinschrift, ruhigere Labels, klarere Eingabewerte und schärfere Tabellenwirkung.",
 };
+
+export const sprint4616Pattern = {
+  id: "calculation-guided-input-flow-badges",
+  sprint: "46.16",
+  description:
+    "Die Kalkulations-Reitermaske erhält eine erste Bedienfluss-Führung. Reiter zeigen offene Mindestdaten, die Statusleiste fasst den Pflichtstatus zusammen, der Auftrag-Button wird bei fehlenden Mindestdaten gesperrt und Pflicht-/optional-/später-Badges werden ruhiger und eindeutiger gezeichnet.",
+};

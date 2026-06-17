@@ -1861,3 +1861,13 @@ Umgesetzt:
 - Tabellenwerte und Weiterverarbeitungsfelder wurden typografisch zurückgenommen, damit die Maske weniger verschwommen/verwaschen wirkt.
 - Lokaler State, editierbare Felder, Weiterverarbeitungstabelle und Übergabe an den Auftragsentwurf bleiben erhalten.
 - Keine neue Preislogik, keine Persistenz und keine echte Ausschieß-Berechnung.
+
+## Sprint 46.16 – Bedienfluss und Badge-/Pill-System schärfen
+
+- Die Kalkulations-Reitermaske erhält eine erste Bedienfluss-Führung: Pflichtfelder werden pro Hauptreiter gezählt und direkt im Reiter angezeigt.
+- Die Statusleiste zeigt nun, wie viele Mindestdaten noch offen sind und wie viele davon im aktiven Bereich liegen.
+- Der Button „Auftrag aus Kalkulation erzeugen“ wird nur freigegeben, wenn die Mindestdaten vollständig sind.
+- Der Reiter „Fremdproduktion“ wird bei reiner Eigenproduktion visuell zurückgenommen, bleibt aber weiterhin erreichbar.
+- Pflicht-/optional-/später-Badges wurden geprüft und optisch entschärft: Pflichtfelder sind klar erkennbar, optionale Felder neutral und spätere Felder bewusst zurückhaltend.
+- Aktive Weiterverarbeitungszeilen werden in der Tabelle besser markiert.
+- Keine neue Preislogik, keine Persistenz und keine echte Ausschieß-Berechnung.

@@ -1845,3 +1845,19 @@ Umgesetzt:
 - Labels bleiben im Oldschool-MIS-Stil, erhalten aber eine ruhigere, abgegrenzte Label-Fläche.
 - Die Reiterlogik, der lokale State, die Weiterverarbeitungstabelle und die Ergebnisübergabe bleiben unverändert.
 - Keine neue Preislogik, keine Persistenz und keine echte Ausschieß-Berechnung.
+
+## Sprint 46.15 – Reiter zusammenfassen und Typografie schärfen
+
+- Die Kalkulations-Reitermaske wurde von neun Einzelreitern auf sechs produktive Hauptreiter reduziert:
+  - Kunde & Auftrag
+  - Produkt & Format
+  - Papier & Druck
+  - Weiterverarbeitung
+  - Fremdproduktion
+  - Preise & Ergebnis
+- Zusammengehörige Eingabeschritte liegen nun in einem Arbeitsbereich, damit weniger geklickt und weniger zwischen Kleinstreitern gewechselt werden muss.
+- Die gleich breiten Reiter bleiben erhalten, wirken aber durch die reduzierte Anzahl ruhiger und besser bedienbar.
+- Die Typografie der Kalkulationsmaske wurde entschärft: weniger fette Kleinschrift, weniger dunkle Textballung, ruhigere Labels und klarere Eingabewerte.
+- Tabellenwerte und Weiterverarbeitungsfelder wurden typografisch zurückgenommen, damit die Maske weniger verschwommen/verwaschen wirkt.
+- Lokaler State, editierbare Felder, Weiterverarbeitungstabelle und Übergabe an den Auftragsentwurf bleiben erhalten.
+- Keine neue Preislogik, keine Persistenz und keine echte Ausschieß-Berechnung.

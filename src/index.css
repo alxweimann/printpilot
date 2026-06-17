@@ -9587,3 +9587,110 @@ button.pp-process-step:hover {
     border-right: 0;
   }
 }
+
+/* Sprint 46.15 – Produktive Hauptreiter und klarere Typografie */
+.pp-calculation-page {
+  -webkit-font-smoothing: antialiased;
+  text-rendering: geometricPrecision;
+}
+
+.pp-calculation-tabs {
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+}
+
+.pp-calculation-tabs button {
+  min-height: 36px;
+  padding: 7px 10px;
+  color: #1d2a3a;
+  font-size: 13px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+}
+
+.pp-calculation-tabs button span {
+  min-width: 20px;
+  color: #667386;
+  font-size: 10px;
+  font-weight: 500;
+}
+
+.pp-calculation-tabs button.is-active {
+  color: #061a34;
+  font-weight: 650;
+}
+
+.pp-calculation-quick-head span,
+.pp-calculation-statusbar span,
+.pp-calc-input-field span,
+.pp-calc-finishing-table td span {
+  font-weight: 500;
+  letter-spacing: 0;
+}
+
+.pp-calculation-quick-head b,
+.pp-calculation-statusbar b,
+.pp-calc-input-field input,
+.pp-calc-input-field select,
+.pp-calc-finishing-table th b,
+.pp-calc-finishing-table td input:not([type="checkbox"]),
+.pp-calc-result-line b {
+  font-weight: 520;
+}
+
+.pp-calc-form-section__head h2,
+.pp-calculation-form__intro h2,
+.pp-calculation-result-panel__head h2,
+.pp-calculation-output-card h3 {
+  font-weight: 650;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select {
+  color: #06162c;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.pp-calc-input-field span {
+  color: #263245;
+}
+
+.pp-calc-input-field span em {
+  font-weight: 500;
+  opacity: .78;
+}
+
+.pp-calc-production-mode button b {
+  font-weight: 600;
+}
+
+.pp-calc-production-mode button span,
+.pp-calc-finishing-table th small {
+  font-weight: 400;
+}
+
+.pp-calc-finishing-table thead th {
+  font-weight: 600;
+}
+
+.pp-calc-finishing-table th,
+.pp-calc-finishing-table td {
+  color: #152238;
+}
+
+.pp-calc-finishing-table td input:not([type="checkbox"]) {
+  color: #07172d;
+  font-size: 12.5px;
+}
+
+@media (max-width: 1280px) {
+  .pp-calculation-tabs {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 720px) {
+  .pp-calculation-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}

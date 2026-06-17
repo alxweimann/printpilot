@@ -985,3 +985,10 @@ export const sprint4614Pattern = {
   description:
     "Die Kalkulations-Reitermaske erhält gleich breite Reiter und klarer erkennbare Eingabefelder. Labels, Feldrahmen, editierbare Flächen und Fokuszustände werden im Oldschool-MIS-Stil präziser gezeichnet, ohne die Reiterlogik oder Berechnung zu ändern.",
 };
+
+export const sprint4615Pattern = {
+  id: "calculation-six-productive-tabs-sharp-typography",
+  sprint: "46.15",
+  description:
+    "Die Kalkulations-Reitermaske wird auf sechs produktive Hauptreiter zusammengeführt: Kunde & Auftrag, Produkt & Format, Papier & Druck, Weiterverarbeitung, Fremdproduktion sowie Preise & Ergebnis. Gleichzeitig wird die Typografie entschärft: weniger fette Kleinschrift, ruhigere Labels, klarere Eingabewerte und schärfere Tabellenwirkung.",
+};

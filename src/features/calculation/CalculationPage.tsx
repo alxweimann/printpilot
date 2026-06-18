@@ -18,6 +18,14 @@ type CalculationPageProps = {
 type ProductionMode = "internal" | "external" | "combined";
 type FieldBadge = "Pflicht" | "optional" | "später";
 type ReadinessState = "ready" | "blocked";
+type CalculationPlausibilityGroupId =
+  | "product-data"
+  | "print-data"
+  | "material-consumption"
+  | "machine-time"
+  | "finishing"
+  | "external-costs"
+  | "price-closing";
 type CalculationTabId =
   | "customer-order"
   | "product-format"
@@ -154,6 +162,132 @@ const calculationTabs: Array<{
   { id: "prices", label: "Preise & Ergebnis", shortcut: "06" },
 ];
 
+const calculationPlausibilityGroups: Array<{
+  id: CalculationPlausibilityGroupId;
+  title: string;
+  helper: string;
+  fields: Array<keyof CalculationDraft>;
+}> = [
+  {
+    id: "product-data",
+    title: "Produktdaten",
+    helper: "Kunde, Produkt, Auflage, Umfang, Format und Farbigkeit",
+    fields: [
+      "customer",
+      "projectName",
+      "productKind",
+      "productLabel",
+      "quantity",
+      "pages",
+      "colorMode",
+      "finalFormat",
+      "openFormat",
+    ],
+  },
+  {
+    id: "print-data",
+    title: "Druckdaten",
+    helper: "Datenquelle, Beschnitt, Prüfschritte, Nutzenformat und Sorten",
+    fields: [
+      "dataSource",
+      "preflight",
+      "bleedMm",
+      "safetyMarginMm",
+      "productionFormat",
+      "versions",
+      "frontColors",
+      "backColors",
+      "spotColors",
+    ],
+  },
+  {
+    id: "material-consumption",
+    title: "Materialverbrauch",
+    helper: "Papier, Bogen, Nutzen, Nettobogen, Zuschuss und Lagerstatus",
+    fields: [
+      "materialGroup",
+      "substrate",
+      "grammage",
+      "sheetFormat",
+      "rawSheetFormat",
+      "printSheetFormat",
+      "paperUsage",
+      "netSheets",
+      "wasteSheets",
+      "grossSheets",
+      "stockStatus",
+    ],
+  },
+  {
+    id: "machine-time",
+    title: "Maschinenzeit",
+    helper:
+      "Produktionsweg, Maschine, Druckart, Wendung, Rüstzeit und Klickmodus",
+    fields: [
+      "machine",
+      "printType",
+      "turning",
+      "impositionLabel",
+      "setupTime",
+      "runTime",
+      "clickCosts",
+      "counterMode",
+      "productionHint",
+    ],
+  },
+  {
+    id: "finishing",
+    title: "Weiterverarbeitung",
+    helper: "Aktive Leistungen, Menge, Parameter, Produktion und Verpackung",
+    fields: [
+      "finishingCosts",
+      "packagingCosts",
+      "shippingCosts",
+      "overdeliveryRule",
+      "partialDeliveries",
+      "samples",
+    ],
+  },
+  {
+    id: "external-costs",
+    title: "Fremdkosten",
+    helper: "Lieferant, Einkauf, Fracht, Handling und Kombinationsanteile",
+    fields: [
+      "externalSupplier",
+      "externalPrice",
+      "externalLeadTime",
+      "externalQuote",
+      "externalFreight",
+      "handlingTime",
+      "combinationPrint",
+      "combinationFinishing",
+      "combinationPostpress",
+      "combinationExternal",
+    ],
+  },
+  {
+    id: "price-closing",
+    title: "Preisabschluss",
+    helper:
+      "Kostenblöcke, Rabatt, Mindestpreis, Deckungsbeitrag und Abrechnung",
+    fields: [
+      "materialCosts",
+      "printCosts",
+      "finishingCosts",
+      "externalCosts",
+      "overheadRate",
+      "minPrice",
+      "discount",
+      "contributionMargin",
+      "billingMode",
+      "settlementNote",
+      "commission",
+      "invoiceControl",
+      "salePriceNet",
+    ],
+  },
+];
+
 const productKindLabels: Record<ProductKind, string> = {
   flyer: "Flyer",
   "business-card": "Visitenkarte",
@@ -255,6 +389,27 @@ function getReadinessLabel(missingCount: number) {
 
 function getReadinessState(missingCount: number): ReadinessState {
   return missingCount === 0 ? "ready" : "blocked";
+}
+
+function isPlausibilityValuePrepared(value: string) {
+  const normalized = value.trim().toLowerCase();
+
+  return (
+    normalized.length > 0 &&
+    normalized !== "offen" &&
+    normalized !== "noch offen" &&
+    normalized !== "automatisch später" &&
+    normalized !== "0,00 €"
+  );
+}
+
+function countPreparedPlausibilityFields(
+  draft: CalculationDraft,
+  fields: Array<keyof CalculationDraft>,
+) {
+  return fields.filter((field) =>
+    isPlausibilityValuePrepared(String(draft[field] ?? "")),
+  ).length;
 }
 
 const productionModes: Array<{
@@ -855,7 +1010,10 @@ function FinishingMatrixRow({
   return (
     <tr className={row.active ? "is-active" : undefined}>
       <td className="pp-calc-finishing-table__active">
-        <label className="pp-calc-finishing-check" aria-label={`${row.label} aktivieren`}>
+        <label
+          className="pp-calc-finishing-check"
+          aria-label={`${row.label} aktivieren`}
+        >
           <input
             type="checkbox"
             checked={row.active}
@@ -963,6 +1121,57 @@ function ResultLine({ label, value }: { label: string; value: string }) {
     <div className="pp-calc-result-line">
       <span>{label}</span>
       <b>{value}</b>
+    </div>
+  );
+}
+
+function CalculationPlausibilityOverview({
+  draft,
+  activeFinishingCount,
+  productionMode,
+}: {
+  draft: CalculationDraft;
+  activeFinishingCount: number;
+  productionMode: ProductionMode;
+}) {
+  return (
+    <div
+      className="pp-calculation-plausibility"
+      aria-label="Plausibilitätsgruppen für spätere Kalkulationslogik"
+    >
+      <div className="pp-calculation-plausibility__head">
+        <span>Plausibilitätsgruppen</span>
+        <b>Vorbereitung für spätere Kalkulationslogik</b>
+        <small>Nur fachliche Zuordnung · keine Preisberechnung</small>
+      </div>
+      <div className="pp-calculation-plausibility__grid">
+        {calculationPlausibilityGroups.map((group) => {
+          const preparedCount = countPreparedPlausibilityFields(
+            draft,
+            group.fields,
+          );
+          const totalCount = group.fields.length;
+          const isMuted =
+            group.id === "external-costs" && productionMode === "internal";
+          const extraLabel =
+            group.id === "finishing"
+              ? `${activeFinishingCount} aktive Leistung${
+                  activeFinishingCount === 1 ? "" : "en"
+                }`
+              : `${preparedCount}/${totalCount} Felder`;
+
+          return (
+            <article
+              key={group.id}
+              className={isMuted ? "is-muted" : undefined}
+            >
+              <span>{group.title}</span>
+              <b>{extraLabel}</b>
+              <p>{group.helper}</p>
+            </article>
+          );
+        })}
+      </div>
     </div>
   );
 }
@@ -1095,6 +1304,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     () => buildPayloadFromDraft(draft, productionMode, finishingRows),
     [draft, finishingRows, productionMode],
   );
+  const activeFinishingCount = finishingRows.filter((row) => row.active).length;
   const result = payload.imposition;
 
   const updateDraft = (field: keyof CalculationDraft) => (value: string) => {
@@ -2003,6 +2213,11 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     />
                   </div>
                 </CalculationSection>
+                <CalculationPlausibilityOverview
+                  draft={draft}
+                  activeFinishingCount={activeFinishingCount}
+                  productionMode={productionMode}
+                />
                 <CalculationFieldAudit />
               </>
             ) : null}

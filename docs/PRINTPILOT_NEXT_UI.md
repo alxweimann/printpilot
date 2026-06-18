@@ -2132,3 +2132,50 @@ Nicht geändert:
 - keine Persistenz
 - keine neue Pflichtfeldlogik
 - keine große Designänderung
+
+## Sprint 46.24 – Kalkulationsmaske: fachliche Plausibilitätsgruppen vorbereiten
+
+Status: umgesetzt.
+
+Ziel war, die bestehende Kalkulationsmaske intern fachlich besser für spätere Kalkulationslogik vorzubereiten, ohne jetzt Preislogik, Tariflogik oder einen sichtbaren Layout-Umbau einzubauen.
+
+Umgesetzt:
+
+- **Fachliche Plausibilitätsgruppen eingeführt**
+  - Die vorhandenen Felder werden jetzt in interne Gruppen eingeordnet:
+    - `Produktdaten`
+    - `Druckdaten`
+    - `Materialverbrauch`
+    - `Maschinenzeit`
+    - `Weiterverarbeitung`
+    - `Fremdkosten`
+    - `Preisabschluss`
+  - Diese Gruppen bilden später die Grundlage für Prüfungen wie „Produktdaten vollständig“, „Materialverbrauch plausibel“, „Maschinenzeit berechenbar“ oder „Preisabschluss prüfbar“.
+
+- **Kompakte Übersicht im Reiter Preise & Ergebnis ergänzt**
+  - Der Abschlussreiter zeigt jetzt eine kompakte Übersicht der Plausibilitätsgruppen.
+  - Pro Gruppe wird angezeigt, wie viele zugeordnete Felder bereits fachlich vorbereitet sind.
+  - Die Gruppe `Weiterverarbeitung` zeigt zusätzlich die Anzahl aktiver Weiterverarbeitungsleistungen.
+  - `Fremdkosten` wird bei reiner Eigenproduktion optisch zurückgenommen.
+
+- **Keine Berechnungslogik eingebaut**
+  - Die Gruppierung ist bewusst nur eine fachliche Strukturierung.
+  - Es werden keine Preise berechnet.
+  - Es werden keine Maschinenzeiten kalkuliert.
+  - Es werden keine Materialverbräuche automatisch verändert.
+  - Es gibt keine neue Pflichtfeldlogik.
+
+Nutzen für die nächsten Schritte:
+
+- Die Maske ist jetzt besser vorbereitet, um später echte Logik gezielt je Fachgruppe einzubauen.
+- Produktdaten, Druckdaten, Materialverbrauch, Maschinenzeit, Weiterverarbeitung, Fremdkosten und Preisabschluss können künftig getrennt geprüft und berechnet werden.
+- Die spätere Kalkulationsengine kann dadurch Schritt für Schritt entstehen, ohne die sechs Reiter erneut umzubauen.
+
+Nicht geändert:
+
+- keine neuen Fachfelder
+- keine neue Preislogik
+- keine automatische Zeitberechnung
+- keine Maschinen-/Tariflogik
+- keine Persistenz
+- keine große Designänderung

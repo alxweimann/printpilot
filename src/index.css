@@ -10261,3 +10261,128 @@ button.pp-process-step:hover {
     min-width: 1240px;
   }
 }
+
+/* Sprint 46.24 – fachliche Plausibilitätsgruppen vorbereiten */
+.pp-calculation-plausibility {
+  margin: 10px 10px 0;
+  border: 1px solid #c8d0da;
+  background: #ffffff;
+}
+
+.pp-calculation-plausibility__head {
+  display: grid;
+  grid-template-columns: auto minmax(0, 1fr) auto;
+  align-items: center;
+  gap: 8px;
+  padding: 7px 9px;
+  border-bottom: 1px solid #c8d0da;
+  background: #f3f5f7;
+}
+
+.pp-calculation-plausibility__head span {
+  padding: 2px 6px;
+  border: 1px solid #c8d0da;
+  color: #39475a;
+  background: #ffffff;
+  font-size: 10.5px;
+  font-weight: 760;
+  line-height: 1.1;
+  text-transform: uppercase;
+  letter-spacing: .04em;
+}
+
+.pp-calculation-plausibility__head b {
+  min-width: 0;
+  color: #1b293c;
+  font-size: 12.5px;
+  font-weight: 690;
+  line-height: 1.2;
+}
+
+.pp-calculation-plausibility__head small {
+  color: #647084;
+  font-size: 11px;
+  font-weight: 520;
+  line-height: 1.2;
+  text-align: right;
+}
+
+.pp-calculation-plausibility__grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+}
+
+.pp-calculation-plausibility article {
+  min-width: 0;
+  padding: 8px 9px;
+  border-right: 1px solid #d7dde5;
+}
+
+.pp-calculation-plausibility article:last-child {
+  border-right: 0;
+}
+
+.pp-calculation-plausibility article.is-muted {
+  background: #f8fafc;
+  opacity: .74;
+}
+
+.pp-calculation-plausibility article span {
+  display: block;
+  margin-bottom: 4px;
+  color: #1b293c;
+  font-size: 12px;
+  font-weight: 720;
+  line-height: 1.15;
+}
+
+.pp-calculation-plausibility article b {
+  display: block;
+  margin-bottom: 5px;
+  color: #2563eb;
+  font-size: 11.5px;
+  font-weight: 760;
+  line-height: 1.15;
+}
+
+.pp-calculation-plausibility article p {
+  margin: 0;
+  color: #647084;
+  font-size: 10.75px;
+  font-weight: 440;
+  line-height: 1.25;
+}
+
+@media (max-width: 1320px) {
+  .pp-calculation-plausibility__grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .pp-calculation-plausibility article:nth-child(4n) {
+    border-right: 0;
+  }
+}
+
+@media (max-width: 820px) {
+  .pp-calculation-plausibility__head {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-calculation-plausibility__head small {
+    text-align: left;
+  }
+
+  .pp-calculation-plausibility__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-calculation-plausibility article,
+  .pp-calculation-plausibility article:nth-child(4n) {
+    border-right: 0;
+    border-bottom: 1px solid #d7dde5;
+  }
+
+  .pp-calculation-plausibility article:last-child {
+    border-bottom: 0;
+  }
+}

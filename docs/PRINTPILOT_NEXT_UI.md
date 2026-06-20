@@ -3360,3 +3360,18 @@ Bewusst nicht geändert:
 - Das Wort `Auftragstasche` im Kopf bleibt am unveränderten offiziellen PrintPilot-Logo ausgerichtet; das Logo selbst wird nicht verändert.
 - A4 Hochformat bleibt strikt einseitig; alle Auftragstaschenwerte bleiben editierbar.
 - Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.
+
+## Sprint 46.59 – Auftragstasche: Relevanz, QR-Position und Detailausrichtung
+
+- Auftragstaschen-Druckkopf weiter am Mockup ausgerichtet: `Auftragstasche` sitzt näher an der optischen Höhe des unveränderten offiziellen PrintPilot-Schriftzugs.
+- QR-Code bleibt groß; Scan-Text und Smartphone-Icon wurden stärker links neben dem QR-Code positioniert.
+- `Status / Im Druck` bleibt aus dem Ausdruck entfernt, weil er für die gedruckte Auftragstasche nicht produktionsrelevant ist.
+- Weiterverarbeitung zeigt in der Arbeitsanweisung nur noch echte Tätigkeitshinweise. Verpackungsmengen wie `3 Pakete à 1.000 Stück` stehen nur noch im Zusatz-/Verpackungsbereich.
+- Kontrollpunkte stehen chronologisch: Druckdaten/Freigabe, Farbigkeit/Maßhaltigkeit, Weiterverarbeitung, Menge/Stückzahl.
+- Materialstatus-Reihenfolge im Ausdruck: `am Lager`, `gestellt`, `bestellt`, `Lieferant`.
+- Papierlieferant wird im Materialbereich als eigener Wert vorbereitet.
+- Versandbereich zeigt nur die gewählte Versand-/Übergabeart statt eines Optionskatalogs.
+- `Seite 1 von 1` wurde aus der druckbaren Auftragstasche entfernt.
+- Label- und Wert-Typografie in den Line-Items wurde nochmals vereinheitlicht, damit linke Labels und rechte Werte in allen Feldern optisch gleich groß und sauber ausgerichtet wirken.
+
+Build-Prüfung: `npm run build`.

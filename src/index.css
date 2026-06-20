@@ -17235,3 +17235,133 @@ button.pp-process-step:hover {
     line-height: 1 !important;
   }
 }
+
+/* Sprint 46.59 – Auftragstasche: finale Relevanz- und Ausrichtungsdetails
+   QR-Hinweis links neben den QR-Code, Auftragstasche-Wort sauberer am CI-Logo,
+   Arbeitsanweisung ohne Verpackungsmenge, chronologische Kontrolle, Materialstatus-Reihenfolge,
+   einheitliche Label-/Wert-Typografie und keine Seitenzählung im Ausdruck. */
+@media print {
+  .pp-modern-print-brand {
+    align-items: flex-start !important;
+    gap: 2.35mm !important;
+  }
+
+  .pp-modern-print-logo-img {
+    height: 12.2mm !important;
+    max-width: 30mm !important;
+    object-fit: contain !important;
+    object-position: left center !important;
+  }
+
+  .pp-modern-print-brand em {
+    margin-left: 0 !important;
+    margin-top: 5.25mm !important;
+    align-self: flex-start !important;
+    line-height: 1 !important;
+  }
+
+  .pp-modern-print-scan {
+    grid-template-columns: 25mm 20.8mm !important;
+    gap: 1.8mm !important;
+    justify-content: end !important;
+    justify-self: end !important;
+  }
+
+  .pp-modern-print-scan span {
+    transform: translateX(-2.6mm) !important;
+    justify-items: end !important;
+  }
+
+  .pp-modern-print-phone-icon {
+    margin-top: .45mm !important;
+  }
+
+  .pp-modern-print-scan img {
+    width: 20.8mm !important;
+    height: 20.8mm !important;
+  }
+
+  .pp-modern-print-line {
+    grid-template-columns: 29mm minmax(0, 1fr) !important;
+    align-items: center !important;
+    min-height: 5.65mm !important;
+    padding: .88mm 2.55mm !important;
+  }
+
+  .pp-modern-print-line span,
+  .pp-modern-print-line strong {
+    display: flex !important;
+    align-items: center !important;
+    align-self: center !important;
+    min-height: 3.35mm !important;
+    padding: 0 !important;
+    line-height: 1.1 !important;
+  }
+
+  .pp-modern-print-line span {
+    font-size: 6.05pt !important;
+    font-weight: 610 !important;
+    letter-spacing: .042em !important;
+  }
+
+  .pp-modern-print-line strong {
+    font-size: 7.72pt !important;
+    font-weight: 505 !important;
+    letter-spacing: -0.002em !important;
+  }
+
+  .pp-modern-print-panel-grid--middle .pp-modern-print-panel:first-child .pp-modern-print-line,
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line,
+  .pp-modern-print-panel--finishing .pp-modern-print-line {
+    grid-template-columns: 29mm minmax(0, 1fr) !important;
+  }
+
+  .pp-modern-print-panel-grid--middle .pp-modern-print-panel:first-child .pp-modern-print-line span,
+  .pp-modern-print-panel-grid--middle .pp-modern-print-panel:first-child .pp-modern-print-line strong,
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line span,
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line strong,
+  .pp-modern-print-panel--finishing .pp-modern-print-line span,
+  .pp-modern-print-panel--finishing .pp-modern-print-line strong {
+    font-size: inherit !important;
+    line-height: 1.1 !important;
+  }
+
+  .pp-modern-print-panel-grid--middle .pp-modern-print-panel:first-child .pp-modern-print-line span,
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line span,
+  .pp-modern-print-panel--finishing .pp-modern-print-line span {
+    font-size: 6.05pt !important;
+  }
+
+  .pp-modern-print-panel-grid--middle .pp-modern-print-panel:first-child .pp-modern-print-line strong,
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line strong,
+  .pp-modern-print-panel--finishing .pp-modern-print-line strong {
+    font-size: 7.72pt !important;
+  }
+
+  .pp-modern-print-check-row {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 1.2mm 3.2mm !important;
+    align-items: center !important;
+    padding: 1.05mm 2.55mm 1.25mm !important;
+  }
+
+  .pp-modern-print-check-list--control-only {
+    grid-template-columns: 1fr !important;
+    gap: 1.05mm !important;
+    padding: 1.8mm 2.7mm 2.2mm !important;
+  }
+
+  .pp-modern-print-check-list--control-only .pp-modern-print-check {
+    justify-content: flex-start !important;
+    min-height: 4.15mm !important;
+  }
+
+  .pp-modern-print-selected-list--shipping {
+    display: none !important;
+  }
+
+  .pp-modern-print-footer {
+    grid-template-columns: 1fr !important;
+  }
+}

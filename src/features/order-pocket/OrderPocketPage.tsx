@@ -730,6 +730,7 @@ type PrintPocketDraft = {
   paperInStock: boolean;
   paperSupplied: boolean;
   paperSupplier: boolean;
+  paperSupplierName: string;
   deliveryAddress: string;
   partialDelivery1: string;
   partialDelivery2: string;
@@ -832,6 +833,7 @@ function createPrintPocketDraft(order: PrintPilotOrder): PrintPocketDraft {
     paperInStock: true,
     paperSupplied: false,
     paperSupplier: false,
+    paperSupplierName: "OVOL / IGEPA / Berberich",
     deliveryAddress: order.customerAddress.join(" · "),
     partialDelivery1: "",
     partialDelivery2: "",
@@ -842,7 +844,7 @@ function createPrintPocketDraft(order: PrintPilotOrder): PrintPocketDraft {
     shipPost: false,
     shipFreight: false,
     shipPickup: false,
-    shipDriver: false,
+    shipDriver: true,
     shippingMethod: order.deliveryMeta,
     packaging: activePackaging?.note ?? "Verpackung prüfen",
     partialDeliveries: "keine Teillieferung",
@@ -859,8 +861,10 @@ function createPrintPocketDraft(order: PrintPilotOrder): PrintPocketDraft {
     finishManual: hasActiveFinishing("Handarbeiten"),
     finishPack: hasActiveFinishing("Verpacken"),
     finishingNotes:
-      activeFinishing.map((step) => `${step.label}: ${step.note}`).join(" · ") ||
-      "keine aktive Weiterverarbeitung",
+      activeFinishing
+        .filter((step) => !step.label.includes("Verpack"))
+        .map((step) => `${step.label}: ${step.note}`)
+        .join(" · ") || "nach Auftrag",
     finishingAdditional: activePackaging?.note ?? "",
     orderNew: false,
     reprintSame: false,
@@ -1400,16 +1404,16 @@ function PrintModernCheck({
 
 
 function getSelectedShippingLabels(draft: PrintPocketDraft) {
-  const labels = [
+  return [
     { label: "DPD", checked: draft.shipDpd },
     { label: "DPD-Express", checked: draft.shipDpdExpress },
     { label: "Post", checked: draft.shipPost },
     { label: "Spedition", checked: draft.shipFreight },
     { label: "Abholung", checked: draft.shipPickup },
     { label: "Fahrer", checked: draft.shipDriver },
-  ].filter((item) => item.checked);
-
-  return labels.length > 0 ? labels.map((item) => item.label) : [draft.shippingMethod];
+  ]
+    .filter((item) => item.checked)
+    .map((item) => item.label);
 }
 
 function getPrintColorSummary(frontColors: string, backColors: string) {
@@ -1566,10 +1570,11 @@ function PrintOrderPocketSheet({
           <PrintModernLine label="Rohbogen" value={draft.rawFormat} />
           <PrintModernLine label="Druckbogen" value={draft.printFormat} />
           <PrintModernLine label="Zuschuss" value={draft.wasteSheets} />
+          <PrintModernLine label="Papierlieferant" value={draft.paperSupplierName} />
           <div className="pp-modern-print-check-row">
-            <PrintModernCheck label="bestellt" checked={draft.paperOrdered} />
             <PrintModernCheck label="am Lager" checked={draft.paperInStock} />
             <PrintModernCheck label="gestellt" checked={draft.paperSupplied} />
+            <PrintModernCheck label="bestellt" checked={draft.paperOrdered} />
             <PrintModernCheck label="Lieferant" checked={draft.paperSupplier} />
           </div>
         </div>
@@ -1595,23 +1600,18 @@ function PrintOrderPocketSheet({
           <h3><PrintSheetIcon name="truck" /> Lieferung / Versand</h3>
           <PrintModernLine label="Lieferadresse" value={draft.deliveryAddress} />
           <PrintModernLine label="Liefertermin" value={`${draft.deliveryDate} · ${draft.deliveryMeta}`} />
-          <PrintModernLine label="Versandart" value={draft.shippingMethod} />
+          <PrintModernLine label="Versandart" value={selectedShippingLabels.join(" · ") || draft.shippingMethod} />
           <PrintModernLine label="Verpackung" value={draft.packaging} />
           <PrintModernLine label="Teillieferung" value={draft.partialDeliveries} />
-          <div className="pp-modern-print-selected-list pp-modern-print-selected-list--shipping">
-            {selectedShippingLabels.map((label) => (
-              <strong key={label}>{label}</strong>
-            ))}
-          </div>
         </div>
 
         <div className="pp-modern-print-panel pp-modern-print-panel--control">
           <h3><PrintSheetIcon name="shield" /> Kontrolle</h3>
           <div className="pp-modern-print-check-list pp-modern-print-check-list--control-only">
+            <PrintModernCheck label="Druckdaten / Freigabe geprüft" />
             <PrintModernCheck label="Farbigkeit / Maßhaltigkeit geprüft" />
             <PrintModernCheck label="Weiterverarbeitung geprüft" />
             <PrintModernCheck label="Menge / Stückzahl geprüft" />
-            <PrintModernCheck label="Druckdaten / Freigabe geprüft" />
           </div>
         </div>
       </section>
@@ -1645,7 +1645,6 @@ function PrintOrderPocketSheet({
 
       <footer className="pp-modern-print-footer">
         <span>Erstellt am {draft.controlDate} durch PrintPilot</span>
-        <span>Seite 1 von 1</span>
       </footer>
     </article>
   );

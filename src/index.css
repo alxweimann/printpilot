@@ -15361,3 +15361,137 @@ button.pp-process-step:hover {
     font-weight: 450 !important;
   }
 }
+
+/* Sprint 46.45 – Auftragstasche: Signaturbalken und Print-Finish-Tokens
+   Der Signaturbereich bekommt den kleinen PrintPilot-Blau-Akzent aus dem Mockup.
+   Gleichzeitig werden Rahmen, Typografie und Produktionsdaten-Schattierung minimal geglättet. */
+@media print {
+  .pp-modern-print-sheet {
+    --modern-blue: #126fce !important;
+    --modern-blue-strong: #075eb5 !important;
+    --modern-blue-dark: #0b3f76 !important;
+    --modern-ink: #09203f !important;
+    --modern-ink-soft: #334a67 !important;
+    --modern-muted: #5e718a !important;
+    --modern-muted-soft: #72839a !important;
+    --modern-border: #d6e2ef !important;
+    --modern-border-strong: #bfd4eb !important;
+    --modern-panel: #fbfdff !important;
+    --modern-panel-soft: #f6faff !important;
+  }
+
+  .pp-modern-print-sheet,
+  .pp-modern-print-sheet * {
+    -webkit-font-smoothing: antialiased !important;
+    text-rendering: geometricPrecision !important;
+  }
+
+  .pp-modern-print-brand b,
+  .pp-modern-print-hero strong,
+  .pp-modern-print-section-title,
+  .pp-modern-print-signatures strong {
+    font-family: "Aptos Display", "Aptos", "Inter", "Segoe UI Variable Display", "Segoe UI", Arial, sans-serif !important;
+  }
+
+  .pp-modern-print-brand b {
+    color: var(--modern-ink) !important;
+    font-weight: 720 !important;
+    letter-spacing: -0.018em !important;
+  }
+
+  .pp-modern-print-brand span,
+  .pp-modern-print-hero span,
+  .pp-modern-print-line strong,
+  .pp-modern-print-check,
+  .pp-modern-print-muted {
+    color: var(--modern-muted) !important;
+  }
+
+  .pp-modern-print-hero strong {
+    color: var(--modern-ink) !important;
+    font-weight: 690 !important;
+    letter-spacing: -0.012em !important;
+  }
+
+  .pp-modern-print-section,
+  .pp-modern-print-production,
+  .pp-modern-print-document-row,
+  .pp-modern-print-signatures {
+    border-color: var(--modern-border) !important;
+    box-shadow: 0 .35mm 1.4mm rgba(18, 43, 72, .035) !important;
+  }
+
+  .pp-modern-print-production {
+    background: linear-gradient(180deg, #fbfdff 0%, #f6faff 100%) !important;
+    border-color: var(--modern-border-strong) !important;
+  }
+
+  .pp-modern-print-production-grid {
+    border-color: #d3e1f0 !important;
+    background: rgba(255, 255, 255, .92) !important;
+  }
+
+  .pp-modern-print-production-fact {
+    border-color: #e2ebf5 !important;
+  }
+
+  .pp-modern-print-section-title {
+    color: #173c65 !important;
+    font-weight: 650 !important;
+    letter-spacing: .012em !important;
+  }
+
+  .pp-modern-print-line strong {
+    font-weight: 500 !important;
+    letter-spacing: .018em !important;
+  }
+
+  .pp-modern-print-line span,
+  .pp-modern-print-production-fact strong {
+    color: var(--modern-ink) !important;
+    font-weight: 580 !important;
+  }
+
+  .pp-modern-print-signatures {
+    position: relative !important;
+    overflow: hidden !important;
+    border-color: #c5dbf2 !important;
+    background: #ffffff !important;
+  }
+
+  .pp-modern-print-signatures > div {
+    position: relative !important;
+    padding: 3.05mm 4.3mm 2.1mm !important;
+    background: linear-gradient(180deg, #ffffff 0%, #ffffff 100%) !important;
+    border-right-color: #d6e2ef !important;
+  }
+
+  .pp-modern-print-signatures > div::before {
+    content: "" !important;
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: .9mm !important;
+    background: linear-gradient(90deg, var(--modern-blue) 0%, #2c95ef 100%) !important;
+  }
+
+  .pp-modern-print-signatures strong {
+    color: var(--modern-blue-dark) !important;
+    font-size: 8.1pt !important;
+    font-weight: 670 !important;
+    letter-spacing: .016em !important;
+    margin-bottom: 4.4mm !important;
+  }
+
+  .pp-modern-print-signatures span {
+    color: var(--modern-muted-soft) !important;
+    font-size: 6.8pt !important;
+    font-weight: 430 !important;
+    border-bottom-color: #ccd9e8 !important;
+  }
+
+  .pp-modern-print-signatures span + span {
+    margin-top: 2.45mm !important;
+  }
+}

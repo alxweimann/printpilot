@@ -3032,3 +3032,41 @@ Nächster sinnvoller Schritt:
 
 - Ausdruck visuell prüfen.
 - Wenn die Auftragstasche passt: Design-North-Star auf die Kalkulationsmaske übertragen.
+
+## Sprint 46.45 – Auftragstasche: Signaturbalken und Print-Finish-Tokens
+
+Status: umgesetzt.
+
+Auslöser: Im modernen Mockup wirkt der Signaturbereich durch den kleinen blauen Akzentbalken oberhalb der drei Prüfbereiche hochwertiger und klarer. Dieses Detail soll in die echte Auftragstasche übernommen werden, ohne die A4-Einseitigkeit oder das editierbare Drucktaschenmodell zu verändern.
+
+Umgesetzt:
+
+- Signaturbereich erhält pro Prüffeld einen feinen PrintPilot-Blau-Balken:
+  - Druck geprüft,
+  - Weiterverarbeitung geprüft,
+  - Versand geprüft.
+- Signaturbox wirkt dadurch näher am Mockup und stärker als abgeschlossene Kontrollzone.
+- Schreibfläche innerhalb der Signaturfelder bleibt erhalten.
+- Signaturtitel wurden typografisch leicht geschärft.
+- Print-Tokens für die Auftragstasche weiter konsolidiert:
+  - PrintPilot-Blau,
+  - Dunkel-Navy für Werte,
+  - Blau-Grau für Labels,
+  - harmonisierte Border-Farben,
+  - subtilere Panel-Schattierung.
+- Produktionsdaten-Panel nochmals etwas hochwertiger und ruhiger abgestimmt.
+- Rahmen und Panel-Linien minimal harmonisiert.
+
+Bewusst nicht geändert:
+
+- Keine neuen Fachfelder.
+- Keine Preislogik.
+- Keine Kalkulationslogik.
+- Keine Persistenzänderung.
+- A4 Hochformat bleibt strikt einseitig.
+- Alle Auftragstaschenwerte bleiben editierbar und kommen aus dem Drucktaschenmodell.
+
+Nächster sinnvoller Schritt:
+
+- Ausdruck prüfen.
+- Danach die Mockup-Designsprache auf die Kalkulationsmaske übertragen.

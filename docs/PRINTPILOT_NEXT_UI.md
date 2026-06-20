@@ -2745,3 +2745,28 @@ Umgesetzt:
 - Keine neue Preislogik.
 - Keine neue Kalkulationslogik.
 - Keine Persistenzänderung.
+
+## Sprint 46.37 – Auftragstasche modernisieren, aber produktiv halten
+
+Status: umgesetzt.
+
+Ziel dieses Sprints war ein behutsamer visueller Feinschliff der einseitigen DIN-A4-Auftragstasche. Die Tasche soll weiterhin wie ein produktiver Druckerei-Laufzettel funktionieren, aber weniger hart und weniger altbacken wirken.
+
+Umgesetzt:
+
+- Rahmen und Tabellenlinien wurden weiter reduziert und vereinheitlicht.
+- Sehr dunkle Formularlinien wurden durch ruhigere, feinere Printlinien ersetzt.
+- Abschnittsüberschriften erhalten eine dezente hellgraue Fläche.
+- Kopfbereich wirkt etwas moderner und ruhiger, bleibt aber klar produktionsorientiert.
+- QR-Code bleibt oben rechts sichtbar, sitzt aber in einer ruhigeren Scanbox.
+- Zellen, Kontrollbereiche und Signaturzone bleiben in der einseitigen A4-Struktur erhalten.
+- Signaturzeilen bleiben mit echter Schreibfläche am Seitenende.
+- Die Auftragstasche bleibt vollständig editierbar und nutzt weiterhin die editierbaren Drucktaschenwerte.
+- DIN A4 Hochformat bleibt strikt einseitig.
+- Keine neue Preislogik.
+- Keine neue Kalkulationslogik.
+- Keine Persistenzänderung.
+
+Design-Grundsatz:
+
+Die Auftragstasche soll nicht wie eine moderne Marketing-PDF wirken, sondern wie ein sauberer, aktueller Produktionslaufzettel: klare Felder, schnelle Lesbarkeit, druckbar auf normalen Büro-/Laserdruckern, aber weniger harte schwarze Formularoptik.

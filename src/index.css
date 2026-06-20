@@ -12715,3 +12715,168 @@ button.pp-process-step:hover {
     border-top: 0.45pt solid #1f2937 !important;
   }
 }
+
+/* Sprint 46.37 – Auftragstasche moderner, aber produktiv halten */
+@media print {
+  .pp-print-order-pocket--form {
+    grid-template-rows: 18mm 37mm 14mm 12mm 28mm 28mm 43mm 37mm 25mm 13mm 22mm !important;
+    gap: 1mm !important;
+    color: #172033 !important;
+  }
+
+  .pp-print-form-header,
+  .pp-print-form-box,
+  .pp-print-form-notice,
+  .pp-print-form-description,
+  .pp-print-form-spec-table,
+  .pp-print-form-bottom-checks {
+    border: 0.35pt solid #7f8da3 !important;
+    border-radius: 1.4mm !important;
+    background: #ffffff !important;
+  }
+
+  .pp-print-form-header {
+    overflow: hidden !important;
+    border-color: #6f7f96 !important;
+    box-shadow: inset 0 2.2mm 0 #f1f6fb !important;
+  }
+
+  .pp-print-form-header > div {
+    border-right: 0.3pt solid #b7c2d0 !important;
+  }
+
+  .pp-print-form-header > div:last-child {
+    border-right: 0 !important;
+  }
+
+  .pp-print-form-header span,
+  .pp-print-form-box h3,
+  .pp-print-form-notice h3,
+  .pp-print-form-description h3 {
+    color: #334155 !important;
+    letter-spacing: .045em !important;
+  }
+
+  .pp-print-form-header strong {
+    color: #0f1d33 !important;
+  }
+
+  .pp-print-form-header small {
+    color: #64748b !important;
+  }
+
+  .pp-print-form-header__qr {
+    background: #f8fbff !important;
+  }
+
+  .pp-print-form-header__qr img {
+    width: 15.2mm !important;
+    height: 15.2mm !important;
+  }
+
+  .pp-print-form-box h3,
+  .pp-print-form-notice h3,
+  .pp-print-form-description h3 {
+    padding: .85mm 1.2mm !important;
+    border-bottom: 0.3pt solid #b7c2d0 !important;
+    background: #f1f6fb !important;
+  }
+
+  .pp-print-form-box > strong,
+  .pp-print-form-box > p,
+  .pp-print-form-notice p,
+  .pp-print-form-description p,
+  .pp-print-form-small-note {
+    color: #162033 !important;
+  }
+
+  .pp-print-form-line,
+  .pp-print-form-empty-line {
+    border-top: 0.25pt solid #d8e0ea !important;
+  }
+
+  .pp-print-form-line:first-of-type,
+  .pp-print-form-empty-line:first-of-type {
+    border-top-color: #e7edf5 !important;
+  }
+
+  .pp-print-form-line span,
+  .pp-print-form-empty-line span {
+    color: #667085 !important;
+  }
+
+  .pp-print-form-line strong,
+  .pp-print-form-empty-line strong {
+    border-bottom: 0.28pt solid #9aa8ba !important;
+    color: #162033 !important;
+  }
+
+  .pp-print-form-spec-table {
+    border-collapse: separate !important;
+    overflow: hidden !important;
+  }
+
+  .pp-print-form-spec-table .pp-print-form-line {
+    border-right: 0.25pt solid #d8e0ea !important;
+    border-bottom: 0.25pt solid #d8e0ea !important;
+  }
+
+  .pp-print-form-material-grid .pp-print-form-line {
+    border-top-color: #d8e0ea !important;
+  }
+
+  .pp-print-form-check-row,
+  .pp-print-form-check-grid,
+  .pp-print-form-finishing-grid,
+  .pp-print-form-small-note {
+    border-top: 0.25pt solid #d8e0ea !important;
+  }
+
+  .pp-print-form-check,
+  .pp-print-form-bottom-checks span {
+    color: #26354d !important;
+  }
+
+  .pp-print-form-check.is-checked {
+    color: #0f1d33 !important;
+  }
+
+  .pp-print-form-check b {
+    color: #0f1d33 !important;
+  }
+
+  .pp-print-form-two-col,
+  .pp-print-form-footer-grid {
+    gap: 1.15mm !important;
+  }
+
+  .pp-print-form-footer-grid .pp-print-form-box {
+    height: 25mm !important;
+  }
+
+  .pp-print-form-footer-grid .pp-print-form-line strong {
+    border-bottom-color: #9aa8ba !important;
+  }
+
+  .pp-print-form-bottom-checks {
+    min-height: 13mm !important;
+    border-top-color: #7f8da3 !important;
+    background: #fbfcfe !important;
+  }
+
+  .pp-print-sheet-signatures--form {
+    min-height: 22mm !important;
+    height: 22mm !important;
+    gap: 4.8mm !important;
+  }
+
+  .pp-print-sheet-signatures--form span {
+    color: #475569 !important;
+    font-size: 6.1pt !important;
+  }
+
+  .pp-print-sheet-signatures--form span::before {
+    bottom: 5.5mm !important;
+    border-top: 0.35pt solid #7f8da3 !important;
+  }
+}

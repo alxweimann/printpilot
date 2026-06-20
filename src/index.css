@@ -15495,3 +15495,68 @@ button.pp-process-step:hover {
     margin-top: 2.45mm !important;
   }
 }
+
+/* Sprint 46.46 – offizielles PrintPilot-Logo global einsetzen
+   Ziel: ein zentrales Masterlogo für App-Masken und druckbare Auftragstasche. */
+.pp-printpilot-logo {
+  display: block;
+  width: auto;
+  object-fit: contain;
+  object-position: left center;
+}
+
+.pp-printpilot-logo--app {
+  height: 78px;
+  max-width: 286px;
+}
+
+.pp-printpilot-logo--print {
+  height: 22px;
+  max-width: 130px;
+}
+
+.pp-printpilot-logo--compact {
+  height: 40px;
+  max-width: 88px;
+}
+
+.pp-header-brand {
+  color: var(--pp-navy);
+  background: linear-gradient(90deg, #ffffff 0%, #ffffff 82%, rgba(255, 255, 255, 0) 100%);
+  border-right: 1px solid #dce6f2;
+  box-shadow: inset -18px 0 26px rgba(8, 41, 87, .035);
+}
+
+.pp-brand-logo {
+  height: 78px;
+  max-width: 286px;
+  filter: none;
+}
+
+@media (max-width: 1480px) {
+  .pp-printpilot-logo--app,
+  .pp-brand-logo {
+    height: 70px;
+    max-width: 254px;
+  }
+}
+
+@media print {
+  .pp-modern-print-brand {
+    gap: 2.4mm !important;
+  }
+
+  .pp-modern-print-logo-img {
+    display: block !important;
+    width: auto !important;
+    height: 8.5mm !important;
+    max-width: 22mm !important;
+    object-fit: contain !important;
+    object-position: left center !important;
+    filter: none !important;
+  }
+
+  .pp-modern-print-brand em {
+    margin-left: .2mm !important;
+  }
+}

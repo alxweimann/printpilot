@@ -1,6 +1,6 @@
 import type { KeyboardEvent } from "react";
 import { StatusPill } from "../../components/ui/StatusPill";
-import printPilotLogo from "../../assets/logo/printpilot-logo-on-navy.png";
+import { PrintPilotLogo } from "../../components/brand/PrintPilotLogo";
 import { laneGroups } from "./order-data";
 import type { OrderPreview, OrderTone, PrintPilotOrder } from "./order-data";
 
@@ -266,11 +266,7 @@ export function OrdersOverviewPage({
     <div className="pp-orders-overview pp-orders-overview--quiet">
       <header className="pp-master-header pp-orders-master-header pp-orders-master-header--quiet">
         <div className="pp-header-brand">
-          <img
-            className="pp-brand-logo"
-            src={printPilotLogo}
-            alt="PrintPilot"
-          />
+          <PrintPilotLogo className="pp-brand-logo" variant="app" />
         </div>
 
         <div className="pp-header-title-shape">

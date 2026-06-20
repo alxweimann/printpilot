@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Panel } from "../../components/ui/Panel";
-import printPilotLogo from "../../assets/logo/printpilot-logo-on-navy.png";
+import { PrintPilotLogo } from "../../components/brand/PrintPilotLogo";
 import orderQrCode from "../../assets/qr/order-pp-2026-00481.svg";
 import digitalColorMachine from "../../assets/machines/machine-digital-color.svg";
 import digitalMonoMachine from "../../assets/machines/machine-digital-mono.svg";
@@ -1219,26 +1219,7 @@ type PrintSheetIconName =
   | "shield";
 
 function PrintPilotSheetLogo() {
-  return (
-    <span className="pp-modern-print-logo-mark" aria-hidden="true">
-      <svg viewBox="0 0 48 48" role="img">
-        <defs>
-          <linearGradient id="ppPrintLogoA" x1="8" x2="40" y1="8" y2="40" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stopColor="#38bdf8" />
-            <stop offset="1" stopColor="#0b63ce" />
-          </linearGradient>
-          <linearGradient id="ppPrintLogoB" x1="7" x2="34" y1="41" y2="14" gradientUnits="userSpaceOnUse">
-            <stop offset="0" stopColor="#0b3f8a" />
-            <stop offset="1" stopColor="#1d9bf0" />
-          </linearGradient>
-        </defs>
-        <path d="M24 4 43 15v18L24 44 5 33V15L24 4Z" fill="url(#ppPrintLogoA)" />
-        <path d="M24 4v19L5 15 24 4Z" fill="#e8f5ff" opacity=".92" />
-        <path d="M24 23v21L5 33V15l19 8Z" fill="url(#ppPrintLogoB)" />
-        <path d="M24 23 43 15v18L24 44V23Z" fill="#0b63ce" />
-      </svg>
-    </span>
-  );
+  return <PrintPilotLogo className="pp-modern-print-logo-img" variant="print" alt="" />;
 }
 
 function PrintSheetIcon({ name }: { name: PrintSheetIconName }) {
@@ -1460,7 +1441,6 @@ function PrintOrderPocketSheet({
         <div className="pp-modern-print-brand-row">
           <div className="pp-modern-print-brand">
             <PrintPilotSheetLogo />
-            <strong>PrintPilot</strong>
             <em>Auftragstasche</em>
           </div>
           <div className="pp-modern-print-scan">
@@ -2534,11 +2514,7 @@ export function OrderPocketPage({
     <div className="pp-order-pocket">
       <header className="pp-master-header">
         <div className="pp-header-brand">
-          <img
-            className="pp-brand-logo"
-            src={printPilotLogo}
-            alt="PrintPilot"
-          />
+          <PrintPilotLogo className="pp-brand-logo" variant="app" />
         </div>
 
         <div className="pp-header-title-shape">

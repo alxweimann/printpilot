@@ -3070,3 +3070,32 @@ Nächster sinnvoller Schritt:
 
 - Ausdruck prüfen.
 - Danach die Mockup-Designsprache auf die Kalkulationsmaske übertragen.
+
+
+## Sprint 46.46 – Offizielles PrintPilot-Logo global einsetzen
+
+Status: umgesetzt.
+
+Ziel:
+- Das neue offizielle PrintPilot-Logo wird als Masterlogo für alle PrintPilot-Masken verwendet.
+- Platzhalter-/Pseudo-Logos werden aus den produktiven Hauptmasken entfernt.
+- Die Logo-Nutzung wird über eine zentrale Komponente vereinheitlicht.
+
+Umgesetzt:
+- Neues Logo als `src/assets/logo/printpilot-logo.png` abgelegt.
+- Neue zentrale Komponente `src/components/brand/PrintPilotLogo.tsx` ergänzt.
+- App-Header in Kalkulation, Auftragsübersicht und Auftragsdetails nutzen jetzt dieselbe Logo-Komponente.
+- Die druckbare Auftragstasche nutzt im Kopfbereich ebenfalls das neue Logo statt der bisherigen generischen SVG-Marke.
+- Die Header-Brandfläche wurde auf helle Darstellung umgestellt, damit das navy/blaue Logo korrekt und hochwertig wirkt.
+- Drucklogo für die A4-Auftragstasche wurde bewusst kompakt gesetzt: Logo links, Dokumenttyp `Auftragstasche` daneben.
+
+Nicht geändert:
+- Keine neue Preislogik.
+- Keine Kalkulationslogik.
+- Keine Persistenzänderung.
+- Keine Veränderung am editierbaren Drucktaschenmodell.
+
+Design-Entscheidung:
+- `PrintPilot.png` ist ab Sprint 46.46 das verbindliche Masterlogo.
+- Neue Screens sollen keine manuell nachgebauten PrintPilot-Logos mehr verwenden.
+- Für zukünftige Masken soll bevorzugt `PrintPilotLogo` genutzt werden, damit Logo-Größen, Varianten und spätere Optimierungen zentral steuerbar bleiben.

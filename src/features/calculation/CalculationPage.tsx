@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import printPilotLogo from "../../assets/logo/printpilot-logo-on-navy.png";
+import { PrintPilotLogo } from "../../components/brand/PrintPilotLogo";
 import {
   createOrderDraftFromCalculation,
   demoCalculationPayload,
@@ -1353,11 +1353,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     <div className="pp-calculation-page">
       <header className="pp-master-header pp-calculation-master-header">
         <div className="pp-header-brand">
-          <img
-            className="pp-brand-logo"
-            src={printPilotLogo}
-            alt="PrintPilot"
-          />
+          <PrintPilotLogo className="pp-brand-logo" variant="app" />
         </div>
         <div className="pp-header-title-shape">
           <h1>KALKULATION</h1>

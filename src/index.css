@@ -17107,3 +17107,131 @@ button.pp-process-step:hover {
     z-index: 1 !important;
   }
 }
+
+/* Sprint 46.58 – Auftragstasche: Relevanz, QR und Typografie finalisieren
+   Status wird im Druckkopf entfernt, Kontrolle nur echte Prüfpunkte,
+   Versand zeigt nur die gewählte Versandart, QR/Smartphone werden größer,
+   Label-/Wert-Zeilen erhalten konsistente Schriftgrößen und Baselines. */
+@media print {
+  .pp-modern-print-brand {
+    align-items: flex-start !important;
+    gap: 2.1mm !important;
+  }
+
+  .pp-modern-print-logo-img {
+    height: 12.2mm !important;
+    max-width: 30mm !important;
+    object-fit: contain !important;
+    object-position: left center !important;
+  }
+
+  .pp-modern-print-brand em {
+    margin-left: .2mm !important;
+    margin-top: 4.05mm !important;
+    align-self: flex-start !important;
+    line-height: 1 !important;
+  }
+
+  .pp-modern-print-scan {
+    grid-template-columns: minmax(0, 19mm) 20.8mm !important;
+    gap: 2.1mm !important;
+    align-items: center !important;
+    justify-content: end !important;
+  }
+
+  .pp-modern-print-scan b,
+  .pp-modern-print-scan small {
+    font-size: 6.35pt !important;
+    line-height: 1.05 !important;
+    letter-spacing: .06em !important;
+  }
+
+  .pp-modern-print-phone-icon svg {
+    width: 3.6mm !important;
+    height: 4.7mm !important;
+    stroke-width: 1.45 !important;
+  }
+
+  .pp-modern-print-scan img {
+    width: 20.8mm !important;
+    height: 20.8mm !important;
+    padding: 1.15mm !important;
+  }
+
+  .pp-modern-print-meta-row {
+    grid-template-columns: 50mm minmax(0, 1fr) 62mm !important;
+    column-gap: 4mm !important;
+  }
+
+  .pp-modern-print-meta:nth-child(3) {
+    border-right: 0 !important;
+  }
+
+  .pp-modern-print-status {
+    display: none !important;
+  }
+
+  .pp-modern-print-line {
+    grid-template-columns: 29.5mm minmax(0, 1fr) !important;
+    align-items: center !important;
+  }
+
+  .pp-modern-print-line span,
+  .pp-modern-print-line strong {
+    font-size: inherit !important;
+    line-height: 1.12 !important;
+    display: flex !important;
+    align-items: center !important;
+  }
+
+  .pp-modern-print-line span {
+    font-size: 6.05pt !important;
+    font-weight: 610 !important;
+    letter-spacing: .042em !important;
+  }
+
+  .pp-modern-print-line strong {
+    font-size: 7.72pt !important;
+    font-weight: 505 !important;
+    letter-spacing: -0.002em !important;
+  }
+
+  .pp-modern-print-panel--control .pp-modern-print-line {
+    display: none !important;
+  }
+
+  .pp-modern-print-check-list--control-only {
+    display: grid !important;
+    grid-template-columns: 1fr !important;
+    gap: .95mm !important;
+    padding: 1.6mm 2.7mm 2.2mm !important;
+    border-top: 0 !important;
+  }
+
+  .pp-modern-print-check-list--control-only .pp-modern-print-check {
+    min-height: 4.05mm !important;
+    align-items: center !important;
+  }
+
+  .pp-modern-print-selected-list {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 1.1mm !important;
+    padding: 1.2mm 2.55mm 1.45mm !important;
+    border-top: .3pt solid #e8eef6 !important;
+  }
+
+  .pp-modern-print-selected-list strong {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-height: 4.8mm !important;
+    padding: .45mm 1.9mm !important;
+    border: .45pt solid #b4d5fa !important;
+    border-radius: .85mm !important;
+    background: #f3f9ff !important;
+    color: var(--modern-blue-dark) !important;
+    font-size: 7.65pt !important;
+    font-weight: 610 !important;
+    line-height: 1 !important;
+  }
+}

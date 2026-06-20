@@ -1398,6 +1398,20 @@ function PrintModernCheck({
   );
 }
 
+
+function getSelectedShippingLabels(draft: PrintPocketDraft) {
+  const labels = [
+    { label: "DPD", checked: draft.shipDpd },
+    { label: "DPD-Express", checked: draft.shipDpdExpress },
+    { label: "Post", checked: draft.shipPost },
+    { label: "Spedition", checked: draft.shipFreight },
+    { label: "Abholung", checked: draft.shipPickup },
+    { label: "Fahrer", checked: draft.shipDriver },
+  ].filter((item) => item.checked);
+
+  return labels.length > 0 ? labels.map((item) => item.label) : [draft.shippingMethod];
+}
+
 function getPrintColorSummary(frontColors: string, backColors: string) {
   const front = frontColors.trim();
   const back = backColors.trim();
@@ -1461,6 +1475,7 @@ function PrintOrderPocketSheet({
   ];
 
   const activeFinishingTasks = finishingTasks.filter((task) => task.checked);
+  const selectedShippingLabels = getSelectedShippingLabels(draft);
 
   return (
     <article
@@ -1504,10 +1519,7 @@ function PrintOrderPocketSheet({
               <em> · {draft.deliveryMeta}</em>
             </strong>
           </div>
-          <div className="pp-modern-print-status">
-            <span>Status</span>
-            <strong>{draft.statusLabel}</strong>
-          </div>
+
         </div>
       </header>
 
@@ -1586,19 +1598,15 @@ function PrintOrderPocketSheet({
           <PrintModernLine label="Versandart" value={draft.shippingMethod} />
           <PrintModernLine label="Verpackung" value={draft.packaging} />
           <PrintModernLine label="Teillieferung" value={draft.partialDeliveries} />
-          <div className="pp-modern-print-check-row pp-modern-print-check-row--shipping">
-            <PrintModernCheck label="DPD" checked={draft.shipDpd} />
-            <PrintModernCheck label="DPD-Express" checked={draft.shipDpdExpress} />
-            <PrintModernCheck label="Post" checked={draft.shipPost} />
-            <PrintModernCheck label="Spedition" checked={draft.shipFreight} />
-            <PrintModernCheck label="Abholung" checked={draft.shipPickup} />
-            <PrintModernCheck label="Fahrer" checked={draft.shipDriver} />
+          <div className="pp-modern-print-selected-list pp-modern-print-selected-list--shipping">
+            {selectedShippingLabels.map((label) => (
+              <strong key={label}>{label}</strong>
+            ))}
           </div>
         </div>
 
         <div className="pp-modern-print-panel pp-modern-print-panel--control">
           <h3><PrintSheetIcon name="shield" /> Kontrolle</h3>
-          <PrintModernLine label="Checkliste" value={draft.checklistLabel} />
           <div className="pp-modern-print-check-list pp-modern-print-check-list--control-only">
             <PrintModernCheck label="Farbigkeit / Maßhaltigkeit geprüft" />
             <PrintModernCheck label="Weiterverarbeitung geprüft" />

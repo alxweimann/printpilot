@@ -3347,3 +3347,16 @@ Bewusst nicht geändert:
 - Das offizielle PrintPilot-Logo bleibt unverändert; keine Rekonstruktion, kein Beschnitt, keine CI-Änderung.
 - A4 Hochformat bleibt strikt einseitig; alle Auftragstaschenwerte bleiben editierbar.
 - Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.
+
+## Sprint 46.58 – Auftragstasche Relevanz, QR und Kontrolllayout finalisieren
+
+- Der Status `Im Druck` wird im Ausdruck der Auftragstasche entfernt, weil er für den physischen Laufzettel nicht relevant genug ist.
+- Der frei werdende Platz im Kopf wird für den QR-/Scanbereich genutzt.
+- QR-Code und Smartphone-/Scan-Hinweis werden größer und klarer platziert.
+- Der Bereich **Kontrolle** enthält keine Status-Zusammenfassung wie `3/13 · 1 offen` mehr.
+- Kontrollpunkte stehen im Ausdruck untereinander, damit der Bereich ruhiger und besser abhakbar wirkt.
+- Der Bereich **Lieferung / Versand** zeigt nur noch die tatsächlich ausgewählte Versand-/Übergabeart, z. B. `Spedition`, `Abholung` oder `Fahrer`; nicht gewählte Versandoptionen werden nicht mehr als Checkbox-Katalog ausgegeben.
+- Label-/Wert-Zeilen in allen Panels wurden auf gleiche optische Baseline und konsistente Schriftgrößen harmonisiert, insbesondere `Material / Bilderdruck`, `Rohbogen / SRA3`, `Lieferadresse / Adresse`.
+- Das Wort `Auftragstasche` im Kopf bleibt am unveränderten offiziellen PrintPilot-Logo ausgerichtet; das Logo selbst wird nicht verändert.
+- A4 Hochformat bleibt strikt einseitig; alle Auftragstaschenwerte bleiben editierbar.
+- Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.

@@ -3197,3 +3197,39 @@ Bewusst nicht geändert:
 Nächster Schritt:
 - Ausdruck prüfen.
 - Wenn die Auftragstasche so passt, Designrichtung auf die Kalkulationsmaske übertragen.
+
+
+## Sprint 46.50 – Auftragstasche finaler Mockup-Abgleich
+
+Sprint 46.50 friert die Auftragstasche als visuelle Designreferenz weiter in Richtung des modernen Mockups ein.
+
+Auslöser:
+- Die Auftragstasche ist nach Sprint 46.49 sehr nah am Mockup, aber Kopf/Logo, Liefertermin und Liniengewicht brauchen noch einen letzten Abgleich.
+- Der Liefertermin soll wie im Mockup gleichwertig lesbar bleiben: Datum cyan/blau, Uhrzeit dunkel, alles einzeilig.
+- Die Linien sollen weniger technisch wirken und nur noch als ruhige Orientierung dienen.
+
+Umgesetzt:
+- Branding/Kopfbereich ruhiger und hochwertiger ausgerichtet.
+- Logo-Mark und `PrintPilot Auftragstasche` optisch stärker an das Mockup angelehnt.
+- QR-/Scanbereich kompakter und weniger hart gesetzt.
+- Liefertermin typografisch korrigiert:
+  - Datum explizit in Cyan/PrintPilot-Blau,
+  - Uhrzeit/Meta in dunklem Navy,
+  - beide Teile einzeilig und gleichwertiger lesbar.
+- Rahmen und Linien nochmals weicher gemacht:
+  - Panel-Rahmen heller,
+  - Innenraster der Produktionsdaten dezenter,
+  - Zeilentrenner in den Panels zurückgenommen.
+- Produktionsdaten-Box als hochwertige zentrale Kernbox stabilisiert.
+- Signaturbereich mit dezenteren blauen Akzentbalken je Prüffeld verfeinert.
+
+Bewusst nicht geändert:
+- Keine neuen Fachfelder.
+- Keine Preislogik.
+- Keine Kalkulationslogik.
+- Keine Persistenzänderung.
+- A4 Hochformat bleibt strikt einseitig.
+- Alle Auftragstaschenwerte bleiben editierbar und kommen aus dem Drucktaschenmodell.
+
+Ergebnis:
+- Die Auftragstasche gilt ab jetzt als Designreferenz für die Übertragung auf die Kalkulationsmaske.

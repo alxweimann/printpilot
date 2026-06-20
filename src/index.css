@@ -12406,3 +12406,131 @@ button.pp-process-step:hover {
     font-size: 6.4pt !important;
   }
 }
+
+
+/* Sprint 46.35 – Auftragstasche Kopf und Überläufe korrigieren */
+@media print {
+  .pp-print-order-pocket--form {
+    grid-template-rows: 17mm 34mm 13mm 11mm 23mm 25mm 37mm 34mm 10mm 16mm !important;
+    gap: 1.45mm !important;
+  }
+
+  .pp-print-form-header {
+    grid-template-columns: 49mm minmax(0, 1fr) 34mm 18mm !important;
+    gap: 1.2mm !important;
+  }
+
+  .pp-print-form-header > div {
+    padding: 1.25mm !important;
+  }
+
+  .pp-print-form-header__left {
+    grid-template-columns: 9.5mm minmax(0, 1fr) !important;
+    gap: 1.2mm !important;
+  }
+
+  .pp-print-form-header__left img {
+    width: 8.5mm !important;
+    height: 8.5mm !important;
+  }
+
+  .pp-print-form-header__left strong {
+    font-size: 10.1pt !important;
+    line-height: 1 !important;
+    letter-spacing: -0.02em !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    white-space: nowrap !important;
+  }
+
+  .pp-print-form-header__left small {
+    font-size: 5.1pt !important;
+    white-space: nowrap !important;
+  }
+
+  .pp-print-form-header__center strong {
+    font-size: 13pt !important;
+    line-height: 1 !important;
+  }
+
+  .pp-print-form-header__date strong {
+    font-size: 11.2pt !important;
+    line-height: 1 !important;
+  }
+
+  .pp-print-form-header__qr {
+    padding: .8mm !important;
+  }
+
+  .pp-print-form-header__qr img {
+    width: 15.6mm !important;
+    height: 15.6mm !important;
+  }
+
+  .pp-print-form-header__qr small {
+    display: none !important;
+  }
+
+  .pp-print-form-party-grid {
+    grid-template-columns: 1.2fr 1fr .82fr !important;
+  }
+
+  .pp-print-form-box > strong,
+  .pp-print-form-box > p,
+  .pp-print-form-notice p,
+  .pp-print-form-description p,
+  .pp-print-form-small-note {
+    padding-top: .65mm !important;
+    padding-bottom: .65mm !important;
+    line-height: 1.1 !important;
+  }
+
+  .pp-print-form-line,
+  .pp-print-form-empty-line {
+    min-height: 3.85mm !important;
+    padding-top: .42mm !important;
+    padding-bottom: .42mm !important;
+  }
+
+  .pp-print-form-footer-grid .pp-print-form-line {
+    grid-template-columns: 18mm minmax(0, 1fr) !important;
+    min-height: 3.55mm !important;
+    padding-top: .32mm !important;
+    padding-bottom: .32mm !important;
+  }
+
+  .pp-print-form-footer-grid .pp-print-form-line strong {
+    min-height: 2.55mm !important;
+    font-size: 5.8pt !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .pp-print-form-footer-grid .pp-print-form-check-row {
+    gap: 1mm 2.1mm !important;
+    padding-top: .65mm !important;
+    padding-bottom: .65mm !important;
+  }
+
+  .pp-print-form-footer-grid .pp-print-form-check {
+    font-size: 5.55pt !important;
+  }
+
+  .pp-print-form-bottom-checks {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) 20mm 20mm !important;
+    gap: 1.2mm 2mm !important;
+    padding: .9mm 1.1mm !important;
+  }
+
+  .pp-print-form-bottom-checks span:nth-last-child(-n+2) {
+    margin-left: 0 !important;
+    justify-content: end !important;
+  }
+
+  .pp-print-sheet-signatures--form span {
+    padding-top: 2.8mm !important;
+  }
+}

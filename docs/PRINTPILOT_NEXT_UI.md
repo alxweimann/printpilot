@@ -2703,3 +2703,24 @@ Nicht geändert:
 - Keine Kalkulationslogik.
 - Keine Persistenzänderung.
 - Keine neue PDF-Engine.
+
+
+## Sprint 46.35 – Auftragstasche Kopf und Überläufe korrigieren
+
+Ziel: Die einseitige DIN-A4-Auftragstasche bleibt strikt einseitig, nutzt die A4-Fläche weiter aus, vermeidet aber abgeschnittene Pflichtinformationen und unruhige Überläufe.
+
+Umgesetzt:
+
+- Auftrag-Nr. im Kopfbereich wird wieder vollständig lesbar gehalten.
+- Kopfspalten wurden ruhiger verteilt: mehr Breite für Auftrag-Nr., etwas kleinerer QR-Code.
+- QR-Code bleibt oben rechts sichtbar, drückt aber den Kopfbereich weniger zusammen.
+- Fremdarbeit-/Kontrollbereich wurde vertikal entlastet.
+- Footer-/Kontrollzeilen wurden kompakter gesetzt, damit Muster, Dokumente und Rechnungskontrolle nicht in die nächste Zone laufen.
+- Untere Dokumenten-/Kontrollzeile wurde als festes Raster stabilisiert.
+- Signaturbereich bleibt am Seitenende erhalten.
+- Keine neuen Fachfelder.
+- Keine Preislogik.
+- Keine Kalkulationslogik.
+- Keine Persistenzänderung.
+
+Hinweis: Lange Texte werden im Print weiterhin bewusst einzeilig begrenzt oder mit Auslassung gekürzt, damit die Auftragstasche immer auf einer DIN-A4-Seite bleibt.

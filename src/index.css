@@ -16792,3 +16792,107 @@ button.pp-process-step:hover {
     padding-top: 3.15mm !important;
   }
 }
+
+/* Sprint 46.53 – CI-Logo, Farbigkeit und Signaturbalken final korrigieren
+   Wichtig: Das offizielle PrintPilot-Logo darf nicht rekonstruiert oder beschnitten werden.
+   Der Druckkopf verwendet deshalb wieder die unveränderte Logo-Datei. */
+@media print {
+  .pp-modern-print-brand {
+    gap: 2.25mm !important;
+    align-items: center !important;
+    transform: none !important;
+  }
+
+  .pp-modern-print-logo-img {
+    display: block !important;
+    width: auto !important;
+    height: 12.2mm !important;
+    max-width: 30mm !important;
+    object-fit: contain !important;
+    object-position: left center !important;
+    filter: none !important;
+    flex: 0 0 auto !important;
+  }
+
+  .pp-modern-print-brand em {
+    margin-left: .35mm !important;
+    margin-top: 2.15mm !important;
+    align-self: center !important;
+    color: #0b70cc !important;
+    font-size: 12.2pt !important;
+    font-weight: 520 !important;
+    line-height: 1 !important;
+    letter-spacing: -0.014em !important;
+  }
+
+  .pp-modern-print-line {
+    align-items: center !important;
+    min-height: 5.8mm !important;
+    padding-top: .88mm !important;
+    padding-bottom: .88mm !important;
+  }
+
+  .pp-modern-print-line span,
+  .pp-modern-print-line strong {
+    display: flex !important;
+    align-items: center !important;
+    align-self: center !important;
+    min-height: 3.45mm !important;
+    line-height: 1.08 !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+  }
+
+  .pp-modern-print-line span {
+    font-size: 6.2pt !important;
+    font-weight: 615 !important;
+  }
+
+  .pp-modern-print-line strong {
+    font-size: 7.9pt !important;
+    font-weight: 500 !important;
+  }
+
+  .pp-modern-print-panel-grid--middle .pp-modern-print-panel:first-child .pp-modern-print-line,
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line {
+    grid-template-columns: 28mm minmax(0, 1fr) !important;
+  }
+
+  .pp-modern-print-signatures {
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  .pp-modern-print-signatures::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    height: .46mm !important;
+    background: #0aa7df !important;
+    z-index: 12 !important;
+  }
+
+  .pp-modern-print-signatures > div {
+    position: relative !important;
+    border-right: 0 !important;
+    z-index: 1 !important;
+    padding-top: 3.2mm !important;
+  }
+
+  .pp-modern-print-signatures > div::before {
+    display: none !important;
+  }
+
+  .pp-modern-print-signatures > div:not(:last-child)::after {
+    content: "" !important;
+    position: absolute !important;
+    top: 1.15mm !important;
+    right: 0 !important;
+    bottom: 0 !important;
+    width: 0 !important;
+    border-right: .22pt dotted #e5edf6 !important;
+    z-index: 1 !important;
+  }
+}

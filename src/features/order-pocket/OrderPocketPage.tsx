@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Panel } from "../../components/ui/Panel";
 import { PrintPilotLogo } from "../../components/brand/PrintPilotLogo";
-import printPilotLogoMark from "../../assets/logo/printpilot-logo-mark.png";
+import printPilotLogoImage from "../../assets/logo/printpilot-logo.png";
 import orderQrCode from "../../assets/qr/order-pp-2026-00481.svg";
 import digitalColorMachine from "../../assets/machines/machine-digital-color.svg";
 import digitalMonoMachine from "../../assets/machines/machine-digital-mono.svg";
@@ -1220,12 +1220,7 @@ type PrintSheetIconName =
   | "shield";
 
 function PrintPilotSheetLogo() {
-  return (
-    <>
-      <img className="pp-modern-print-logo-mark-img" src={printPilotLogoMark} alt="" aria-hidden="true" />
-      <strong>PrintPilot</strong>
-    </>
-  );
+  return <img className="pp-modern-print-logo-img" src={printPilotLogoImage} alt="PrintPilot" />;
 }
 
 function PrintSheetIcon({ name }: { name: PrintSheetIconName }) {
@@ -1251,9 +1246,10 @@ function PrintSheetIcon({ name }: { name: PrintSheetIconName }) {
     case "format":
       return (
         <svg {...common}>
-          <path d="M19 4h7v24h-7z" />
-          <path d="M13 6v20" />
-          <path d="M9 9 5 16l4 7" />
+          <path d="M18.7 4.8h7.2v22.4h-7.2z" />
+          <path d="M10.2 5.5v21" />
+          <path d="M10.2 26.5 6.8 22.4" />
+          <path d="M10.2 26.5 13.6 22.4" />
         </svg>
       );
     case "cmyk":
@@ -1403,6 +1399,35 @@ function PrintModernCheck({
   );
 }
 
+function getPrintColorSummary(frontColors: string, backColors: string) {
+  const front = frontColors.trim();
+  const back = backColors.trim();
+  const frontLower = front.toLowerCase();
+  const backLower = back.toLowerCase();
+
+  const isFourColor = (value: string) =>
+    value.toLowerCase().includes("4-farbig") && value.toLowerCase().includes("cmyk");
+  const isBlack = (value: string) => value.toLowerCase().includes("schwarz");
+
+  if (isFourColor(front) && isFourColor(back)) {
+    return "4/4 farbig CMYK";
+  }
+
+  if (isBlack(front) && isBlack(back)) {
+    return "1/1 farbig Schwarz";
+  }
+
+  if (front && back && frontLower === backLower) {
+    return front.replace("-farbig", " farbig");
+  }
+
+  if (!back || backLower === "prüfen") {
+    return front.replace("-farbig", " farbig");
+  }
+
+  return `${front.replace("-farbig", " farbig")} / ${back.replace("-farbig", " farbig")}`;
+}
+
 function PrintOrderPocketSheet({
   order,
   draft,
@@ -1414,7 +1439,7 @@ function PrintOrderPocketSheet({
   const productionFacts = [
     { icon: <PrintSheetIcon name="stack" />, label: "Auflage", value: draft.quantity },
     { icon: <PrintSheetIcon name="format" />, label: "Endformat", value: draft.finalFormat },
-    { icon: <PrintSheetIcon name="cmyk" />, label: "Farbigkeit", value: `${draft.frontColors} / ${draft.backColors}` },
+    { icon: <PrintSheetIcon name="cmyk" />, label: "Farbigkeit", value: getPrintColorSummary(draft.frontColors, draft.backColors) },
     { icon: <PrintSheetIcon name="paper" />, label: "Material", value: draft.paper },
     { icon: <PrintSheetIcon name="printer" />, label: "Maschine", value: order.machine },
     { icon: <PrintSheetIcon name="dots" />, label: "Druckart", value: draft.printType },

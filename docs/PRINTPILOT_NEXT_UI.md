@@ -3269,3 +3269,23 @@ Bewusst nicht geändert:
 - A4-Hochformat bleibt strikt einseitig; alle Drucktaschenwerte bleiben editierbar.
 - Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.
 
+
+### Sprint 46.53 – Auftragstasche CI-Logo und Detailkorrekturen
+
+Korrektur nach Review:
+- Das PrintPilot-Logo darf nicht rekonstruiert, beschnitten oder als separat erzeugte Marke verändert werden. Das Logo ist CI und muss unverändert verwendet werden.
+- Der Druckkopf nutzt deshalb wieder die originale Logo-Datei `src/assets/logo/printpilot-logo.png`.
+- Das Wort `Auftragstasche` wird neben dem originalen PrintPilot-Logo auf die optische Höhe des PrintPilot-Schriftzugs gesetzt.
+- Die zuvor erzeugte separate Datei `src/assets/logo/printpilot-logo-mark.png` wird nicht mehr verwendet und aus dem Paket entfernt.
+- Das Icon für `Endformat` wurde näher an das Mockup angepasst.
+- `Farbigkeit` wird in der Produktionsdaten-Kernbox nicht mehr doppelt als Vorder-/Rückseitenwert ausgegeben. Stattdessen wird ein kompakter Druckerei-Wert erzeugt, z. B. `4/4 farbig CMYK` oder `1/1 farbig Schwarz`.
+- Zeilen in Informationspanels wurden erneut auf einheitliche Baselines gebracht, insbesondere für `Rohbogen` / `SRA3` und ähnliche Label-/Wert-Paare.
+- Der blaue Signaturbalken ist wieder wirklich durchgehend über die gesamte Prüfzone. Die vertikalen Trennlinien beginnen erst unterhalb des Balkens.
+
+Bewusst nicht geändert:
+- Keine neuen Fachfelder.
+- Keine Preislogik.
+- Keine Kalkulationslogik.
+- Keine Persistenzänderung.
+- A4 Hochformat bleibt strikt einseitig.
+- Alle Auftragstaschenwerte bleiben editierbar.

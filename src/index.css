@@ -11322,3 +11322,269 @@ button.pp-process-step:hover {
     line-height: 1.05 !important;
   }
 }
+
+/* Sprint 46.31 – Auftragsdetails und Auftragstasche begrifflich trennen */
+.pp-pocket-view-tabs {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 0 0 14px;
+}
+
+.pp-pocket-view-tabs button {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  min-height: 46px;
+  padding: 10px 14px;
+  border: 1px solid #c9d7e7;
+  border-radius: 12px;
+  background: linear-gradient(180deg, #f8fbff 0%, #edf3f9 100%);
+  color: #071f48;
+  font: inherit;
+  cursor: pointer;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .75);
+}
+
+.pp-pocket-view-tabs button:hover {
+  border-color: #8fb8e4;
+}
+
+.pp-pocket-view-tabs button.is-active {
+  border-color: #0587d8;
+  background: linear-gradient(180deg, #eaf7ff 0%, #d9effc 100%);
+  box-shadow: inset 0 0 0 1px rgba(5, 135, 216, .18), 0 8px 18px rgba(9, 80, 170, .1);
+}
+
+.pp-pocket-view-tabs span {
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: -.01em;
+}
+
+.pp-pocket-view-tabs small {
+  color: #52637d;
+  font-size: 11px;
+  font-weight: 760;
+  line-height: 1.15;
+  text-align: right;
+}
+
+.pp-print-action-bar--secondary button {
+  border-color: #c9d7e7;
+  background: #ffffff;
+  color: #071f48;
+  box-shadow: none;
+}
+
+.pp-print-action-bar--secondary button:hover {
+  border-color: #0587d8;
+  background: #f3f9ff;
+}
+
+.pp-print-pocket-editor {
+  display: grid;
+  gap: 14px;
+  padding: 18px;
+  border: 1px solid #c8d5e5;
+  border-radius: 16px;
+  background: #f7fafd;
+  box-shadow: 0 18px 40px rgba(16, 38, 69, .08);
+}
+
+.pp-print-pocket-editor__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 18px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid #d8e2ee;
+}
+
+.pp-print-pocket-editor__head span {
+  display: block;
+  color: #0b63ce;
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: .08em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.pp-print-pocket-editor__head strong {
+  display: block;
+  margin-top: 4px;
+  color: #071f48;
+  font-size: 19px;
+  font-weight: 900;
+  letter-spacing: -.03em;
+  line-height: 1.15;
+}
+
+.pp-print-pocket-editor__head p {
+  max-width: 720px;
+  margin: 6px 0 0;
+  color: #52637d;
+  font-size: 12px;
+  font-weight: 720;
+  line-height: 1.35;
+}
+
+.pp-print-pocket-editor__job {
+  min-width: 260px;
+  padding: 10px 12px;
+  border: 1px solid #c9d7e7;
+  border-radius: 12px;
+  background: #ffffff;
+  text-align: right;
+}
+
+.pp-print-pocket-editor__job small,
+.pp-print-pocket-editor__job b,
+.pp-print-pocket-editor__job span {
+  display: block;
+}
+
+.pp-print-pocket-editor__job small {
+  color: #0b63ce;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.pp-print-pocket-editor__job b {
+  margin-top: 2px;
+  color: #071f48;
+  font-size: 14px;
+  font-weight: 900;
+}
+
+.pp-print-pocket-editor__job span {
+  margin-top: 2px;
+  color: #52637d;
+  font-size: 11px;
+  font-weight: 760;
+}
+
+.pp-print-pocket-editor__grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pp-print-pocket-editor label {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+}
+
+.pp-print-pocket-editor__wide {
+  grid-column: span 2;
+}
+
+.pp-print-pocket-editor label > span {
+  color: #52637d;
+  font-size: 10px;
+  font-weight: 880;
+  letter-spacing: .02em;
+  line-height: 1.1;
+  text-transform: uppercase;
+}
+
+.pp-print-pocket-editor input,
+.pp-print-pocket-editor textarea {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #b7c8da;
+  border-radius: 8px;
+  background: #fffdf6;
+  color: #071f48;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 760;
+  line-height: 1.3;
+  box-sizing: border-box;
+}
+
+.pp-print-pocket-editor input {
+  min-height: 34px;
+  padding: 7px 9px;
+}
+
+.pp-print-pocket-editor textarea {
+  min-height: 74px;
+  padding: 8px 9px;
+  resize: vertical;
+}
+
+.pp-print-pocket-editor input:focus,
+.pp-print-pocket-editor textarea:focus {
+  outline: 2px solid rgba(5, 135, 216, .22);
+  border-color: #0587d8;
+  background: #ffffff;
+}
+
+.pp-print-pocket-preview-list {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  border: 1px solid #d8e2ee;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.pp-print-pocket-preview-list > strong {
+  color: #071f48;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.pp-print-pocket-preview-list > div {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 6px 12px;
+}
+
+.pp-print-pocket-preview-list p {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 6px 0;
+  border-top: 1px solid #edf1f6;
+}
+
+.pp-print-pocket-preview-list span {
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 840;
+}
+
+.pp-print-pocket-preview-list b {
+  min-width: 0;
+  overflow-wrap: anywhere;
+  color: #071f48;
+  font-size: 12px;
+  font-weight: 820;
+}
+
+@media (max-width: 1100px) {
+  .pp-print-pocket-editor__head {
+    flex-direction: column;
+  }
+
+  .pp-print-pocket-editor__job {
+    width: 100%;
+    min-width: 0;
+    text-align: left;
+  }
+
+  .pp-print-pocket-editor__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pp-print-pocket-preview-list > div {
+    grid-template-columns: 1fr;
+  }
+}

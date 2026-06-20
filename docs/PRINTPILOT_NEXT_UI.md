@@ -2546,3 +2546,63 @@ Die PDF-Auftragstasche ist ein Produktionslaufzettel. Sie muss druckbar, scanbar
 
 - `src/index.css`
 - `docs/PRINTPILOT_NEXT_UI.md`
+
+## Sprint 46.31 – Auftragsdetails und Auftragstasche begrifflich trennen
+
+Ziel dieses Sprints war die fachliche Begriffsklärung: Die bisherige Bildschirmseite wurde zwar als Auftragstasche bezeichnet, verhält sich aber eigentlich wie eine digitale Produktions- und Auftragsdetailansicht. Die eigentliche Auftragstasche ist im Druckerei-Alltag der bearbeitbare Laufzettel, der vor dem Drucken noch kontrolliert, ergänzt und angepasst werden kann.
+
+### Produktentscheidung
+
+- **Auftragsdetails** sind die digitale Bildschirm-/Produktionsansicht.
+- **Auftragstasche** ist der editierbare und druckbare Laufzettel.
+- Der PDF-/Druckbutton gehört fachlich zur Auftragstasche, nicht zur allgemeinen Bildschirmansicht.
+- Auftragsdaten und Drucktaschen-Zusatzdaten werden bewusst getrennt.
+
+### Umgesetzt
+
+- Sichtbarer Haupttitel der bisherigen Seite auf **Auftragsdetails** geändert.
+- Neuer Ansichtswechsel innerhalb der geöffneten Auftragsseite:
+  - **Auftragsdetails**
+  - **Auftragstasche**
+- Die bisherige digitale Ansicht bleibt unter **Auftragsdetails** erhalten.
+- Neuer Bereich **Auftragstasche bearbeiten** ergänzt.
+- Der Druck-/PDF-Button wurde in den Auftragstaschen-Bereich verschoben.
+- Die Auftragstasche bekommt editierbare Felder für den Drucklaufzettel:
+  - Korrektur bis
+  - Bestellnummer / Kundenauftrag
+  - Versandart
+  - Teillieferungen
+  - besondere Hinweise
+  - Weiterverarbeitung / Handarbeit
+  - Lieferadresse / Lieferhinweis
+  - Fremdarbeiten / Lieferant
+  - Muster / Belege
+  - Rechnungskontrolle
+  - Dokumente / Ablage
+  - Kontrollhinweis
+- Die bearbeiteten Felder fließen direkt in die druckbare DIN-A4-Auftragstasche ein.
+- Die Daten sind aktuell lokaler UI-State und noch nicht persistent.
+
+### Bewusste Grenzen
+
+- keine Persistenzänderung
+- keine Datenbank-/Store-Änderung
+- keine Preislogik
+- keine Kalkulationslogik
+- keine neue PDF-Engine
+- keine Änderung an der einseitigen A4-Druckbegrenzung
+
+### Fachlicher Nutzen
+
+Die Trennung entspricht besser dem Druckerei-Alltag:
+
+- Auftragsdetails = digitale Arbeitsansicht für Produktion und Auftragssteuerung
+- Auftragstasche = editierbarer Laufzettel für Druck, Weiterverarbeitung, Versand und Kontrolle
+
+Damit kann PrintPilot später sauber unterscheiden, welche Informationen aus Kalkulation und Auftrag stammen und welche Zusatzangaben nur für den Ausdruck der Auftragstasche gelten.
+
+### Betroffene Dateien
+
+- `src/features/order-pocket/OrderPocketPage.tsx`
+- `src/index.css`
+- `docs/PRINTPILOT_NEXT_UI.md`

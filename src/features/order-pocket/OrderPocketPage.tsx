@@ -692,17 +692,231 @@ function ProductionCoreStrip({
   );
 }
 
+type OrderPocketView = "details" | "print-pocket";
+
+type PrintPocketDraft = {
+  correctionUntil: string;
+  specialNotes: string;
+  orderReference: string;
+  deliveryNotes: string;
+  finishingNotes: string;
+  shippingMethod: string;
+  partialDeliveries: string;
+  foreignWork: string;
+  invoiceNote: string;
+  samples: string;
+  documents: string;
+  controlNote: string;
+};
+
+function createPrintPocketDraft(order: PrintPilotOrder): PrintPocketDraft {
+  const activePackaging = order.finishing.find((step) =>
+    step.label.includes("Verpack"),
+  );
+
+  return {
+    correctionUntil: `${order.orderDate} · 16:00`,
+    specialNotes: order.nextStep,
+    orderReference: "Bestellung per Mail / Kundenauftrag prüfen",
+    deliveryNotes: order.customerAddress.join(" · "),
+    finishingNotes: activePackaging?.note ?? "Schneiden und Verpackung prüfen",
+    shippingMethod: order.deliveryMeta,
+    partialDeliveries: "keine Teillieferung",
+    foreignWork: "keine Fremdarbeit erfasst",
+    invoiceNote: "Rechnung nach Versand prüfen",
+    samples: "2 Belegexemplare / Muster nach Auftrag",
+    documents: "Lieferschein · Papierrechnung · Lieferantenrechnung prüfen",
+    controlNote:
+      "Druck, Weiterverarbeitung und Versand vor Abschluss abzeichnen",
+  };
+}
+
+function getPrintPocketOverview(draft: PrintPocketDraft) {
+  return [
+    ["Korrektur bis", draft.correctionUntil],
+    ["Bestell-/Kunden-Nr.", draft.orderReference],
+    ["Besondere Hinweise", draft.specialNotes],
+    ["Fremdarbeit", draft.foreignWork],
+    ["Versandart", draft.shippingMethod],
+    ["Teillieferungen", draft.partialDeliveries],
+    ["Muster / Belege", draft.samples],
+    ["Dokumente", draft.documents],
+    ["Rechnung", draft.invoiceNote],
+    ["Kontrolle", draft.controlNote],
+  ].map(([label, value]) => ({ label, value: value || "prüfen" }));
+}
+
+function PrintPocketDraftEditor({
+  order,
+  draft,
+  onDraftChange,
+}: {
+  order: PrintPilotOrder;
+  draft: PrintPocketDraft;
+  onDraftChange: (field: keyof PrintPocketDraft, value: string) => void;
+}) {
+  const rows = getPrintPocketOverview(draft);
+
+  return (
+    <section
+      className="pp-print-pocket-editor"
+      aria-label="Auftragstasche bearbeiten"
+    >
+      <div className="pp-print-pocket-editor__head">
+        <div>
+          <span>Auftragstasche</span>
+          <strong>Editierbarer Laufzettel vor dem Druck</strong>
+          <p>
+            Die Auftragsdetails bleiben die digitale Produktionsansicht. Hier
+            werden nur die Angaben gepflegt, die auf die gedruckte
+            DIN-A4-Auftragstasche gehören.
+          </p>
+        </div>
+        <div className="pp-print-pocket-editor__job">
+          <small>{order.id}</small>
+          <b>{order.product}</b>
+          <span>
+            {order.customer} · {order.quantity}
+          </span>
+        </div>
+      </div>
+
+      <div className="pp-print-pocket-editor__grid">
+        <label>
+          <span>Korrektur bis</span>
+          <input
+            value={draft.correctionUntil}
+            onChange={(event) =>
+              onDraftChange("correctionUntil", event.target.value)
+            }
+          />
+        </label>
+        <label>
+          <span>Bestellnummer / Kundenauftrag</span>
+          <input
+            value={draft.orderReference}
+            onChange={(event) =>
+              onDraftChange("orderReference", event.target.value)
+            }
+          />
+        </label>
+        <label>
+          <span>Versandart</span>
+          <input
+            value={draft.shippingMethod}
+            onChange={(event) =>
+              onDraftChange("shippingMethod", event.target.value)
+            }
+          />
+        </label>
+        <label>
+          <span>Teillieferungen</span>
+          <input
+            value={draft.partialDeliveries}
+            onChange={(event) =>
+              onDraftChange("partialDeliveries", event.target.value)
+            }
+          />
+        </label>
+        <label className="pp-print-pocket-editor__wide">
+          <span>Besondere Hinweise</span>
+          <textarea
+            rows={3}
+            value={draft.specialNotes}
+            onChange={(event) =>
+              onDraftChange("specialNotes", event.target.value)
+            }
+          />
+        </label>
+        <label className="pp-print-pocket-editor__wide">
+          <span>Weiterverarbeitung / Handarbeit</span>
+          <textarea
+            rows={3}
+            value={draft.finishingNotes}
+            onChange={(event) =>
+              onDraftChange("finishingNotes", event.target.value)
+            }
+          />
+        </label>
+        <label className="pp-print-pocket-editor__wide">
+          <span>Lieferadresse / Lieferhinweis</span>
+          <textarea
+            rows={3}
+            value={draft.deliveryNotes}
+            onChange={(event) =>
+              onDraftChange("deliveryNotes", event.target.value)
+            }
+          />
+        </label>
+        <label className="pp-print-pocket-editor__wide">
+          <span>Fremdarbeiten / Lieferant</span>
+          <textarea
+            rows={3}
+            value={draft.foreignWork}
+            onChange={(event) =>
+              onDraftChange("foreignWork", event.target.value)
+            }
+          />
+        </label>
+        <label>
+          <span>Muster / Belege</span>
+          <input
+            value={draft.samples}
+            onChange={(event) => onDraftChange("samples", event.target.value)}
+          />
+        </label>
+        <label>
+          <span>Rechnungskontrolle</span>
+          <input
+            value={draft.invoiceNote}
+            onChange={(event) =>
+              onDraftChange("invoiceNote", event.target.value)
+            }
+          />
+        </label>
+        <label className="pp-print-pocket-editor__wide">
+          <span>Dokumente / Ablage</span>
+          <input
+            value={draft.documents}
+            onChange={(event) => onDraftChange("documents", event.target.value)}
+          />
+        </label>
+        <label className="pp-print-pocket-editor__wide">
+          <span>Kontrollhinweis</span>
+          <input
+            value={draft.controlNote}
+            onChange={(event) =>
+              onDraftChange("controlNote", event.target.value)
+            }
+          />
+        </label>
+      </div>
+
+      <div className="pp-print-pocket-preview-list">
+        <strong>Wird auf der gedruckten Auftragstasche verwendet</strong>
+        <div>
+          {rows.map((row) => (
+            <p key={row.label}>
+              <span>{row.label}</span>
+              <b>{row.value}</b>
+            </p>
+          ))}
+        </div>
+      </div>
+    </section>
+  );
+}
 
 function getPrintableSheetSections(
   order: PrintPilotOrder,
   actionState: PocketActionState,
+  draft: PrintPocketDraft,
 ) {
   const productionData = getOrderProductionData(order);
   const activeFinishing = getActiveFinishingSteps(actionState);
   const activeFinishingText =
-    activeFinishing
-      .map((step) => `${step.label}: ${step.note}`)
-      .join("\n") || "keine aktive Weiterverarbeitung";
+    activeFinishing.map((step) => `${step.label}: ${step.note}`).join("\n") ||
+    "keine aktive Weiterverarbeitung";
   const finishingCatalogText = finishingCatalog.join(" · ");
 
   return [
@@ -724,18 +938,33 @@ function getPrintableSheetSections(
       rows: [
         ["Datenstatus", actionState.data.label],
         ["Freigabe", actionState.approval.label],
-        ["Datei", productionData.files.original?.filename ?? order.preview.filename],
+        ["Korrektur bis", draft.correctionUntil],
+        [
+          "Datei",
+          productionData.files.original?.filename ?? order.preview.filename,
+        ],
         ["Preflight", order.preflightValue],
         ["Beschnitt", order.bleedStatus.label],
-        ["Profil", order.machineType === "wide-format" ? "Roland VG3 · Medienprofil" : "Coated FOGRA39"],
+        [
+          "Profil",
+          order.machineType === "wide-format"
+            ? "Roland VG3 · Medienprofil"
+            : "Coated FOGRA39",
+        ],
       ],
     },
     {
       title: "Nutzenplan / Druckbogen",
       rows: [
-        ["Bogenformat", `${productionData.imposition.sheet.name} · ${formatSheetSize(productionData.imposition.sheet.widthMm, productionData.imposition.sheet.heightMm)}`],
+        [
+          "Bogenformat",
+          `${productionData.imposition.sheet.name} · ${formatSheetSize(productionData.imposition.sheet.widthMm, productionData.imposition.sheet.heightMm)}`,
+        ],
         ["Nutzen", productionData.imposition.label],
-        ["Anordnung", `${productionData.imposition.layout.columns} × ${productionData.imposition.layout.rows} · ${productionData.imposition.layout.usedSlots} Nutzen`],
+        [
+          "Anordnung",
+          `${productionData.imposition.layout.columns} × ${productionData.imposition.layout.rows} · ${productionData.imposition.layout.usedSlots} Nutzen`,
+        ],
         ["Beschnitt", productionData.imposition.bleed],
         ["Zuschuss", order.waste],
         ["Druckbogen-PDF", "später aus Ausschießmodul"],
@@ -744,8 +973,12 @@ function getPrintableSheetSections(
     {
       title: "Weiterverarbeitung",
       rows: [
-        ["Aktive Schritte", activeFinishing.length ? `${activeFinishing.length}` : "keine"],
+        [
+          "Aktive Schritte",
+          activeFinishing.length ? `${activeFinishing.length}` : "keine",
+        ],
         ["Leistungen", activeFinishingText],
+        ["Zusatzhinweis", draft.finishingNotes],
         ["Katalog", finishingCatalogText],
       ],
     },
@@ -753,16 +986,28 @@ function getPrintableSheetSections(
       title: "Versand / Verpackung",
       rows: [
         ["Liefertermin", `${order.dueDate} · ${order.dueMeta}`],
-        ["Lieferart", order.deliveryMeta],
-        ["Lieferadresse", order.customerAddress.join(", ")],
-        ["Verpackung", activeFinishing.find((step) => step.label.includes("Verpack"))?.note ?? "prüfen"],
-        ["Teillieferung", "später aus Auftrag"],
+        ["Lieferart", draft.shippingMethod || order.deliveryMeta],
+        [
+          "Lieferadresse",
+          draft.deliveryNotes || order.customerAddress.join(", "),
+        ],
+        [
+          "Verpackung",
+          activeFinishing.find((step) => step.label.includes("Verpack"))
+            ?.note ?? "prüfen",
+        ],
+        ["Teillieferung", draft.partialDeliveries],
       ],
     },
     {
       title: "Notizen / Kontrolle",
       rows: [
-        ["Produktionshinweis", order.nextStep],
+        ["Produktionshinweis", draft.specialNotes || order.nextStep],
+        ["Bestell-/Kunden-Nr.", draft.orderReference],
+        ["Fremdarbeit", draft.foreignWork],
+        ["Muster / Belege", draft.samples],
+        ["Dokumente", draft.documents],
+        ["Rechnung", draft.invoiceNote],
         ["Operator", order.owner],
         ["Status", getCurrentProductionLabel(actionState.production)],
         ["QR-Code", `${order.id} in PrintPilot öffnen`],
@@ -771,23 +1016,24 @@ function getPrintableSheetSections(
   ];
 }
 
-function PrintDataBlock({
-  title,
-  rows,
-}: {
-  title: string;
-  rows: string[][];
-}) {
+function PrintDataBlock({ title, rows }: { title: string; rows: string[][] }) {
   return (
     <section className="pp-print-sheet-block">
       <h3>{title}</h3>
       <div className="pp-print-sheet-table">
         {rows.map(([label, value]) => {
-          const isLongPrintRow = label === "Leistungen" || label === "Katalog" || label === "Lieferadresse";
+          const isLongPrintRow =
+            label === "Leistungen" ||
+            label === "Katalog" ||
+            label === "Lieferadresse";
           return (
             <p
               key={`${title}-${label}`}
-              className={isLongPrintRow ? "pp-print-sheet-row pp-print-sheet-row--long" : "pp-print-sheet-row"}
+              className={
+                isLongPrintRow
+                  ? "pp-print-sheet-row pp-print-sheet-row--long"
+                  : "pp-print-sheet-row"
+              }
             >
               <span>{label}</span>
               <strong>{value}</strong>
@@ -802,16 +1048,21 @@ function PrintDataBlock({
 function PrintOrderPocketSheet({
   order,
   actionState,
+  draft,
 }: {
   order: PrintPilotOrder;
   actionState: PocketActionState;
+  draft: PrintPocketDraft;
 }) {
-  const sections = getPrintableSheetSections(order, actionState);
+  const sections = getPrintableSheetSections(order, actionState, draft);
   const productionData = getOrderProductionData(order);
   const checklistSummary = getChecklistSummary(actionState.checklist);
 
   return (
-    <article className="pp-print-order-pocket" aria-label="Druckbare Auftragstasche">
+    <article
+      className="pp-print-order-pocket"
+      aria-label="Druckbare Auftragstasche"
+    >
       <header className="pp-print-sheet-header">
         <div className="pp-print-sheet-brand">
           <img src={printPilotLogo} alt="PrintPilot" />
@@ -824,7 +1075,8 @@ function PrintOrderPocketSheet({
         <div className="pp-print-sheet-title">
           <h2>{order.product}</h2>
           <p>
-            {order.customer} · {productionData.product.quantity} · {productionData.product.finalFormat}
+            {order.customer} · {productionData.product.quantity} ·{" "}
+            {productionData.product.finalFormat}
           </p>
         </div>
         <div className="pp-print-sheet-qr">
@@ -837,7 +1089,9 @@ function PrintOrderPocketSheet({
         <span>
           <small>Kunde</small>
           <strong>{order.customer}</strong>
-          <b>{order.contactName} · {order.contactPhone}</b>
+          <b>
+            {order.contactName} · {order.contactPhone}
+          </b>
         </span>
         <span>
           <small>Termin</small>
@@ -851,7 +1105,9 @@ function PrintOrderPocketSheet({
         </span>
         <span>
           <small>Checkliste</small>
-          <strong>{checklistSummary.done} / {checklistSummary.total}</strong>
+          <strong>
+            {checklistSummary.done} / {checklistSummary.total}
+          </strong>
           <b>{checklistSummary.requiredOpen} Pflichtpunkte offen</b>
         </span>
       </section>
@@ -1667,9 +1923,14 @@ export function OrderPocketPage({
   const [localActionState, setLocalActionState] = useState<PocketActionState>(
     () => createPocketActionState(order),
   );
+  const [activeView, setActiveView] = useState<OrderPocketView>("details");
+  const [printPocketDraft, setPrintPocketDraft] = useState<PrintPocketDraft>(
+    () => createPrintPocketDraft(order),
+  );
 
   useEffect(() => {
     setLocalActionState(createPocketActionState(order));
+    setPrintPocketDraft(createPrintPocketDraft(order));
   }, [order]);
 
   const hasCentralOrderState = typeof onOrderChange === "function";
@@ -1736,6 +1997,13 @@ export function OrderPocketPage({
     onOrderReset?.();
   };
 
+  const handlePrintPocketDraftChange = (
+    field: keyof PrintPocketDraft,
+    value: string,
+  ) => {
+    setPrintPocketDraft((current) => ({ ...current, [field]: value }));
+  };
+
   const handleToggleChecklistItem = (
     sectionIndex: number,
     itemIndex: number,
@@ -1780,8 +2048,8 @@ export function OrderPocketPage({
         </div>
 
         <div className="pp-header-title-shape">
-          <h1>AUFTRAGSTASCHE</h1>
-          <p>Produktionsauftrag</p>
+          <h1>AUFTRAGSDETAILS</h1>
+          <p>Digitale Produktionsansicht</p>
         </div>
 
         <div className="pp-header-job" aria-label="Auftragsnummer">
@@ -1803,309 +2071,366 @@ export function OrderPocketPage({
         </div>
       </header>
 
-      <div className="pp-print-action-bar">
-        <button type="button" onClick={() => window.print()}>
-          Druckbare Auftragstasche / PDF vorbereiten
+      <nav className="pp-pocket-view-tabs" aria-label="Ansicht wählen">
+        <button
+          type="button"
+          className={activeView === "details" ? "is-active" : ""}
+          onClick={() => setActiveView("details")}
+        >
+          <span>Auftragsdetails</span>
+          <small>digitale Produktionsansicht</small>
         </button>
-        <span>A4-Laufzettel mit QR-Code, Produktionsdaten, Nutzenplan, Weiterverarbeitung und Versand</span>
-      </div>
-
-      <section className="pp-top-info-panel">
-        <TopInfoCard
-          icon={<PocketIcon name="customer" />}
-          label="Kunde"
-          title={order.customer}
+        <button
+          type="button"
+          className={activeView === "print-pocket" ? "is-active" : ""}
+          onClick={() => setActiveView("print-pocket")}
         >
-          {order.customerAddress.map((line) => (
-            <span key={line}>
-              {line}
-              <br />
+          <span>Auftragstasche</span>
+          <small>bearbeiten · drucken</small>
+        </button>
+      </nav>
+
+      {activeView === "details" ? (
+        <>
+          <div className="pp-print-action-bar pp-print-action-bar--secondary">
+            <button type="button" onClick={() => setActiveView("print-pocket")}>
+              Auftragstasche bearbeiten
+            </button>
+            <span>
+              Die druckbare Auftragstasche ist jetzt ein eigener
+              Bearbeitungsbereich.
             </span>
-          ))}
-          <br />
-          <a>Kundendetails anzeigen →</a>
-        </TopInfoCard>
-        <TopInfoCard
-          icon={<PocketIcon name="contact" />}
-          label="Ansprechpartner"
-          title={order.contactName}
-        >
-          {order.contactPhone}
-          <br />
-          {order.contactEmail}
-        </TopInfoCard>
-        <TopInfoCard
-          icon={<PocketIcon name="date" />}
-          label="Auftragsdatum"
-          title={order.orderDate}
-        >
-          &nbsp;
-        </TopInfoCard>
-        <TopInfoCard
-          icon={<PocketIcon name="delivery" />}
-          label="Liefertermin"
-          title={order.dueDate}
-        >
-          {order.deliveryMeta}
-        </TopInfoCard>
-        <article className="pp-status-overview pp-status-overview--process pp-status-overview--interactive">
-          <div className="pp-status-overview__head">
-            <div>
-              <div className="pp-eyebrow">Interaktive Prozessleiste</div>
-              <strong>
-                Auftragsstatus und Prozessphasen direkt bearbeiten
-              </strong>
-              <p className="pp-status-overview__note">
-                UI-Vorschau ohne persistente Speicherung. Schritte anklicken, um
-                Datenprüfung, Freigabe und Produktionsphase lokal zu ändern.
-              </p>
-            </div>
-            <div className="pp-status-current pp-status-current--with-reset">
-              <span>
-                <small>Aktuell</small>
-                <StatusPill tone={actionState.production.tone}>
-                  {currentProductionLabel}
-                </StatusPill>
-              </span>
-              <button type="button" onClick={handleResetActions}>
-                Zurücksetzen
-              </button>
-            </div>
           </div>
-          <ProcessFlow
-            steps={processSteps}
-            interactive
-            onDataClick={handleMarkDataChecked}
-            onApprovalClick={handleMarkApprovalGranted}
-            onProductionClick={handleCycleProduction}
-          />
-        </article>
-      </section>
 
-      <ProductionCoreStrip order={order} actionState={actionState} />
-
-      <ProductionInfoAudit order={order} actionState={actionState} />
-
-      <div className="pp-pocket-zones">
-        <section
-          className="pp-pocket-zone pp-pocket-zone--overview"
-          aria-label="Auftragsdaten"
-        >
-          <div className="pp-pocket-zone__header">
-            <h2>Auftragsdaten</h2>
-            <span>Produkt · Druckdaten · Termine · Checkliste</span>
-          </div>
-          <div className="pp-pocket-zone-grid pp-pocket-zone-grid--overview">
-            <Panel
-              title="Produkt"
-              icon={<PocketIcon name="product" />}
-              className="pp-product-panel"
+          <section className="pp-top-info-panel">
+            <TopInfoCard
+              icon={<PocketIcon name="customer" />}
+              label="Kunde"
+              title={order.customer}
             >
-              <ProductCard order={order} />
-            </Panel>
-
-            <Panel
-              title="Druckdaten"
-              icon={<PocketIcon name="print-data" />}
-              className="pp-printdata-panel"
-            >
-              <PrintDataCard order={order} dataStatus={actionState.data} />
-            </Panel>
-
-            <Panel title="Termine" icon={<PocketIcon name="timeline" />}>
-              <ScheduleCard order={order} actionState={actionState} />
-            </Panel>
-
-            <Panel
-              title="Produktions-Checkliste"
-              icon={<PocketIcon name="checklist" />}
-              className="pp-checklist-panel"
-            >
-              <div className="pp-checklist-summary">
-                <strong>
-                  {checklistSummary.done} / {checklistSummary.total} erledigt
-                </strong>
-                <span>
-                  {checklistSummary.requiredOpen} Pflichtpunkt
-                  {checklistSummary.requiredOpen === 1 ? "" : "e"} offen
+              {order.customerAddress.map((line) => (
+                <span key={line}>
+                  {line}
+                  <br />
                 </span>
-              </div>
-
-              <div className="pp-checklist-sections">
-                {actionState.checklist.map((section, sectionIndex) => {
-                  const stats = getChecklistSectionStats(section);
-
-                  return (
-                    <section className="pp-check-section" key={section.title}>
-                      <div className="pp-check-section__head">
-                        <h4>{section.title}</h4>
-                        <span>
-                          {stats.done}/{stats.total}
-                        </span>
-                      </div>
-                      <div className="pp-check-section__items">
-                        {section.items.map((item, itemIndex) => (
-                          <CheckItem
-                            key={item.label}
-                            status={item.status}
-                            label={item.label}
-                            onToggle={() =>
-                              handleToggleChecklistItem(sectionIndex, itemIndex)
-                            }
-                          />
-                        ))}
-                      </div>
-                    </section>
-                  );
-                })}
-              </div>
-
-              <div className="pp-signature">
-                <b>Geprüft von / am</b>
-                <span>Unterschrift</span>
-              </div>
-            </Panel>
-          </div>
-        </section>
-
-        <section
-          className="pp-pocket-zone pp-pocket-zone--production"
-          aria-label="Produktion"
-        >
-          <div className="pp-pocket-zone__header">
-            <h2>Produktion</h2>
-            <span>Nutzenplan · Vorschau · Weiterverarbeitung</span>
-          </div>
-          <div className="pp-pocket-zone-grid pp-pocket-zone-grid--production">
-            <Panel
-              title="Nutzenplan"
-              icon={<PocketIcon name="imposition" />}
-              className="pp-imposition-panel"
+              ))}
+              <br />
+              <a>Kundendetails anzeigen →</a>
+            </TopInfoCard>
+            <TopInfoCard
+              icon={<PocketIcon name="contact" />}
+              label="Ansprechpartner"
+              title={order.contactName}
             >
-              <ImpositionPlanCard order={order} />
-            </Panel>
-
-            <Panel
-              title="Vorschau"
-              icon={<PocketIcon name="preview" />}
-              className="pp-preview-panel"
+              {order.contactPhone}
+              <br />
+              {order.contactEmail}
+            </TopInfoCard>
+            <TopInfoCard
+              icon={<PocketIcon name="date" />}
+              label="Auftragsdatum"
+              title={order.orderDate}
             >
-              <PreviewCard order={order} />
-            </Panel>
-
-            <Panel
-              title="Weiterverarbeitung"
-              icon={<PocketIcon name="finishing" />}
-              className="pp-finishing-panel"
+              &nbsp;
+            </TopInfoCard>
+            <TopInfoCard
+              icon={<PocketIcon name="delivery" />}
+              label="Liefertermin"
+              title={order.dueDate}
             >
-              <div className="pp-finishing-list">
-                {actionState.finishing.map((step, stepIndex) => (
-                  <div key={step.label}>
+              {order.deliveryMeta}
+            </TopInfoCard>
+            <article className="pp-status-overview pp-status-overview--process pp-status-overview--interactive">
+              <div className="pp-status-overview__head">
+                <div>
+                  <div className="pp-eyebrow">Interaktive Prozessleiste</div>
+                  <strong>
+                    Auftragsstatus und Prozessphasen direkt bearbeiten
+                  </strong>
+                  <p className="pp-status-overview__note">
+                    UI-Vorschau ohne persistente Speicherung. Schritte
+                    anklicken, um Datenprüfung, Freigabe und Produktionsphase
+                    lokal zu ändern.
+                  </p>
+                </div>
+                <div className="pp-status-current pp-status-current--with-reset">
+                  <span>
+                    <small>Aktuell</small>
+                    <StatusPill tone={actionState.production.tone}>
+                      {currentProductionLabel}
+                    </StatusPill>
+                  </span>
+                  <button type="button" onClick={handleResetActions}>
+                    Zurücksetzen
+                  </button>
+                </div>
+              </div>
+              <ProcessFlow
+                steps={processSteps}
+                interactive
+                onDataClick={handleMarkDataChecked}
+                onApprovalClick={handleMarkApprovalGranted}
+                onProductionClick={handleCycleProduction}
+              />
+            </article>
+          </section>
+
+          <ProductionCoreStrip order={order} actionState={actionState} />
+
+          <ProductionInfoAudit order={order} actionState={actionState} />
+
+          <div className="pp-pocket-zones">
+            <section
+              className="pp-pocket-zone pp-pocket-zone--overview"
+              aria-label="Auftragsdaten"
+            >
+              <div className="pp-pocket-zone__header">
+                <h2>Auftragsdaten</h2>
+                <span>Produkt · Druckdaten · Termine · Checkliste</span>
+              </div>
+              <div className="pp-pocket-zone-grid pp-pocket-zone-grid--overview">
+                <Panel
+                  title="Produkt"
+                  icon={<PocketIcon name="product" />}
+                  className="pp-product-panel"
+                >
+                  <ProductCard order={order} />
+                </Panel>
+
+                <Panel
+                  title="Druckdaten"
+                  icon={<PocketIcon name="print-data" />}
+                  className="pp-printdata-panel"
+                >
+                  <PrintDataCard order={order} dataStatus={actionState.data} />
+                </Panel>
+
+                <Panel title="Termine" icon={<PocketIcon name="timeline" />}>
+                  <ScheduleCard order={order} actionState={actionState} />
+                </Panel>
+
+                <Panel
+                  title="Produktions-Checkliste"
+                  icon={<PocketIcon name="checklist" />}
+                  className="pp-checklist-panel"
+                >
+                  <div className="pp-checklist-summary">
+                    <strong>
+                      {checklistSummary.done} / {checklistSummary.total}{" "}
+                      erledigt
+                    </strong>
                     <span>
-                      <b>{step.label}</b>
-                      <small>{step.note}</small>
+                      {checklistSummary.requiredOpen} Pflichtpunkt
+                      {checklistSummary.requiredOpen === 1 ? "" : "e"} offen
                     </span>
-                    <button
-                      type="button"
-                      className="pp-finishing-status-button"
-                      disabled={step.status.label === "Nicht notwendig"}
-                      onClick={() => handleToggleFinishingStep(stepIndex)}
-                    >
-                      <StatusPill tone={step.status.tone}>
-                        {step.status.label}
-                      </StatusPill>
-                    </button>
                   </div>
-                ))}
-              </div>
-              <FinishingCatalog actionState={actionState} />
-            </Panel>
-          </div>
-        </section>
 
-        <section
-          className="pp-pocket-zone pp-pocket-zone--support"
-          aria-label="Auftragsbegleitung"
-        >
-          <div className="pp-pocket-zone__header">
-            <h2>Auftragsbegleitung</h2>
-            <span>Dateien · Notizen · Maschine · Verlauf</span>
-          </div>
-          <div className="pp-pocket-zone-grid pp-pocket-zone-grid--support">
-            <Panel title="Dateien" icon={<PocketIcon name="files" />}>
-              <div className="pp-files-list">
-                {files.map(([type, name, category, date, time, size]) => (
-                  <div className="pp-file-row" key={name}>
-                    <span
-                      className={`pp-file-type pp-file-type--${type.toLowerCase()}`}
-                    >
-                      {type}
-                    </span>
-                    <div className="pp-file-main">
-                      <b>{name}</b>
-                      <small>
-                        {category} · {date} · {time}
-                      </small>
-                    </div>
-                    <strong>{size}</strong>
+                  <div className="pp-checklist-sections">
+                    {actionState.checklist.map((section, sectionIndex) => {
+                      const stats = getChecklistSectionStats(section);
+
+                      return (
+                        <section
+                          className="pp-check-section"
+                          key={section.title}
+                        >
+                          <div className="pp-check-section__head">
+                            <h4>{section.title}</h4>
+                            <span>
+                              {stats.done}/{stats.total}
+                            </span>
+                          </div>
+                          <div className="pp-check-section__items">
+                            {section.items.map((item, itemIndex) => (
+                              <CheckItem
+                                key={item.label}
+                                status={item.status}
+                                label={item.label}
+                                onToggle={() =>
+                                  handleToggleChecklistItem(
+                                    sectionIndex,
+                                    itemIndex,
+                                  )
+                                }
+                              />
+                            ))}
+                          </div>
+                        </section>
+                      );
+                    })}
                   </div>
-                ))}
+
+                  <div className="pp-signature">
+                    <b>Geprüft von / am</b>
+                    <span>Unterschrift</span>
+                  </div>
+                </Panel>
               </div>
-              <a className="pp-card-link">Alle Dateien im Auftrag anzeigen →</a>
-            </Panel>
+            </section>
 
-            <Panel title="Notizen" icon={<PocketIcon name="notes" />}>
-              <div className="pp-activity-list pp-activity-list--notes">
-                {noteRows.map((note) => (
-                  <article className="pp-activity-item" key={note.label}>
-                    <span
-                      className={`pp-activity-dot pp-activity-dot--${note.tone}`}
-                    ></span>
-                    <div>
-                      <strong>{note.label}</strong>
-                      <p>{note.text}</p>
-                      <small>{note.meta}</small>
-                    </div>
-                  </article>
-                ))}
-              </div>
-            </Panel>
-
-            <Panel title="Maschine" icon={<PocketIcon name="machine" />}>
-              <MachineCard machine={selectedMachine} />
-              <a className="pp-card-link">Maschinendetails anzeigen →</a>
-            </Panel>
-
-            <Panel
-              title="Kommentare / Verlauf"
-              icon={<PocketIcon name="history" />}
+            <section
+              className="pp-pocket-zone pp-pocket-zone--production"
+              aria-label="Produktion"
             >
-              <div className="pp-activity-list pp-activity-list--history">
-                {order.history.map((entry) => (
-                  <article
-                    className="pp-activity-item"
-                    key={`${entry.date}-${entry.time}-${entry.title}`}
-                  >
-                    <span
-                      className={`pp-activity-dot pp-activity-dot--${entry.tone}`}
-                    ></span>
-                    <div>
-                      <small>
-                        {entry.date} · {entry.time}
-                      </small>
-                      <strong>{entry.title}</strong>
-                      <p>{entry.user}</p>
-                    </div>
-                  </article>
-                ))}
+              <div className="pp-pocket-zone__header">
+                <h2>Produktion</h2>
+                <span>Nutzenplan · Vorschau · Weiterverarbeitung</span>
               </div>
-              <a className="pp-card-link">Gesamten Verlauf anzeigen →</a>
-            </Panel>
-          </div>
-        </section>
-      </div>
+              <div className="pp-pocket-zone-grid pp-pocket-zone-grid--production">
+                <Panel
+                  title="Nutzenplan"
+                  icon={<PocketIcon name="imposition" />}
+                  className="pp-imposition-panel"
+                >
+                  <ImpositionPlanCard order={order} />
+                </Panel>
 
-      <PrintOrderPocketSheet order={order} actionState={actionState} />
+                <Panel
+                  title="Vorschau"
+                  icon={<PocketIcon name="preview" />}
+                  className="pp-preview-panel"
+                >
+                  <PreviewCard order={order} />
+                </Panel>
+
+                <Panel
+                  title="Weiterverarbeitung"
+                  icon={<PocketIcon name="finishing" />}
+                  className="pp-finishing-panel"
+                >
+                  <div className="pp-finishing-list">
+                    {actionState.finishing.map((step, stepIndex) => (
+                      <div key={step.label}>
+                        <span>
+                          <b>{step.label}</b>
+                          <small>{step.note}</small>
+                        </span>
+                        <button
+                          type="button"
+                          className="pp-finishing-status-button"
+                          disabled={step.status.label === "Nicht notwendig"}
+                          onClick={() => handleToggleFinishingStep(stepIndex)}
+                        >
+                          <StatusPill tone={step.status.tone}>
+                            {step.status.label}
+                          </StatusPill>
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                  <FinishingCatalog actionState={actionState} />
+                </Panel>
+              </div>
+            </section>
+
+            <section
+              className="pp-pocket-zone pp-pocket-zone--support"
+              aria-label="Auftragsbegleitung"
+            >
+              <div className="pp-pocket-zone__header">
+                <h2>Auftragsbegleitung</h2>
+                <span>Dateien · Notizen · Maschine · Verlauf</span>
+              </div>
+              <div className="pp-pocket-zone-grid pp-pocket-zone-grid--support">
+                <Panel title="Dateien" icon={<PocketIcon name="files" />}>
+                  <div className="pp-files-list">
+                    {files.map(([type, name, category, date, time, size]) => (
+                      <div className="pp-file-row" key={name}>
+                        <span
+                          className={`pp-file-type pp-file-type--${type.toLowerCase()}`}
+                        >
+                          {type}
+                        </span>
+                        <div className="pp-file-main">
+                          <b>{name}</b>
+                          <small>
+                            {category} · {date} · {time}
+                          </small>
+                        </div>
+                        <strong>{size}</strong>
+                      </div>
+                    ))}
+                  </div>
+                  <a className="pp-card-link">
+                    Alle Dateien im Auftrag anzeigen →
+                  </a>
+                </Panel>
+
+                <Panel title="Notizen" icon={<PocketIcon name="notes" />}>
+                  <div className="pp-activity-list pp-activity-list--notes">
+                    {noteRows.map((note) => (
+                      <article className="pp-activity-item" key={note.label}>
+                        <span
+                          className={`pp-activity-dot pp-activity-dot--${note.tone}`}
+                        ></span>
+                        <div>
+                          <strong>{note.label}</strong>
+                          <p>{note.text}</p>
+                          <small>{note.meta}</small>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                </Panel>
+
+                <Panel title="Maschine" icon={<PocketIcon name="machine" />}>
+                  <MachineCard machine={selectedMachine} />
+                  <a className="pp-card-link">Maschinendetails anzeigen →</a>
+                </Panel>
+
+                <Panel
+                  title="Kommentare / Verlauf"
+                  icon={<PocketIcon name="history" />}
+                >
+                  <div className="pp-activity-list pp-activity-list--history">
+                    {order.history.map((entry) => (
+                      <article
+                        className="pp-activity-item"
+                        key={`${entry.date}-${entry.time}-${entry.title}`}
+                      >
+                        <span
+                          className={`pp-activity-dot pp-activity-dot--${entry.tone}`}
+                        ></span>
+                        <div>
+                          <small>
+                            {entry.date} · {entry.time}
+                          </small>
+                          <strong>{entry.title}</strong>
+                          <p>{entry.user}</p>
+                        </div>
+                      </article>
+                    ))}
+                  </div>
+                  <a className="pp-card-link">Gesamten Verlauf anzeigen →</a>
+                </Panel>
+              </div>
+            </section>
+          </div>
+        </>
+      ) : (
+        <>
+          <div className="pp-print-action-bar">
+            <button type="button" onClick={() => window.print()}>
+              Auftragstasche drucken / als PDF speichern
+            </button>
+            <span>
+              DIN-A4-Hochformat, exakt eine Seite. Die Felder unten fließen
+              direkt in den Ausdruck.
+            </span>
+          </div>
+          <PrintPocketDraftEditor
+            order={order}
+            draft={printPocketDraft}
+            onDraftChange={handlePrintPocketDraftChange}
+          />
+        </>
+      )}
+
+      <PrintOrderPocketSheet
+        order={order}
+        actionState={actionState}
+        draft={printPocketDraft}
+      />
     </div>
   );
 }

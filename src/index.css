@@ -16643,3 +16643,83 @@ button.pp-process-step:hover {
     font-size: 6.45pt !important;
   }
 }
+
+/* Sprint 46.51 – Auftragstasche Signaturraum und Prüfstatus finalisieren
+   Ziel: mehr Weißraum unter Name/Unterschrift, Lieferadresse besser lesbar,
+   Datenstatus nach Mockup mit grünem Kreis und blauem Text. */
+@media print {
+  .pp-modern-print-state-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 4.2mm !important;
+    min-height: 7.4mm !important;
+    padding: 1.1mm 2.55mm !important;
+    border-top: .18pt solid #f4f7fb !important;
+    border-bottom: .18pt solid #f4f7fb !important;
+  }
+
+  .pp-modern-print-state-row span,
+  .pp-modern-print-state-row span.is-ok {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 1.25mm !important;
+    color: #234e7b !important;
+    font-size: 7.85pt !important;
+    font-weight: 565 !important;
+    line-height: 1.1 !important;
+    letter-spacing: -0.004em !important;
+  }
+
+  .pp-modern-print-state-row i {
+    display: inline-grid !important;
+    place-items: center !important;
+    width: 3.2mm !important;
+    height: 3.2mm !important;
+    border-radius: 999px !important;
+    background: #34a853 !important;
+    color: #ffffff !important;
+    font-style: normal !important;
+    font-size: 5.2pt !important;
+    font-weight: 800 !important;
+    line-height: 1 !important;
+    box-shadow: 0 .25mm .55mm rgba(52, 168, 83, .18) !important;
+  }
+
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line:first-of-type {
+    min-height: 6.75mm !important;
+  }
+
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line:first-of-type span {
+    color: #5f7189 !important;
+    font-size: 6.35pt !important;
+    font-weight: 625 !important;
+  }
+
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line:first-of-type strong {
+    color: #17263c !important;
+    font-size: 8.25pt !important;
+    font-weight: 505 !important;
+    line-height: 1.18 !important;
+  }
+
+  .pp-modern-print-signatures > div {
+    grid-template-rows: 5.9mm 7.6mm 7.3mm !important;
+    padding: 3.05mm 4mm 4.15mm !important;
+  }
+
+  .pp-modern-print-signatures > div::before {
+    top: .7mm !important;
+    left: 5.9mm !important;
+    right: 5.9mm !important;
+    height: .32mm !important;
+  }
+
+  .pp-modern-print-signatures span {
+    align-items: flex-end !important;
+    padding-bottom: .55mm !important;
+  }
+
+  .pp-modern-print-signatures span + span {
+    margin-top: .55mm !important;
+  }
+}

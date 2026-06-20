@@ -1515,8 +1515,8 @@ function PrintOrderPocketSheet({
           <h3><PrintSheetIcon name="document" /> Druckdaten</h3>
           <PrintModernLine label="Datei" value={draft.fileName} />
           <div className="pp-modern-print-state-row">
-            <span className="is-ok">✓ {draft.dataStatus}</span>
-            <span className="is-ok">✓ {draft.approvalStatus}</span>
+            <span className="is-ok"><i aria-hidden="true">✓</i>{draft.dataStatus}</span>
+            <span className="is-ok"><i aria-hidden="true">✓</i>{draft.approvalStatus}</span>
           </div>
           <PrintModernLine label="Korrektur bis" value={draft.correctionUntil} />
           <PrintModernLine label="Besonderheiten" value={draft.specialNotes} />

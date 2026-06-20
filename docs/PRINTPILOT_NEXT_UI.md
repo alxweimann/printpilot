@@ -3233,3 +3233,29 @@ Bewusst nicht geändert:
 
 Ergebnis:
 - Die Auftragstasche gilt ab jetzt als Designreferenz für die Übertragung auf die Kalkulationsmaske.
+
+## Sprint 46.51 – Auftragstasche Signaturraum und Prüfstatus finalisieren
+
+Sprint 46.51 korrigiert kleine Ausdruckdetails nach dem Mockup-Vergleich.
+
+Auslöser:
+- Im Signaturbereich war unter der Linie `Name, Unterschrift` zu wenig Weißraum.
+- In `Lieferung / Versand` wirkten `Lieferadresse` und der Adresswert noch nicht sauber genug in der Größenhierarchie.
+- Im Mockup sind `Daten geprüft` und `Freigabe erteilt` als grüner Kreis mit weißem Haken und blauem Text dargestellt; diese Anmutung soll übernommen werden.
+
+Umgesetzt:
+- Signaturfelder unten mit mehr Weißraum unter `Name, Unterschrift` versehen.
+- Signaturzeilen innerhalb der Prüfbox neu austariert, ohne die A4-Einseitigkeit aufzugeben.
+- `Lieferadresse`-Zeile im Bereich `Lieferung / Versand` minimal besser lesbar gesetzt.
+- Druckdaten-Status auf Mockup-Anmutung umgestellt:
+  - grüner runder Statuspunkt mit weißem Haken,
+  - Status-/Freigabetext in ruhigem Blau/Navy statt grünem Volltext.
+- Prüfstatus-Zeile mit etwas mehr Luft und besserer Icon-/Text-Ausrichtung versehen.
+
+Bewusst nicht geändert:
+- Keine neuen Fachfelder.
+- Keine Preislogik.
+- Keine Kalkulationslogik.
+- Keine Persistenzänderung.
+- A4 Hochformat bleibt strikt einseitig.
+- Alle Auftragstaschenwerte bleiben editierbar und kommen aus dem Drucktaschenmodell.

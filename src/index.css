@@ -15702,3 +15702,368 @@ button.pp-process-step:hover {
     background: linear-gradient(90deg, #0ba8df 0%, #126fce 100%) !important;
   }
 }
+
+/* Sprint 46.48 – Auftragstasche exakt an Mockup annähern
+   Ziel: Logo/Branding wie Mockup, einzeiliger cyanfarbener Liefertermin,
+   weichere Linien, luftigere Panels und dezente Scanbox mit Phone-Icon. */
+@media print {
+  .pp-print-order-pocket--modern {
+    --modern-blue: #0b6fd3 !important;
+    --modern-blue-dark: #153d70 !important;
+    --modern-accent: #0ba8df !important;
+    --modern-ink: #0c1b33 !important;
+    --modern-ink-soft: #263b58 !important;
+    --modern-heading: #2e527c !important;
+    --modern-muted: #586d86 !important;
+    --modern-muted-soft: #7a8ba1 !important;
+    --modern-line: #e3ebf5 !important;
+    --modern-line-strong: #d2e0f1 !important;
+    --modern-soft: #f8fbff !important;
+    --modern-soft-2: #f2f7ff !important;
+    --modern-panel: #ffffff !important;
+    --modern-green: #2f9d57 !important;
+    grid-template-rows: 34mm 50mm 42mm 44mm 52mm 9mm 31mm 5mm !important;
+    gap: 1.85mm !important;
+    font-family: "Inter", "Aptos", "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, "Helvetica Neue", Arial, sans-serif !important;
+    -webkit-font-smoothing: antialiased !important;
+    text-rendering: geometricPrecision !important;
+  }
+
+  .pp-modern-print-header {
+    grid-template-rows: 15.5mm 16.8mm !important;
+    gap: 1.9mm !important;
+  }
+
+  .pp-modern-print-brand-row {
+    align-items: center !important;
+    padding: 0 3mm 0 2.6mm !important;
+  }
+
+  .pp-modern-print-brand {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 2.2mm !important;
+    min-width: 0 !important;
+  }
+
+  .pp-modern-print-logo-mark-img {
+    display: block !important;
+    width: 9.4mm !important;
+    height: 9.4mm !important;
+    object-fit: contain !important;
+    object-position: center center !important;
+    flex: 0 0 auto !important;
+  }
+
+  .pp-modern-print-brand strong {
+    display: inline-block !important;
+    color: #0a1830 !important;
+    font-family: "Inter", "Aptos Display", "Aptos", "Segoe UI Variable Display", "Segoe UI", Arial, sans-serif !important;
+    font-size: 18.15pt !important;
+    font-weight: 725 !important;
+    letter-spacing: -0.035em !important;
+    line-height: .98 !important;
+  }
+
+  .pp-modern-print-brand em {
+    display: inline-block !important;
+    margin-left: -.4mm !important;
+    color: #146ecb !important;
+    font-family: "Inter", "Aptos", "Segoe UI Variable Text", "Segoe UI", Arial, sans-serif !important;
+    font-size: 12.45pt !important;
+    font-style: normal !important;
+    font-weight: 520 !important;
+    letter-spacing: -0.016em !important;
+    line-height: 1 !important;
+  }
+
+  .pp-modern-print-scan {
+    display: grid !important;
+    grid-template-columns: 17mm 18mm !important;
+    align-items: center !important;
+    gap: 2.1mm !important;
+  }
+
+  .pp-modern-print-scan span {
+    display: grid !important;
+    justify-items: end !important;
+    gap: .45mm !important;
+    width: auto !important;
+    min-width: 0 !important;
+    color: #203f65 !important;
+    text-align: right !important;
+    text-transform: uppercase !important;
+  }
+
+  .pp-modern-print-scan b,
+  .pp-modern-print-scan small {
+    display: block !important;
+    color: #203f65 !important;
+    font-size: 6.25pt !important;
+    font-weight: 720 !important;
+    letter-spacing: .065em !important;
+    line-height: 1.02 !important;
+    white-space: nowrap !important;
+  }
+
+  .pp-modern-print-phone-icon {
+    display: grid !important;
+    place-items: center !important;
+    width: 3.6mm !important;
+    height: 4.6mm !important;
+    color: #203f65 !important;
+    opacity: .72 !important;
+  }
+
+  .pp-modern-print-phone-icon svg {
+    display: block !important;
+    width: 3.2mm !important;
+    height: 4mm !important;
+    stroke: currentColor !important;
+    stroke-width: 1.25 !important;
+  }
+
+  .pp-modern-print-scan img {
+    width: 18mm !important;
+    height: 18mm !important;
+    padding: 1.15mm !important;
+    border: .45pt solid #d5dfeb !important;
+    border-radius: 1.35mm !important;
+    background: #ffffff !important;
+    box-shadow: 0 .45mm 1.2mm rgba(9, 34, 64, .045) !important;
+  }
+
+  .pp-modern-print-meta-row {
+    grid-template-columns: 61mm 54mm 58mm 27mm !important;
+    column-gap: 0 !important;
+    align-items: end !important;
+    padding: 0 0 !important;
+    border-bottom: .42pt solid #e8eef7 !important;
+  }
+
+  .pp-modern-print-meta,
+  .pp-modern-print-status {
+    min-height: 13.9mm !important;
+    padding: 0 3.6mm 2.4mm 3.6mm !important;
+    border-right: .36pt solid #e7edf6 !important;
+  }
+
+  .pp-modern-print-meta:first-child {
+    padding-left: 0 !important;
+  }
+
+  .pp-modern-print-status {
+    border-right: 0 !important;
+    padding-right: 0 !important;
+  }
+
+  .pp-modern-print-meta span,
+  .pp-modern-print-status span,
+  .pp-modern-print-line span,
+  .pp-modern-print-fact small {
+    color: #5c6f89 !important;
+    font-size: 6.65pt !important;
+    font-weight: 650 !important;
+    letter-spacing: .055em !important;
+    text-transform: uppercase !important;
+  }
+
+  .pp-modern-print-meta strong {
+    color: #0c1b33 !important;
+    font-size: 13.7pt !important;
+    font-weight: 665 !important;
+    letter-spacing: -0.026em !important;
+    line-height: 1.08 !important;
+    white-space: nowrap !important;
+  }
+
+  .pp-modern-print-meta--order strong {
+    font-size: 17.8pt !important;
+    font-weight: 720 !important;
+    letter-spacing: -0.036em !important;
+  }
+
+  .pp-modern-print-delivery-date,
+  .pp-modern-print-delivery-date span,
+  .pp-modern-print-delivery-date em {
+    display: inline !important;
+    white-space: nowrap !important;
+  }
+
+  .pp-modern-print-delivery-date span {
+    color: #0ba8df !important;
+    font: inherit !important;
+    font-weight: 700 !important;
+    letter-spacing: inherit !important;
+    text-transform: none !important;
+  }
+
+  .pp-modern-print-delivery-date em {
+    color: #0c1b33 !important;
+    font-style: normal !important;
+    font-weight: 625 !important;
+  }
+
+  .pp-modern-print-status strong {
+    min-height: 7.3mm !important;
+    margin-top: 1.45mm !important;
+    padding: 0 3.1mm !important;
+    border-radius: 1mm !important;
+    background: #0b66c9 !important;
+    color: #ffffff !important;
+    font-size: 8.8pt !important;
+    font-weight: 650 !important;
+    box-shadow: 0 .55mm 1.2mm rgba(11, 102, 201, .16) !important;
+  }
+
+  .pp-modern-print-core,
+  .pp-modern-print-panel,
+  .pp-modern-print-document-row,
+  .pp-modern-print-signatures {
+    border-color: #e1e9f4 !important;
+    border-width: .36pt !important;
+    border-radius: 1.45mm !important;
+    background: #ffffff !important;
+    box-shadow: 0 .45mm 1.35mm rgba(10, 32, 58, .032) !important;
+  }
+
+  .pp-modern-print-core {
+    border-color: #d3e4f7 !important;
+    background: linear-gradient(180deg, #fcfeff 0%, #f8fbff 52%, #f4f8fe 100%) !important;
+  }
+
+  .pp-modern-print-core > header {
+    min-height: 12.4mm !important;
+    padding: 2.1mm 3.1mm !important;
+    border-bottom: .38pt solid #e0ebf7 !important;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%) !important;
+  }
+
+  .pp-modern-print-core h2,
+  .pp-modern-print-panel h3 {
+    color: #2d507b !important;
+    font-family: "Inter", "Aptos Display", "Aptos", "Segoe UI Variable Display", "Segoe UI", Arial, sans-serif !important;
+    font-size: 10.7pt !important;
+    font-weight: 680 !important;
+    letter-spacing: .018em !important;
+  }
+
+  .pp-modern-print-core header p {
+    color: #5f728b !important;
+    font-size: 7.7pt !important;
+    font-weight: 450 !important;
+  }
+
+  .pp-modern-print-fact-grid {
+    margin: 2.25mm 3mm 2.7mm !important;
+    border: .42pt solid #d6e5f6 !important;
+    border-radius: 1.15mm !important;
+    background: rgba(255, 255, 255, .98) !important;
+    overflow: hidden !important;
+  }
+
+  .pp-modern-print-fact {
+    min-height: 15.25mm !important;
+    padding: 1.9mm 2.8mm !important;
+    border-right: .3pt solid #eaf0f7 !important;
+    border-bottom: .3pt solid #eaf0f7 !important;
+  }
+
+  .pp-modern-print-fact strong {
+    color: #0d1c34 !important;
+    font-size: 9.45pt !important;
+    font-weight: 595 !important;
+    line-height: 1.17 !important;
+  }
+
+  .pp-modern-print-section-icon,
+  .pp-modern-print-fact__icon {
+    color: #0b75d8 !important;
+  }
+
+  .pp-modern-print-section-icon svg,
+  .pp-modern-print-fact__icon svg,
+  .pp-modern-print-panel h3 svg,
+  .pp-modern-print-svg-icon {
+    stroke-width: 1.52 !important;
+  }
+
+  .pp-modern-print-panel h3 {
+    min-height: 9mm !important;
+    padding: 1.95mm 2.7mm 1.55mm !important;
+    border-bottom: .36pt solid #e7edf6 !important;
+    background: #ffffff !important;
+  }
+
+  .pp-modern-print-line {
+    min-height: 6.25mm !important;
+    padding: 1.08mm 2.65mm !important;
+    border-bottom: .25pt solid #edf2f8 !important;
+  }
+
+  .pp-modern-print-line strong {
+    color: #233852 !important;
+    font-size: 8.55pt !important;
+    font-weight: 510 !important;
+    line-height: 1.24 !important;
+  }
+
+  .pp-modern-print-state-row span {
+    color: #2f9d57 !important;
+    font-size: 8.2pt !important;
+    font-weight: 600 !important;
+  }
+
+  .pp-modern-print-tags strong {
+    border-color: #b8d9fb !important;
+    background: #f5faff !important;
+    color: #0b4f91 !important;
+    font-size: 8.35pt !important;
+    font-weight: 625 !important;
+  }
+
+  .pp-modern-print-check-row,
+  .pp-modern-print-check-list {
+    border-top-color: #edf2f8 !important;
+  }
+
+  .pp-modern-print-check,
+  .pp-modern-print-muted,
+  .pp-modern-print-document-row {
+    color: #32465f !important;
+    font-size: 7.85pt !important;
+    font-weight: 480 !important;
+  }
+
+  .pp-modern-print-signatures {
+    border-color: #c6ddf7 !important;
+    border-width: .45pt !important;
+  }
+
+  .pp-modern-print-signatures > div {
+    padding: 2.9mm 4mm 2mm !important;
+    border-right: .35pt dotted #d6e0ec !important;
+  }
+
+  .pp-modern-print-signatures > div::before {
+    top: 0 !important;
+    left: 0 !important;
+    right: 0 !important;
+    height: .55mm !important;
+    border-radius: 0 !important;
+    background: #0b88dc !important;
+  }
+
+  .pp-modern-print-signatures strong {
+    color: #234e7b !important;
+    font-size: 8.1pt !important;
+    font-weight: 650 !important;
+    letter-spacing: .025em !important;
+  }
+
+  .pp-modern-print-footer {
+    color: #74859a !important;
+    font-size: 6.8pt !important;
+    font-weight: 440 !important;
+  }
+}

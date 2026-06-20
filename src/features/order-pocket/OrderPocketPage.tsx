@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Panel } from "../../components/ui/Panel";
 import { PrintPilotLogo } from "../../components/brand/PrintPilotLogo";
+import printPilotLogoMark from "../../assets/logo/printpilot-logo-mark.png";
 import orderQrCode from "../../assets/qr/order-pp-2026-00481.svg";
 import digitalColorMachine from "../../assets/machines/machine-digital-color.svg";
 import digitalMonoMachine from "../../assets/machines/machine-digital-mono.svg";
@@ -1219,7 +1220,12 @@ type PrintSheetIconName =
   | "shield";
 
 function PrintPilotSheetLogo() {
-  return <PrintPilotLogo className="pp-modern-print-logo-img" variant="print" alt="" />;
+  return (
+    <>
+      <img className="pp-modern-print-logo-mark-img" src={printPilotLogoMark} alt="" aria-hidden="true" />
+      <strong>PrintPilot</strong>
+    </>
+  );
 }
 
 function PrintSheetIcon({ name }: { name: PrintSheetIconName }) {
@@ -1447,6 +1453,12 @@ function PrintOrderPocketSheet({
             <span>
               <b>Scannen</b>
               <small>für Details</small>
+              <i aria-hidden="true" className="pp-modern-print-phone-icon">
+                <svg viewBox="0 0 16 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <rect x="4.25" y="1.25" width="7.5" height="17.5" rx="1.4" />
+                  <path d="M6.7 3.2h2.6M7.65 16.7h.7" />
+                </svg>
+              </i>
             </span>
             <img src={orderQrCode} alt={`QR-Code für Auftrag ${order.id}`} />
           </div>

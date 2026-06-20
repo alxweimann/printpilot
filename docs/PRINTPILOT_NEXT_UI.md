@@ -3141,3 +3141,23 @@ Bewusst nicht geändert:
 Nächster sinnvoller Schritt:
 - Ausdruck prüfen.
 - Wenn die Auftragstasche optisch passt, die Designrichtung auf die Kalkulationsmaske übertragen.
+
+## Sprint 46.48 – Auftragstasche exakt am Mockup ausrichten
+
+Sprint 46.48 schärft die druckbare Auftragstasche nochmals explizit gegen das moderne Mockup als Zielbild.
+
+Umgesetzt:
+
+- Printkopf stärker an das Mockup angeglichen.
+- Offizielles PrintPilot-Markenzeichen im Druckkopf als separate Marke eingesetzt, daneben typografisch gesetztes `PrintPilot` und `Auftragstasche`.
+- Liefertermin im Kopf wieder einzeilig gesetzt.
+- Lieferdatum im Mockup-Stil cyan/blau hervorgehoben, Uhrzeit bleibt dunkel.
+- QR-/Scanbereich um eine kleine Phone-/Scan-Markierung ergänzt.
+- Rahmen und Innenlinien weiter entschärft.
+- Produktionsdaten-Box dezenter schattiert und hochwertiger gesetzt.
+- Panels, Linien, Labels und Werte typografisch ruhiger abgestimmt.
+- Signaturbereich bleibt mit blauem Akzent und echter Schreibfläche erhalten.
+- DIN A4 Hochformat bleibt strikt einseitig.
+- Alle Werte bleiben aus dem editierbaren Drucktaschenmodell.
+
+Keine Preislogik, keine Kalkulationslogik und keine Persistenzänderung.

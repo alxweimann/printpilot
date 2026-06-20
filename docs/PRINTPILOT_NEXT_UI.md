@@ -3326,3 +3326,24 @@ Bewusst nicht geändert:
 - Arbeitsanweisung und Zusatzhinweis bleiben erhalten, sofern sie echte auftragsrelevante Informationen enthalten.
 - Grundsatz für die Auftragstasche bestätigt: Gedruckt wird nur, was für diesen Auftrag relevant ist; frei werdender Platz soll für Besonderheiten und wichtige Produktionshinweise genutzt werden.
 - Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.
+
+## Sprint 46.57 – Auftragstasche Kontrollbereich bereinigen
+
+- Der Bereich **Kontrolle** in der druckbaren Auftragstasche enthält nur noch echte Prüfpunkte.
+- Entfernt aus dem Kontrollpanel wurden:
+  - Fremdarbeit,
+  - Muster-/Belegangaben,
+  - Dokumente,
+  - Rechnungshinweise.
+- Die Dokumenten-/Ablagezeile unten bleibt die einzige Stelle für `Muster in Tasche`, `Lieferschein`, `Papierrechnung` und `Lieferantenrechnung`.
+- Dadurch gibt es keine doppelte Ausgabe von Lieferschein/Papierrechnung/Lieferantenrechnung mehr.
+- Kontrollpunkte bleiben auf Produktionsprüfung fokussiert:
+  - Farbigkeit / Maßhaltigkeit geprüft,
+  - Weiterverarbeitung geprüft,
+  - Menge / Stückzahl geprüft,
+  - Druckdaten / Freigabe geprüft.
+- Das Wort `Auftragstasche` im Druckkopf wurde optisch stärker auf Höhe des unveränderten offiziellen PrintPilot-Schriftzugs ausgerichtet.
+- Der blaue Signaturbalken wurde erneut als durchgehende Linie über die gesamte Signaturzone abgesichert.
+- Das offizielle PrintPilot-Logo bleibt unverändert; keine Rekonstruktion, kein Beschnitt, keine CI-Änderung.
+- A4 Hochformat bleibt strikt einseitig; alle Auftragstaschenwerte bleiben editierbar.
+- Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.

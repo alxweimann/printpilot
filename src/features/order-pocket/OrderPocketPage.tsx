@@ -1599,15 +1599,12 @@ function PrintOrderPocketSheet({
         <div className="pp-modern-print-panel pp-modern-print-panel--control">
           <h3><PrintSheetIcon name="shield" /> Kontrolle</h3>
           <PrintModernLine label="Checkliste" value={draft.checklistLabel} />
-          <div className="pp-modern-print-check-list">
+          <div className="pp-modern-print-check-list pp-modern-print-check-list--control-only">
             <PrintModernCheck label="Farbigkeit / Maßhaltigkeit geprüft" />
             <PrintModernCheck label="Weiterverarbeitung geprüft" />
             <PrintModernCheck label="Menge / Stückzahl geprüft" />
+            <PrintModernCheck label="Druckdaten / Freigabe geprüft" />
           </div>
-          <PrintModernLine label="Fremdarbeit" value={draft.foreignWork} />
-          <PrintModernLine label="Muster" value={draft.samples} />
-          <PrintModernLine label="Dokumente" value={draft.documents} />
-          <PrintModernLine label="Rechnung" value={draft.invoiceNote} />
         </div>
       </section>
 

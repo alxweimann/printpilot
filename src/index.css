@@ -17029,3 +17029,81 @@ button.pp-process-step:hover {
     line-height: 1.14 !important;
   }
 }
+
+/* Sprint 46.57 – Auftragstasche: Kontrollbereich bereinigen und Logo-Wortmarke ausrichten
+   Ziel: Kontrolle enthält nur echte Prüfpunkte, keine Fremdarbeit/Dokumente/Rechnung.
+   Das Wort Auftragstasche wird auf die optische Höhe des originalen PrintPilot-Schriftzugs gesetzt. */
+@media print {
+  .pp-modern-print-brand {
+    align-items: center !important;
+    gap: 2.05mm !important;
+  }
+
+  .pp-modern-print-logo-img {
+    height: 12.2mm !important;
+    max-width: 30mm !important;
+    object-fit: contain !important;
+    object-position: left center !important;
+  }
+
+  .pp-modern-print-brand em {
+    margin-left: .25mm !important;
+    margin-top: 2.85mm !important;
+    align-self: center !important;
+    line-height: 1 !important;
+  }
+
+  .pp-modern-print-panel--control {
+    align-content: start !important;
+  }
+
+  .pp-modern-print-panel--control .pp-modern-print-line {
+    min-height: 5.8mm !important;
+  }
+
+  .pp-modern-print-check-list--control-only {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 1.25mm 2.4mm !important;
+    padding: 1.65mm 2.55mm 2.05mm !important;
+    border-top: .18pt solid #f4f7fb !important;
+  }
+
+  .pp-modern-print-check-list--control-only .pp-modern-print-check {
+    align-items: center !important;
+    min-height: 4.25mm !important;
+    line-height: 1.15 !important;
+  }
+
+  .pp-modern-print-signatures {
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  .pp-modern-print-signatures::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    height: .46mm !important;
+    background: #0aa7df !important;
+    z-index: 50 !important;
+    pointer-events: none !important;
+  }
+
+  .pp-modern-print-signatures > div {
+    border-right: 0 !important;
+  }
+
+  .pp-modern-print-signatures > div::before {
+    display: none !important;
+  }
+
+  .pp-modern-print-signatures > div:not(:last-child)::after {
+    top: 1.2mm !important;
+    bottom: 0 !important;
+    border-right: .2pt dotted #e8eff7 !important;
+    z-index: 1 !important;
+  }
+}

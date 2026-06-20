@@ -731,45 +731,33 @@ function createPrintPocketDraft(order: PrintPilotOrder): PrintPocketDraft {
   };
 }
 
-function getPrintPocketOverview(draft: PrintPocketDraft) {
-  return [
-    ["Korrektur bis", draft.correctionUntil],
-    ["Bestell-/Kunden-Nr.", draft.orderReference],
-    ["Besondere Hinweise", draft.specialNotes],
-    ["Fremdarbeit", draft.foreignWork],
-    ["Versandart", draft.shippingMethod],
-    ["Teillieferungen", draft.partialDeliveries],
-    ["Muster / Belege", draft.samples],
-    ["Dokumente", draft.documents],
-    ["Rechnung", draft.invoiceNote],
-    ["Kontrolle", draft.controlNote],
-  ].map(([label, value]) => ({ label, value: value || "prüfen" }));
-}
-
 function PrintPocketDraftEditor({
   order,
+  actionState,
   draft,
   onDraftChange,
 }: {
   order: PrintPilotOrder;
+  actionState: PocketActionState;
   draft: PrintPocketDraft;
   onDraftChange: (field: keyof PrintPocketDraft, value: string) => void;
 }) {
-  const rows = getPrintPocketOverview(draft);
+  const activeFinishing = getActiveFinishingSteps(actionState);
+  const productionData = getOrderProductionData(order);
 
   return (
     <section
-      className="pp-print-pocket-editor"
+      className="pp-print-pocket-editor pp-print-pocket-editor--sheet"
       aria-label="Auftragstasche bearbeiten"
     >
       <div className="pp-print-pocket-editor__head">
         <div>
           <span>Auftragstasche</span>
-          <strong>Editierbarer Laufzettel vor dem Druck</strong>
+          <strong>Laufzettel vorbereiten</strong>
           <p>
-            Die Auftragsdetails bleiben die digitale Produktionsansicht. Hier
-            werden nur die Angaben gepflegt, die auf die gedruckte
-            DIN-A4-Auftragstasche gehören.
+            Links ist die spätere DIN-A4-Auftragstasche als Raster-Vorschau.
+            Rechts werden nur drucktaschenrelevante Ergänzungen gepflegt. Die
+            digitale Produktionsansicht bleibt unter Auftragsdetails.
           </p>
         </div>
         <div className="pp-print-pocket-editor__job">
@@ -781,267 +769,260 @@ function PrintPocketDraftEditor({
         </div>
       </div>
 
-      <div className="pp-print-pocket-editor__grid">
-        <label>
-          <span>Korrektur bis</span>
-          <input
-            value={draft.correctionUntil}
-            onChange={(event) =>
-              onDraftChange("correctionUntil", event.target.value)
-            }
-          />
-        </label>
-        <label>
-          <span>Bestellnummer / Kundenauftrag</span>
-          <input
-            value={draft.orderReference}
-            onChange={(event) =>
-              onDraftChange("orderReference", event.target.value)
-            }
-          />
-        </label>
-        <label>
-          <span>Versandart</span>
-          <input
-            value={draft.shippingMethod}
-            onChange={(event) =>
-              onDraftChange("shippingMethod", event.target.value)
-            }
-          />
-        </label>
-        <label>
-          <span>Teillieferungen</span>
-          <input
-            value={draft.partialDeliveries}
-            onChange={(event) =>
-              onDraftChange("partialDeliveries", event.target.value)
-            }
-          />
-        </label>
-        <label className="pp-print-pocket-editor__wide">
-          <span>Besondere Hinweise</span>
-          <textarea
-            rows={3}
-            value={draft.specialNotes}
-            onChange={(event) =>
-              onDraftChange("specialNotes", event.target.value)
-            }
-          />
-        </label>
-        <label className="pp-print-pocket-editor__wide">
-          <span>Weiterverarbeitung / Handarbeit</span>
-          <textarea
-            rows={3}
-            value={draft.finishingNotes}
-            onChange={(event) =>
-              onDraftChange("finishingNotes", event.target.value)
-            }
-          />
-        </label>
-        <label className="pp-print-pocket-editor__wide">
-          <span>Lieferadresse / Lieferhinweis</span>
-          <textarea
-            rows={3}
-            value={draft.deliveryNotes}
-            onChange={(event) =>
-              onDraftChange("deliveryNotes", event.target.value)
-            }
-          />
-        </label>
-        <label className="pp-print-pocket-editor__wide">
-          <span>Fremdarbeiten / Lieferant</span>
-          <textarea
-            rows={3}
-            value={draft.foreignWork}
-            onChange={(event) =>
-              onDraftChange("foreignWork", event.target.value)
-            }
-          />
-        </label>
-        <label>
-          <span>Muster / Belege</span>
-          <input
-            value={draft.samples}
-            onChange={(event) => onDraftChange("samples", event.target.value)}
-          />
-        </label>
-        <label>
-          <span>Rechnungskontrolle</span>
-          <input
-            value={draft.invoiceNote}
-            onChange={(event) =>
-              onDraftChange("invoiceNote", event.target.value)
-            }
-          />
-        </label>
-        <label className="pp-print-pocket-editor__wide">
-          <span>Dokumente / Ablage</span>
-          <input
-            value={draft.documents}
-            onChange={(event) => onDraftChange("documents", event.target.value)}
-          />
-        </label>
-        <label className="pp-print-pocket-editor__wide">
-          <span>Kontrollhinweis</span>
-          <input
-            value={draft.controlNote}
-            onChange={(event) =>
-              onDraftChange("controlNote", event.target.value)
-            }
-          />
-        </label>
-      </div>
+      <div className="pp-print-pocket-workbench">
+        <article
+          className="pp-print-pocket-a4-preview"
+          aria-label="A4-Vorschau"
+        >
+          <header>
+            <div>
+              <small>Auftrag-Nr.</small>
+              <strong>{order.id.replace("PP-", "")}</strong>
+            </div>
+            <div>
+              <small>Liefertermin</small>
+              <strong>{order.dueDate}</strong>
+              <span>{order.dueMeta}</span>
+            </div>
+            <img src={orderQrCode} alt={`QR-Code für Auftrag ${order.id}`} />
+          </header>
 
-      <div className="pp-print-pocket-preview-list">
-        <strong>Wird auf der gedruckten Auftragstasche verwendet</strong>
-        <div>
-          {rows.map((row) => (
-            <p key={row.label}>
-              <span>{row.label}</span>
-              <b>{row.value}</b>
-            </p>
-          ))}
+          <section className="pp-print-pocket-a4-preview__customer">
+            <b>{order.customer}</b>
+            <span>
+              {order.contactName} · {order.contactPhone}
+            </span>
+            <em>{draft.deliveryNotes || order.customerAddress.join(" · ")}</em>
+          </section>
+
+          <section className="pp-print-pocket-a4-preview__notice">
+            <small>Besondere Hinweise</small>
+            <strong>{draft.specialNotes || "keine besonderen Hinweise"}</strong>
+          </section>
+
+          <section className="pp-print-pocket-a4-preview__title">
+            <small>Auftragsbezeichnung</small>
+            <strong>{order.product}</strong>
+            <span>
+              {productionData.product.quantity} ·{" "}
+              {productionData.product.finalFormat} ·{" "}
+              {productionData.product.colorMode}
+            </span>
+          </section>
+
+          <div className="pp-print-pocket-a4-preview__grid">
+            <span>
+              Material
+              <br />
+              <b>{productionData.product.substrate}</b>
+            </span>
+            <span>
+              Druck
+              <br />
+              <b>{order.machine}</b>
+            </span>
+            <span>
+              Nutzen
+              <br />
+              <b>{productionData.imposition.label}</b>
+            </span>
+            <span>
+              Weiterverarbeitung
+              <br />
+              <b>{activeFinishing.length || 0} aktiv</b>
+            </span>
+          </div>
+
+          <section className="pp-print-pocket-a4-preview__checks">
+            <span>☐ Papier bestellt</span>
+            <span>☐ Daten gestellt</span>
+            <span>☐ Muster</span>
+            <span>☐ Lieferschein</span>
+            <span>☐ Rechnung prüfen</span>
+            <span>☐ Versand erledigt</span>
+          </section>
+
+          <footer>
+            <span>Druck geprüft</span>
+            <span>Weiterverarbeitung geprüft</span>
+            <span>Versand geprüft</span>
+          </footer>
+        </article>
+
+        <div className="pp-print-pocket-fields">
+          <section className="pp-print-pocket-field-group">
+            <h3>Kopf & Termine</h3>
+            <div>
+              <label>
+                <span>Korrektur bis</span>
+                <input
+                  value={draft.correctionUntil}
+                  onChange={(event) =>
+                    onDraftChange("correctionUntil", event.target.value)
+                  }
+                />
+              </label>
+              <label>
+                <span>Bestellnummer / Kundenauftrag</span>
+                <input
+                  value={draft.orderReference}
+                  onChange={(event) =>
+                    onDraftChange("orderReference", event.target.value)
+                  }
+                />
+              </label>
+            </div>
+          </section>
+
+          <section className="pp-print-pocket-field-group">
+            <h3>Hinweise & Weiterverarbeitung</h3>
+            <label>
+              <span>Besondere Hinweise</span>
+              <textarea
+                rows={3}
+                value={draft.specialNotes}
+                onChange={(event) =>
+                  onDraftChange("specialNotes", event.target.value)
+                }
+              />
+            </label>
+            <label>
+              <span>Weiterverarbeitung / Handarbeit</span>
+              <textarea
+                rows={3}
+                value={draft.finishingNotes}
+                onChange={(event) =>
+                  onDraftChange("finishingNotes", event.target.value)
+                }
+              />
+            </label>
+          </section>
+
+          <section className="pp-print-pocket-field-group">
+            <h3>Versand & Fremdarbeit</h3>
+            <div>
+              <label>
+                <span>Versandart</span>
+                <input
+                  value={draft.shippingMethod}
+                  onChange={(event) =>
+                    onDraftChange("shippingMethod", event.target.value)
+                  }
+                />
+              </label>
+              <label>
+                <span>Teillieferungen</span>
+                <input
+                  value={draft.partialDeliveries}
+                  onChange={(event) =>
+                    onDraftChange("partialDeliveries", event.target.value)
+                  }
+                />
+              </label>
+            </div>
+            <label>
+              <span>Lieferadresse / Lieferhinweis</span>
+              <textarea
+                rows={2}
+                value={draft.deliveryNotes}
+                onChange={(event) =>
+                  onDraftChange("deliveryNotes", event.target.value)
+                }
+              />
+            </label>
+            <label>
+              <span>Fremdarbeiten / Lieferant</span>
+              <textarea
+                rows={2}
+                value={draft.foreignWork}
+                onChange={(event) =>
+                  onDraftChange("foreignWork", event.target.value)
+                }
+              />
+            </label>
+          </section>
+
+          <section className="pp-print-pocket-field-group">
+            <h3>Kontrolle & Ablage</h3>
+            <div>
+              <label>
+                <span>Muster / Belege</span>
+                <input
+                  value={draft.samples}
+                  onChange={(event) =>
+                    onDraftChange("samples", event.target.value)
+                  }
+                />
+              </label>
+              <label>
+                <span>Rechnungskontrolle</span>
+                <input
+                  value={draft.invoiceNote}
+                  onChange={(event) =>
+                    onDraftChange("invoiceNote", event.target.value)
+                  }
+                />
+              </label>
+            </div>
+            <label>
+              <span>Dokumente / Ablage</span>
+              <input
+                value={draft.documents}
+                onChange={(event) =>
+                  onDraftChange("documents", event.target.value)
+                }
+              />
+            </label>
+            <label>
+              <span>Kontrollhinweis</span>
+              <input
+                value={draft.controlNote}
+                onChange={(event) =>
+                  onDraftChange("controlNote", event.target.value)
+                }
+              />
+            </label>
+          </section>
         </div>
       </div>
     </section>
   );
 }
 
-function getPrintableSheetSections(
-  order: PrintPilotOrder,
-  actionState: PocketActionState,
-  draft: PrintPocketDraft,
-) {
-  const productionData = getOrderProductionData(order);
-  const activeFinishing = getActiveFinishingSteps(actionState);
-  const activeFinishingText =
-    activeFinishing.map((step) => `${step.label}: ${step.note}`).join("\n") ||
-    "keine aktive Weiterverarbeitung";
-  const finishingCatalogText = finishingCatalog.join(" · ");
-
-  return [
-    {
-      title: "Produktionsdaten",
-      rows: [
-        ["Produkt", productionData.product.label],
-        ["Auflage", productionData.product.quantity],
-        ["Endformat", productionData.product.finalFormat],
-        ["Seiten", productionData.product.pages],
-        ["Farbigkeit", productionData.product.colorMode],
-        ["Material", productionData.product.substrate],
-        ["Rohbogen", productionData.product.productionFormat],
-        ["Maschine", order.machine],
-      ],
-    },
-    {
-      title: "Druckdaten / Freigabe",
-      rows: [
-        ["Datenstatus", actionState.data.label],
-        ["Freigabe", actionState.approval.label],
-        ["Korrektur bis", draft.correctionUntil],
-        [
-          "Datei",
-          productionData.files.original?.filename ?? order.preview.filename,
-        ],
-        ["Preflight", order.preflightValue],
-        ["Beschnitt", order.bleedStatus.label],
-        [
-          "Profil",
-          order.machineType === "wide-format"
-            ? "Roland VG3 · Medienprofil"
-            : "Coated FOGRA39",
-        ],
-      ],
-    },
-    {
-      title: "Nutzenplan / Druckbogen",
-      rows: [
-        [
-          "Bogenformat",
-          `${productionData.imposition.sheet.name} · ${formatSheetSize(productionData.imposition.sheet.widthMm, productionData.imposition.sheet.heightMm)}`,
-        ],
-        ["Nutzen", productionData.imposition.label],
-        [
-          "Anordnung",
-          `${productionData.imposition.layout.columns} × ${productionData.imposition.layout.rows} · ${productionData.imposition.layout.usedSlots} Nutzen`,
-        ],
-        ["Beschnitt", productionData.imposition.bleed],
-        ["Zuschuss", order.waste],
-        ["Druckbogen-PDF", "später aus Ausschießmodul"],
-      ],
-    },
-    {
-      title: "Weiterverarbeitung",
-      rows: [
-        [
-          "Aktive Schritte",
-          activeFinishing.length ? `${activeFinishing.length}` : "keine",
-        ],
-        ["Leistungen", activeFinishingText],
-        ["Zusatzhinweis", draft.finishingNotes],
-        ["Katalog", finishingCatalogText],
-      ],
-    },
-    {
-      title: "Versand / Verpackung",
-      rows: [
-        ["Liefertermin", `${order.dueDate} · ${order.dueMeta}`],
-        ["Lieferart", draft.shippingMethod || order.deliveryMeta],
-        [
-          "Lieferadresse",
-          draft.deliveryNotes || order.customerAddress.join(", "),
-        ],
-        [
-          "Verpackung",
-          activeFinishing.find((step) => step.label.includes("Verpack"))
-            ?.note ?? "prüfen",
-        ],
-        ["Teillieferung", draft.partialDeliveries],
-      ],
-    },
-    {
-      title: "Notizen / Kontrolle",
-      rows: [
-        ["Produktionshinweis", draft.specialNotes || order.nextStep],
-        ["Bestell-/Kunden-Nr.", draft.orderReference],
-        ["Fremdarbeit", draft.foreignWork],
-        ["Muster / Belege", draft.samples],
-        ["Dokumente", draft.documents],
-        ["Rechnung", draft.invoiceNote],
-        ["Operator", order.owner],
-        ["Status", getCurrentProductionLabel(actionState.production)],
-        ["QR-Code", `${order.id} in PrintPilot öffnen`],
-      ],
-    },
-  ];
+function PrintCheckBox({
+  label,
+  checked = false,
+}: {
+  label: string;
+  checked?: boolean;
+}) {
+  return (
+    <span
+      className={
+        checked ? "pp-print-form-check is-checked" : "pp-print-form-check"
+      }
+    >
+      <b>{checked ? "☒" : "☐"}</b>
+      {label}
+    </span>
+  );
 }
 
-function PrintDataBlock({ title, rows }: { title: string; rows: string[][] }) {
+function PrintLine({ label, value }: { label: string; value?: string }) {
   return (
-    <section className="pp-print-sheet-block">
-      <h3>{title}</h3>
-      <div className="pp-print-sheet-table">
-        {rows.map(([label, value]) => {
-          const isLongPrintRow =
-            label === "Leistungen" ||
-            label === "Katalog" ||
-            label === "Lieferadresse";
-          return (
-            <p
-              key={`${title}-${label}`}
-              className={
-                isLongPrintRow
-                  ? "pp-print-sheet-row pp-print-sheet-row--long"
-                  : "pp-print-sheet-row"
-              }
-            >
-              <span>{label}</span>
-              <strong>{value}</strong>
-            </p>
-          );
-        })}
-      </div>
-    </section>
+    <p className="pp-print-form-line">
+      <span>{label}</span>
+      <strong>{value || ""}</strong>
+    </p>
+  );
+}
+
+function PrintEmptyLine({ label }: { label: string }) {
+  return (
+    <p className="pp-print-form-empty-line">
+      <span>{label}</span>
+      <strong></strong>
+    </p>
   );
 }
 
@@ -1054,75 +1035,238 @@ function PrintOrderPocketSheet({
   actionState: PocketActionState;
   draft: PrintPocketDraft;
 }) {
-  const sections = getPrintableSheetSections(order, actionState, draft);
   const productionData = getOrderProductionData(order);
+  const activeFinishing = getActiveFinishingSteps(actionState);
   const checklistSummary = getChecklistSummary(actionState.checklist);
+  const activePackaging = activeFinishing.find((step) =>
+    step.label.includes("Verpack"),
+  );
+  const orderNumber = order.id.replace("PP-", "");
 
   return (
     <article
-      className="pp-print-order-pocket"
+      className="pp-print-order-pocket pp-print-order-pocket--form"
       aria-label="Druckbare Auftragstasche"
     >
-      <header className="pp-print-sheet-header">
-        <div className="pp-print-sheet-brand">
+      <header className="pp-print-form-header">
+        <div className="pp-print-form-header__left">
           <img src={printPilotLogo} alt="PrintPilot" />
           <div>
-            <span>PrintPilot Auftragstasche</span>
-            <strong>{order.id}</strong>
-            <small>Digitaler Laufzettel / Produktionsauftrag</small>
+            <span>Auftrag-Nr.</span>
+            <strong>{orderNumber}</strong>
+            <small>PrintPilot Auftragstasche</small>
           </div>
         </div>
-        <div className="pp-print-sheet-title">
-          <h2>{order.product}</h2>
-          <p>
-            {order.customer} · {productionData.product.quantity} ·{" "}
-            {productionData.product.finalFormat}
-          </p>
+        <div className="pp-print-form-header__center">
+          <span>Auftragsbezeichnung</span>
+          <strong>{order.product}</strong>
+          <small>
+            {productionData.product.quantity} ·{" "}
+            {productionData.product.finalFormat} ·{" "}
+            {productionData.product.colorMode}
+          </small>
         </div>
-        <div className="pp-print-sheet-qr">
+        <div className="pp-print-form-header__date">
+          <span>Liefertermin</span>
+          <strong>{order.dueDate}</strong>
+          <small>{order.dueMeta}</small>
+        </div>
+        <div className="pp-print-form-header__qr">
           <img src={orderQrCode} alt={`QR-Code für Auftrag ${order.id}`} />
-          <span>Scannen und Auftrag öffnen</span>
+          <small>{order.id}</small>
         </div>
       </header>
 
-      <section className="pp-print-sheet-summary">
-        <span>
-          <small>Kunde</small>
+      <section className="pp-print-form-party-grid">
+        <div className="pp-print-form-box pp-print-form-box--customer">
+          <h3>Kunde</h3>
           <strong>{order.customer}</strong>
-          <b>
-            {order.contactName} · {order.contactPhone}
-          </b>
-        </span>
-        <span>
-          <small>Termin</small>
-          <strong>{order.dueDate}</strong>
-          <b>{order.dueMeta}</b>
-        </span>
-        <span>
-          <small>Produktion</small>
-          <strong>{getCurrentProductionLabel(actionState.production)}</strong>
-          <b>{order.machine}</b>
-        </span>
-        <span>
-          <small>Checkliste</small>
-          <strong>
-            {checklistSummary.done} / {checklistSummary.total}
-          </strong>
-          <b>{checklistSummary.requiredOpen} Pflichtpunkte offen</b>
-        </span>
+          <p>{order.contactName}</p>
+          <p>{order.customerAddress.join(" · ")}</p>
+          <p>Telefon: {order.contactPhone}</p>
+        </div>
+        <div className="pp-print-form-box">
+          <h3>Rechnung an</h3>
+          <strong>{order.customer}</strong>
+          <p>{order.customerAddress.join(" · ")}</p>
+        </div>
+        <div className="pp-print-form-box pp-print-form-box--control">
+          <h3>Kontrolle</h3>
+          <PrintLine label="Korrektur bis" value={draft.correctionUntil} />
+          <PrintLine
+            label="Checkliste"
+            value={`${checklistSummary.done}/${checklistSummary.total} · ${checklistSummary.requiredOpen} offen`}
+          />
+          <PrintLine
+            label="Status"
+            value={getCurrentProductionLabel(actionState.production)}
+          />
+        </div>
       </section>
 
-      <div className="pp-print-sheet-grid">
-        {sections.map((section) => (
-          <PrintDataBlock
-            key={section.title}
-            title={section.title}
-            rows={section.rows}
-          />
-        ))}
-      </div>
+      <section className="pp-print-form-notice">
+        <h3>Besondere Hinweise</h3>
+        <p>{draft.specialNotes || order.nextStep}</p>
+      </section>
 
-      <section className="pp-print-sheet-signatures">
+      <section className="pp-print-form-description">
+        <h3>Auftragsbeschreibung</h3>
+        <p>
+          {productionData.product.label} · {productionData.product.pages} ·{" "}
+          {productionData.product.colorMode} · {draft.orderReference}
+        </p>
+      </section>
+
+      <section className="pp-print-form-spec-table">
+        <PrintLine label="Auflage" value={productionData.product.quantity} />
+        <PrintLine
+          label="Endformat"
+          value={productionData.product.finalFormat}
+        />
+        <PrintLine
+          label="Offenes Format"
+          value={productionData.product.finalFormat}
+        />
+        <PrintLine label="Umfang" value={productionData.product.pages} />
+        <PrintLine
+          label="Bogenaufteilung"
+          value={productionData.imposition.label}
+        />
+        <PrintLine
+          label="Farben Vorderseite"
+          value={order.color.includes("4/4") ? "4-farbig CMYK" : order.color}
+        />
+        <PrintLine
+          label="Farben Rückseite"
+          value={order.color.includes("4/4") ? "4-farbig CMYK" : "prüfen"}
+        />
+        <PrintLine label="Druckart" value={order.machineTypeLabel} />
+      </section>
+
+      <section className="pp-print-form-material">
+        <div className="pp-print-form-box">
+          <h3>Papier / Druckbogen</h3>
+          <div className="pp-print-form-material-grid">
+            <PrintLine
+              label="Papier"
+              value={productionData.product.substrate}
+            />
+            <PrintLine
+              label="Rohbogenformat"
+              value={productionData.product.productionFormat}
+            />
+            <PrintLine
+              label="Druckformat"
+              value={`${productionData.imposition.sheet.name} · ${formatSheetSize(productionData.imposition.sheet.widthMm, productionData.imposition.sheet.heightMm)}`}
+            />
+            <PrintLine label="Nettobogen" value="aus Kalkulation" />
+            <PrintLine label="Zuschuss" value={order.waste} />
+            <PrintLine label="Bruttobogen" value="aus Kalkulation" />
+          </div>
+          <div className="pp-print-form-check-row">
+            <PrintCheckBox label="Papier bestellt" />
+            <PrintCheckBox label="Papier am Lager" checked />
+            <PrintCheckBox label="Papier gestellt" />
+            <PrintCheckBox label="Lieferant" />
+          </div>
+        </div>
+      </section>
+
+      <section className="pp-print-form-two-col">
+        <div className="pp-print-form-box">
+          <h3>Lieferadresse</h3>
+          <p>{draft.deliveryNotes || order.customerAddress.join(" · ")}</p>
+          <PrintEmptyLine label="1. Teillieferung" />
+          <PrintEmptyLine label="2. Teillieferung" />
+          <PrintEmptyLine label="3. Teillieferung" />
+          <PrintLine
+            label="Gesamtmenge"
+            value={productionData.product.quantity}
+          />
+        </div>
+        <div className="pp-print-form-box">
+          <h3>Versand</h3>
+          <div className="pp-print-form-check-grid">
+            <PrintCheckBox label="DPD" />
+            <PrintCheckBox label="DPD-Express" />
+            <PrintCheckBox label="Post" />
+            <PrintCheckBox label="Spedition" />
+            <PrintCheckBox label="Abholung" />
+            <PrintCheckBox label="Fahrer" />
+          </div>
+          <PrintLine
+            label="Versandart"
+            value={draft.shippingMethod || order.deliveryMeta}
+          />
+          <PrintLine
+            label="Verpackung"
+            value={activePackaging?.note ?? draft.finishingNotes}
+          />
+          <PrintLine label="Teillieferung" value={draft.partialDeliveries} />
+        </div>
+      </section>
+
+      <section className="pp-print-form-finishing">
+        <div className="pp-print-form-box">
+          <h3>Weiterverarbeitung / Produktion</h3>
+          <div className="pp-print-form-finishing-grid">
+            {finishingCatalog.map((label) => {
+              const active = activeFinishing.some(
+                (step) => step.label === label,
+              );
+              return (
+                <PrintCheckBox key={label} label={label} checked={active} />
+              );
+            })}
+          </div>
+          <p className="pp-print-form-small-note">
+            {activeFinishing
+              .map((step) => `${step.label}: ${step.note}`)
+              .join(" · ") || "keine aktive Weiterverarbeitung"}
+          </p>
+          <p className="pp-print-form-small-note">
+            Zusatz: {draft.finishingNotes}
+          </p>
+        </div>
+      </section>
+
+      <section className="pp-print-form-footer-grid">
+        <div className="pp-print-form-box">
+          <h3>Auftrag / Daten</h3>
+          <div className="pp-print-form-check-row pp-print-form-check-row--wrap">
+            <PrintCheckBox label="Neuauftrag" />
+            <PrintCheckBox label="Nachdruck unverändert" />
+            <PrintCheckBox label="Nachdruck mit Änderung" />
+            <PrintCheckBox label="Daten gestellt" checked />
+          </div>
+          <PrintLine label="Datenstatus" value={actionState.data.label} />
+          <PrintLine label="Freigabe" value={actionState.approval.label} />
+          <PrintLine
+            label="Datei"
+            value={
+              productionData.files.original?.filename ?? order.preview.filename
+            }
+          />
+        </div>
+        <div className="pp-print-form-box">
+          <h3>Fremdarbeit / Kontrolle</h3>
+          <PrintLine label="Fremdarbeit" value={draft.foreignWork} />
+          <PrintLine label="Muster" value={draft.samples} />
+          <PrintLine label="Dokumente" value={draft.documents} />
+          <PrintLine label="Rechnung" value={draft.invoiceNote} />
+        </div>
+      </section>
+
+      <section className="pp-print-form-bottom-checks">
+        <PrintCheckBox label="Muster in Tasche" />
+        <PrintCheckBox label="Lieferschein" />
+        <PrintCheckBox label="Papierrechnung" />
+        <PrintCheckBox label="Lieferantenrechnung" />
+        <span>{order.orderDate}</span>
+        <span>{order.owner}</span>
+      </section>
+
+      <section className="pp-print-sheet-signatures pp-print-sheet-signatures--form">
         <span>Druck geprüft</span>
         <span>Weiterverarbeitung geprüft</span>
         <span>Versand geprüft</span>
@@ -2420,6 +2564,7 @@ export function OrderPocketPage({
           </div>
           <PrintPocketDraftEditor
             order={order}
+            actionState={actionState}
             draft={printPocketDraft}
             onDraftChange={handlePrintPocketDraftChange}
           />

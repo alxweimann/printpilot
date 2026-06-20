@@ -2606,3 +2606,34 @@ Damit kann PrintPilot später sauber unterscheiden, welche Informationen aus Kal
 - `src/features/order-pocket/OrderPocketPage.tsx`
 - `src/index.css`
 - `docs/PRINTPILOT_NEXT_UI.md`
+
+## Sprint 46.32 – Auftragstasche als echte A4-Laufzettel-Vorlage
+
+Sprint 46.32 trennt die Auftragstasche visuell stärker von einer normalen Eingabemaske. Die Auftragstasche wird als druckbarer Laufzettel-Editor verstanden: links eine A4-nahe Vorschau, rechts kompakte Bearbeitungsgruppen für die Angaben, die vor dem Ausdruck ergänzt werden.
+
+Umgesetzt:
+
+- Auftragstaschen-Reiter als Laufzettel-Editor neu strukturiert.
+- A4-Vorschau ergänzt, damit die Drucktasche nicht mehr wie eine normale Formularmaske wirkt.
+- Bearbeitungsgruppen neu geordnet:
+  - Kopf & Termine
+  - Hinweise & Weiterverarbeitung
+  - Versand & Fremdarbeit
+  - Kontrolle & Ablage
+- Druckansicht strukturell näher an klassischen Druckerei-Auftragstaschen ausgerichtet:
+  - fester Tabellen-/Rastercharakter
+  - Auftrag, Kunde, Rechnung, Kontrolle und QR-Code im Kopf-/Adressbereich
+  - separate Zonen für besondere Hinweise und Auftragsbeschreibung
+  - tabellarische Produkt-, Material-, Druckbogen- und Versanddaten
+  - Checkboxen für Papier, Versandarten, Auftragstyp, Daten, Dokumente und Kontrollpunkte
+  - Weiterverarbeitung als echte Arbeits-/Checkliste statt Fließtext-Katalog
+  - Signaturzeilen am Seitenende
+- DIN-A4-Hochformat bleibt strikt einseitig.
+- Bei zu viel Inhalt wird weiterhin priorisiert und verdichtet; die Auftragstasche erzeugt keine zweite Seite.
+- Keine Preislogik.
+- Keine Kalkulationslogik.
+- Keine Persistenzänderung.
+
+Fachliche Entscheidung:
+
+Die Auftragstasche ist nicht mehr nur ein PDF-Auszug aus der digitalen Produktionsansicht. Sie ist ein eigener Laufzettel-Typ mit editierbaren Drucktaschen-Daten. Auftragsdetails bleiben die digitale Arbeitsansicht, Auftragstasche bleibt der druckbare Produktionsauftrag.

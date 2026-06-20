@@ -2770,3 +2770,31 @@ Umgesetzt:
 Design-Grundsatz:
 
 Die Auftragstasche soll nicht wie eine moderne Marketing-PDF wirken, sondern wie ein sauberer, aktueller Produktionslaufzettel: klare Felder, schnelle Lesbarkeit, druckbar auf normalen Büro-/Laserdruckern, aber weniger harte schwarze Formularoptik.
+
+## Sprint 46.38 – Auftragstasche Hybrid-Stil stabilisieren
+
+Status: umgesetzt.
+
+Ziel dieses Sprints war die visuelle Korrektur nach Sprint 46.37. Die Auftragstasche sollte nicht weiter in Richtung weiche Card-/Dashboard-PDF gehen, sondern als produktiver Druckerei-Laufzettel stabilisiert werden: moderner als Printy, aber kantiger und verbindlicher als die zu weiche Variante.
+
+Umgesetzt:
+
+- Rundungen der Drucktaschen-Boxen deutlich reduziert.
+- Rahmen wieder etwas definierter gesetzt, aber nicht zurück zu sehr harten schwarzen Linien.
+- Abschnittsüberschriften bleiben dezent grau hinterlegt, wirken aber technischer und weniger weich.
+- Kopfbereich wurde kantiger und produktionsnäher stabilisiert.
+- QR-Code bleibt oben rechts sichtbar und sitzt weiter in einer ruhigen Scanbox.
+- Tabellen- und Formularlinien wurden als Hybrid aus klarer Produktion und moderner Lesbarkeit vereinheitlicht.
+- Footerbereich mit Auftrag/Daten und Fremdarbeit/Kontrolle bleibt stabil.
+- Checkbox-Zeile in Auftrag/Daten wurde zweispaltig stabilisiert, damit Einträge wie „Nachdruck mit Änderung“ und „Daten gestellt“ nicht zusammenkleben.
+- Signaturzone bleibt mit echter Schreibfläche am Seitenende erhalten.
+- DIN A4 Hochformat bleibt strikt einseitig.
+- Alle Drucktaschenwerte bleiben vollständig editierbar.
+- Keine neuen Fachfelder.
+- Keine neue Preislogik.
+- Keine neue Kalkulationslogik.
+- Keine Persistenzänderung.
+
+Design-Grundsatz:
+
+Die Auftragstasche soll als moderne Produktions-Auftragstasche wirken: kantige Raster, klare Bereiche, feinere Linien als klassische Altsoftware, aber bewusst kein weicher Card-Look.

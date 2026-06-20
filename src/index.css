@@ -12880,3 +12880,203 @@ button.pp-process-step:hover {
     border-top: 0.35pt solid #7f8da3 !important;
   }
 }
+
+/* Sprint 46.38 – Auftragstasche Hybrid-Stil stabilisieren
+   Kantiger und produktiver als 46.37, aber ruhiger als die harte Printy-Variante. */
+@media print {
+  .pp-print-order-pocket--form {
+    grid-template-rows: 18mm 37mm 14mm 12mm 28mm 28mm 43mm 37mm 25mm 13mm 22mm !important;
+    gap: .95mm !important;
+    color: #111827 !important;
+  }
+
+  .pp-print-order-pocket--form > * {
+    min-width: 0 !important;
+    box-sizing: border-box !important;
+  }
+
+  .pp-print-form-header,
+  .pp-print-form-box,
+  .pp-print-form-notice,
+  .pp-print-form-description,
+  .pp-print-form-spec-table,
+  .pp-print-form-bottom-checks {
+    border: 0.45pt solid #526171 !important;
+    border-radius: .35mm !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .pp-print-form-header {
+    overflow: hidden !important;
+    border-color: #415163 !important;
+    background: linear-gradient(180deg, #f5f7fa 0, #f5f7fa 2.1mm, #ffffff 2.1mm) !important;
+  }
+
+  .pp-print-form-header > div {
+    border-right: 0.4pt solid #7f8b99 !important;
+    background: transparent !important;
+  }
+
+  .pp-print-form-header > div:last-child {
+    border-right: 0 !important;
+  }
+
+  .pp-print-form-header__left {
+    grid-template-columns: 11mm minmax(0, 1fr) !important;
+    gap: 1.1mm !important;
+  }
+
+  .pp-print-form-header__left img {
+    width: 9.5mm !important;
+    height: 9.5mm !important;
+  }
+
+  .pp-print-form-header__qr {
+    background: #f7f9fc !important;
+    border-left: 0 !important;
+  }
+
+  .pp-print-form-header__qr img {
+    width: 15.6mm !important;
+    height: 15.6mm !important;
+  }
+
+  .pp-print-form-header span,
+  .pp-print-form-box h3,
+  .pp-print-form-notice h3,
+  .pp-print-form-description h3 {
+    color: #1f2937 !important;
+    font-weight: 900 !important;
+    letter-spacing: .04em !important;
+  }
+
+  .pp-print-form-header strong {
+    color: #111827 !important;
+    font-weight: 900 !important;
+  }
+
+  .pp-print-form-header__left strong,
+  .pp-print-form-header__date strong {
+    font-size: 10.6pt !important;
+  }
+
+  .pp-print-form-header__center strong {
+    font-size: 12.1pt !important;
+  }
+
+  .pp-print-form-header small {
+    color: #4b5563 !important;
+    font-weight: 750 !important;
+  }
+
+  .pp-print-form-box h3,
+  .pp-print-form-notice h3,
+  .pp-print-form-description h3 {
+    padding: .78mm 1.15mm !important;
+    border-bottom: 0.4pt solid #7f8b99 !important;
+    background: #edf1f5 !important;
+  }
+
+  .pp-print-form-box > strong,
+  .pp-print-form-box > p,
+  .pp-print-form-notice p,
+  .pp-print-form-description p,
+  .pp-print-form-small-note {
+    color: #111827 !important;
+  }
+
+  .pp-print-form-line,
+  .pp-print-form-empty-line {
+    border-top: 0.28pt solid #c7d0da !important;
+  }
+
+  .pp-print-form-line span,
+  .pp-print-form-empty-line span {
+    color: #4b5563 !important;
+    font-weight: 850 !important;
+  }
+
+  .pp-print-form-line strong,
+  .pp-print-form-empty-line strong {
+    border-bottom: 0.35pt solid #7a8796 !important;
+    color: #111827 !important;
+    font-weight: 780 !important;
+  }
+
+  .pp-print-form-spec-table {
+    border-color: #526171 !important;
+    border-radius: .25mm !important;
+  }
+
+  .pp-print-form-spec-table .pp-print-form-line {
+    border-right: 0.28pt solid #c7d0da !important;
+    border-bottom: 0.28pt solid #c7d0da !important;
+  }
+
+  .pp-print-form-check-row,
+  .pp-print-form-check-grid,
+  .pp-print-form-finishing-grid,
+  .pp-print-form-small-note {
+    border-top: 0.28pt solid #c7d0da !important;
+  }
+
+  .pp-print-form-check,
+  .pp-print-form-bottom-checks span {
+    color: #182233 !important;
+    font-weight: 760 !important;
+  }
+
+  .pp-print-form-check.is-checked {
+    color: #111827 !important;
+    font-weight: 900 !important;
+  }
+
+  .pp-print-form-check b {
+    color: #111827 !important;
+  }
+
+  .pp-print-form-two-col,
+  .pp-print-form-footer-grid {
+    gap: .95mm !important;
+  }
+
+  .pp-print-form-footer-grid .pp-print-form-box {
+    height: 25mm !important;
+  }
+
+  .pp-print-form-footer-grid .pp-print-form-check-row--wrap {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: .75mm 1.5mm !important;
+  }
+
+  .pp-print-form-footer-grid .pp-print-form-check-row--wrap .pp-print-form-check {
+    white-space: nowrap !important;
+    font-size: 5.25pt !important;
+  }
+
+  .pp-print-form-bottom-checks {
+    min-height: 13mm !important;
+    border-color: #526171 !important;
+    border-top-color: #526171 !important;
+    background: #ffffff !important;
+  }
+
+  .pp-print-sheet-signatures--form {
+    min-height: 22mm !important;
+    height: 22mm !important;
+    gap: 4.6mm !important;
+  }
+
+  .pp-print-sheet-signatures--form span {
+    color: #1f2937 !important;
+    font-size: 6.2pt !important;
+    font-weight: 850 !important;
+  }
+
+  .pp-print-sheet-signatures--form span::before {
+    bottom: 5.6mm !important;
+    border-top: 0.45pt solid #526171 !important;
+  }
+}

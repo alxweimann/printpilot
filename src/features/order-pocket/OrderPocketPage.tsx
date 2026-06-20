@@ -810,7 +810,7 @@ function createPrintPocketDraft(order: PrintPilotOrder): PrintPocketDraft {
     invoiceAddress: order.customerAddress.join(" · "),
     correctionUntil: `${order.orderDate} · 16:00`,
     checklistLabel: "3/13 · 1 offen",
-    statusLabel: order.production.label,
+    statusLabel: getCurrentProductionLabel(order.production),
     specialNotes: order.nextStep,
     orderDescription: `${productionData.product.label} · ${productionData.product.pages} · ${productionData.product.colorMode} · Bestellung per Mail / Kundenauftrag prüfen`,
     quantity: productionData.product.quantity,
@@ -1202,6 +1202,170 @@ function PrintPocketDraftEditor({
   );
 }
 
+
+type PrintSheetIconName =
+  | "stack"
+  | "format"
+  | "cmyk"
+  | "paper"
+  | "printer"
+  | "dots"
+  | "grid"
+  | "customer"
+  | "document"
+  | "layers"
+  | "scissors"
+  | "truck"
+  | "shield";
+
+function PrintPilotSheetLogo() {
+  return (
+    <span className="pp-modern-print-logo-mark" aria-hidden="true">
+      <svg viewBox="0 0 48 48" role="img">
+        <defs>
+          <linearGradient id="ppPrintLogoA" x1="8" x2="40" y1="8" y2="40" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#38bdf8" />
+            <stop offset="1" stopColor="#0b63ce" />
+          </linearGradient>
+          <linearGradient id="ppPrintLogoB" x1="7" x2="34" y1="41" y2="14" gradientUnits="userSpaceOnUse">
+            <stop offset="0" stopColor="#0b3f8a" />
+            <stop offset="1" stopColor="#1d9bf0" />
+          </linearGradient>
+        </defs>
+        <path d="M24 4 43 15v18L24 44 5 33V15L24 4Z" fill="url(#ppPrintLogoA)" />
+        <path d="M24 4v19L5 15 24 4Z" fill="#e8f5ff" opacity=".92" />
+        <path d="M24 23v21L5 33V15l19 8Z" fill="url(#ppPrintLogoB)" />
+        <path d="M24 23 43 15v18L24 44V23Z" fill="#0b63ce" />
+      </svg>
+    </span>
+  );
+}
+
+function PrintSheetIcon({ name }: { name: PrintSheetIconName }) {
+  const common = {
+    width: 28,
+    height: 28,
+    viewBox: "0 0 32 32",
+    fill: "none",
+    xmlns: "http://www.w3.org/2000/svg",
+    "aria-hidden": true,
+    className: "pp-modern-print-svg-icon",
+  };
+
+  switch (name) {
+    case "stack":
+      return (
+        <svg {...common}>
+          <path d="M16 5 5 10.5 16 16l11-5.5L16 5Z" />
+          <path d="M6 15.5 16 20.5l10-5" />
+          <path d="M6 20.5 16 25.5l10-5" />
+        </svg>
+      );
+    case "format":
+      return (
+        <svg {...common}>
+          <path d="M19 4h7v24h-7z" />
+          <path d="M13 6v20" />
+          <path d="M9 9 5 16l4 7" />
+        </svg>
+      );
+    case "cmyk":
+      return (
+        <svg {...common} className="pp-modern-print-svg-icon pp-modern-print-svg-icon--cmyk">
+          <path className="c" d="M8 5c3.2 4 4.8 6.9 4.8 9.2a4.8 4.8 0 0 1-9.6 0C3.2 11.9 4.8 9 8 5Z" />
+          <path className="m" d="M16 3.8c3.2 4.1 4.8 7 4.8 9.3a4.8 4.8 0 0 1-9.6 0c0-2.3 1.6-5.2 4.8-9.3Z" />
+          <path className="y" d="M24 5c3.2 4 4.8 6.9 4.8 9.2a4.8 4.8 0 0 1-9.6 0C19.2 11.9 20.8 9 24 5Z" />
+          <path className="k" d="M16 14c3.2 4 4.8 6.9 4.8 9.2a4.8 4.8 0 0 1-9.6 0C11.2 20.9 12.8 18 16 14Z" />
+        </svg>
+      );
+    case "paper":
+      return (
+        <svg {...common}>
+          <path d="M9 4h10l5 5v19H9z" />
+          <path d="M19 4v5h5" />
+        </svg>
+      );
+    case "printer":
+      return (
+        <svg {...common}>
+          <path d="M9 11V5h14v6" />
+          <path d="M7 24H5a2 2 0 0 1-2-2v-7a3 3 0 0 1 3-3h20a3 3 0 0 1 3 3v7a2 2 0 0 1-2 2h-2" />
+          <path d="M9 19h14v9H9z" />
+          <path d="M24.5 15.5h.01" />
+        </svg>
+      );
+    case "dots":
+      return (
+        <svg {...common}>
+          <circle cx="8" cy="11" r="2.6" />
+          <circle cx="16" cy="7" r="2.6" />
+          <circle cx="24" cy="11" r="2.6" />
+          <circle cx="8" cy="21" r="2.6" />
+          <circle cx="16" cy="25" r="2.6" />
+          <circle cx="24" cy="21" r="2.6" />
+        </svg>
+      );
+    case "grid":
+      return (
+        <svg {...common}>
+          <path d="M5 5h22v22H5z" />
+          <path d="M12.3 5v22M19.7 5v22M5 12.3h22M5 19.7h22" />
+        </svg>
+      );
+    case "customer":
+      return (
+        <svg {...common}>
+          <path d="M16 16a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" />
+          <path d="M7 27c1.3-5.1 4.3-7.6 9-7.6s7.7 2.5 9 7.6" />
+        </svg>
+      );
+    case "document":
+      return (
+        <svg {...common}>
+          <path d="M9 4h10l5 5v19H9z" />
+          <path d="M19 4v5h5" />
+          <path d="M12 15h8M12 20h8" />
+        </svg>
+      );
+    case "layers":
+      return (
+        <svg {...common}>
+          <path d="M16 5 5 10.5 16 16l11-5.5L16 5Z" />
+          <path d="M5 16.5 16 22l11-5.5" />
+          <path d="M5 22.5 16 28l11-5.5" />
+        </svg>
+      );
+    case "scissors":
+      return (
+        <svg {...common}>
+          <circle cx="9" cy="8" r="3" />
+          <circle cx="9" cy="24" r="3" />
+          <path d="M12 10.5 27 22" />
+          <path d="M12 21.5 27 10" />
+          <path d="M15 16h2" />
+        </svg>
+      );
+    case "truck":
+      return (
+        <svg {...common}>
+          <path d="M4 9h17v12H4z" />
+          <path d="M21 13h4l3 4v4h-7" />
+          <circle cx="9" cy="23" r="2.5" />
+          <circle cx="24" cy="23" r="2.5" />
+        </svg>
+      );
+    case "shield":
+      return (
+        <svg {...common}>
+          <path d="M16 4 26 8v7c0 6.5-4 10.8-10 13-6-2.2-10-6.5-10-13V8l10-4Z" />
+          <path d="m11.5 16 3.2 3.2 6.5-7" />
+        </svg>
+      );
+    default:
+      return null;
+  }
+}
+
 function PrintModernFact({
   icon,
   label,
@@ -1261,13 +1425,13 @@ function PrintOrderPocketSheet({
   draft: PrintPocketDraft;
 }) {
   const productionFacts = [
-    { icon: <PocketIcon name="files" />, label: "Auflage", value: draft.quantity },
-    { icon: <PocketIcon name="product" />, label: "Endformat", value: draft.finalFormat },
-    { icon: <PocketIcon name="preview" />, label: "Farbigkeit", value: `${draft.frontColors} / ${draft.backColors}` },
-    { icon: <PocketIcon name="files" />, label: "Material", value: draft.paper },
-    { icon: <PocketIcon name="machine" />, label: "Maschine", value: order.machine },
-    { icon: <PocketIcon name="print-data" />, label: "Druckart", value: draft.printType },
-    { icon: <PocketIcon name="imposition" />, label: "Nutzen", value: draft.impositionLabel },
+    { icon: <PrintSheetIcon name="stack" />, label: "Auflage", value: draft.quantity },
+    { icon: <PrintSheetIcon name="format" />, label: "Endformat", value: draft.finalFormat },
+    { icon: <PrintSheetIcon name="cmyk" />, label: "Farbigkeit", value: `${draft.frontColors} / ${draft.backColors}` },
+    { icon: <PrintSheetIcon name="paper" />, label: "Material", value: draft.paper },
+    { icon: <PrintSheetIcon name="printer" />, label: "Maschine", value: order.machine },
+    { icon: <PrintSheetIcon name="dots" />, label: "Druckart", value: draft.printType },
+    { icon: <PrintSheetIcon name="grid" />, label: "Nutzen", value: draft.impositionLabel },
   ];
 
   const finishingTasks = [
@@ -1295,7 +1459,7 @@ function PrintOrderPocketSheet({
       <header className="pp-modern-print-header">
         <div className="pp-modern-print-brand-row">
           <div className="pp-modern-print-brand">
-            <span className="pp-modern-print-mark">P</span>
+            <PrintPilotSheetLogo />
             <strong>PrintPilot</strong>
             <em>Auftragstasche</em>
           </div>
@@ -1330,7 +1494,7 @@ function PrintOrderPocketSheet({
 
       <section className="pp-modern-print-core" aria-label="Produktionsdaten">
         <header>
-          <span className="pp-modern-print-section-icon"><PocketIcon name="files" /></span>
+          <span className="pp-modern-print-section-icon"><PrintSheetIcon name="document" /></span>
           <div>
             <h2>Produktionsdaten</h2>
             <p>{draft.quantity} · {draft.finalFormat} · {draft.printType}</p>
@@ -1345,7 +1509,7 @@ function PrintOrderPocketSheet({
 
       <section className="pp-modern-print-panel-grid pp-modern-print-panel-grid--top">
         <div className="pp-modern-print-panel">
-          <h3><PocketIcon name="customer" /> Kunde</h3>
+          <h3><PrintSheetIcon name="customer" /> Kunde</h3>
           <PrintModernLine label="Kunde" value={draft.customerName} />
           <PrintModernLine label="Ansprechpartner" value={draft.customerContact} />
           <PrintModernLine label="Telefon" value={draft.customerPhone} />
@@ -1353,7 +1517,7 @@ function PrintOrderPocketSheet({
         </div>
 
         <div className="pp-modern-print-panel">
-          <h3><PocketIcon name="print-data" /> Druckdaten</h3>
+          <h3><PrintSheetIcon name="document" /> Druckdaten</h3>
           <PrintModernLine label="Datei" value={draft.fileName} />
           <div className="pp-modern-print-state-row">
             <span className="is-ok">✓ {draft.dataStatus}</span>
@@ -1366,7 +1530,7 @@ function PrintOrderPocketSheet({
 
       <section className="pp-modern-print-panel-grid pp-modern-print-panel-grid--middle">
         <div className="pp-modern-print-panel">
-          <h3><PocketIcon name="imposition" /> Material / Druckbogen</h3>
+          <h3><PrintSheetIcon name="layers" /> Material / Druckbogen</h3>
           <PrintModernLine label="Material" value={draft.paper} />
           <PrintModernLine label="Rohbogen" value={draft.rawFormat} />
           <PrintModernLine label="Druckbogen" value={draft.printFormat} />
@@ -1380,7 +1544,7 @@ function PrintOrderPocketSheet({
         </div>
 
         <div className="pp-modern-print-panel pp-modern-print-panel--finishing">
-          <h3><PocketIcon name="finishing" /> Weiterverarbeitung</h3>
+          <h3><PrintSheetIcon name="scissors" /> Weiterverarbeitung</h3>
           <div className="pp-modern-print-tags">
             {activeFinishingTasks.length > 0 ? (
               activeFinishingTasks.map((task) => <strong key={task.label}>{task.label}</strong>)
@@ -1398,7 +1562,7 @@ function PrintOrderPocketSheet({
 
       <section className="pp-modern-print-panel-grid pp-modern-print-panel-grid--bottom">
         <div className="pp-modern-print-panel">
-          <h3><PocketIcon name="delivery" /> Lieferung / Versand</h3>
+          <h3><PrintSheetIcon name="truck" /> Lieferung / Versand</h3>
           <PrintModernLine label="Lieferadresse" value={draft.deliveryAddress} />
           <PrintModernLine label="Liefertermin" value={`${draft.deliveryDate} · ${draft.deliveryMeta}`} />
           <PrintModernLine label="Versandart" value={draft.shippingMethod} />
@@ -1415,7 +1579,7 @@ function PrintOrderPocketSheet({
         </div>
 
         <div className="pp-modern-print-panel pp-modern-print-panel--control">
-          <h3><PocketIcon name="checklist" /> Kontrolle</h3>
+          <h3><PrintSheetIcon name="shield" /> Kontrolle</h3>
           <PrintModernLine label="Checkliste" value={draft.checklistLabel} />
           <div className="pp-modern-print-check-list">
             <PrintModernCheck label="Farbigkeit / Maßhaltigkeit geprüft" />

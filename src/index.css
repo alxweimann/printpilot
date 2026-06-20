@@ -14173,3 +14173,357 @@ button.pp-process-step:hover {
     line-height: 1 !important;
   }
 }
+
+/* Sprint 46.41 – Auftragstasche auf Mockup-Stil präzisieren
+   Ziel: dieselbe klare Mockup-Anmutung mit Iconset, Inter-ähnlicher Typografie,
+   blauem Status-Pill und stärkerem Scan-/Produktionsdaten-Fokus. */
+@media print {
+  .pp-print-order-pocket--modern {
+    --modern-blue: #0b63ce;
+    --modern-blue-dark: #082b63;
+    --modern-accent: #006bd6;
+    --modern-ink: #0b1730;
+    --modern-muted: #60708a;
+    --modern-line: #d6e0ec;
+    --modern-line-strong: #b8c8dc;
+    --modern-soft: #f7faff;
+    --modern-soft-2: #eef6ff;
+    --modern-green: #36a852;
+    font-family: "Inter", "Segoe UI", "Helvetica Neue", Arial, sans-serif !important;
+    letter-spacing: 0 !important;
+  }
+
+  .pp-modern-print-header {
+    display: grid !important;
+    grid-template-rows: 15mm 17mm !important;
+    gap: 2mm !important;
+  }
+
+  .pp-modern-print-brand-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 30mm !important;
+    align-items: start !important;
+  }
+
+  .pp-modern-print-brand {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 2.2mm !important;
+    min-width: 0 !important;
+  }
+
+  .pp-modern-print-logo-mark {
+    display: inline-grid !important;
+    place-items: center !important;
+    width: 8.8mm !important;
+    height: 8.8mm !important;
+    flex: 0 0 auto !important;
+  }
+
+  .pp-modern-print-logo-mark svg {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+  }
+
+  .pp-modern-print-brand strong {
+    color: var(--modern-ink) !important;
+    font-size: 18pt !important;
+    font-weight: 860 !important;
+    line-height: 1 !important;
+    letter-spacing: -.03em !important;
+  }
+
+  .pp-modern-print-brand em {
+    color: var(--modern-accent) !important;
+    font-size: 12.8pt !important;
+    font-style: normal !important;
+    font-weight: 620 !important;
+    line-height: 1 !important;
+    letter-spacing: -.015em !important;
+  }
+
+  .pp-modern-print-scan {
+    justify-self: end !important;
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) 16.5mm !important;
+    align-items: center !important;
+    gap: 2.1mm !important;
+    min-width: 0 !important;
+  }
+
+  .pp-modern-print-scan span {
+    display: block !important;
+    color: var(--modern-blue-dark) !important;
+    text-align: right !important;
+    text-transform: uppercase !important;
+  }
+
+  .pp-modern-print-scan b,
+  .pp-modern-print-scan small {
+    display: block !important;
+    margin: 0 !important;
+    color: var(--modern-blue-dark) !important;
+    font-size: 6.6pt !important;
+    font-weight: 900 !important;
+    letter-spacing: .055em !important;
+    line-height: .95 !important;
+  }
+
+  .pp-modern-print-scan img {
+    width: 16.5mm !important;
+    height: 16.5mm !important;
+    padding: 1.1mm !important;
+    border: .7pt solid #c3cfdd !important;
+    border-radius: 1.2mm !important;
+    background: #ffffff !important;
+  }
+
+  .pp-modern-print-meta-row {
+    display: grid !important;
+    grid-template-columns: 39mm minmax(0, 1fr) 54mm 27mm !important;
+    gap: 0 !important;
+    align-items: end !important;
+    border-bottom: .75pt solid #d2dce9 !important;
+  }
+
+  .pp-modern-print-meta,
+  .pp-modern-print-status {
+    display: grid !important;
+    align-content: end !important;
+    min-width: 0 !important;
+    min-height: 13.8mm !important;
+    padding: 0 4.2mm 2.6mm !important;
+    border-left: .65pt solid #d8e1ec !important;
+  }
+
+  .pp-modern-print-meta:first-child {
+    border-left: 0 !important;
+    padding-left: 0 !important;
+  }
+
+  .pp-modern-print-meta span,
+  .pp-modern-print-status span,
+  .pp-modern-print-line span {
+    color: #566982 !important;
+    font-size: 6.8pt !important;
+    font-weight: 900 !important;
+    letter-spacing: .06em !important;
+    line-height: 1 !important;
+    text-transform: uppercase !important;
+  }
+
+  .pp-modern-print-meta strong {
+    display: block !important;
+    color: var(--modern-ink) !important;
+    font-size: 13.8pt !important;
+    font-weight: 850 !important;
+    line-height: 1.05 !important;
+    letter-spacing: -.025em !important;
+    white-space: nowrap !important;
+  }
+
+  .pp-modern-print-meta--order strong {
+    font-size: 16.4pt !important;
+    letter-spacing: -.04em !important;
+  }
+
+  .pp-modern-print-status strong {
+    justify-self: start !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    min-height: 7.4mm !important;
+    padding: 0 3mm !important;
+    border-radius: 1mm !important;
+    background: var(--modern-blue) !important;
+    color: #ffffff !important;
+    font-size: 9.8pt !important;
+    font-weight: 850 !important;
+    line-height: 1 !important;
+    box-shadow: inset 0 -0.6mm 0 rgba(0, 0, 0, .08) !important;
+  }
+
+  .pp-modern-print-core,
+  .pp-modern-print-panel,
+  .pp-modern-print-signatures {
+    border: .55pt solid var(--modern-line) !important;
+    border-radius: 1.35mm !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .pp-modern-print-core {
+    display: grid !important;
+    grid-template-rows: 12.5mm minmax(0, 1fr) !important;
+    background: var(--modern-soft) !important;
+    border-color: #c8d8ef !important;
+  }
+
+  .pp-modern-print-core > header {
+    gap: 2.3mm !important;
+    padding: 2mm 3mm !important;
+    border-bottom: .55pt solid #c8d8ef !important;
+  }
+
+  .pp-modern-print-section-icon {
+    width: 6.8mm !important;
+    height: 6.8mm !important;
+  }
+
+  .pp-modern-print-core h2,
+  .pp-modern-print-panel h3 {
+    color: #18365f !important;
+    font-size: 11.2pt !important;
+    font-weight: 860 !important;
+    letter-spacing: .018em !important;
+    line-height: 1 !important;
+    text-transform: uppercase !important;
+  }
+
+  .pp-modern-print-core header p {
+    color: var(--modern-muted) !important;
+    font-size: 8pt !important;
+    font-weight: 700 !important;
+  }
+
+  .pp-modern-print-svg-icon {
+    display: block !important;
+    width: 100% !important;
+    height: 100% !important;
+    color: var(--modern-accent) !important;
+    stroke: currentColor !important;
+    stroke-width: 2.05 !important;
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+    fill: none !important;
+  }
+
+  .pp-modern-print-svg-icon--cmyk {
+    stroke-width: 1.25 !important;
+  }
+
+  .pp-modern-print-svg-icon--cmyk .c { fill: #0ea5e9 !important; stroke: #0b76b7 !important; }
+  .pp-modern-print-svg-icon--cmyk .m { fill: #d946ef !important; stroke: #a21caf !important; }
+  .pp-modern-print-svg-icon--cmyk .y { fill: #facc15 !important; stroke: #ca8a04 !important; }
+  .pp-modern-print-svg-icon--cmyk .k { fill: #111827 !important; stroke: #111827 !important; }
+
+  .pp-modern-print-section-icon svg,
+  .pp-modern-print-fact__icon svg,
+  .pp-modern-print-panel h3 svg {
+    stroke-width: 2.05 !important;
+  }
+
+  .pp-modern-print-fact-grid {
+    margin: 2.2mm !important;
+    border: .6pt solid #c8d8ef !important;
+    border-radius: 1.15mm !important;
+    background: #ffffff !important;
+  }
+
+  .pp-modern-print-fact {
+    grid-template-columns: 13.5mm minmax(0, 1fr) !important;
+    gap: 2.1mm !important;
+    min-height: 15.6mm !important;
+    padding: 2mm 2.6mm !important;
+    border-right: .45pt solid #dbe6f3 !important;
+    border-bottom: .45pt solid #dbe6f3 !important;
+  }
+
+  .pp-modern-print-fact__icon {
+    width: 9.6mm !important;
+    height: 9.6mm !important;
+  }
+
+  .pp-modern-print-fact small {
+    color: #61728a !important;
+    font-size: 6.7pt !important;
+    font-weight: 900 !important;
+    letter-spacing: .055em !important;
+  }
+
+  .pp-modern-print-fact strong {
+    color: var(--modern-ink) !important;
+    font-size: 9.5pt !important;
+    font-weight: 820 !important;
+    line-height: 1.15 !important;
+  }
+
+  .pp-modern-print-panel-grid {
+    gap: 2mm !important;
+  }
+
+  .pp-modern-print-panel h3 {
+    gap: 1.8mm !important;
+    min-height: 9.2mm !important;
+    padding: 2mm 2.8mm 1.7mm !important;
+    border-bottom: .55pt solid var(--modern-line) !important;
+  }
+
+  .pp-modern-print-panel h3 svg {
+    width: 5.2mm !important;
+    height: 5.2mm !important;
+    color: var(--modern-blue-dark) !important;
+  }
+
+  .pp-modern-print-line {
+    grid-template-columns: 30mm minmax(0, 1fr) !important;
+    gap: 3mm !important;
+    min-height: 6.4mm !important;
+    padding: 1.15mm 2.8mm !important;
+    border-bottom: .35pt solid #e5ebf3 !important;
+  }
+
+  .pp-modern-print-line strong {
+    color: var(--modern-ink) !important;
+    font-size: 8.7pt !important;
+    font-weight: 760 !important;
+    line-height: 1.22 !important;
+    white-space: normal !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  .pp-modern-print-state-row span {
+    color: var(--modern-green) !important;
+    font-size: 8.6pt !important;
+    font-weight: 820 !important;
+  }
+
+  .pp-modern-print-tags strong {
+    min-height: 6.4mm !important;
+    padding: 0 3mm !important;
+    border: .75pt solid #9ec7f7 !important;
+    border-radius: .9mm !important;
+    background: #edf6ff !important;
+    color: var(--modern-blue-dark) !important;
+    font-size: 8.7pt !important;
+    font-weight: 850 !important;
+  }
+
+  .pp-modern-print-check b {
+    color: var(--modern-blue-dark) !important;
+  }
+
+  .pp-modern-print-document-row {
+    border-color: var(--modern-line) !important;
+    border-radius: 1.15mm !important;
+    background: #ffffff !important;
+  }
+
+  .pp-modern-print-signatures {
+    border-color: #a8ccf7 !important;
+    border-radius: 1.3mm !important;
+  }
+
+  .pp-modern-print-signatures strong {
+    color: var(--modern-blue-dark) !important;
+    font-size: 8.3pt !important;
+    font-weight: 900 !important;
+  }
+
+  .pp-modern-print-footer {
+    color: var(--modern-muted) !important;
+    font-size: 7.1pt !important;
+    font-weight: 670 !important;
+  }
+}

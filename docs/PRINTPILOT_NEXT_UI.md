@@ -2877,3 +2877,52 @@ Umgesetzt:
 Design-Grundsatz:
 
 PrintPilot soll als moderne, sachliche Produktionssoftware für Druckereien wirken. Die Auftragstasche ist der erste harte Referenzpunkt: keine Printy-Kopie, keine MIS-Formularwüste und kein verspieltes Dashboard, sondern ein gut lesbarer Produktions-Laufzettel mit klarer Hierarchie. Diese Richtung soll anschließend auf die Kalkulationsmaske übertragen werden.
+
+## Sprint 46.41 – Auftragstasche konsequent am Mockup ausrichten
+
+Status: umgesetzt
+
+Ziel: Die druckbare Auftragstasche soll nicht nur ungefähr in Richtung des generierten Mockups gehen, sondern dessen sichtbare Designentscheidung übernehmen: gleiche klare Icon-Logik, Inter-/Segoe-ähnliche Typografie, ruhige blaue Akzente, Scanbox oben rechts, prominente Produktionsdaten und sehr gute Lesbarkeit.
+
+Umgesetzt:
+
+- PrintPilot-Auftragstasche weiter am modernen Mockup ausgerichtet.
+- Eigenes Print-Iconset für die Auftragstasche ergänzt:
+  - Stapel / Auflage
+  - Format
+  - CMYK-Farbigkeit
+  - Papier / Material
+  - Druckmaschine
+  - Druckart / Rasterpunkte
+  - Nutzenraster
+  - Kunde
+  - Druckdaten
+  - Material / Druckbogen
+  - Schere / Weiterverarbeitung
+  - Lieferung / Versand
+  - Kontrolle
+- PrintPilot-Logo im Druckkopf durch eine klare blaue geometrische Marke ersetzt.
+- Typografie im Printlayout auf Inter-/Segoe-UI-ähnliche Schriftführung gesetzt.
+- Status im Kopfbereich wieder als blauer Status-Pill dargestellt.
+- QR-/Scanbereich stärker an das Mockup angepasst.
+- Produktionsdaten-Panel stärker an die Mockup-Struktur angeglichen.
+- Panel-Überschriften und Icons einheitlicher und hochwertiger gesetzt.
+- Linien, Abstände und Farbakzente weiter auf den modernen sachlichen Mockup-Stil abgestimmt.
+- A4 Hochformat bleibt strikt einseitig.
+- Alle Werte kommen weiterhin aus dem editierbaren Drucktaschenmodell.
+
+Nicht umgesetzt:
+
+- Keine echte PDF-Engine.
+- Keine Persistenzänderung.
+- Keine Preislogik.
+- Keine Kalkulationslogik.
+- Kein externer Font-Download; die Schrift wird über einen robusten Inter-/System-Font-Stack gesetzt.
+
+Buildprüfung:
+
+```bash
+npm run build
+```
+
+Ergebnis: erfolgreich.

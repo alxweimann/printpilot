@@ -692,6 +692,182 @@ function ProductionCoreStrip({
   );
 }
 
+
+function getPrintableSheetSections(
+  order: PrintPilotOrder,
+  actionState: PocketActionState,
+) {
+  const productionData = getOrderProductionData(order);
+  const activeFinishing = getActiveFinishingSteps(actionState);
+  const activeFinishingText =
+    activeFinishing
+      .map((step) => `${step.label}: ${step.note}`)
+      .join(" · ") || "keine aktive Weiterverarbeitung";
+
+  return [
+    {
+      title: "Produktionsdaten",
+      rows: [
+        ["Produkt", productionData.product.label],
+        ["Auflage", productionData.product.quantity],
+        ["Endformat", productionData.product.finalFormat],
+        ["Seiten", productionData.product.pages],
+        ["Farbigkeit", productionData.product.colorMode],
+        ["Material", productionData.product.substrate],
+        ["Rohbogen", productionData.product.productionFormat],
+        ["Maschine", order.machine],
+      ],
+    },
+    {
+      title: "Druckdaten / Freigabe",
+      rows: [
+        ["Datenstatus", actionState.data.label],
+        ["Freigabe", actionState.approval.label],
+        ["Datei", productionData.files.original?.filename ?? order.preview.filename],
+        ["Preflight", order.preflightValue],
+        ["Beschnitt", order.bleedStatus.label],
+        ["Profil", order.machineType === "wide-format" ? "Roland VG3 · Medienprofil" : "Coated FOGRA39"],
+      ],
+    },
+    {
+      title: "Nutzenplan / Druckbogen",
+      rows: [
+        ["Bogenformat", `${productionData.imposition.sheet.name} · ${formatSheetSize(productionData.imposition.sheet.widthMm, productionData.imposition.sheet.heightMm)}`],
+        ["Nutzen", productionData.imposition.label],
+        ["Anordnung", `${productionData.imposition.layout.columns} × ${productionData.imposition.layout.rows} · ${productionData.imposition.layout.usedSlots} Nutzen`],
+        ["Beschnitt", productionData.imposition.bleed],
+        ["Zuschuss", order.waste],
+        ["Druckbogen-PDF", "später aus Ausschießmodul"],
+      ],
+    },
+    {
+      title: "Weiterverarbeitung",
+      rows: [
+        ["Aktive Schritte", activeFinishing.length ? `${activeFinishing.length}` : "keine"],
+        ["Leistungen", activeFinishingText],
+        ["Katalog", finishingCatalog.join(" · ")],
+      ],
+    },
+    {
+      title: "Versand / Verpackung",
+      rows: [
+        ["Liefertermin", `${order.dueDate} · ${order.dueMeta}`],
+        ["Lieferart", order.deliveryMeta],
+        ["Lieferadresse", order.customerAddress.join(", ")],
+        ["Verpackung", activeFinishing.find((step) => step.label.includes("Verpack"))?.note ?? "prüfen"],
+        ["Teillieferung", "später aus Auftrag"],
+      ],
+    },
+    {
+      title: "Notizen / Kontrolle",
+      rows: [
+        ["Produktionshinweis", order.nextStep],
+        ["Operator", order.owner],
+        ["Status", getCurrentProductionLabel(actionState.production)],
+        ["QR-Code", `${order.id} in PrintPilot öffnen`],
+      ],
+    },
+  ];
+}
+
+function PrintDataBlock({
+  title,
+  rows,
+}: {
+  title: string;
+  rows: string[][];
+}) {
+  return (
+    <section className="pp-print-sheet-block">
+      <h3>{title}</h3>
+      <div className="pp-print-sheet-table">
+        {rows.map(([label, value]) => (
+          <p key={`${title}-${label}`}>
+            <span>{label}</span>
+            <strong>{value}</strong>
+          </p>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function PrintOrderPocketSheet({
+  order,
+  actionState,
+}: {
+  order: PrintPilotOrder;
+  actionState: PocketActionState;
+}) {
+  const sections = getPrintableSheetSections(order, actionState);
+  const productionData = getOrderProductionData(order);
+  const checklistSummary = getChecklistSummary(actionState.checklist);
+
+  return (
+    <article className="pp-print-order-pocket" aria-label="Druckbare Auftragstasche">
+      <header className="pp-print-sheet-header">
+        <div className="pp-print-sheet-brand">
+          <img src={printPilotLogo} alt="PrintPilot" />
+          <div>
+            <span>PrintPilot Auftragstasche</span>
+            <strong>{order.id}</strong>
+            <small>Digitaler Laufzettel / Produktionsauftrag</small>
+          </div>
+        </div>
+        <div className="pp-print-sheet-title">
+          <h2>{order.product}</h2>
+          <p>
+            {order.customer} · {productionData.product.quantity} · {productionData.product.finalFormat}
+          </p>
+        </div>
+        <div className="pp-print-sheet-qr">
+          <img src={orderQrCode} alt={`QR-Code für Auftrag ${order.id}`} />
+          <span>Scannen und Auftrag öffnen</span>
+        </div>
+      </header>
+
+      <section className="pp-print-sheet-summary">
+        <span>
+          <small>Kunde</small>
+          <strong>{order.customer}</strong>
+          <b>{order.contactName} · {order.contactPhone}</b>
+        </span>
+        <span>
+          <small>Termin</small>
+          <strong>{order.dueDate}</strong>
+          <b>{order.dueMeta}</b>
+        </span>
+        <span>
+          <small>Produktion</small>
+          <strong>{getCurrentProductionLabel(actionState.production)}</strong>
+          <b>{order.machine}</b>
+        </span>
+        <span>
+          <small>Checkliste</small>
+          <strong>{checklistSummary.done} / {checklistSummary.total}</strong>
+          <b>{checklistSummary.requiredOpen} Pflichtpunkte offen</b>
+        </span>
+      </section>
+
+      <div className="pp-print-sheet-grid">
+        {sections.map((section) => (
+          <PrintDataBlock
+            key={section.title}
+            title={section.title}
+            rows={section.rows}
+          />
+        ))}
+      </div>
+
+      <section className="pp-print-sheet-signatures">
+        <span>Druck geprüft</span>
+        <span>Weiterverarbeitung geprüft</span>
+        <span>Versand geprüft</span>
+      </section>
+    </article>
+  );
+}
+
 type MachineType =
   | "digital-color"
   | "digital-mono"
@@ -1620,6 +1796,13 @@ export function OrderPocketPage({
         </div>
       </header>
 
+      <div className="pp-print-action-bar">
+        <button type="button" onClick={() => window.print()}>
+          Druckbare Auftragstasche / PDF vorbereiten
+        </button>
+        <span>A4-Laufzettel mit QR-Code, Produktionsdaten, Nutzenplan, Weiterverarbeitung und Versand</span>
+      </div>
+
       <section className="pp-top-info-panel">
         <TopInfoCard
           icon={<PocketIcon name="customer" />}
@@ -1914,6 +2097,8 @@ export function OrderPocketPage({
           </div>
         </section>
       </div>
+
+      <PrintOrderPocketSheet order={order} actionState={actionState} />
     </div>
   );
 }

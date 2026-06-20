@@ -10778,3 +10778,294 @@ button.pp-process-step:hover {
     min-height: 0;
   }
 }
+
+/* Sprint 46.28 – Druckbare PDF-Auftragstasche vorbereiten */
+.pp-print-action-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  margin: 0 0 12px;
+  padding: 0 2px;
+}
+
+.pp-print-action-bar button {
+  min-height: 36px;
+  padding: 8px 14px;
+  border: 1px solid #0b63ce;
+  border-radius: 10px;
+  background: #0b63ce;
+  color: #ffffff;
+  font: inherit;
+  font-size: 12px;
+  font-weight: 820;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 10px 20px rgba(9, 80, 170, .14);
+}
+
+.pp-print-action-bar button:hover {
+  background: #084fba;
+}
+
+.pp-print-action-bar span {
+  max-width: 520px;
+  color: #52637d;
+  font-size: 11px;
+  font-weight: 720;
+  line-height: 1.3;
+  text-align: right;
+}
+
+.pp-print-order-pocket {
+  display: none;
+}
+
+.pp-print-sheet-header,
+.pp-print-sheet-summary,
+.pp-print-sheet-grid,
+.pp-print-sheet-signatures {
+  box-sizing: border-box;
+}
+
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 10mm;
+  }
+
+  body {
+    background: #ffffff !important;
+  }
+
+  body * {
+    visibility: hidden !important;
+  }
+
+  .pp-print-order-pocket,
+  .pp-print-order-pocket * {
+    visibility: visible !important;
+  }
+
+  .pp-order-pocket > :not(.pp-print-order-pocket) {
+    display: none !important;
+  }
+
+  .pp-order-pocket {
+    display: block !important;
+    max-width: none !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+  }
+
+  .pp-print-order-pocket {
+    display: block !important;
+    position: static !important;
+    width: 100% !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    background: #ffffff !important;
+    color: #071f48 !important;
+    font-family: Arial, Helvetica, sans-serif !important;
+    break-inside: avoid;
+  }
+
+  .pp-print-sheet-header {
+    display: grid;
+    grid-template-columns: 1.1fr 1.4fr 92px;
+    gap: 10px;
+    align-items: center;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #071f48;
+  }
+
+  .pp-print-sheet-brand {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  .pp-print-sheet-brand img {
+    width: 42px;
+    height: 42px;
+    object-fit: contain;
+  }
+
+  .pp-print-sheet-brand span,
+  .pp-print-sheet-brand small,
+  .pp-print-sheet-summary small {
+    display: block;
+    color: #52637d !important;
+    font-size: 7.5pt;
+    font-weight: 700;
+    letter-spacing: .08em;
+    line-height: 1.15;
+    text-transform: uppercase;
+  }
+
+  .pp-print-sheet-brand strong {
+    display: block;
+    color: #071f48 !important;
+    font-size: 15pt;
+    font-weight: 900;
+    line-height: 1.05;
+  }
+
+  .pp-print-sheet-title {
+    min-width: 0;
+    text-align: left;
+  }
+
+  .pp-print-sheet-title h2 {
+    margin: 0 0 3px;
+    color: #071f48 !important;
+    font-size: 16pt;
+    font-weight: 900;
+    letter-spacing: -.03em;
+    line-height: 1.05;
+  }
+
+  .pp-print-sheet-title p {
+    margin: 0;
+    color: #213657 !important;
+    font-size: 9pt;
+    font-weight: 700;
+    line-height: 1.25;
+  }
+
+  .pp-print-sheet-qr {
+    display: grid;
+    justify-items: center;
+    gap: 3px;
+  }
+
+  .pp-print-sheet-qr img {
+    width: 72px;
+    height: 72px;
+  }
+
+  .pp-print-sheet-qr span {
+    color: #52637d !important;
+    font-size: 6.7pt;
+    font-weight: 700;
+    line-height: 1.1;
+    text-align: center;
+  }
+
+  .pp-print-sheet-summary {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 6px;
+    margin: 7px 0 8px;
+  }
+
+  .pp-print-sheet-summary span {
+    min-width: 0;
+    padding: 6px 7px;
+    border: 1px solid #cfdbea;
+    border-radius: 5px;
+    background: #f8fbff !important;
+  }
+
+  .pp-print-sheet-summary strong {
+    display: block;
+    overflow: hidden;
+    color: #071f48 !important;
+    font-size: 9pt;
+    font-weight: 900;
+    line-height: 1.15;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pp-print-sheet-summary b {
+    display: block;
+    overflow: hidden;
+    color: #52637d !important;
+    font-size: 7pt;
+    font-weight: 700;
+    line-height: 1.2;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .pp-print-sheet-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 7px;
+  }
+
+  .pp-print-sheet-block {
+    min-width: 0;
+    overflow: hidden;
+    border: 1px solid #cfdbea;
+    border-radius: 5px;
+    break-inside: avoid;
+  }
+
+  .pp-print-sheet-block h3 {
+    margin: 0;
+    padding: 5px 7px;
+    border-bottom: 1px solid #cfdbea;
+    background: #edf4fb !important;
+    color: #071f48 !important;
+    font-size: 8.5pt;
+    font-weight: 900;
+    letter-spacing: -.01em;
+    line-height: 1.1;
+  }
+
+  .pp-print-sheet-table {
+    display: grid;
+  }
+
+  .pp-print-sheet-table p {
+    display: grid;
+    grid-template-columns: 30mm minmax(0, 1fr);
+    gap: 5px;
+    margin: 0;
+    padding: 4px 7px;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .pp-print-sheet-table p:last-child {
+    border-bottom: 0;
+  }
+
+  .pp-print-sheet-table span {
+    color: #64748b !important;
+    font-size: 7pt;
+    font-weight: 800;
+    line-height: 1.2;
+  }
+
+  .pp-print-sheet-table strong {
+    min-width: 0;
+    color: #213657 !important;
+    font-size: 7.3pt;
+    font-weight: 800;
+    line-height: 1.22;
+    white-space: normal;
+  }
+
+  .pp-print-sheet-signatures {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .pp-print-sheet-signatures span {
+    min-height: 24px;
+    padding-top: 5px;
+    border-top: 1px solid #071f48;
+    color: #52637d !important;
+    font-size: 7pt;
+    font-weight: 800;
+    line-height: 1.1;
+  }
+}

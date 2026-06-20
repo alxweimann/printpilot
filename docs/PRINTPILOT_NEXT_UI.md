@@ -2443,3 +2443,38 @@ Nicht umgesetzt wurden:
 - `src/features/order-pocket/OrderPocketPage.tsx`
 - `src/index.css`
 - `docs/PRINTPILOT_NEXT_UI.md`
+
+## Sprint 46.28 – PDF-Auftragstasche vorbereiten
+
+Ziel dieses Sprints war die Vorbereitung einer druckbaren Auftragstaschen-Ansicht, ohne bereits eine neue PDF-Engine, Persistenz oder Preis-/Kalkulationslogik einzubauen.
+
+Umgesetzt wurde eine separate A4-/Print-Struktur innerhalb der Auftragstasche. Die Bildschirmansicht bleibt unverändert nutzbar, zusätzlich gibt es nun eine druckbare Laufzettel-Ansicht für den Browser-Druckdialog bzw. „Als PDF speichern“.
+
+### Inhalt der druckbaren Auftragstasche
+
+Die druckbare Auftragstasche ist in produktionsgerechter Reihenfolge aufgebaut:
+
+1. Kopfbereich mit PrintPilot, Auftragsnummer, Produkt, Kunde und QR-Code
+2. Kompakte Zusammenfassung: Kunde, Termin, Produktionsstatus und Checklistenstand
+3. Produktionsdaten: Produkt, Auflage, Format, Seiten, Farbigkeit, Material, Rohbogen und Maschine
+4. Druckdaten / Freigabe: Datenstatus, Freigabe, Datei, Preflight, Beschnitt und Profil
+5. Nutzenplan / Druckbogen: Bogenformat, Nutzen, Anordnung, Beschnitt, Zuschuss und späteres Druckbogen-PDF
+6. Weiterverarbeitung: aktive Schritte, Leistungen und kompletter vorbereiteter Leistungskatalog
+7. Versand / Verpackung: Termin, Lieferart, Adresse, Verpackung und spätere Teillieferung
+8. Notizen / Kontrolle: Produktionshinweis, Operator, Status und QR-Code-Bezug
+9. Signatur-/Kontrollzeilen für Druck, Weiterverarbeitung und Versand
+
+### Technische Umsetzung
+
+- Neue Print-Komponente in `OrderPocketPage.tsx`: `PrintOrderPocketSheet`
+- Neue Datenaufbereitung: `getPrintableSheetSections`
+- Print-Button in der Auftragstasche: „Druckbare Auftragstasche / PDF vorbereiten“
+- Print-CSS über `@media print`
+- Die normale Bildschirmansicht wird beim Drucken ausgeblendet
+- Die druckbare Auftragstasche wird nur im Druck/PDF sichtbar
+
+### Strategische Einordnung
+
+Dieser Sprint bereitet die PDF-Auftragstasche fachlich und strukturell vor. Eine spätere echte PDF-Erzeugung kann darauf aufbauen, zum Beispiel über eine dedizierte PDF-Route, HTML-to-PDF, serverseitige PDF-Generierung oder eine spätere native Exportfunktion.
+
+Wichtig: Die PDF-Auftragstasche bleibt Teil des zentralen PrintPilot-Prinzips: Alle produktionsrelevanten Informationen müssen aus der Auftragstasche heraus sichtbar und ausgabefähig sein.

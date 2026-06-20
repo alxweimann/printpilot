@@ -1461,9 +1461,12 @@ function PrintOrderPocketSheet({
             <span>Produkt</span>
             <strong>{draft.jobTitle}</strong>
           </div>
-          <div className="pp-modern-print-meta">
+          <div className="pp-modern-print-meta pp-modern-print-meta--delivery">
             <span>Liefertermin</span>
-            <strong>{draft.deliveryDate} · {draft.deliveryMeta}</strong>
+            <strong className="pp-modern-print-delivery-date">
+              <span>{draft.deliveryDate}</span>
+              <em> · {draft.deliveryMeta}</em>
+            </strong>
           </div>
           <div className="pp-modern-print-status">
             <span>Status</span>

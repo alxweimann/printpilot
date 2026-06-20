@@ -3099,3 +3099,45 @@ Design-Entscheidung:
 - `PrintPilot.png` ist ab Sprint 46.46 das verbindliche Masterlogo.
 - Neue Screens sollen keine manuell nachgebauten PrintPilot-Logos mehr verwenden.
 - Für zukünftige Masken soll bevorzugt `PrintPilotLogo` genutzt werden, damit Logo-Größen, Varianten und spätere Optimierungen zentral steuerbar bleiben.
+
+## Sprint 46.47 – Logo-Ausrichtung, Liefertermin-Akzent und weichere Linien
+
+Status: umgesetzt.
+
+Auslöser:
+- Das neue PrintPilot-Logo soll in allen Masken mittiger und ruhiger sitzen.
+- Der Liefertermin soll wie im modernen Mockup stärker mit PrintPilot-Cyan hervorgehoben werden.
+- Die Rahmen der Auftragstasche sind noch etwas zu deutlich und sollen weicher, hochwertiger und weniger hart wirken.
+
+Umgesetzt:
+- Globale Logo-Ausrichtung in den Hauptmasken angepasst:
+  - Brand-Fläche zentriert das Logo besser,
+  - Logo-Objektposition auf mittige Ausrichtung gesetzt,
+  - App-Logo minimal vertikal ausgerichtet.
+- Druckbare Auftragstasche im Kopfbereich feinjustiert:
+  - offizielles Logo sitzt ruhiger in der Kopfzeile,
+  - Logo und Dokumenttyp `Auftragstasche` sind vertikal besser ausgerichtet.
+- Liefertermin im Druckkopf erhält den Mockup-Akzent:
+  - Datum in Cyan / PrintPilot-Blau,
+  - Meta-Zeitangabe weiter in dunklem Navy.
+- Linien und Rahmen der A4-Auftragstasche weicher gesetzt:
+  - Panel-Rahmen heller,
+  - Produktionsdaten-Rahmen subtiler,
+  - Innenraster weniger hart,
+  - Tabellen-/Zeilentrenner heller,
+  - Signaturbereich weiterhin klar, aber weniger schwer.
+- Produktionsdaten-Schattierung weiter zurückgenommen, damit der Bereich hochwertiger und weniger technisch wirkt.
+- QR-/Scantext minimal ruhiger abgestimmt.
+- Signatur-Akzentbalken dezenter gemacht und je Prüffeld mittiger als kleiner Balken gesetzt.
+
+Bewusst nicht geändert:
+- Keine neuen Fachfelder.
+- Keine Preislogik.
+- Keine Kalkulationslogik.
+- Keine Persistenzänderung.
+- A4 Hochformat bleibt strikt einseitig.
+- Alle Auftragstaschenwerte bleiben editierbar und kommen aus dem Drucktaschenmodell.
+
+Nächster sinnvoller Schritt:
+- Ausdruck prüfen.
+- Wenn die Auftragstasche optisch passt, die Designrichtung auf die Kalkulationsmaske übertragen.

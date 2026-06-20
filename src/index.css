@@ -15560,3 +15560,145 @@ button.pp-process-step:hover {
     margin-left: .2mm !important;
   }
 }
+
+/* Sprint 46.47 – Logo-Ausrichtung, Liefertermin-Akzent und weichere Print-Linien
+   Ziel: offizielles Logo in allen Masken mittiger setzen, Liefertermin im Mockup-Stil
+   mit Cyan-Akzent hervorheben und die Auftragstaschen-Rahmen leichter/sachlicher machen. */
+.pp-header-brand {
+  justify-content: center;
+  padding-left: 30px;
+  padding-right: 30px;
+}
+
+.pp-printpilot-logo {
+  object-position: center center;
+}
+
+.pp-brand-logo {
+  margin-inline: auto;
+  transform: translateY(1px);
+}
+
+@media print {
+  .pp-modern-print-brand-row {
+    align-items: center !important;
+  }
+
+  .pp-modern-print-brand {
+    align-items: center !important;
+    gap: 2.1mm !important;
+  }
+
+  .pp-modern-print-logo-img {
+    height: 9.2mm !important;
+    max-width: 34mm !important;
+    object-position: center center !important;
+  }
+
+  .pp-modern-print-brand em {
+    align-self: center !important;
+    margin-left: 0 !important;
+    color: #0d74c9 !important;
+    font-weight: 560 !important;
+  }
+
+  .pp-modern-print-scan {
+    align-items: center !important;
+  }
+
+  .pp-modern-print-scan b,
+  .pp-modern-print-scan small {
+    color: #244567 !important;
+    letter-spacing: .048em !important;
+    line-height: 1.02 !important;
+  }
+
+  .pp-modern-print-meta-row {
+    border-bottom-color: #e2ebf6 !important;
+  }
+
+  .pp-modern-print-meta,
+  .pp-modern-print-status {
+    border-color: #e6edf6 !important;
+  }
+
+  .pp-modern-print-delivery-date span {
+    color: #0ba8df !important;
+    font-weight: 700 !important;
+  }
+
+  .pp-modern-print-delivery-date em {
+    color: #10233d !important;
+    font-style: normal !important;
+    font-weight: 610 !important;
+  }
+
+  .pp-modern-print-core,
+  .pp-modern-print-panel,
+  .pp-modern-print-document-row,
+  .pp-modern-print-signatures {
+    border-color: #e1eaf5 !important;
+    border-width: .38pt !important;
+    box-shadow: 0 .25mm 1mm rgba(18, 43, 72, .025) !important;
+  }
+
+  .pp-modern-print-core {
+    border-color: #d8e7f7 !important;
+    background: linear-gradient(180deg, #fcfeff 0%, #f8fbff 52%, #f5f9fe 100%) !important;
+  }
+
+  .pp-modern-print-core > header {
+    border-bottom-color: #e4eef8 !important;
+    background: linear-gradient(180deg, #ffffff 0%, #fafcff 100%) !important;
+  }
+
+  .pp-modern-print-fact-grid {
+    border-color: #e0eaf6 !important;
+    background: #ffffff !important;
+  }
+
+  .pp-modern-print-fact {
+    border-right-color: #edf3fa !important;
+    border-bottom-color: #edf3fa !important;
+  }
+
+  .pp-modern-print-panel h3 {
+    border-bottom-color: #e7eef7 !important;
+    background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%) !important;
+  }
+
+  .pp-modern-print-line {
+    border-bottom-color: #eef3f8 !important;
+  }
+
+  .pp-modern-print-check-row,
+  .pp-modern-print-check-list {
+    border-top-color: #eef3f8 !important;
+  }
+
+  .pp-modern-print-tags strong {
+    border-color: #c6ddf7 !important;
+    background: #f6fbff !important;
+  }
+
+  .pp-modern-print-document-row {
+    background: #ffffff !important;
+  }
+
+  .pp-modern-print-signatures {
+    border-color: #d4e5f7 !important;
+  }
+
+  .pp-modern-print-signatures > div {
+    border-right-color: #e2ebf5 !important;
+  }
+
+  .pp-modern-print-signatures > div::before {
+    top: .75mm !important;
+    left: 5mm !important;
+    right: 5mm !important;
+    height: .52mm !important;
+    border-radius: 99px !important;
+    background: linear-gradient(90deg, #0ba8df 0%, #126fce 100%) !important;
+  }
+}

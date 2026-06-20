@@ -1294,18 +1294,63 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   const activeTabOpenRequiredFields = missingRequiredByTab[activeTab];
   const canCreateOrderDraft = openRequiredFields === 0;
   const orderOpenFields = countMissingFields(draft, orderRequiredFields);
-  const readinessSummary = [
-    `Kalkulierbar ${getReadinessLabel(calculationOpenFields)}`,
-    `Angebotsfähig ${getReadinessLabel(offerOpenFields)}`,
-    `Auftragsfähig ${getReadinessLabel(orderOpenFields)}`,
-  ];
-
   const payload = useMemo(
     () => buildPayloadFromDraft(draft, productionMode, finishingRows),
     [draft, finishingRows, productionMode],
   );
   const activeFinishingCount = finishingRows.filter((row) => row.active).length;
   const result = payload.imposition;
+  const productionModeLabel =
+    productionModes.find((mode) => mode.id === productionMode)?.label ??
+    "Eigenproduktion";
+  const sheetCount = result.production.sheetsRequired
+    ? formatNumber(result.production.sheetsRequired)
+    : "offen";
+  const northStarCards = [
+    {
+      label: "Kalkulation",
+      value: "Daten erfassen",
+      helper: "Produkt, Material, Druck, Weiterverarbeitung und Preis",
+    },
+    {
+      label: "Auftrag",
+      value: canCreateOrderDraft
+        ? "erzeugbar"
+        : `${openRequiredFields} Pflichtfelder offen`,
+      helper: "Kunde, Termin und Produktionsweg werden geprüft",
+    },
+    {
+      label: "Auftragstasche",
+      value: "wird vorbereitet",
+      helper: "Nur produktionsrelevante Daten sollen später übernommen werden",
+    },
+    {
+      label: "Produktion",
+      value: `${activeFinishingCount} aktive WV-Schritte`,
+      helper: `${draft.machine} · ${draft.dueDate}`,
+    },
+  ];
+  const calculationCoreCards = [
+    ["Kunde", draft.customer, draft.contactEmail],
+    ["Produkt", payload.product.label, `${draft.pages} · ${draft.colorMode}`],
+    ["Auflage", `${formatNumber(payload.product.quantity)} Stück`, `${sheetCount} Bogen`],
+    ["Material", draft.substrate, `${draft.grammage} · ${draft.sheetFormat}`],
+    ["Maschine", draft.machine, draft.printType],
+    ["Termin", draft.dueDate, draft.dataStatus],
+  ];
+  const orderPocketPreviewRows = [
+    ["Kunde", `${draft.customer} · ${draft.contactName}`],
+    ["Produkt", `${payload.product.label} · ${draft.finalFormat}`],
+    ["Druck", `${draft.machine} · ${draft.colorMode}`],
+    ["Material", `${draft.substrate} · ${draft.grammage}`],
+    [
+      "Weiterverarbeitung",
+      activeFinishingCount > 0
+        ? `${activeFinishingCount} aktive Schritte`
+        : "nur relevante Schritte",
+    ],
+    ["Lieferung", draft.deliveryAddress],
+  ];
 
   const updateDraft = (field: keyof CalculationDraft) => (value: string) => {
     setDraft((currentDraft) => ({ ...currentDraft, [field]: value }));
@@ -1357,7 +1402,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         </div>
         <div className="pp-header-title-shape">
           <h1>KALKULATION</h1>
-          <p>MIS-Maske · 6 Arbeitsbereiche · geführter Bedienfluss</p>
+          <p>Produktionsdaten · Preisfindung · Auftragstasche</p>
         </div>
         <div
           className="pp-header-job pp-header-job--overview"
@@ -1375,8 +1420,8 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         >
           <div className="pp-calculation-form__intro pp-calculation-tabs-intro">
             <div>
-              <p className="pp-eyebrow">Arbeitsmaske</p>
-              <h2>Produktive Reitermaske</h2>
+              <p className="pp-eyebrow">Sprint 47 · Designübertragung</p>
+              <h2>Kalkulation als Produktionsmaske</h2>
             </div>
             <div
               className="pp-calculation-form__meta"
@@ -1389,36 +1434,30 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           </div>
 
           <div
+            className="pp-calculation-north-star"
+            aria-label="PrintPilot Produktionsfluss"
+          >
+            {northStarCards.map((card, index) => (
+              <article key={card.label}>
+                <span>{String(index + 1).padStart(2, "0")}</span>
+                <b>{card.label}</b>
+                <strong>{card.value}</strong>
+                <small>{card.helper}</small>
+              </article>
+            ))}
+          </div>
+
+          <div
             className="pp-calculation-quick-head"
             aria-label="Kalkulationskopf"
           >
-            <div>
-              <span>Kunde</span>
-              <b>{draft.customer}</b>
-            </div>
-            <div>
-              <span>Produkt</span>
-              <b>{payload.product.label}</b>
-            </div>
-            <div>
-              <span>Auflage</span>
-              <b>{formatNumber(payload.product.quantity)} Stück</b>
-            </div>
-            <div>
-              <span>Format</span>
-              <b>{draft.finalFormat}</b>
-            </div>
-            <div>
-              <span>Produktion</span>
-              <b>
-                {productionModes.find((mode) => mode.id === productionMode)
-                  ?.label ?? "Eigenproduktion"}
-              </b>
-            </div>
-            <div>
-              <span>Status</span>
-              <b>{readinessSummary.join(" · ")}</b>
-            </div>
+            {calculationCoreCards.map(([label, value, helper]) => (
+              <div key={label}>
+                <span>{label}</span>
+                <b>{value}</b>
+                <small>{helper}</small>
+              </div>
+            ))}
           </div>
 
           <nav
@@ -2252,11 +2291,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             <div>
               <span>Nutzen / Bogen</span>
               <b>
-                {result.layout.usedSlots} Nutzen ·{" "}
-                {result.production.sheetsRequired
-                  ? formatNumber(result.production.sheetsRequired)
-                  : "offen"}{" "}
-                Bogen
+                {result.layout.usedSlots} Nutzen · {sheetCount} Bogen
               </b>
             </div>
             <button
@@ -2266,8 +2301,8 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
               disabled={!canCreateOrderDraft}
             >
               {canCreateOrderDraft
-                ? "Auftrag aus Kalkulation erzeugen"
-                : "Auftragsdaten fehlen"}
+                ? "Auftragstasche vorbereiten"
+                : "Pflichtdaten fehlen"}
             </button>
           </div>
         </div>
@@ -2277,9 +2312,9 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           aria-label="Kalkulation Ergebnis"
         >
           <div className="pp-calculation-result-panel__head">
-            <p className="pp-eyebrow">Ergebnis</p>
-            <h2>Auswertung</h2>
-            <span>Kurzübersicht zur aktuellen Kalkulation.</span>
+            <p className="pp-eyebrow">Ergebnis & Auftragstasche</p>
+            <h2>Produktionskern</h2>
+            <span>Bleibt beim Erfassen sichtbar und zeigt, was später in die Auftragstasche wandert.</span>
           </div>
 
           <CalculationSheetPreview payload={payload} />
@@ -2289,10 +2324,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             <div className="pp-calc-result-list">
               <ResultLine
                 label="Produktionsweg"
-                value={
-                  productionModes.find((mode) => mode.id === productionMode)
-                    ?.label ?? "Eigenproduktion"
-                }
+                value={productionModeLabel}
               />
               <ResultLine label="Produkt" value={payload.product.label} />
               <ResultLine
@@ -2315,6 +2347,42 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             </div>
           </div>
 
+          <div className="pp-calculation-output-card pp-calculation-output-card--price">
+            <h3>Preisabschluss</h3>
+            <div className="pp-calc-result-list">
+              <ResultLine label="Material" value={draft.materialCosts} />
+              <ResultLine label="Druck" value={draft.printCosts} />
+              <ResultLine label="Weiterverarbeitung" value={draft.finishingCosts} />
+              <ResultLine label="Fremdleistung" value={draft.externalCosts} />
+              <ResultLine label="Verkauf netto" value={draft.salePriceNet} />
+            </div>
+          </div>
+
+          <div className="pp-calculation-output-card pp-calculation-output-card--pocket">
+            <h3>Übergabe an Auftragstasche</h3>
+            <div className="pp-calc-result-list">
+              {orderPocketPreviewRows.map(([label, value]) => (
+                <ResultLine key={label} label={label} value={value} />
+              ))}
+            </div>
+          </div>
+
+          <div className="pp-calculation-action-stack">
+            <button className="pp-calculation-create-button" type="button" disabled>
+              Angebot speichern · später
+            </button>
+            <button
+              className="pp-calculation-create-button"
+              type="button"
+              onClick={handleCreateOrderDraft}
+              disabled={!canCreateOrderDraft}
+            >
+              {canCreateOrderDraft
+                ? "Auftragstasche vorbereiten"
+                : "Pflichtdaten fehlen"}
+            </button>
+          </div>
+
           <div
             className={
               draftWasCreated
@@ -2328,8 +2396,9 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                 : "Noch nicht gespeichert"}
             </strong>
             <p>
-              Reitermaske mit lokalem Demo-State. Die aktuellen Werte werden
-              beim Erzeugen übernommen.
+              Lokaler Demo-State. Die aktuellen Kalkulationswerte werden beim
+              Vorbereiten in den Auftragsentwurf und anschließend in die
+              Auftragstasche übernommen.
             </p>
           </div>
         </aside>

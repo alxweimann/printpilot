@@ -3401,3 +3401,18 @@ Build-Prüfung: `npm run build`.
 - Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.
 
 Build-Prüfung: `npm run build`.
+
+## Sprint 47 – Kalkulationsmaske nach Auftragstaschen-Designreferenz
+
+- Die finale Auftragstasche aus Sprint 46.61 wurde als North Star auf die Kalkulationsmaske übertragen.
+- Der Kopf der Kalkulation spricht jetzt fachlich klarer: Produktionsdaten, Preisfindung und Auftragstasche statt klassischer MIS-Maske.
+- Die Kalkulationsseite erhält einen sichtbaren PrintPilot-Fluss: **Kalkulation → Auftrag → Auftragstasche → Produktion**.
+- Der obere Kalkulationskern zeigt die wichtigsten Produktionsdaten als ruhige, gut lesbare Kernboxen: Kunde, Produkt, Auflage, Material, Maschine und Termin.
+- Die sechs Arbeitsbereiche bleiben erhalten, sind aber optisch ruhiger, gleich breit und stärker als produktive Eingabereiter gezeichnet.
+- Eingabefelder, Pflicht-/Optional-/Später-Badges und Fokuszustände wurden in Richtung Auftragstasche harmonisiert: klare Ränder, weniger fette Typografie, weißer Arbeitsraum, dezente Linien.
+- Rechts steht jetzt ein sticky Ergebnis- und Auftragstaschenbereich mit Nutzenplan, Produktionsdaten, Preisabschluss und Vorschau der Übergabe an die Auftragstasche.
+- Der Haupt-CTA wurde fachlich umbenannt zu **Auftragstasche vorbereiten**, weil die Kalkulation in PrintPilot auf Auftrag und Auftragstasche hinführt.
+- `Angebot speichern` bleibt sichtbar als vorbereiteter, noch deaktivierter Folgeprozess ohne neue Persistenzlogik.
+- Keine neue Preislogik, keine neue Kalkulationslogik, keine Persistenzänderung.
+
+Build-Prüfung: `npm run build`.

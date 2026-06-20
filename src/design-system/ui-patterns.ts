@@ -1013,3 +1013,10 @@ export const sprint4618Pattern = {
   description:
     "Die Kalkulationsmaske wird fachlich aufgeräumt, ohne neue Preislogik oder große Designänderung. Pflichtfelder werden auf echte Mindestdaten reduziert, optionale und spätere Felder blockieren den Auftrag nicht mehr und die Felder werden in den sechs Hauptreitern klarer nach Kontakt, Auftrag, Menge, Produkt, Format, Material, Druck, Fremdproduktion und Abrechnung sortiert.",
 };
+
+export const sprint47Pattern = {
+  id: "calculation-modern-production-mask-from-order-pocket",
+  sprint: "47",
+  description:
+    "Die Kalkulationsmaske übernimmt die eingefrorene Auftragstaschen-Designrichtung: weißer Produktionsarbeitsraum, ruhige Panels, klarere Feldrahmen, PrintPilot-Blau/Cyan als Akzent, oben sichtbarer PrintPilot-Fluss von Kalkulation über Auftrag und Auftragstasche bis Produktion sowie ein sticky Ergebnis-/Auftragstaschenblock rechts.",
+};

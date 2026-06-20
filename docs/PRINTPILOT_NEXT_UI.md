@@ -2360,3 +2360,86 @@ Nicht umgesetzt wurden:
 - `src/features/order-pocket/OrderPocketPage.tsx`
 - `src/index.css`
 - `docs/PRINTPILOT_NEXT_UI.md`
+
+---
+
+## Sprint 46.27 – Auftragstasche Produktionsinformationen vollständig prüfen
+
+### Ziel
+
+Die Auftragstasche wurde fachlich darauf geprüft, ob alle produktionsrelevanten Informationen aus Kalkulation, Auftrag, Druckdaten, Produktion, Weiterverarbeitung und Versand sichtbar oder zumindest als vorbereiteter Bereich erkennbar sind.
+
+Wichtig war dabei: Die Auftragstasche bleibt das Herzstück von PrintPilot. Neue Informationen sollen nicht isoliert in Modulen verschwinden, sondern später gezielt in der Auftragstasche erscheinen.
+
+### Umsetzung
+
+In der Auftragstasche wurde ein kompakter Vollständigkeitscheck ergänzt.
+
+Die neue Prüfzone zeigt folgende Informationsgruppen:
+
+- Kunde & Auftrag
+- Produktdaten
+- Material
+- Druck
+- Nutzenplan
+- Weiterverarbeitung
+- Versand
+
+Pro Gruppe werden die wichtigsten Produktionsinformationen direkt angezeigt. Fehlende oder später aus anderen Modulen kommende Informationen werden bewusst als `prüfen` oder `später` sichtbar gemacht, statt still zu fehlen.
+
+### Fachlicher Nutzen
+
+Die Auftragstasche beantwortet jetzt besser die zentrale Frage:
+
+```text
+Sind alle für die Produktion relevanten Informationen sichtbar?
+```
+
+Besonders wichtig:
+
+- Kundendaten und Ansprechpartner sind sichtbar.
+- Produkt, Format, Seiten, Auflage und Farbigkeiten sind sichtbar.
+- Papier, Rohformat, Bogenformat und Zuschuss sind sichtbar.
+- Maschine, Verfahren, Datenstatus, Freigabe und Beschnittstatus sind sichtbar.
+- Nutzenplan, Anordnung, Beschnitt und spätere Druckbogen-PDF sind vorbereitet.
+- Aktive Weiterverarbeitungsschritte werden sichtbar zusammengefasst.
+- Versandtermin, Lieferinfo, Adresse und Verpackungshinweis sind sichtbar.
+
+### Weiterverarbeitung
+
+Die Auftragstasche zeigt weiterhin nur die konkret aktiven oder relevanten Schritte des aktuellen Auftrags. Zusätzlich wurde ein kompakter Leistungskatalog ergänzt, damit erkennbar ist, welche Weiterverarbeitungsarten grundsätzlich vorbereitet sind.
+
+Vorbereiteter Katalog:
+
+- Schneiden
+- Falzen
+- Rillen
+- Heften
+- Ringösen
+- Ableimen
+- Bohren
+- Perforieren
+- Nummerieren
+- Kuvertieren
+- Handarbeiten
+- Verpacken
+
+Aktive Leistungen werden im Katalog dezent hervorgehoben. Dadurch bleibt der aktuelle Auftrag schlank, aber die fachliche Vollständigkeit der Weiterverarbeitung ist sichtbar.
+
+### Bewusste Grenzen dieses Sprints
+
+Nicht umgesetzt wurden:
+
+- keine neue Preislogik
+- keine neue Kalkulationslogik
+- keine echte Materialbestellung
+- keine echte Versandlogik
+- keine Persistenzänderung
+- keine PDF-Auftragstasche
+- keine QR-Code-Aktion
+
+### Betroffene Dateien
+
+- `src/features/order-pocket/OrderPocketPage.tsx`
+- `src/index.css`
+- `docs/PRINTPILOT_NEXT_UI.md`

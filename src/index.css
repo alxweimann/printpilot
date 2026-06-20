@@ -10544,3 +10544,237 @@ button.pp-process-step:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* Sprint 46.27 – Auftragstasche Produktionsinformationen vollständig prüfen */
+.pp-production-info-audit {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 18px;
+  padding: 15px 16px 16px;
+  border: 1px solid #dbe7f4;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #fbfdff 100%);
+  box-shadow: 0 14px 32px rgba(9, 31, 68, .045);
+}
+
+.pp-production-info-audit__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e4edf7;
+}
+
+.pp-production-info-audit__head span {
+  display: block;
+  margin-bottom: 5px;
+  color: #607086;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .14em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.pp-production-info-audit__head strong {
+  display: block;
+  color: #06163a;
+  font-size: 16px;
+  font-weight: 850;
+  letter-spacing: -.025em;
+  line-height: 1.15;
+}
+
+.pp-production-info-audit__head small {
+  max-width: 520px;
+  color: #52637d;
+  font-size: 11px;
+  font-weight: 720;
+  line-height: 1.3;
+  text-align: right;
+}
+
+.pp-production-info-grid {
+  display: grid;
+  grid-template-columns: repeat(7, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.pp-production-info-card {
+  position: relative;
+  min-width: 0;
+  overflow: hidden;
+  border: 1px solid #dfe9f5;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.pp-production-info-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: #94a3b8;
+}
+
+.pp-production-info-card--green::before { background: #11b978; }
+.pp-production-info-card--orange::before { background: #ff8b25; }
+.pp-production-info-card--blue::before { background: #087bff; }
+.pp-production-info-card--gray::before { background: #94a3b8; }
+
+.pp-production-info-card header {
+  min-height: 70px;
+  padding: 11px 11px 9px 13px;
+  border-bottom: 1px solid #edf3fa;
+  background: #fbfdff;
+}
+
+.pp-production-info-card header span {
+  display: block;
+  margin-bottom: 5px;
+  color: #071f48;
+  font-size: 12px;
+  font-weight: 850;
+  letter-spacing: -.015em;
+  line-height: 1.15;
+}
+
+.pp-production-info-card header small {
+  display: -webkit-box;
+  overflow: hidden;
+  color: #64748b;
+  font-size: 10.5px;
+  font-weight: 680;
+  line-height: 1.25;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.pp-production-info-card > div {
+  display: grid;
+}
+
+.pp-production-info-row {
+  display: grid;
+  grid-template-columns: minmax(78px, .78fr) minmax(0, 1fr);
+  gap: 7px;
+  margin: 0;
+  padding: 7px 10px 7px 13px;
+  border-bottom: 1px solid #edf3fa;
+}
+
+.pp-production-info-row:last-child {
+  border-bottom: 0;
+}
+
+.pp-production-info-row span {
+  color: #64748b;
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: .015em;
+  line-height: 1.2;
+}
+
+.pp-production-info-row strong {
+  min-width: 0;
+  overflow: hidden;
+  color: #213657;
+  font-size: 10.5px;
+  font-weight: 760;
+  letter-spacing: -.006em;
+  line-height: 1.22;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-production-info-row--check strong {
+  color: #9a5a0b;
+}
+
+.pp-production-info-row--later strong {
+  color: #64748b;
+  font-style: italic;
+  font-weight: 680;
+}
+
+.pp-finishing-catalog {
+  display: grid;
+  gap: 8px;
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid #e6eef8;
+}
+
+.pp-finishing-catalog > span {
+  color: #607086;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .12em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.pp-finishing-catalog > div {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.pp-finishing-catalog__item {
+  display: inline-flex;
+  align-items: center;
+  min-height: 22px;
+  padding: 3px 8px;
+  border: 1px solid #d9e4f2;
+  border-radius: 999px;
+  background: #f8fbff;
+  color: #607086;
+  font-size: 10px;
+  font-weight: 720;
+  line-height: 1;
+}
+
+.pp-finishing-catalog__item--active {
+  border-color: #ffd6aa;
+  background: #fff7ed;
+  color: #9a5a0b;
+}
+
+@media (max-width: 1680px) {
+  .pp-production-info-grid {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1180px) {
+  .pp-production-info-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .pp-production-info-audit {
+    padding: 13px;
+    border-radius: 15px;
+  }
+
+  .pp-production-info-audit__head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .pp-production-info-audit__head small {
+    max-width: none;
+    text-align: left;
+  }
+
+  .pp-production-info-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-production-info-card header {
+    min-height: 0;
+  }
+}

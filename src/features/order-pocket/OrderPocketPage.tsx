@@ -8,7 +8,10 @@ import wideFormatMachine from "../../assets/machines/machine-wide-format.svg";
 import inkjetMachine from "../../assets/machines/machine-inkjet.svg";
 import finishingMachine from "../../assets/machines/machine-finishing.svg";
 import { StatusPill } from "../../components/ui/StatusPill";
-import { getOrderProductionData, type PrintPilotOrder } from "../orders/order-data";
+import {
+  getOrderProductionData,
+  type PrintPilotOrder,
+} from "../orders/order-data";
 
 function getProductHighlights(order: PrintPilotOrder) {
   const { product } = getOrderProductionData(order);
@@ -178,7 +181,10 @@ function getImpositionLegend(order: PrintPilotOrder) {
   const { imposition } = getOrderProductionData(order);
 
   return [
-    ["Bogen", formatSheetSize(imposition.sheet.widthMm, imposition.sheet.heightMm)],
+    [
+      "Bogen",
+      formatSheetSize(imposition.sheet.widthMm, imposition.sheet.heightMm),
+    ],
     ["Nutzen", imposition.item.finalFormat],
     ["Beschnitt", imposition.bleed],
     ["Abstand", imposition.layout.gapMm ?? "schematisch"],
@@ -294,7 +300,9 @@ function getProductionCoreItems(
     {
       label: "Druckdaten",
       title: actionState.data.label,
-      value: productionData.files.original?.filename ?? productionData.files.preview.filename,
+      value:
+        productionData.files.original?.filename ??
+        productionData.files.preview.filename,
       meta: `Preflight ${order.preflightValue} · Beschnitt ${order.bleedStatus.label}`,
       tone: actionState.data.tone,
     },
@@ -308,10 +316,11 @@ function getProductionCoreItems(
     {
       label: "Weiterverarbeitung",
       title: `${activeFinishing} aktive Schritte`,
-      value: actionState.finishing
-        .filter((step) => step.status.label !== "Nicht notwendig")
-        .map((step) => step.label)
-        .join(" · ") || "keine aktive Leistung",
+      value:
+        actionState.finishing
+          .filter((step) => step.status.label !== "Nicht notwendig")
+          .map((step) => step.label)
+          .join(" · ") || "keine aktive Leistung",
       meta: "aus Auftragstasche steuerbar",
       tone: activeFinishing > 0 ? ("orange" as const) : ("gray" as const),
     },
@@ -320,9 +329,325 @@ function getProductionCoreItems(
       title: order.deliveryMeta,
       value: order.dueMeta,
       meta: "Übergabe aus Produktion an Versand",
-      tone: actionState.production.label === "Versandbereit" ? ("green" as const) : ("gray" as const),
+      tone:
+        actionState.production.label === "Versandbereit"
+          ? ("green" as const)
+          : ("gray" as const),
     },
   ];
+}
+
+const finishingCatalog = [
+  "Schneiden",
+  "Falzen",
+  "Rillen",
+  "Heften",
+  "Ringösen",
+  "Ableimen",
+  "Bohren",
+  "Perforieren",
+  "Nummerieren",
+  "Kuvertieren",
+  "Handarbeiten",
+  "Verpacken",
+];
+
+type ProductionInfoRow = {
+  label: string;
+  value: string;
+  state?: "ok" | "check" | "later";
+};
+
+type ProductionInfoGroup = {
+  title: string;
+  description: string;
+  tone: "green" | "orange" | "blue" | "gray";
+  rows: ProductionInfoRow[];
+};
+
+function getActiveFinishingSteps(actionState: PocketActionState) {
+  return actionState.finishing.filter(
+    (step) => step.status.label !== "Nicht notwendig",
+  );
+}
+
+function getActiveFinishingLabels(actionState: PocketActionState) {
+  return getActiveFinishingSteps(actionState).map((step) => step.label);
+}
+
+function getProductionInfoGroups(
+  order: PrintPilotOrder,
+  actionState: PocketActionState,
+): ProductionInfoGroup[] {
+  const productionData = getOrderProductionData(order);
+  const activeFinishing = getActiveFinishingSteps(actionState);
+  const activeFinishingText =
+    activeFinishing.map((step) => step.label).join(" · ") ||
+    "keine aktive Leistung";
+
+  return [
+    {
+      title: "Kunde & Auftrag",
+      description: "Kontakt und kaufmännische Auftragsbasis",
+      tone: "blue",
+      rows: [
+        { label: "Kunde", value: order.customer, state: "ok" },
+        {
+          label: "Kontakt",
+          value: `${order.contactName} · ${order.contactPhone}`,
+          state: "ok",
+        },
+        { label: "E-Mail", value: order.contactEmail, state: "ok" },
+        { label: "Auftrag", value: order.id, state: "ok" },
+        { label: "Bestellnummer", value: "noch nicht erfasst", state: "check" },
+      ],
+    },
+    {
+      title: "Produktdaten",
+      description: "Format, Umfang, Auflage und Farbigkeiten",
+      tone: "green",
+      rows: [
+        { label: "Produkt", value: productionData.product.label, state: "ok" },
+        {
+          label: "Endformat",
+          value: productionData.product.finalFormat,
+          state: "ok",
+        },
+        { label: "Seiten", value: productionData.product.pages, state: "ok" },
+        {
+          label: "Auflage",
+          value: productionData.product.quantity,
+          state: "ok",
+        },
+        {
+          label: "Farbigkeit",
+          value: productionData.product.colorMode,
+          state: "ok",
+        },
+      ],
+    },
+    {
+      title: "Material",
+      description: "Papier, Bogenformat und Bedarf",
+      tone: "blue",
+      rows: [
+        {
+          label: "Papier",
+          value: productionData.product.substrate,
+          state: "ok",
+        },
+        {
+          label: "Rohformat",
+          value: productionData.product.productionFormat,
+          state: "ok",
+        },
+        {
+          label: "Bogenformat",
+          value: productionData.imposition.sheet.name,
+          state: "ok",
+        },
+        { label: "Zuschuss", value: order.waste, state: "ok" },
+        {
+          label: "Papierstatus",
+          value: "später aus Materialmodul",
+          state: "later",
+        },
+      ],
+    },
+    {
+      title: "Druck",
+      description: "Maschine, Datenstatus, Freigabe und technische Prüfung",
+      tone: actionState.data.tone,
+      rows: [
+        { label: "Maschine", value: order.machine, state: "ok" },
+        { label: "Verfahren", value: order.machineTypeLabel, state: "ok" },
+        {
+          label: "Datenstatus",
+          value: actionState.data.label,
+          state: actionState.data.tone === "green" ? "ok" : "check",
+        },
+        {
+          label: "Freigabe",
+          value: actionState.approval.label,
+          state: actionState.approval.tone === "green" ? "ok" : "check",
+        },
+        {
+          label: "Beschnitt",
+          value: order.bleedStatus.label,
+          state: order.bleedStatus.tone === "green" ? "ok" : "check",
+        },
+      ],
+    },
+    {
+      title: "Nutzenplan",
+      description: "Ausschießdaten für Druckbogen und spätere Engine",
+      tone: "blue",
+      rows: [
+        {
+          label: "Nutzen",
+          value: productionData.imposition.label,
+          state: "ok",
+        },
+        {
+          label: "Anordnung",
+          value: `${productionData.imposition.layout.columns} × ${productionData.imposition.layout.rows}`,
+          state: "ok",
+        },
+        {
+          label: "Beschnitt",
+          value: productionData.imposition.bleed,
+          state: "ok",
+        },
+        {
+          label: "Zwischenraum",
+          value: productionData.imposition.layout.gapMm ?? "schematisch",
+          state: "check",
+        },
+        { label: "Druckbogen-PDF", value: "später erzeugen", state: "later" },
+      ],
+    },
+    {
+      title: "Weiterverarbeitung",
+      description: "Aktive Produktionsschritte und kompletter Leistungskatalog",
+      tone: activeFinishing.length > 0 ? "orange" : "gray",
+      rows: [
+        {
+          label: "Aktiv",
+          value: activeFinishingText,
+          state: activeFinishing.length > 0 ? "ok" : "check",
+        },
+        {
+          label: "Schritte",
+          value: `${activeFinishing.length} aktiv`,
+          state: activeFinishing.length > 0 ? "ok" : "check",
+        },
+        {
+          label: "Katalog",
+          value: `${finishingCatalog.length} Leistungen vorbereitet`,
+          state: "ok",
+        },
+        {
+          label: "Sonderarbeit",
+          value: "Handarbeiten / Konfektionieren sichtbar",
+          state: "ok",
+        },
+        { label: "Mailing", value: "Kuvertieren vorbereitet", state: "later" },
+      ],
+    },
+    {
+      title: "Versand",
+      description: "Lieferung, Verpackung und Übergabe",
+      tone: actionState.production.label === "Versandbereit" ? "green" : "gray",
+      rows: [
+        {
+          label: "Termin",
+          value: `${order.dueDate} · ${order.dueMeta}`,
+          state: "ok",
+        },
+        { label: "Lieferinfo", value: order.deliveryMeta, state: "ok" },
+        {
+          label: "Adresse",
+          value: order.customerAddress.join(", "),
+          state: "ok",
+        },
+        {
+          label: "Verpackung",
+          value:
+            activeFinishing.find((step) => step.label.includes("Verpack"))
+              ?.note ?? "prüfen",
+          state: "check",
+        },
+        { label: "Teillieferung", value: "später aus Auftrag", state: "later" },
+      ],
+    },
+  ];
+}
+
+function ProductionInfoAudit({
+  order,
+  actionState,
+}: {
+  order: PrintPilotOrder;
+  actionState: PocketActionState;
+}) {
+  const groups = getProductionInfoGroups(order, actionState);
+
+  return (
+    <section
+      className="pp-production-info-audit"
+      aria-label="Produktionsinformationen prüfen"
+    >
+      <div className="pp-production-info-audit__head">
+        <div>
+          <span>Produktionsinformationen</span>
+          <strong>Fachlicher Vollständigkeitscheck der Auftragstasche</strong>
+        </div>
+        <small>
+          zeigt, welche Informationen aus Kalkulation, Auftrag, Druckdaten und
+          Produktion in der Auftragstasche sichtbar sind
+        </small>
+      </div>
+      <div className="pp-production-info-grid">
+        {groups.map((group) => (
+          <article
+            className={`pp-production-info-card pp-production-info-card--${group.tone}`}
+            key={group.title}
+          >
+            <header>
+              <span>{group.title}</span>
+              <small>{group.description}</small>
+            </header>
+            <div>
+              {group.rows.map((row) => (
+                <p
+                  className={`pp-production-info-row pp-production-info-row--${row.state ?? "ok"}`}
+                  key={`${group.title}-${row.label}`}
+                >
+                  <span>{row.label}</span>
+                  <strong>{row.value}</strong>
+                </p>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
+function FinishingCatalog({ actionState }: { actionState: PocketActionState }) {
+  const activeLabels = getActiveFinishingLabels(actionState);
+
+  return (
+    <div
+      className="pp-finishing-catalog"
+      aria-label="Weiterverarbeitungs-Katalog"
+    >
+      <span>Leistungskatalog</span>
+      <div>
+        {finishingCatalog.map((label) => {
+          const isActive = activeLabels.some(
+            (activeLabel) =>
+              activeLabel.toLowerCase().includes(label.toLowerCase()) ||
+              label.toLowerCase().includes(activeLabel.toLowerCase()),
+          );
+
+          return (
+            <small
+              className={
+                isActive
+                  ? "pp-finishing-catalog__item pp-finishing-catalog__item--active"
+                  : "pp-finishing-catalog__item"
+              }
+              key={label}
+            >
+              {label}
+            </small>
+          );
+        })}
+      </div>
+    </div>
+  );
 }
 
 function ProductionCoreStrip({
@@ -335,17 +660,27 @@ function ProductionCoreStrip({
   const items = getProductionCoreItems(order, actionState);
 
   return (
-    <section className="pp-pocket-core-strip" aria-label="Produktionskern Auftragstasche">
+    <section
+      className="pp-pocket-core-strip"
+      aria-label="Produktionskern Auftragstasche"
+    >
       <div className="pp-pocket-core-strip__head">
         <div>
           <span>Auftragstasche als Produktionskern</span>
-          <strong>Alle produktionsrelevanten Informationen laufen hier zusammen</strong>
+          <strong>
+            Alle produktionsrelevanten Informationen laufen hier zusammen
+          </strong>
         </div>
-        <small>Kalkulation → Auftrag → Auftragstasche → Produktion → Versand</small>
+        <small>
+          Kalkulation → Auftrag → Auftragstasche → Produktion → Versand
+        </small>
       </div>
       <div className="pp-pocket-core-grid">
         {items.map((item) => (
-          <article className={`pp-pocket-core-card pp-pocket-core-card--${item.tone}`} key={item.label}>
+          <article
+            className={`pp-pocket-core-card pp-pocket-core-card--${item.tone}`}
+            key={item.label}
+          >
             <span>{item.label}</span>
             <strong>{item.title}</strong>
             <b>{item.value}</b>
@@ -584,7 +919,6 @@ function createPocketActionState(order: PrintPilotOrder): PocketActionState {
   };
 }
 
-
 function createOrderFromActionState(
   order: PrintPilotOrder,
   actionState: PocketActionState,
@@ -678,7 +1012,10 @@ function getProcessStepState(
         isActive: true,
       };
     }
-    if (currentLabel === "Weiterverarbeitung" || currentLabel === "Versandbereit") {
+    if (
+      currentLabel === "Weiterverarbeitung" ||
+      currentLabel === "Versandbereit"
+    ) {
       return { key: "print", label: "Druck", value: "erledigt", tone: "green" };
     }
     return { key: "print", label: "Druck", value: "geplant", tone: "blue" };
@@ -1047,7 +1384,10 @@ function ImpositionPlanCard({ order }: { order: PrintPilotOrder }) {
         ))}
       </div>
 
-      <div className="pp-imposition-legend" aria-label="Technische Nutzenplan-Legende">
+      <div
+        className="pp-imposition-legend"
+        aria-label="Technische Nutzenplan-Legende"
+      >
         {impositionLegend.map(([label, value]) => (
           <span key={label}>
             <small>{label}</small>
@@ -1079,9 +1419,12 @@ function PreviewCard({ order }: { order: PrintPilotOrder }) {
       </div>
 
       <div className="pp-preview-meta">
-        <b>{productionData.files.original?.filename ?? order.preview.filename}</b>
+        <b>
+          {productionData.files.original?.filename ?? order.preview.filename}
+        </b>
         <span>
-          {productionData.product.label} · {productionData.product.colorMode} · {order.preview.meta}
+          {productionData.product.label} · {productionData.product.colorMode} ·{" "}
+          {order.preview.meta}
         </span>
       </div>
 
@@ -1138,8 +1481,8 @@ export function OrderPocketPage({
   onOrderChange?: (order: PrintPilotOrder) => void;
   onOrderReset?: () => void;
 }) {
-  const [localActionState, setLocalActionState] = useState<PocketActionState>(() =>
-    createPocketActionState(order),
+  const [localActionState, setLocalActionState] = useState<PocketActionState>(
+    () => createPocketActionState(order),
   );
 
   useEffect(() => {
@@ -1147,8 +1490,13 @@ export function OrderPocketPage({
   }, [order]);
 
   const hasCentralOrderState = typeof onOrderChange === "function";
-  const centralActionState = useMemo(() => createPocketActionState(order), [order]);
-  const actionState = hasCentralOrderState ? centralActionState : localActionState;
+  const centralActionState = useMemo(
+    () => createPocketActionState(order),
+    [order],
+  );
+  const actionState = hasCentralOrderState
+    ? centralActionState
+    : localActionState;
 
   const files = useMemo(() => getFiles(order), [order]);
   const noteRows = useMemo(() => getNoteRows(order), [order]);
@@ -1164,7 +1512,11 @@ export function OrderPocketPage({
     typeLabel: order.machineTypeLabel,
     status: "Verfügbar",
     location: order.machineType === "wide-format" ? "Großformat" : "Halle 1",
-    specs: [order.rawFormat, order.color, getOrderProductionData(order).imposition.label],
+    specs: [
+      order.rawFormat,
+      order.color,
+      getOrderProductionData(order).imposition.label,
+    ],
     service: "12.05.2026",
   };
 
@@ -1310,10 +1662,12 @@ export function OrderPocketPage({
           <div className="pp-status-overview__head">
             <div>
               <div className="pp-eyebrow">Interaktive Prozessleiste</div>
-              <strong>Auftragsstatus und Prozessphasen direkt bearbeiten</strong>
+              <strong>
+                Auftragsstatus und Prozessphasen direkt bearbeiten
+              </strong>
               <p className="pp-status-overview__note">
-                UI-Vorschau ohne persistente Speicherung. Schritte anklicken,
-                um Datenprüfung, Freigabe und Produktionsphase lokal zu ändern.
+                UI-Vorschau ohne persistente Speicherung. Schritte anklicken, um
+                Datenprüfung, Freigabe und Produktionsphase lokal zu ändern.
               </p>
             </div>
             <div className="pp-status-current pp-status-current--with-reset">
@@ -1339,6 +1693,8 @@ export function OrderPocketPage({
       </section>
 
       <ProductionCoreStrip order={order} actionState={actionState} />
+
+      <ProductionInfoAudit order={order} actionState={actionState} />
 
       <div className="pp-pocket-zones">
         <section
@@ -1472,6 +1828,7 @@ export function OrderPocketPage({
                   </div>
                 ))}
               </div>
+              <FinishingCatalog actionState={actionState} />
             </Panel>
           </div>
         </section>

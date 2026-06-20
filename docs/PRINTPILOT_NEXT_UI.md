@@ -2478,3 +2478,34 @@ Die druckbare Auftragstasche ist in produktionsgerechter Reihenfolge aufgebaut:
 Dieser Sprint bereitet die PDF-Auftragstasche fachlich und strukturell vor. Eine spätere echte PDF-Erzeugung kann darauf aufbauen, zum Beispiel über eine dedizierte PDF-Route, HTML-to-PDF, serverseitige PDF-Generierung oder eine spätere native Exportfunktion.
 
 Wichtig: Die PDF-Auftragstasche bleibt Teil des zentralen PrintPilot-Prinzips: Alle produktionsrelevanten Informationen müssen aus der Auftragstasche heraus sichtbar und ausgabefähig sein.
+
+## Sprint 46.29 – PDF-Auftragstasche auf DIN A4 Hochformat korrigieren
+
+Ziel dieses Sprints war die Korrektur der ersten Browser-PDF-Ausgabe der Auftragstasche. In der erzeugten PDF war die erste Seite leer und die eigentliche Auftragstasche begann erst auf Seite 2. Außerdem musste die Druckansicht eindeutig auf DIN A4 im Hochformat ausgelegt werden.
+
+### Korrigiert
+
+- Druckausgabe startet direkt auf Seite 1.
+- `@page` ist explizit auf `210mm × 297mm` gesetzt.
+- Die druckbare Auftragstasche wird im Print-Modus absolut am oberen linken Seitenanfang positioniert.
+- Sichtbare Bildschirmbereiche bleiben im Druck ausgeblendet, verursachen aber keine leere Vorschaltseite mehr.
+- Druckbreite ist auf die nutzbare A4-Breite abgestimmt.
+- QR-Code bleibt sichtbar im Kopfbereich.
+- Lange Weiterverarbeitungstexte werden nicht mehr abgeschnitten.
+- Aktive Weiterverarbeitungsschritte werden in der Druckansicht zeilenweise gesetzt.
+- Katalog, Lieferadresse und andere lange Werte dürfen sauber umbrechen.
+- Signaturbereich bleibt am Ende der A4-Auftragstasche erhalten.
+
+### Bewusste Grenzen
+
+- keine echte PDF-Engine
+- keine neue Preislogik
+- keine neue Kalkulationslogik
+- keine Persistenzänderung
+- keine neue Auftragstaschen-Informationslogik
+
+### Betroffene Dateien
+
+- `src/features/order-pocket/OrderPocketPage.tsx`
+- `src/index.css`
+- `docs/PRINTPILOT_NEXT_UI.md`

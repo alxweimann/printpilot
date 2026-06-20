@@ -702,7 +702,8 @@ function getPrintableSheetSections(
   const activeFinishingText =
     activeFinishing
       .map((step) => `${step.label}: ${step.note}`)
-      .join(" · ") || "keine aktive Weiterverarbeitung";
+      .join("\n") || "keine aktive Weiterverarbeitung";
+  const finishingCatalogText = finishingCatalog.join(" · ");
 
   return [
     {
@@ -745,7 +746,7 @@ function getPrintableSheetSections(
       rows: [
         ["Aktive Schritte", activeFinishing.length ? `${activeFinishing.length}` : "keine"],
         ["Leistungen", activeFinishingText],
-        ["Katalog", finishingCatalog.join(" · ")],
+        ["Katalog", finishingCatalogText],
       ],
     },
     {
@@ -781,12 +782,18 @@ function PrintDataBlock({
     <section className="pp-print-sheet-block">
       <h3>{title}</h3>
       <div className="pp-print-sheet-table">
-        {rows.map(([label, value]) => (
-          <p key={`${title}-${label}`}>
-            <span>{label}</span>
-            <strong>{value}</strong>
-          </p>
-        ))}
+        {rows.map(([label, value]) => {
+          const isLongPrintRow = label === "Leistungen" || label === "Katalog" || label === "Lieferadresse";
+          return (
+            <p
+              key={`${title}-${label}`}
+              className={isLongPrintRow ? "pp-print-sheet-row pp-print-sheet-row--long" : "pp-print-sheet-row"}
+            >
+              <span>{label}</span>
+              <strong>{value}</strong>
+            </p>
+          );
+        })}
       </div>
     </section>
   );

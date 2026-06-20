@@ -2926,3 +2926,42 @@ npm run build
 ```
 
 Ergebnis: erfolgreich.
+
+## Sprint 46.42 – Auftragstasche Typografie und Schriftfarben präzisieren
+
+Status: umgesetzt.
+
+Auslöser: Die Auftragstasche war nach Sprint 46.41 strukturell deutlich näher am Mockup, Schriftbild und Schriftfarben wirkten aber noch zu schwer, zu schwarz und nicht hochwertig genug. Außerdem waren Kopfwerte wie Produkt/Liefertermin/Status noch zu eng.
+
+Umsetzung:
+
+- Print-Typografie stärker in Richtung Mockup geschärft.
+- Font-Stack auf Inter-/Aptos-/Segoe-UI-ähnliche moderne Sans-Schriften gesetzt.
+- Harte Schwarzwerte durch dunkles Navy ersetzt.
+- Label- und Hilfstexte auf gedämpftes Blau-Grau umgestellt.
+- Überschriften farblich ruhiger und hochwertiger gesetzt.
+- Font-Weights deutlich reduziert:
+  - weniger 900/ultrafett,
+  - mehr 500–720 für ruhigeres professionelles Schriftbild.
+- Kopfzeile neu austariert:
+  - Auftrag-Nr. bleibt stark, aber nicht zu schwer,
+  - Produkt und Liefertermin bekommen mehr saubere Breite,
+  - Status-Pill bricht nicht mehr unsauber um.
+- Produktionsdaten-Panel farblich näher an den Design-North-Star gebracht.
+- Paneltexte und Werte weniger gedrückt und weniger schwarz gesetzt.
+- Icons bleiben blau, aber Liniengewicht wurde etwas reduziert.
+- Signatur- und Footertexte farblich zurückgenommen.
+
+Bewusst nicht geändert:
+
+- Keine neuen Fachfelder.
+- Keine neue Preislogik.
+- Keine Kalkulationslogik.
+- Keine Persistenzänderung.
+- A4 Hochformat bleibt strikt einseitig.
+- Alle Auftragstaschenwerte bleiben aus dem editierbaren Drucktaschenmodell.
+
+Nächster sinnvoller Schritt:
+
+- Ausdruck/PDF erneut prüfen.
+- Danach Auftragstaschen-Mockup-Stil auf die Kalkulationsmaske übertragen.

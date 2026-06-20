@@ -2509,3 +2509,40 @@ Ziel dieses Sprints war die Korrektur der ersten Browser-PDF-Ausgabe der Auftrag
 - `src/features/order-pocket/OrderPocketPage.tsx`
 - `src/index.css`
 - `docs/PRINTPILOT_NEXT_UI.md`
+
+## Sprint 46.30 – PDF-Auftragstasche strikt einseitig machen
+
+Ziel dieses Sprints war die verbindliche Korrektur der druckbaren Auftragstasche: Die Ausgabe darf nicht auf zwei Seiten laufen. Die Auftragstasche muss als DIN-A4-Hochformat-Laufzettel immer auf genau einer Seite ausgegeben werden – unabhängig davon, wie viel Inhalt in der vorbereiteten Druckansicht steht.
+
+### Korrigiert
+
+- Print-Layout ist strikt auf eine DIN-A4-Hochformat-Seite begrenzt.
+- `@page` nutzt `A4 portrait` mit 6 mm Rand.
+- HTML, Body und Root werden im Print-Modus auf eine feste A4-Seite begrenzt.
+- Die eigentliche Auftragstasche wird als fixer 198 × 285 mm Druckbereich positioniert.
+- Überlauf wird im Print-Modus bewusst abgeschnitten, damit keine zweite Seite entsteht.
+- Druckinhalt wurde deutlich verdichtet:
+  - kompakterer Kopfbereich
+  - kleinerer QR-Code, aber weiterhin sichtbar
+  - kompaktere Zusammenfassung
+  - dreispaltige Informationsblöcke
+  - kleinere Tabellenzeilen
+  - fest am Seitenende positionierte Prüf-/Signaturzeilen
+- Lange Werte dürfen umbrechen, erzeugen aber keinen Seitenumbruch mehr.
+
+### Fachlicher Grundsatz
+
+Die PDF-Auftragstasche ist ein Produktionslaufzettel. Sie muss druckbar, scanbar und eindeutig sein. Für die Produktion ist eine konsistente Ein-Seiten-Ausgabe wichtiger als ein vollständiger mehrseitiger Bericht. Falls Inhalte später zu umfangreich werden, müssen sie priorisiert, zusammengefasst oder in zusätzliche Detailansichten ausgelagert werden – die Produktions-Auftragstasche selbst bleibt eine Seite.
+
+### Bewusste Grenzen
+
+- keine echte PDF-Engine
+- keine neue Preislogik
+- keine neue Kalkulationslogik
+- keine Persistenzänderung
+- keine neue Datenlogik
+
+### Betroffene Dateien
+
+- `src/index.css`
+- `docs/PRINTPILOT_NEXT_UI.md`

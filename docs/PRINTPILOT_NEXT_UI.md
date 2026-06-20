@@ -2986,3 +2986,49 @@ Umgesetzt:
 - Keine Preislogik.
 - Keine Kalkulationslogik.
 - Keine Persistenzänderung.
+
+## Sprint 46.44 – Auftragstasche: Mockup-Finish für Schrift, Farbe, Schattierung und Rahmen
+
+Status: umgesetzt.
+
+Ziel: Die moderne Auftragstasche nach Sprint 46.43 noch näher an den Mockup-Charakter bringen. Fokus liegt ausschließlich auf den feinen visuellen Details im Ausdruck: Schriftart, Schriftgröße, Schriftfarbe, Produktionsdaten-Schattierung und Rahmen.
+
+Umgesetzt:
+
+- Print-Font-Stack auf `Aptos Display` / `Aptos` / `Inter` / `Segoe UI` geschärft.
+- Überschriften, Kopfwerte und Signaturtitel nutzen einen Display-/Heading-orientierten Font-Stack.
+- Schriftgewichte weiter feinjustiert:
+  - große Kopfwerte bleiben kräftig,
+  - Fließ- und Tabellenwerte wirken weniger schwer,
+  - Labels bleiben klar, aber zurückhaltender.
+- Schriftfarben weiter abgestimmt:
+  - Werte in ruhigem Dunkel-Navy,
+  - Labels in gedämpftem Blau-Grau,
+  - Überschriften in hochwertigem Slate-/Navy-Blau,
+  - Status und aktive Elemente in PrintPilot-Blau.
+- Produktionsdaten-Panel verfeinert:
+  - subtilere Schattierung,
+  - leichterer Innenrahmen,
+  - feinere Rasterlinien,
+  - etwas ruhigere Fact-Kacheln.
+- Rahmen harmonisiert:
+  - Panels, Dokumentenzeile und Signaturbereich mit gleichmäßigeren Linien,
+  - weniger harte Kanten,
+  - weiterhin klar druckbar und sachlich.
+- QR-/Scanbereich etwas feiner gesetzt.
+- Icon-Linienstärken und Panel-Icons minimal beruhigt.
+- Signaturbereich typografisch weiter an das Mockup angepasst.
+
+Bewusst nicht geändert:
+
+- Keine neuen Fachfelder.
+- Keine Preislogik.
+- Keine Kalkulationslogik.
+- Keine Persistenzänderung.
+- A4 Hochformat bleibt strikt einseitig.
+- Alle Auftragstaschenwerte bleiben editierbar und kommen aus dem Drucktaschenmodell.
+
+Nächster sinnvoller Schritt:
+
+- Ausdruck visuell prüfen.
+- Wenn die Auftragstasche passt: Design-North-Star auf die Kalkulationsmaske übertragen.

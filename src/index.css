@@ -17007,3 +17007,25 @@ button.pp-process-step:hover {
     font-size: 7.72pt !important;
   }
 }
+
+/* Sprint 46.56 – Auftragstasche: nur relevante Weiterverarbeitung drucken
+   Drucktasche zeigt bei Weiterverarbeitung ausschließlich aktive/ausgewählte
+   Schritte und echte Arbeitsanweisungen. Mögliche, aber nicht gewählte Schritte
+   werden nicht mehr als Katalog ausgegeben. */
+@media print {
+  .pp-modern-print-panel--finishing {
+    align-content: start !important;
+  }
+
+  .pp-modern-print-panel--finishing .pp-modern-print-tags {
+    margin-bottom: .85mm !important;
+  }
+
+  .pp-modern-print-panel--finishing .pp-modern-print-line {
+    min-height: 6.1mm !important;
+  }
+
+  .pp-modern-print-panel--finishing .pp-modern-print-line strong {
+    line-height: 1.14 !important;
+  }
+}

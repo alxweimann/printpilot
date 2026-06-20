@@ -1572,10 +1572,9 @@ function PrintOrderPocketSheet({
             )}
           </div>
           <PrintModernLine label="Arbeitsanweisung" value={draft.finishingNotes} />
-          <PrintModernLine label="Zusatz" value={draft.finishingAdditional || "—"} />
-          <p className="pp-modern-print-muted">
-            Weitere Schritte: {finishingTasks.filter((task) => !task.checked).slice(0, 5).map((task) => task.label).join(" · ")}
-          </p>
+          {draft.finishingAdditional.trim() ? (
+            <PrintModernLine label="Zusatz" value={draft.finishingAdditional} />
+          ) : null}
         </div>
       </section>
 

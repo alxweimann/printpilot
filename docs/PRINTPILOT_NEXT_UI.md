@@ -3318,3 +3318,11 @@ Bewusst nicht geändert:
 - Das offizielle PrintPilot-Logo bleibt unverändert; keine Rekonstruktion, kein Beschnitt, keine CI-Änderung.
 - A4 Hochformat bleibt strikt einseitig; alle Auftragstaschenwerte bleiben editierbar.
 - Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.
+
+## Sprint 46.56 – Auftragstasche: nur relevante Weiterverarbeitung drucken
+
+- Die druckbare Auftragstasche zeigt im Bereich **Weiterverarbeitung** nur noch wirklich ausgewählte/aktive Schritte.
+- Der bisherige Hinweis **Weitere Schritte** wurde entfernt, damit keine nicht gewählten Optionen wie Falzen, Rillen, Heften oder Ableimen unnötig auf dem Laufzettel erscheinen.
+- Arbeitsanweisung und Zusatzhinweis bleiben erhalten, sofern sie echte auftragsrelevante Informationen enthalten.
+- Grundsatz für die Auftragstasche bestätigt: Gedruckt wird nur, was für diesen Auftrag relevant ist; frei werdender Platz soll für Besonderheiten und wichtige Produktionshinweise genutzt werden.
+- Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.

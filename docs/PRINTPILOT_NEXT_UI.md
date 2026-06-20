@@ -3259,3 +3259,13 @@ Bewusst nicht geändert:
 - Keine Persistenzänderung.
 - A4 Hochformat bleibt strikt einseitig.
 - Alle Auftragstaschenwerte bleiben editierbar und kommen aus dem Drucktaschenmodell.
+
+### Sprint 46.52 – Auftragstasche Detailkorrekturen
+
+- Logo-Mark in der druckbaren Auftragstasche bereinigt: der störende dunkle Reststrich aus dem Wortlogo-Crop wurde entfernt.
+- Zeilenlayout in den Informationspanels nachjustiert, damit Label und Wert sauberer auf einer optischen Höhe sitzen.
+- Schriftgrößen in den Line-Items minimal harmonisiert, insbesondere für Werte wie `Rohbogen` / `SRA3` und `Lieferadresse` / Adresse.
+- Signatur-Akzentbalken wieder als durchgehende blaue Linie über die gesamte Prüfzone gesetzt.
+- A4-Hochformat bleibt strikt einseitig; alle Drucktaschenwerte bleiben editierbar.
+- Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.
+

@@ -16723,3 +16723,72 @@ button.pp-process-step:hover {
     margin-top: .55mm !important;
   }
 }
+
+/* Sprint 46.52 – Auftragstasche Detailkorrekturen
+   Logo-Mark ohne Wordmark-Rest, Zeilen-Baselines ruhiger und Signaturbalken wieder durchgehend. */
+@media print {
+  .pp-modern-print-logo-mark-img {
+    object-fit: contain !important;
+    object-position: center center !important;
+  }
+
+  .pp-modern-print-line {
+    align-items: center !important;
+    grid-template-columns: 29mm minmax(0, 1fr) !important;
+    min-height: 5.95mm !important;
+    padding-top: .95mm !important;
+    padding-bottom: .95mm !important;
+  }
+
+  .pp-modern-print-line span {
+    align-self: center !important;
+    display: block !important;
+    font-size: 6.2pt !important;
+    line-height: 1.05 !important;
+    padding-top: .15mm !important;
+  }
+
+  .pp-modern-print-line strong {
+    align-self: center !important;
+    display: block !important;
+    font-size: 7.95pt !important;
+    line-height: 1.12 !important;
+    padding-top: 0 !important;
+  }
+
+  .pp-modern-print-panel-grid--middle .pp-modern-print-panel:first-child .pp-modern-print-line,
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line {
+    grid-template-columns: 27.5mm minmax(0, 1fr) !important;
+  }
+
+  .pp-modern-print-panel-grid--middle .pp-modern-print-panel:first-child .pp-modern-print-line span,
+  .pp-modern-print-panel-grid--middle .pp-modern-print-panel:first-child .pp-modern-print-line strong,
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line span,
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line strong {
+    line-height: 1.1 !important;
+  }
+
+  .pp-modern-print-signatures {
+    position: relative !important;
+    overflow: hidden !important;
+  }
+
+  .pp-modern-print-signatures::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    top: 0 !important;
+    height: .42mm !important;
+    background: #0aa7df !important;
+    z-index: 2 !important;
+  }
+
+  .pp-modern-print-signatures > div::before {
+    display: none !important;
+  }
+
+  .pp-modern-print-signatures > div {
+    padding-top: 3.15mm !important;
+  }
+}

@@ -1202,7 +1202,42 @@ function PrintPocketDraftEditor({
   );
 }
 
-function PrintCheckBox({
+function PrintModernFact({
+  icon,
+  label,
+  value,
+}: {
+  icon: ReactNode;
+  label: string;
+  value: string;
+}) {
+  return (
+    <div className="pp-modern-print-fact">
+      <span className="pp-modern-print-fact__icon">{icon}</span>
+      <span className="pp-modern-print-fact__text">
+        <small>{label}</small>
+        <strong>{value}</strong>
+      </span>
+    </div>
+  );
+}
+
+function PrintModernLine({
+  label,
+  value,
+}: {
+  label: string;
+  value: string;
+}) {
+  return (
+    <p className="pp-modern-print-line">
+      <span>{label}</span>
+      <strong>{value}</strong>
+    </p>
+  );
+}
+
+function PrintModernCheck({
   label,
   checked = false,
 }: {
@@ -1210,17 +1245,12 @@ function PrintCheckBox({
   checked?: boolean;
 }) {
   return (
-    <span
-      className={
-        checked ? "pp-print-form-check is-checked" : "pp-print-form-check"
-      }
-    >
-      <b>{checked ? "☒" : "☐"}</b>
+    <span className={checked ? "pp-modern-print-check is-checked" : "pp-modern-print-check"}>
+      <b>{checked ? "☑" : "☐"}</b>
       {label}
     </span>
   );
 }
-
 
 function PrintOrderPocketSheet({
   order,
@@ -1231,22 +1261,13 @@ function PrintOrderPocketSheet({
   draft: PrintPocketDraft;
 }) {
   const productionFacts = [
-    ["Auflage", draft.quantity],
-    ["Format", draft.finalFormat],
-    ["Umfang", draft.pages],
-    ["Farbigkeit", `${draft.frontColors} / ${draft.backColors}`],
-    ["Material", draft.paper],
-    ["Maschine", order.machine],
-    ["Druckart", draft.printType],
-    ["Nutzen", draft.impositionLabel],
-  ];
-
-  const materialFacts = [
-    ["Rohbogen", draft.rawFormat],
-    ["Druckbogen", draft.printFormat],
-    ["Netto", draft.netSheets],
-    ["Zuschuss", draft.wasteSheets],
-    ["Brutto", draft.grossSheets],
+    { icon: <PocketIcon name="files" />, label: "Auflage", value: draft.quantity },
+    { icon: <PocketIcon name="product" />, label: "Endformat", value: draft.finalFormat },
+    { icon: <PocketIcon name="preview" />, label: "Farbigkeit", value: `${draft.frontColors} / ${draft.backColors}` },
+    { icon: <PocketIcon name="files" />, label: "Material", value: draft.paper },
+    { icon: <PocketIcon name="machine" />, label: "Maschine", value: order.machine },
+    { icon: <PocketIcon name="print-data" />, label: "Druckart", value: draft.printType },
+    { icon: <PocketIcon name="imposition" />, label: "Nutzen", value: draft.impositionLabel },
   ];
 
   const finishingTasks = [
@@ -1268,181 +1289,177 @@ function PrintOrderPocketSheet({
 
   return (
     <article
-      className="pp-print-order-pocket pp-print-order-pocket--form pp-print-order-pocket--production"
+      className="pp-print-order-pocket pp-print-order-pocket--form pp-print-order-pocket--modern"
       aria-label="Druckbare Auftragstasche"
     >
-      <header className="pp-production-sheet-header">
-        <div className="pp-production-sheet-id">
-          <img src={printPilotLogo} alt="PrintPilot" />
-          <span>Auftrag-Nr.</span>
-          <strong>{draft.orderNumber}</strong>
-          <small>{order.id}</small>
+      <header className="pp-modern-print-header">
+        <div className="pp-modern-print-brand-row">
+          <div className="pp-modern-print-brand">
+            <span className="pp-modern-print-mark">P</span>
+            <strong>PrintPilot</strong>
+            <em>Auftragstasche</em>
+          </div>
+          <div className="pp-modern-print-scan">
+            <span>
+              <b>Scannen</b>
+              <small>für Details</small>
+            </span>
+            <img src={orderQrCode} alt={`QR-Code für Auftrag ${order.id}`} />
+          </div>
         </div>
-        <div className="pp-production-sheet-title">
-          <span>Produktionsauftrag</span>
-          <strong>{draft.jobTitle}</strong>
-          <p>{draft.jobSummary}</p>
-        </div>
-        <div className="pp-production-sheet-deadline">
-          <span>Liefertermin</span>
-          <strong>{draft.deliveryDate}</strong>
-          <p>{draft.deliveryMeta}</p>
-        </div>
-        <div className="pp-production-sheet-qr">
-          <img src={orderQrCode} alt={`QR-Code für Auftrag ${order.id}`} />
-          <small>Scan</small>
+
+        <div className="pp-modern-print-meta-row">
+          <div className="pp-modern-print-meta pp-modern-print-meta--order">
+            <span>Auftrag-Nr.</span>
+            <strong>{order.id}</strong>
+          </div>
+          <div className="pp-modern-print-meta">
+            <span>Produkt</span>
+            <strong>{draft.jobTitle}</strong>
+          </div>
+          <div className="pp-modern-print-meta">
+            <span>Liefertermin</span>
+            <strong>{draft.deliveryDate} · {draft.deliveryMeta}</strong>
+          </div>
+          <div className="pp-modern-print-status">
+            <span>Status</span>
+            <strong>{draft.statusLabel}</strong>
+          </div>
         </div>
       </header>
 
-      <section className="pp-production-sheet-topline">
-        <div>
-          <span>Kunde</span>
-          <strong>{draft.customerName}</strong>
-          <p>{draft.customerContact} · {draft.customerPhone}</p>
-          <p>{draft.customerAddress}</p>
-        </div>
-        <div>
-          <span>Status</span>
-          <strong>{draft.statusLabel}</strong>
-          <p>Korrektur bis: {draft.correctionUntil}</p>
-          <p>Checkliste: {draft.checklistLabel}</p>
-        </div>
-        <div>
-          <span>Druckdaten</span>
-          <strong>{draft.dataStatus}</strong>
-          <p>{draft.approvalStatus}</p>
-          <p>{draft.fileName}</p>
-        </div>
-      </section>
-
-      <section className="pp-production-sheet-note">
-        <span>Besondere Hinweise</span>
-        <strong>{draft.specialNotes}</strong>
-        <p>{draft.orderDescription}</p>
-      </section>
-
-      <section className="pp-production-sheet-core" aria-label="Produktionsdaten">
+      <section className="pp-modern-print-core" aria-label="Produktionsdaten">
         <header>
-          <span>Produktionsdaten</span>
-          <strong>{draft.quantity} · {draft.finalFormat} · {draft.printType}</strong>
+          <span className="pp-modern-print-section-icon"><PocketIcon name="files" /></span>
+          <div>
+            <h2>Produktionsdaten</h2>
+            <p>{draft.quantity} · {draft.finalFormat} · {draft.printType}</p>
+          </div>
         </header>
-        <div className="pp-production-sheet-facts">
-          {productionFacts.map(([label, value]) => (
-            <p key={label}>
-              <span>{label}</span>
-              <strong>{value}</strong>
-            </p>
+        <div className="pp-modern-print-fact-grid">
+          {productionFacts.map((fact) => (
+            <PrintModernFact key={fact.label} icon={fact.icon} label={fact.label} value={fact.value} />
           ))}
         </div>
       </section>
 
-      <section className="pp-production-sheet-main-grid">
-        <div className="pp-production-sheet-panel pp-production-sheet-panel--material">
-          <h3>Material / Druckbogen</h3>
-          <div className="pp-production-sheet-lines">
-            {materialFacts.map(([label, value]) => (
-              <p key={label}>
-                <span>{label}</span>
-                <strong>{value}</strong>
-              </p>
-            ))}
+      <section className="pp-modern-print-panel-grid pp-modern-print-panel-grid--top">
+        <div className="pp-modern-print-panel">
+          <h3><PocketIcon name="customer" /> Kunde</h3>
+          <PrintModernLine label="Kunde" value={draft.customerName} />
+          <PrintModernLine label="Ansprechpartner" value={draft.customerContact} />
+          <PrintModernLine label="Telefon" value={draft.customerPhone} />
+          <PrintModernLine label="Adresse" value={draft.customerAddress} />
+        </div>
+
+        <div className="pp-modern-print-panel">
+          <h3><PocketIcon name="print-data" /> Druckdaten</h3>
+          <PrintModernLine label="Datei" value={draft.fileName} />
+          <div className="pp-modern-print-state-row">
+            <span className="is-ok">✓ {draft.dataStatus}</span>
+            <span className="is-ok">✓ {draft.approvalStatus}</span>
           </div>
-          <div className="pp-production-sheet-checks pp-production-sheet-checks--compact">
-            <PrintCheckBox label="bestellt" checked={draft.paperOrdered} />
-            <PrintCheckBox label="am Lager" checked={draft.paperInStock} />
-            <PrintCheckBox label="gestellt" checked={draft.paperSupplied} />
-            <PrintCheckBox label="Lieferant" checked={draft.paperSupplier} />
+          <PrintModernLine label="Korrektur bis" value={draft.correctionUntil} />
+          <PrintModernLine label="Besonderheiten" value={draft.specialNotes} />
+        </div>
+      </section>
+
+      <section className="pp-modern-print-panel-grid pp-modern-print-panel-grid--middle">
+        <div className="pp-modern-print-panel">
+          <h3><PocketIcon name="imposition" /> Material / Druckbogen</h3>
+          <PrintModernLine label="Material" value={draft.paper} />
+          <PrintModernLine label="Rohbogen" value={draft.rawFormat} />
+          <PrintModernLine label="Druckbogen" value={draft.printFormat} />
+          <PrintModernLine label="Zuschuss" value={draft.wasteSheets} />
+          <div className="pp-modern-print-check-row">
+            <PrintModernCheck label="bestellt" checked={draft.paperOrdered} />
+            <PrintModernCheck label="am Lager" checked={draft.paperInStock} />
+            <PrintModernCheck label="gestellt" checked={draft.paperSupplied} />
+            <PrintModernCheck label="Lieferant" checked={draft.paperSupplier} />
           </div>
         </div>
 
-        <div className="pp-production-sheet-panel pp-production-sheet-panel--finishing">
-          <h3>Weiterverarbeitung</h3>
-          <div className="pp-production-sheet-active-list">
+        <div className="pp-modern-print-panel pp-modern-print-panel--finishing">
+          <h3><PocketIcon name="finishing" /> Weiterverarbeitung</h3>
+          <div className="pp-modern-print-tags">
             {activeFinishingTasks.length > 0 ? (
               activeFinishingTasks.map((task) => <strong key={task.label}>{task.label}</strong>)
             ) : (
               <strong>keine aktive Weiterverarbeitung</strong>
             )}
           </div>
-          <p className="pp-production-sheet-instruction">{draft.finishingNotes}</p>
-          <p className="pp-production-sheet-instruction">{draft.finishingAdditional}</p>
+          <PrintModernLine label="Arbeitsanweisung" value={draft.finishingNotes} />
+          <PrintModernLine label="Zusatz" value={draft.finishingAdditional || "—"} />
+          <p className="pp-modern-print-muted">
+            Weitere Schritte: {finishingTasks.filter((task) => !task.checked).slice(0, 5).map((task) => task.label).join(" · ")}
+          </p>
         </div>
       </section>
 
-      <section className="pp-production-sheet-main-grid pp-production-sheet-main-grid--delivery">
-        <div className="pp-production-sheet-panel">
-          <h3>Lieferung / Versand</h3>
-          <div className="pp-production-sheet-lines">
-            <p>
-              <span>Lieferadresse</span>
-              <strong>{draft.deliveryAddress}</strong>
-            </p>
-            <p>
-              <span>Versandart</span>
-              <strong>{draft.shippingMethod}</strong>
-            </p>
-            <p>
-              <span>Verpackung</span>
-              <strong>{draft.packaging}</strong>
-            </p>
-            <p>
-              <span>Teillieferung</span>
-              <strong>{draft.partialDeliveries}</strong>
-            </p>
-          </div>
-          <div className="pp-production-sheet-checks pp-production-sheet-checks--shipping">
-            <PrintCheckBox label="DPD" checked={draft.shipDpd} />
-            <PrintCheckBox label="DPD-Express" checked={draft.shipDpdExpress} />
-            <PrintCheckBox label="Post" checked={draft.shipPost} />
-            <PrintCheckBox label="Spedition" checked={draft.shipFreight} />
-            <PrintCheckBox label="Abholung" checked={draft.shipPickup} />
-            <PrintCheckBox label="Fahrer" checked={draft.shipDriver} />
+      <section className="pp-modern-print-panel-grid pp-modern-print-panel-grid--bottom">
+        <div className="pp-modern-print-panel">
+          <h3><PocketIcon name="delivery" /> Lieferung / Versand</h3>
+          <PrintModernLine label="Lieferadresse" value={draft.deliveryAddress} />
+          <PrintModernLine label="Liefertermin" value={`${draft.deliveryDate} · ${draft.deliveryMeta}`} />
+          <PrintModernLine label="Versandart" value={draft.shippingMethod} />
+          <PrintModernLine label="Verpackung" value={draft.packaging} />
+          <PrintModernLine label="Teillieferung" value={draft.partialDeliveries} />
+          <div className="pp-modern-print-check-row pp-modern-print-check-row--shipping">
+            <PrintModernCheck label="DPD" checked={draft.shipDpd} />
+            <PrintModernCheck label="DPD-Express" checked={draft.shipDpdExpress} />
+            <PrintModernCheck label="Post" checked={draft.shipPost} />
+            <PrintModernCheck label="Spedition" checked={draft.shipFreight} />
+            <PrintModernCheck label="Abholung" checked={draft.shipPickup} />
+            <PrintModernCheck label="Fahrer" checked={draft.shipDriver} />
           </div>
         </div>
 
-        <div className="pp-production-sheet-panel">
-          <h3>Auftrag / Kontrolle</h3>
-          <div className="pp-production-sheet-checks pp-production-sheet-checks--order">
-            <PrintCheckBox label="Neuauftrag" checked={draft.orderNew} />
-            <PrintCheckBox label="Nachdruck unverändert" checked={draft.reprintSame} />
-            <PrintCheckBox label="Nachdruck mit Änderung" checked={draft.reprintChanged} />
-            <PrintCheckBox label="Daten gestellt" checked={draft.dataSupplied} />
+        <div className="pp-modern-print-panel pp-modern-print-panel--control">
+          <h3><PocketIcon name="checklist" /> Kontrolle</h3>
+          <PrintModernLine label="Checkliste" value={draft.checklistLabel} />
+          <div className="pp-modern-print-check-list">
+            <PrintModernCheck label="Farbigkeit / Maßhaltigkeit geprüft" />
+            <PrintModernCheck label="Weiterverarbeitung geprüft" />
+            <PrintModernCheck label="Menge / Stückzahl geprüft" />
           </div>
-          <div className="pp-production-sheet-lines pp-production-sheet-lines--control">
-            <p>
-              <span>Fremdarbeit</span>
-              <strong>{draft.foreignWork}</strong>
-            </p>
-            <p>
-              <span>Muster</span>
-              <strong>{draft.samples}</strong>
-            </p>
-            <p>
-              <span>Dokumente</span>
-              <strong>{draft.documents}</strong>
-            </p>
-            <p>
-              <span>Rechnung</span>
-              <strong>{draft.invoiceNote}</strong>
-            </p>
-          </div>
+          <PrintModernLine label="Fremdarbeit" value={draft.foreignWork} />
+          <PrintModernLine label="Muster" value={draft.samples} />
+          <PrintModernLine label="Dokumente" value={draft.documents} />
+          <PrintModernLine label="Rechnung" value={draft.invoiceNote} />
         </div>
       </section>
 
-      <section className="pp-production-sheet-document-row">
-        <PrintCheckBox label="Muster in Tasche" checked={draft.sampleInPocket} />
-        <PrintCheckBox label="Lieferschein" checked={draft.deliveryNoteDocument} />
-        <PrintCheckBox label="Papierrechnung" checked={draft.paperInvoiceDocument} />
-        <PrintCheckBox label="Lieferantenrechnung" checked={draft.supplierInvoiceDocument} />
+      <section className="pp-modern-print-document-row">
+        <PrintModernCheck label="Muster in Tasche" checked={draft.sampleInPocket} />
+        <PrintModernCheck label="Lieferschein" checked={draft.deliveryNoteDocument} />
+        <PrintModernCheck label="Papierrechnung" checked={draft.paperInvoiceDocument} />
+        <PrintModernCheck label="Lieferantenrechnung" checked={draft.supplierInvoiceDocument} />
         <span>{draft.controlDate}</span>
         <span>{draft.operator}</span>
       </section>
 
-      <section className="pp-production-sheet-signatures">
-        <span>{draft.signaturePrint}</span>
-        <span>{draft.signatureFinishing}</span>
-        <span>{draft.signatureShipping}</span>
+      <section className="pp-modern-print-signatures">
+        <div>
+          <strong>{draft.signaturePrint}</strong>
+          <span>Datum, Uhrzeit</span>
+          <span>Name, Unterschrift</span>
+        </div>
+        <div>
+          <strong>{draft.signatureFinishing}</strong>
+          <span>Datum, Uhrzeit</span>
+          <span>Name, Unterschrift</span>
+        </div>
+        <div>
+          <strong>{draft.signatureShipping}</strong>
+          <span>Datum, Uhrzeit</span>
+          <span>Name, Unterschrift</span>
+        </div>
       </section>
+
+      <footer className="pp-modern-print-footer">
+        <span>Erstellt am {draft.controlDate} durch PrintPilot</span>
+        <span>Seite 1 von 1</span>
+      </footer>
     </article>
   );
 }

@@ -2833,3 +2833,47 @@ Umgesetzt:
 Design-Grundsatz:
 
 Die Drucktasche ist keine verkleinerte Datenmaske und kein Printy-Nachbau. Sie ist eine produktionsoptimierte Kurzfassung der editierbaren Auftragstaschenwerte: große Schrift, klare Prioritäten, sachliche Blöcke, QR-Code, Arbeitsanweisungen, Kontrollfelder und Signaturflächen auf genau einer DIN-A4-Seite.
+
+## Sprint 46.40 – Auftragstasche Design-North-Star nach Mockup
+
+Status: umgesetzt.
+
+Ziel dieses Sprints war die klare Übernahme der neuen Designrichtung aus dem modernen Auftragstaschen-Mockup. Die Auftragstasche soll nicht mehr wie ein verkleinertes Formular wirken, sondern wie eine hochwertige, sachliche und trotzdem produktionsgerechte DIN-A4-Produktionsseite.
+
+Umgesetzt:
+
+- Das Mockup wurde als neuer Design-North-Star für Auftragstasche und spätere Kalkulation festgelegt.
+- Gedruckte Auftragstasche wurde näher an die moderne Mockup-Struktur gebracht.
+- Kopfbereich wurde neu aufgebaut:
+  - PrintPilot-Auftragstasche als klare Marke
+  - Auftrag-Nr.
+  - Produkt
+  - Liefertermin
+  - Status
+  - QR-/Scan-Bereich
+- Produktionsdaten wurden als prominente Kernbox mit groß lesbaren Fakten umgesetzt.
+- Sachliche Panel-Struktur ergänzt:
+  - Kunde
+  - Druckdaten
+  - Material / Druckbogen
+  - Weiterverarbeitung
+  - Lieferung / Versand
+  - Kontrolle
+- Weiterverarbeitung wird als aktive Arbeitsliste mit Tags und Arbeitsanweisung dargestellt.
+- Kontrollbereich enthält klare Prüfpunkte und weiterhin editierbare Kontrollwerte.
+- Signaturbereich wurde an die moderne Mockup-Richtung angepasst:
+  - Druck geprüft
+  - Weiterverarbeitung geprüft
+  - Versand geprüft
+  - jeweils mit Datum-/Uhrzeit- und Name-/Unterschrift-Linie
+- Schriftbild im Ausdruck bleibt deutlich größer und lesbarer als in der alten Formularvariante.
+- Linien und Rahmen sind weiter reduziert, aber fachlich klar genug für Produktion.
+- DIN A4 Hochformat bleibt strikt einseitig.
+- Alle Werte kommen weiterhin aus dem editierbaren Drucktaschenmodell.
+- Keine neue Preislogik.
+- Keine neue Kalkulationslogik.
+- Keine Persistenzänderung.
+
+Design-Grundsatz:
+
+PrintPilot soll als moderne, sachliche Produktionssoftware für Druckereien wirken. Die Auftragstasche ist der erste harte Referenzpunkt: keine Printy-Kopie, keine MIS-Formularwüste und kein verspieltes Dashboard, sondern ein gut lesbarer Produktions-Laufzettel mit klarer Hierarchie. Diese Richtung soll anschließend auf die Kalkulationsmaske übertragen werden.

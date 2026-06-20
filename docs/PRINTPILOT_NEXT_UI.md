@@ -2724,3 +2724,24 @@ Umgesetzt:
 - Keine Persistenzänderung.
 
 Hinweis: Lange Texte werden im Print weiterhin bewusst einzeilig begrenzt oder mit Auslassung gekürzt, damit die Auftragstasche immer auf einer DIN-A4-Seite bleibt.
+
+## Sprint 46.36 – Auftragstasche Printlayout sauberziehen
+
+Status: umgesetzt.
+
+Ziel dieses Sprints war kein konzeptioneller Umbau der Auftragstasche, sondern ein sauberer Printlayout-Feinschliff der einseitigen DIN-A4-Auftragstasche.
+
+Umgesetzt:
+
+- Rahmen und Zellen im Drucklayout wurden optisch beruhigt.
+- Sehr fette Linien wurden reduziert.
+- Tabellen-/Box-Rahmen wurden auf feinere Print-Linienstärken umgestellt.
+- Footerbereich mit Auftrag/Daten und Fremdarbeit/Kontrolle wurde höher und stabiler gesetzt.
+- Fremdarbeit-/Kontrollwerte werden nicht mehr in die Dokumentenzeile hineingedrückt.
+- Dokumenten-/Kontrollzeile wurde als eigenes Raster stabilisiert.
+- Signaturbereich wurde deutlich vergrößert.
+- Die Linien für Druck, Weiterverarbeitung und Versand sitzen jetzt tiefer mit echter Schreibfläche darüber.
+- DIN A4 Hochformat bleibt strikt einseitig.
+- Keine neue Preislogik.
+- Keine neue Kalkulationslogik.
+- Keine Persistenzänderung.

@@ -2637,3 +2637,45 @@ Umgesetzt:
 Fachliche Entscheidung:
 
 Die Auftragstasche ist nicht mehr nur ein PDF-Auszug aus der digitalen Produktionsansicht. Sie ist ein eigener Laufzettel-Typ mit editierbaren Drucktaschen-Daten. Auftragsdetails bleiben die digitale Arbeitsansicht, Auftragstasche bleibt der druckbare Produktionsauftrag.
+
+## Sprint 46.33 – Auftragstasche vollständig editierbar vorbereiten
+
+Status: umgesetzt.
+
+Ziel dieses Sprints war die fachliche Korrektur, dass die Auftragstasche nicht nur ein automatisch erzeugter Report ist. Die Auftragstasche ist ein bearbeitbarer Produktionszettel. Deshalb müssen die sichtbaren Drucktaschenwerte vor dem Ausdruck grundsätzlich überschreibbar sein, ohne die ursprünglichen Auftragsdaten aus Kalkulation, Auftrag, Material, Maschine oder Weiterverarbeitung zu verändern.
+
+Umgesetzt:
+
+- Eigenes editierbares Drucktaschenmodell `PrintPocketDraft` deutlich erweitert.
+- Alle sichtbaren Bereiche der DIN-A4-Auftragstasche werden aus den editierbaren Drucktaschenwerten gespeist.
+- Auftragstaschen-Reiter zeigt jetzt nicht nur Zusatzfelder, sondern einen vollständigen Laufzettel-Editor.
+- Bearbeitbar vorbereitet wurden:
+  - Auftrag-Nr., Auftragsbezeichnung, Kurzzeile, Liefertermin und Termin-Zusatz
+  - Kunde, Ansprechpartner, Telefon, Kundenadresse, Rechnungsempfänger und Rechnungsadresse
+  - Korrektur bis, Checkliste, Status und besondere Hinweise
+  - Auftragsbeschreibung
+  - Auflage, Endformat, offenes Format, Umfang, Bogenaufteilung, Vorder-/Rückseitenfarben und Druckart
+  - Papier, Rohbogenformat, Druckformat, Nettobogen, Zuschuss und Bruttobogen
+  - Papierstatus-Checkboxen
+  - Lieferadresse, Teillieferungen, Gesamtmenge, Versandart, Verpackung und Teillieferungshinweis
+  - Versand-Checkboxen
+  - Weiterverarbeitungs-Checkboxen für Schneiden, Falzen, Rillen, Heften, Ringösen, Ableimen, Bohren, Perforieren, Nummerieren, Kuvertieren, Handarbeiten und Verpacken
+  - Arbeitsanweisung und Zusatzhinweis für Weiterverarbeitung
+  - Neuauftrag/Nachdruck/Daten-Checkboxen
+  - Datenstatus, Freigabe, Datei, Fremdarbeit, Muster, Dokumente und Rechnungskontrolle
+  - Ablage-/Dokument-Checkboxen
+  - Datum, Operator und Signaturbezeichnungen
+- A4-Vorschau verwendet dieselben editierbaren Werte wie die Druckausgabe.
+- Die Trennung bleibt erhalten: Auftragsdaten sind Quellwerte, Drucktaschenwerte sind die gedruckten Werte.
+- Keine Persistenzänderung.
+- Keine Preislogik.
+- Keine Kalkulationslogik.
+- Keine neue PDF-Engine.
+
+Build-Prüfung:
+
+```bash
+npm run build
+```
+
+Ergebnis: erfolgreich.

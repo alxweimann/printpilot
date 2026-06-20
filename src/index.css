@@ -12304,3 +12304,105 @@ button.pp-process-step:hover {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Sprint 46.34 – Auftragstasche A4-Fläche korrekt ausnutzen */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 5mm;
+  }
+
+  html,
+  body,
+  #root,
+  .pp-app,
+  .pp-main,
+  .pp-pocket-route-shell,
+  .pp-order-pocket {
+    width: 210mm !important;
+    min-width: 0 !important;
+    max-width: 210mm !important;
+    height: 297mm !important;
+    min-height: 0 !important;
+    max-height: 297mm !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    box-shadow: none !important;
+  }
+
+  .pp-pocket-route-toolbar,
+  .pp-bottom-nav,
+  .pp-print-action-bar,
+  .pp-order-pocket > :not(.pp-print-order-pocket--form) {
+    display: none !important;
+  }
+
+  .pp-print-order-pocket--form {
+    display: grid !important;
+    position: fixed !important;
+    top: 5mm !important;
+    left: 5mm !important;
+    right: auto !important;
+    bottom: auto !important;
+    width: 200mm !important;
+    max-width: 200mm !important;
+    height: 287mm !important;
+    max-height: 287mm !important;
+    min-width: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    transform: none !important;
+    zoom: 1 !important;
+    background: #ffffff !important;
+  }
+
+  .pp-print-form-header {
+    grid-template-columns: 44mm minmax(0, 1fr) 36mm 22mm !important;
+  }
+
+  .pp-print-form-header strong {
+    font-size: 12.2pt !important;
+  }
+
+  .pp-print-form-header__center strong {
+    font-size: 13.4pt !important;
+  }
+
+  .pp-print-form-header small,
+  .pp-print-form-line strong,
+  .pp-print-form-empty-line strong,
+  .pp-print-form-check,
+  .pp-print-form-bottom-checks span {
+    font-size: 6.2pt !important;
+  }
+
+  .pp-print-form-box > strong,
+  .pp-print-form-box > p,
+  .pp-print-form-notice p,
+  .pp-print-form-description p,
+  .pp-print-form-small-note {
+    font-size: 6.8pt !important;
+  }
+
+  .pp-print-form-box h3,
+  .pp-print-form-notice h3,
+  .pp-print-form-description h3,
+  .pp-print-form-header span,
+  .pp-print-form-line span,
+  .pp-print-form-empty-line span {
+    font-size: 5.7pt !important;
+  }
+
+  .pp-print-form-header__qr img {
+    width: 18.5mm !important;
+    height: 18.5mm !important;
+  }
+
+  .pp-print-sheet-signatures--form span {
+    font-size: 6.4pt !important;
+  }
+}

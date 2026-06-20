@@ -2679,3 +2679,27 @@ npm run build
 ```
 
 Ergebnis: erfolgreich.
+
+## Sprint 46.34 – Auftragstasche A4-Fläche korrekt ausnutzen
+
+Status: umgesetzt.
+
+Ziel dieses Sprints war es, die druckbare Auftragstasche nicht mehr als kleinen Block oben links auf dem DIN-A4-Blatt auszugeben, sondern die nutzbare A4-Hochformatfläche sauber auszunutzen.
+
+Umgesetzt:
+
+- Print-Layout bleibt strikt auf eine DIN-A4-Hochformat-Seite begrenzt.
+- Globale Bildschirmbreiten wie `body { min-width: 1280px; }` werden im Print-Modus neutralisiert.
+- Print-relevante Wrapper (`html`, `body`, `#root`, AppShell, Route-Shell und Auftragstaschen-Container) werden im Druckmodus auf A4 begrenzt.
+- Toolbar, Bottom-Navigation und Bildschirmbereiche werden im Print-Modus konsequent ausgeblendet.
+- Die Auftragstasche nutzt wieder die volle A4-Nutzfläche von 200 × 287 mm bei 5 mm Seitenrand.
+- Schriftgrößen im Drucklayout wurden leicht angehoben, damit die Produktionsinformationen besser lesbar sind.
+- QR-Code bleibt oben rechts im Kopfbereich sichtbar.
+- Tabellenraster und Einseitigkeit bleiben erhalten.
+
+Nicht geändert:
+
+- Keine Preislogik.
+- Keine Kalkulationslogik.
+- Keine Persistenzänderung.
+- Keine neue PDF-Engine.

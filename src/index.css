@@ -16914,3 +16914,96 @@ button.pp-process-step:hover {
     stroke: none !important;
   }
 }
+
+/* Sprint 46.55 – Auftragstasche Produktionsdaten, Header-Logo und Zeilenharmonie
+   Ziel: Produktionsdatenwerte einzeilig halten, Line-Items ruhiger ausrichten
+   und den Logo-Verlauf in den App-Masken entfernen. */
+.pp-header-brand {
+  background: #ffffff !important;
+  box-shadow: none !important;
+  border-right: 1px solid #dce6f2 !important;
+}
+
+@media print {
+  .pp-modern-print-fact {
+    grid-template-columns: 9.4mm minmax(0, 1fr) !important;
+    gap: 1.35mm !important;
+    padding: 1.75mm 1.9mm !important;
+    min-height: 14.2mm !important;
+  }
+
+  .pp-modern-print-fact__icon {
+    width: 8.35mm !important;
+    height: 8.35mm !important;
+  }
+
+  .pp-modern-print-fact small {
+    margin-bottom: .72mm !important;
+    font-size: 5.95pt !important;
+    letter-spacing: .042em !important;
+    line-height: 1 !important;
+  }
+
+  .pp-modern-print-fact strong {
+    font-size: 7.72pt !important;
+    font-weight: 610 !important;
+    line-height: 1.08 !important;
+    letter-spacing: -0.008em !important;
+    white-space: nowrap !important;
+    overflow-wrap: normal !important;
+    word-break: normal !important;
+  }
+
+  .pp-modern-print-fact-grid {
+    margin: 1.9mm 2.65mm 2.1mm !important;
+  }
+
+  .pp-modern-print-line {
+    grid-template-columns: 29mm minmax(0, 1fr) !important;
+    align-items: center !important;
+    min-height: 5.55mm !important;
+    padding: .82mm 2.55mm !important;
+  }
+
+  .pp-modern-print-line span,
+  .pp-modern-print-line strong {
+    display: flex !important;
+    align-items: center !important;
+    min-height: 3.3mm !important;
+    padding: 0 !important;
+    line-height: 1.08 !important;
+  }
+
+  .pp-modern-print-line span {
+    font-size: 6.08pt !important;
+    font-weight: 610 !important;
+    letter-spacing: .042em !important;
+  }
+
+  .pp-modern-print-line strong {
+    font-size: 7.72pt !important;
+    font-weight: 505 !important;
+    letter-spacing: -0.002em !important;
+  }
+
+  .pp-modern-print-panel-grid--middle .pp-modern-print-panel:first-child .pp-modern-print-line,
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line {
+    grid-template-columns: 29mm minmax(0, 1fr) !important;
+  }
+
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line:first-of-type,
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line:first-of-type span,
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line:first-of-type strong {
+    min-height: 3.3mm !important;
+    font-size: inherit !important;
+    line-height: 1.08 !important;
+  }
+
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line:first-of-type span {
+    font-size: 6.08pt !important;
+  }
+
+  .pp-modern-print-panel-grid--bottom .pp-modern-print-panel:first-child .pp-modern-print-line:first-of-type strong {
+    font-size: 7.72pt !important;
+  }
+}

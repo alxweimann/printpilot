@@ -3307,3 +3307,14 @@ Bewusst nicht geändert:
 - Farbigkeit bleibt weiterhin kompakt als druckereitypischer Wert, z. B. `4/4 farbig CMYK` oder `1/1 farbig Schwarz`.
 - A4 Hochformat bleibt strikt einseitig; alle Auftragstaschenwerte bleiben editierbar.
 - Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.
+
+### Sprint 46.55 – Auftragstasche Produktionsdaten und Logo-Verlauf korrigieren
+
+- Produktionsdaten-Kernbox nach Review nachgezogen: Werte wie `Bilderdruck matt 135 g`, `Xerox® Iridesse 1`, `Digitaldruck Farbe` und `8 Nutzen` sollen einzeilig bleiben.
+- Produktionsdaten-Icons, Textbreiten, Abstände und Schriftgröße wurden leicht kompakter gesetzt, damit die Kernwerte in einer Zeile Platz haben.
+- Line-Items in den Panels wurden erneut harmonisiert, damit Label und Wert ruhiger auf einer optischen Höhe sitzen.
+- Besonders geprüft wurden Zeilen wie `Rohbogen` / `SRA3` und `Lieferadresse` / Adresswert.
+- Der Verlauf im PrintPilot-Logo-/Headerbereich der App-Masken wurde entfernt. Das Logo steht auf ruhigem weißen Hintergrund, ohne Fade/Gradient.
+- Das offizielle PrintPilot-Logo bleibt unverändert; keine Rekonstruktion, kein Beschnitt, keine CI-Änderung.
+- A4 Hochformat bleibt strikt einseitig; alle Auftragstaschenwerte bleiben editierbar.
+- Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.

@@ -16067,3 +16067,302 @@ button.pp-process-step:hover {
     font-weight: 440 !important;
   }
 }
+
+
+/* Sprint 46.49 – Auftragstasche Mockup-Feinschliff kompakt
+   Ziel: Schrift minimal kleiner, Liefertermin vollständig einzeilig, Logo-/Kopfbereich ruhiger,
+   Rahmen/Trenner weiter weicher und Signaturzone mockupnah ohne harte Linien. */
+@media print {
+  .pp-print-order-pocket--modern {
+    --modern-blue: #0b68d7 !important;
+    --modern-blue-dark: #173f6d !important;
+    --modern-accent: #0aa8df !important;
+    --modern-ink: #0d1c34 !important;
+    --modern-ink-soft: #2b405b !important;
+    --modern-heading: #2f527a !important;
+    --modern-muted: #61738b !important;
+    --modern-muted-soft: #7b8a9d !important;
+    --modern-line: #e7eef7 !important;
+    --modern-line-strong: #d8e5f3 !important;
+    --modern-soft: #f9fcff !important;
+    --modern-soft-2: #f4f9ff !important;
+    grid-template-rows: 34mm 49mm 41mm 43mm 51mm 8.5mm 30mm 5mm !important;
+    gap: 1.85mm !important;
+  }
+
+  .pp-modern-print-brand-row {
+    padding: 0 3mm 0 2.2mm !important;
+  }
+
+  .pp-modern-print-brand {
+    gap: 2mm !important;
+  }
+
+  .pp-modern-print-logo-mark-img {
+    width: 9.1mm !important;
+    height: 9.1mm !important;
+  }
+
+  .pp-modern-print-brand strong {
+    font-size: 17.6pt !important;
+    font-weight: 710 !important;
+    letter-spacing: -0.034em !important;
+  }
+
+  .pp-modern-print-brand em {
+    font-size: 12.15pt !important;
+    font-weight: 510 !important;
+  }
+
+  .pp-modern-print-scan {
+    grid-template-columns: 17mm 17.4mm !important;
+    gap: 1.9mm !important;
+  }
+
+  .pp-modern-print-scan b,
+  .pp-modern-print-scan small {
+    font-size: 5.95pt !important;
+    font-weight: 700 !important;
+    letter-spacing: .058em !important;
+  }
+
+  .pp-modern-print-phone-icon {
+    width: 3.4mm !important;
+    height: 4.3mm !important;
+  }
+
+  .pp-modern-print-scan img {
+    width: 17.4mm !important;
+    height: 17.4mm !important;
+    border-color: #dbe6f2 !important;
+    box-shadow: 0 .35mm 1mm rgba(9, 34, 64, .035) !important;
+  }
+
+  .pp-modern-print-meta-row {
+    grid-template-columns: 57mm minmax(0, 1fr) 59mm 25mm !important;
+    border-bottom-color: #edf2f8 !important;
+  }
+
+  .pp-modern-print-meta,
+  .pp-modern-print-status {
+    min-height: 13.6mm !important;
+    padding: 0 3.2mm 2.25mm 3.2mm !important;
+    border-right-color: #edf2f8 !important;
+    border-right-width: .28pt !important;
+  }
+
+  .pp-modern-print-meta:first-child {
+    padding-left: 0 !important;
+  }
+
+  .pp-modern-print-status {
+    padding-right: 0 !important;
+  }
+
+  .pp-modern-print-meta span,
+  .pp-modern-print-status span,
+  .pp-modern-print-line span,
+  .pp-modern-print-fact small {
+    color: #66778d !important;
+    font-size: 6.35pt !important;
+    font-weight: 620 !important;
+    letter-spacing: .052em !important;
+  }
+
+  .pp-modern-print-meta strong {
+    font-size: 12.9pt !important;
+    font-weight: 640 !important;
+    letter-spacing: -0.024em !important;
+    line-height: 1.08 !important;
+  }
+
+  .pp-modern-print-meta--order strong {
+    font-size: 17.05pt !important;
+    font-weight: 700 !important;
+  }
+
+  .pp-modern-print-delivery-date {
+    max-width: 100% !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+  }
+
+  .pp-modern-print-delivery-date span {
+    color: #08a8df !important;
+    font-weight: 700 !important;
+  }
+
+  .pp-modern-print-delivery-date em {
+    color: #0d1c34 !important;
+    font-weight: 610 !important;
+  }
+
+  .pp-modern-print-status strong {
+    min-height: 6.9mm !important;
+    padding: 0 2.8mm !important;
+    font-size: 8.35pt !important;
+    font-weight: 640 !important;
+  }
+
+  .pp-modern-print-core,
+  .pp-modern-print-panel,
+  .pp-modern-print-document-row,
+  .pp-modern-print-signatures {
+    border-color: #e6edf6 !important;
+    border-width: .3pt !important;
+    box-shadow: 0 .35mm 1.1mm rgba(10, 32, 58, .028) !important;
+  }
+
+  .pp-modern-print-core {
+    border-color: #dbe9f8 !important;
+    background: linear-gradient(180deg, #fdfeff 0%, #f9fcff 52%, #f6faff 100%) !important;
+  }
+
+  .pp-modern-print-core > header {
+    min-height: 11.9mm !important;
+    padding: 1.95mm 3mm !important;
+    border-bottom-color: #e7f0fa !important;
+  }
+
+  .pp-modern-print-core h2,
+  .pp-modern-print-panel h3 {
+    font-size: 10.35pt !important;
+    font-weight: 650 !important;
+    color: #31547c !important;
+  }
+
+  .pp-modern-print-core header p {
+    font-size: 7.35pt !important;
+    color: #65778e !important;
+  }
+
+  .pp-modern-print-section-icon {
+    width: 6.3mm !important;
+    height: 6.3mm !important;
+  }
+
+  .pp-modern-print-section-icon svg,
+  .pp-modern-print-fact__icon svg,
+  .pp-modern-print-panel h3 svg,
+  .pp-modern-print-svg-icon {
+    stroke-width: 1.45 !important;
+  }
+
+  .pp-modern-print-fact-grid {
+    margin: 2.1mm 2.9mm 2.5mm !important;
+    border-color: #dce9f7 !important;
+    border-width: .34pt !important;
+  }
+
+  .pp-modern-print-fact {
+    min-height: 14.85mm !important;
+    padding: 1.75mm 2.55mm !important;
+    border-right-color: #eef3fa !important;
+    border-right-width: .24pt !important;
+    border-bottom-color: #eef3fa !important;
+    border-bottom-width: .24pt !important;
+  }
+
+  .pp-modern-print-fact__icon {
+    width: 9mm !important;
+    height: 9mm !important;
+  }
+
+  .pp-modern-print-fact small {
+    font-size: 6.05pt !important;
+  }
+
+  .pp-modern-print-fact strong {
+    font-size: 8.95pt !important;
+    font-weight: 570 !important;
+    line-height: 1.16 !important;
+  }
+
+  .pp-modern-print-panel h3 {
+    min-height: 8.7mm !important;
+    padding: 1.78mm 2.6mm 1.45mm !important;
+    border-bottom-color: #edf2f8 !important;
+    border-bottom-width: .26pt !important;
+  }
+
+  .pp-modern-print-panel h3 svg {
+    width: 5mm !important;
+    height: 5mm !important;
+  }
+
+  .pp-modern-print-line {
+    grid-template-columns: 28mm minmax(0, 1fr) !important;
+    min-height: 6mm !important;
+    padding: 1mm 2.55mm !important;
+    border-bottom-color: #f0f4f9 !important;
+    border-bottom-width: .22pt !important;
+  }
+
+  .pp-modern-print-line strong {
+    font-size: 8.18pt !important;
+    font-weight: 500 !important;
+    line-height: 1.22 !important;
+  }
+
+  .pp-modern-print-state-row span {
+    font-size: 7.95pt !important;
+    font-weight: 580 !important;
+  }
+
+  .pp-modern-print-tags strong {
+    min-height: 5.85mm !important;
+    padding: 0 2.7mm !important;
+    border-color: #c5def9 !important;
+    font-size: 8.1pt !important;
+    font-weight: 600 !important;
+  }
+
+  .pp-modern-print-check,
+  .pp-modern-print-muted,
+  .pp-modern-print-document-row {
+    font-size: 7.58pt !important;
+    font-weight: 460 !important;
+  }
+
+  .pp-modern-print-check-row,
+  .pp-modern-print-check-list {
+    border-top-color: #f0f4f9 !important;
+    border-top-width: .22pt !important;
+  }
+
+  .pp-modern-print-document-row {
+    min-height: 8.1mm !important;
+    border-color: #e6edf6 !important;
+  }
+
+  .pp-modern-print-signatures {
+    border-color: #d4e6f8 !important;
+    border-width: .36pt !important;
+  }
+
+  .pp-modern-print-signatures > div {
+    padding: 2.75mm 4mm 1.9mm !important;
+    border-right-color: #e4ecf5 !important;
+    border-right-width: .28pt !important;
+  }
+
+  .pp-modern-print-signatures > div::before {
+    height: .42mm !important;
+    background: #0aa8df !important;
+  }
+
+  .pp-modern-print-signatures strong {
+    font-size: 7.85pt !important;
+    font-weight: 630 !important;
+  }
+
+  .pp-modern-print-signatures span {
+    font-size: 6.55pt !important;
+    border-bottom-color: #d4dee9 !important;
+  }
+
+  .pp-modern-print-footer {
+    font-size: 6.55pt !important;
+    color: #7d8b9d !important;
+  }
+}

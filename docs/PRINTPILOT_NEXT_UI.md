@@ -3161,3 +3161,39 @@ Umgesetzt:
 - Alle Werte bleiben aus dem editierbaren Drucktaschenmodell.
 
 Keine Preislogik, keine Kalkulationslogik und keine Persistenzänderung.
+
+## Sprint 46.49 – Auftragstasche Mockup-Feinschliff kompakt
+
+Sprint 46.49 verfeinert die Auftragstasche nach dem Vergleich mit dem Mockup und dem aktuellen Ausdruck.
+
+Auslöser:
+- Die Richtung aus Sprint 46.48 ist deutlich besser, die Schrift wirkt im Ausdruck aber minimal zu groß.
+- Der Liefertermin im Kopf wurde bei ungünstiger Browser-PDF-Skalierung am Ende abgeschnitten.
+- Rahmen, Innenlinien und Signaturakzent sollen noch einen kleinen Tick weicher werden.
+
+Umgesetzt:
+- Print-Schriftgrößen minimal reduziert, ohne die Lesbarkeit wieder zu verlieren.
+- Kopfbereich neu ausbalanciert:
+  - Auftrag-Nr. bleibt prominent,
+  - Produkt bleibt ruhig,
+  - Liefertermin bekommt mehr Breite,
+  - Status bleibt kompakt.
+- Liefertermin bleibt einzeilig und vollständig sichtbar.
+- Cyan-Akzent auf dem Datum bleibt erhalten, Uhrzeit/Meta bleiben dunkel.
+- QR-/Scanbereich minimal kompakter und ruhiger gesetzt.
+- Produktionsdaten-Box etwas kompakter, mit noch weicheren Innenlinien.
+- Panel-Rahmen, Tabellenlinien und Checklisten-Trenner weiter entspannt.
+- Aktive Weiterverarbeitungs-Tags minimal kleiner gesetzt.
+- Signaturbereich leicht kompakter, blauer Balken dezenter.
+
+Bewusst nicht geändert:
+- Keine neuen Fachfelder.
+- Keine Preislogik.
+- Keine Kalkulationslogik.
+- Keine Persistenzänderung.
+- A4 Hochformat bleibt strikt einseitig.
+- Alle Auftragstaschenwerte bleiben editierbar und kommen aus dem Drucktaschenmodell.
+
+Nächster Schritt:
+- Ausdruck prüfen.
+- Wenn die Auftragstasche so passt, Designrichtung auf die Kalkulationsmaske übertragen.

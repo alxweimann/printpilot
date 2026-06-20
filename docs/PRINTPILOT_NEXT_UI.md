@@ -2965,3 +2965,24 @@ Nächster sinnvoller Schritt:
 
 - Ausdruck/PDF erneut prüfen.
 - Danach Auftragstaschen-Mockup-Stil auf die Kalkulationsmaske übertragen.
+
+## Sprint 46.43 – Auftragstasche: Typografie, Farben, Schattierung und Rahmen feinjustieren
+
+Ziel: Die moderne Auftragstasche näher an den Mockup-Charakter bringen, ohne die einseitige A4-Struktur oder die vollständige Editierbarkeit zu verändern.
+
+Umgesetzt:
+
+- Print-Typografie weiter in Richtung Mockup geschärft.
+- Font-Reihenfolge für den Ausdruck geändert: `Aptos` vor `Inter`, danach Segoe/UI-Systemfonts.
+- Schriftgewichte weiter reduziert, damit der Ausdruck weniger fett und weniger gedrückt wirkt.
+- Harte Schwarz-/Navy-Werte weiter beruhigt.
+- Haupttext, Labels und Hilfstexte farblich stärker getrennt.
+- Produktionsdaten-Schattierung subtiler und hochwertiger gesetzt.
+- Produktionsdaten-Rahmen und Innenraster feiner abgestimmt.
+- Allgemeine Panel-Rahmen, Tabellenlinien und Trennlinien weiter harmonisiert.
+- QR-/Scanbereich typografisch stabilisiert.
+- Status-Pill farblich sauberer auf PrintPilot-Blau gesetzt.
+- Keine neuen Fachfelder.
+- Keine Preislogik.
+- Keine Kalkulationslogik.
+- Keine Persistenzänderung.

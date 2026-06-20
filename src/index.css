@@ -13080,3 +13080,484 @@ button.pp-process-step:hover {
     border-top: 0.45pt solid #526171 !important;
   }
 }
+
+/* Sprint 46.39 – Auftragstasche als moderne, lesbare Produktionsseite
+   Größere Schrift, weniger Tabellenkleinteile, klare sachliche Produktionsblöcke. */
+@media print {
+  @page {
+    size: A4 portrait;
+    margin: 5mm;
+  }
+
+  .pp-print-order-pocket--production {
+    display: grid !important;
+    grid-template-rows: 22mm 30mm 20mm 45mm 44mm 56mm 12mm 36mm !important;
+    gap: 1.8mm !important;
+    position: fixed !important;
+    top: 5mm !important;
+    left: 5mm !important;
+    width: 200mm !important;
+    height: 287mm !important;
+    max-height: 287mm !important;
+    padding: 0 !important;
+    overflow: hidden !important;
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-family: Arial, Helvetica, sans-serif !important;
+    box-sizing: border-box !important;
+    contain: layout paint !important;
+  }
+
+  .pp-print-order-pocket--production,
+  .pp-print-order-pocket--production * {
+    box-sizing: border-box !important;
+    text-rendering: geometricPrecision !important;
+  }
+
+  .pp-production-sheet-header,
+  .pp-production-sheet-topline,
+  .pp-production-sheet-note,
+  .pp-production-sheet-core,
+  .pp-production-sheet-panel,
+  .pp-production-sheet-document-row {
+    border: 0.55pt solid #9aa7b5 !important;
+    border-radius: 1mm !important;
+    background: #ffffff !important;
+    overflow: hidden !important;
+  }
+
+  .pp-production-sheet-header {
+    display: grid !important;
+    grid-template-columns: 42mm minmax(0, 1fr) 34mm 22mm !important;
+    gap: 0 !important;
+    min-height: 0 !important;
+    border-color: #6b7a90 !important;
+  }
+
+  .pp-production-sheet-header > div {
+    min-width: 0 !important;
+    padding: 2mm 2.2mm !important;
+    border-right: 0.45pt solid #c3ccd6 !important;
+  }
+
+  .pp-production-sheet-header > div:last-child {
+    border-right: 0 !important;
+  }
+
+  .pp-production-sheet-id {
+    display: grid !important;
+    grid-template-columns: 10mm minmax(0, 1fr) !important;
+    grid-template-rows: auto auto auto !important;
+    column-gap: 1.5mm !important;
+    align-content: center !important;
+  }
+
+  .pp-production-sheet-id img {
+    grid-row: 1 / 4 !important;
+    align-self: center !important;
+    width: 8.6mm !important;
+    height: 8.6mm !important;
+    object-fit: contain !important;
+  }
+
+  .pp-production-sheet-header span,
+  .pp-production-sheet-topline span,
+  .pp-production-sheet-note span,
+  .pp-production-sheet-core header span,
+  .pp-production-sheet-panel h3 {
+    display: block !important;
+    margin: 0 !important;
+    color: #475569 !important;
+    font-size: 7pt !important;
+    font-weight: 900 !important;
+    letter-spacing: .045em !important;
+    line-height: 1.05 !important;
+    text-transform: uppercase !important;
+  }
+
+  .pp-production-sheet-id strong {
+    display: block !important;
+    color: #0f172a !important;
+    font-size: 13.4pt !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.03em !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  .pp-production-sheet-id small,
+  .pp-production-sheet-qr small {
+    display: block !important;
+    color: #64748b !important;
+    font-size: 6.5pt !important;
+    font-weight: 800 !important;
+    line-height: 1.05 !important;
+  }
+
+  .pp-production-sheet-title,
+  .pp-production-sheet-deadline {
+    display: grid !important;
+    align-content: center !important;
+  }
+
+  .pp-production-sheet-title strong {
+    display: block !important;
+    color: #0f172a !important;
+    font-size: 17pt !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.045em !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .pp-production-sheet-title p,
+  .pp-production-sheet-deadline p,
+  .pp-production-sheet-topline p,
+  .pp-production-sheet-note p {
+    margin: 0 !important;
+    color: #334155 !important;
+    font-size: 7.7pt !important;
+    font-weight: 760 !important;
+    line-height: 1.2 !important;
+  }
+
+  .pp-production-sheet-deadline strong {
+    display: block !important;
+    color: #0f172a !important;
+    font-size: 14.5pt !important;
+    font-weight: 900 !important;
+    letter-spacing: -0.035em !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  .pp-production-sheet-qr {
+    display: grid !important;
+    justify-items: center !important;
+    align-content: center !important;
+    gap: .7mm !important;
+    background: #f8fafc !important;
+  }
+
+  .pp-production-sheet-qr img {
+    width: 17.5mm !important;
+    height: 17.5mm !important;
+  }
+
+  .pp-production-sheet-topline {
+    display: grid !important;
+    grid-template-columns: 1.25fr .8fr .95fr !important;
+    gap: 0 !important;
+    min-height: 0 !important;
+  }
+
+  .pp-production-sheet-topline > div {
+    min-width: 0 !important;
+    padding: 2mm 2.3mm !important;
+    border-right: 0.35pt solid #d5dde7 !important;
+  }
+
+  .pp-production-sheet-topline > div:last-child {
+    border-right: 0 !important;
+  }
+
+  .pp-production-sheet-topline strong,
+  .pp-production-sheet-note strong,
+  .pp-production-sheet-core header strong {
+    display: block !important;
+    margin: .7mm 0 .9mm !important;
+    color: #0f172a !important;
+    font-size: 9.6pt !important;
+    font-weight: 900 !important;
+    line-height: 1.1 !important;
+  }
+
+  .pp-production-sheet-note {
+    display: grid !important;
+    grid-template-columns: 42mm minmax(0, 1fr) !important;
+    align-items: stretch !important;
+    min-height: 0 !important;
+  }
+
+  .pp-production-sheet-note span {
+    display: flex !important;
+    align-items: center !important;
+    padding: 0 2.2mm !important;
+    background: #edf2f7 !important;
+    border-right: 0.35pt solid #d5dde7 !important;
+  }
+
+  .pp-production-sheet-note strong,
+  .pp-production-sheet-note p {
+    padding: 1.5mm 2.3mm 0 !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .pp-production-sheet-note p {
+    padding-top: 0 !important;
+  }
+
+  .pp-production-sheet-core {
+    display: grid !important;
+    grid-template-rows: 11mm minmax(0, 1fr) !important;
+  }
+
+  .pp-production-sheet-core header {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 4mm !important;
+    padding: 1.6mm 2.4mm !important;
+    border-bottom: 0.45pt solid #c3ccd6 !important;
+    background: #f1f5f9 !important;
+  }
+
+  .pp-production-sheet-core header strong {
+    margin: 0 !important;
+    font-size: 10.4pt !important;
+    white-space: nowrap !important;
+  }
+
+  .pp-production-sheet-facts {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    min-height: 0 !important;
+  }
+
+  .pp-production-sheet-facts p {
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 2mm 2.2mm !important;
+    border-right: 0.3pt solid #d5dde7 !important;
+    border-bottom: 0.3pt solid #d5dde7 !important;
+  }
+
+  .pp-production-sheet-facts p:nth-child(4n) {
+    border-right: 0 !important;
+  }
+
+  .pp-production-sheet-facts p:nth-last-child(-n+4) {
+    border-bottom: 0 !important;
+  }
+
+  .pp-production-sheet-facts span,
+  .pp-production-sheet-lines span {
+    display: block !important;
+    color: #64748b !important;
+    font-size: 6.9pt !important;
+    font-weight: 900 !important;
+    letter-spacing: .02em !important;
+    line-height: 1.1 !important;
+  }
+
+  .pp-production-sheet-facts strong {
+    display: block !important;
+    margin-top: .8mm !important;
+    color: #0f172a !important;
+    font-size: 8.8pt !important;
+    font-weight: 900 !important;
+    line-height: 1.12 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .pp-production-sheet-main-grid {
+    display: grid !important;
+    grid-template-columns: .9fr 1.1fr !important;
+    gap: 1.8mm !important;
+    min-height: 0 !important;
+  }
+
+  .pp-production-sheet-main-grid--delivery {
+    grid-template-columns: 1fr 1fr !important;
+  }
+
+  .pp-production-sheet-panel {
+    min-width: 0 !important;
+    min-height: 0 !important;
+    display: grid !important;
+    grid-template-rows: 8mm minmax(0, 1fr) auto !important;
+  }
+
+  .pp-production-sheet-panel h3 {
+    padding: 1.7mm 2.2mm !important;
+    border-bottom: 0.4pt solid #c3ccd6 !important;
+    background: #f1f5f9 !important;
+  }
+
+  .pp-production-sheet-lines {
+    display: grid !important;
+    align-content: start !important;
+    min-height: 0 !important;
+  }
+
+  .pp-production-sheet-lines p {
+    display: grid !important;
+    grid-template-columns: 25mm minmax(0, 1fr) !important;
+    gap: 2mm !important;
+    align-items: center !important;
+    min-height: 6.2mm !important;
+    margin: 0 !important;
+    padding: .8mm 2.2mm !important;
+    border-bottom: 0.28pt solid #e2e8f0 !important;
+  }
+
+  .pp-production-sheet-lines p:last-child {
+    border-bottom: 0 !important;
+  }
+
+  .pp-production-sheet-lines strong {
+    min-width: 0 !important;
+    color: #0f172a !important;
+    font-size: 8pt !important;
+    font-weight: 850 !important;
+    line-height: 1.15 !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+  }
+
+  .pp-production-sheet-panel--finishing {
+    grid-template-rows: 8mm 13mm minmax(0, 1fr) minmax(0, 1fr) !important;
+  }
+
+  .pp-production-sheet-active-list {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    gap: 1.4mm !important;
+    align-content: center !important;
+    min-height: 0 !important;
+    padding: 1.6mm 2.2mm !important;
+    border-bottom: 0.28pt solid #e2e8f0 !important;
+  }
+
+  .pp-production-sheet-active-list strong {
+    display: inline-flex !important;
+    align-items: center !important;
+    min-height: 5.2mm !important;
+    padding: 0 2.1mm !important;
+    border: 0.45pt solid #94a3b8 !important;
+    border-radius: 999px !important;
+    background: #f8fafc !important;
+    color: #0f172a !important;
+    font-size: 8pt !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    white-space: nowrap !important;
+  }
+
+  .pp-production-sheet-instruction {
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 1.3mm 2.2mm !important;
+    border-bottom: 0.28pt solid #e2e8f0 !important;
+    color: #0f172a !important;
+    font-size: 8pt !important;
+    font-weight: 780 !important;
+    line-height: 1.2 !important;
+    overflow: hidden !important;
+  }
+
+  .pp-production-sheet-instruction:last-child {
+    border-bottom: 0 !important;
+  }
+
+  .pp-production-sheet-checks {
+    display: grid !important;
+    gap: 1.1mm 2.4mm !important;
+    align-items: center !important;
+    padding: 1.3mm 2.2mm !important;
+    border-top: 0.28pt solid #e2e8f0 !important;
+  }
+
+  .pp-production-sheet-checks--compact,
+  .pp-production-sheet-checks--shipping {
+    grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+  }
+
+  .pp-production-sheet-checks--order {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+
+  .pp-production-sheet-checks .pp-print-form-check,
+  .pp-production-sheet-document-row .pp-print-form-check {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 1mm !important;
+    min-width: 0 !important;
+    color: #0f172a !important;
+    font-size: 7.7pt !important;
+    font-weight: 760 !important;
+    line-height: 1.1 !important;
+    white-space: nowrap !important;
+  }
+
+  .pp-production-sheet-checks .pp-print-form-check b,
+  .pp-production-sheet-document-row .pp-print-form-check b {
+    color: #0f172a !important;
+    font-size: 9.4pt !important;
+    line-height: 1 !important;
+  }
+
+  .pp-production-sheet-checks .pp-print-form-check.is-checked,
+  .pp-production-sheet-document-row .pp-print-form-check.is-checked {
+    font-weight: 900 !important;
+  }
+
+  .pp-production-sheet-lines--control p {
+    grid-template-columns: 24mm minmax(0, 1fr) !important;
+    min-height: 5.6mm !important;
+  }
+
+  .pp-production-sheet-document-row {
+    display: grid !important;
+    grid-template-columns: repeat(4, minmax(0, 1fr)) 20mm 20mm !important;
+    gap: 2mm !important;
+    align-items: center !important;
+    min-height: 0 !important;
+    padding: 1.6mm 2.2mm !important;
+    background: #f8fafc !important;
+  }
+
+  .pp-production-sheet-document-row > span:nth-last-child(-n+2) {
+    justify-self: end !important;
+    color: #0f172a !important;
+    font-size: 8pt !important;
+    font-weight: 900 !important;
+  }
+
+  .pp-production-sheet-signatures {
+    display: grid !important;
+    grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    gap: 7mm !important;
+    align-items: stretch !important;
+    min-height: 0 !important;
+  }
+
+  .pp-production-sheet-signatures span {
+    position: relative !important;
+    display: flex !important;
+    align-items: flex-end !important;
+    min-width: 0 !important;
+    margin: 0 !important;
+    padding: 0 0 1.3mm !important;
+    color: #334155 !important;
+    font-size: 8pt !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+  }
+
+  .pp-production-sheet-signatures span::before {
+    content: "" !important;
+    position: absolute !important;
+    left: 0 !important;
+    right: 0 !important;
+    bottom: 8mm !important;
+    border-top: 0.55pt solid #64748b !important;
+  }
+}

@@ -2798,3 +2798,38 @@ Umgesetzt:
 Design-Grundsatz:
 
 Die Auftragstasche soll als moderne Produktions-Auftragstasche wirken: kantige Raster, klare Bereiche, feinere Linien als klassische Altsoftware, aber bewusst kein weicher Card-Look.
+
+## Sprint 46.39 – Auftragstasche als moderne, lesbare Produktionsseite neu strukturieren
+
+Status: umgesetzt.
+
+Ziel dieses Sprints war kein weiterer kleiner CSS-Feinschliff, sondern eine sichtbar andere Drucktaschen-Richtung: modern, sachlich, fachlich korrekt und im Ausdruck besser lesbar. Der vorherige Stand war zwar einseitig und vollständiger, blieb aber durch viele kleinteilige Tabellenzellen und kleine Schrift zu schwer lesbar.
+
+Umgesetzt:
+
+- Gedruckte Auftragstasche wurde als moderne Produktionsseite neu strukturiert.
+- Schriftgrößen im Ausdruck wurden deutlich angehoben.
+- Kleinteilige Tabellenoptik wurde reduziert.
+- Kopfbereich wurde neu priorisiert:
+  - Auftrag-Nr.
+  - Produktionsauftrag / Auftragsbezeichnung
+  - Liefertermin
+  - QR-Code
+- Neue Topline mit Kunde, Status und Druckdaten.
+- Besondere Hinweise und Auftragsbeschreibung wurden als klarer Hinweisblock zusammengeführt.
+- Produktionsdaten stehen jetzt als zentrale, gut lesbare Kernbox im Mittelpunkt.
+- Material/Druckbogen und Weiterverarbeitung wurden in zwei sachliche Produktionsblöcke getrennt.
+- Weiterverarbeitung zeigt aktive Arbeitsschritte prominenter statt nur einen kleinen Checkbox-Teppich.
+- Lieferung/Versand und Auftrag/Kontrolle wurden zu lesbaren Kontrollblöcken zusammengefasst.
+- Dokumenten- und Kontrollzeile bleibt erhalten.
+- Signaturbereich bleibt großzügig am Seitenende.
+- Die Auftragstasche bleibt vollständig editierbar: Die Druckseite nutzt weiterhin die editierbaren Drucktaschenwerte.
+- DIN A4 Hochformat bleibt strikt einseitig.
+- Keine neuen Fachfelder.
+- Keine neue Preislogik.
+- Keine neue Kalkulationslogik.
+- Keine Persistenzänderung.
+
+Design-Grundsatz:
+
+Die Drucktasche ist keine verkleinerte Datenmaske und kein Printy-Nachbau. Sie ist eine produktionsoptimierte Kurzfassung der editierbaren Auftragstaschenwerte: große Schrift, klare Prioritäten, sachliche Blöcke, QR-Code, Arbeitsanweisungen, Kontrollfelder und Signaturflächen auf genau einer DIN-A4-Seite.

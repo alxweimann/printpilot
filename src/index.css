@@ -18114,3 +18114,151 @@ button.pp-process-step:hover {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 }
+
+/* Sprint 47.1 · Kalkulationsmaske: Ergebnisbereich bei normalen Desktopbreiten entquetschen */
+.pp-calculation-layout--tabs,
+.pp-calculation-result-panel--compact,
+.pp-calculation-result-panel--compact *,
+.pp-calculation-form,
+.pp-calculation-form * {
+  box-sizing: border-box;
+}
+
+.pp-calculation-layout--tabs {
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 382px);
+}
+
+.pp-calculation-result-panel--compact {
+  min-width: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
+  max-height: calc(100vh - var(--pp-bottom-nav-height) - 72px);
+  padding-bottom: 18px;
+}
+
+.pp-calculation-result-panel--compact > * {
+  min-width: 0;
+}
+
+.pp-calculation-result-panel--compact .pp-calc-sheet-preview,
+.pp-calculation-result-panel--compact .pp-calc-sheet-preview__sheet {
+  min-width: 0;
+  max-width: 100%;
+  overflow: hidden;
+}
+
+.pp-calculation-result-panel--compact .pp-calc-sheet-preview__bar {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+}
+
+.pp-calculation-result-panel--compact .pp-calc-sheet-preview__bar span,
+.pp-calculation-result-panel--compact .pp-calc-sheet-preview__bar b {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-calculation-result-panel--compact .pp-calc-result-line {
+  grid-template-columns: minmax(0, .62fr) minmax(0, 1fr);
+  gap: 10px;
+}
+
+.pp-calculation-result-panel--compact .pp-calc-result-line span,
+.pp-calculation-result-panel--compact .pp-calc-result-line b {
+  min-width: 0;
+  overflow: hidden;
+  overflow-wrap: anywhere;
+  word-break: normal;
+}
+
+.pp-calculation-result-panel--compact .pp-calc-result-line b {
+  text-align: right;
+  white-space: normal;
+}
+
+.pp-calculation-output-card--pocket .pp-calc-result-line {
+  grid-template-columns: 1fr;
+  gap: 3px;
+  align-items: start;
+}
+
+.pp-calculation-output-card--pocket .pp-calc-result-line b {
+  text-align: left;
+}
+
+.pp-calculation-action-stack {
+  min-width: 0;
+}
+
+@media (max-width: 1680px) {
+  .pp-calculation-layout--tabs {
+    grid-template-columns: minmax(0, 1fr);
+  }
+
+  .pp-calculation-result-panel--compact {
+    position: static;
+    top: auto;
+    max-height: none;
+    overflow: visible;
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px;
+    padding: 16px;
+  }
+
+  .pp-calculation-result-panel__head {
+    grid-column: 1 / -1;
+    margin-bottom: 0;
+  }
+
+  .pp-calculation-result-panel--compact .pp-calc-sheet-preview,
+  .pp-calculation-result-panel--compact .pp-calculation-output-card,
+  .pp-calculation-result-panel--compact .pp-calculation-create-note {
+    margin: 0;
+  }
+
+  .pp-calculation-result-panel--compact .pp-calc-sheet-preview {
+    min-height: 260px;
+  }
+
+  .pp-calculation-result-panel--compact .pp-calc-sheet-preview__sheet {
+    height: auto;
+    aspect-ratio: 450 / 320;
+  }
+
+  .pp-calculation-output-card--pocket,
+  .pp-calculation-action-stack,
+  .pp-calculation-create-note {
+    grid-column: span 3;
+  }
+
+  .pp-calculation-output-card--pocket .pp-calc-result-list {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    column-gap: 18px;
+  }
+
+  .pp-calculation-action-stack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 1180px) {
+  .pp-calculation-result-panel--compact {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-calculation-output-card--pocket,
+  .pp-calculation-action-stack,
+  .pp-calculation-create-note {
+    grid-column: auto;
+  }
+
+  .pp-calculation-output-card--pocket .pp-calc-result-list,
+  .pp-calculation-action-stack {
+    grid-template-columns: 1fr;
+  }
+}

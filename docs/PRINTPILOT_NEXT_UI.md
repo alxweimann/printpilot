@@ -3416,3 +3416,17 @@ Build-Prüfung: `npm run build`.
 - Keine neue Preislogik, keine neue Kalkulationslogik, keine Persistenzänderung.
 
 Build-Prüfung: `npm run build`.
+
+### Sprint 47.1 – Kalkulationsmaske: Ergebnisbereich entquetscht
+
+Nach dem ersten Sprint-47-Test auf normaler Desktopbreite mit linker App-Navigation wurde der rechte Produktionskern zu eng dargestellt. Der Ergebnisbereich wird deshalb bei kleineren Arbeitsflächen nicht mehr als schmale rechte Sticky-Spalte erzwungen, sondern unterhalb der Eingabemaske als breiter, moderner Ergebnisblock geführt.
+
+Korrekturen:
+
+- Breakpoint für die Kalkulationsmaske auf reale Arbeitsbreite mit linker Navigation angepasst.
+- Horizontalen Überlauf im Produktionskern entfernt.
+- Nutzenplan, Produktionsdaten, Preisabschluss und Übergabe an Auftragstasche umbrechen jetzt kontrolliert.
+- Auftragstaschen-Übergabe nutzt in engen Bereichen eine vertikale Label/Wert-Darstellung statt gequetschter Tabellenoptik.
+- Sticky-Höhe des Ergebnisbereichs berücksichtigt die Bottom-Navigation, damit keine Inhalte darunter verschwinden.
+
+Ziel bleibt: Die Kalkulationsmaske soll produktiv bedienbar sein und sich optisch an der finalen Auftragstasche orientieren, ohne auf normalen Monitoren rechts zu zerbrechen.

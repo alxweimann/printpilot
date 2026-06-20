@@ -705,6 +705,7 @@ type PrintPocketDraft = {
   customerContact: string;
   customerAddress: string;
   customerPhone: string;
+  customerEmail: string;
   invoiceName: string;
   invoiceAddress: string;
   correctionUntil: string;
@@ -808,6 +809,7 @@ function createPrintPocketDraft(order: PrintPilotOrder): PrintPocketDraft {
     customerContact: order.contactName,
     customerAddress: order.customerAddress.join(" · "),
     customerPhone: order.contactPhone,
+    customerEmail: order.contactEmail,
     invoiceName: order.customer,
     invoiceAddress: order.customerAddress.join(" · "),
     correctionUntil: `${order.orderDate} · 16:00`,
@@ -1016,6 +1018,7 @@ function PrintPocketDraftEditor({
             <span>
               {draft.customerContact} · {draft.customerPhone}
             </span>
+            <span>{draft.customerEmail}</span>
             <em>{draft.customerAddress}</em>
           </section>
 
@@ -1082,6 +1085,7 @@ function PrintPocketDraftEditor({
               <DraftTextField label="Kunde" field="customerName" draft={draft} onDraftChange={onDraftChange} />
               <DraftTextField label="Ansprechpartner" field="customerContact" draft={draft} onDraftChange={onDraftChange} />
               <DraftTextField label="Telefon" field="customerPhone" draft={draft} onDraftChange={onDraftChange} />
+              <DraftTextField label="E-Mail" field="customerEmail" draft={draft} onDraftChange={onDraftChange} />
               <DraftTextField label="Rechnung an" field="invoiceName" draft={draft} onDraftChange={onDraftChange} />
             </div>
             <DraftTextArea label="Kundenadresse" field="customerAddress" draft={draft} onDraftChange={onDraftChange} rows={2} />
@@ -1548,6 +1552,7 @@ function PrintOrderPocketSheet({
           <PrintModernLine label="Kunde" value={draft.customerName} />
           <PrintModernLine label="Ansprechpartner" value={draft.customerContact} />
           <PrintModernLine label="Telefon" value={draft.customerPhone} />
+          <PrintModernLine label="E-Mail" value={draft.customerEmail} />
           <PrintModernLine label="Adresse" value={draft.customerAddress} />
         </div>
 

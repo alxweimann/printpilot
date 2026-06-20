@@ -3375,3 +3375,16 @@ Bewusst nicht geändert:
 - Label- und Wert-Typografie in den Line-Items wurde nochmals vereinheitlicht, damit linke Labels und rechte Werte in allen Feldern optisch gleich groß und sauber ausgerichtet wirken.
 
 Build-Prüfung: `npm run build`.
+
+## Sprint 46.60 – Auftragstasche Kundendaten E-Mail ergänzen
+
+- Kundendaten in der druckbaren Auftragstasche wurden fachlich ergänzt.
+- Die E-Mail-Adresse des Ansprechpartners wird jetzt im Bereich **Kunde** angezeigt.
+- Das editierbare Drucktaschenmodell enthält dafür ein eigenes Feld `customerEmail`.
+- Der Auftragstaschen-Editor bietet die E-Mail-Adresse als bearbeitbares Feld im Bereich Kopf / Kunde / Rechnung an.
+- Die E-Mail wird aus den bestehenden Auftragsdaten (`contactEmail`) übernommen und kann für den Ausdruck überschrieben werden.
+- Ziel bleibt: Die Auftragstasche enthält nur relevante Produktions- und Kontaktdaten, aber die wichtigsten Rückfragekanäle wie Telefon und E-Mail müssen sichtbar sein.
+- A4 Hochformat bleibt strikt einseitig; alle Auftragstaschenwerte bleiben editierbar.
+- Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.
+
+Build-Prüfung: `npm run build`.

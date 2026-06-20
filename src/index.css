@@ -10386,3 +10386,161 @@ button.pp-process-step:hover {
     border-bottom: 0;
   }
 }
+
+/* Sprint 46.26 – Auftragstasche als Produktionskern sichtbar machen */
+.pp-pocket-core-strip {
+  display: grid;
+  gap: 12px;
+  margin: 0 0 18px;
+  padding: 15px 16px 16px;
+  border: 1px solid #dbe7f4;
+  border-radius: 18px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+  box-shadow: 0 14px 32px rgba(9, 31, 68, .045);
+}
+
+.pp-pocket-core-strip__head {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid #e4edf7;
+}
+
+.pp-pocket-core-strip__head span {
+  display: block;
+  margin-bottom: 5px;
+  color: #607086;
+  font-size: 10px;
+  font-weight: 850;
+  letter-spacing: .14em;
+  line-height: 1;
+  text-transform: uppercase;
+}
+
+.pp-pocket-core-strip__head strong {
+  display: block;
+  color: #06163a;
+  font-size: 17px;
+  font-weight: 850;
+  letter-spacing: -.025em;
+  line-height: 1.15;
+}
+
+.pp-pocket-core-strip__head small {
+  color: #52637d;
+  font-size: 11px;
+  font-weight: 740;
+  line-height: 1.25;
+  text-align: right;
+}
+
+.pp-pocket-core-grid {
+  display: grid;
+  grid-template-columns: repeat(6, minmax(0, 1fr));
+  gap: 9px;
+}
+
+.pp-pocket-core-card {
+  position: relative;
+  min-width: 0;
+  min-height: 108px;
+  padding: 11px 11px 12px;
+  overflow: hidden;
+  border: 1px solid #dfe9f5;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.pp-pocket-core-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 3px;
+  background: #cbd5e1;
+}
+
+.pp-pocket-core-card--green::before { background: #11b978; }
+.pp-pocket-core-card--orange::before { background: #ff8b25; }
+.pp-pocket-core-card--blue::before { background: #087bff; }
+.pp-pocket-core-card--gray::before { background: #94a3b8; }
+
+.pp-pocket-core-card > span {
+  display: block;
+  margin-bottom: 7px;
+  overflow: hidden;
+  color: #607086;
+  font-size: 9.5px;
+  font-weight: 860;
+  letter-spacing: .12em;
+  line-height: 1.05;
+  text-overflow: ellipsis;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.pp-pocket-core-card strong {
+  display: block;
+  overflow: hidden;
+  color: #071f48;
+  font-size: 13px;
+  font-weight: 840;
+  letter-spacing: -.018em;
+  line-height: 1.14;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-pocket-core-card b {
+  display: -webkit-box;
+  min-height: 30px;
+  margin-top: 6px;
+  overflow: hidden;
+  color: #213657;
+  font-size: 12px;
+  font-weight: 760;
+  letter-spacing: -.01em;
+  line-height: 1.22;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+}
+
+.pp-pocket-core-card small {
+  display: block;
+  margin-top: 7px;
+  overflow: hidden;
+  color: #64748b;
+  font-size: 10.5px;
+  font-weight: 680;
+  line-height: 1.2;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 1480px) {
+  .pp-pocket-core-grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 860px) {
+  .pp-pocket-core-strip {
+    padding: 13px;
+    border-radius: 15px;
+  }
+
+  .pp-pocket-core-strip__head {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 7px;
+  }
+
+  .pp-pocket-core-strip__head small {
+    text-align: left;
+  }
+
+  .pp-pocket-core-grid {
+    grid-template-columns: 1fr;
+  }
+}

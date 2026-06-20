@@ -2304,3 +2304,59 @@ Auftragsübersicht → Auftragstasche
 ```
 
 Die Auftragstasche wird der digitale Laufzettel, Produktionsauftrag und zentrale Informationspunkt von PrintPilot.
+
+---
+
+## Sprint 46.26 – Auftragstasche als Produktionskern sichtbar machen
+
+### Ziel
+
+Nach der strategischen Rückverankerung aus Sprint 40 wurde die Auftragstasche in der Oberfläche weiter als Herzstück von PrintPilot sichtbar gemacht.
+
+PrintPilot bleibt damit klar positioniert als Produktionsplattform für Druckereien. Die Auftragstasche ist nicht nur Detailansicht eines Auftrags, sondern der zentrale Produktionskern, in dem die Informationen aus Kalkulation, Auftrag, Druckdaten, Produktion, Weiterverarbeitung und Versand zusammenlaufen.
+
+### Umsetzung
+
+In der Desktop-Auftragstasche wurde eine kompakte Produktionskern-Zeile ergänzt.
+
+Diese zeigt auf einen Blick:
+
+- Kalkulation / Produktionsgrundlage
+- Auftrag / Kunde / Liefertermin
+- Druckdaten / Preflight / Beschnittstatus
+- Produktion / Maschine / aktueller Produktionsstatus
+- Weiterverarbeitung / aktive Produktionsschritte
+- Versand / Übergabe aus Produktion an Versand
+
+### Fachlicher Nutzen
+
+Die neue Zeile macht die zentrale Leitfrage sichtbar:
+
+```text
+Wo erscheint diese Information in der Auftragstasche?
+```
+
+Sie verbindet die bisher getrennten Bereiche stärker:
+
+```text
+Kalkulation → Auftrag → Auftragstasche → Produktion → Versand
+```
+
+Damit wird die Auftragstasche im Alltag schneller erfassbar. Ein Mitarbeiter sieht sofort, welche produktionsrelevanten Informationen bereits vorhanden sind und wo der Auftrag im Produktionsfluss steht.
+
+### Grenzen dieses Sprints
+
+Nicht umgesetzt wurden:
+
+- keine neue Kalkulationslogik
+- keine neue Preislogik
+- keine echte Maschinenzeitberechnung
+- keine Persistenzänderung
+- keine PDF-Auftragstasche
+- keine QR-Code-Aktion
+
+### Betroffene Dateien
+
+- `src/features/order-pocket/OrderPocketPage.tsx`
+- `src/index.css`
+- `docs/PRINTPILOT_NEXT_UI.md`

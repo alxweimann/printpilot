@@ -267,6 +267,96 @@ function getNoteRows(order: PrintPilotOrder) {
   ];
 }
 
+function getProductionCoreItems(
+  order: PrintPilotOrder,
+  actionState: PocketActionState,
+) {
+  const productionData = getOrderProductionData(order);
+  const activeFinishing = actionState.finishing.filter(
+    (step) => step.status.label !== "Nicht notwendig",
+  ).length;
+
+  return [
+    {
+      label: "Kalkulation",
+      title: "Produktionsgrundlage",
+      value: `${productionData.product.label} · ${productionData.product.quantity}`,
+      meta: `${productionData.product.finalFormat} · ${productionData.product.substrate}`,
+      tone: "blue" as const,
+    },
+    {
+      label: "Auftrag",
+      title: order.id,
+      value: order.customer,
+      meta: `Liefertermin ${order.dueDate} · ${order.dueMeta}`,
+      tone: order.priority.tone,
+    },
+    {
+      label: "Druckdaten",
+      title: actionState.data.label,
+      value: productionData.files.original?.filename ?? productionData.files.preview.filename,
+      meta: `Preflight ${order.preflightValue} · Beschnitt ${order.bleedStatus.label}`,
+      tone: actionState.data.tone,
+    },
+    {
+      label: "Produktion",
+      title: getCurrentProductionLabel(actionState.production),
+      value: order.machine,
+      meta: `${order.machineTypeLabel} · ${productionData.imposition.label}`,
+      tone: actionState.production.tone,
+    },
+    {
+      label: "Weiterverarbeitung",
+      title: `${activeFinishing} aktive Schritte`,
+      value: actionState.finishing
+        .filter((step) => step.status.label !== "Nicht notwendig")
+        .map((step) => step.label)
+        .join(" · ") || "keine aktive Leistung",
+      meta: "aus Auftragstasche steuerbar",
+      tone: activeFinishing > 0 ? ("orange" as const) : ("gray" as const),
+    },
+    {
+      label: "Versand",
+      title: order.deliveryMeta,
+      value: order.dueMeta,
+      meta: "Übergabe aus Produktion an Versand",
+      tone: actionState.production.label === "Versandbereit" ? ("green" as const) : ("gray" as const),
+    },
+  ];
+}
+
+function ProductionCoreStrip({
+  order,
+  actionState,
+}: {
+  order: PrintPilotOrder;
+  actionState: PocketActionState;
+}) {
+  const items = getProductionCoreItems(order, actionState);
+
+  return (
+    <section className="pp-pocket-core-strip" aria-label="Produktionskern Auftragstasche">
+      <div className="pp-pocket-core-strip__head">
+        <div>
+          <span>Auftragstasche als Produktionskern</span>
+          <strong>Alle produktionsrelevanten Informationen laufen hier zusammen</strong>
+        </div>
+        <small>Kalkulation → Auftrag → Auftragstasche → Produktion → Versand</small>
+      </div>
+      <div className="pp-pocket-core-grid">
+        {items.map((item) => (
+          <article className={`pp-pocket-core-card pp-pocket-core-card--${item.tone}`} key={item.label}>
+            <span>{item.label}</span>
+            <strong>{item.title}</strong>
+            <b>{item.value}</b>
+            <small>{item.meta}</small>
+          </article>
+        ))}
+      </div>
+    </section>
+  );
+}
+
 type MachineType =
   | "digital-color"
   | "digital-mono"
@@ -1247,6 +1337,8 @@ export function OrderPocketPage({
           />
         </article>
       </section>
+
+      <ProductionCoreStrip order={order} actionState={actionState} />
 
       <div className="pp-pocket-zones">
         <section

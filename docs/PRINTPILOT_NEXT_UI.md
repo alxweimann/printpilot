@@ -3388,3 +3388,16 @@ Build-Prüfung: `npm run build`.
 - Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.
 
 Build-Prüfung: `npm run build`.
+
+## Sprint 46.61 – Auftragstasche als Designreferenz einfrieren
+
+- Das Wort **Auftragstasche** wurde aus dem Druckkopf entfernt.
+- Das offizielle PrintPilot-Logo steht im Ausdruck jetzt allein als Brand-Anker; der Dokumenttyp ist durch Layout, Inhalt und Druckbutton eindeutig.
+- Die aktuelle druckbare Auftragstasche wird als verbindliche Designreferenz für die nächsten PrintPilot-Masken festgelegt.
+- Design-Grundsatz ab jetzt: modern, sachlich, fachlich korrekt, sehr gut lesbar, mit klar priorisierten Produktionsinformationen.
+- Diese Richtung soll auf die Kalkulationsmaske übertragen werden: größere Lesbarkeit, klare Kernboxen, ruhige Panels, dezente Linien, PrintPilot-Blau/Cyan-Akzente und keine gequetschte Formularoptik.
+- Das offizielle PrintPilot-Logo bleibt unverändert; keine Zuschnitte, keine grafischen Veränderungen, keine CI-Abwandlungen.
+- A4 Hochformat bleibt strikt einseitig; alle Auftragstaschenwerte bleiben editierbar.
+- Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.
+
+Build-Prüfung: `npm run build`.

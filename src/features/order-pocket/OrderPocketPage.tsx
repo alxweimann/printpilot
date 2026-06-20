@@ -1494,7 +1494,6 @@ function PrintOrderPocketSheet({
         <div className="pp-modern-print-brand-row">
           <div className="pp-modern-print-brand">
             <PrintPilotSheetLogo />
-            <em>Auftragstasche</em>
           </div>
           <div className="pp-modern-print-scan">
             <span>

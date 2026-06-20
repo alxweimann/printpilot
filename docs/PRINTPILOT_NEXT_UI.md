@@ -3289,3 +3289,21 @@ Bewusst nicht geändert:
 - Keine Persistenzänderung.
 - A4 Hochformat bleibt strikt einseitig.
 - Alle Auftragstaschenwerte bleiben editierbar.
+
+### Sprint 46.54 – Auftragstasche Iconset nach Mockup präzisieren
+
+- Icons der druckbaren Auftragstasche wurden näher an das moderne Mockup angepasst.
+- Produktionsdaten-Kernbox erhält überarbeitete Icons für:
+  - Auflage / Papierstapel,
+  - Endformat mit vertikaler Maß-/Pfeilmarkierung,
+  - Farbigkeit mit CMYK-Tropfen,
+  - Material / Papierbogen,
+  - Maschine,
+  - Druckart,
+  - Nutzenraster.
+- Bereichsicons für Kunde, Druckdaten, Material/Druckbogen, Weiterverarbeitung, Lieferung/Versand und Kontrolle wurden in Linienführung, Rundungen und Proportionen harmonisiert.
+- Druckart-Icon nutzt jetzt wie im Mockup einen gefüllten Hauptpunkt mit weiteren Outline-Punkten.
+- Die offizielle PrintPilot-Logo-Datei bleibt unverändert; es wird keine rekonstruierte oder beschnittene Logo-Variante verwendet.
+- Farbigkeit bleibt weiterhin kompakt als druckereitypischer Wert, z. B. `4/4 farbig CMYK` oder `1/1 farbig Schwarz`.
+- A4 Hochformat bleibt strikt einseitig; alle Auftragstaschenwerte bleiben editierbar.
+- Keine Preislogik, keine Kalkulationslogik, keine Persistenzänderung.

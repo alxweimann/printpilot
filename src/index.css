@@ -16896,3 +16896,21 @@ button.pp-process-step:hover {
     z-index: 1 !important;
   }
 }
+
+/* Sprint 46.54 – Auftragstasche: Iconset näher am Mockup */
+.pp-modern-print-svg-icon .dot-filled {
+  fill: currentColor !important;
+  stroke: none !important;
+}
+
+@media print {
+  .pp-modern-print-svg-icon {
+    stroke-linecap: round !important;
+    stroke-linejoin: round !important;
+  }
+
+  .pp-modern-print-svg-icon .dot-filled {
+    fill: currentColor !important;
+    stroke: none !important;
+  }
+}

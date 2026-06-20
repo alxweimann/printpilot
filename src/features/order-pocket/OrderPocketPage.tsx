@@ -1238,117 +1238,116 @@ function PrintSheetIcon({ name }: { name: PrintSheetIconName }) {
     case "stack":
       return (
         <svg {...common}>
-          <path d="M16 5 5 10.5 16 16l11-5.5L16 5Z" />
-          <path d="M6 15.5 16 20.5l10-5" />
-          <path d="M6 20.5 16 25.5l10-5" />
+          <path d="M16 5.2 5.2 10.7 16 16.1l10.8-5.4L16 5.2Z" />
+          <path d="M6 15.9 16 20.9l10-5" />
+          <path d="M6 21 16 26l10-5" />
         </svg>
       );
     case "format":
       return (
         <svg {...common}>
-          <path d="M18.7 4.8h7.2v22.4h-7.2z" />
-          <path d="M10.2 5.5v21" />
-          <path d="M10.2 26.5 6.8 22.4" />
-          <path d="M10.2 26.5 13.6 22.4" />
+          <path d="M19.9 5.4h6.8c.7 0 1.2.5 1.2 1.2v18.8c0 .7-.5 1.2-1.2 1.2h-6.8c-.7 0-1.2-.5-1.2-1.2V6.6c0-.7.5-1.2 1.2-1.2Z" />
+          <path d="M10.1 5.7v20.6" />
+          <path d="M6.9 22.5 10.1 26.3l3.2-3.8" />
         </svg>
       );
     case "cmyk":
       return (
         <svg {...common} className="pp-modern-print-svg-icon pp-modern-print-svg-icon--cmyk">
-          <path className="c" d="M8 5c3.2 4 4.8 6.9 4.8 9.2a4.8 4.8 0 0 1-9.6 0C3.2 11.9 4.8 9 8 5Z" />
-          <path className="m" d="M16 3.8c3.2 4.1 4.8 7 4.8 9.3a4.8 4.8 0 0 1-9.6 0c0-2.3 1.6-5.2 4.8-9.3Z" />
-          <path className="y" d="M24 5c3.2 4 4.8 6.9 4.8 9.2a4.8 4.8 0 0 1-9.6 0C19.2 11.9 20.8 9 24 5Z" />
-          <path className="k" d="M16 14c3.2 4 4.8 6.9 4.8 9.2a4.8 4.8 0 0 1-9.6 0C11.2 20.9 12.8 18 16 14Z" />
+          <path className="c" d="M8.1 5.2c3 3.9 4.5 6.8 4.5 9a4.5 4.5 0 0 1-9 0c0-2.2 1.5-5.1 4.5-9Z" />
+          <path className="m" d="M16 3.9c3.1 4 4.6 7 4.6 9.1a4.6 4.6 0 1 1-9.2 0c0-2.1 1.5-5.1 4.6-9.1Z" />
+          <path className="y" d="M23.9 5.2c3 3.9 4.5 6.8 4.5 9a4.5 4.5 0 0 1-9 0c0-2.2 1.5-5.1 4.5-9Z" />
+          <path className="k" d="M16 14.1c3.1 4 4.6 6.9 4.6 9.1a4.6 4.6 0 1 1-9.2 0c0-2.2 1.5-5.1 4.6-9.1Z" />
         </svg>
       );
     case "paper":
       return (
         <svg {...common}>
-          <path d="M9 4h10l5 5v19H9z" />
-          <path d="M19 4v5h5" />
+          <path d="M9.2 4.8h10.2l5.4 5.4v17H9.2V4.8Z" />
+          <path d="M19.4 4.8v5.4h5.4" />
         </svg>
       );
     case "printer":
       return (
         <svg {...common}>
-          <path d="M9 11V5h14v6" />
-          <path d="M7 24H5a2 2 0 0 1-2-2v-7a3 3 0 0 1 3-3h20a3 3 0 0 1 3 3v7a2 2 0 0 1-2 2h-2" />
-          <path d="M9 19h14v9H9z" />
-          <path d="M24.5 15.5h.01" />
+          <path d="M10 11V5.4h12V11" />
+          <path d="M7.4 22.5H5.8c-1.1 0-2-.9-2-2v-6.1c0-1.7 1.4-3.1 3.1-3.1h18.2c1.7 0 3.1 1.4 3.1 3.1v6.1c0 1.1-.9 2-2 2h-1.6" />
+          <path d="M9.2 18.4h13.6v8.2H9.2v-8.2Z" />
+          <path d="M10.9 21.1h10.2" />
         </svg>
       );
     case "dots":
       return (
         <svg {...common}>
-          <circle cx="8" cy="11" r="2.6" />
-          <circle cx="16" cy="7" r="2.6" />
-          <circle cx="24" cy="11" r="2.6" />
-          <circle cx="8" cy="21" r="2.6" />
-          <circle cx="16" cy="25" r="2.6" />
-          <circle cx="24" cy="21" r="2.6" />
+          <circle cx="8.5" cy="11.2" r="2.25" />
+          <circle className="dot-filled" cx="16" cy="7.4" r="2.7" />
+          <circle cx="23.5" cy="11.2" r="2.25" />
+          <circle cx="8.5" cy="20.8" r="2.25" />
+          <circle cx="16" cy="24.6" r="2.25" />
+          <circle cx="23.5" cy="20.8" r="2.25" />
         </svg>
       );
     case "grid":
       return (
         <svg {...common}>
-          <path d="M5 5h22v22H5z" />
-          <path d="M12.3 5v22M19.7 5v22M5 12.3h22M5 19.7h22" />
+          <path d="M5.6 5.6h20.8v20.8H5.6V5.6Z" />
+          <path d="M12.5 5.6v20.8M19.5 5.6v20.8M5.6 12.5h20.8M5.6 19.5h20.8" />
         </svg>
       );
     case "customer":
       return (
         <svg {...common}>
-          <path d="M16 16a5 5 0 1 0 0-10 5 5 0 0 0 0 10Z" />
-          <path d="M7 27c1.3-5.1 4.3-7.6 9-7.6s7.7 2.5 9 7.6" />
+          <path d="M16 15.8a4.9 4.9 0 1 0 0-9.8 4.9 4.9 0 0 0 0 9.8Z" />
+          <path d="M6.8 27c1.4-5.4 4.5-8 9.2-8 4.8 0 7.8 2.6 9.2 8" />
         </svg>
       );
     case "document":
       return (
         <svg {...common}>
-          <path d="M9 4h10l5 5v19H9z" />
-          <path d="M19 4v5h5" />
-          <path d="M12 15h8M12 20h8" />
+          <path d="M9 4.7h10.2l5.5 5.5v17.1H9V4.7Z" />
+          <path d="M19.2 4.7v5.5h5.5" />
+          <path d="M12.2 15.3h7.6M12.2 20h7.6" />
         </svg>
       );
     case "layers":
       return (
         <svg {...common}>
-          <path d="M16 5 5 10.5 16 16l11-5.5L16 5Z" />
-          <path d="M5 16.5 16 22l11-5.5" />
-          <path d="M5 22.5 16 28l11-5.5" />
+          <path d="M16 5.3 5.2 10.6 16 16l10.8-5.4L16 5.3Z" />
+          <path d="M5.2 16.4 16 21.8l10.8-5.4" />
+          <path d="M5.2 22.1 16 27.5l10.8-5.4" />
         </svg>
       );
     case "scissors":
       return (
         <svg {...common}>
-          <circle cx="9" cy="8" r="3" />
-          <circle cx="9" cy="24" r="3" />
-          <path d="M12 10.5 27 22" />
-          <path d="M12 21.5 27 10" />
-          <path d="M15 16h2" />
+          <circle cx="8.4" cy="8.4" r="3" />
+          <circle cx="8.4" cy="23.6" r="3" />
+          <path d="M11.2 10 26.4 22.8" />
+          <path d="M11.2 22 26.4 9.2" />
+          <path d="M15.4 16h2.2" />
         </svg>
       );
     case "truck":
       return (
         <svg {...common}>
-          <path d="M4 9h17v12H4z" />
-          <path d="M21 13h4l3 4v4h-7" />
-          <circle cx="9" cy="23" r="2.5" />
-          <circle cx="24" cy="23" r="2.5" />
+          <path d="M4.5 9.5h16.2v10.8H4.5V9.5Z" />
+          <path d="M20.7 13h4.2l2.6 3.5v3.8h-6.8" />
+          <circle cx="9.2" cy="22.5" r="2.35" />
+          <circle cx="24.2" cy="22.5" r="2.35" />
+          <path d="M11.6 22.5h10.2" />
         </svg>
       );
     case "shield":
       return (
         <svg {...common}>
-          <path d="M16 4 26 8v7c0 6.5-4 10.8-10 13-6-2.2-10-6.5-10-13V8l10-4Z" />
-          <path d="m11.5 16 3.2 3.2 6.5-7" />
+          <path d="M16 4.4 25.8 8v7.3c0 6.1-3.7 10.4-9.8 12.3-6.1-1.9-9.8-6.2-9.8-12.3V8L16 4.4Z" />
+          <path d="m11.4 16 3.2 3.1 6.2-6.6" />
         </svg>
       );
     default:
       return null;
   }
 }
-
 function PrintModernFact({
   icon,
   label,

@@ -2179,3 +2179,128 @@ Nicht geändert:
 - keine Maschinen-/Tariflogik
 - keine Persistenz
 - keine große Designänderung
+
+## Strategische Leitlinie – Sprint 40: Auftragstasche als Herzstück etablieren
+
+Status: dokumentiert und als Produktgrundsatz für die nächsten Sprints verankert.
+
+### Zentrale Produktentscheidung
+
+PrintPilot wird nicht als klassische ERP-Software mit angehängtem Produktionsmodul verstanden, sondern als Produktionsplattform für Druckereien.
+
+Das Herzstück von PrintPilot ist die Auftragstasche.
+
+### Core Principle
+
+Alles, was für die Produktion relevant ist, muss in der Auftragstasche sichtbar sein.
+
+Leitfrage für jede neue Funktion:
+
+> Wo erscheint diese Information in der Auftragstasche?
+
+### Fachlicher Workflow
+
+```text
+Kalkulation
+→ Auftrag
+→ Auftragstasche
+→ Produktion
+→ Versand
+→ Rechnung
+```
+
+### Wichtigste Bereiche
+
+1. **Auftragsübersicht**
+   - Einstiegspunkt in laufende Aufträge.
+
+2. **Auftragstasche**
+   - Zentraler Arbeitsplatz für Produktion, Arbeitsvorbereitung, Weiterverarbeitung und Versand.
+
+3. **Kalkulation**
+   - Erzeugt die produktionsrelevanten Grundlagen.
+
+### Die Auftragstasche bündelt
+
+- Kunde
+- Produkt
+- Auflage
+- Format
+- Material
+- Maschinen
+- Druckdatenstatus
+- Freigabe
+- Weiterverarbeitung
+- Ausschießdaten / Nutzenplan
+- Versand
+- Notizen
+- Historie
+- Fotos
+- Dateien
+- Produktionsstatus
+- QR-Code
+
+### Geplante Auftragstaschen-Ansichten
+
+1. Desktop-Ansicht
+2. Mobile-/PWA-Ansicht
+3. Druckbare PDF-Auftragstasche
+
+### Prioritäten für nächste Sprints
+
+1. Vision in `docs/PRINTPILOT_NEXT_UI.md` dokumentieren.
+2. Auftragstasche weiter perfektionieren.
+3. PDF-Auftragstasche planen und vorbereiten.
+4. Vollständige Produktionsinformationen prüfen.
+5. Weiterverarbeitung vollständig integrieren, inklusive:
+   - Schneiden
+   - Falzen
+   - Rillen
+   - Heften
+   - Ringösen
+   - Ableimen
+   - Bohren
+   - Perforieren
+   - Nummerieren
+   - Kuvertieren
+   - Handarbeiten
+   - Verpacken
+6. QR-Code-Workflow vorbereiten.
+7. Ausschießmodul vor Lettershop priorisieren.
+
+### Strategische Reihenfolge
+
+1. Kalkulation
+2. Auftragsübersicht
+3. Auftragstasche
+4. Material / Maschinen / Weiterverarbeitung
+5. PDF-Auftragstasche
+6. QR-Code-Workflow
+7. Ausschießen / Druckbogen-Erzeugung
+8. Mobile PWA
+9. Produktionsplanung
+10. Versand
+11. Lettershop
+12. Auswertungen / Controlling
+
+### Modul-Grundsatz
+
+Neue Module existieren nicht isoliert. Sie liefern Informationen in die Auftragstasche.
+
+Beispiele:
+
+- Materialverwaltung → Materialbereich der Auftragstasche
+- Ausschießen → Nutzenplan / Druckbogenbereich der Auftragstasche
+- Weiterverarbeitung → Produktionsschritte der Auftragstasche
+- Versand → Versandbereich der Auftragstasche
+- Lettershop → Mailingbereich der Auftragstasche
+
+### Langfristige Vision
+
+Ein Mitarbeiter soll im Alltag hauptsächlich mit zwei Bereichen arbeiten:
+
+```text
+Auftragsübersicht → Auftragstasche
+```
+
+Die Auftragstasche wird der digitale Laufzettel, Produktionsauftrag und zentrale Informationspunkt von PrintPilot.

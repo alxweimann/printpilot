@@ -746,9 +746,9 @@ const initialDraft: CalculationDraft = {
   customerNote: "Lieferung an Standardadresse",
   internalNote: "Daten aus PDF-Preview prüfen",
   productKind: demoCalculationPayload.product.kind,
-  productLabel: demoCalculationPayload.product.label,
-  pages: demoCalculationPayload.product.pages,
-  colorMode: "4/4-farbig · Skala",
+  productLabel: "Visitenkarten",
+  pages: "2-seitig",
+  colorMode: "4/4-farbig Euroskala",
   frontColors: "Euroskala / 4c",
   backColors: "Euroskala / 4c",
   spotColors: "keine Sonderfarben",
@@ -772,8 +772,8 @@ const initialDraft: CalculationDraft = {
   tier3: "2.500 Stück",
   variants: "6 Sorten zusammen",
   materialGroup: "Bilderdruck / Karton",
-  substrate: demoCalculationPayload.product.substrate ?? "Munken Lynx 300 g",
-  grammage: "350 g/m²",
+  substrate: "Munken Lynx",
+  grammage: "300 g/m²",
   sheetFormat: "SRA3 · 450 × 320 mm",
   grainDirection: "offen",
   rawSheetFormat: "70 × 100 cm",
@@ -953,8 +953,87 @@ function getOfferPriceLabel(value: string) {
   return isDraftValueMissing(value) ? "Preis offen" : value;
 }
 
+function parseEuroAmount(value: string) {
+  if (isDraftValueMissing(value)) {
+    return null;
+  }
+
+  const normalized = value
+    .replace(/[^0-9,.-]/g, "")
+    .replace(/\./g, "")
+    .replace(",", ".");
+  const parsed = Number.parseFloat(normalized);
+
+  return Number.isFinite(parsed) ? parsed : null;
+}
+
+function formatEuroAmount(value: number) {
+  return `${value.toLocaleString("de-DE", {
+    minimumFractionDigits: 2,
+    maximumFractionDigits: 2,
+  })} €`;
+}
+
+function getOfferPriceBreakdown(netPriceLabel: string, quantity: number) {
+  const net = parseEuroAmount(netPriceLabel);
+
+  if (net === null) {
+    return {
+      netLabel: getOfferPriceLabel(netPriceLabel),
+      unitNetLabel: "offen",
+      taxLabel: "offen",
+      grossLabel: "offen",
+    };
+  }
+
+  const tax = net * 0.19;
+  const gross = net + tax;
+  const unitNet = quantity > 0 ? net / quantity : net;
+
+  return {
+    netLabel: formatEuroAmount(net),
+    unitNetLabel: formatEuroAmount(unitNet),
+    taxLabel: formatEuroAmount(tax),
+    grossLabel: formatEuroAmount(gross),
+  };
+}
+
 function getOfferQuantityLabel(payload: CalculationToProductionPayload) {
   return `${formatNumber(payload.product.quantity)} Stück`;
+}
+
+function getOfferTitle(draft: CalculationDraft, payload: CalculationToProductionPayload) {
+  return draft.projectName.trim() || payload.product.label;
+}
+
+function getOfferColorLabel(draft: CalculationDraft) {
+  return draft.colorMode
+    .replace(/\s*·\s*Skala/gi, " Euroskala")
+    .replace(/CMYK/gi, "Euroskala")
+    .replace(/\s+/g, " ")
+    .trim();
+}
+
+function getOfferScopeAndColorLabel(draft: CalculationDraft) {
+  const scope = draft.pages.trim();
+  const color = getOfferColorLabel(draft);
+
+  if (!scope || scope.toLowerCase() === color.toLowerCase()) {
+    return color;
+  }
+
+  return `${scope} · ${color}`;
+}
+
+function getOfferMaterialLabel(draft: CalculationDraft) {
+  const substrate = draft.substrate.trim();
+  const grammage = draft.grammage.trim();
+
+  if (!grammage || substrate.toLowerCase().includes(grammage.toLowerCase())) {
+    return substrate;
+  }
+
+  return `${substrate} · ${grammage}`;
 }
 
 function getOfferSubject(draft: CalculationDraft) {
@@ -962,20 +1041,28 @@ function getOfferSubject(draft: CalculationDraft) {
 }
 
 function getOfferMailBody(draft: CalculationDraft, payload: CalculationToProductionPayload) {
+  const price = getOfferPriceBreakdown(draft.salePriceNet, payload.product.quantity);
+
   return [
     `Hallo ${draft.contactName},`,
     "",
-    `anbei erhalten Sie unser Angebot ${draft.offerId} für ${payload.product.label}.`,
+    `vielen Dank für Ihre Anfrage. Gerne bieten wir Ihnen ${getOfferTitle(draft, payload)} wie folgt an.`,
     "",
-    `Produkt: ${payload.product.label}`,
+    `Angebotsnummer: ${draft.offerId}`,
+    `Produkt: ${draft.productLabel}`,
     `Auflage: ${getOfferQuantityLabel(payload)}`,
-    `Preis netto: ${getOfferPriceLabel(draft.salePriceNet)}`,
+    `Format: ${draft.finalFormat}`,
+    `Material: ${getOfferMaterialLabel(draft)}`,
+    `Gesamt netto: ${price.netLabel}`,
+    `Gesamt brutto inkl. 19 % Umsatzsteuer: ${price.grossLabel}`,
+    "",
+    `Das Angebot ist ${draft.offerValidUntil} gültig.`,
+    "Die Angebots-PDF kann vor dem Versand angehängt werden.",
     "",
     "Viele Grüße",
     draft.owner,
   ].join("\n");
 }
-
 
 function escapeOfferPrintText(value: string) {
   return value
@@ -1255,6 +1342,46 @@ function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
         border-top: .35pt solid #e7eef7;
       }
 
+
+      .pp-offer-document__positions th:nth-child(4),
+      .pp-offer-document__positions td:nth-child(4),
+      .pp-offer-document__positions th:nth-child(5),
+      .pp-offer-document__positions td:nth-child(5) {
+        text-align: right;
+      }
+
+      .pp-offer-document__positions .pp-offer-document__total-row td {
+        background: #eaf8ff;
+        color: #003d5d;
+        font-size: 11.4pt;
+        font-weight: 920;
+      }
+
+      .pp-offer-document__closing {
+        display: grid;
+        gap: 1.2mm;
+        padding: 4mm;
+        border: .45pt solid #dbe6f1;
+        border-radius: 4mm;
+        background: #ffffff;
+      }
+
+      .pp-offer-document__closing p,
+      .pp-offer-document__closing span {
+        margin: 0;
+        color: #53647c;
+        font-size: 9.2pt;
+        font-weight: 520;
+        line-height: 1.42;
+      }
+
+      .pp-offer-document__closing strong {
+        margin-top: 1mm;
+        color: #07183a;
+        font-size: 9.4pt;
+        font-weight: 820;
+      }
+
       @media print {
         html, body, .pp-offer-print-window, .pp-print-offer-document {
           width: 210mm;
@@ -1273,8 +1400,6 @@ function CalculationOfferDocument({
   draft,
   payload,
   finishingRows,
-  productionModeLabel,
-  sheetCount,
 }: {
   draft: CalculationDraft;
   payload: CalculationToProductionPayload;
@@ -1283,14 +1408,17 @@ function CalculationOfferDocument({
   sheetCount: string;
 }) {
   const activeFinishingLabels = getActiveFinishingLabels(finishingRows);
-  const netPrice = getOfferPriceLabel(draft.salePriceNet);
+  const price = getOfferPriceBreakdown(draft.salePriceNet, payload.product.quantity);
+  const offerTitle = getOfferTitle(draft, payload);
+  const materialLabel = getOfferMaterialLabel(draft);
+  const scopeAndColorLabel = getOfferScopeAndColorLabel(draft);
   const offerRows = [
-    ["Produkt", payload.product.label],
+    ["Projekt", offerTitle],
+    ["Produkt", draft.productLabel],
     ["Auflage", getOfferQuantityLabel(payload)],
     ["Format", draft.finalFormat],
-    ["Umfang / Farbigkeit", `${draft.pages} · ${draft.colorMode}`],
-    ["Material", `${draft.substrate} · ${draft.grammage}`],
-    ["Druck", `${draft.printType} · ${productionModeLabel}`],
+    ["Umfang / Farbigkeit", scopeAndColorLabel],
+    ["Material", materialLabel],
     ["Weiterverarbeitung", activeFinishingLabels],
     ["Lieferung", `${draft.shippingMethod} · ${draft.deliveryTimeWindow}`],
   ];
@@ -1317,11 +1445,11 @@ function CalculationOfferDocument({
         <dl>
           <div>
             <dt>Projekt</dt>
-            <dd>{draft.projectName}</dd>
+            <dd>{offerTitle}</dd>
           </div>
           <div>
-            <dt>Kalkulation</dt>
-            <dd>{draft.calculationId}</dd>
+            <dt>Angebotsdatum</dt>
+            <dd>{draft.offerDate}</dd>
           </div>
           <div>
             <dt>Liefertermin</dt>
@@ -1335,10 +1463,10 @@ function CalculationOfferDocument({
       </section>
 
       <section className="pp-offer-document__intro">
-        <h1>Angebot für {payload.product.label}</h1>
+        <h1>Angebot für {offerTitle}</h1>
         <p>
-          Vielen Dank für Ihre Anfrage. Auf Grundlage der vorliegenden
-          Kalkulationsdaten bieten wir Ihnen folgende Druckleistung an.
+          Vielen Dank für Ihre Anfrage. Gerne bieten wir Ihnen folgende
+          Druckleistung an.
         </p>
       </section>
 
@@ -1358,29 +1486,38 @@ function CalculationOfferDocument({
               <th>Pos.</th>
               <th>Leistung</th>
               <th>Menge</th>
-              <th>Gesamt netto</th>
+              <th>Einzelpreis netto</th>
+              <th>Gesamtpreis netto</th>
             </tr>
           </thead>
           <tbody>
             <tr>
               <td>1</td>
               <td>
-                <strong>{payload.product.label}</strong>
+                <strong>{offerTitle}</strong>
                 <span>
-                  {draft.finalFormat} · {draft.pages} · {draft.colorMode} · {draft.substrate}
+                  {draft.productLabel} · {draft.finalFormat} · {scopeAndColorLabel} · {materialLabel}
                 </span>
-                <span>
-                  Produktion: {productionModeLabel} · {sheetCount} Bogen · {draft.impositionLabel}
-                </span>
+                <span>Weiterverarbeitung: {activeFinishingLabels}</span>
+                <span>Lieferung: {draft.shippingMethod} · {draft.deliveryTimeWindow}</span>
               </td>
               <td>{getOfferQuantityLabel(payload)}</td>
-              <td>{netPrice}</td>
+              <td>{price.unitNetLabel}</td>
+              <td>{price.netLabel}</td>
             </tr>
           </tbody>
           <tfoot>
             <tr>
-              <td colSpan={3}>Gesamtsumme netto</td>
-              <td>{netPrice}</td>
+              <td colSpan={4}>Zwischensumme netto</td>
+              <td>{price.netLabel}</td>
+            </tr>
+            <tr>
+              <td colSpan={4}>Umsatzsteuer 19 %</td>
+              <td>{price.taxLabel}</td>
+            </tr>
+            <tr className="pp-offer-document__total-row">
+              <td colSpan={4}>Gesamtsumme brutto</td>
+              <td>{price.grossLabel}</td>
             </tr>
           </tfoot>
         </table>
@@ -1391,19 +1528,27 @@ function CalculationOfferDocument({
           <h2>Hinweise</h2>
           <p>{draft.customerNote}</p>
           <p>{draft.settlementNote}</p>
-          <p>Preise verstehen sich netto zuzüglich gesetzlicher Umsatzsteuer.</p>
+          <p>Interne Produktionsdaten, Kostenblöcke und Margen sind nicht Bestandteil dieses Angebots.</p>
         </div>
         <div>
-          <h2>Abrechnung</h2>
-          <p>{draft.billingMode}</p>
-          <p>{draft.paymentTerms}</p>
+          <h2>Konditionen</h2>
+          <p>Zahlungsbedingungen: {draft.paymentTerms}</p>
           <p>Angebot gültig: {draft.offerValidUntil}</p>
+          <p>Alle Preise verstehen sich in Euro inklusive ausgewiesener gesetzlicher Umsatzsteuer.</p>
         </div>
+      </section>
+
+      <section className="pp-offer-document__closing">
+        <p>
+          Wir freuen uns auf Ihre Rückmeldung und stehen für Rückfragen gerne zur Verfügung.
+        </p>
+        <strong>Mit freundlichen Grüßen</strong>
+        <span>{draft.owner}</span>
       </section>
 
       <footer className="pp-offer-document__footer">
         <span>Erstellt mit PrintPilot</span>
-        <span>{draft.owner}</span>
+        <span>{draft.offerId}</span>
       </footer>
     </article>
   );

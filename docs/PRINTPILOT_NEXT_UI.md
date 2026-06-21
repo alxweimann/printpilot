@@ -3672,3 +3672,20 @@ Build-Prüfung: `npm run build`.
 - Keine echte Server-PDF-Erzeugung, keine Persistenzänderung und keine E-Mail-Attachment-Automation; Sprint 50.1 stabilisiert ausschließlich die lokale Druck-/PDF-Ausgabe.
 
 Build-Prüfung: `npm run build`.
+
+## Sprint 50.2 – Angebots-PDF als Kundendokument veredeln
+
+- Die Angebotsausgabe wurde nach dem ersten echten PDF-Test fachlich und sprachlich bereinigt.
+- Das Angebot ist jetzt konsequenter ein Kundendokument und kein technisches Produktionsdokument.
+- Produkt-/Projektbezeichnung wird sauberer verwendet: der Angebotstitel nutzt den Projektnamen, die Produktart bleibt separat sichtbar.
+- Doppelte Farbigkeit wurde bereinigt: statt technischer Wiederholung wie `4/4-farbig · 4/4-farbig · Skala` wird kundenverständlich `2-seitig · 4/4-farbig Euroskala` ausgegeben.
+- Materialname und Grammatur wurden sauber getrennt, damit keine widersprüchlichen Angaben wie `Munken Lynx 300 g · 350 g/m²` entstehen.
+- Interne Produktionsdaten wie Bogenanzahl, Nutzenraster und Ausschießdetails werden im Angebot nicht mehr ausgegeben. Diese Daten bleiben für Auftrag, Produktion und Auftragstasche relevant, aber nicht für das Kundenangebot.
+- Die Positionstabelle wurde erweitert um Einzelpreis netto, Gesamtpreis netto, Zwischensumme, 19 % Umsatzsteuer und Gesamtsumme brutto.
+- Angebotsfließtext, Hinweise, Konditionen und Abschlussformel wurden kundengerechter formuliert.
+- Die E-Mail-Vorbereitung verwendet jetzt den bereinigten Angebotstext inklusive Netto- und Bruttosumme.
+- Der isolierte Druckfenster-Export aus Sprint 50.1 bleibt erhalten.
+- Die Bottom-Navigation wurde nicht verändert.
+- Keine echte Preislogik, keine Persistenz, keine Server-PDF-Erzeugung und keine automatische Mail-Anhang-Funktion; Sprint 50.2 verbessert ausschließlich Inhalt, Sprache und Darstellung des Angebotsdokuments.
+
+Build-Prüfung: `npm run build`.

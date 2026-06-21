@@ -1113,11 +1113,12 @@ function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
 
       .pp-print-offer-document {
         display: grid;
-        gap: 5.2mm;
+        grid-template-rows: auto auto auto auto auto auto 1fr auto;
+        gap: 3.4mm;
         width: 210mm;
         min-height: 297mm;
         margin: 0;
-        padding: 16mm;
+        padding: 12mm 13mm 11mm;
         border: 0;
         border-radius: 0;
         background: #ffffff;
@@ -1129,23 +1130,23 @@ function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
         display: grid;
         grid-template-columns: minmax(0, 1fr) auto;
         align-items: start;
-        gap: 18mm;
-        padding-bottom: 7mm;
-        border-bottom: 1.4pt solid #00a8e0;
+        gap: 14mm;
+        padding-bottom: 4.2mm;
+        border-bottom: 1.2pt solid #00a8e0;
       }
 
       .pp-printpilot-logo,
       .pp-offer-document__logo {
         display: block;
-        width: 47mm;
-        max-width: 47mm;
+        width: 42mm;
+        max-width: 42mm;
         height: auto;
       }
 
       .pp-offer-document__header div {
         display: grid;
-        gap: 1mm;
-        min-width: 48mm;
+        gap: .6mm;
+        min-width: 46mm;
         text-align: right;
       }
 
@@ -1155,15 +1156,15 @@ function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
       .pp-offer-document__positions th,
       .pp-offer-document__address dt {
         color: #24577d;
-        font-size: 7.6pt;
+        font-size: 7.1pt;
         font-weight: 850;
-        letter-spacing: .06em;
+        letter-spacing: .055em;
         text-transform: uppercase;
       }
 
       .pp-offer-document__header strong {
         color: #07183a;
-        font-size: 20pt;
+        font-size: 18pt;
         font-weight: 950;
         letter-spacing: -.04em;
         line-height: 1;
@@ -1175,40 +1176,41 @@ function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
       .pp-offer-document__notes p,
       .pp-offer-document__intro p {
         color: #53647c;
-        font-size: 9.2pt;
+        font-size: 8.6pt;
         font-weight: 520;
-        line-height: 1.42;
+        line-height: 1.32;
       }
 
       .pp-offer-document__address {
         display: grid;
-        grid-template-columns: minmax(0, 1.06fr) minmax(75mm, .94fr);
-        gap: 9mm;
+        grid-template-columns: minmax(0, 1.14fr) minmax(78mm, .86fr);
+        gap: 7mm;
       }
 
       .pp-offer-document__address strong {
         display: block;
-        margin: 1.2mm 0 2.4mm;
+        margin: .8mm 0 1.7mm;
         color: #07183a;
-        font-size: 13pt;
+        font-size: 12pt;
         font-weight: 850;
       }
 
-      .pp-offer-document__address p { margin: 0 0 1.2mm; }
+      .pp-offer-document__address p { margin: 0 0 .8mm; }
 
       .pp-offer-document__address dl {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
         margin: 0;
         border: .45pt solid #dbe6f1;
-        border-radius: 3.6mm;
+        border-radius: 3.2mm;
         overflow: hidden;
       }
 
       .pp-offer-document__address dl div {
         display: grid;
-        gap: 1mm;
-        padding: 3mm 3.4mm;
+        gap: .7mm;
+        min-height: 13mm;
+        padding: 2.2mm 2.8mm;
         border-right: .35pt solid #e7eef7;
         border-bottom: .35pt solid #e7eef7;
       }
@@ -1219,67 +1221,74 @@ function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
       .pp-offer-document__address dd {
         margin: 0;
         color: #07183a;
-        font-size: 9.2pt;
+        font-size: 8.6pt;
         font-weight: 760;
-        line-height: 1.22;
+        line-height: 1.16;
       }
 
       .pp-offer-document__intro {
-        padding: 5mm;
+        padding: 3.2mm 3.8mm;
         border: .45pt solid #dbe6f1;
-        border-radius: 4mm;
+        border-radius: 3.2mm;
         background: #f8fbff;
       }
 
       .pp-offer-document__intro h1 {
-        margin: 0 0 2.4mm;
+        margin: 0 0 1.3mm;
         color: #18345e;
-        font-size: 17pt;
+        font-size: 14.5pt;
         font-weight: 900;
         letter-spacing: -.04em;
-        line-height: 1.08;
+        line-height: 1.04;
       }
 
       .pp-offer-document__intro p { margin: 0; }
 
       .pp-offer-document__summary {
         display: grid;
-        grid-template-columns: repeat(4, minmax(0, 1fr));
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         border: .45pt solid #dbe6f1;
-        border-radius: 4mm;
+        border-radius: 3.2mm;
         overflow: hidden;
       }
 
       .pp-offer-document__summary div {
         display: grid;
-        gap: 1.4mm;
-        min-height: 17mm;
-        padding: 3.1mm 3.4mm;
+        gap: .9mm;
+        min-height: 13mm;
+        padding: 2.3mm 2.8mm;
         border-right: .35pt solid #e7eef7;
         border-bottom: .35pt solid #e7eef7;
       }
 
-      .pp-offer-document__summary div:nth-child(4n) { border-right: 0; }
-      .pp-offer-document__summary div:nth-last-child(-n + 4) { border-bottom: 0; }
+      .pp-offer-document__summary div:nth-child(3n) { border-right: 0; }
+      .pp-offer-document__summary div:nth-last-child(-n + 3) { border-bottom: 0; }
 
       .pp-offer-document__summary b {
         color: #07183a;
-        font-size: 9.2pt;
-        font-weight: 760;
-        line-height: 1.25;
+        font-size: 8.4pt;
+        font-weight: 740;
+        line-height: 1.16;
       }
 
       .pp-offer-document__positions table {
         width: 100%;
+        table-layout: fixed;
         border-collapse: collapse;
         overflow: hidden;
         border: .45pt solid #dbe6f1;
-        border-radius: 4mm;
+        border-radius: 3.2mm;
       }
+
+      .pp-offer-document__positions col:nth-child(1) { width: 9mm; }
+      .pp-offer-document__positions col:nth-child(2) { width: auto; }
+      .pp-offer-document__positions col:nth-child(3) { width: 22mm; }
+      .pp-offer-document__positions col:nth-child(4) { width: 27mm; }
+      .pp-offer-document__positions col:nth-child(5) { width: 31mm; }
 
       .pp-offer-document__positions th,
       .pp-offer-document__positions td {
-        padding: 3.4mm;
+        padding: 2.6mm 2.7mm;
         border-bottom: .35pt solid #e7eef7;
         text-align: left;
         vertical-align: top;
@@ -1290,59 +1299,22 @@ function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
 
       .pp-offer-document__positions td {
         color: #07183a;
-        font-size: 9.2pt;
+        font-size: 8.5pt;
         font-weight: 650;
-        line-height: 1.28;
+        line-height: 1.2;
       }
 
       .pp-offer-document__positions td strong,
       .pp-offer-document__positions td span { display: block; }
 
       .pp-offer-document__positions td span {
-        margin-top: 1.2mm;
+        margin-top: .8mm;
         color: #53647c;
         font-weight: 540;
       }
 
-      .pp-offer-document__positions tfoot td {
-        border-bottom: 0;
-        background: #f8fbff;
-        color: #07183a;
-        font-size: 10.5pt;
-        font-weight: 850;
-      }
-
-      .pp-offer-document__notes {
-        display: grid;
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 4.4mm;
-      }
-
-      .pp-offer-document__notes div {
-        padding: 4mm;
-        border: .45pt solid #dbe6f1;
-        border-radius: 4mm;
-        background: #ffffff;
-      }
-
-      .pp-offer-document__notes h2 {
-        margin: 0 0 2.2mm;
-        color: #18345e;
-        font-size: 10.8pt;
-        font-weight: 850;
-      }
-
-      .pp-offer-document__notes p { margin: 0 0 1.4mm; }
-
-      .pp-offer-document__footer {
-        display: flex;
-        justify-content: space-between;
-        gap: 6mm;
-        padding-top: 3.6mm;
-        border-top: .35pt solid #e7eef7;
-      }
-
-
+      .pp-offer-document__positions th:nth-child(3),
+      .pp-offer-document__positions td:nth-child(3),
       .pp-offer-document__positions th:nth-child(4),
       .pp-offer-document__positions td:nth-child(4),
       .pp-offer-document__positions th:nth-child(5),
@@ -1350,19 +1322,49 @@ function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
         text-align: right;
       }
 
+      .pp-offer-document__positions tfoot td {
+        border-bottom: 0;
+        background: #f8fbff;
+        color: #07183a;
+        font-size: 9.3pt;
+        font-weight: 850;
+      }
+
       .pp-offer-document__positions .pp-offer-document__total-row td {
         background: #eaf8ff;
         color: #003d5d;
-        font-size: 11.4pt;
+        font-size: 10.4pt;
         font-weight: 920;
       }
 
+      .pp-offer-document__notes {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 3.2mm;
+      }
+
+      .pp-offer-document__notes div {
+        padding: 2.8mm 3.2mm;
+        border: .45pt solid #dbe6f1;
+        border-radius: 3.2mm;
+        background: #ffffff;
+      }
+
+      .pp-offer-document__notes h2 {
+        margin: 0 0 1.3mm;
+        color: #18345e;
+        font-size: 9.6pt;
+        font-weight: 850;
+      }
+
+      .pp-offer-document__notes p { margin: 0 0 .7mm; }
+
       .pp-offer-document__closing {
         display: grid;
-        gap: 1.2mm;
-        padding: 4mm;
+        gap: .7mm;
+        padding: 2.8mm 3.2mm;
         border: .45pt solid #dbe6f1;
-        border-radius: 4mm;
+        border-radius: 3.2mm;
         background: #ffffff;
       }
 
@@ -1370,16 +1372,25 @@ function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
       .pp-offer-document__closing span {
         margin: 0;
         color: #53647c;
-        font-size: 9.2pt;
+        font-size: 8.6pt;
         font-weight: 520;
-        line-height: 1.42;
+        line-height: 1.28;
       }
 
       .pp-offer-document__closing strong {
-        margin-top: 1mm;
+        margin-top: .4mm;
         color: #07183a;
-        font-size: 9.4pt;
+        font-size: 8.8pt;
         font-weight: 820;
+      }
+
+      .pp-offer-document__footer {
+        display: flex;
+        align-self: end;
+        justify-content: space-between;
+        gap: 6mm;
+        padding-top: 2.3mm;
+        border-top: .35pt solid #e7eef7;
       }
 
       @media print {
@@ -1413,14 +1424,12 @@ function CalculationOfferDocument({
   const materialLabel = getOfferMaterialLabel(draft);
   const scopeAndColorLabel = getOfferScopeAndColorLabel(draft);
   const offerRows = [
-    ["Projekt", offerTitle],
     ["Produkt", draft.productLabel],
     ["Auflage", getOfferQuantityLabel(payload)],
     ["Format", draft.finalFormat],
     ["Umfang / Farbigkeit", scopeAndColorLabel],
     ["Material", materialLabel],
     ["Weiterverarbeitung", activeFinishingLabels],
-    ["Lieferung", `${draft.shippingMethod} · ${draft.deliveryTimeWindow}`],
   ];
 
   return (
@@ -1481,6 +1490,13 @@ function CalculationOfferDocument({
 
       <section className="pp-offer-document__positions" aria-label="Angebotspositionen">
         <table>
+          <colgroup>
+            <col />
+            <col />
+            <col />
+            <col />
+            <col />
+          </colgroup>
           <thead>
             <tr>
               <th>Pos.</th>
@@ -1528,13 +1544,12 @@ function CalculationOfferDocument({
           <h2>Hinweise</h2>
           <p>{draft.customerNote}</p>
           <p>{draft.settlementNote}</p>
-          <p>Interne Produktionsdaten, Kostenblöcke und Margen sind nicht Bestandteil dieses Angebots.</p>
         </div>
         <div>
           <h2>Konditionen</h2>
           <p>Zahlungsbedingungen: {draft.paymentTerms}</p>
           <p>Angebot gültig: {draft.offerValidUntil}</p>
-          <p>Alle Preise verstehen sich in Euro inklusive ausgewiesener gesetzlicher Umsatzsteuer.</p>
+          <p>Alle Preise verstehen sich netto zuzüglich 19 % gesetzlicher Umsatzsteuer. Die Gesamtsumme brutto ist ausgewiesen.</p>
         </div>
       </section>
 

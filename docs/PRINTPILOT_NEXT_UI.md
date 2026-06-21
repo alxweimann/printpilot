@@ -3689,3 +3689,22 @@ Build-Prüfung: `npm run build`.
 - Keine echte Preislogik, keine Persistenz, keine Server-PDF-Erzeugung und keine automatische Mail-Anhang-Funktion; Sprint 50.2 verbessert ausschließlich Inhalt, Sprache und Darstellung des Angebotsdokuments.
 
 Build-Prüfung: `npm run build`.
+
+## Sprint 50.3 – Angebots-PDF auf eine Seite optimieren
+
+- Der PDF-Test aus Sprint 50.2 zeigte, dass einfache Angebote noch auf eine zweite Seite umbrechen konnten, obwohl nur Abschluss, Grußformel und Footer betroffen waren.
+- Die Angebotsausgabe wurde deshalb für DIN A4 Hochformat kompakter gesetzt:
+  - kleinere Seitenränder im isolierten Druckfenster,
+  - geringere vertikale Abstände,
+  - kompakterer Kopfbereich,
+  - kompaktere Leistungsübersicht,
+  - kleinere Tabellen- und Konditionsabstände.
+- Die Leistungsübersicht wurde von acht auf sechs kundenrelevante Felder reduziert. Projekt und Lieferung stehen weiterhin im Dokument, aber nicht mehr doppelt in der Übersicht.
+- Die Positionstabelle nutzt feste Spaltenbreiten, damit Menge, Einzelpreis netto und Gesamtpreis netto sauberer stehen und die Tabellenköpfe weniger unschön umbrechen.
+- Der Satz `Interne Produktionsdaten, Kostenblöcke und Margen sind nicht Bestandteil dieses Angebots.` wurde entfernt. Die Aussage bleibt intern fachlich richtig, gehört aber nicht in ein Kundendokument.
+- Der Preistext wurde kundenfreundlicher und eindeutiger formuliert: Preise netto zuzüglich 19 % gesetzlicher Umsatzsteuer, Bruttosumme ausgewiesen.
+- Ziel für einfache Standardangebote: eine A4-Seite, druckbar oder als PDF per E-Mail versendbar.
+- Die Bottom-Navigation wurde nicht verändert.
+- Keine echte Preislogik, keine Persistenz, keine Server-PDF-Erzeugung und keine automatische Mail-Anhang-Funktion; Sprint 50.3 optimiert ausschließlich Layout, Sprache und Druckausgabe des Angebotsdokuments.
+
+Build-Prüfung: `npm run build`.

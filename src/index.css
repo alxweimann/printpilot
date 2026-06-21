@@ -21245,3 +21245,104 @@ button.pp-process-step:hover {
   font-size: 13px;
   font-weight: 820;
 }
+
+/* Sprint 50.3 – Angebots-PDF auf eine Seite und kundentaugliche Ausgabe optimieren */
+.pp-print-offer-document {
+  gap: 14px;
+}
+
+.pp-offer-document__header {
+  padding-bottom: 14px;
+}
+
+.pp-offer-document__logo {
+  width: 154px;
+}
+
+.pp-offer-document__header strong {
+  font-size: 25px;
+}
+
+.pp-offer-document__intro {
+  padding: 13px 15px;
+}
+
+.pp-offer-document__intro h1 {
+  margin-bottom: 6px;
+  font-size: 22px;
+  line-height: 1.08;
+}
+
+.pp-offer-document__summary {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.pp-offer-document__summary div {
+  min-height: 54px;
+  padding: 9px 10px;
+}
+
+.pp-offer-document__summary div:nth-child(3n) {
+  border-right: 0;
+}
+
+.pp-offer-document__summary div:nth-child(4n) {
+  border-right: 1px solid #e7eef7;
+}
+
+.pp-offer-document__summary div:nth-last-child(-n + 4) {
+  border-bottom: 1px solid #e7eef7;
+}
+
+.pp-offer-document__summary div:nth-last-child(-n + 3) {
+  border-bottom: 0;
+}
+
+.pp-offer-document__positions table {
+  table-layout: fixed;
+}
+
+.pp-offer-document__positions col:nth-child(1) {
+  width: 42px;
+}
+
+.pp-offer-document__positions col:nth-child(2) {
+  width: auto;
+}
+
+.pp-offer-document__positions col:nth-child(3) {
+  width: 92px;
+}
+
+.pp-offer-document__positions col:nth-child(4) {
+  width: 112px;
+}
+
+.pp-offer-document__positions col:nth-child(5) {
+  width: 128px;
+}
+
+.pp-offer-document__positions th,
+.pp-offer-document__positions td {
+  padding: 9px 10px;
+}
+
+.pp-offer-document__positions th:nth-child(3),
+.pp-offer-document__positions td:nth-child(3),
+.pp-offer-document__positions th:nth-child(4),
+.pp-offer-document__positions td:nth-child(4),
+.pp-offer-document__positions th:nth-child(5),
+.pp-offer-document__positions td:nth-child(5) {
+  text-align: right;
+}
+
+.pp-offer-document__notes div,
+.pp-offer-document__closing {
+  padding: 11px 12px;
+}
+
+.pp-offer-document__notes p,
+.pp-offer-document__closing p,
+.pp-offer-document__closing span {
+  line-height: 1.35;
+}

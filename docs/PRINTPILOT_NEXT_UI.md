@@ -3490,3 +3490,12 @@ Build-Prüfung: `npm run build`.
 - Keine neue Kalkulationslogik, keine Preislogik und keine Persistenzänderung.
 
 Build-Prüfung: `npm run build`.
+
+## Sprint 47.7 – Kalkulation: Labelspalte und Eingabewerte verfeinert
+
+- Die Labelbereiche der Kalkulations-Eingabefelder wurden von leicht grauer Fläche auf Weiß umgestellt.
+- Die Labeltexte wie Kunde, Telefon, Produkt, Format usw. verwenden jetzt PrintPilot-Cyan als Orientierungssignal.
+- Pflicht-/Optional-Badges bleiben zurückhaltend, aber farblich sauber an das Cyan-System gekoppelt.
+- Die Schriftgewichte der eigentlichen Eingabewerte wurden leicht reduziert, damit die Maske weniger massiv wirkt und näher an der ruhigen Auftragstaschen-Typografie bleibt.
+- Feldinhalt, Rahmenlogik und Fokuszustand bleiben weiß/cyan und damit weiterhin klar als editierbare Eingabefelder erkennbar.
+- Keine Änderung an Bottom-Navigation, Kalkulationslogik, Preislogik, Datenmodell oder Persistenz.

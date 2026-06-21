@@ -19953,3 +19953,50 @@ button.pp-process-step:hover {
     margin: 6px 7px !important;
   }
 }
+
+/* Sprint 47.7 – Feldlabels weiß/cyan, Eingabewerte leichter */
+.pp-calc-input-field span,
+.pp-calculation-tab-panel .pp-calc-input-field span {
+  background: #ffffff !important;
+  color: var(--pp-calc-blue) !important;
+}
+
+.pp-calc-input-field span strong,
+.pp-calculation-tab-panel .pp-calc-input-field span strong {
+  color: var(--pp-calc-blue) !important;
+  font-weight: 820 !important;
+  letter-spacing: .02em !important;
+}
+
+.pp-calc-input-field span em,
+.pp-calc-input-field span em.pp-field-badge--pflicht,
+.pp-calc-input-field span em.pp-field-badge--optional,
+.pp-calc-input-field span em.pp-field-badge--später,
+.pp-calculation-tab-panel .pp-calc-input-field span em {
+  background: rgba(0, 162, 220, .07) !important;
+  border-color: rgba(0, 162, 220, .18) !important;
+  color: rgba(0, 92, 150, .72) !important;
+}
+
+.pp-calc-input-field span em.pp-field-badge--pflicht {
+  background: rgba(0, 162, 220, .10) !important;
+  color: rgba(0, 92, 150, .86) !important;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select,
+.pp-calculation-tab-panel .pp-calc-input-field input,
+.pp-calculation-tab-panel .pp-calc-input-field select,
+.pp-calc-finishing-table td input:not([type="checkbox"]) {
+  color: #10284d !important;
+  font-weight: 680 !important;
+  letter-spacing: -.008em !important;
+}
+
+.pp-calc-input-field input:read-only,
+.pp-calc-input-field select:disabled,
+.pp-calculation-tab-panel .pp-calc-input-field input:read-only,
+.pp-calculation-tab-panel .pp-calc-input-field select:disabled {
+  color: #405674 !important;
+  font-weight: 650 !important;
+}

@@ -3785,3 +3785,34 @@ Build-Prüfung: `npm run build`.
 - Keine Persistenz, kein echter Logo-Upload und keine Server-PDF-Erzeugung; Sprint 51.1 bereinigt ausschließlich die Kundendokument-Ausgabe und die Demo-Stammdaten.
 
 Build-Hinweis: In dieser Umgebung konnte `npm run build` nicht vollständig ausgeführt werden, weil die aus dem ZIP ausgeschlossenen `node_modules` fehlen. Bitte lokal nach dem Einspielen mit installiertem Projektstand wie gewohnt prüfen.
+
+## Sprint 52 – Nutzenrechner in der Kalkulationsmaske ergänzen
+
+- Vor dem Workflow **Kalkulation → Angebot → Auftrag** wurde die Kalkulationsmaske fachlich um einen echten, produktionsnahen Nutzenrechner erweitert.
+- Der Reiter **Papier & Druck** enthält jetzt einen eigenen Bereich **Nutzenrechner**.
+- Der Rechner arbeitet aktuell clientseitig aus den vorhandenen Kalkulationsdaten:
+  - Auflage,
+  - Endformat,
+  - Druckbogenformat,
+  - Beschnitt,
+  - Bogenrand,
+  - Zwischenschnitt,
+  - Berechnungsbasis `Endformat` oder `inklusive Beschnitt`,
+  - Drehregel `Drehung erlaubt`, `nur aufrecht` oder `nur gedreht`.
+- Es werden aufrechte und gedrehte Varianten berechnet, verglichen und die beste Variante nach Nutzenanzahl und Flächenausnutzung empfohlen.
+- Der Rechner zeigt jetzt:
+  - bestes Raster,
+  - Nutzen pro Druckbogen,
+  - Flächenausnutzung,
+  - Nettobogen,
+  - netto produzierte Stückzahl,
+  - Restmenge,
+  - Zuschussbogen,
+  - Bruttobogen,
+  - Variantenvergleich.
+- Die bisher statischen Demo-Werte für `Nutzen`, `Nettobogen` und `Bruttobogen` werden in der sichtbaren Maske nun aus dem Nutzenrechner abgeleitet.
+- Die Übergabe an die Auftragstasche nutzt ebenfalls das berechnete Nutzenraster aus der Kalkulation.
+- Wichtig: Dies ist noch keine echte Ausschieß-Engine und erzeugt noch keine produktionsfertigen Druckbogen-PDFs. Der Rechner ist ein sauberer Kalkulations-/Planungsrechner für wiederholte Nutzen auf einem Bogen. Die spätere Ausschieß-Engine bleibt ein eigener Produktionsschritt.
+- Die Bottom-Navigation wurde nicht verändert.
+
+Build-Prüfung: `npm run build`.

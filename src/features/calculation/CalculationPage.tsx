@@ -7,6 +7,7 @@ import {
   getFallbackOrder,
 } from "../orders/order-data";
 import type {
+  CalculationImpositionResult,
   CalculationToProductionPayload,
   PrintPilotOrder,
   ProductKind,
@@ -131,6 +132,10 @@ type CalculationDraft = {
   printType: string;
   turning: string;
   impositionLabel: string;
+  impositionGapMm: string;
+  impositionMarginMm: string;
+  impositionUseBleed: string;
+  impositionRotationMode: string;
   setupTime: string;
   runTime: string;
   clickCosts: string;
@@ -270,6 +275,10 @@ const calculationPlausibilityGroups: Array<{
       "printType",
       "turning",
       "impositionLabel",
+      "impositionGapMm",
+      "impositionMarginMm",
+      "impositionUseBleed",
+      "impositionRotationMode",
       "setupTime",
       "runTime",
       "clickCosts",
@@ -820,6 +829,10 @@ const initialDraft: CalculationDraft = {
   printType: "Digitaldruck 4/4",
   turning: "einseitig / aufrecht",
   impositionLabel: "6 × 4 · 24 Nutzen",
+  impositionGapMm: "0",
+  impositionMarginMm: "5",
+  impositionUseBleed: "Endformat",
+  impositionRotationMode: "Drehung erlaubt",
   setupTime: "12 min",
   runTime: "automatisch später",
   clickCosts: "Maschinenstamm",
@@ -928,23 +941,253 @@ function parseFormatDimensions(label: string) {
   };
 }
 
+type ImpositionOrientation = "upright" | "rotated";
+
+type ImpositionCalculatorVariant = {
+  id: ImpositionOrientation;
+  label: string;
+  itemWidthMm: number;
+  itemHeightMm: number;
+  columns: number;
+  rows: number;
+  usedSlots: number;
+  totalSlots: number;
+  usablePercent: number;
+  restWidthMm: number;
+  restHeightMm: number;
+};
+
+type ImpositionCalculatorResult = {
+  sheet: {
+    label: string;
+    widthMm: number;
+    heightMm: number;
+  };
+  item: {
+    label: string;
+    finalWidthMm: number;
+    finalHeightMm: number;
+    calculationWidthMm: number;
+    calculationHeightMm: number;
+  };
+  settings: {
+    gapMm: number;
+    marginMm: number;
+    includeBleed: boolean;
+    rotationMode: string;
+  };
+  selected: ImpositionCalculatorVariant;
+  variants: ImpositionCalculatorVariant[];
+  production: {
+    orderedQuantity: number;
+    sheetsRequired: number;
+    netQuantity: number;
+    restQuantity: number;
+    wasteSheets: number;
+    grossSheets: number;
+  };
+  label: string;
+};
+
+const impositionBleedModeOptions = [
+  { value: "Endformat", label: "Endformat rechnen" },
+  { value: "inklusive Beschnitt", label: "inklusive Beschnitt rechnen" },
+];
+
+const impositionRotationModeOptions = [
+  { value: "Drehung erlaubt", label: "Drehung erlaubt" },
+  { value: "nur aufrecht", label: "nur aufrecht" },
+  { value: "nur gedreht", label: "nur gedreht" },
+];
+
+function parseDimensionPairToMm(
+  value: string,
+  fallback: { widthMm: number; heightMm: number; label: string },
+) {
+  const normalized = value.replace(/[,]/g, ".");
+  const match = normalized.match(
+    /(\d+(?:\.\d+)?)\s*[×xX]\s*(\d+(?:\.\d+)?)(?:\s*(mm|cm))?/i,
+  );
+
+  if (!match) {
+    return fallback;
+  }
+
+  const unitFromText = match[3]?.toLowerCase();
+  const first = Number.parseFloat(match[1]);
+  const second = Number.parseFloat(match[2]);
+  const multiplier = unitFromText === "cm" ? 10 : 1;
+
+  if (!Number.isFinite(first) || !Number.isFinite(second)) {
+    return fallback;
+  }
+
+  return {
+    label: value,
+    widthMm: Math.round(first * multiplier * 10) / 10,
+    heightMm: Math.round(second * multiplier * 10) / 10,
+  };
+}
+
+function getSheetDimensionsFromDraft(draft: CalculationDraft) {
+  const fallback = { widthMm: 450, heightMm: 320, label: "SRA3 · 450 × 320 mm" };
+  const printSheet = parseDimensionPairToMm(draft.printSheetFormat, fallback);
+
+  if (printSheet.widthMm !== fallback.widthMm || printSheet.heightMm !== fallback.heightMm) {
+    return printSheet;
+  }
+
+  return parseDimensionPairToMm(draft.sheetFormat, printSheet);
+}
+
+function getImpositionVariant(
+  id: ImpositionOrientation,
+  label: string,
+  sheetWidthMm: number,
+  sheetHeightMm: number,
+  itemWidthMm: number,
+  itemHeightMm: number,
+  gapMm: number,
+  marginMm: number,
+): ImpositionCalculatorVariant {
+  const usableWidth = Math.max(1, sheetWidthMm - marginMm * 2);
+  const usableHeight = Math.max(1, sheetHeightMm - marginMm * 2);
+  const columns = Math.max(1, Math.floor((usableWidth + gapMm) / Math.max(1, itemWidthMm + gapMm)));
+  const rows = Math.max(1, Math.floor((usableHeight + gapMm) / Math.max(1, itemHeightMm + gapMm)));
+  const totalSlots = columns * rows;
+  const occupiedWidth = columns * itemWidthMm + Math.max(0, columns - 1) * gapMm;
+  const occupiedHeight = rows * itemHeightMm + Math.max(0, rows - 1) * gapMm;
+  const usablePercent = Math.min(100, (totalSlots * itemWidthMm * itemHeightMm) / (sheetWidthMm * sheetHeightMm) * 100);
+
+  return {
+    id,
+    label,
+    itemWidthMm,
+    itemHeightMm,
+    columns,
+    rows,
+    usedSlots: totalSlots,
+    totalSlots,
+    usablePercent,
+    restWidthMm: Math.max(0, Math.round((usableWidth - occupiedWidth) * 10) / 10),
+    restHeightMm: Math.max(0, Math.round((usableHeight - occupiedHeight) * 10) / 10),
+  };
+}
+
+function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalculatorResult {
+  const sheet = getSheetDimensionsFromDraft(draft);
+  const finalFormat = parseFormatDimensions(draft.finalFormat);
+  const fallbackWidth = demoCalculationPayload.product.finalFormat.widthMm ?? 85;
+  const fallbackHeight = demoCalculationPayload.product.finalFormat.heightMm ?? 55;
+  const finalWidthMm = finalFormat.widthMm ?? fallbackWidth;
+  const finalHeightMm = finalFormat.heightMm ?? fallbackHeight;
+  const bleedMm = Math.max(0, parseGermanNumber(draft.bleedMm, 0));
+  const gapMm = Math.max(0, parseGermanNumber(draft.impositionGapMm, 0));
+  const marginMm = Math.max(0, parseGermanNumber(draft.impositionMarginMm, 0));
+  const includeBleed = draft.impositionUseBleed.toLowerCase().includes("beschnitt");
+  const calculationWidthMm = finalWidthMm + (includeBleed ? bleedMm * 2 : 0);
+  const calculationHeightMm = finalHeightMm + (includeBleed ? bleedMm * 2 : 0);
+  const quantity = parseInteger(draft.quantity, demoCalculationPayload.product.quantity);
+  const wasteSheets = Math.max(0, parseInteger(draft.wasteSheets, 0));
+  const variants = [
+    getImpositionVariant(
+      "upright",
+      "aufrecht",
+      sheet.widthMm,
+      sheet.heightMm,
+      calculationWidthMm,
+      calculationHeightMm,
+      gapMm,
+      marginMm,
+    ),
+    getImpositionVariant(
+      "rotated",
+      "gedreht",
+      sheet.widthMm,
+      sheet.heightMm,
+      calculationHeightMm,
+      calculationWidthMm,
+      gapMm,
+      marginMm,
+    ),
+  ].filter((variant) => {
+    if (draft.impositionRotationMode === "nur aufrecht") {
+      return variant.id === "upright";
+    }
+
+    if (draft.impositionRotationMode === "nur gedreht") {
+      return variant.id === "rotated";
+    }
+
+    return true;
+  });
+  const selected = [...variants].sort((a, b) => {
+    if (b.usedSlots !== a.usedSlots) {
+      return b.usedSlots - a.usedSlots;
+    }
+
+    return b.usablePercent - a.usablePercent;
+  })[0] ?? variants[0];
+  const sheetsRequired = Math.max(1, Math.ceil(quantity / Math.max(1, selected.usedSlots)));
+  const netQuantity = sheetsRequired * selected.usedSlots;
+  const restQuantity = Math.max(0, netQuantity - quantity);
+  const grossSheets = sheetsRequired + wasteSheets;
+
+  return {
+    sheet,
+    item: {
+      label: draft.finalFormat,
+      finalWidthMm,
+      finalHeightMm,
+      calculationWidthMm,
+      calculationHeightMm,
+    },
+    settings: {
+      gapMm,
+      marginMm,
+      includeBleed,
+      rotationMode: draft.impositionRotationMode,
+    },
+    selected,
+    variants,
+    production: {
+      orderedQuantity: quantity,
+      sheetsRequired,
+      netQuantity,
+      restQuantity,
+      wasteSheets,
+      grossSheets,
+    },
+    label: `${selected.columns} × ${selected.rows} · ${selected.usedSlots} Nutzen`,
+  };
+}
+
+function getPlanTypeFromProductKind(productKind: ProductKind): CalculationImpositionResult["planType"] {
+  switch (productKind) {
+    case "business-card":
+      return "business-card-24up";
+    case "letterhead":
+      return "letterhead-2up";
+    case "brochure":
+      return "brochure-signature";
+    case "poster":
+      return "wide-format-single";
+    case "sticker":
+      return "sticker-sheet";
+    case "flyer":
+    default:
+      return "sheet-repeat";
+  }
+}
+
 function buildPayloadFromDraft(
   draft: CalculationDraft,
   productionMode: ProductionMode,
   finishingRows: FinishingDraftRow[],
 ): CalculationToProductionPayload {
-  const quantity = parseInteger(
-    draft.quantity,
-    demoCalculationPayload.product.quantity,
-  );
-  const usedSlots = demoCalculationPayload.imposition.layout.usedSlots;
-  const sheetsRequired = Math.max(
-    1,
-    Math.ceil(quantity / Math.max(1, usedSlots)),
-  );
-  const netQuantity = sheetsRequired * usedSlots;
-  const restQuantity = Math.max(0, netQuantity - quantity);
-  const overs = parseInteger(draft.overs, restQuantity);
+  const impositionResult = calculateImpositionFromDraft(draft);
+  const quantity = impositionResult.production.orderedQuantity;
+  const overs = parseInteger(draft.overs, impositionResult.production.restQuantity);
   const activeFinishing = finishingRows
     .filter((row) => row.active)
     .map((row) => row.label);
@@ -970,22 +1213,45 @@ function buildPayloadFromDraft(
     },
     imposition: {
       ...demoCalculationPayload.imposition,
+      planType: getPlanTypeFromProductKind(draft.productKind),
+      sheet: {
+        name: `${impositionResult.sheet.label}`,
+        widthMm: impositionResult.sheet.widthMm,
+        heightMm: impositionResult.sheet.heightMm,
+        orientation:
+          impositionResult.sheet.widthMm >= impositionResult.sheet.heightMm
+            ? "landscape"
+            : "portrait",
+      },
       item: {
-        ...demoCalculationPayload.imposition.item,
         finalFormat: draft.finalFormat,
         widthMm: finalFormat.widthMm,
         heightMm: finalFormat.heightMm,
       },
+      layout: {
+        columns: impositionResult.selected.columns,
+        rows: impositionResult.selected.rows,
+        usedSlots: impositionResult.selected.usedSlots,
+        totalSlots: impositionResult.selected.totalSlots,
+        gapMm: impositionResult.settings.gapMm,
+        marginMm: impositionResult.settings.marginMm,
+        orientation:
+          impositionResult.selected.id === "rotated" ? "rotated" : "upright",
+      },
       production: {
         orderedQuantity: quantity,
-        sheetsRequired,
+        sheetsRequired: impositionResult.production.sheetsRequired,
         overs,
-        netQuantity,
-        restQuantity,
+        netQuantity: impositionResult.production.netQuantity,
+        restQuantity: impositionResult.production.restQuantity,
       },
       finishingHints: activeFinishing.length
         ? activeFinishing
         : ["Weiterverarbeitung prüfen"],
+      notes: [
+        `Nutzenrechner: ${impositionResult.label}`,
+        `Berechnungsbasis: ${impositionResult.settings.includeBleed ? "inklusive Beschnitt" : "Endformat"}`,
+      ],
     },
     machine: {
       label:
@@ -2014,6 +2280,121 @@ function CalculationSheetPreview({
   );
 }
 
+function formatMillimeterValue(value: number) {
+  return `${value.toLocaleString("de-DE", {
+    maximumFractionDigits: 1,
+  })} mm`;
+}
+
+function formatPercentValue(value: number) {
+  return `${value.toLocaleString("de-DE", {
+    maximumFractionDigits: 1,
+  })} %`;
+}
+
+function ImpositionCalculatorPanel({
+  draft,
+  result,
+  onDraftChange,
+}: {
+  draft: CalculationDraft;
+  result: ImpositionCalculatorResult;
+  onDraftChange: (field: keyof CalculationDraft) => (value: string) => void;
+}) {
+  return (
+    <div className="pp-imposition-calculator">
+      <div className="pp-imposition-calculator__controls">
+        <CalculationField
+          label="Druckbogen"
+          value={draft.printSheetFormat}
+          onValueChange={onDraftChange("printSheetFormat")}
+          badge="Pflicht"
+        />
+        <CalculationField
+          label="Endformat"
+          value={draft.finalFormat}
+          onValueChange={onDraftChange("finalFormat")}
+          badge="Pflicht"
+        />
+        <CalculationField
+          label="Bogenrand"
+          value={draft.impositionMarginMm}
+          onValueChange={onDraftChange("impositionMarginMm")}
+          hint="in Millimeter"
+        />
+        <CalculationField
+          label="Zwischenschnitt"
+          value={draft.impositionGapMm}
+          onValueChange={onDraftChange("impositionGapMm")}
+          hint="0 mm bei gemeinsamen Schnittkanten"
+        />
+        <CalculationSelect
+          label="Berechnungsbasis"
+          value={draft.impositionUseBleed}
+          options={impositionBleedModeOptions}
+          onValueChange={onDraftChange("impositionUseBleed")}
+        />
+        <CalculationSelect
+          label="Drehung"
+          value={draft.impositionRotationMode}
+          options={impositionRotationModeOptions}
+          onValueChange={onDraftChange("impositionRotationMode")}
+        />
+      </div>
+
+      <div className="pp-imposition-calculator__result">
+        <div className="pp-imposition-calculator__hero">
+          <span>Beste Variante</span>
+          <strong>{result.label}</strong>
+          <p>
+            {result.selected.label} · {formatPercentValue(result.selected.usablePercent)}
+            Flächennutzung · Berechnungsformat {formatMillimeterValue(result.item.calculationWidthMm)} × {formatMillimeterValue(result.item.calculationHeightMm)}
+          </p>
+        </div>
+
+        <div className="pp-imposition-calculator__metrics">
+          <ResultLine label="Druckbogen" value={`${formatMillimeterValue(result.sheet.widthMm)} × ${formatMillimeterValue(result.sheet.heightMm)}`} />
+          <ResultLine label="Nettobogen" value={`${formatNumber(result.production.sheetsRequired)} Bogen`} />
+          <ResultLine label="Netto produziert" value={`${formatNumber(result.production.netQuantity)} Stück`} />
+          <ResultLine label="Restmenge" value={`${formatNumber(result.production.restQuantity)} Stück`} />
+          <ResultLine label="Zuschussbogen" value={`${formatNumber(result.production.wasteSheets)} Bogen`} />
+          <ResultLine label="Bruttobogen" value={`${formatNumber(result.production.grossSheets)} Bogen`} />
+        </div>
+      </div>
+
+      <div className="pp-imposition-calculator__variants" aria-label="Nutzenvarianten">
+        <table>
+          <thead>
+            <tr>
+              <th>Variante</th>
+              <th>Raster</th>
+              <th>Nutzen</th>
+              <th>Ausnutzung</th>
+              <th>Restfläche</th>
+            </tr>
+          </thead>
+          <tbody>
+            {result.variants.map((variant) => (
+              <tr
+                key={variant.id}
+                className={variant.id === result.selected.id ? "is-selected" : undefined}
+              >
+                <th scope="row">{variant.label}</th>
+                <td>{variant.columns} × {variant.rows}</td>
+                <td>{variant.usedSlots}</td>
+                <td>{formatPercentValue(variant.usablePercent)}</td>
+                <td>
+                  {formatMillimeterValue(variant.restWidthMm)} × {formatMillimeterValue(variant.restHeightMm)}
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
+    </div>
+  );
+}
+
 function ResultLine({ label, value }: { label: string; value: string }) {
   return (
     <div className="pp-calc-result-line">
@@ -2646,6 +3027,10 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   const payload = useMemo(
     () => buildPayloadFromDraft(draft, productionMode, finishingRows),
     [draft, finishingRows, productionMode],
+  );
+  const impositionCalculatorResult = useMemo(
+    () => calculateImpositionFromDraft(draft),
+    [draft],
   );
   const activeFinishingCount = finishingRows.filter((row) => row.active).length;
   const result = payload.imposition;
@@ -3325,15 +3710,13 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     />
                     <CalculationField
                       label="Papier-Nutzen"
-                      value={draft.paperUsage}
-                      onValueChange={updateDraft("paperUsage")}
-                      badge="optional"
+                      value={impositionCalculatorResult.label}
+                      badge="Pflicht"
                     />
                     <CalculationField
                       label="Nettobogen"
-                      value={draft.netSheets}
-                      onValueChange={updateDraft("netSheets")}
-                      badge="optional"
+                      value={`${formatNumber(impositionCalculatorResult.production.sheetsRequired)} Nettobogen`}
+                      badge="Pflicht"
                     />
                     <CalculationField
                       label="Zuschussbogen"
@@ -3343,9 +3726,8 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     />
                     <CalculationField
                       label="Bruttobogen"
-                      value={draft.grossSheets}
-                      onValueChange={updateDraft("grossSheets")}
-                      badge="optional"
+                      value={`${formatNumber(impositionCalculatorResult.production.grossSheets)} Bruttobogen`}
+                      badge="Pflicht"
                     />
                     <CalculationField
                       label="Lagerstatus"
@@ -3425,10 +3807,9 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                         badge="optional"
                       />
                       <CalculationField
-                        label="Nutzenrechner"
-                        value={draft.impositionLabel}
-                        onValueChange={updateDraft("impositionLabel")}
-                        badge="später"
+                        label="Berechneter Nutzenplan"
+                        value={impositionCalculatorResult.label}
+                        badge="Pflicht"
                       />
                       <CalculationField
                         label="Rüstzeit"
@@ -3469,6 +3850,14 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       />
                     </div>
                   </div>
+                </CalculationSection>
+
+                <CalculationSection eyebrow="07B" title="Nutzenrechner">
+                  <ImpositionCalculatorPanel
+                    draft={draft}
+                    result={impositionCalculatorResult}
+                    onDraftChange={updateDraft}
+                  />
                 </CalculationSection>
               </>
             ) : null}

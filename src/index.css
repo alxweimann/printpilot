@@ -21514,3 +21514,154 @@ button.pp-process-step:hover {
   flex: 0 0 auto;
   white-space: nowrap;
 }
+
+/* Sprint 52 · Kalkulation: produktionsnaher Nutzenrechner */
+.pp-imposition-calculator {
+  display: grid;
+  grid-template-columns: minmax(0, .95fr) minmax(320px, .82fr);
+  gap: 14px;
+  align-items: stretch;
+}
+
+.pp-imposition-calculator__controls {
+  min-width: 0;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pp-imposition-calculator__result {
+  min-width: 0;
+  display: grid;
+  gap: 10px;
+}
+
+.pp-imposition-calculator__hero {
+  min-width: 0;
+  padding: 14px;
+  border: 1px solid rgba(0, 159, 227, .24);
+  border-radius: 18px;
+  background:
+    linear-gradient(180deg, rgba(0, 159, 227, .07), rgba(255, 255, 255, .98));
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .7);
+}
+
+.pp-imposition-calculator__hero span {
+  display: block;
+  margin-bottom: 6px;
+  color: #009fe3;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 760;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.pp-imposition-calculator__hero strong {
+  display: block;
+  color: #07183a;
+  font-size: 25px;
+  line-height: 1.05;
+  font-weight: 720;
+  letter-spacing: -.035em;
+}
+
+.pp-imposition-calculator__hero p {
+  margin: 8px 0 0;
+  color: #49617f;
+  font-size: 12px;
+  line-height: 1.36;
+  font-weight: 520;
+}
+
+.pp-imposition-calculator__metrics {
+  min-width: 0;
+  padding: 0 14px;
+  border: 1px solid #d8e7f2;
+  border-radius: 18px;
+  background: #ffffff;
+}
+
+.pp-imposition-calculator__metrics .pp-calc-result-line {
+  grid-template-columns: minmax(126px, .64fr) minmax(0, 1fr);
+}
+
+.pp-imposition-calculator__metrics .pp-calc-result-line span {
+  color: #009fe3;
+  font-weight: 680;
+}
+
+.pp-imposition-calculator__metrics .pp-calc-result-line b {
+  color: #10213f;
+  font-weight: 620;
+}
+
+.pp-imposition-calculator__variants {
+  grid-column: 1 / -1;
+  min-width: 0;
+  overflow: auto;
+  border: 1px solid #d8e7f2;
+  border-radius: 18px;
+  background: #ffffff;
+}
+
+.pp-imposition-calculator__variants table {
+  width: 100%;
+  border-collapse: collapse;
+  min-width: 660px;
+}
+
+.pp-imposition-calculator__variants th,
+.pp-imposition-calculator__variants td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #edf4f9;
+  color: #263c59;
+  font-size: 12px;
+  line-height: 1.22;
+  font-weight: 520;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.pp-imposition-calculator__variants thead th {
+  color: #009fe3;
+  background: #ffffff;
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.pp-imposition-calculator__variants tbody th {
+  color: #07183a;
+  font-weight: 680;
+}
+
+.pp-imposition-calculator__variants tr:last-child th,
+.pp-imposition-calculator__variants tr:last-child td {
+  border-bottom: 0;
+}
+
+.pp-imposition-calculator__variants tr.is-selected th,
+.pp-imposition-calculator__variants tr.is-selected td {
+  background: rgba(0, 159, 227, .06);
+}
+
+.pp-imposition-calculator__variants tr.is-selected th::after {
+  content: " empfohlen";
+  color: #009fe3;
+  font-size: 10px;
+  font-weight: 760;
+  letter-spacing: .03em;
+  text-transform: uppercase;
+}
+
+@media (max-width: 980px) {
+  .pp-imposition-calculator {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-imposition-calculator__controls {
+    grid-template-columns: 1fr;
+  }
+}

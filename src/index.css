@@ -19813,3 +19813,143 @@ button.pp-process-step:hover {
   background: #ffffff !important;
   box-shadow: inset 0 1px 0 rgba(255, 255, 255, .92), 0 0 0 1px rgba(0, 162, 220, .045) !important;
 }
+
+/* Sprint 47.6 – Kalkulationsmaske Feinschliff: Kopf kompakter, Felder ruhiger */
+.pp-calculation-tabs-intro,
+.pp-calculation-form__intro {
+  grid-template-columns: minmax(0, 1fr) minmax(380px, 470px) !important;
+  gap: 22px !important;
+  margin-bottom: 12px !important;
+  padding: 15px 18px 14px !important;
+}
+
+.pp-calculation-form__intro h2 {
+  margin-top: 2px !important;
+  font-size: 25px !important;
+  line-height: 1.02 !important;
+}
+
+.pp-calculation-intro-copy {
+  max-width: 530px !important;
+  margin-top: 6px !important;
+  font-size: 11.5px !important;
+  line-height: 1.32 !important;
+}
+
+.pp-calculation-compact-info {
+  border-color: #bdd4ea !important;
+  border-radius: 14px !important;
+  box-shadow: inset 0 3px 0 var(--pp-calc-blue), 0 8px 18px rgba(12, 35, 67, .035) !important;
+}
+
+.pp-calculation-compact-info__head {
+  min-height: 34px !important;
+  padding: 8px 12px 7px !important;
+}
+
+.pp-calculation-compact-info__head b {
+  font-size: 17.5px !important;
+  letter-spacing: -.04em !important;
+}
+
+.pp-calculation-compact-info dl div {
+  padding: 10px 12px !important;
+}
+
+.pp-calculation-compact-info dt {
+  font-size: 9.25px !important;
+}
+
+.pp-calculation-compact-info dd {
+  margin-top: 5px !important;
+  font-size: 12.5px !important;
+  line-height: 1.18 !important;
+}
+
+.pp-calculation-tabs {
+  margin-top: 12px !important;
+}
+
+.pp-calc-input-field,
+.pp-calculation-tab-panel .pp-calc-input-field {
+  min-height: 48px !important;
+}
+
+.pp-calc-input-field span,
+.pp-calculation-tab-panel .pp-calc-input-field span {
+  background: #f6f9fc !important;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select,
+.pp-calculation-tab-panel .pp-calc-input-field input,
+.pp-calculation-tab-panel .pp-calc-input-field select {
+  min-height: 33px !important;
+  margin: 6px 8px !important;
+  border-color: rgba(0, 162, 220, .24) !important;
+  background: #ffffff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .96), 0 0 0 1px rgba(0, 162, 220, .025) !important;
+}
+
+.pp-calc-input-field input:not(:read-only),
+.pp-calc-input-field select:not(:disabled),
+.pp-calculation-tab-panel .pp-calc-input-field input:not(:read-only),
+.pp-calculation-tab-panel .pp-calc-input-field select:not(:disabled) {
+  border-color: rgba(0, 162, 220, .30) !important;
+  background: #ffffff !important;
+}
+
+.pp-calc-input-field input:read-only,
+.pp-calc-input-field select:disabled,
+.pp-calculation-tab-panel .pp-calc-input-field input:read-only,
+.pp-calculation-tab-panel .pp-calc-input-field select:disabled {
+  border-color: rgba(0, 162, 220, .16) !important;
+  background: #ffffff !important;
+  color: #52647e !important;
+}
+
+.pp-calc-input-field input:not(:read-only):hover,
+.pp-calc-input-field select:not(:disabled):hover,
+.pp-calculation-tab-panel .pp-calc-input-field input:not(:read-only):hover,
+.pp-calculation-tab-panel .pp-calc-input-field select:not(:disabled):hover {
+  border-color: rgba(0, 142, 205, .52) !important;
+  background: #ffffff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .96), 0 0 0 1px rgba(0, 162, 220, .08) !important;
+}
+
+.pp-calc-input-field input:not(:read-only):focus,
+.pp-calc-input-field select:not(:disabled):focus,
+.pp-calc-finishing-table input[type="text"]:focus,
+.pp-calc-finishing-table td input:not([type="checkbox"]):focus {
+  border-color: var(--pp-calc-blue) !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(0, 162, 220, .16), inset 0 1px 0 rgba(255, 255, 255, .96) !important;
+}
+
+.pp-calc-input-field:focus-within,
+.pp-calculation-tab-panel .pp-calc-input-field:focus-within {
+  box-shadow: inset 2px 0 0 var(--pp-calc-blue) !important;
+}
+
+.pp-calc-finishing-table td input:not([type="checkbox"]) {
+  border-color: rgba(0, 162, 220, .24) !important;
+  background: #ffffff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .96), 0 0 0 1px rgba(0, 162, 220, .025) !important;
+}
+
+@media (max-width: 1180px) {
+  .pp-calculation-tabs-intro,
+  .pp-calculation-form__intro {
+    grid-template-columns: 1fr !important;
+    padding: 14px 16px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-calc-input-field input,
+  .pp-calc-input-field select,
+  .pp-calculation-tab-panel .pp-calc-input-field input,
+  .pp-calculation-tab-panel .pp-calc-input-field select {
+    margin: 6px 7px !important;
+  }
+}

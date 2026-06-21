@@ -3427,7 +3427,7 @@ Korrekturen:
 - Horizontalen Überlauf im Produktionskern entfernt.
 - Nutzenplan, Produktionsdaten, Preisabschluss und Übergabe an Auftragstasche umbrechen jetzt kontrolliert.
 - Auftragstaschen-Übergabe nutzt in engen Bereichen eine vertikale Label/Wert-Darstellung statt gequetschter Tabellenoptik.
-- Sticky-Höhe des Ergebnisbereichs berücksichtigt die Bottom-Navigation, damit keine Inhalte darunter verschwinden.
+- Der Ergebnisbereich bleibt im normalen Seitenfluss; die Bottom-Navigation bleibt unverändert, weil die Seite scrollbar ist.
 
 Ziel bleibt: Die Kalkulationsmaske soll produktiv bedienbar sein und sich optisch an der finalen Auftragstasche orientieren, ohne auf normalen Monitoren rechts zu zerbrechen.
 
@@ -3475,5 +3475,18 @@ Build-Prüfung: `npm run build`.
 - Hover- und Fokuszustände bleiben cyanbetont, aber ohne graue oder gelbliche Feldflächen.
 - Auch Felder in der Weiterverarbeitungstabelle folgen dieser feineren weißen Feldlogik.
 - Die Änderung betrifft nur die visuelle Führung der Tabs und Eingabefelder. Keine neue Kalkulationslogik, keine Preislogik und keine Persistenzänderung.
+
+Build-Prüfung: `npm run build`.
+
+
+### Sprint 47.6 – Kalkulationsmaske Feinschliff
+
+- Der Kopfbereich der Kalkulationsmaske wurde kompakter gezogen, damit die Arbeitsreiter und Eingabefelder schneller in den sichtbaren Arbeitsbereich rücken.
+- Die kompakte Infobox rechts im Kopf bleibt erhalten, wurde aber minimal breiter und besser lesbar gestaltet.
+- Die normalen Eingabefeld-Konturen wurden zurückgenommen: weiße Feldflächen bleiben bestehen, die Cyan-Umrandung ist im Normalzustand feiner und ruhiger.
+- Hover und Fokus bleiben klar cyanbetont, damit aktive Bearbeitung eindeutig sichtbar bleibt.
+- Die Label-Hinterlegung wurde leicht beruhigt, damit viele Felder gleichzeitig weniger stark leuchten.
+- Die Bottom-Navigation wurde bewusst nicht verändert; die Kalkulationsseite ist scrollbar.
+- Keine neue Kalkulationslogik, keine Preislogik und keine Persistenzänderung.
 
 Build-Prüfung: `npm run build`.

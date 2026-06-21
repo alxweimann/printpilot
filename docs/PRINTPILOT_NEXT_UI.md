@@ -3816,3 +3816,21 @@ Build-Hinweis: In dieser Umgebung konnte `npm run build` nicht vollständig ausg
 - Die Bottom-Navigation wurde nicht verändert.
 
 Build-Prüfung: `npm run build`.
+
+## Sprint 52.1 – Nutzenrechner mit getrennten X-/Y-Zwischenschnitten
+
+- Der Nutzenrechner wurde praxisnäher an Fiery-ähnliche Einstellungen angelehnt.
+- Der bisher gemeinsame Wert **Zwischenschnitt** wurde in zwei editierbare Achsen getrennt:
+  - **Zwischenschnitt X-Achse** für den horizontalen Abstand zwischen den Nutzen,
+  - **Zwischenschnitt Y-Achse** für den vertikalen Abstand zwischen den Nutzen.
+- Die Nutzenberechnung berücksichtigt X- und Y-Zwischenschnitt getrennt:
+  - Spalten werden mit dem X-Zwischenschnitt berechnet,
+  - Reihen werden mit dem Y-Zwischenschnitt berechnet,
+  - belegte Breite und belegte Höhe werden separat ermittelt.
+- Die Empfehlung der besten Variante nutzt weiterhin Nutzenanzahl und Flächenausnutzung, basiert jetzt aber auf den getrennten Achsenwerten.
+- Ergebnis, Variantenvergleich, Produktionsnotizen und Übergabe an die Auftragstasche zeigen den Zwischenschnitt jetzt als `X … / Y …`, wenn sich beide Werte unterscheiden. Bei gleichen Werten bleibt die Anzeige kompakt.
+- Der vorhandene Altwert `impositionGapMm` bleibt als interner Fallback erhalten, damit bestehende Demo-/Altzustände nicht brechen.
+- Dies bleibt ein Kalkulations-Nutzenrechner und noch keine echte Ausschieß-Engine mit produktionsfertigem Druckbogen-PDF.
+- Die Bottom-Navigation wurde nicht verändert.
+
+Build-Prüfung: `npm run build`.

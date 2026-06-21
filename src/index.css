@@ -21608,7 +21608,7 @@ button.pp-process-step:hover {
 .pp-imposition-calculator__variants table {
   width: 100%;
   border-collapse: collapse;
-  min-width: 660px;
+  min-width: 760px;
 }
 
 .pp-imposition-calculator__variants th,

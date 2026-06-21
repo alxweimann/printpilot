@@ -133,6 +133,8 @@ type CalculationDraft = {
   turning: string;
   impositionLabel: string;
   impositionGapMm: string;
+  impositionGapXMm: string;
+  impositionGapYMm: string;
   impositionMarginMm: string;
   impositionUseBleed: string;
   impositionRotationMode: string;
@@ -275,7 +277,8 @@ const calculationPlausibilityGroups: Array<{
       "printType",
       "turning",
       "impositionLabel",
-      "impositionGapMm",
+      "impositionGapXMm",
+      "impositionGapYMm",
       "impositionMarginMm",
       "impositionUseBleed",
       "impositionRotationMode",
@@ -830,6 +833,8 @@ const initialDraft: CalculationDraft = {
   turning: "einseitig / aufrecht",
   impositionLabel: "6 × 4 · 24 Nutzen",
   impositionGapMm: "0",
+  impositionGapXMm: "0",
+  impositionGapYMm: "0",
   impositionMarginMm: "5",
   impositionUseBleed: "Endformat",
   impositionRotationMode: "Drehung erlaubt",
@@ -971,7 +976,8 @@ type ImpositionCalculatorResult = {
     calculationHeightMm: number;
   };
   settings: {
-    gapMm: number;
+    gapXMm: number;
+    gapYMm: number;
     marginMm: number;
     includeBleed: boolean;
     rotationMode: string;
@@ -1047,16 +1053,17 @@ function getImpositionVariant(
   sheetHeightMm: number,
   itemWidthMm: number,
   itemHeightMm: number,
-  gapMm: number,
+  gapXMm: number,
+  gapYMm: number,
   marginMm: number,
 ): ImpositionCalculatorVariant {
   const usableWidth = Math.max(1, sheetWidthMm - marginMm * 2);
   const usableHeight = Math.max(1, sheetHeightMm - marginMm * 2);
-  const columns = Math.max(1, Math.floor((usableWidth + gapMm) / Math.max(1, itemWidthMm + gapMm)));
-  const rows = Math.max(1, Math.floor((usableHeight + gapMm) / Math.max(1, itemHeightMm + gapMm)));
+  const columns = Math.max(1, Math.floor((usableWidth + gapXMm) / Math.max(1, itemWidthMm + gapXMm)));
+  const rows = Math.max(1, Math.floor((usableHeight + gapYMm) / Math.max(1, itemHeightMm + gapYMm)));
   const totalSlots = columns * rows;
-  const occupiedWidth = columns * itemWidthMm + Math.max(0, columns - 1) * gapMm;
-  const occupiedHeight = rows * itemHeightMm + Math.max(0, rows - 1) * gapMm;
+  const occupiedWidth = columns * itemWidthMm + Math.max(0, columns - 1) * gapXMm;
+  const occupiedHeight = rows * itemHeightMm + Math.max(0, rows - 1) * gapYMm;
   const usablePercent = Math.min(100, (totalSlots * itemWidthMm * itemHeightMm) / (sheetWidthMm * sheetHeightMm) * 100);
 
   return {
@@ -1082,7 +1089,9 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
   const finalWidthMm = finalFormat.widthMm ?? fallbackWidth;
   const finalHeightMm = finalFormat.heightMm ?? fallbackHeight;
   const bleedMm = Math.max(0, parseGermanNumber(draft.bleedMm, 0));
-  const gapMm = Math.max(0, parseGermanNumber(draft.impositionGapMm, 0));
+  const legacyGapMm = Math.max(0, parseGermanNumber(draft.impositionGapMm, 0));
+  const gapXMm = Math.max(0, parseGermanNumber(draft.impositionGapXMm, legacyGapMm));
+  const gapYMm = Math.max(0, parseGermanNumber(draft.impositionGapYMm, legacyGapMm));
   const marginMm = Math.max(0, parseGermanNumber(draft.impositionMarginMm, 0));
   const includeBleed = draft.impositionUseBleed.toLowerCase().includes("beschnitt");
   const calculationWidthMm = finalWidthMm + (includeBleed ? bleedMm * 2 : 0);
@@ -1097,7 +1106,8 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
       sheet.heightMm,
       calculationWidthMm,
       calculationHeightMm,
-      gapMm,
+      gapXMm,
+      gapYMm,
       marginMm,
     ),
     getImpositionVariant(
@@ -1107,7 +1117,8 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
       sheet.heightMm,
       calculationHeightMm,
       calculationWidthMm,
-      gapMm,
+      gapXMm,
+      gapYMm,
       marginMm,
     ),
   ].filter((variant) => {
@@ -1143,7 +1154,8 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
       calculationHeightMm,
     },
     settings: {
-      gapMm,
+      gapXMm,
+      gapYMm,
       marginMm,
       includeBleed,
       rotationMode: draft.impositionRotationMode,
@@ -1160,6 +1172,17 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
     },
     label: `${selected.columns} × ${selected.rows} · ${selected.usedSlots} Nutzen`,
   };
+}
+
+function formatImpositionGapLabel(gapXMm: number, gapYMm: number) {
+  const xLabel = formatMillimeterValue(gapXMm);
+  const yLabel = formatMillimeterValue(gapYMm);
+
+  if (gapXMm === gapYMm) {
+    return xLabel;
+  }
+
+  return `X ${xLabel} / Y ${yLabel}`;
 }
 
 function getPlanTypeFromProductKind(productKind: ProductKind): CalculationImpositionResult["planType"] {
@@ -1233,7 +1256,7 @@ function buildPayloadFromDraft(
         rows: impositionResult.selected.rows,
         usedSlots: impositionResult.selected.usedSlots,
         totalSlots: impositionResult.selected.totalSlots,
-        gapMm: impositionResult.settings.gapMm,
+        gapMm: formatImpositionGapLabel(impositionResult.settings.gapXMm, impositionResult.settings.gapYMm),
         marginMm: impositionResult.settings.marginMm,
         orientation:
           impositionResult.selected.id === "rotated" ? "rotated" : "upright",
@@ -1251,6 +1274,7 @@ function buildPayloadFromDraft(
       notes: [
         `Nutzenrechner: ${impositionResult.label}`,
         `Berechnungsbasis: ${impositionResult.settings.includeBleed ? "inklusive Beschnitt" : "Endformat"}`,
+        `Zwischenschnitt: ${formatImpositionGapLabel(impositionResult.settings.gapXMm, impositionResult.settings.gapYMm)}`,
       ],
     },
     machine: {
@@ -2323,10 +2347,16 @@ function ImpositionCalculatorPanel({
           hint="in Millimeter"
         />
         <CalculationField
-          label="Zwischenschnitt"
-          value={draft.impositionGapMm}
-          onValueChange={onDraftChange("impositionGapMm")}
-          hint="0 mm bei gemeinsamen Schnittkanten"
+          label="Zwischenschnitt X-Achse"
+          value={draft.impositionGapXMm}
+          onValueChange={onDraftChange("impositionGapXMm")}
+          hint="horizontal zwischen den Nutzen"
+        />
+        <CalculationField
+          label="Zwischenschnitt Y-Achse"
+          value={draft.impositionGapYMm}
+          onValueChange={onDraftChange("impositionGapYMm")}
+          hint="vertikal zwischen den Nutzen"
         />
         <CalculationSelect
           label="Berechnungsbasis"
@@ -2349,11 +2379,13 @@ function ImpositionCalculatorPanel({
           <p>
             {result.selected.label} · {formatPercentValue(result.selected.usablePercent)}
             Flächennutzung · Berechnungsformat {formatMillimeterValue(result.item.calculationWidthMm)} × {formatMillimeterValue(result.item.calculationHeightMm)}
+            · Zwischenschnitt {formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)}
           </p>
         </div>
 
         <div className="pp-imposition-calculator__metrics">
           <ResultLine label="Druckbogen" value={`${formatMillimeterValue(result.sheet.widthMm)} × ${formatMillimeterValue(result.sheet.heightMm)}`} />
+          <ResultLine label="Zwischenschnitt" value={formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)} />
           <ResultLine label="Nettobogen" value={`${formatNumber(result.production.sheetsRequired)} Bogen`} />
           <ResultLine label="Netto produziert" value={`${formatNumber(result.production.netQuantity)} Stück`} />
           <ResultLine label="Restmenge" value={`${formatNumber(result.production.restQuantity)} Stück`} />
@@ -2370,6 +2402,7 @@ function ImpositionCalculatorPanel({
               <th>Raster</th>
               <th>Nutzen</th>
               <th>Ausnutzung</th>
+              <th>Zwischenschnitt</th>
               <th>Restfläche</th>
             </tr>
           </thead>
@@ -2383,6 +2416,7 @@ function ImpositionCalculatorPanel({
                 <td>{variant.columns} × {variant.rows}</td>
                 <td>{variant.usedSlots}</td>
                 <td>{formatPercentValue(variant.usablePercent)}</td>
+                <td>{formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)}</td>
                 <td>
                   {formatMillimeterValue(variant.restWidthMm)} × {formatMillimeterValue(variant.restHeightMm)}
                 </td>

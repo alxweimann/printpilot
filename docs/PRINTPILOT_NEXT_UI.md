@@ -3467,3 +3467,13 @@ Build-Prüfung: `npm run build`.
 - Die Änderung betrifft nur die visuelle Reiterführung. Keine neue Kalkulationslogik, keine Preislogik und keine Persistenzänderung.
 
 Build-Prüfung: `npm run build`.
+
+### Sprint 47.5 – Reiterabschluss und Feldflächen verfeinern
+
+- Der helle Abschlussbalken im aktiven vollflächigen Cyan-Reiter wurde auf klares Weiß umgestellt, damit der aktive Arbeitsbereich sauberer und bewusster wirkt.
+- Die Eingabefelder behalten jetzt eine weiße Feldfläche und bekommen eine sehr feine Cyan-Kontur.
+- Hover- und Fokuszustände bleiben cyanbetont, aber ohne graue oder gelbliche Feldflächen.
+- Auch Felder in der Weiterverarbeitungstabelle folgen dieser feineren weißen Feldlogik.
+- Die Änderung betrifft nur die visuelle Führung der Tabs und Eingabefelder. Keine neue Kalkulationslogik, keine Preislogik und keine Persistenzänderung.
+
+Build-Prüfung: `npm run build`.

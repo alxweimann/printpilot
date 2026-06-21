@@ -19757,3 +19757,59 @@ button.pp-process-step:hover {
 .pp-calculation-tabs button.is-active small {
   opacity: .88 !important;
 }
+
+/* Sprint 47.5 – Aktiver Kalkulationsreiter mit weißem Abschlussbalken und feiner Cyan-Feldkontur */
+.pp-calculation-tabs button.is-active,
+.pp-calculation-tabs button.is-active:hover,
+.pp-calculation-tabs button.is-active:focus-visible {
+  box-shadow: inset 0 -4px 0 #ffffff !important;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select,
+.pp-calculation-tab-panel .pp-calc-input-field input,
+.pp-calculation-tab-panel .pp-calc-input-field select {
+  border-color: rgba(0, 162, 220, .36) !important;
+  background: #ffffff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .92), 0 0 0 1px rgba(0, 162, 220, .045) !important;
+}
+
+.pp-calc-input-field input:not(:read-only),
+.pp-calc-input-field select:not(:disabled),
+.pp-calculation-tab-panel .pp-calc-input-field input:not(:read-only),
+.pp-calculation-tab-panel .pp-calc-input-field select:not(:disabled) {
+  border-color: rgba(0, 162, 220, .42) !important;
+  background: #ffffff !important;
+}
+
+.pp-calc-input-field input:read-only,
+.pp-calc-input-field select:disabled,
+.pp-calculation-tab-panel .pp-calc-input-field input:read-only,
+.pp-calculation-tab-panel .pp-calc-input-field select:disabled {
+  border-color: rgba(0, 162, 220, .24) !important;
+  background: #ffffff !important;
+}
+
+.pp-calc-input-field input:not(:read-only):hover,
+.pp-calc-input-field select:not(:disabled):hover,
+.pp-calculation-tab-panel .pp-calc-input-field input:not(:read-only):hover,
+.pp-calculation-tab-panel .pp-calc-input-field select:not(:disabled):hover {
+  border-color: rgba(0, 142, 205, .68) !important;
+  background: #ffffff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .92), 0 0 0 1px rgba(0, 162, 220, .10) !important;
+}
+
+.pp-calc-input-field input:not(:read-only):focus,
+.pp-calc-input-field select:not(:disabled):focus,
+.pp-calc-finishing-table input[type="text"]:focus,
+.pp-calc-finishing-table td input:not([type="checkbox"]):focus {
+  border-color: var(--pp-calc-blue) !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(0, 162, 220, .14), inset 0 1px 0 rgba(255, 255, 255, .92) !important;
+}
+
+.pp-calc-finishing-table td input:not([type="checkbox"]) {
+  border-color: rgba(0, 162, 220, .36) !important;
+  background: #ffffff !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .92), 0 0 0 1px rgba(0, 162, 220, .045) !important;
+}

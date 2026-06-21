@@ -46,6 +46,12 @@ type CalculationDraft = {
   offerId: string;
   offerDate: string;
   offerValidUntil: string;
+  offerStatus: string;
+  senderCompany: string;
+  senderAddress: string;
+  senderPhone: string;
+  senderEmail: string;
+  senderWebsite: string;
   paymentTerms: string;
   dueDate: string;
   correctionDeadline: string;
@@ -721,6 +727,12 @@ const initialDraft: CalculationDraft = {
   offerId: "ANG-2026-00017",
   offerDate: "21.06.2026",
   offerValidUntil: "14 Tage",
+  offerStatus: "Entwurf",
+  senderCompany: "PrintPilot Demo-Druckerei",
+  senderAddress: "Musterstraße 12 · 69151 Neckargemünd",
+  senderPhone: "06222 / 123456",
+  senderEmail: "angebot@printpilot-demo.de",
+  senderWebsite: "www.printpilot-demo.de",
   paymentTerms: "zahlbar innerhalb von 14 Tagen ohne Abzug",
   dueDate: "04.06.2026 · 11:00",
   correctionDeadline: "03.06.2026 · 12:00",
@@ -846,6 +858,28 @@ function parseGermanNumber(value: string, fallback: number) {
     .replace(",", ".");
   const parsed = Number.parseFloat(normalized);
   return Number.isFinite(parsed) ? parsed : fallback;
+}
+
+function parseGermanDate(value: string) {
+  const match = value.match(/(\d{1,2})\.(\d{1,2})\.(\d{4})/);
+
+  if (!match) {
+    return null;
+  }
+
+  const [, day, month, year] = match;
+  return new Date(Number(year), Number(month) - 1, Number(day));
+}
+
+function isDeliveryBeforeOfferDate(draft: CalculationDraft) {
+  const offerDate = parseGermanDate(draft.offerDate);
+  const deliveryDate = parseGermanDate(draft.dueDate);
+
+  if (!offerDate || !deliveryDate) {
+    return false;
+  }
+
+  return deliveryDate.getTime() < offerDate.getTime();
 }
 
 function parseInteger(value: string, fallback: number) {
@@ -1044,23 +1078,23 @@ function getOfferMailBody(draft: CalculationDraft, payload: CalculationToProduct
   const price = getOfferPriceBreakdown(draft.salePriceNet, payload.product.quantity);
 
   return [
-    `Hallo ${draft.contactName},`,
+    `Guten Tag ${draft.contactName},`,
     "",
-    `vielen Dank für Ihre Anfrage. Gerne bieten wir Ihnen ${getOfferTitle(draft, payload)} wie folgt an.`,
+    `vielen Dank für Ihre Anfrage. Im Anhang erhalten Sie unser Angebot ${draft.offerId} für ${getOfferTitle(draft, payload)}.`,
     "",
-    `Angebotsnummer: ${draft.offerId}`,
     `Produkt: ${draft.productLabel}`,
     `Auflage: ${getOfferQuantityLabel(payload)}`,
     `Format: ${draft.finalFormat}`,
     `Material: ${getOfferMaterialLabel(draft)}`,
-    `Gesamt netto: ${price.netLabel}`,
-    `Gesamt brutto inkl. 19 % Umsatzsteuer: ${price.grossLabel}`,
+    `Gesamtsumme netto: ${price.netLabel}`,
+    `Gesamtsumme brutto inkl. 19 % Umsatzsteuer: ${price.grossLabel}`,
     "",
     `Das Angebot ist ${draft.offerValidUntil} gültig.`,
-    "Die Angebots-PDF kann vor dem Versand angehängt werden.",
+    "Bei Rückfragen stehen wir Ihnen gerne zur Verfügung.",
     "",
-    "Viele Grüße",
+    "Mit freundlichen Grüßen",
     draft.owner,
+    draft.senderCompany,
   ].join("\n");
 }
 
@@ -1143,11 +1177,42 @@ function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
         height: auto;
       }
 
-      .pp-offer-document__header div {
+      .pp-offer-document__meta {
         display: grid;
         gap: .6mm;
         min-width: 46mm;
         text-align: right;
+      }
+
+      .pp-offer-document__sender {
+        display: flex;
+        align-items: flex-start;
+        gap: 5mm;
+        min-width: 0;
+      }
+
+      .pp-offer-document__sender p {
+        display: grid;
+        gap: .45mm;
+        margin: 0;
+        color: #53647c;
+        font-size: 7.4pt;
+        font-weight: 520;
+        line-height: 1.22;
+      }
+
+      .pp-offer-document__sender p strong {
+        color: #07183a;
+        font-size: 8.4pt;
+        font-weight: 850;
+      }
+
+      .pp-offer-document__sender p span {
+        color: #53647c;
+        font-size: 7.4pt;
+        font-weight: 520;
+        letter-spacing: 0;
+        text-transform: none;
       }
 
       .pp-offer-document__header span,
@@ -1388,9 +1453,14 @@ function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
         display: flex;
         align-self: end;
         justify-content: space-between;
-        gap: 6mm;
-        padding-top: 2.3mm;
+        gap: 4mm;
+        padding-top: 2.1mm;
         border-top: .35pt solid #e7eef7;
+      }
+
+      .pp-offer-document__footer span {
+        min-width: 0;
+        overflow-wrap: anywhere;
       }
 
       @media print {
@@ -1435,11 +1505,20 @@ function CalculationOfferDocument({
   return (
     <article className="pp-print-offer-document" aria-label="Angebot PDF-Vorschau">
       <header className="pp-offer-document__header">
-        <PrintPilotLogo className="pp-offer-document__logo" variant="app" />
-        <div>
+        <div className="pp-offer-document__sender">
+          <PrintPilotLogo className="pp-offer-document__logo" variant="app" />
+          <p>
+            <strong>{draft.senderCompany}</strong>
+            <span>{draft.senderAddress}</span>
+            <span>{draft.senderPhone} · {draft.senderEmail}</span>
+            <span>{draft.senderWebsite}</span>
+          </p>
+        </div>
+        <div className="pp-offer-document__meta">
           <span>Angebot</span>
           <strong>{draft.offerId}</strong>
           <small>{draft.offerDate}</small>
+          <small>{draft.offerStatus}</small>
         </div>
       </header>
 
@@ -1562,7 +1641,8 @@ function CalculationOfferDocument({
       </section>
 
       <footer className="pp-offer-document__footer">
-        <span>Erstellt mit PrintPilot</span>
+        <span>{draft.senderCompany} · {draft.senderAddress}</span>
+        <span>{draft.senderPhone} · {draft.senderEmail}</span>
         <span>{draft.offerId}</span>
       </footer>
     </article>
@@ -2421,6 +2501,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   const canCreateOrderDraft = openRequiredFields === 0;
   const canCreateOffer = offerOpenFields === 0;
   const orderOpenFields = countMissingFields(draft, orderRequiredFields);
+  const offerDateWarning = isDeliveryBeforeOfferDate(draft);
   const payload = useMemo(
     () => buildPayloadFromDraft(draft, productionMode, finishingRows),
     [draft, finishingRows, productionMode],
@@ -3399,6 +3480,71 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                 >
                   <div className="pp-calc-input-grid pp-calc-input-grid--four">
                     <CalculationField
+                      label="Angebotsnummer"
+                      value={draft.offerId}
+                      onValueChange={updateDraft("offerId")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Angebotsdatum"
+                      value={draft.offerDate}
+                      onValueChange={updateDraft("offerDate")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Angebotsstatus"
+                      value={draft.offerStatus}
+                      onValueChange={updateDraft("offerStatus")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Angebotsgültigkeit"
+                      value={draft.offerValidUntil}
+                      onValueChange={updateDraft("offerValidUntil")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Zahlungsbedingungen"
+                      value={draft.paymentTerms}
+                      onValueChange={updateDraft("paymentTerms")}
+                      badge="optional"
+                      wide
+                    />
+                    <CalculationField
+                      label="Eigene Firma"
+                      value={draft.senderCompany}
+                      onValueChange={updateDraft("senderCompany")}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="Eigene Adresse"
+                      value={draft.senderAddress}
+                      onValueChange={updateDraft("senderAddress")}
+                      badge="später"
+                      wide
+                    />
+                    <CalculationField
+                      label="Eigene Kontaktdaten"
+                      value={`${draft.senderPhone} · ${draft.senderEmail}`}
+                      onValueChange={(value) => {
+                        const [phone = "", email = ""] = value.split("·").map((part) => part.trim());
+                        setDraft((currentDraft) => ({
+                          ...currentDraft,
+                          senderPhone: phone,
+                          senderEmail: email || currentDraft.senderEmail,
+                        }));
+                        setDraftWasCreated(false);
+                        setOfferWasPrepared(false);
+                      }}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="Eigene Website"
+                      value={draft.senderWebsite}
+                      onValueChange={updateDraft("senderWebsite")}
+                      badge="später"
+                    />
+                    <CalculationField
                       label="Materialkosten"
                       value={draft.materialCosts}
                       onValueChange={updateDraft("materialCosts")}
@@ -3562,6 +3708,12 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       Interne Kalkulationswerte bleiben verborgen.
                     </small>
                   </div>
+                  {offerDateWarning ? (
+                    <div className="pp-calculation-offer-warning" role="status">
+                      <b>Liefertermin prüfen</b>
+                      <span>Der Liefertermin liegt vor dem Angebotsdatum. Bitte Datum korrigieren oder bewusst als Alt-/Demo-Datensatz stehen lassen.</span>
+                    </div>
+                  ) : null}
                   <div className="pp-calculation-offer-workflow__actions">
                     <button
                       type="button"

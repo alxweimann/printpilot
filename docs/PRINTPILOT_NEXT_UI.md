@@ -3708,3 +3708,26 @@ Build-Prüfung: `npm run build`.
 - Keine echte Preislogik, keine Persistenz, keine Server-PDF-Erzeugung und keine automatische Mail-Anhang-Funktion; Sprint 50.3 optimiert ausschließlich Layout, Sprache und Druckausgabe des Angebotsdokuments.
 
 Build-Prüfung: `npm run build`.
+
+## Sprint 50.4 – Angebotsdokument finalisieren
+
+- Das einseitige Angebots-PDF aus Sprint 50.3 wurde fachlich abgerundet, ohne den akzeptierten Angebotslook grundsätzlich zu verändern.
+- Das Angebot enthält jetzt einen kompakten Absender-/Firmendatenblock im Kopfbereich. Aktuell sind dies Demo-/Platzhalterdaten; später sollen diese Daten aus den Einstellungen beziehungsweise Firmenstammdaten kommen.
+- Der Angebotskopf zeigt zusätzlich den Angebotsstatus, zunächst als `Entwurf`.
+- Im Reiter **Preise & Ergebnis** wurden Angebotsstammdaten sicht- und editierbar ergänzt:
+  - Angebotsnummer,
+  - Angebotsdatum,
+  - Angebotsstatus,
+  - Angebotsgültigkeit,
+  - Zahlungsbedingungen,
+  - eigene Firma,
+  - eigene Adresse,
+  - eigene Kontaktdaten,
+  - eigene Website.
+- Für den Demo-Fall wurde eine Plausibilitätswarnung ergänzt: Liegt der Liefertermin vor dem Angebotsdatum, weist die Angebotsbox darauf hin. Die Warnung blockiert das Angebot nicht, sondern macht das Datum prüfbar.
+- Der vorbereitete E-Mail-Text wurde professioneller formuliert und an das Kundendokument angepasst. Die PDF wird weiterhin nicht automatisch angehängt; der Benutzer speichert sie über den Druckdialog und hängt sie im Mailprogramm an.
+- Der Footer des Angebots enthält jetzt kompakte Firmendaten und die Angebotsnummer.
+- Die Bottom-Navigation wurde nicht verändert.
+- Keine echte Preislogik, keine Persistenz, keine Server-PDF-Erzeugung, keine automatische Mail-Anhang-Funktion und kein firmenseitiger Einstellungsdialog; Sprint 50.4 schließt die sichtbare Angebotsvorbereitung fachlich ab.
+
+Build-Prüfung: `npm run build`.

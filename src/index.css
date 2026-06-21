@@ -20898,6 +20898,27 @@ button.pp-process-step:hover {
   line-height: 1.4;
 }
 
+.pp-calculation-offer-warning {
+  display: grid;
+  gap: 3px;
+  padding: 10px 12px;
+  border: 1px solid rgba(245, 145, 0, .28);
+  border-radius: 12px;
+  background: #fff8ed;
+  color: #653b00;
+}
+
+.pp-calculation-offer-warning b {
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.pp-calculation-offer-warning span {
+  font-size: 12px;
+  font-weight: 560;
+  line-height: 1.35;
+}
+
 .pp-calculation-offer-workflow__actions {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
@@ -20928,7 +20949,38 @@ button.pp-process-step:hover {
   max-width: 100%;
 }
 
-.pp-offer-document__header div {
+.pp-offer-document__sender {
+  display: flex;
+  align-items: flex-start;
+  gap: 18px;
+  min-width: 0;
+}
+
+.pp-offer-document__sender p {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  color: #53647c;
+  font-size: 12px;
+  font-weight: 520;
+  line-height: 1.25;
+}
+
+.pp-offer-document__sender p strong {
+  color: #07183a;
+  font-size: 14px;
+  font-weight: 850;
+}
+
+.pp-offer-document__sender p span {
+  color: #53647c;
+  font-size: 12px;
+  font-weight: 520;
+  letter-spacing: 0;
+  text-transform: none;
+}
+
+.pp-offer-document__meta {
   display: grid;
   gap: 2px;
   min-width: 210px;
@@ -21140,9 +21192,14 @@ button.pp-process-step:hover {
 .pp-offer-document__footer {
   display: flex;
   justify-content: space-between;
-  gap: 16px;
+  gap: 14px;
   padding-top: 12px;
   border-top: 1px solid #e7eef7;
+}
+
+.pp-offer-document__footer span {
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 @media (max-width: 1180px) {
@@ -21345,4 +21402,31 @@ button.pp-process-step:hover {
 .pp-offer-document__closing p,
 .pp-offer-document__closing span {
   line-height: 1.35;
+}
+
+
+/* Sprint 50.4 – Angebotsdokument mit Absenderdaten, Status und Plausibilitätswarnung abrunden */
+.pp-offer-document__sender {
+  gap: 15px;
+}
+
+.pp-offer-document__sender p {
+  font-size: 11px;
+  line-height: 1.22;
+}
+
+.pp-offer-document__sender p strong {
+  font-size: 13px;
+}
+
+.pp-offer-document__sender p span {
+  font-size: 11px;
+}
+
+.pp-offer-document__meta {
+  min-width: 190px;
+}
+
+.pp-offer-document__footer {
+  font-size: 12px;
 }

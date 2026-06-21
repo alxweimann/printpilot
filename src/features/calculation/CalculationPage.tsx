@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import { useMemo, useRef, useState } from "react";
 import { PrintPilotLogo } from "../../components/brand/PrintPilotLogo";
 import {
   createOrderDraftFromCalculation,
@@ -976,6 +976,299 @@ function getOfferMailBody(draft: CalculationDraft, payload: CalculationToProduct
   ].join("\n");
 }
 
+
+function escapeOfferPrintText(value: string) {
+  return value
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
+  const documentTitle = escapeOfferPrintText(title);
+
+  return `<!doctype html>
+<html lang="de">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <base href="${window.location.origin}/" />
+    <title>${documentTitle}</title>
+    <style>
+      @page { size: A4 portrait; margin: 0; }
+
+      *, *::before, *::after { box-sizing: border-box; }
+
+      html,
+      body {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+        color: #07183a;
+        font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+        -webkit-print-color-adjust: exact;
+        print-color-adjust: exact;
+      }
+
+      body { display: block; }
+
+      .pp-offer-print-window {
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0;
+        padding: 0;
+        background: #ffffff;
+      }
+
+      .pp-print-offer-document {
+        display: grid;
+        gap: 5.2mm;
+        width: 210mm;
+        min-height: 297mm;
+        margin: 0;
+        padding: 16mm;
+        border: 0;
+        border-radius: 0;
+        background: #ffffff;
+        color: #07183a;
+        box-shadow: none;
+      }
+
+      .pp-offer-document__header {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) auto;
+        align-items: start;
+        gap: 18mm;
+        padding-bottom: 7mm;
+        border-bottom: 1.4pt solid #00a8e0;
+      }
+
+      .pp-printpilot-logo,
+      .pp-offer-document__logo {
+        display: block;
+        width: 47mm;
+        max-width: 47mm;
+        height: auto;
+      }
+
+      .pp-offer-document__header div {
+        display: grid;
+        gap: 1mm;
+        min-width: 48mm;
+        text-align: right;
+      }
+
+      .pp-offer-document__header span,
+      .pp-offer-document__address span,
+      .pp-offer-document__summary span,
+      .pp-offer-document__positions th,
+      .pp-offer-document__address dt {
+        color: #24577d;
+        font-size: 7.6pt;
+        font-weight: 850;
+        letter-spacing: .06em;
+        text-transform: uppercase;
+      }
+
+      .pp-offer-document__header strong {
+        color: #07183a;
+        font-size: 20pt;
+        font-weight: 950;
+        letter-spacing: -.04em;
+        line-height: 1;
+      }
+
+      .pp-offer-document__header small,
+      .pp-offer-document__footer,
+      .pp-offer-document__address p,
+      .pp-offer-document__notes p,
+      .pp-offer-document__intro p {
+        color: #53647c;
+        font-size: 9.2pt;
+        font-weight: 520;
+        line-height: 1.42;
+      }
+
+      .pp-offer-document__address {
+        display: grid;
+        grid-template-columns: minmax(0, 1.06fr) minmax(75mm, .94fr);
+        gap: 9mm;
+      }
+
+      .pp-offer-document__address strong {
+        display: block;
+        margin: 1.2mm 0 2.4mm;
+        color: #07183a;
+        font-size: 13pt;
+        font-weight: 850;
+      }
+
+      .pp-offer-document__address p { margin: 0 0 1.2mm; }
+
+      .pp-offer-document__address dl {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        margin: 0;
+        border: .45pt solid #dbe6f1;
+        border-radius: 3.6mm;
+        overflow: hidden;
+      }
+
+      .pp-offer-document__address dl div {
+        display: grid;
+        gap: 1mm;
+        padding: 3mm 3.4mm;
+        border-right: .35pt solid #e7eef7;
+        border-bottom: .35pt solid #e7eef7;
+      }
+
+      .pp-offer-document__address dl div:nth-child(2n) { border-right: 0; }
+      .pp-offer-document__address dl div:nth-last-child(-n + 2) { border-bottom: 0; }
+
+      .pp-offer-document__address dd {
+        margin: 0;
+        color: #07183a;
+        font-size: 9.2pt;
+        font-weight: 760;
+        line-height: 1.22;
+      }
+
+      .pp-offer-document__intro {
+        padding: 5mm;
+        border: .45pt solid #dbe6f1;
+        border-radius: 4mm;
+        background: #f8fbff;
+      }
+
+      .pp-offer-document__intro h1 {
+        margin: 0 0 2.4mm;
+        color: #18345e;
+        font-size: 17pt;
+        font-weight: 900;
+        letter-spacing: -.04em;
+        line-height: 1.08;
+      }
+
+      .pp-offer-document__intro p { margin: 0; }
+
+      .pp-offer-document__summary {
+        display: grid;
+        grid-template-columns: repeat(4, minmax(0, 1fr));
+        border: .45pt solid #dbe6f1;
+        border-radius: 4mm;
+        overflow: hidden;
+      }
+
+      .pp-offer-document__summary div {
+        display: grid;
+        gap: 1.4mm;
+        min-height: 17mm;
+        padding: 3.1mm 3.4mm;
+        border-right: .35pt solid #e7eef7;
+        border-bottom: .35pt solid #e7eef7;
+      }
+
+      .pp-offer-document__summary div:nth-child(4n) { border-right: 0; }
+      .pp-offer-document__summary div:nth-last-child(-n + 4) { border-bottom: 0; }
+
+      .pp-offer-document__summary b {
+        color: #07183a;
+        font-size: 9.2pt;
+        font-weight: 760;
+        line-height: 1.25;
+      }
+
+      .pp-offer-document__positions table {
+        width: 100%;
+        border-collapse: collapse;
+        overflow: hidden;
+        border: .45pt solid #dbe6f1;
+        border-radius: 4mm;
+      }
+
+      .pp-offer-document__positions th,
+      .pp-offer-document__positions td {
+        padding: 3.4mm;
+        border-bottom: .35pt solid #e7eef7;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .pp-offer-document__positions th:last-child,
+      .pp-offer-document__positions td:last-child { text-align: right; }
+
+      .pp-offer-document__positions td {
+        color: #07183a;
+        font-size: 9.2pt;
+        font-weight: 650;
+        line-height: 1.28;
+      }
+
+      .pp-offer-document__positions td strong,
+      .pp-offer-document__positions td span { display: block; }
+
+      .pp-offer-document__positions td span {
+        margin-top: 1.2mm;
+        color: #53647c;
+        font-weight: 540;
+      }
+
+      .pp-offer-document__positions tfoot td {
+        border-bottom: 0;
+        background: #f8fbff;
+        color: #07183a;
+        font-size: 10.5pt;
+        font-weight: 850;
+      }
+
+      .pp-offer-document__notes {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 4.4mm;
+      }
+
+      .pp-offer-document__notes div {
+        padding: 4mm;
+        border: .45pt solid #dbe6f1;
+        border-radius: 4mm;
+        background: #ffffff;
+      }
+
+      .pp-offer-document__notes h2 {
+        margin: 0 0 2.2mm;
+        color: #18345e;
+        font-size: 10.8pt;
+        font-weight: 850;
+      }
+
+      .pp-offer-document__notes p { margin: 0 0 1.4mm; }
+
+      .pp-offer-document__footer {
+        display: flex;
+        justify-content: space-between;
+        gap: 6mm;
+        padding-top: 3.6mm;
+        border-top: .35pt solid #e7eef7;
+      }
+
+      @media print {
+        html, body, .pp-offer-print-window, .pp-print-offer-document {
+          width: 210mm;
+          min-height: 297mm;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <main class="pp-offer-print-window">${offerMarkup}</main>
+  </body>
+</html>`;
+}
+
 function CalculationOfferDocument({
   draft,
   payload,
@@ -1902,6 +2195,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   const [draftWasCreated, setDraftWasCreated] = useState(false);
   const [offerPreviewOpen, setOfferPreviewOpen] = useState(false);
   const [offerWasPrepared, setOfferWasPrepared] = useState(false);
+  const offerPrintRef = useRef<HTMLDivElement>(null);
   const [draft, setDraft] = useState<CalculationDraft>(initialDraft);
   const [productionMode, setProductionMode] =
     useState<ProductionMode>("internal");
@@ -2048,7 +2342,39 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
 
     setOfferPreviewOpen(true);
     setOfferWasPrepared(true);
-    window.setTimeout(() => window.print(), 120);
+
+    const offerMarkup = offerPrintRef.current?.innerHTML;
+
+    if (!offerMarkup) {
+      window.alert(
+        "Das Angebotsdokument konnte noch nicht vorbereitet werden. Bitte Angebot anzeigen und danach erneut als PDF drucken.",
+      );
+      return;
+    }
+
+    const printWindow = window.open(
+      "",
+      "printpilot-offer-print",
+      "width=920,height=1200,menubar=no,toolbar=no,location=no,status=no",
+    );
+
+    if (!printWindow) {
+      window.alert(
+        "Das Druckfenster wurde vom Browser blockiert. Bitte Pop-ups für PrintPilot erlauben und erneut drucken.",
+      );
+      return;
+    }
+
+    printWindow.document.open();
+    printWindow.document.write(
+      getOfferPrintWindowHtml(getOfferSubject(draft), offerMarkup),
+    );
+    printWindow.document.close();
+
+    window.setTimeout(() => {
+      printWindow.focus();
+      printWindow.print();
+    }, 260);
   };
 
   const handlePrepareOfferEmail = () => {
@@ -3168,6 +3494,16 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                 : "Pflichtdaten fehlen"}
             </button>
           </div>
+        </div>
+
+        <div className="pp-offer-print-source" ref={offerPrintRef} aria-hidden="true">
+          <CalculationOfferDocument
+            draft={draft}
+            payload={payload}
+            finishingRows={finishingRows}
+            productionModeLabel={productionModeLabel}
+            sheetCount={sheetCount}
+          />
         </div>
 
         <aside

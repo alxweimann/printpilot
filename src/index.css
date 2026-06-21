@@ -21200,3 +21200,8 @@ button.pp-process-step:hover {
     margin: 0;
   }
 }
+
+/* Sprint 50.1 – Angebotsdruck als isoliertes Druckfenster stabilisieren */
+.pp-offer-print-source {
+  display: none !important;
+}

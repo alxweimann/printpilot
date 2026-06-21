@@ -3659,3 +3659,16 @@ Wichtiges Pattern:
 - Keine echte Preisberechnung, keine Persistenz, keine PDF-Servergenerierung und keine E-Mail-Backend-Integration; Sprint 50 bereitet den sichtbaren Angebotsworkflow im Frontend vor.
 
 Build-Prüfung: `npm run build`.
+
+## Sprint 50.1 – Angebots-PDF/Druckausgabe sichtbar stabilisieren
+
+- Der Angebotsdruck wurde korrigiert, weil die erste browserweite Druckausgabe durch bestehende Auftragstaschen-Print-CSS-Regeln leer erscheinen konnte.
+- **Angebot als PDF drucken** öffnet jetzt ein isoliertes Druckfenster mit ausschließlich dem Angebotsdokument und eigenem A4-Print-CSS.
+- Dadurch wird die Angebotsausgabe nicht mehr von globalen Print-Regeln der Auftragstasche beeinflusst.
+- Das sichtbare Angebots-Preview in der Kalkulationsmaske bleibt erhalten.
+- Die E-Mail-Vorbereitung bleibt unverändert.
+- Der akzeptierte Sprint-47.7-Eingabemasken-Look bleibt unverändert.
+- Die Bottom-Navigation wurde nicht verändert.
+- Keine echte Server-PDF-Erzeugung, keine Persistenzänderung und keine E-Mail-Attachment-Automation; Sprint 50.1 stabilisiert ausschließlich die lokale Druck-/PDF-Ausgabe.
+
+Build-Prüfung: `npm run build`.

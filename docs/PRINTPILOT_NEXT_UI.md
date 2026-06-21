@@ -3556,3 +3556,11 @@ Build-Prüfung: `npm run build`.
 - Keine Kalkulationslogik, Preislogik, Datenmodell- oder Persistenzänderung.
 
 Build-Prüfung: `npm run build`.
+
+## Sprint 48.2 – Vollständige Feldbeschriftungen ohne Kollisionen
+
+- Feldbeschriftungen der Kalkulationsmaske werden vollständig lesbar gehalten.
+- Lange Begriffe wie `Kalkulationsnummer` und `Geplante Übermenge` dürfen sauber umbrechen und kollidieren nicht mehr mit Pflicht-/Optional-Badges.
+- Die Labelspalte wurde moderat verbreitert, ohne die akzeptierte Auftragstaschen-Optik zu verändern.
+- Badge-Positionierung in den Feldlabels wurde stabilisiert.
+- Bottom-Navigation bleibt unverändert.

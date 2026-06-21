@@ -20200,3 +20200,261 @@ button.pp-process-step:hover {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Sprint 49 – Datenübergabe Kalkulation → Auftragstasche */
+.pp-calculation-transfer-map {
+  margin-top: 14px;
+  border: 1px solid rgba(0, 127, 196, 0.16);
+  border-radius: 18px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.pp-calculation-transfer-map__head {
+  display: grid;
+  gap: 3px;
+  padding: 14px 16px;
+  border-bottom: 1px solid rgba(0, 127, 196, 0.13);
+  background: linear-gradient(180deg, #ffffff 0%, #f8fcff 100%);
+}
+
+.pp-calculation-transfer-map__head span {
+  color: #007fc4;
+  font-size: 11px;
+  font-weight: 760;
+  letter-spacing: 0.055em;
+  text-transform: uppercase;
+}
+
+.pp-calculation-transfer-map__head b {
+  color: #061a34;
+  font-size: 17px;
+  font-weight: 680;
+}
+
+.pp-calculation-transfer-map__head small {
+  max-width: 860px;
+  color: #4d6078;
+  font-size: 12px;
+  font-weight: 520;
+  line-height: 1.45;
+}
+
+.pp-calculation-transfer-map__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pp-calculation-transfer-map article {
+  min-width: 0;
+  padding: 14px 16px 16px;
+  border-right: 1px solid rgba(0, 127, 196, 0.10);
+  border-bottom: 1px solid rgba(0, 127, 196, 0.10);
+}
+
+.pp-calculation-transfer-map article:nth-child(2n) {
+  border-right: 0;
+}
+
+.pp-calculation-transfer-map article header {
+  display: grid;
+  gap: 4px;
+  margin-bottom: 10px;
+}
+
+.pp-calculation-transfer-map article h3 {
+  margin: 0;
+  color: #071a34;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: uppercase;
+}
+
+.pp-calculation-transfer-map article p {
+  margin: 0;
+  color: #51647d;
+  font-size: 11.5px;
+  font-weight: 500;
+  line-height: 1.4;
+}
+
+.pp-calculation-transfer-map__rows {
+  display: grid;
+  gap: 8px;
+}
+
+.pp-calculation-transfer-map__rows > div {
+  display: grid;
+  grid-template-columns: minmax(105px, 0.70fr) minmax(0, 1fr);
+  align-items: start;
+  column-gap: 12px;
+  row-gap: 3px;
+  padding: 9px 10px;
+  border: 1px solid rgba(0, 127, 196, 0.13);
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+.pp-transfer-kind {
+  grid-row: span 4;
+  width: fit-content;
+  max-width: 100%;
+  padding: 4px 7px;
+  border-radius: 999px;
+  border: 1px solid rgba(0, 127, 196, 0.16);
+  background: #f6fbff;
+  color: #007fc4;
+  font-size: 9.8px;
+  font-weight: 760;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.pp-transfer-kind--order-internal {
+  border-color: rgba(76, 96, 122, 0.18);
+  background: #f7f9fb;
+  color: #52657d;
+}
+
+.pp-transfer-kind--calculation-internal {
+  border-color: rgba(12, 28, 48, 0.16);
+  background: #fffaf1;
+  color: #8b5a00;
+}
+
+.pp-calculation-transfer-map__rows b {
+  min-width: 0;
+  overflow: hidden;
+  color: #071a34;
+  font-size: 12.2px;
+  font-weight: 680;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-calculation-transfer-map__rows small {
+  color: #007fc4;
+  font-size: 10.5px;
+  font-weight: 640;
+  line-height: 1.25;
+}
+
+.pp-calculation-transfer-map__rows strong {
+  min-width: 0;
+  color: #17243a;
+  font-size: 12px;
+  font-weight: 520;
+  line-height: 1.35;
+  overflow-wrap: anywhere;
+}
+
+.pp-calculation-transfer-map__rows em {
+  color: #586a82;
+  font-size: 10.8px;
+  font-style: normal;
+  font-weight: 500;
+  line-height: 1.35;
+}
+
+.pp-calculation-transfer-map--compact {
+  margin-top: 0;
+  border-radius: 16px;
+}
+
+.pp-calculation-transfer-map--compact .pp-calculation-transfer-map__head {
+  padding: 12px 14px;
+}
+
+.pp-calculation-transfer-map--compact .pp-calculation-transfer-map__head b {
+  font-size: 14px;
+}
+
+.pp-calculation-transfer-map--compact .pp-calculation-transfer-map__head small {
+  font-size: 11px;
+}
+
+.pp-calculation-transfer-map--compact .pp-calculation-transfer-map__grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.pp-calculation-transfer-map--compact article {
+  padding: 11px 12px;
+}
+
+.pp-calculation-transfer-map--compact article:nth-child(2n) {
+  border-right: 1px solid rgba(0, 127, 196, 0.10);
+}
+
+.pp-calculation-transfer-map--compact article:nth-child(4n) {
+  border-right: 0;
+}
+
+.pp-calculation-transfer-map--compact article h3 {
+  font-size: 11.2px;
+}
+
+.pp-calculation-transfer-map--compact article p {
+  font-size: 10.4px;
+}
+
+.pp-calculation-transfer-map--compact .pp-calculation-transfer-map__rows {
+  gap: 6px;
+}
+
+.pp-calculation-transfer-map--compact .pp-calculation-transfer-map__rows > div {
+  grid-template-columns: 1fr;
+  padding: 7px 8px;
+}
+
+.pp-calculation-transfer-map--compact .pp-transfer-kind {
+  grid-row: auto;
+  font-size: 8.8px;
+}
+
+.pp-calculation-transfer-map--compact .pp-calculation-transfer-map__rows b {
+  font-size: 11px;
+}
+
+.pp-calculation-transfer-map--compact .pp-calculation-transfer-map__rows small {
+  font-size: 9.8px;
+}
+
+.pp-calculation-transfer-map--compact .pp-calculation-transfer-map__rows strong {
+  font-size: 10.8px;
+}
+
+@media (max-width: 1420px) {
+  .pp-calculation-transfer-map__grid,
+  .pp-calculation-transfer-map--compact .pp-calculation-transfer-map__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .pp-calculation-transfer-map article:nth-child(2n),
+  .pp-calculation-transfer-map--compact article:nth-child(2n) {
+    border-right: 0;
+  }
+}
+
+@media (max-width: 860px) {
+  .pp-calculation-transfer-map__grid,
+  .pp-calculation-transfer-map--compact .pp-calculation-transfer-map__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-calculation-transfer-map article,
+  .pp-calculation-transfer-map article:nth-child(2n),
+  .pp-calculation-transfer-map--compact article,
+  .pp-calculation-transfer-map--compact article:nth-child(2n),
+  .pp-calculation-transfer-map--compact article:nth-child(4n) {
+    border-right: 0;
+  }
+
+  .pp-calculation-transfer-map__rows > div {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-transfer-kind {
+    grid-row: auto;
+  }
+}

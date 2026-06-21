@@ -1172,6 +1172,405 @@ function ResultLine({ label, value }: { label: string; value: string }) {
   );
 }
 
+type CalculationTransferKind =
+  | "order-pocket"
+  | "order-internal"
+  | "calculation-internal";
+
+type CalculationTransferRow = {
+  label: string;
+  source: string;
+  value: string;
+  target: string;
+  kind: CalculationTransferKind;
+};
+
+type CalculationTransferGroup = {
+  title: string;
+  helper: string;
+  rows: CalculationTransferRow[];
+};
+
+function getTransferKindLabel(kind: CalculationTransferKind) {
+  switch (kind) {
+    case "order-pocket":
+      return "Auftragstasche";
+    case "order-internal":
+      return "Auftrag intern";
+    case "calculation-internal":
+      return "nur Kalkulation";
+    default:
+      return "offen";
+  }
+}
+
+function getActiveFinishingLabels(finishingRows: FinishingDraftRow[]) {
+  const activeLabels = finishingRows
+    .filter((row) => row.active)
+    .map((row) => row.label);
+
+  return activeLabels.length ? activeLabels.join(" · ") : "keine aktiven Schritte";
+}
+
+function buildCalculationTransferGroups({
+  draft,
+  payload,
+  finishingRows,
+  productionModeLabel,
+  sheetCount,
+}: {
+  draft: CalculationDraft;
+  payload: CalculationToProductionPayload;
+  finishingRows: FinishingDraftRow[];
+  productionModeLabel: string;
+  sheetCount: string;
+}): CalculationTransferGroup[] {
+  const activeFinishingLabels = getActiveFinishingLabels(finishingRows);
+
+  return [
+    {
+      title: "Kopfdaten",
+      helper: "Steuert Kopfbereich und Identifikation der späteren Auftragstasche.",
+      rows: [
+        {
+          label: "Kalkulationsnummer",
+          source: "Auftrag / Status",
+          value: draft.calculationId,
+          target: "Auftrag · spätere Auftragsnummer wird separat erzeugt",
+          kind: "order-internal",
+        },
+        {
+          label: "Produkt",
+          source: "Produkt / Farbigkeit",
+          value: payload.product.label,
+          target: "Auftragstasche · Kopf und Produktionsdaten",
+          kind: "order-pocket",
+        },
+        {
+          label: "Liefertermin",
+          source: "Auftrag / Status",
+          value: draft.dueDate,
+          target: "Auftragstasche · Kopf und Lieferung / Versand",
+          kind: "order-pocket",
+        },
+      ],
+    },
+    {
+      title: "Produktionsdaten",
+      helper: "Alles, was die Produktion sofort auf einen Blick braucht.",
+      rows: [
+        {
+          label: "Auflage",
+          source: "Menge / Lieferung",
+          value: `${formatNumber(payload.product.quantity)} Stück`,
+          target: "Auftragstasche · Produktionsdaten",
+          kind: "order-pocket",
+        },
+        {
+          label: "Endformat",
+          source: "Produkt / Format",
+          value: draft.finalFormat,
+          target: "Auftragstasche · Produktionsdaten",
+          kind: "order-pocket",
+        },
+        {
+          label: "Farbigkeit",
+          source: "Produkt / Farbigkeit",
+          value: draft.colorMode,
+          target: "Auftragstasche · Produktionsdaten und Druckdaten",
+          kind: "order-pocket",
+        },
+        {
+          label: "Produktionsweg",
+          source: "Papier & Druck",
+          value: productionModeLabel,
+          target: "Auftrag intern · Planung / Produktionssteuerung",
+          kind: "order-internal",
+        },
+      ],
+    },
+    {
+      title: "Kunde",
+      helper: "Kunden- und Kontaktinformationen ohne Preisdaten.",
+      rows: [
+        {
+          label: "Kunde",
+          source: "Kunde / Kontakt",
+          value: draft.customer,
+          target: "Auftragstasche · Kunde",
+          kind: "order-pocket",
+        },
+        {
+          label: "Ansprechpartner",
+          source: "Kunde / Kontakt",
+          value: draft.contactName,
+          target: "Auftragstasche · Kunde",
+          kind: "order-pocket",
+        },
+        {
+          label: "Telefon und E-Mail",
+          source: "Kunde / Kontakt",
+          value: `${draft.contactPhone} · ${draft.contactEmail}`,
+          target: "Auftragstasche · Kunde",
+          kind: "order-pocket",
+        },
+        {
+          label: "Kundenhinweis",
+          source: "Auftrag / Status",
+          value: draft.customerNote,
+          target: "Auftrag intern · optional in Auftragstasche nach Relevanz",
+          kind: "order-internal",
+        },
+      ],
+    },
+    {
+      title: "Druckdaten",
+      helper: "Datei, Prüfung, Freigabe und Korrekturstatus bleiben produktionsrelevant.",
+      rows: [
+        {
+          label: "Druckdatei",
+          source: "Produkt & Format",
+          value: draft.printFileName,
+          target: "Auftragstasche · Druckdaten",
+          kind: "order-pocket",
+        },
+        {
+          label: "Dateiversion / Ablageort",
+          source: "Produkt & Format",
+          value: `${draft.printFileVersion} · ${draft.printFileLocation}`,
+          target: "Auftrag intern · Dateiablage / Historie",
+          kind: "order-internal",
+        },
+        {
+          label: "Datenprüfung",
+          source: "Produkt & Format",
+          value: `${draft.printDataCheck} · ${draft.preflight}`,
+          target: "Auftragstasche · Druckdaten und Kontrolle",
+          kind: "order-pocket",
+        },
+        {
+          label: "Freigabe / Proof",
+          source: "Produkt & Format",
+          value: `${draft.approvalStatus} · ${draft.proofRequirement}`,
+          target: "Auftragstasche · Druckdaten",
+          kind: "order-pocket",
+        },
+      ],
+    },
+    {
+      title: "Material / Druckbogen",
+      helper: "Papier, Bogenformat, Zuschuss und Lieferanteninformation.",
+      rows: [
+        {
+          label: "Material",
+          source: "Papier / Material",
+          value: `${draft.substrate} · ${draft.grammage}`,
+          target: "Auftragstasche · Material / Druckbogen",
+          kind: "order-pocket",
+        },
+        {
+          label: "Druckbogen",
+          source: "Papier / Material",
+          value: `${draft.sheetFormat} · ${draft.printSheetFormat}`,
+          target: "Auftragstasche · Material / Druckbogen und Nutzenplan",
+          kind: "order-pocket",
+        },
+        {
+          label: "Bogenmenge",
+          source: "Papier / Material",
+          value: `${sheetCount} Bogen · ${draft.wasteSheets}`,
+          target: "Auftragstasche · Material / Druckbogen",
+          kind: "order-pocket",
+        },
+        {
+          label: "Papierlieferant / Lagerstatus",
+          source: "Papier / Material",
+          value: `${draft.supplier} · ${draft.stockStatus}`,
+          target: "Auftragstasche · Material / Druckbogen",
+          kind: "order-pocket",
+        },
+      ],
+    },
+    {
+      title: "Druck / Nutzenplan",
+      helper: "Maschine und Nutzenrechner liefern Produktionsvorgaben, ohne in der Tasche neu zu rechnen.",
+      rows: [
+        {
+          label: "Maschine",
+          source: "Druck / Maschine",
+          value: `${draft.machine} · ${draft.printType}`,
+          target: "Auftragstasche · Produktionsdaten",
+          kind: "order-pocket",
+        },
+        {
+          label: "Nutzen",
+          source: "Nutzenrechner",
+          value: `${payload.imposition.layout.usedSlots} Nutzen · ${draft.impositionLabel}`,
+          target: "Auftragstasche · Nutzenplan",
+          kind: "order-pocket",
+        },
+        {
+          label: "Beschnitt / Sicherheitsabstand",
+          source: "Produkt / Format",
+          value: `${draft.bleedMm} mm · ${draft.safetyMarginMm}`,
+          target: "Auftragstasche · Druckdaten / Kontrolle",
+          kind: "order-pocket",
+        },
+      ],
+    },
+    {
+      title: "Weiterverarbeitung / Versand",
+      helper: "Nur konkrete Produktionsanweisungen, keine Kalkulationstarife.",
+      rows: [
+        {
+          label: "Aktive Leistungen",
+          source: "Weiterverarbeitung",
+          value: activeFinishingLabels,
+          target: "Auftragstasche · Weiterverarbeitung",
+          kind: "order-pocket",
+        },
+        {
+          label: "Arbeitsanweisung",
+          source: "Weiterverarbeitung",
+          value: draft.workInstruction,
+          target: "Auftragstasche · Weiterverarbeitung",
+          kind: "order-pocket",
+        },
+        {
+          label: "Zusatz / Verpackungshinweis",
+          source: "Weiterverarbeitung",
+          value: draft.pocketExtraNote,
+          target: "Auftragstasche · Weiterverarbeitung / Lieferung",
+          kind: "order-pocket",
+        },
+        {
+          label: "Versand und Verpackung",
+          source: "Menge / Lieferung",
+          value: `${draft.shippingMethod} · ${draft.packagingPlan}`,
+          target: "Auftragstasche · Lieferung / Versand",
+          kind: "order-pocket",
+        },
+      ],
+    },
+    {
+      title: "Kontrolle",
+      helper: "Prüfpunkte für Produktion, Weiterverarbeitung und Versand.",
+      rows: [
+        {
+          label: "Druckdaten / Freigabe",
+          source: "Preise & Ergebnis",
+          value: draft.controlPrintData,
+          target: "Auftragstasche · Kontrolle",
+          kind: "order-pocket",
+        },
+        {
+          label: "Farbigkeit / Maßhaltigkeit",
+          source: "Preise & Ergebnis",
+          value: draft.controlColorAccuracy,
+          target: "Auftragstasche · Kontrolle",
+          kind: "order-pocket",
+        },
+        {
+          label: "Weiterverarbeitung / Menge",
+          source: "Preise & Ergebnis",
+          value: `${draft.controlFinishing} · ${draft.controlQuantity}`,
+          target: "Auftragstasche · Kontrolle",
+          kind: "order-pocket",
+        },
+        {
+          label: "Muster / Rechnungsbelege",
+          source: "Preise & Ergebnis",
+          value: `${draft.pocketSampleStatus} · ${draft.paperInvoiceStatus} · ${draft.supplierInvoiceStatus}`,
+          target: "Auftragstasche · Kontrolle",
+          kind: "order-pocket",
+        },
+      ],
+    },
+    {
+      title: "Interne Kalkulationsdaten",
+      helper: "Diese Werte gehören nicht auf die Auftragstasche.",
+      rows: [
+        {
+          label: "Kostenblöcke",
+          source: "Preise & Ergebnis",
+          value: `${draft.materialCosts} · ${draft.printCosts} · ${draft.finishingCosts}`,
+          target: "nur Kalkulation · Preisfindung",
+          kind: "calculation-internal",
+        },
+        {
+          label: "Marge / Deckungsbeitrag",
+          source: "Preise & Ergebnis",
+          value: `${draft.discount} · ${draft.contributionMargin} · ${draft.margin}`,
+          target: "nur Kalkulation · Auswertung",
+          kind: "calculation-internal",
+        },
+        {
+          label: "Fremdkosten / Einkauf",
+          source: "Fremdproduktion",
+          value: `${draft.externalSupplier} · ${draft.externalPrice} · ${draft.externalFreight}`,
+          target: "nur Kalkulation, außer Produktionsweg ist extern relevant",
+          kind: "calculation-internal",
+        },
+      ],
+    },
+  ];
+}
+
+function CalculationTransferMapping({
+  groups,
+  compact = false,
+}: {
+  groups: CalculationTransferGroup[];
+  compact?: boolean;
+}) {
+  const visibleGroups = compact ? groups.slice(0, 8) : groups;
+
+  return (
+    <div
+      className={
+        compact
+          ? "pp-calculation-transfer-map pp-calculation-transfer-map--compact"
+          : "pp-calculation-transfer-map"
+      }
+      aria-label="Mapping von Kalkulation zur Auftragstasche"
+    >
+      <div className="pp-calculation-transfer-map__head">
+        <span>Datenübergabe</span>
+        <b>Kalkulation → Auftrag → Auftragstasche</b>
+        <small>
+          Produktionsrelevante Daten gehen in die Auftragstasche. Preisdaten
+          bleiben intern in der Kalkulation.
+        </small>
+      </div>
+      <div className="pp-calculation-transfer-map__grid">
+        {visibleGroups.map((group) => (
+          <article key={group.title}>
+            <header>
+              <h3>{group.title}</h3>
+              <p>{group.helper}</p>
+            </header>
+            <div className="pp-calculation-transfer-map__rows">
+              {group.rows.map((row) => (
+                <div key={`${group.title}-${row.label}`}>
+                  <span
+                    className={`pp-transfer-kind pp-transfer-kind--${row.kind}`}
+                  >
+                    {getTransferKindLabel(row.kind)}
+                  </span>
+                  <b>{row.label}</b>
+                  <small>{row.source}</small>
+                  <strong>{row.value}</strong>
+                  {!compact ? <em>{row.target}</em> : null}
+                </div>
+              ))}
+            </div>
+          </article>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function CalculationPlausibilityOverview({
   draft,
   activeFinishingCount,
@@ -1376,6 +1775,17 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     ["Zusatz", draft.pocketExtraNote],
     ["Lieferung", `${draft.shippingMethod} · ${draft.packagingPlan}`],
   ];
+  const transferGroups = useMemo(
+    () =>
+      buildCalculationTransferGroups({
+        draft,
+        payload,
+        finishingRows,
+        productionModeLabel,
+        sheetCount,
+      }),
+    [draft, finishingRows, payload, productionModeLabel, sheetCount],
+  );
 
   const updateDraft = (field: keyof CalculationDraft) => (value: string) => {
     setDraft((currentDraft) => ({ ...currentDraft, [field]: value }));
@@ -2393,6 +2803,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                   productionMode={productionMode}
                 />
                 <CalculationFieldAudit />
+                <CalculationTransferMapping groups={transferGroups} />
               </>
             ) : null}
           </div>
@@ -2507,6 +2918,8 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
               ))}
             </div>
           </div>
+
+          <CalculationTransferMapping groups={transferGroups} compact />
 
           <div className="pp-calculation-action-stack">
             <button className="pp-calculation-create-button" type="button" disabled>

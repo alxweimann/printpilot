@@ -3573,3 +3573,26 @@ Build-Prüfung: `npm run build`.
 - Die Labelspalte wurde moderat stabilisiert, damit Begriffe wie „Kalkulationsnummer“ ausgeschrieben lesbar bleiben.
 - Der akzeptierte Look der Kalkulationsmaske bleibt erhalten: weiße Labelbereiche, Cyan-Schrift, weiße Eingabefelder und feine Cyan-Kontur.
 - Die Bottom-Navigation bleibt unverändert.
+
+## Sprint 49 – Übergabe Kalkulation → Auftragstasche definiert
+
+- Die Kalkulationsmaske erhält eine sichtbare Datenübergabe-Logik: **Kalkulation → Auftrag → Auftragstasche**.
+- Die Übergabe trennt produktionsrelevante Daten konsequent von internen Preis- und Kalkulationsdaten.
+- Produktionsrelevante Daten werden nach Auftragstaschen-Bereichen gemappt:
+  - Kopfdaten,
+  - Produktionsdaten,
+  - Kunde,
+  - Druckdaten,
+  - Material / Druckbogen,
+  - Druck / Nutzenplan,
+  - Weiterverarbeitung / Versand,
+  - Kontrolle.
+- Preis- und Kalkulationswerte wie Materialkosten, Druckkosten, Weiterverarbeitungskosten, Fremdkosten, Rabatt, Marge und Deckungsbeitrag werden ausdrücklich als **nur Kalkulation** markiert und gehören nicht auf die Auftragstasche.
+- Der Reiter **Preise & Ergebnis** zeigt eine vollständige Mapping-Übersicht mit Quelle, aktuellem Wert, Zielbereich und Übergabeart.
+- Der Produktionskern unter der Maske zeigt zusätzlich eine kompakte Mapping-Version, damit sofort sichtbar bleibt, welche Werte später in die Auftragstasche wandern.
+- Die Auftragstasche bleibt dadurch Produktionsdokument und wird nicht zur Preis- oder Kalkulationsübersicht.
+- Der akzeptierte Look aus Sprint 47.7/48.3 bleibt erhalten: weiße Labelbereiche, Cyan-Schrift, weiße Eingabefelder, feine Cyan-Kontur und vollflächig cyanfarbige aktive Tabs.
+- Die Bottom-Navigation bleibt unverändert.
+- Keine neue Preislogik, keine Persistenzänderung und keine echte Auftragsnummernlogik; Sprint 49 definiert den sichtbaren Datenvertrag für die spätere Übergabe.
+
+Build-Prüfung: `npm run build`.

@@ -1020,3 +1020,10 @@ export const sprint47Pattern = {
   description:
     "Die Kalkulationsmaske übernimmt die eingefrorene Auftragstaschen-Designrichtung: weißer Produktionsarbeitsraum, ruhige Panels, klarere Feldrahmen, PrintPilot-Blau/Cyan als Akzent, oben sichtbarer PrintPilot-Fluss von Kalkulation über Auftrag und Auftragstasche bis Produktion sowie ein sticky Ergebnis-/Auftragstaschenblock rechts.",
 };
+
+export const sprint49Pattern = {
+  id: "calculation-to-order-pocket-transfer-map",
+  sprint: "49",
+  description:
+    "Die Kalkulationsmaske definiert sichtbar, welche Daten in Auftrag und Auftragstasche übernommen werden. Produktionsrelevante Bereiche wie Kopfdaten, Kunde, Druckdaten, Material, Nutzenplan, Weiterverarbeitung, Versand und Kontrolle werden der Auftragstasche zugeordnet; Preis-, Margen- und Kostenwerte bleiben als interne Kalkulationsdaten markiert.",
+};

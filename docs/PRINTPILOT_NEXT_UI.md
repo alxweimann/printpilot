@@ -3456,3 +3456,14 @@ Ziel bleibt: Die Kalkulationsmaske soll produktiv bedienbar sein und sich optisc
 - Die Änderung betrifft nur Layout/Design. Keine neue Kalkulationslogik, keine Preislogik und keine Persistenzänderung.
 
 Build-Prüfung: `npm run build`.
+
+### Sprint 47.4 – Kalkulationsnavigation stärker hervorheben
+
+- Die obere Reiternavigation der Kalkulationsmaske wurde höher gezeichnet, damit die Arbeitsbereiche deutlicher als primäre Bedienstruktur erkennbar sind.
+- Der aktive Reiter wird jetzt vollflächig im PrintPilot-Cyan dargestellt.
+- Text, Status und Nummer des aktiven Reiters laufen negativ in Weiß.
+- Inaktive Reiter bleiben ruhig weiß mit feinen Trennlinien, damit die Maske weiterhin sachlich und auftragstaschenähnlich bleibt.
+- Hover- und Fokuszustände wurden passend zur neuen aktiven Fläche angepasst.
+- Die Änderung betrifft nur die visuelle Reiterführung. Keine neue Kalkulationslogik, keine Preislogik und keine Persistenzänderung.
+
+Build-Prüfung: `npm run build`.

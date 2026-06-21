@@ -3499,3 +3499,47 @@ Build-Prüfung: `npm run build`.
 - Die Schriftgewichte der eigentlichen Eingabewerte wurden leicht reduziert, damit die Maske weniger massiv wirkt und näher an der ruhigen Auftragstaschen-Typografie bleibt.
 - Feldinhalt, Rahmenlogik und Fokuszustand bleiben weiß/cyan und damit weiterhin klar als editierbare Eingabefelder erkennbar.
 - Keine Änderung an Bottom-Navigation, Kalkulationslogik, Preislogik, Datenmodell oder Persistenz.
+
+Build-Prüfung: `npm run build`.
+
+## Sprint 48 – Kalkulationsmaske fachlich bereinigt
+
+- Die Kalkulationsmaske wurde nach dem stabilisierten Sprint-47.7-Look fachlich überprüft und auf die spätere Auftragstaschen-Übergabe ausgerichtet.
+- Doppelte oder missverständliche Begriffe wurden getrennt:
+  - **Lieferant** bei Papier heißt jetzt **Papierlieferant**.
+  - **Lieferant** bei Fremdproduktion heißt jetzt **Fremdlieferant**.
+  - **Fremdleistung** im Ergebnis heißt jetzt **Fremdkosten**.
+  - **Weiterverarbeitung** im Preisbereich heißt jetzt **Weiterverarbeitungskosten**.
+  - **Marge** im Fremdbereich heißt jetzt **Fremdleistungs-Aufschlag**.
+  - **Marge** im Preisabschluss heißt jetzt **Gesamtmarge / DB**.
+  - **Zuschuss** in der Menge heißt jetzt **geplante Übermenge**.
+  - **Makulatur** im Druckbereich heißt jetzt **Maschinenmakulatur**.
+- Wichtige Auftragstaschen-Felder wurden ergänzt:
+  - Druckdatei,
+  - Dateiversion,
+  - Ablageort / Link,
+  - Druckdaten geprüft,
+  - Freigabe,
+  - Proof / Muster,
+  - Arbeitsanweisung,
+  - Zusatz / Verpackungshinweis.
+- Lieferung und Versand wurden als produktionsrelevante Angaben erweitert:
+  - Versandart,
+  - Verpackung,
+  - Lieferzeit / Tour,
+  - Neutralversand / Label,
+  - Lieferschein.
+- Die Kontrollübergabe an die Auftragstasche wurde vorbereitet:
+  - Kontrolle Druckdaten,
+  - Kontrolle Farbe / Maß,
+  - Kontrolle Weiterverarbeitung,
+  - Kontrolle Menge,
+  - Muster in Tasche,
+  - Papierrechnung,
+  - Lieferantenrechnung.
+- Die Infobox und der Produktionskern berücksichtigen jetzt auch Druckdatei, Freigabe, Arbeitsanweisung, Zusatz und Versandlogik.
+- Der akzeptierte Sprint-47.7-Look bleibt unverändert: weiße Labels mit Cyan-Schrift, weiße Eingabefelder mit feiner Cyan-Kontur, aktive Tabs vollflächig Cyan.
+- Die Bottom-Navigation bleibt unverändert.
+- Keine neue Preislogik, keine Persistenzänderung und keine echte Kalkulationsberechnung; Sprint 48 ist eine fachliche Feldbereinigung.
+
+Build-Prüfung: `npm run build`.

@@ -50,8 +50,19 @@ type CalculationDraft = {
   customerOrderNumber: string;
   orderType: string;
   dataStatus: string;
+  printFileName: string;
+  printFileVersion: string;
+  printFileLocation: string;
+  printDataCheck: string;
+  approvalStatus: string;
+  proofRequirement: string;
   overdeliveryRule: string;
   partialDeliveries: string;
+  shippingMethod: string;
+  packagingPlan: string;
+  deliveryTimeWindow: string;
+  neutralShipping: string;
+  deliveryNoteStatus: string;
   samples: string;
   customerNote: string;
   internalNote: string;
@@ -107,6 +118,8 @@ type CalculationDraft = {
   wasteMode: string;
   counterMode: string;
   productionHint: string;
+  workInstruction: string;
+  pocketExtraNote: string;
   externalSupplier: string;
   externalPrice: string;
   externalLeadTime: string;
@@ -133,6 +146,13 @@ type CalculationDraft = {
   settlementNote: string;
   commission: string;
   invoiceControl: string;
+  controlPrintData: string;
+  controlColorAccuracy: string;
+  controlFinishing: string;
+  controlQuantity: string;
+  pocketSampleStatus: string;
+  paperInvoiceStatus: string;
+  supplierInvoiceStatus: string;
   salePriceNet: string;
 };
 
@@ -189,6 +209,9 @@ const calculationPlausibilityGroups: Array<{
     title: "Druckdaten",
     helper: "Datenquelle, Beschnitt, Prüfschritte, Nutzenformat und Sorten",
     fields: [
+      "printFileName",
+      "approvalStatus",
+      "printDataCheck",
       "dataSource",
       "preflight",
       "bleedMm",
@@ -243,8 +266,12 @@ const calculationPlausibilityGroups: Array<{
       "finishingCosts",
       "packagingCosts",
       "shippingCosts",
+      "workInstruction",
+      "pocketExtraNote",
       "overdeliveryRule",
       "partialDeliveries",
+      "packagingPlan",
+      "shippingMethod",
       "samples",
     ],
   },
@@ -334,7 +361,7 @@ const requiredFieldsByTab: Record<
     "dueDate",
     "quantity",
   ],
-  "product-format": ["productKind", "productLabel", "pages", "finalFormat"],
+  "product-format": ["productKind", "productLabel", "pages", "finalFormat", "printFileName"],
   "paper-print": ["substrate", "machine", "printType"],
   finishing: [],
   external: ["externalSupplier", "externalPrice", "externalLeadTime"],
@@ -693,8 +720,19 @@ const initialDraft: CalculationDraft = {
   customerOrderNumber: "Bestellung per Mail",
   orderType: "Neuauftrag",
   dataStatus: "Daten gestellt · Prüfung offen",
+  printFileName: "wohlstandsmeister-vika.pdf",
+  printFileVersion: "V1 · 21.06.2026",
+  printFileLocation: "Druckdaten / Kundenordner",
+  printDataCheck: "Druckdaten prüfen",
+  approvalStatus: "Freigabe offen",
+  proofRequirement: "kein Proof erforderlich",
   overdeliveryRule: "keine Überlieferung",
   partialDeliveries: "keine Teillieferung",
+  shippingMethod: "Fahrer / Standardtour",
+  packagingPlan: "1 Karton · nach Sorten trennen",
+  deliveryTimeWindow: "04.06.2026 · 11:00",
+  neutralShipping: "kein Neutralversand",
+  deliveryNoteStatus: "Lieferschein erforderlich",
   samples: "2 Belegexemplare",
   customerNote: "Lieferung an Standardadresse",
   internalNote: "Daten aus PDF-Preview prüfen",
@@ -750,6 +788,8 @@ const initialDraft: CalculationDraft = {
   wasteMode: "Zuschuss aus Kalkulation",
   counterMode: "Klicks 4/4",
   productionHint: "Schön- und Widerdruck prüfen",
+  workInstruction: "Drucken, schneiden, sortenrein verpacken",
+  pocketExtraNote: "1 Karton · Sorten kennzeichnen · 2 Belege beilegen",
   externalSupplier: "Fremddruckerei auswählen",
   externalPrice: "0,00 €",
   externalLeadTime: "3–5 Arbeitstage",
@@ -776,6 +816,13 @@ const initialDraft: CalculationDraft = {
   settlementNote: "Mengen laut Auftrag",
   commission: "keine Provision",
   invoiceControl: "Lieferschein / Lieferantenrechnung prüfen",
+  controlPrintData: "Druckdaten / Freigabe prüfen",
+  controlColorAccuracy: "Farbigkeit / Maßhaltigkeit prüfen",
+  controlFinishing: "Weiterverarbeitung prüfen",
+  controlQuantity: "Menge / Stückzahl prüfen",
+  pocketSampleStatus: "Muster in Tasche",
+  paperInvoiceStatus: "Papierrechnung später",
+  supplierInvoiceStatus: "Lieferantenrechnung später",
   salePriceNet: "automatisch später",
 };
 
@@ -1191,8 +1238,8 @@ function CalculationFieldAudit() {
       title: "Bedienfluss bereinigt",
       items: [
         "Kunde, Kontakt, Adressen und Auftrag bleiben im Startreiter",
-        "Produkt, Format, Farben, Datenquelle und Auflage führen in einem Block zur Kalkulation",
-        "Papier, Maschine, Druckart und Bogeninformationen stehen vor Weiterverarbeitung",
+        "Produkt, Format, Farben, Druckdatei, Freigabe und Auflage führen in einem Block zur Kalkulation",
+        "Papierlieferant, Maschine, Druckart und Bogeninformationen stehen vor Weiterverarbeitung",
         "Fremdproduktion ist nur bei externem oder kombiniertem Produktionsweg blockierend",
         "Preise & Ergebnis bleibt Prüf- und Abschlussreiter ohne neue Preislogik",
       ],
@@ -1202,7 +1249,7 @@ function CalculationFieldAudit() {
       items: [
         "Papierpreisimport, Preisstände und Lieferantenkataloge",
         "Maschinenzeiten, Klickkosten, Zählermodus und Zuschussautomatiken",
-        "automatische Netto-/Restmengen und Sammelauftragslogik",
+        "automatische Netto-/Restmengen, Zuschuss- und Sammelauftragslogik",
         "Deckungsbeitrag, Mindestpreis, Rabattregeln und Provision",
         "Rechnungskontrolle, Persistenz, Tariflogik und Druck-PDF",
       ],
@@ -1325,7 +1372,9 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         ? `${activeFinishingCount} aktive Schritte`
         : "nur relevante Schritte",
     ],
-    ["Lieferung", draft.deliveryAddress],
+    ["Arbeitsanweisung", draft.workInstruction],
+    ["Zusatz", draft.pocketExtraNote],
+    ["Lieferung", `${draft.shippingMethod} · ${draft.packagingPlan}`],
   ];
 
   const updateDraft = (field: keyof CalculationDraft) => (value: string) => {
@@ -1399,9 +1448,9 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
               <p className="pp-eyebrow">Auftragstaschen-Design</p>
               <h2>Kalkulation</h2>
               <p className="pp-calculation-intro-copy">
-                Eingabemaske für produktionsrelevante Kalkulationsdaten. Die
-                Werte werden später kontrolliert in Auftrag und Auftragstasche
-                übernommen.
+                Eingabemaske für produktionsrelevante Kalkulationsdaten. Doppelte
+                Begriffe sind getrennt, damit die Werte sauber in Auftrag und
+                Auftragstasche übernommen werden.
               </p>
             </div>
             <aside
@@ -1589,7 +1638,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       badge="Pflicht"
                     />
                     <CalculationField
-                      label="Zuschuss"
+                      label="geplante Übermenge"
                       value={draft.overs}
                       onValueChange={updateDraft("overs")}
                       badge="optional"
@@ -1614,6 +1663,37 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       label="Teillieferungen"
                       value={draft.partialDeliveries}
                       onValueChange={updateDraft("partialDeliveries")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Versandart"
+                      value={draft.shippingMethod}
+                      onValueChange={updateDraft("shippingMethod")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Verpackung"
+                      value={draft.packagingPlan}
+                      onValueChange={updateDraft("packagingPlan")}
+                      badge="optional"
+                      wide
+                    />
+                    <CalculationField
+                      label="Lieferzeit / Tour"
+                      value={draft.deliveryTimeWindow}
+                      onValueChange={updateDraft("deliveryTimeWindow")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Neutralversand / Label"
+                      value={draft.neutralShipping}
+                      onValueChange={updateDraft("neutralShipping")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Lieferschein"
+                      value={draft.deliveryNoteStatus}
+                      onValueChange={updateDraft("deliveryNoteStatus")}
                       badge="optional"
                     />
                     <CalculationField
@@ -1772,6 +1852,44 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       onValueChange={updateDraft("preflight")}
                       badge="optional"
                     />
+                    <CalculationField
+                      label="Druckdatei"
+                      value={draft.printFileName}
+                      onValueChange={updateDraft("printFileName")}
+                      badge="Pflicht"
+                      wide
+                    />
+                    <CalculationField
+                      label="Dateiversion"
+                      value={draft.printFileVersion}
+                      onValueChange={updateDraft("printFileVersion")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Ablageort / Link"
+                      value={draft.printFileLocation}
+                      onValueChange={updateDraft("printFileLocation")}
+                      badge="optional"
+                      wide
+                    />
+                    <CalculationField
+                      label="Druckdaten geprüft"
+                      value={draft.printDataCheck}
+                      onValueChange={updateDraft("printDataCheck")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Freigabe"
+                      value={draft.approvalStatus}
+                      onValueChange={updateDraft("approvalStatus")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Proof / Muster"
+                      value={draft.proofRequirement}
+                      onValueChange={updateDraft("proofRequirement")}
+                      badge="optional"
+                    />
                   </div>
                 </CalculationSection>
               </>
@@ -1867,7 +1985,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       badge="optional"
                     />
                     <CalculationField
-                      label="Lieferant"
+                      label="Papierlieferant"
                       value={draft.supplier}
                       onValueChange={updateDraft("supplier")}
                       badge="optional"
@@ -1950,7 +2068,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                         badge="später"
                       />
                       <CalculationField
-                        label="Makulatur"
+                        label="Maschinenmakulatur"
                         value={draft.wasteMode}
                         onValueChange={updateDraft("wasteMode")}
                         badge="optional"
@@ -2013,6 +2131,22 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     </tbody>
                   </table>
                 </div>
+                <div className="pp-calc-input-grid pp-calc-input-grid--four pp-calc-finishing-transfer">
+                  <CalculationField
+                    label="Arbeitsanweisung"
+                    value={draft.workInstruction}
+                    onValueChange={updateDraft("workInstruction")}
+                    badge="optional"
+                    wide
+                  />
+                  <CalculationField
+                    label="Zusatz / Verpackungshinweis"
+                    value={draft.pocketExtraNote}
+                    onValueChange={updateDraft("pocketExtraNote")}
+                    badge="optional"
+                    wide
+                  />
+                </div>
               </CalculationSection>
             ) : null}
 
@@ -2023,7 +2157,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
               >
                 <div className="pp-calc-input-grid pp-calc-input-grid--four">
                   <CalculationField
-                    label="Lieferant"
+                    label="Fremdlieferant"
                     value={draft.externalSupplier}
                     onValueChange={updateDraft("externalSupplier")}
                     badge="Pflicht"
@@ -2041,7 +2175,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     badge="Pflicht"
                   />
                   <CalculationField
-                    label="Marge / Aufschlag"
+                    label="Fremdleistungs-Aufschlag"
                     value={draft.margin}
                     onValueChange={updateDraft("margin")}
                     badge="optional"
@@ -2083,13 +2217,13 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     badge="optional"
                   />
                   <CalculationField
-                    label="Weiterverarbeitung"
+                    label="WV-Anteil intern/extern"
                     value={draft.combinationPostpress}
                     onValueChange={updateDraft("combinationPostpress")}
                     badge="optional"
                   />
                   <CalculationField
-                    label="Fremdleistung"
+                    label="Fremdleistungs-Anteil"
                     value={draft.combinationExternal}
                     onValueChange={updateDraft("combinationExternal")}
                     badge="optional"
@@ -2118,13 +2252,13 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       badge="später"
                     />
                     <CalculationField
-                      label="Weiterverarbeitung"
+                      label="Weiterverarbeitungskosten"
                       value={draft.finishingCosts}
                       onValueChange={updateDraft("finishingCosts")}
                       badge="später"
                     />
                     <CalculationField
-                      label="Fremdleistung"
+                      label="Fremdkosten"
                       value={draft.externalCosts}
                       onValueChange={updateDraft("externalCosts")}
                       badge="optional"
@@ -2172,7 +2306,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       badge="später"
                     />
                     <CalculationField
-                      label="Marge"
+                      label="Gesamtmarge / DB"
                       value={draft.margin}
                       onValueChange={updateDraft("margin")}
                       badge="optional"
@@ -2208,6 +2342,48 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       onValueChange={updateDraft("invoiceControl")}
                       badge="optional"
                       wide
+                    />
+                    <CalculationField
+                      label="Kontrolle Druckdaten"
+                      value={draft.controlPrintData}
+                      onValueChange={updateDraft("controlPrintData")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Kontrolle Farbe / Maß"
+                      value={draft.controlColorAccuracy}
+                      onValueChange={updateDraft("controlColorAccuracy")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Kontrolle WV"
+                      value={draft.controlFinishing}
+                      onValueChange={updateDraft("controlFinishing")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Kontrolle Menge"
+                      value={draft.controlQuantity}
+                      onValueChange={updateDraft("controlQuantity")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Muster in Tasche"
+                      value={draft.pocketSampleStatus}
+                      onValueChange={updateDraft("pocketSampleStatus")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Papierrechnung"
+                      value={draft.paperInvoiceStatus}
+                      onValueChange={updateDraft("paperInvoiceStatus")}
+                      badge="optional"
+                    />
+                    <CalculationField
+                      label="Lieferantenrechnung"
+                      value={draft.supplierInvoiceStatus}
+                      onValueChange={updateDraft("supplierInvoiceStatus")}
+                      badge="optional"
                     />
                   </div>
                 </CalculationSection>
@@ -2290,6 +2466,8 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                 value={productionModeLabel}
               />
               <ResultLine label="Produkt" value={payload.product.label} />
+              <ResultLine label="Druckdatei" value={draft.printFileName} />
+              <ResultLine label="Freigabe" value={draft.approvalStatus} />
               <ResultLine
                 label="Nutzen"
                 value={`${result.layout.usedSlots} von ${result.layout.totalSlots}`}
@@ -2315,8 +2493,8 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             <div className="pp-calc-result-list">
               <ResultLine label="Material" value={draft.materialCosts} />
               <ResultLine label="Druck" value={draft.printCosts} />
-              <ResultLine label="Weiterverarbeitung" value={draft.finishingCosts} />
-              <ResultLine label="Fremdleistung" value={draft.externalCosts} />
+              <ResultLine label="Weiterverarbeitungskosten" value={draft.finishingCosts} />
+              <ResultLine label="Fremdkosten" value={draft.externalCosts} />
               <ResultLine label="Verkauf netto" value={draft.salePriceNet} />
             </div>
           </div>

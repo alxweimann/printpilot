@@ -20000,3 +20000,10 @@ button.pp-process-step:hover {
   color: #405674 !important;
   font-weight: 650 !important;
 }
+
+/* Sprint 48: Auftragstaschen-relevante Zusatzfelder in der Weiterverarbeitung */
+.pp-calc-finishing-transfer {
+  margin-top: 14px;
+  padding-top: 14px;
+  border-top: 1px solid rgba(0, 159, 227, 0.16);
+}

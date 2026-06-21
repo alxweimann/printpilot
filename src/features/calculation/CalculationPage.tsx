@@ -1638,7 +1638,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       badge="Pflicht"
                     />
                     <CalculationField
-                      label="geplante Übermenge"
+                      label="Geplante Übermenge"
                       value={draft.overs}
                       onValueChange={updateDraft("overs")}
                       badge="optional"
@@ -2217,7 +2217,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     badge="optional"
                   />
                   <CalculationField
-                    label="WV-Anteil intern/extern"
+                    label="Weiterverarbeitungs-Anteil intern / extern"
                     value={draft.combinationPostpress}
                     onValueChange={updateDraft("combinationPostpress")}
                     badge="optional"
@@ -2306,7 +2306,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       badge="später"
                     />
                     <CalculationField
-                      label="Gesamtmarge / DB"
+                      label="Gesamtmarge / Deckungsbeitrag"
                       value={draft.margin}
                       onValueChange={updateDraft("margin")}
                       badge="optional"
@@ -2356,7 +2356,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       badge="optional"
                     />
                     <CalculationField
-                      label="Kontrolle WV"
+                      label="Kontrolle Weiterverarbeitung"
                       value={draft.controlFinishing}
                       onValueChange={updateDraft("controlFinishing")}
                       badge="optional"

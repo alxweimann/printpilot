@@ -3511,7 +3511,7 @@ Build-Prüfung: `npm run build`.
   - **Fremdleistung** im Ergebnis heißt jetzt **Fremdkosten**.
   - **Weiterverarbeitung** im Preisbereich heißt jetzt **Weiterverarbeitungskosten**.
   - **Marge** im Fremdbereich heißt jetzt **Fremdleistungs-Aufschlag**.
-  - **Marge** im Preisabschluss heißt jetzt **Gesamtmarge / DB**.
+  - **Marge** im Preisabschluss heißt jetzt **Gesamtmarge / Deckungsbeitrag**.
   - **Zuschuss** in der Menge heißt jetzt **geplante Übermenge**.
   - **Makulatur** im Druckbereich heißt jetzt **Maschinenmakulatur**.
 - Wichtige Auftragstaschen-Felder wurden ergänzt:
@@ -3541,5 +3541,18 @@ Build-Prüfung: `npm run build`.
 - Der akzeptierte Sprint-47.7-Look bleibt unverändert: weiße Labels mit Cyan-Schrift, weiße Eingabefelder mit feiner Cyan-Kontur, aktive Tabs vollflächig Cyan.
 - Die Bottom-Navigation bleibt unverändert.
 - Keine neue Preislogik, keine Persistenzänderung und keine echte Kalkulationsberechnung; Sprint 48 ist eine fachliche Feldbereinigung.
+
+Build-Prüfung: `npm run build`.
+
+
+## Sprint 48.1 – Kalkulation: Beschriftungen vollständig sichtbar
+
+- Abgekürzte Fachlabels wurden ausgeschrieben: **WV-Anteil intern/extern** wurde zu **Weiterverarbeitungs-Anteil intern / extern**, **Gesamtmarge / DB** wurde zu **Gesamtmarge / Deckungsbeitrag** und **Kontrolle WV** wurde zu **Kontrolle Weiterverarbeitung**.
+- Die Labelspalte der Eingabemaske wurde verbreitert, damit Begriffe wie **Kalkulationsnummer** oder **Geplante Übermenge** nicht abgeschnitten werden.
+- Labeltexte dürfen innerhalb der weißen Labelzelle sauber umbrechen, statt mit Auslassungspunkten gekürzt zu werden.
+- Die kompakte Infobox im Kopf darf ihre Werte umbrechen, damit Maschinen-, Material- und Produktbezeichnungen vollständig lesbar bleiben.
+- Der akzeptierte Sprint-47.7-Look bleibt erhalten: weiße Labels mit Cyan-Schrift, weiße Eingabefelder mit feiner Cyan-Kontur, aktive Tabs vollflächig Cyan.
+- Die Bottom-Navigation bleibt unverändert.
+- Keine Kalkulationslogik, Preislogik, Datenmodell- oder Persistenzänderung.
 
 Build-Prüfung: `npm run build`.

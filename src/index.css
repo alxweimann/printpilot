@@ -20007,3 +20007,69 @@ button.pp-process-step:hover {
   padding-top: 14px;
   border-top: 1px solid rgba(0, 159, 227, 0.16);
 }
+
+
+/* Sprint 48.1 – Kalkulationsmaske: Beschriftungen vollständig ausschreiben */
+.pp-calculation-compact-info {
+  overflow: visible !important;
+}
+
+.pp-calculation-compact-info__head b,
+.pp-calculation-compact-info dd {
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+}
+
+.pp-calculation-compact-info dd {
+  line-height: 1.22 !important;
+}
+
+.pp-calc-input-field,
+.pp-calculation-tab-panel .pp-calc-input-field {
+  grid-template-columns: minmax(188px, 0.34fr) minmax(0, 1fr) !important;
+}
+
+.pp-calc-input-field span,
+.pp-calculation-tab-panel .pp-calc-input-field span {
+  align-items: center !important;
+  gap: 7px !important;
+  min-width: 0 !important;
+}
+
+.pp-calc-input-field span strong,
+.pp-calculation-tab-panel .pp-calc-input-field span strong {
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  line-height: 1.14 !important;
+}
+
+.pp-calc-input-field span em,
+.pp-calculation-tab-panel .pp-calc-input-field span em {
+  max-width: none !important;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select,
+.pp-calculation-tab-panel .pp-calc-input-field input,
+.pp-calculation-tab-panel .pp-calc-input-field select {
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+@media (max-width: 1180px) {
+  .pp-calc-input-field,
+  .pp-calculation-tab-panel .pp-calc-input-field {
+    grid-template-columns: minmax(170px, 0.38fr) minmax(0, 1fr) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-calc-input-field,
+  .pp-calculation-tab-panel .pp-calc-input-field,
+  .pp-calc-input-field--wide,
+  .pp-calculation-tab-panel .pp-calc-input-field--wide {
+    grid-template-columns: 1fr !important;
+  }
+}

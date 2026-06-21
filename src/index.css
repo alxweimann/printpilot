@@ -19468,3 +19468,209 @@ button.pp-process-step:hover {
     grid-column: auto !important;
   }
 }
+
+/* Sprint 47.3 – Kalkulationsmaske: kompakter Kopf und deutlicher erkennbare Eingabefelder */
+.pp-calculation-tabs-intro,
+.pp-calculation-form__intro {
+  grid-template-columns: minmax(0, 1fr) minmax(340px, 430px) !important;
+  align-items: stretch !important;
+  gap: 26px !important;
+  padding: 22px 22px 20px !important;
+}
+
+.pp-calculation-intro-copy {
+  max-width: 560px !important;
+  margin: 9px 0 0 !important;
+  color: var(--pp-calc-muted) !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
+  line-height: 1.35 !important;
+}
+
+.pp-calculation-compact-info {
+  align-self: stretch !important;
+  min-width: 0 !important;
+  overflow: hidden !important;
+  border: .55pt solid #c7d8ea !important;
+  border-radius: 13px !important;
+  background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%) !important;
+  box-shadow: inset 0 3px 0 var(--pp-calc-blue), 0 10px 22px rgba(12, 35, 67, .04) !important;
+}
+
+.pp-calculation-compact-info__head {
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 12px !important;
+  min-height: 36px !important;
+  padding: 9px 12px 8px !important;
+  border-bottom: .55pt solid var(--pp-calc-line) !important;
+  background: #ffffff !important;
+}
+
+.pp-calculation-compact-info__head span,
+.pp-calculation-compact-info dt {
+  color: var(--pp-calc-muted) !important;
+  font-size: 9px !important;
+  font-weight: 900 !important;
+  letter-spacing: .07em !important;
+  line-height: 1 !important;
+  text-transform: uppercase !important;
+}
+
+.pp-calculation-compact-info__head b {
+  overflow: hidden !important;
+  color: var(--pp-calc-heading) !important;
+  font-size: 17px !important;
+  font-weight: 950 !important;
+  letter-spacing: -.035em !important;
+  line-height: 1 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.pp-calculation-compact-info dl {
+  display: grid !important;
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+}
+
+.pp-calculation-compact-info dl div {
+  min-width: 0 !important;
+  padding: 9px 11px !important;
+  border-right: .35pt solid var(--pp-calc-line-soft) !important;
+  border-bottom: .35pt solid var(--pp-calc-line-soft) !important;
+}
+
+.pp-calculation-compact-info dl div:nth-child(2n) {
+  border-right: 0 !important;
+}
+
+.pp-calculation-compact-info dt,
+.pp-calculation-compact-info dd {
+  min-width: 0 !important;
+  margin: 0 !important;
+}
+
+.pp-calculation-compact-info dd {
+  margin-top: 4px !important;
+  overflow: hidden !important;
+  color: var(--pp-calc-ink) !important;
+  font-size: 12px !important;
+  font-weight: 820 !important;
+  letter-spacing: -.015em !important;
+  line-height: 1.16 !important;
+  text-overflow: ellipsis !important;
+  white-space: nowrap !important;
+}
+
+.pp-calculation-north-star,
+.pp-calculation-quick-head {
+  display: none !important;
+}
+
+.pp-calculation-tabs {
+  margin-top: 16px !important;
+}
+
+.pp-calc-input-field,
+.pp-calculation-tab-panel .pp-calc-input-field {
+  min-height: 50px !important;
+  background: #ffffff !important;
+}
+
+.pp-calc-input-field span,
+.pp-calculation-tab-panel .pp-calc-input-field span {
+  background: #f3f7fb !important;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select,
+.pp-calculation-tab-panel .pp-calc-input-field input,
+.pp-calculation-tab-panel .pp-calc-input-field select {
+  align-self: center !important;
+  width: calc(100% - 16px) !important;
+  min-height: 34px !important;
+  margin: 7px 8px !important;
+  padding: 8px 10px !important;
+  border: .55pt solid #c7d5e5 !important;
+  border-radius: 8px !important;
+  background: #f6f8fb !important;
+  color: var(--pp-calc-ink) !important;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, .88) !important;
+}
+
+.pp-calc-input-field input:not(:read-only),
+.pp-calc-input-field select:not(:disabled),
+.pp-calculation-tab-panel .pp-calc-input-field input:not(:read-only),
+.pp-calculation-tab-panel .pp-calc-input-field select:not(:disabled) {
+  border-color: #b8cadc !important;
+  background: #f4f7fa !important;
+}
+
+.pp-calc-input-field input:read-only,
+.pp-calc-input-field select:disabled,
+.pp-calculation-tab-panel .pp-calc-input-field input:read-only,
+.pp-calculation-tab-panel .pp-calc-input-field select:disabled {
+  border-color: #dde6ef !important;
+  background: #f8fafc !important;
+  color: #50627a !important;
+}
+
+.pp-calc-input-field input:not(:read-only):hover,
+.pp-calc-input-field select:not(:disabled):hover,
+.pp-calculation-tab-panel .pp-calc-input-field input:not(:read-only):hover,
+.pp-calculation-tab-panel .pp-calc-input-field select:not(:disabled):hover {
+  border-color: #91b7dc !important;
+  background: #eef6ff !important;
+}
+
+.pp-calc-input-field input:not(:read-only):focus,
+.pp-calc-input-field select:not(:disabled):focus,
+.pp-calc-finishing-table input[type="text"]:focus,
+.pp-calc-finishing-table td input:not([type="checkbox"]):focus {
+  border-color: var(--pp-calc-blue) !important;
+  background: #ffffff !important;
+  box-shadow: 0 0 0 3px rgba(0, 162, 220, .12), inset 0 1px 0 rgba(255, 255, 255, .88) !important;
+}
+
+.pp-calc-input-field:focus-within,
+.pp-calculation-tab-panel .pp-calc-input-field:focus-within {
+  box-shadow: inset 3px 0 0 var(--pp-calc-blue) !important;
+}
+
+.pp-calc-finishing-table td input:not([type="checkbox"]) {
+  border-color: #c7d5e5 !important;
+  background: #f6f8fb !important;
+  border-radius: 8px !important;
+}
+
+@media (max-width: 1180px) {
+  .pp-calculation-tabs-intro,
+  .pp-calculation-form__intro {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pp-calculation-compact-info dl {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-calculation-compact-info dl {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pp-calculation-compact-info dl div {
+    border-right: 0 !important;
+  }
+
+  .pp-calc-input-field input,
+  .pp-calc-input-field select,
+  .pp-calculation-tab-panel .pp-calc-input-field input,
+  .pp-calculation-tab-panel .pp-calc-input-field select {
+    width: calc(100% - 14px) !important;
+    margin: 7px !important;
+  }
+}

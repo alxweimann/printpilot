@@ -1306,37 +1306,13 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   const sheetCount = result.production.sheetsRequired
     ? formatNumber(result.production.sheetsRequired)
     : "offen";
-  const northStarCards = [
-    {
-      label: "Kalkulation",
-      value: "Daten erfassen",
-      helper: "Produkt, Material, Druck, Weiterverarbeitung und Preis",
-    },
-    {
-      label: "Auftrag",
-      value: canCreateOrderDraft
-        ? "erzeugbar"
-        : `${openRequiredFields} Pflichtfelder offen`,
-      helper: "Kunde, Termin und Produktionsweg werden geprüft",
-    },
-    {
-      label: "Auftragstasche",
-      value: "wird vorbereitet",
-      helper: "Nur produktionsrelevante Daten sollen später übernommen werden",
-    },
-    {
-      label: "Produktion",
-      value: `${activeFinishingCount} aktive WV-Schritte`,
-      helper: `${draft.machine} · ${draft.dueDate}`,
-    },
-  ];
-  const calculationCoreCards = [
-    ["Kunde", draft.customer, draft.contactEmail],
-    ["Produkt", payload.product.label, `${draft.pages} · ${draft.colorMode}`],
-    ["Auflage", `${formatNumber(payload.product.quantity)} Stück`, `${sheetCount} Bogen`],
-    ["Material", draft.substrate, `${draft.grammage} · ${draft.sheetFormat}`],
-    ["Maschine", draft.machine, draft.printType],
-    ["Termin", draft.dueDate, draft.dataStatus],
+  const calculationInfoRows = [
+    ["Kunde", draft.customer],
+    ["Produkt", payload.product.label],
+    ["Auflage", `${formatNumber(payload.product.quantity)} Stück · ${sheetCount} Bogen`],
+    ["Termin", draft.dueDate],
+    ["Material", `${draft.substrate} · ${draft.grammage}`],
+    ["Maschine", `${draft.machine} · ${draft.printType}`],
   ];
   const orderPocketPreviewRows = [
     ["Kunde", `${draft.customer} · ${draft.contactName}`],
@@ -1422,42 +1398,29 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             <div>
               <p className="pp-eyebrow">Auftragstaschen-Design</p>
               <h2>Kalkulation</h2>
+              <p className="pp-calculation-intro-copy">
+                Eingabemaske für produktionsrelevante Kalkulationsdaten. Die
+                Werte werden später kontrolliert in Auftrag und Auftragstasche
+                übernommen.
+              </p>
             </div>
-            <div
-              className="pp-calculation-form__meta"
-              aria-label="Kalkulationsstatus"
+            <aside
+              className="pp-calculation-compact-info"
+              aria-label="Wichtigste Kalkulationsdaten"
             >
-              <span>{payload.calculationId ?? "CALC"}</span>
-              <b>{draft.customer}</b>
-              <small>{formatNumber(payload.product.quantity)} Stück</small>
-            </div>
-          </div>
-
-          <div
-            className="pp-calculation-north-star"
-            aria-label="PrintPilot Produktionsfluss"
-          >
-            {northStarCards.map((card, index) => (
-              <article key={card.label}>
-                <span>{String(index + 1).padStart(2, "0")}</span>
-                <b>{card.label}</b>
-                <strong>{card.value}</strong>
-                <small>{card.helper}</small>
-              </article>
-            ))}
-          </div>
-
-          <div
-            className="pp-calculation-quick-head"
-            aria-label="Kalkulationskopf"
-          >
-            {calculationCoreCards.map(([label, value, helper]) => (
-              <div key={label}>
-                <span>{label}</span>
-                <b>{value}</b>
-                <small>{helper}</small>
+              <div className="pp-calculation-compact-info__head">
+                <span>Demo-Kalkulation</span>
+                <b>{payload.calculationId ?? "CALC"}</b>
               </div>
-            ))}
+              <dl>
+                {calculationInfoRows.map(([label, value]) => (
+                  <div key={label}>
+                    <dt>{label}</dt>
+                    <dd>{value}</dd>
+                  </div>
+                ))}
+              </dl>
+            </aside>
           </div>
 
           <nav

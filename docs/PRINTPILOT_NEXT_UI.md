@@ -3445,3 +3445,14 @@ Ziel bleibt: Die Kalkulationsmaske soll produktiv bedienbar sein und sich optisc
 - Die bisherige rechte Ergebnis-Spalte wurde in einen vollbreiten Produktionskern unterhalb der Eingabemaske überführt.
 - Die Statusleiste ist nicht mehr sticky über den Eingabefeldern, damit die Bottom-Navigation keine Inhalte verdeckt.
 - Ergebnis, Nutzenplan, Preisabschluss und Auftragstaschen-Übergabe nutzen dieselbe Panel-Logik wie die gedruckte Auftragstasche.
+
+### Sprint 47.3 – Kalkulationsmaske: Kopf reduzieren und Eingabefelder schärfen
+
+- Die zwei oberen Infozeilen unter dem Kalkulationskopf wurden entfernt, weil sie in der Arbeitsmaske redundant waren.
+- Stattdessen steht rechts im Kopf eine kompakte Infobox mit den wichtigsten Kalkulationsdaten: Kunde, Produkt, Auflage/Bogen, Termin, Material und Maschine.
+- Die Reiter rücken dadurch direkt unter den Kopf und die eigentliche Eingabe beginnt schneller.
+- Eingabefelder wurden deutlicher als bearbeitbare Felder gezeichnet: leicht grauer Feldhintergrund, dezente Innenkontur, Hover- und Fokuszustand mit PrintPilot-Blau.
+- Labelzellen bleiben ruhig und sachlich, damit die Maske weiter an die Auftragstaschen-Logik angelehnt ist und nicht zurück in eine schwere ERP-Tabellenoptik fällt.
+- Die Änderung betrifft nur Layout/Design. Keine neue Kalkulationslogik, keine Preislogik und keine Persistenzänderung.
+
+Build-Prüfung: `npm run build`.

@@ -20643,3 +20643,202 @@ button.pp-process-step:hover {
     border-right: 0 !important;
   }
 }
+
+/* Sprint 49.2 – Anwenderorientierte Übergabeprüfung statt technischer Mapping-Tabelle */
+.pp-calculation-handoff-check {
+  margin-top: 14px;
+  border: .55pt solid var(--pp-calc-line);
+  border-radius: 18px;
+  background: #ffffff;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(6, 26, 52, .04);
+}
+
+.pp-calculation-handoff-check__head {
+  display: grid;
+  gap: 4px;
+  padding: 15px 17px;
+  border-bottom: .55pt solid var(--pp-calc-line);
+  background: linear-gradient(180deg, #ffffff 0%, #f9fdff 100%);
+}
+
+.pp-calculation-handoff-check__head span {
+  color: var(--pp-calc-blue);
+  font-size: 11px;
+  font-weight: 820;
+  letter-spacing: .055em;
+  text-transform: uppercase;
+}
+
+.pp-calculation-handoff-check__head b {
+  color: var(--pp-calc-heading);
+  font-size: 17px;
+  font-weight: 760;
+  line-height: 1.12;
+}
+
+.pp-calculation-handoff-check__head small {
+  max-width: 780px;
+  color: var(--pp-calc-muted);
+  font-size: 12px;
+  font-weight: 540;
+  line-height: 1.45;
+}
+
+.pp-calculation-handoff-check__summary {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  border-bottom: .55pt solid var(--pp-calc-line);
+}
+
+.pp-calculation-handoff-check__summary article {
+  display: grid;
+  gap: 5px;
+  min-width: 0;
+  padding: 14px 16px;
+  border-right: .55pt solid var(--pp-calc-line);
+  background: #ffffff;
+}
+
+.pp-calculation-handoff-check__summary article:last-child {
+  border-right: 0;
+}
+
+.pp-calculation-handoff-check__summary span,
+.pp-calculation-handoff-check__list span {
+  color: var(--pp-calc-blue);
+  font-size: 10.5px;
+  font-weight: 820;
+  letter-spacing: .045em;
+  text-transform: uppercase;
+}
+
+.pp-calculation-handoff-check__summary b {
+  color: var(--pp-calc-heading);
+  font-size: 15px;
+  font-weight: 780;
+  line-height: 1.14;
+}
+
+.pp-calculation-handoff-check__summary small,
+.pp-calculation-handoff-check__list small {
+  color: var(--pp-calc-muted);
+  font-size: 11.5px;
+  font-weight: 540;
+  line-height: 1.4;
+}
+
+.pp-calculation-handoff-check__list {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.pp-calculation-handoff-check__list article {
+  display: grid;
+  grid-template-columns: minmax(132px, .28fr) minmax(0, 1fr);
+  gap: 4px 14px;
+  align-items: center;
+  min-width: 0;
+  padding: 12px 16px;
+  border-right: .55pt solid var(--pp-calc-line);
+  border-bottom: .55pt solid var(--pp-calc-line);
+  background: #ffffff;
+}
+
+.pp-calculation-handoff-check__list article:nth-child(2n) {
+  border-right: 0;
+}
+
+.pp-calculation-handoff-check__list article:nth-last-child(-n + 2) {
+  border-bottom: 0;
+}
+
+.pp-calculation-handoff-check__list b {
+  color: var(--pp-calc-heading);
+  font-size: 12.8px;
+  font-weight: 760;
+  line-height: 1.18;
+}
+
+.pp-calculation-handoff-check__list small {
+  grid-column: 2;
+}
+
+.pp-calculation-handoff-check__list article.is-internal {
+  background: #fffdf8;
+}
+
+.pp-calculation-handoff-check__list article.is-internal span {
+  color: #8b5a00;
+}
+
+.pp-calculation-handoff-check--compact {
+  margin-top: 0;
+  border-radius: 16px;
+}
+
+.pp-calculation-handoff-check--compact .pp-calculation-handoff-check__head {
+  padding: 12px 14px;
+}
+
+.pp-calculation-handoff-check--compact .pp-calculation-handoff-check__head b {
+  font-size: 14px;
+}
+
+.pp-calculation-handoff-check--compact .pp-calculation-handoff-check__head small {
+  font-size: 11px;
+}
+
+.pp-calculation-handoff-check--compact .pp-calculation-handoff-check__summary {
+  grid-template-columns: 1fr;
+  border-bottom: 0;
+}
+
+.pp-calculation-handoff-check--compact .pp-calculation-handoff-check__summary article {
+  padding: 11px 13px;
+  border-right: 0;
+  border-bottom: .55pt solid var(--pp-calc-line);
+}
+
+.pp-calculation-handoff-check--compact .pp-calculation-handoff-check__summary article:last-child {
+  border-bottom: 0;
+}
+
+.pp-calculation-handoff-check--compact .pp-calculation-handoff-check__summary b {
+  font-size: 13px;
+}
+
+.pp-calculation-handoff-check--compact .pp-calculation-handoff-check__summary small {
+  font-size: 10.8px;
+}
+
+@media (max-width: 1120px) {
+  .pp-calculation-handoff-check__summary,
+  .pp-calculation-handoff-check__list {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-calculation-handoff-check__summary article,
+  .pp-calculation-handoff-check__list article,
+  .pp-calculation-handoff-check__list article:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .pp-calculation-handoff-check__list article:nth-last-child(-n + 2) {
+    border-bottom: .55pt solid var(--pp-calc-line);
+  }
+
+  .pp-calculation-handoff-check__list article:last-child {
+    border-bottom: 0;
+  }
+}
+
+@media (max-width: 720px) {
+  .pp-calculation-handoff-check__list article {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-calculation-handoff-check__list small {
+    grid-column: auto;
+  }
+}

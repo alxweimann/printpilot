@@ -3617,3 +3617,12 @@ Wichtiges Pattern:
 - Detail-Mapping nur im Reiter `Preise & Ergebnis`
 - Produktionskern nur als kompakte Übersicht
 - Auftragstasche bleibt Produktionsdokument, keine Preis- oder Kalkulationsübersicht
+
+## Sprint 49.2 – Datenübergabe anwenderorientiert darstellen
+
+- Die technische Datenübergabe-Tabelle wurde aus der sichtbaren Arbeitsmaske entfernt.
+- Benutzer sehen im Reiter **Preise & Ergebnis** nur noch eine einfache Übergabeprüfung: Status, enthaltene Produktionsbereiche und interne Bereiche, die nicht auf die Auftragstasche gehören.
+- Die Detailzuordnung Kalkulation → Auftrag → Auftragstasche bleibt fachlich dokumentiert und kann später intern/administrativ genutzt werden.
+- Preis-, Kosten-, Rabatt-, Margen- und Deckungsbeitragswerte bleiben ausdrücklich interne Kalkulationsdaten und werden nicht auf der Auftragstasche ausgegeben.
+- Der akzeptierte Sprint-47.7-Eingabemasken-Look bleibt erhalten: weißer Hintergrund, aktive Tabs vollflächig Cyan, weiße Eingabefelder mit sehr feiner Cyan-Umrandung, Label-Felder weiß mit Cyan-Schrift.
+- Die Bottom-Navigation wurde nicht verändert.

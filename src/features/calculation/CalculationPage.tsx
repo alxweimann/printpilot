@@ -1523,80 +1523,95 @@ function CalculationTransferMapping({
   groups: CalculationTransferGroup[];
   compact?: boolean;
 }) {
-  const visibleGroups = compact ? groups.slice(0, 8) : groups;
+  const orderPocketLabel = getTransferKindLabel("order-pocket");
+  const internalLabel = getTransferKindLabel("calculation-internal");
+  const orderPocketGroupCount = groups.filter((group) =>
+    group.rows.some((row) => row.kind === "order-pocket"),
+  ).length;
+  const internalGroupCount = groups.filter((group) =>
+    group.rows.some((row) => row.kind === "calculation-internal"),
+  ).length;
 
-  const compactGroupItems = visibleGroups.map((group) => {
-    const orderPocketCount = group.rows.filter(
-      (row) => row.kind === "order-pocket",
-    ).length;
-    const internalCount = group.rows.length - orderPocketCount;
-
-    return {
-      title: group.title,
-      helper: group.helper,
-      orderPocketCount,
-      internalCount,
-    };
-  });
+  const readinessItems = [
+    {
+      title: "Kundendaten",
+      value: "Kunde, Ansprechpartner und Lieferadresse vorhanden",
+    },
+    {
+      title: "Produktionsdaten",
+      value: "Produkt, Auflage, Format, Material und Maschine definiert",
+    },
+    {
+      title: "Druckdaten",
+      value: "Datei, Datenprüfung, Freigabe und Korrekturstatus vorbereitet",
+    },
+    {
+      title: "Weiterverarbeitung",
+      value: "Leistungen, Arbeitsanweisung und Zusatz sind übergabefähig",
+    },
+    {
+      title: "Lieferung",
+      value: "Termin, Versandart, Verpackung und Teillieferung sind gesetzt",
+    },
+    {
+      title: "Kontrolle",
+      value: "Prüfpunkte für Druck, Weiterverarbeitung, Menge und Belege angelegt",
+    },
+  ];
 
   return (
     <div
       className={
         compact
-          ? "pp-calculation-transfer-map pp-calculation-transfer-map--compact"
-          : "pp-calculation-transfer-map"
+          ? "pp-calculation-handoff-check pp-calculation-handoff-check--compact"
+          : "pp-calculation-handoff-check"
       }
-      aria-label="Mapping von Kalkulation zur Auftragstasche"
+      aria-label="Übergabeprüfung für Auftrag und Auftragstasche"
     >
-      <div className="pp-calculation-transfer-map__head">
-        <span>Datenübergabe</span>
-        <b>Kalkulation → Auftrag → Auftragstasche</b>
+      <div className="pp-calculation-handoff-check__head">
+        <span>Übergabeprüfung</span>
+        <b>Bereit für Auftrag und Auftragstasche</b>
         <small>
-          Produktionsrelevante Daten gehen in die Auftragstasche. Preis- und
-          Kalkulationswerte bleiben intern.
+          Der Benutzer sieht nur den Übergabestatus. Die genaue Feldzuordnung
+          bleibt intern dokumentiert.
         </small>
       </div>
 
-      {compact ? (
-        <div className="pp-calculation-transfer-map__compact-list">
-          {compactGroupItems.map((group) => (
-            <article key={group.title}>
-              <h3>{group.title}</h3>
-              <p>{group.helper}</p>
-              <div>
-                <span>{group.orderPocketCount} Auftragstasche</span>
-                {group.internalCount > 0 ? (
-                  <span>{group.internalCount} intern</span>
-                ) : null}
-              </div>
+      <div className="pp-calculation-handoff-check__summary">
+        <article>
+          <span>Status</span>
+          <b>übergabefähig</b>
+          <small>Kalkulation kann in einen Auftragsentwurf überführt werden.</small>
+        </article>
+        <article>
+          <span>Enthalten</span>
+          <b>{orderPocketGroupCount} Produktionsbereiche</b>
+          <small>Kunde, Produkt, Druck, Material, Weiterverarbeitung und Lieferung.</small>
+        </article>
+        <article>
+          <span>Nicht auf der Auftragstasche</span>
+          <b>{internalGroupCount} interne Bereiche</b>
+          <small>Preise, Kosten, Margen und reine Kalkulationswerte bleiben intern.</small>
+        </article>
+      </div>
+
+      {compact ? null : (
+        <div className="pp-calculation-handoff-check__list">
+          {readinessItems.map((item) => (
+            <article key={item.title}>
+              <span>{orderPocketLabel}</span>
+              <b>{item.title}</b>
+              <small>{item.value}</small>
             </article>
           ))}
-        </div>
-      ) : (
-        <div className="pp-calculation-transfer-map__grid">
-          {visibleGroups.map((group) => (
-            <article key={group.title}>
-              <header>
-                <h3>{group.title}</h3>
-                <p>{group.helper}</p>
-              </header>
-              <div className="pp-calculation-transfer-map__rows">
-                {group.rows.map((row) => (
-                  <div key={`${group.title}-${row.label}`}>
-                    <span
-                      className={`pp-transfer-kind pp-transfer-kind--${row.kind}`}
-                    >
-                      {getTransferKindLabel(row.kind)}
-                    </span>
-                    <b>{row.label}</b>
-                    <small>Quelle: {row.source}</small>
-                    <strong>{row.value}</strong>
-                    <em>Ziel: {row.target}</em>
-                  </div>
-                ))}
-              </div>
-            </article>
-          ))}
+          <article className="is-internal">
+            <span>{internalLabel}</span>
+            <b>Preis- und Kalkulationswerte</b>
+            <small>
+              Verkaufspreis, Kostenblöcke, Marge, Rabatt und Deckungsbeitrag
+              werden nicht auf die Auftragstasche übernommen.
+            </small>
+          </article>
         </div>
       )}
     </div>

@@ -1087,6 +1087,66 @@ function getOfferMaterialLabel(draft: CalculationDraft) {
   return `${substrate} · ${grammage}`;
 }
 
+
+function isDocumentPlaceholderValue(value: string) {
+  const normalized = value.trim().toLowerCase();
+
+  if (!normalized) {
+    return true;
+  }
+
+  return (
+    normalized.includes("später") ||
+    normalized.includes("platzhalter") ||
+    normalized.includes("placeholder") ||
+    normalized === "firmenlogo" ||
+    normalized === "logo"
+  );
+}
+
+function getDocumentValueOrEmpty(value: string) {
+  return isDocumentPlaceholderValue(value) ? "" : value.trim();
+}
+
+function getOfferDocumentLogo(draft: CalculationDraft) {
+  const label = getDocumentValueOrEmpty(draft.documentLogoLabel);
+
+  if (!label) {
+    return null;
+  }
+
+  return {
+    label,
+    hint: getDocumentValueOrEmpty(draft.documentLogoHint),
+  };
+}
+
+function getOfferVatIdLabel(draft: CalculationDraft) {
+  const vatId = getDocumentValueOrEmpty(draft.senderVatId);
+
+  if (!vatId) {
+    return "";
+  }
+
+  return /ust|umsatzsteuer/i.test(vatId) ? vatId : `USt-ID ${vatId}`;
+}
+
+function getOfferTaxNumberLabel(draft: CalculationDraft) {
+  const taxNumber = getDocumentValueOrEmpty(draft.senderTaxNumber);
+
+  if (!taxNumber) {
+    return "";
+  }
+
+  return /steuer/i.test(taxNumber) ? taxNumber : `Steuernummer ${taxNumber}`;
+}
+
+function getOfferFooterMeta(draft: CalculationDraft) {
+  return [getOfferVatIdLabel(draft), getOfferTaxNumberLabel(draft), draft.offerId]
+    .filter(Boolean)
+    .join(" · ");
+}
+
 function getOfferSubject(draft: CalculationDraft) {
   return `Angebot ${draft.offerId} - ${draft.projectName}`;
 }
@@ -1237,6 +1297,10 @@ function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
         align-items: flex-start;
         gap: 5mm;
         min-width: 0;
+      }
+
+      .pp-offer-document__sender--without-logo {
+        gap: 0;
       }
 
       .pp-offer-document__sender p {
@@ -1508,7 +1572,19 @@ function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
 
       .pp-offer-document__footer span {
         min-width: 0;
-        overflow-wrap: anywhere;
+        overflow-wrap: normal;
+        word-break: normal;
+        hyphens: none;
+      }
+
+      .pp-offer-document__footer-main {
+        flex: 1 1 auto;
+      }
+
+      .pp-offer-document__footer-contact,
+      .pp-offer-document__footer-meta {
+        flex: 0 0 auto;
+        white-space: nowrap;
       }
 
       @media print {
@@ -1541,6 +1617,8 @@ function CalculationOfferDocument({
   const offerTitle = getOfferTitle(draft, payload);
   const materialLabel = getOfferMaterialLabel(draft);
   const scopeAndColorLabel = getOfferScopeAndColorLabel(draft);
+  const documentLogo = getOfferDocumentLogo(draft);
+  const footerMeta = getOfferFooterMeta(draft);
   const offerRows = [
     ["Produkt", draft.productLabel],
     ["Auflage", getOfferQuantityLabel(payload)],
@@ -1553,11 +1631,19 @@ function CalculationOfferDocument({
   return (
     <article className="pp-print-offer-document" aria-label="Angebot PDF-Vorschau">
       <header className="pp-offer-document__header">
-        <div className="pp-offer-document__sender">
-          <div className="pp-document-company-logo" aria-label="Firmenlogo Platzhalter">
-            <span>{draft.documentLogoLabel}</span>
-            <small>{draft.documentLogoHint}</small>
-          </div>
+        <div
+          className={
+            documentLogo
+              ? "pp-offer-document__sender"
+              : "pp-offer-document__sender pp-offer-document__sender--without-logo"
+          }
+        >
+          {documentLogo ? (
+            <div className="pp-document-company-logo" aria-label="Firmenlogo">
+              <span>{documentLogo.label}</span>
+              {documentLogo.hint ? <small>{documentLogo.hint}</small> : null}
+            </div>
+          ) : null}
           <p>
             <strong>{draft.senderCompany}</strong>
             <span>{draft.senderAddress}</span>
@@ -1692,9 +1778,13 @@ function CalculationOfferDocument({
       </section>
 
       <footer className="pp-offer-document__footer">
-        <span>{draft.senderCompany} · {draft.senderAddress}</span>
-        <span>{draft.senderPhone} · {draft.senderEmail}</span>
-        <span>{draft.senderVatId} · {draft.offerId}</span>
+        <span className="pp-offer-document__footer-main">
+          {draft.senderCompany} · {draft.senderAddress}
+        </span>
+        <span className="pp-offer-document__footer-contact">
+          {draft.senderPhone} · {draft.senderEmail}
+        </span>
+        <span className="pp-offer-document__footer-meta">{footerMeta}</span>
       </footer>
     </article>
   );

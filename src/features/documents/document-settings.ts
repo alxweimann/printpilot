@@ -40,11 +40,11 @@ export const demoDocumentSettings: DocumentSettings = {
     phone: "06222 / 123456",
     email: "angebot@printpilot-demo.de",
     website: "www.printpilot-demo.de",
-    taxNumber: "Steuernummer später",
-    vatId: "USt-ID später",
-    bankName: "Hausbank später",
-    iban: "IBAN später",
-    bic: "BIC später",
+    taxNumber: "",
+    vatId: "",
+    bankName: "",
+    iban: "",
+    bic: "",
   },
   defaults: {
     paymentTerms: "zahlbar innerhalb von 14 Tagen ohne Abzug",
@@ -55,8 +55,8 @@ export const demoDocumentSettings: DocumentSettings = {
   },
   branding: {
     mode: "placeholder",
-    logoLabel: "Firmenlogo",
-    logoHint: "später aus Dokumenteinstellungen",
+    logoLabel: "",
+    logoHint: "",
   },
 };
 

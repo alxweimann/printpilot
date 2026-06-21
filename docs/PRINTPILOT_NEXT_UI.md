@@ -3768,3 +3768,20 @@ Build-Prüfung: `npm run build`.
 - Noch nicht enthalten: echter Logo-Upload, Persistenz der Dokumenteneinstellungen, Mandantenfähigkeit, Server-PDF-Erzeugung oder automatische E-Mail-Anhänge. Sprint 51 bereitet die Stammdatenstruktur und die spätere Einstellungsmaske vor.
 
 Build-Prüfung: `npm run build`.
+
+## Sprint 51.1 – Dokumentenplatzhalter und Footer kundentauglich bereinigen
+
+- Der PDF-Test aus Sprint 51 zeigte, dass vorbereitete Platzhalterwerte zu sichtbar im Kundendokument standen, insbesondere `FIRMENLOGO später aus Dokumenteinstellungen` und `USt-ID später`.
+- Platzhalterwerte mit `später`, `Platzhalter`, `placeholder`, `Firmenlogo` oder leeren Werten werden im Angebots-PDF jetzt nicht mehr ausgegeben.
+- Wenn noch kein echtes Firmenlogo beziehungsweise kein echter Logo-Wert gepflegt ist, wird der Logo-Platzhalter im Kundendokument ausgeblendet. Die Absenderdaten bleiben sauber im Kopf sichtbar.
+- Umsatzsteuer-ID und Steuernummer werden nur noch im Footer angezeigt, wenn echte Werte gepflegt sind. Reine Vorbereitungswerte erscheinen nicht mehr auf dem PDF.
+- Die Demo-Dokumentenstammdaten enthalten für Steuernummer, Umsatzsteuer-ID, Bank, IBAN, BIC und Logo-Hinweis keine druckbaren `später`-Platzhalter mehr.
+- Der Angebotsfooter wurde stabilisiert:
+  - E-Mail-Adresse wird nicht mehr mitten im Wort getrennt,
+  - Angebotsnummer bleibt zusammen,
+  - Steuer-/Umsatzsteuerangaben erscheinen nur bei echten Werten,
+  - Firmenzeile darf bei Bedarf sauber umbrechen.
+- Die Bottom-Navigation wurde nicht verändert.
+- Keine Persistenz, kein echter Logo-Upload und keine Server-PDF-Erzeugung; Sprint 51.1 bereinigt ausschließlich die Kundendokument-Ausgabe und die Demo-Stammdaten.
+
+Build-Hinweis: In dieser Umgebung konnte `npm run build` nicht vollständig ausgeführt werden, weil die aus dem ZIP ausgeschlossenen `node_modules` fehlen. Bitte lokal nach dem Einspielen mit installiertem Projektstand wie gewohnt prüfen.

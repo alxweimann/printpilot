@@ -20987,6 +20987,10 @@ button.pp-process-step:hover {
   min-width: 0;
 }
 
+.pp-offer-document__sender--without-logo {
+  gap: 0;
+}
+
 .pp-offer-document__sender p {
   display: grid;
   gap: 2px;
@@ -21230,7 +21234,19 @@ button.pp-process-step:hover {
 
 .pp-offer-document__footer span {
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+
+.pp-offer-document__footer-main {
+  flex: 1 1 auto;
+}
+
+.pp-offer-document__footer-contact,
+.pp-offer-document__footer-meta {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }
 
 @media (max-width: 1180px) {
@@ -21470,4 +21486,31 @@ button.pp-process-step:hover {
 
 .pp-offer-document__footer span:last-child {
   text-align: right;
+}
+
+
+/* Sprint 51.1 – Kundendokumente ohne Platzhaltertext und mit stabilem Footer */
+.pp-offer-document__sender--without-logo {
+  gap: 0;
+}
+
+.pp-offer-document__footer {
+  align-items: flex-start;
+}
+
+.pp-offer-document__footer span {
+  overflow-wrap: normal;
+  word-break: normal;
+  hyphens: none;
+}
+
+.pp-offer-document__footer-main {
+  flex: 1 1 auto;
+  min-width: 0;
+}
+
+.pp-offer-document__footer-contact,
+.pp-offer-document__footer-meta {
+  flex: 0 0 auto;
+  white-space: nowrap;
 }

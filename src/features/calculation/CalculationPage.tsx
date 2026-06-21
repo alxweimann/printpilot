@@ -1420,8 +1420,8 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         >
           <div className="pp-calculation-form__intro pp-calculation-tabs-intro">
             <div>
-              <p className="pp-eyebrow">Sprint 47 · Designübertragung</p>
-              <h2>Kalkulation als Produktionsmaske</h2>
+              <p className="pp-eyebrow">Auftragstaschen-Design</p>
+              <h2>Kalkulation</h2>
             </div>
             <div
               className="pp-calculation-form__meta"
@@ -2314,7 +2314,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           <div className="pp-calculation-result-panel__head">
             <p className="pp-eyebrow">Ergebnis & Auftragstasche</p>
             <h2>Produktionskern</h2>
-            <span>Bleibt beim Erfassen sichtbar und zeigt, was später in die Auftragstasche wandert.</span>
+            <span>Gleiche Struktur wie die Auftragstasche: Produktionsdaten, Nutzenplan, Kosten und Übergabe.</span>
           </div>
 
           <CalculationSheetPreview payload={payload} />

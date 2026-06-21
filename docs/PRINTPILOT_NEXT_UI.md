@@ -3430,3 +3430,18 @@ Korrekturen:
 - Sticky-Höhe des Ergebnisbereichs berücksichtigt die Bottom-Navigation, damit keine Inhalte darunter verschwinden.
 
 Ziel bleibt: Die Kalkulationsmaske soll produktiv bedienbar sein und sich optisch an der finalen Auftragstasche orientieren, ohne auf normalen Monitoren rechts zu zerbrechen.
+
+### Sprint 47.2 – Kalkulationsmaske konsequent an Auftragstasche angleichen
+
+- Sprint 47/47.1 wurde optisch korrigiert: Die Kalkulationsmaske darf nicht wie eine klassische MIS-/ERP-Eingabetabelle wirken.
+- Eingabemasken orientieren sich ab Sprint 47.2 an der eingefrorenen Auftragstasche aus Sprint 46.61:
+  - weiße Panels,
+  - feine blaue/hellgraue Linien,
+  - klare Label-Wert-Zeilen,
+  - keine harten grauen Tabellenköpfe,
+  - keine gequetschte rechte Ergebnis-Spalte,
+  - ruhige sachliche Typografie,
+  - Produktionsdaten stehen im Vordergrund.
+- Die bisherige rechte Ergebnis-Spalte wurde in einen vollbreiten Produktionskern unterhalb der Eingabemaske überführt.
+- Die Statusleiste ist nicht mehr sticky über den Eingabefeldern, damit die Bottom-Navigation keine Inhalte verdeckt.
+- Ergebnis, Nutzenplan, Preisabschluss und Auftragstaschen-Übergabe nutzen dieselbe Panel-Logik wie die gedruckte Auftragstasche.

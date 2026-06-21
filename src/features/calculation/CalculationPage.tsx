@@ -1525,6 +1525,20 @@ function CalculationTransferMapping({
 }) {
   const visibleGroups = compact ? groups.slice(0, 8) : groups;
 
+  const compactGroupItems = visibleGroups.map((group) => {
+    const orderPocketCount = group.rows.filter(
+      (row) => row.kind === "order-pocket",
+    ).length;
+    const internalCount = group.rows.length - orderPocketCount;
+
+    return {
+      title: group.title,
+      helper: group.helper,
+      orderPocketCount,
+      internalCount,
+    };
+  });
+
   return (
     <div
       className={
@@ -1538,35 +1552,53 @@ function CalculationTransferMapping({
         <span>Datenübergabe</span>
         <b>Kalkulation → Auftrag → Auftragstasche</b>
         <small>
-          Produktionsrelevante Daten gehen in die Auftragstasche. Preisdaten
-          bleiben intern in der Kalkulation.
+          Produktionsrelevante Daten gehen in die Auftragstasche. Preis- und
+          Kalkulationswerte bleiben intern.
         </small>
       </div>
-      <div className="pp-calculation-transfer-map__grid">
-        {visibleGroups.map((group) => (
-          <article key={group.title}>
-            <header>
+
+      {compact ? (
+        <div className="pp-calculation-transfer-map__compact-list">
+          {compactGroupItems.map((group) => (
+            <article key={group.title}>
               <h3>{group.title}</h3>
               <p>{group.helper}</p>
-            </header>
-            <div className="pp-calculation-transfer-map__rows">
-              {group.rows.map((row) => (
-                <div key={`${group.title}-${row.label}`}>
-                  <span
-                    className={`pp-transfer-kind pp-transfer-kind--${row.kind}`}
-                  >
-                    {getTransferKindLabel(row.kind)}
-                  </span>
-                  <b>{row.label}</b>
-                  <small>{row.source}</small>
-                  <strong>{row.value}</strong>
-                  {!compact ? <em>{row.target}</em> : null}
-                </div>
-              ))}
-            </div>
-          </article>
-        ))}
-      </div>
+              <div>
+                <span>{group.orderPocketCount} Auftragstasche</span>
+                {group.internalCount > 0 ? (
+                  <span>{group.internalCount} intern</span>
+                ) : null}
+              </div>
+            </article>
+          ))}
+        </div>
+      ) : (
+        <div className="pp-calculation-transfer-map__grid">
+          {visibleGroups.map((group) => (
+            <article key={group.title}>
+              <header>
+                <h3>{group.title}</h3>
+                <p>{group.helper}</p>
+              </header>
+              <div className="pp-calculation-transfer-map__rows">
+                {group.rows.map((row) => (
+                  <div key={`${group.title}-${row.label}`}>
+                    <span
+                      className={`pp-transfer-kind pp-transfer-kind--${row.kind}`}
+                    >
+                      {getTransferKindLabel(row.kind)}
+                    </span>
+                    <b>{row.label}</b>
+                    <small>Quelle: {row.source}</small>
+                    <strong>{row.value}</strong>
+                    <em>Ziel: {row.target}</em>
+                  </div>
+                ))}
+              </div>
+            </article>
+          ))}
+        </div>
+      )}
     </div>
   );
 }

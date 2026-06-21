@@ -3596,3 +3596,24 @@ Build-Prüfung: `npm run build`.
 - Keine neue Preislogik, keine Persistenzänderung und keine echte Auftragsnummernlogik; Sprint 49 definiert den sichtbaren Datenvertrag für die spätere Übergabe.
 
 Build-Prüfung: `npm run build`.
+
+## Sprint 49.1 – Datenübergabe lesbar machen
+
+Die Datenübergabe `Kalkulation → Auftrag → Auftragstasche` wurde nach dem ersten Testscreen überarbeitet. Das Sprint-49-Raster war fachlich richtig, aber visuell zu eng und erzeugte gequetschte Mapping-Karten. Sprint 49.1 stabilisiert die Darstellung als lesbare Übergabeliste.
+
+Umgesetzt:
+
+- vollständige Datenübergabe bleibt erhalten
+- Haupt-Mapping wird einspaltig und zeilenbasiert dargestellt
+- Quellen, Werte und Zielbereiche werden nebeneinander lesbar geführt
+- keine harten Kürzungen in Mapping-Zeilen
+- kompakte Mapping-Version im Produktionskern zeigt nur Gruppenzusammenfassung statt alle Detailwerte
+- Preis- und Kalkulationsdaten bleiben weiterhin klar von Auftragstaschen-Daten getrennt
+- akzeptierter Kalkulationsmasken-Look bleibt unverändert
+- Bottom-Navigation bleibt unverändert
+
+Wichtiges Pattern:
+
+- Detail-Mapping nur im Reiter `Preise & Ergebnis`
+- Produktionskern nur als kompakte Übersicht
+- Auftragstasche bleibt Produktionsdokument, keine Preis- oder Kalkulationsübersicht

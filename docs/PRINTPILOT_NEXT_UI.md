@@ -3564,3 +3564,12 @@ Build-Prüfung: `npm run build`.
 - Die Labelspalte wurde moderat verbreitert, ohne die akzeptierte Auftragstaschen-Optik zu verändern.
 - Badge-Positionierung in den Feldlabels wurde stabilisiert.
 - Bottom-Navigation bleibt unverändert.
+
+
+## Sprint 48.3 – Feldbeschriftungen vollständig ohne harte Worttrennung
+
+- Lange Feldbeschriftungen werden nicht mehr mitten im Wort getrennt.
+- Pflicht-/Optional-/Später-Kennzeichnungen stehen im Labelbereich unter der Bezeichnung und kollidieren nicht mehr mit langen Begriffen.
+- Die Labelspalte wurde moderat stabilisiert, damit Begriffe wie „Kalkulationsnummer“ ausgeschrieben lesbar bleiben.
+- Der akzeptierte Look der Kalkulationsmaske bleibt erhalten: weiße Labelbereiche, Cyan-Schrift, weiße Eingabefelder und feine Cyan-Kontur.
+- Die Bottom-Navigation bleibt unverändert.

@@ -3626,3 +3626,36 @@ Wichtiges Pattern:
 - Preis-, Kosten-, Rabatt-, Margen- und Deckungsbeitragswerte bleiben ausdrücklich interne Kalkulationsdaten und werden nicht auf der Auftragstasche ausgegeben.
 - Der akzeptierte Sprint-47.7-Eingabemasken-Look bleibt erhalten: weißer Hintergrund, aktive Tabs vollflächig Cyan, weiße Eingabefelder mit sehr feiner Cyan-Umrandung, Label-Felder weiß mit Cyan-Schrift.
 - Die Bottom-Navigation wurde nicht verändert.
+
+## Sprint 50 – Angebot aus der Kalkulation erzeugen
+
+- Vor dem Schritt **Kalkulation → Auftrag erzeugen** wurde die Angebotsausgabe ergänzt.
+- Die Kalkulationsmaske kann jetzt aus den aktuellen Kalkulationsdaten ein kundenorientiertes Angebot vorbereiten.
+- Der Reiter **Preise & Ergebnis** enthält einen neuen Angebotsbereich mit Aktionen:
+  - **Angebot anzeigen**,
+  - **Angebot als PDF drucken**,
+  - **E-Mail vorbereiten**.
+- Das Angebot ist bewusst kein Produktionsdokument und keine Auftragstasche. Es enthält kundenrelevante Daten:
+  - Angebotsnummer,
+  - Datum,
+  - Kunde und Ansprechpartner,
+  - Projekt,
+  - Produkt,
+  - Auflage,
+  - Format,
+  - Umfang / Farbigkeit,
+  - Material,
+  - Druck / Produktionsweg,
+  - Weiterverarbeitung,
+  - Lieferung,
+  - Verkaufspreis netto,
+  - Hinweise und Zahlungsbedingungen.
+- Interne Kalkulationswerte wie Materialkosten, Druckkosten, Weiterverarbeitungskosten, Fremdkosten, Rabatt, Marge und Deckungsbeitrag werden nicht im Angebot ausgegeben.
+- Die PDF-Ausgabe läuft zunächst browserbasiert über den Druckdialog. Der Benutzer kann daraus ein PDF speichern oder direkt drucken.
+- Die E-Mail-Aktion bereitet eine Mail an die hinterlegte Kundenadresse mit Betreff und Text vor. Das PDF wird aus dem Druckdialog gespeichert und anschließend manuell angehängt; eine echte Mail-Attachment-Automation ist später eine Backend-/Integrationsaufgabe.
+- Die Angebotsfähigkeit berücksichtigt jetzt auch den Verkaufspreis netto. Ohne Verkaufspreis soll kein Angebot erzeugt werden.
+- Der akzeptierte Eingabemasken-Look bleibt erhalten: weißer Hintergrund, aktive Tabs vollflächig Cyan, weiße Eingabefelder mit sehr feiner Cyan-Umrandung, Label-Felder weiß mit Cyan-Schrift.
+- Die Bottom-Navigation wurde nicht verändert.
+- Keine echte Preisberechnung, keine Persistenz, keine PDF-Servergenerierung und keine E-Mail-Backend-Integration; Sprint 50 bereitet den sichtbaren Angebotsworkflow im Frontend vor.
+
+Build-Prüfung: `npm run build`.

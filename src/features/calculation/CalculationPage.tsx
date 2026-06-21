@@ -43,6 +43,10 @@ type CalculationDraft = {
   deliveryAddress: string;
   projectName: string;
   calculationId: string;
+  offerId: string;
+  offerDate: string;
+  offerValidUntil: string;
+  paymentTerms: string;
   dueDate: string;
   correctionDeadline: string;
   owner: string;
@@ -347,6 +351,7 @@ const offerRequiredFields: Array<keyof CalculationDraft> = [
   "contactName",
   "pages",
   "colorMode",
+  "salePriceNet",
 ];
 
 const requiredFieldsByTab: Record<
@@ -713,6 +718,10 @@ const initialDraft: CalculationDraft = {
   deliveryAddress: "wie Rechnungsadresse",
   projectName: "Visitenkarten Relaunch",
   calculationId: demoCalculationPayload.calculationId ?? "CALC-2026-00017",
+  offerId: "ANG-2026-00017",
+  offerDate: "21.06.2026",
+  offerValidUntil: "14 Tage",
+  paymentTerms: "zahlbar innerhalb von 14 Tagen ohne Abzug",
   dueDate: "04.06.2026 · 11:00",
   correctionDeadline: "03.06.2026 · 12:00",
   owner: "Max M.",
@@ -823,7 +832,7 @@ const initialDraft: CalculationDraft = {
   pocketSampleStatus: "Muster in Tasche",
   paperInvoiceStatus: "Papierrechnung später",
   supplierInvoiceStatus: "Lieferantenrechnung später",
-  salePriceNet: "automatisch später",
+  salePriceNet: "148,50 €",
 };
 
 function formatNumber(value: number) {
@@ -937,6 +946,174 @@ function buildPayloadFromDraft(
       type: demoCalculationPayload.machine?.type ?? "digital-color",
     },
   };
+}
+
+
+function getOfferPriceLabel(value: string) {
+  return isDraftValueMissing(value) ? "Preis offen" : value;
+}
+
+function getOfferQuantityLabel(payload: CalculationToProductionPayload) {
+  return `${formatNumber(payload.product.quantity)} Stück`;
+}
+
+function getOfferSubject(draft: CalculationDraft) {
+  return `Angebot ${draft.offerId} - ${draft.projectName}`;
+}
+
+function getOfferMailBody(draft: CalculationDraft, payload: CalculationToProductionPayload) {
+  return [
+    `Hallo ${draft.contactName},`,
+    "",
+    `anbei erhalten Sie unser Angebot ${draft.offerId} für ${payload.product.label}.`,
+    "",
+    `Produkt: ${payload.product.label}`,
+    `Auflage: ${getOfferQuantityLabel(payload)}`,
+    `Preis netto: ${getOfferPriceLabel(draft.salePriceNet)}`,
+    "",
+    "Viele Grüße",
+    draft.owner,
+  ].join("\n");
+}
+
+function CalculationOfferDocument({
+  draft,
+  payload,
+  finishingRows,
+  productionModeLabel,
+  sheetCount,
+}: {
+  draft: CalculationDraft;
+  payload: CalculationToProductionPayload;
+  finishingRows: FinishingDraftRow[];
+  productionModeLabel: string;
+  sheetCount: string;
+}) {
+  const activeFinishingLabels = getActiveFinishingLabels(finishingRows);
+  const netPrice = getOfferPriceLabel(draft.salePriceNet);
+  const offerRows = [
+    ["Produkt", payload.product.label],
+    ["Auflage", getOfferQuantityLabel(payload)],
+    ["Format", draft.finalFormat],
+    ["Umfang / Farbigkeit", `${draft.pages} · ${draft.colorMode}`],
+    ["Material", `${draft.substrate} · ${draft.grammage}`],
+    ["Druck", `${draft.printType} · ${productionModeLabel}`],
+    ["Weiterverarbeitung", activeFinishingLabels],
+    ["Lieferung", `${draft.shippingMethod} · ${draft.deliveryTimeWindow}`],
+  ];
+
+  return (
+    <article className="pp-print-offer-document" aria-label="Angebot PDF-Vorschau">
+      <header className="pp-offer-document__header">
+        <PrintPilotLogo className="pp-offer-document__logo" variant="app" />
+        <div>
+          <span>Angebot</span>
+          <strong>{draft.offerId}</strong>
+          <small>{draft.offerDate}</small>
+        </div>
+      </header>
+
+      <section className="pp-offer-document__address">
+        <div>
+          <span>Angebot an</span>
+          <strong>{draft.customer}</strong>
+          <p>{draft.contactName}</p>
+          <p>{draft.billingAddress}</p>
+          <p>{draft.contactEmail}</p>
+        </div>
+        <dl>
+          <div>
+            <dt>Projekt</dt>
+            <dd>{draft.projectName}</dd>
+          </div>
+          <div>
+            <dt>Kalkulation</dt>
+            <dd>{draft.calculationId}</dd>
+          </div>
+          <div>
+            <dt>Liefertermin</dt>
+            <dd>{draft.dueDate}</dd>
+          </div>
+          <div>
+            <dt>Gültigkeit</dt>
+            <dd>{draft.offerValidUntil}</dd>
+          </div>
+        </dl>
+      </section>
+
+      <section className="pp-offer-document__intro">
+        <h1>Angebot für {payload.product.label}</h1>
+        <p>
+          Vielen Dank für Ihre Anfrage. Auf Grundlage der vorliegenden
+          Kalkulationsdaten bieten wir Ihnen folgende Druckleistung an.
+        </p>
+      </section>
+
+      <section className="pp-offer-document__summary" aria-label="Leistungsdaten">
+        {offerRows.map(([label, value]) => (
+          <div key={label}>
+            <span>{label}</span>
+            <b>{value}</b>
+          </div>
+        ))}
+      </section>
+
+      <section className="pp-offer-document__positions" aria-label="Angebotspositionen">
+        <table>
+          <thead>
+            <tr>
+              <th>Pos.</th>
+              <th>Leistung</th>
+              <th>Menge</th>
+              <th>Gesamt netto</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>1</td>
+              <td>
+                <strong>{payload.product.label}</strong>
+                <span>
+                  {draft.finalFormat} · {draft.pages} · {draft.colorMode} · {draft.substrate}
+                </span>
+                <span>
+                  Produktion: {productionModeLabel} · {sheetCount} Bogen · {draft.impositionLabel}
+                </span>
+              </td>
+              <td>{getOfferQuantityLabel(payload)}</td>
+              <td>{netPrice}</td>
+            </tr>
+          </tbody>
+          <tfoot>
+            <tr>
+              <td colSpan={3}>Gesamtsumme netto</td>
+              <td>{netPrice}</td>
+            </tr>
+          </tfoot>
+        </table>
+      </section>
+
+      <section className="pp-offer-document__notes">
+        <div>
+          <h2>Hinweise</h2>
+          <p>{draft.customerNote}</p>
+          <p>{draft.settlementNote}</p>
+          <p>Preise verstehen sich netto zuzüglich gesetzlicher Umsatzsteuer.</p>
+        </div>
+        <div>
+          <h2>Abrechnung</h2>
+          <p>{draft.billingMode}</p>
+          <p>{draft.paymentTerms}</p>
+          <p>Angebot gültig: {draft.offerValidUntil}</p>
+        </div>
+      </section>
+
+      <footer className="pp-offer-document__footer">
+        <span>Erstellt mit PrintPilot</span>
+        <span>{draft.owner}</span>
+      </footer>
+    </article>
+  );
 }
 
 function CalculationField({
@@ -1723,6 +1900,8 @@ function CalculationFieldAudit() {
 
 export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   const [draftWasCreated, setDraftWasCreated] = useState(false);
+  const [offerPreviewOpen, setOfferPreviewOpen] = useState(false);
+  const [offerWasPrepared, setOfferWasPrepared] = useState(false);
   const [draft, setDraft] = useState<CalculationDraft>(initialDraft);
   const [productionMode, setProductionMode] =
     useState<ProductionMode>("internal");
@@ -1786,6 +1965,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   );
   const activeTabOpenRequiredFields = missingRequiredByTab[activeTab];
   const canCreateOrderDraft = openRequiredFields === 0;
+  const canCreateOffer = offerOpenFields === 0;
   const orderOpenFields = countMissingFields(draft, orderRequiredFields);
   const payload = useMemo(
     () => buildPayloadFromDraft(draft, productionMode, finishingRows),
@@ -1837,6 +2017,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   const updateDraft = (field: keyof CalculationDraft) => (value: string) => {
     setDraft((currentDraft) => ({ ...currentDraft, [field]: value }));
     setDraftWasCreated(false);
+    setOfferWasPrepared(false);
   };
 
   const updateFinishingRow = (
@@ -1847,6 +2028,41 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
       currentRows.map((row) => (row.id === id ? { ...row, ...updates } : row)),
     );
     setDraftWasCreated(false);
+    setOfferWasPrepared(false);
+  };
+
+  const handlePrepareOffer = () => {
+    if (!canCreateOffer) {
+      return;
+    }
+
+    setOfferPreviewOpen(true);
+    setOfferWasPrepared(true);
+    setActiveTab("prices");
+  };
+
+  const handlePrintOffer = () => {
+    if (!canCreateOffer) {
+      return;
+    }
+
+    setOfferPreviewOpen(true);
+    setOfferWasPrepared(true);
+    window.setTimeout(() => window.print(), 120);
+  };
+
+  const handlePrepareOfferEmail = () => {
+    if (!canCreateOffer || !draft.contactEmail.trim()) {
+      return;
+    }
+
+    setOfferPreviewOpen(true);
+    setOfferWasPrepared(true);
+
+    const mailto = new URL(`mailto:${draft.contactEmail}`);
+    mailto.searchParams.set("subject", getOfferSubject(draft));
+    mailto.searchParams.set("body", getOfferMailBody(draft, payload));
+    window.location.href = mailto.toString();
   };
 
   const handleCreateOrderDraft = () => {
@@ -2851,6 +3067,56 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                 />
                 <CalculationFieldAudit />
                 <CalculationTransferMapping groups={transferGroups} />
+                <div className="pp-calculation-offer-workflow" aria-label="Angebot erzeugen">
+                  <div className="pp-calculation-offer-workflow__head">
+                    <span>Angebot</span>
+                    <b>{offerWasPrepared ? "Angebot vorbereitet" : "PDF für Druck und E-Mail vorbereiten"}</b>
+                    <small>
+                      Das Angebot enthält nur kundenrelevante Leistungs- und Preisdaten.
+                      Interne Kalkulationswerte bleiben verborgen.
+                    </small>
+                  </div>
+                  <div className="pp-calculation-offer-workflow__actions">
+                    <button
+                      type="button"
+                      className="pp-calculation-create-button"
+                      onClick={handlePrepareOffer}
+                      disabled={!canCreateOffer}
+                    >
+                      Angebot anzeigen
+                    </button>
+                    <button
+                      type="button"
+                      className="pp-calculation-create-button"
+                      onClick={handlePrintOffer}
+                      disabled={!canCreateOffer}
+                    >
+                      Angebot als PDF drucken
+                    </button>
+                    <button
+                      type="button"
+                      className="pp-calculation-create-button pp-calculation-create-button--secondary"
+                      onClick={handlePrepareOfferEmail}
+                      disabled={!canCreateOffer || !draft.contactEmail.trim()}
+                    >
+                      E-Mail vorbereiten
+                    </button>
+                  </div>
+                  {!canCreateOffer ? (
+                    <p className="pp-calculation-offer-workflow__hint">
+                      Für ein Angebot fehlen noch Pflichtdaten oder der Verkaufspreis netto.
+                    </p>
+                  ) : null}
+                  {offerPreviewOpen ? (
+                    <CalculationOfferDocument
+                      draft={draft}
+                      payload={payload}
+                      finishingRows={finishingRows}
+                      productionModeLabel={productionModeLabel}
+                      sheetCount={sheetCount}
+                    />
+                  ) : null}
+                </div>
               </>
             ) : null}
           </div>
@@ -2969,8 +3235,21 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           <CalculationTransferMapping groups={transferGroups} compact />
 
           <div className="pp-calculation-action-stack">
-            <button className="pp-calculation-create-button" type="button" disabled>
-              Angebot speichern · später
+            <button
+              className="pp-calculation-create-button"
+              type="button"
+              onClick={handlePrepareOffer}
+              disabled={!canCreateOffer}
+            >
+              {canCreateOffer ? "Angebot anzeigen" : "Angebotsdaten fehlen"}
+            </button>
+            <button
+              className="pp-calculation-create-button pp-calculation-create-button--secondary"
+              type="button"
+              onClick={handlePrintOffer}
+              disabled={!canCreateOffer}
+            >
+              Angebot als PDF drucken
             </button>
             <button
               className="pp-calculation-create-button"
@@ -2997,9 +3276,9 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                 : "Noch nicht gespeichert"}
             </strong>
             <p>
-              Lokaler Demo-State. Die aktuellen Kalkulationswerte werden beim
-              Vorbereiten in den Auftragsentwurf und anschließend in die
-              Auftragstasche übernommen.
+              Lokaler Demo-State. Das Angebot kann als Druck-PDF ausgegeben werden;
+              der Auftragsentwurf übernimmt danach die produktionsrelevanten
+              Kalkulationswerte in Auftrag und Auftragstasche.
             </p>
           </div>
         </aside>

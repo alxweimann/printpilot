@@ -3731,3 +3731,40 @@ Build-Prüfung: `npm run build`.
 - Keine echte Preislogik, keine Persistenz, keine Server-PDF-Erzeugung, keine automatische Mail-Anhang-Funktion und kein firmenseitiger Einstellungsdialog; Sprint 50.4 schließt die sichtbare Angebotsvorbereitung fachlich ab.
 
 Build-Prüfung: `npm run build`.
+
+## Sprint 51 – Dokumenten-Stammdaten vorbereiten
+
+- Die Dokumentenlogik wurde fachlich vorbereitet, damit Kundendokumente später nicht mehr direkt aus hart codierten Demo-Werten in der Kalkulationsmaske gespeist werden.
+- Neue zentrale Struktur: `src/features/documents/document-settings.ts`.
+- Dort liegen zunächst Demo-Dokumentenstammdaten für:
+  - Firmenname,
+  - Adresse,
+  - Telefon,
+  - E-Mail,
+  - Website,
+  - Steuernummer,
+  - Umsatzsteuer-ID,
+  - Bankname,
+  - IBAN,
+  - BIC,
+  - Standard-Zahlungsbedingungen,
+  - Standard-Angebotsgültigkeit,
+  - Dokumentenfuß,
+  - Branding-Modus und Logo-Platzhalter.
+- Das Angebotsdokument verwendet nun die zentralen Dokumenten-Stammdaten als Initialwerte und ist damit für spätere Dokumenteinstellungen vorbereitet.
+- Für Kundendokumente wurde ein Firmenlogo-Platzhalter vorbereitet. Das PrintPilot-Logo bleibt App-/Software-Branding; Angebote und spätere Geschäftsdokumente sollen perspektivisch das Firmenlogo der jeweiligen Druckerei verwenden.
+- Im Reiter **Preise & Ergebnis** wurden die vorbereiteten Dokumentenfelder erweitert:
+  - Logo-Platzhalter,
+  - Logo-Hinweis,
+  - Umsatzsteuer-ID,
+  - Steuernummer,
+  - Bank,
+  - IBAN,
+  - BIC,
+  - Dokumentenfuß.
+- Die Umsatzsteuerberechnung nutzt den zentralen Dokumenten-Standardwert `taxRatePercent` statt einer isolierten 19-Prozent-Konstante im Angebotscode.
+- E-Mail-Text, Angebotskopf und Angebotsfooter bleiben mit den zentralen Dokumentendaten gekoppelt.
+- Die Bottom-Navigation wurde nicht verändert.
+- Noch nicht enthalten: echter Logo-Upload, Persistenz der Dokumenteneinstellungen, Mandantenfähigkeit, Server-PDF-Erzeugung oder automatische E-Mail-Anhänge. Sprint 51 bereitet die Stammdatenstruktur und die spätere Einstellungsmaske vor.
+
+Build-Prüfung: `npm run build`.

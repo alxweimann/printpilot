@@ -20949,6 +20949,37 @@ button.pp-process-step:hover {
   max-width: 100%;
 }
 
+.pp-document-company-logo {
+  display: grid;
+  place-items: center;
+  align-content: center;
+  gap: 3px;
+  width: 146px;
+  min-width: 146px;
+  min-height: 76px;
+  padding: 10px;
+  border: .55pt solid #dbe6f1;
+  border-radius: 12px;
+  background: #f8fbff;
+  color: #008bd1;
+  text-align: center;
+}
+
+.pp-document-company-logo span {
+  color: #008bd1;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: .06em;
+  text-transform: uppercase;
+}
+
+.pp-document-company-logo small {
+  color: #53647c;
+  font-size: 10px;
+  font-weight: 560;
+  line-height: 1.1;
+}
+
 .pp-offer-document__sender {
   display: flex;
   align-items: flex-start;
@@ -21429,4 +21460,14 @@ button.pp-process-step:hover {
 
 .pp-offer-document__footer {
   font-size: 12px;
+}
+
+
+/* Sprint 51 – Dokumenten-Stammdaten und Firmenlogo-Platzhalter vorbereiten */
+.pp-document-company-logo {
+  box-shadow: inset 0 0 0 1px rgba(0, 168, 224, .08);
+}
+
+.pp-offer-document__footer span:last-child {
+  text-align: right;
 }

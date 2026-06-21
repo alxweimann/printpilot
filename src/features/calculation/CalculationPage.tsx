@@ -1,5 +1,6 @@
 import { useMemo, useRef, useState } from "react";
 import { PrintPilotLogo } from "../../components/brand/PrintPilotLogo";
+import { demoDocumentSettings } from "../documents/document-settings";
 import {
   createOrderDraftFromCalculation,
   demoCalculationPayload,
@@ -52,6 +53,14 @@ type CalculationDraft = {
   senderPhone: string;
   senderEmail: string;
   senderWebsite: string;
+  senderTaxNumber: string;
+  senderVatId: string;
+  senderBankName: string;
+  senderIban: string;
+  senderBic: string;
+  documentLogoLabel: string;
+  documentLogoHint: string;
+  documentFooterNote: string;
   paymentTerms: string;
   dueDate: string;
   correctionDeadline: string;
@@ -726,14 +735,22 @@ const initialDraft: CalculationDraft = {
   calculationId: demoCalculationPayload.calculationId ?? "CALC-2026-00017",
   offerId: "ANG-2026-00017",
   offerDate: "21.06.2026",
-  offerValidUntil: "14 Tage",
+  offerValidUntil: demoDocumentSettings.defaults.offerValidity,
   offerStatus: "Entwurf",
-  senderCompany: "PrintPilot Demo-Druckerei",
-  senderAddress: "Musterstraße 12 · 69151 Neckargemünd",
-  senderPhone: "06222 / 123456",
-  senderEmail: "angebot@printpilot-demo.de",
-  senderWebsite: "www.printpilot-demo.de",
-  paymentTerms: "zahlbar innerhalb von 14 Tagen ohne Abzug",
+  senderCompany: demoDocumentSettings.company.companyName,
+  senderAddress: demoDocumentSettings.company.address,
+  senderPhone: demoDocumentSettings.company.phone,
+  senderEmail: demoDocumentSettings.company.email,
+  senderWebsite: demoDocumentSettings.company.website,
+  senderTaxNumber: demoDocumentSettings.company.taxNumber,
+  senderVatId: demoDocumentSettings.company.vatId,
+  senderBankName: demoDocumentSettings.company.bankName,
+  senderIban: demoDocumentSettings.company.iban,
+  senderBic: demoDocumentSettings.company.bic,
+  documentLogoLabel: demoDocumentSettings.branding.logoLabel,
+  documentLogoHint: demoDocumentSettings.branding.logoHint,
+  documentFooterNote: demoDocumentSettings.defaults.footerNote,
+  paymentTerms: demoDocumentSettings.defaults.paymentTerms,
   dueDate: "04.06.2026 · 11:00",
   correctionDeadline: "03.06.2026 · 12:00",
   owner: "Max M.",
@@ -1020,7 +1037,7 @@ function getOfferPriceBreakdown(netPriceLabel: string, quantity: number) {
     };
   }
 
-  const tax = net * 0.19;
+  const tax = net * (demoDocumentSettings.defaults.taxRatePercent / 100);
   const gross = net + tax;
   const unitNet = quantity > 0 ? net / quantity : net;
 
@@ -1087,7 +1104,7 @@ function getOfferMailBody(draft: CalculationDraft, payload: CalculationToProduct
     `Format: ${draft.finalFormat}`,
     `Material: ${getOfferMaterialLabel(draft)}`,
     `Gesamtsumme netto: ${price.netLabel}`,
-    `Gesamtsumme brutto inkl. 19 % Umsatzsteuer: ${price.grossLabel}`,
+    `Gesamtsumme brutto inkl. ${demoDocumentSettings.defaults.taxRatePercent} % Umsatzsteuer: ${price.grossLabel}`,
     "",
     `Das Angebot ist ${draft.offerValidUntil} gültig.`,
     "Bei Rückfragen stehen wir Ihnen gerne zur Verfügung.",
@@ -1175,6 +1192,37 @@ function getOfferPrintWindowHtml(title: string, offerMarkup: string) {
         width: 42mm;
         max-width: 42mm;
         height: auto;
+      }
+
+      .pp-document-company-logo {
+        display: grid;
+        place-items: center;
+        align-content: center;
+        gap: .65mm;
+        width: 36mm;
+        min-width: 36mm;
+        min-height: 19mm;
+        padding: 2.2mm;
+        border: .55pt solid #dbe6f1;
+        border-radius: 3.2mm;
+        background: #f8fbff;
+        color: #008bd1;
+        text-align: center;
+      }
+
+      .pp-document-company-logo span {
+        color: #008bd1;
+        font-size: 9.2pt;
+        font-weight: 900;
+        letter-spacing: .04em;
+        text-transform: uppercase;
+      }
+
+      .pp-document-company-logo small {
+        color: #53647c;
+        font-size: 6.4pt;
+        font-weight: 560;
+        line-height: 1.1;
       }
 
       .pp-offer-document__meta {
@@ -1506,7 +1554,10 @@ function CalculationOfferDocument({
     <article className="pp-print-offer-document" aria-label="Angebot PDF-Vorschau">
       <header className="pp-offer-document__header">
         <div className="pp-offer-document__sender">
-          <PrintPilotLogo className="pp-offer-document__logo" variant="app" />
+          <div className="pp-document-company-logo" aria-label="Firmenlogo Platzhalter">
+            <span>{draft.documentLogoLabel}</span>
+            <small>{draft.documentLogoHint}</small>
+          </div>
           <p>
             <strong>{draft.senderCompany}</strong>
             <span>{draft.senderAddress}</span>
@@ -1628,7 +1679,7 @@ function CalculationOfferDocument({
           <h2>Konditionen</h2>
           <p>Zahlungsbedingungen: {draft.paymentTerms}</p>
           <p>Angebot gültig: {draft.offerValidUntil}</p>
-          <p>Alle Preise verstehen sich netto zuzüglich 19 % gesetzlicher Umsatzsteuer. Die Gesamtsumme brutto ist ausgewiesen.</p>
+          <p>Alle Preise verstehen sich netto zuzüglich {demoDocumentSettings.defaults.taxRatePercent} % gesetzlicher Umsatzsteuer. Die Gesamtsumme brutto ist ausgewiesen.</p>
         </div>
       </section>
 
@@ -1643,7 +1694,7 @@ function CalculationOfferDocument({
       <footer className="pp-offer-document__footer">
         <span>{draft.senderCompany} · {draft.senderAddress}</span>
         <span>{draft.senderPhone} · {draft.senderEmail}</span>
-        <span>{draft.offerId}</span>
+        <span>{draft.senderVatId} · {draft.offerId}</span>
       </footer>
     </article>
   );
@@ -3543,6 +3594,55 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       value={draft.senderWebsite}
                       onValueChange={updateDraft("senderWebsite")}
                       badge="später"
+                    />
+                    <CalculationField
+                      label="Logo-Platzhalter"
+                      value={draft.documentLogoLabel}
+                      onValueChange={updateDraft("documentLogoLabel")}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="Logo-Hinweis"
+                      value={draft.documentLogoHint}
+                      onValueChange={updateDraft("documentLogoHint")}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="Umsatzsteuer-ID"
+                      value={draft.senderVatId}
+                      onValueChange={updateDraft("senderVatId")}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="Steuernummer"
+                      value={draft.senderTaxNumber}
+                      onValueChange={updateDraft("senderTaxNumber")}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="Bank"
+                      value={draft.senderBankName}
+                      onValueChange={updateDraft("senderBankName")}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="IBAN"
+                      value={draft.senderIban}
+                      onValueChange={updateDraft("senderIban")}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="BIC"
+                      value={draft.senderBic}
+                      onValueChange={updateDraft("senderBic")}
+                      badge="später"
+                    />
+                    <CalculationField
+                      label="Dokumentenfuß"
+                      value={draft.documentFooterNote}
+                      onValueChange={updateDraft("documentFooterNote")}
+                      badge="später"
+                      wide
                     />
                     <CalculationField
                       label="Materialkosten"

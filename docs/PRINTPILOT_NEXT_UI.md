@@ -3892,3 +3892,19 @@ Build-Hinweis: In dieser Umgebung konnte `npm run build` nicht vollständig ausg
 - Die Bottom-Navigation wurde nicht verändert.
 
 Build-Hinweis: In dieser Umgebung konnte `npm run build` nicht vollständig ausgeführt werden, weil die lokalen Typdefinitionen aus `node_modules` fehlen (`vite/client` und `node`). Bitte lokal nach dem Einspielen mit installiertem Projektstand prüfen.
+
+### Sprint 53.2 – Aktionsbezogene Validierung vereinheitlichen
+
+- Die ruhige Maskenlogik aus Sprint 53/53.1 bleibt erhalten: Im Normalzustand werden keine Pflicht-/Optional-/Später-Badges und keine dauerhaften Prüfhinweise angezeigt.
+- Die Validierung ist jetzt aktionsbezogen statt nur global:
+  - **Angebot anzeigen** prüft die für ein Angebot notwendigen Felder.
+  - **Angebot als PDF drucken** nutzt dieselbe Angebotsprüfung.
+  - **E-Mail vorbereiten** prüft zusätzlich die E-Mail-Adresse des Ansprechpartners.
+  - **Auftragsentwurf erzeugen** prüft die auftragsrelevanten Felder.
+- Fehlende Felder werden erst nach der jeweiligen Aktion gezielt markiert. Dadurch bleibt die Maske ruhig, aber die Logik greift bei jeder fachlichen Aktion.
+- Nach einer fehlgeschlagenen Aktion springt PrintPilot zum ersten Reiter mit fehlender Angabe. Reiter zeigen offene Felder nur nach einer ausgelösten Validierung an.
+- Die Feldmarkierung arbeitet jetzt über konkrete Feldnamen statt über sichtbare Badge-Texte. Die frühere interne Einstufung bleibt für die Validierungslogik nutzbar, wird aber nicht mehr im UI gerendert.
+- **Verkaufspreis netto** wird als Angebotsfeld sauber geprüft und markiert, obwohl kein sichtbares Pflicht-Badge mehr angezeigt wird.
+- **Bottom-Navigation nicht angefasst.**
+
+Build-Prüfung: `npm run build`.

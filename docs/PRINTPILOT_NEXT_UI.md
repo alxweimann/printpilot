@@ -4047,3 +4047,20 @@ Der Nutzenrechner wurde in der Eingabe ergonomisch verfeinert. Ziel ist, die Fie
 - Die Nutzenvorschau bleibt physikalisch skaliert und zentriert aus Sprint 55.1/55.2.
 - Impose/Ausschießen bleibt weiterhin ein separates späteres Modul; der Nutzenrechner bleibt Kalkulationswerkzeug.
 - Die Bottom-Navigation wurde nicht verändert.
+
+## Sprint 55.4 – Nutzenrechner-Eingabe nach Split-Feldern stabilisieren
+
+- Die in Sprint 55.3 eingeführten getrennten Breite-/Höhe- und Auswahlfelder wurden layoutseitig stabilisiert.
+- `fieldset`-/`legend`-Darstellung im Nutzenrechner wurde ersetzt, damit Browser-Defaults die Eingabezeilen nicht mehr zerreißen.
+- Druckbogen, Endformat, Bogenrand, Zwischenschnitt X/Y, manuelle Spalten/Reihen und Auswahlfelder stehen wieder sauber untereinander im linken Bedienbereich.
+- Auswahlbuttons für Berechnungsbasis, Drehung und Rastermodus bleiben vollständig lesbar und werden nicht mehr über Ergebnis-/Vorschaukarten gelegt.
+- Die Druckbogen-Vorschau rechts bleibt daneben sichtbar; physikalische Skalierung und Zentrierung aus Sprint 55.1/55.2 bleiben erhalten.
+- Keine Änderung an der Bottom-Navigation.
+
+## Sprint 55.5 – Nutzenrechner-Steuerung stabilisieren
+
+- Die Eingabesteuerung im Reiter **04 Nutzenrechner** wurde nach Sprint 55.4 nochmals stabilisiert.
+- Die Felder **Druckbogen**, **Endformat**, **Bogenrand**, **Zwischenschnitt X/Y**, **Manuelle Spalten/Reihen**, **Berechnungsbasis**, **Drehung** und **Rastermodus** werden wieder vollständig sichtbar dargestellt.
+- Die Steuerung ist jetzt als robuste Zeilenmatrix aufgebaut, damit keine Eingabefelder oder Auswahlbuttons mehr ineinanderlaufen.
+- Die Druckbogen-Vorschau bleibt rechts daneben und behält physikalische Skalierung sowie Zentrierung aus Sprint 55.1/55.2.
+- **Bottom-Navigation unverändert.**

@@ -2552,14 +2552,16 @@ function DimensionPairField({
   );
 
   return (
-    <fieldset
+    <div
       className={[
-        "pp-calc-input-field pp-calc-dimension-field",
+        "pp-calc-input-field pp-calc-dimension-field pp-calc-input-field--control-card",
         isMissingRequired ? "is-required-missing" : "",
       ].filter(Boolean).join(" ")}
       data-calculation-field={field ? String(field) : undefined}
     >
-      <legend>{label}</legend>
+      <div className="pp-calc-input-field__label">
+        <strong>{label}</strong>
+      </div>
       <div className="pp-calc-dimension-field__values">
         <label>
           <em>{widthLabel}</em>
@@ -2583,7 +2585,7 @@ function DimensionPairField({
           <small>mm</small>
         </label>
       </div>
-    </fieldset>
+    </div>
   );
 }
 
@@ -2644,14 +2646,16 @@ function ChoiceButtonField({
   const isMissingRequired = Boolean(field && activeValidationFields.has(String(field)) && isDraftValueMissing(value));
 
   return (
-    <fieldset
+    <div
       className={[
-        "pp-calc-input-field pp-calc-choice-field pp-calc-input-field--wide",
+        "pp-calc-input-field pp-calc-choice-field pp-calc-input-field--wide pp-calc-input-field--control-card",
         isMissingRequired ? "is-required-missing" : "",
       ].filter(Boolean).join(" ")}
       data-calculation-field={field ? String(field) : undefined}
     >
-      <legend>{label}</legend>
+      <div className="pp-calc-input-field__label">
+        <strong>{label}</strong>
+      </div>
       <div className="pp-calc-choice-field__options" role="group" aria-label={label}>
         {options.map((option) => (
           <button
@@ -2664,7 +2668,7 @@ function ChoiceButtonField({
           </button>
         ))}
       </div>
-    </fieldset>
+    </div>
   );
 }
 

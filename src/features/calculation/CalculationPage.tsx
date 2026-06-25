@@ -51,7 +51,10 @@ type CalculationTabId =
   | "imposition"
   | "finishing"
   | "external"
-  | "prices";
+  | "prices"
+  | "impose"
+  | "lettershop"
+  | "wide-format";
 
 type CalculationDraft = {
   customer: string;
@@ -220,10 +223,13 @@ const calculationTabs: Array<{
   { id: "customer-order", label: "Kunde & Auftrag", shortcut: "01" },
   { id: "product-format", label: "Produkt & Format", shortcut: "02" },
   { id: "paper-print", label: "Papier & Druck", shortcut: "03" },
-  { id: "imposition", label: "Nutzen & Ausschießen", shortcut: "04" },
+  { id: "imposition", label: "Nutzenrechner", shortcut: "04" },
   { id: "finishing", label: "Weiterverarbeitung", shortcut: "05" },
   { id: "external", label: "Fremdproduktion", shortcut: "06" },
   { id: "prices", label: "Preise & Ergebnis", shortcut: "07" },
+  { id: "impose", label: "Impose", shortcut: "08" },
+  { id: "lettershop", label: "Lettershop", shortcut: "09" },
+  { id: "wide-format", label: "Großformat", shortcut: "10" },
 ];
 
 const calculationPlausibilityGroups: Array<{
@@ -429,6 +435,9 @@ const requiredFieldsByTab: Record<
   finishing: [],
   external: ["externalSupplier", "externalPrice", "externalLeadTime"],
   prices: ["salePriceNet"],
+  impose: [],
+  lettershop: [],
+  "wide-format": [],
 };
 
 
@@ -1385,7 +1394,7 @@ function buildPayloadFromDraft(
         ? activeFinishing
         : ["Weiterverarbeitung prüfen"],
       notes: [
-        `Nutzen und Ausschießen: ${impositionResult.label}`,
+        `Nutzenrechner: ${impositionResult.label}`,
         `Berechnungsbasis: ${impositionResult.settings.includeBleed ? "inklusive Beschnitt" : "Endformat"}`,
         `Zwischenschnitt: ${formatImpositionGapLabel(impositionResult.settings.gapXMm, impositionResult.settings.gapYMm)}`,
       ],
@@ -2649,7 +2658,7 @@ function CalculationSheetPreview({
   return (
     <div
       className="pp-calc-sheet-preview"
-      aria-label="Nutzen- und Ausschießvorschau"
+      aria-label="Nutzenvorschau"
     >
       <div className="pp-calc-sheet-preview__bar">
         <span>{imposition.sheet.name}</span>
@@ -2722,7 +2731,7 @@ function ImpositionCalculatorPanel({
         <div className="pp-imposition-calculator__editor-head">
           <span>Nutzenrechner</span>
           <strong>Nutzenplan einrichten</strong>
-          <p>Beschnitt, Bogenrand, X-/Y-Zwischenschnitt und Drehregel steuern den Kalkulationsnutzen und bereiten den späteren Ausschießplan vor.</p>
+          <p>Beschnitt, Bogenrand, X-/Y-Zwischenschnitt und Drehregel steuern den Kalkulationsnutzen für Materialverbrauch, Bogenanzahl und Preisbildung.</p>
         </div>
         <div className="pp-imposition-calculator__controls">
         <CalculationField
@@ -2779,29 +2788,6 @@ function ImpositionCalculatorPanel({
 
       <div className="pp-imposition-calculator__preview">
         <CalculationSheetPreview payload={payload} />
-        <div className="pp-imposition-calculator__imposing-plan" aria-label="Ausschießplan vorbereitet">
-          <div>
-            <span>Ausschießplan / Imposing</span>
-            <strong>Vorbereitet</strong>
-            <p>
-              Der berechnete Nutzenplan bildet die Grundlage für den späteren produktionsfertigen Druckbogen.
-            </p>
-          </div>
-          <dl>
-            <div>
-              <dt>Status</dt>
-              <dd>noch kein PDF erzeugt</dd>
-            </div>
-            <div>
-              <dt>Geplant</dt>
-              <dd>Stand, Anlage, Vorderseite / Rückseite, Marken</dd>
-            </div>
-            <div>
-              <dt>Ausgabe</dt>
-              <dd>Druckbogen erzeugen folgt in eigener Engine</dd>
-            </div>
-          </dl>
-        </div>
       </div>
 
       <div className="pp-imposition-calculator__result">
@@ -2856,6 +2842,34 @@ function ImpositionCalculatorPanel({
             ))}
           </tbody>
         </table>
+      </div>
+    </div>
+  );
+}
+
+function CalculationModulePlaceholder({
+  title,
+  intro,
+  items,
+}: {
+  title: string;
+  intro: string;
+  items: Array<{ label: string; value: string }>;
+}) {
+  return (
+    <div className="pp-calc-module-placeholder">
+      <div className="pp-calc-module-placeholder__intro">
+        <span>Modulbereich</span>
+        <strong>{title}</strong>
+        <p>{intro}</p>
+      </div>
+      <div className="pp-calc-module-placeholder__grid">
+        {items.map((item) => (
+          <div key={item.label}>
+            <span>{item.label}</span>
+            <b>{item.value}</b>
+          </div>
+        ))}
       </div>
     </div>
   );
@@ -3102,7 +3116,7 @@ function buildCalculationTransferGroups({
         },
         {
           label: "Nutzen",
-          source: "Nutzen & Ausschießen",
+          source: "Nutzenrechner",
           value: `${payload.imposition.layout.usedSlots} Nutzen · ${draft.impositionLabel}`,
           target: "Auftragstasche · Nutzenplan",
           kind: "order-pocket",
@@ -3457,6 +3471,9 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         finishing: 0,
         external: 0,
         prices: 0,
+        impose: 0,
+        lettershop: 0,
+        "wide-format": 0,
       },
     );
   }, [activeValidationFields, draft]);
@@ -4498,7 +4515,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             ) : null}
 
             {activeTab === "imposition" ? (
-              <CalculationSection eyebrow="08" title="Nutzen & Ausschießen">
+              <CalculationSection eyebrow="04" title="Nutzenrechner">
                 <ImpositionCalculatorPanel
                   draft={draft}
                   payload={payload}
@@ -4509,7 +4526,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             ) : null}
 
             {activeTab === "finishing" ? (
-              <CalculationSection eyebrow="09" title="Weiterverarbeitung">
+              <CalculationSection eyebrow="05" title="Weiterverarbeitung">
                 <div
                   className="pp-calc-finishing-matrix"
                   aria-label="Weiterverarbeitungs-Matrix"
@@ -4570,7 +4587,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
 
             {activeTab === "external" ? (
               <CalculationSection
-                eyebrow="09"
+                eyebrow="06"
                 title="Fremdproduktion / Kombination"
               >
                 <div className="pp-calc-input-grid pp-calc-input-grid--four">
@@ -4665,7 +4682,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             {activeTab === "prices" ? (
               <>
                 <CalculationSection
-                  eyebrow="10"
+                  eyebrow="07"
                   title="Preise / Ergebnisvorgaben"
                 >
                   <div className="pp-calc-input-grid pp-calc-input-grid--four">
@@ -5029,6 +5046,48 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                   ) : null}
                 </div>
               </>
+            ) : null}
+
+            {activeTab === "impose" ? (
+              <CalculationSection eyebrow="08" title="Impose / Ausschießen">
+                <CalculationModulePlaceholder
+                  title="Produktionsnaher Ausschießbereich"
+                  intro="Impose bleibt ein eigenes Modul nach der Kalkulation. Hier entstehen später Stand, Anlage, Vorderseite/Rückseite, Marken und produktionsfertige Druckbogen-PDFs."
+                  items={[
+                    { label: "Datenbasis", value: "Nutzenplan aus Reiter 04" },
+                    { label: "Geplant", value: "Stand, Anlage, Wendeart und Marken" },
+                    { label: "Ausgabe", value: "Druckbogen erzeugen" },
+                  ]}
+                />
+              </CalculationSection>
+            ) : null}
+
+            {activeTab === "lettershop" ? (
+              <CalculationSection eyebrow="09" title="Lettershop">
+                <CalculationModulePlaceholder
+                  title="Lettershop vorbereiten"
+                  intro="Lettershop wird als eigener Spezialbereich geführt. Hier werden später Adressdaten, Personalisierung, Porto, Sortierung, Kuvertierung und Einlieferung gebündelt."
+                  items={[
+                    { label: "Daten", value: "Adressliste und Personalisierung" },
+                    { label: "Produktion", value: "Kuvertierung, Beilagen, Porto" },
+                    { label: "Übergabe", value: "Lettershop-Daten zur Auftragstasche" },
+                  ]}
+                />
+              </CalculationSection>
+            ) : null}
+
+            {activeTab === "wide-format" ? (
+              <CalculationSection eyebrow="10" title="Großformat / Plotter">
+                <CalculationModulePlaceholder
+                  title="Großformat und Plotter"
+                  intro="Großformat wird getrennt von der klassischen Bogenkalkulation geführt. Später kommen Rollenmaterial, Laufmeter, Konturschnitt, Laminat, Montage und Nesting dazu."
+                  items={[
+                    { label: "Material", value: "Rolle, Breite, Laufmeter" },
+                    { label: "Produktion", value: "Druck, Konturschnitt, Laminat" },
+                    { label: "Planung", value: "Nesting und Montage" },
+                  ]}
+                />
+              </CalculationSection>
             ) : null}
           </div>
 

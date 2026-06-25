@@ -3951,3 +3951,31 @@ Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `n
 - **Bottom-Navigation nicht angefasst.**
 
 Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `npm run build` ausführen.
+
+### Sprint 54 – Nutzenrechner und Spezialmodule trennen
+
+- Die Reiterstruktur der Kalkulationsmaske wurde fachlich neu geordnet.
+- Der bisherige Reiter **Nutzen & Ausschießen** wurde wieder getrennt:
+  - **04 Nutzenrechner** bleibt das Kalkulationswerkzeug für Nutzen, Bogenanzahl, Zuschuss und Materialverbrauch.
+  - **08 Impose / Ausschießen** wird als eigenes produktionsnahes Modul vorbereitet.
+- Die Reiterfolge lautet jetzt:
+  1. Kunde & Auftrag
+  2. Produkt & Format
+  3. Papier & Druck
+  4. Nutzenrechner
+  5. Weiterverarbeitung
+  6. Fremdproduktion
+  7. Preise & Ergebnis
+  8. Impose
+  9. Lettershop
+  10. Großformat
+- Der Nutzenrechner enthält keine sichtbaren Ausschieß-/Impose-Hinweise mehr. Er konzentriert sich auf Druckbogen, Endformat, Bogenrand, Zwischenschnitt X/Y, Berechnungsbasis, Drehung, Nutzen, Flächenausnutzung, Nettobogen, Zuschuss und Bruttobogen.
+- Die Anzeige bleibt neben der editierbaren Steuerung: links Eingabeparameter, rechts Druckbogen-/Nutzenvorschau, darunter Ergebnis und Variantenvergleich.
+- Die neuen Reiter **Impose**, **Lettershop** und **Großformat** sind als ruhige Modulbereiche vorbereitet, ohne Pflicht-/Optional-/Später-Badges und ohne permanente Systemhinweise.
+- Impose wird später die echte Druckbogen-Erzeugung, Stand/Anlage, Vorderseite/Rückseite, Marken und produktionsfertige PDFs übernehmen.
+- Lettershop wird später Adressdaten, Personalisierung, Porto, Sortierung, Kuvertierung und Einlieferung bündeln.
+- Großformat / Plotter wird später Rollenmaterial, Laufmeter, Konturschnitt, Laminat, Montage und Nesting abbilden.
+- Die Validierungslogik aus Sprint 53.5 bleibt unverändert: Hinweise erscheinen nur als softwareeigenes Popup bei Problemen.
+- **Bottom-Navigation nicht angefasst.**
+
+Build-Prüfung: `npm run build`.

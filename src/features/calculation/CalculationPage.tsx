@@ -445,6 +445,66 @@ function countMissingFields(
   ).length;
 }
 
+
+const calculationFieldLabels: Partial<Record<keyof CalculationDraft, string>> = {
+  customer: "Kunde",
+  contactName: "Ansprechpartner",
+  contactEmail: "E-Mail-Adresse",
+  owner: "Bearbeiter",
+  projectName: "Projekt",
+  dueDate: "Liefertermin",
+  quantity: "Auflage",
+  productKind: "Produktart",
+  productLabel: "Produktbezeichnung",
+  pages: "Umfang",
+  finalFormat: "Endformat",
+  printFileName: "Druckdatei",
+  substrate: "Material",
+  machine: "Maschine",
+  printType: "Druckart",
+  colorMode: "Farbigkeit",
+  salePriceNet: "Verkaufspreis netto",
+  externalSupplier: "Fremdlieferant",
+  externalPrice: "Einkaufspreis Fremdproduktion",
+  externalLeadTime: "Lieferzeit Fremdproduktion",
+  printSheetFormat: "Druckbogenformat",
+};
+
+function getMissingFieldLabels(
+  draft: CalculationDraft,
+  fields: Array<keyof CalculationDraft>,
+) {
+  return Array.from(new Set(fields))
+    .filter((field) => isDraftValueMissing(String(draft[field] ?? "")))
+    .map((field) => calculationFieldLabels[field] ?? String(field));
+}
+
+function formatMissingFieldMessage(
+  headline: string,
+  missingLabels: string[],
+  extraMessage?: string,
+) {
+  const lines = [headline, ""];
+
+  if (missingLabels.length > 0) {
+    lines.push("Bitte prüfen:");
+    lines.push(...missingLabels.slice(0, 8).map((label) => `- ${label}`));
+
+    if (missingLabels.length > 8) {
+      lines.push(`- ${missingLabels.length - 8} weitere Felder`);
+    }
+  }
+
+  if (extraMessage) {
+    if (missingLabels.length > 0) {
+      lines.push("");
+    }
+    lines.push(extraMessage);
+  }
+
+  return lines.join("\n");
+}
+
 function getReadinessLabel(missingCount: number) {
   return missingCount === 0 ? "bereit" : `${missingCount} offen`;
 }
@@ -3097,6 +3157,18 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   const canCreateOrderDraft = openRequiredFields === 0;
   const canCreateOffer = offerOpenFields === 0;
   const orderOpenFields = countMissingFields(draft, orderRequiredFields);
+  const offerMissingFieldLabels = useMemo(
+    () =>
+      getMissingFieldLabels(draft, [
+        ...offerRequiredFields,
+        ...productionModeRequiredFields,
+      ]),
+    [draft, productionModeRequiredFields],
+  );
+  const orderMissingFieldLabels = useMemo(
+    () => getMissingFieldLabels(draft, orderRequiredFields),
+    [draft, orderRequiredFields],
+  );
   const offerDateWarning = isDeliveryBeforeOfferDate(draft);
   const payload = useMemo(
     () => buildPayloadFromDraft(draft, productionMode, finishingRows),
@@ -3166,8 +3238,29 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     setOfferWasPrepared(false);
   };
 
+  const showOfferValidation = () => {
+    window.alert(
+      formatMissingFieldMessage(
+        "Das Angebot kann noch nicht erzeugt werden.",
+        offerMissingFieldLabels,
+        "Die Maske bleibt bewusst ruhig. PrintPilot meldet sich nur, wenn bei einer Aktion etwas fehlt.",
+      ),
+    );
+  };
+
+  const showOrderValidation = () => {
+    window.alert(
+      formatMissingFieldMessage(
+        "Der Auftrag kann noch nicht vorbereitet werden.",
+        orderMissingFieldLabels,
+        "Bitte die fehlenden Angaben ergänzen und die Aktion danach erneut ausführen.",
+      ),
+    );
+  };
+
   const handlePrepareOffer = () => {
     if (!canCreateOffer) {
+      showOfferValidation();
       return;
     }
 
@@ -3178,6 +3271,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
 
   const handlePrintOffer = () => {
     if (!canCreateOffer) {
+      showOfferValidation();
       return;
     }
 
@@ -3219,7 +3313,13 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   };
 
   const handlePrepareOfferEmail = () => {
-    if (!canCreateOffer || !draft.contactEmail.trim()) {
+    if (!canCreateOffer) {
+      showOfferValidation();
+      return;
+    }
+
+    if (!draft.contactEmail.trim()) {
+      window.alert("Für die E-Mail-Vorbereitung fehlt die E-Mail-Adresse des Ansprechpartners.");
       return;
     }
 
@@ -3234,6 +3334,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
 
   const handleCreateOrderDraft = () => {
     if (!canCreateOrderDraft) {
+      showOrderValidation();
       return;
     }
 
@@ -3337,13 +3438,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                 >
                   <span>{tab.shortcut}</span>
                   <b>{tab.label}</b>
-                  <small>
-                    {missingCount > 0
-                      ? `${missingCount} offen`
-                      : isExternalMuted
-                        ? "nicht aktiv"
-                        : "ok"}
-                  </small>
+                  {missingCount > 0 ? <small>{`${missingCount} offen`}</small> : null}
                 </button>
               );
             })}
@@ -4348,13 +4443,15 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     />
                   </div>
                 </CalculationSection>
-                <CalculationPlausibilityOverview
-                  draft={draft}
-                  activeFinishingCount={activeFinishingCount}
-                  productionMode={productionMode}
-                />
-                <CalculationFieldAudit />
-                <CalculationTransferMapping groups={transferGroups} />
+                <div hidden>
+                  <CalculationPlausibilityOverview
+                    draft={draft}
+                    activeFinishingCount={activeFinishingCount}
+                    productionMode={productionMode}
+                  />
+                  <CalculationFieldAudit />
+                  <CalculationTransferMapping groups={transferGroups} />
+                </div>
                 <div className="pp-calculation-offer-workflow" aria-label="Angebot erzeugen">
                   <div className="pp-calculation-offer-workflow__head">
                     <span>Angebot</span>
@@ -4375,7 +4472,6 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       type="button"
                       className="pp-calculation-create-button"
                       onClick={handlePrepareOffer}
-                      disabled={!canCreateOffer}
                     >
                       Angebot anzeigen
                     </button>
@@ -4383,7 +4479,6 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       type="button"
                       className="pp-calculation-create-button"
                       onClick={handlePrintOffer}
-                      disabled={!canCreateOffer}
                     >
                       Angebot als PDF drucken
                     </button>
@@ -4391,16 +4486,10 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                       type="button"
                       className="pp-calculation-create-button pp-calculation-create-button--secondary"
                       onClick={handlePrepareOfferEmail}
-                      disabled={!canCreateOffer || !draft.contactEmail.trim()}
                     >
                       E-Mail vorbereiten
                     </button>
                   </div>
-                  {!canCreateOffer ? (
-                    <p className="pp-calculation-offer-workflow__hint">
-                      Für ein Angebot fehlen noch Pflichtdaten oder der Verkaufspreis netto.
-                    </p>
-                  ) : null}
                   {offerPreviewOpen ? (
                     <CalculationOfferDocument
                       draft={draft}
@@ -4418,6 +4507,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           <div
             className="pp-calculation-statusbar"
             aria-label="Kalkulationsstatus und Aktionen"
+            hidden
           >
             <div>
               <span>Kalkulierbar</span>
@@ -4455,11 +4545,8 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
               className="pp-calculation-create-button pp-calculation-create-button--bar"
               type="button"
               onClick={handleCreateOrderDraft}
-              disabled={!canCreateOrderDraft}
             >
-              {canCreateOrderDraft
-                ? "Auftragstasche vorbereiten"
-                : "Pflichtdaten fehlen"}
+              Auftragsentwurf erzeugen
             </button>
           </div>
         </div>
@@ -4479,9 +4566,9 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           aria-label="Kalkulation Ergebnis"
         >
           <div className="pp-calculation-result-panel__head">
-            <p className="pp-eyebrow">Ergebnis & Auftragstasche</p>
+            <p className="pp-eyebrow">Ergebnis</p>
             <h2>Produktionskern</h2>
-            <span>Gleiche Struktur wie die Auftragstasche: Produktionsdaten, Nutzenplan, Kosten und Übergabe.</span>
+            <span>Produktionsdaten, Nutzenplan und Preisabschluss.</span>
           </div>
 
           <CalculationSheetPreview payload={payload} />
@@ -4527,7 +4614,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             </div>
           </div>
 
-          <div className="pp-calculation-output-card pp-calculation-output-card--pocket">
+          <div className="pp-calculation-output-card pp-calculation-output-card--pocket" hidden>
             <h3>Übergabe an Auftragstasche</h3>
             <div className="pp-calc-result-list">
               {orderPocketPreviewRows.map(([label, value]) => (
@@ -4536,22 +4623,22 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             </div>
           </div>
 
-          <CalculationTransferMapping groups={transferGroups} compact />
+          <div hidden>
+            <CalculationTransferMapping groups={transferGroups} compact />
+          </div>
 
           <div className="pp-calculation-action-stack">
             <button
               className="pp-calculation-create-button"
               type="button"
               onClick={handlePrepareOffer}
-              disabled={!canCreateOffer}
             >
-              {canCreateOffer ? "Angebot anzeigen" : "Angebotsdaten fehlen"}
+              Angebot anzeigen
             </button>
             <button
               className="pp-calculation-create-button pp-calculation-create-button--secondary"
               type="button"
               onClick={handlePrintOffer}
-              disabled={!canCreateOffer}
             >
               Angebot als PDF drucken
             </button>
@@ -4559,32 +4646,20 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
               className="pp-calculation-create-button"
               type="button"
               onClick={handleCreateOrderDraft}
-              disabled={!canCreateOrderDraft}
             >
-              {canCreateOrderDraft
-                ? "Auftragstasche vorbereiten"
-                : "Pflichtdaten fehlen"}
+              Auftragsentwurf erzeugen
             </button>
           </div>
 
-          <div
-            className={
-              draftWasCreated
-                ? "pp-calculation-create-note is-active"
-                : "pp-calculation-create-note"
-            }
-          >
-            <strong>
-              {draftWasCreated
-                ? "Auftragsentwurf erzeugt"
-                : "Noch nicht gespeichert"}
-            </strong>
-            <p>
-              Lokaler Demo-State. Das Angebot kann als Druck-PDF ausgegeben werden;
-              der Auftragsentwurf übernimmt danach die produktionsrelevanten
-              Kalkulationswerte in Auftrag und Auftragstasche.
-            </p>
-          </div>
+          {draftWasCreated ? (
+            <div className="pp-calculation-create-note is-active">
+              <strong>Auftragsentwurf erzeugt</strong>
+              <p>
+                Die produktionsrelevanten Kalkulationswerte wurden in einen
+                lokalen Auftragsentwurf übernommen.
+              </p>
+            </div>
+          ) : null}
         </aside>
       </section>
     </div>

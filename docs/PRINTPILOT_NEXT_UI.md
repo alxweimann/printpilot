@@ -3862,3 +3862,20 @@ Build-Prüfung: `npm run build`.
 - Die Bottom-Navigation wurde nicht verändert.
 
 Build-Prüfung: `npm run build`.
+
+### Sprint 53 – Systemhinweise aus Arbeitsmasken entfernen
+
+- Die Kalkulationsmaske wurde nach dem Prinzip **Normalzustand = ruhig, Abweichungen = sichtbar** bereinigt.
+- Dauerhafte System-/Prüfhinweise werden in der sichtbaren Arbeitsmaske nicht mehr permanent angezeigt:
+  - keine sichtbare Übergabeprüfung,
+  - kein dauerhaftes „noch nicht gespeichert“,
+  - keine technische Feldzuordnung zur Auftragstasche,
+  - keine dauerhafte Bereitschaftsstatusleiste.
+- Interne Prüfungen und Mapping-Strukturen bleiben im Code vorbereitet, sind aber aus dem normalen Arbeitsfluss ausgeblendet.
+- Aktionen wie **Angebot anzeigen**, **Angebot als PDF drucken**, **E-Mail vorbereiten** und **Auftragsentwurf erzeugen** bleiben sichtbar und lösen bei fehlenden Pflichtdaten eine gezielte Warnmeldung aus.
+- Die Reiter zeigen nur noch offene Pflichtfelder an. Ein normaler OK-Zustand wird nicht mehr als zusätzlicher Text angezeigt.
+- Die rechte Ergebnisleiste wurde beruhigt: sichtbar bleiben Produktionsdaten, Preisabschluss und die wichtigsten Aktionen. Technische Übergabedetails sind ausgeblendet.
+- Die Angebotserzeugung bleibt unverändert funktionsfähig; Lieferterminwarnungen erscheinen weiterhin nur bei tatsächlicher Plausibilitätsabweichung.
+- Die Bottom-Navigation wurde nicht verändert.
+
+Build-Hinweis: In dieser Umgebung konnte `npm run build` nicht vollständig ausgeführt werden, weil im ZIP die installierten `node_modules` fehlen (`vite/client` und `node` Typdefinitionen nicht vorhanden). Bitte lokal nach dem Einspielen mit installiertem Projektstand prüfen.

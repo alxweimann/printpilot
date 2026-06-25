@@ -3926,3 +3926,16 @@ Build-Prüfung: `npm run build`.
 - **Bottom-Navigation nicht angefasst.**
 
 Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `npm run build` ausführen.
+
+### Sprint 53.4 – Validierungs-Popup zuverlässig als Overlay rendern
+
+- Der softwareeigene Validierungsdialog aus Sprint 53.3 wird jetzt per React-Portal direkt am Dokument-Body gerendert.
+- Dadurch hängt der Dialog nicht mehr im normalen Seitenfluss der Kalkulationsmaske und erscheint nicht mehr als ungestylter Block unterhalb der Arbeitsmaske.
+- Zusätzlich wurden die wichtigsten Overlay-/Panel-/Button-Stile direkt am Dialog abgesichert, damit das Popup auch dann korrekt sichtbar bleibt, wenn CSS-Reihenfolge oder Browser-Cache die Klassen verspätet laden.
+- Der Dialog bleibt fachlich unverändert:
+  - erscheint nur nach aktionsbezogener Validierung,
+  - zeigt fehlende Pflichtangaben gezielt,
+  - Feldmarkierung und Sprung zum betroffenen Reiter bleiben erhalten.
+- **Bottom-Navigation nicht angefasst.**
+
+Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `npm run build` ausführen.

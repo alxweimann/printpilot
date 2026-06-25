@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo, useRef, useState } from "react";
+import { createPortal } from "react-dom";
 import { PrintPilotLogo } from "../../components/brand/PrintPilotLogo";
 import { demoDocumentSettings } from "../documents/document-settings";
 import {
@@ -2191,13 +2192,35 @@ function CalculationSoftwareDialog({
         ? "Erledigt"
         : "Information";
 
-  return (
-    <div className="pp-software-dialog" role="presentation">
+  const dialogMarkup = (
+    <div
+      className="pp-software-dialog"
+      role="presentation"
+      style={{
+        position: "fixed",
+        inset: 0,
+        zIndex: 9999,
+        display: "grid",
+        placeItems: "center",
+        padding: 28,
+      }}
+    >
       <button
         className="pp-software-dialog__backdrop"
         type="button"
         aria-label="Dialog schließen"
         onClick={onClose}
+        style={{
+          position: "absolute",
+          inset: 0,
+          display: "block",
+          width: "100%",
+          height: "100%",
+          border: 0,
+          background: "rgba(11, 23, 48, .36)",
+          backdropFilter: "blur(7px)",
+          cursor: "default",
+        }}
       />
       <section
         className={[
@@ -2207,32 +2230,159 @@ function CalculationSoftwareDialog({
         role="dialog"
         aria-modal="true"
         aria-labelledby="pp-calculation-dialog-title"
+        style={{
+          position: "relative",
+          zIndex: 1,
+          width: "min(540px, calc(100vw - 32px))",
+          overflow: "hidden",
+          border: ".55pt solid rgba(217, 120, 0, .25)",
+          borderRadius: 22,
+          background: "rgba(255, 255, 255, .98)",
+          boxShadow: "0 28px 80px rgba(11, 23, 48, .22)",
+        }}
       >
-        <div className="pp-software-dialog__head">
-          <span>{variantLabel}</span>
-          <button type="button" onClick={onClose} aria-label="Dialog schließen">
+        <div
+          className="pp-software-dialog__head"
+          style={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "space-between",
+            gap: 16,
+            minHeight: 54,
+            padding: "14px 18px 12px",
+            borderBottom: ".55pt solid #e6edf6",
+            background: "#ffffff",
+          }}
+        >
+          <span
+            style={{
+              fontSize: 11,
+              fontWeight: 760,
+              letterSpacing: ".13em",
+              textTransform: "uppercase",
+              color: dialog.variant === "warning" ? "#a95800" : "#0b63ce",
+            }}
+          >
+            {variantLabel}
+          </span>
+          <button
+            type="button"
+            onClick={onClose}
+            aria-label="Dialog schließen"
+            style={{
+              display: "grid",
+              width: 34,
+              height: 34,
+              placeItems: "center",
+              border: ".55pt solid rgba(11, 99, 206, .18)",
+              borderRadius: 999,
+              background: "#ffffff",
+              color: "#082b63",
+              fontSize: 23,
+              lineHeight: 1,
+              cursor: "pointer",
+            }}
+          >
             ×
           </button>
         </div>
-        <div className="pp-software-dialog__body">
-          <h2 id="pp-calculation-dialog-title">{dialog.title}</h2>
-          {dialog.body ? <p>{dialog.body}</p> : null}
+        <div
+          className="pp-software-dialog__body"
+          style={{
+            padding: "22px 24px 10px",
+          }}
+        >
+          <h2
+            id="pp-calculation-dialog-title"
+            style={{
+              margin: 0,
+              color: "#18345e",
+              fontSize: 22,
+              lineHeight: 1.16,
+              letterSpacing: "-.02em",
+            }}
+          >
+            {dialog.title}
+          </h2>
+          {dialog.body ? (
+            <p
+              style={{
+                margin: "10px 0 0",
+                color: "#60708a",
+                fontSize: 14,
+                lineHeight: 1.48,
+              }}
+            >
+              {dialog.body}
+            </p>
+          ) : null}
           {dialog.items && dialog.items.length > 0 ? (
-            <ul>
+            <ul
+              style={{
+                display: "grid",
+                gap: 7,
+                margin: "18px 0 0",
+                padding: 0,
+                listStyle: "none",
+              }}
+            >
               {dialog.items.map((item) => (
-                <li key={item}>{item}</li>
+                <li
+                  key={item}
+                  style={{
+                    minHeight: 34,
+                    padding: "8px 12px",
+                    border: ".55pt solid rgba(217, 120, 0, .18)",
+                    borderRadius: 12,
+                    background: "rgba(255, 247, 237, .74)",
+                    color: "#5f3900",
+                    fontSize: 13,
+                    lineHeight: 1.35,
+                  }}
+                >
+                  {item}
+                </li>
               ))}
             </ul>
           ) : null}
         </div>
-        <div className="pp-software-dialog__actions">
-          <button type="button" onClick={onClose}>
+        <div
+          className="pp-software-dialog__actions"
+          style={{
+            display: "flex",
+            justifyContent: "flex-end",
+            padding: "14px 24px 22px",
+          }}
+        >
+          <button
+            type="button"
+            onClick={onClose}
+            style={{
+              minHeight: 42,
+              border: 0,
+              borderRadius: 999,
+              background: "#0b63ce",
+              color: "#ffffff",
+              fontSize: 13,
+              fontWeight: 760,
+              letterSpacing: ".01em",
+              padding: "0 22px",
+              cursor: "pointer",
+              boxShadow: "0 12px 24px rgba(11, 99, 206, .18)",
+            }}
+          >
             {dialog.primaryLabel ?? "Verstanden"}
           </button>
         </div>
       </section>
     </div>
   );
+
+  if (typeof document === "undefined") {
+    return dialogMarkup;
+  }
+
+  return createPortal(dialogMarkup, document.body);
 }
 
 function CalculationField({

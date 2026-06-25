@@ -4023,3 +4023,14 @@ Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `n
 - Validierungsdialog und Bottom-Navigation bleiben unverändert.
 
 Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `npm run build` ausführen.
+
+## Sprint 55.2 – Nutzenvorschau auf dem Druckbogen zentrieren
+
+- Die Nutzenvorschau im Reiter **04 Nutzenrechner** wird jetzt innerhalb der nutzbaren Druckbogenfläche zentriert.
+- Manuelle Raster wie **3 × 3** kleben nicht mehr oben links am Bogenrand.
+- Die physikalische Skalierung aus Sprint 55.1 bleibt erhalten: Nutzen werden weiterhin in realer Größe relativ zum Druckbogen dargestellt.
+- Bogenrand, Zwischenschnitt X-Achse und Zwischenschnitt Y-Achse werden weiterhin in der Positionierung berücksichtigt.
+- Die sichtbare Restfläche verteilt sich bei kleineren manuellen Rastern links/rechts und oben/unten gleichmäßig.
+- **08 Impose** bleibt weiterhin ein separates späteres Produktionsmodul; der Nutzenrechner bleibt Kalkulationswerkzeug.
+- Bottom-Navigation bleibt unverändert.
+

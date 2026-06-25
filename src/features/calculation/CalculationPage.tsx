@@ -2728,6 +2728,12 @@ function CalculationSheetPreview({
   const sheetAspectRatio = sheetWidthMm && sheetHeightMm
     ? `${sheetWidthMm} / ${sheetHeightMm}`
     : undefined;
+  const occupiedWidthMm = columns * itemWidthMm + Math.max(0, columns - 1) * gapXMm;
+  const occupiedHeightMm = rows * itemHeightMm + Math.max(0, rows - 1) * gapYMm;
+  const usableWidthMm = Math.max(1, sheetWidthMm - marginMm * 2);
+  const usableHeightMm = Math.max(1, sheetHeightMm - marginMm * 2);
+  const centeredOffsetXMm = marginMm + Math.max(0, (usableWidthMm - occupiedWidthMm) / 2);
+  const centeredOffsetYMm = marginMm + Math.max(0, (usableHeightMm - occupiedHeightMm) / 2);
   const marginStyle = sheetWidthMm && sheetHeightMm
     ? {
         left: `${(marginMm / sheetWidthMm) * 100}%`,
@@ -2760,8 +2766,8 @@ function CalculationSheetPreview({
           const isUsed = cell <= usedSlots;
           const itemStyle = sheetWidthMm && sheetHeightMm
             ? {
-                left: `${((marginMm + columnIndex * (itemWidthMm + gapXMm)) / sheetWidthMm) * 100}%`,
-                top: `${((marginMm + rowIndex * (itemHeightMm + gapYMm)) / sheetHeightMm) * 100}%`,
+                left: `${((centeredOffsetXMm + columnIndex * (itemWidthMm + gapXMm)) / sheetWidthMm) * 100}%`,
+                top: `${((centeredOffsetYMm + rowIndex * (itemHeightMm + gapYMm)) / sheetHeightMm) * 100}%`,
                 width: `${(itemWidthMm / sheetWidthMm) * 100}%`,
                 height: `${(itemHeightMm / sheetHeightMm) * 100}%`,
               }

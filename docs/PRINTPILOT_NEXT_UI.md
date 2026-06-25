@@ -3879,3 +3879,16 @@ Build-Prüfung: `npm run build`.
 - Die Bottom-Navigation wurde nicht verändert.
 
 Build-Hinweis: In dieser Umgebung konnte `npm run build` nicht vollständig ausgeführt werden, weil im ZIP die installierten `node_modules` fehlen (`vite/client` und `node` Typdefinitionen nicht vorhanden). Bitte lokal nach dem Einspielen mit installiertem Projektstand prüfen.
+
+### Sprint 53.1 – Pflicht-/Optional-/Später-Badges aus Arbeitsmasken entfernen
+
+- Die dauerhaften Feld-Badges **Pflicht**, **optional** und **später** werden in der Kalkulationsmaske nicht mehr sichtbar gerendert.
+- Die fachliche Einstufung der Felder bleibt intern im Code erhalten, damit Validierung und Aktionsprüfung weiterhin sauber funktionieren.
+- **Optionale Felder** werden nicht mehr als solche beschriftet. Ein Feld ohne Warnung ist im Normalzustand einfach ein normales Eingabefeld.
+- **Später-Felder** werden nicht mehr als Entwicklungsstatus im Arbeitsfluss markiert. Entwicklungs-/Roadmap-Informationen gehören in die Dokumentation oder spätere Admin-/Einstellungsbereiche, nicht dauerhaft in die Maske.
+- **Pflichtfelder** werden nicht mehr permanent mit einem Badge markiert. Erst wenn der Anwender eine Aktion auslöst und Pflichtangaben fehlen, werden die fehlenden Pflichtfelder gezielt und ruhig hervorgehoben.
+- Die vorhandenen Warn-Dialoge für Angebotserzeugung und Auftragsentwurf bleiben der primäre Hinweisweg. Die Maske bleibt im Normalzustand visuell ruhig.
+- Die akzeptierte Eingabemasken-Optik bleibt erhalten: weiße Labels mit Cyan-Schrift, weiße Eingabefelder mit feiner Cyan-Umrandung und aktive Tabs vollflächig in PrintPilot-Cyan.
+- Die Bottom-Navigation wurde nicht verändert.
+
+Build-Hinweis: In dieser Umgebung konnte `npm run build` nicht vollständig ausgeführt werden, weil die lokalen Typdefinitionen aus `node_modules` fehlen (`vite/client` und `node`). Bitte lokal nach dem Einspielen mit installiertem Projektstand prüfen.

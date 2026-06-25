@@ -21844,3 +21844,42 @@ button.pp-process-step:hover {
     gap: 4px;
   }
 }
+
+/* Sprint 53.1 – Pflicht-/Optional-/Später-Badges aus Arbeitsmasken entfernen */
+.pp-calc-input-field span,
+.pp-calculation-tab-panel .pp-calc-input-field span {
+  grid-template-rows: auto !important;
+  row-gap: 0 !important;
+  align-content: center !important;
+}
+
+.pp-calc-input-field span em,
+.pp-calc-input-field span em.pp-field-badge--pflicht,
+.pp-calc-input-field span em.pp-field-badge--optional,
+.pp-calc-input-field span em.pp-field-badge--später,
+.pp-calculation-tab-panel .pp-calc-input-field span em {
+  display: none !important;
+}
+
+.pp-calc-input-field.is-required-missing,
+.pp-calculation-tab-panel .pp-calc-input-field.is-required-missing {
+  box-shadow: inset 2px 0 0 #d97800 !important;
+}
+
+.pp-calc-input-field.is-required-missing span,
+.pp-calculation-tab-panel .pp-calc-input-field.is-required-missing span {
+  color: #a95800 !important;
+}
+
+.pp-calc-input-field.is-required-missing span strong,
+.pp-calculation-tab-panel .pp-calc-input-field.is-required-missing span strong {
+  color: #a95800 !important;
+}
+
+.pp-calc-input-field.is-required-missing input,
+.pp-calc-input-field.is-required-missing select,
+.pp-calculation-tab-panel .pp-calc-input-field.is-required-missing input,
+.pp-calculation-tab-panel .pp-calc-input-field.is-required-missing select {
+  border-color: rgba(217, 120, 0, .58) !important;
+  box-shadow: 0 0 0 2px rgba(217, 120, 0, .08), inset 0 1px 0 rgba(255, 255, 255, .96) !important;
+}

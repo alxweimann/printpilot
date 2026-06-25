@@ -1,4 +1,4 @@
-import { useMemo, useRef, useState } from "react";
+import { createContext, useContext, useMemo, useRef, useState } from "react";
 import { PrintPilotLogo } from "../../components/brand/PrintPilotLogo";
 import { demoDocumentSettings } from "../documents/document-settings";
 import {
@@ -19,6 +19,8 @@ type CalculationPageProps = {
 
 type ProductionMode = "internal" | "external" | "combined";
 type FieldBadge = "Pflicht" | "optional" | "später";
+
+const CalculationFieldValidationContext = createContext(false);
 type ReadinessState = "ready" | "blocked";
 type CalculationPlausibilityGroupId =
   | "product-data"
@@ -2158,28 +2160,29 @@ function CalculationField({
   badge?: FieldBadge;
   wide?: boolean;
 }) {
+  const showValidation = useContext(CalculationFieldValidationContext);
+  const isMissingRequired =
+    badge === "Pflicht" && showValidation && isDraftValueMissing(value);
+
   return (
     <label
-      className={
+      className={[
         wide
           ? "pp-calc-input-field pp-calc-input-field--wide"
-          : "pp-calc-input-field"
-      }
+          : "pp-calc-input-field",
+        isMissingRequired ? "is-required-missing" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
     >
       <span>
         <strong>{label}</strong>
-        {badge ? (
-          <em
-            className={`pp-field-badge pp-field-badge--${badge.toLowerCase()}`}
-          >
-            {badge}
-          </em>
-        ) : null}
       </span>
       <input
         value={value}
         onChange={(event) => onValueChange?.(event.target.value)}
         readOnly={!onValueChange}
+        aria-invalid={isMissingRequired || undefined}
       />
       {hint ? <small>{hint}</small> : null}
     </label>
@@ -2201,22 +2204,27 @@ function CalculationSelect({
   hint?: string;
   badge?: FieldBadge;
 }) {
+  const showValidation = useContext(CalculationFieldValidationContext);
+  const isMissingRequired =
+    badge === "Pflicht" && showValidation && isDraftValueMissing(value);
+
   return (
-    <label className="pp-calc-input-field">
+    <label
+      className={[
+        "pp-calc-input-field",
+        isMissingRequired ? "is-required-missing" : "",
+      ]
+        .filter(Boolean)
+        .join(" ")}
+    >
       <span>
         <strong>{label}</strong>
-        {badge ? (
-          <em
-            className={`pp-field-badge pp-field-badge--${badge.toLowerCase()}`}
-          >
-            {badge}
-          </em>
-        ) : null}
       </span>
       <select
         value={value}
         onChange={(event) => onValueChange?.(event.target.value)}
         disabled={!onValueChange}
+        aria-invalid={isMissingRequired || undefined}
       >
         {options.map((option) => (
           <option key={option.value} value={option.value}>
@@ -3098,6 +3106,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     useState<FinishingDraftRow[]>(initialFinishingRows);
   const [activeTab, setActiveTab] =
     useState<CalculationTabId>("customer-order");
+  const [showFieldValidation, setShowFieldValidation] = useState(false);
 
   const missingRequiredByTab = useMemo(() => {
     return calculationTabs.reduce<Record<CalculationTabId, number>>(
@@ -3239,6 +3248,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   };
 
   const showOfferValidation = () => {
+    setShowFieldValidation(true);
     window.alert(
       formatMissingFieldMessage(
         "Das Angebot kann noch nicht erzeugt werden.",
@@ -3249,6 +3259,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   };
 
   const showOrderValidation = () => {
+    setShowFieldValidation(true);
     window.alert(
       formatMissingFieldMessage(
         "Der Auftrag kann noch nicht vorbereitet werden.",
@@ -3264,6 +3275,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
       return;
     }
 
+    setShowFieldValidation(false);
     setOfferPreviewOpen(true);
     setOfferWasPrepared(true);
     setActiveTab("prices");
@@ -3275,6 +3287,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
       return;
     }
 
+    setShowFieldValidation(false);
     setOfferPreviewOpen(true);
     setOfferWasPrepared(true);
 
@@ -3323,6 +3336,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
       return;
     }
 
+    setShowFieldValidation(false);
     setOfferPreviewOpen(true);
     setOfferWasPrepared(true);
 
@@ -3357,6 +3371,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     );
 
     onCreateOrderDraft(draftOrder);
+    setShowFieldValidation(false);
     setDraftWasCreated(true);
   };
 
@@ -3379,7 +3394,8 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         </div>
       </header>
 
-      <section className="pp-calculation-layout pp-calculation-layout--tabs">
+      <CalculationFieldValidationContext.Provider value={showFieldValidation}>
+        <section className="pp-calculation-layout pp-calculation-layout--tabs">
         <div
           className="pp-calculation-form"
           aria-label="Kalkulation Reitermaske"
@@ -4661,7 +4677,8 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             </div>
           ) : null}
         </aside>
-      </section>
+        </section>
+      </CalculationFieldValidationContext.Provider>
     </div>
   );
 }

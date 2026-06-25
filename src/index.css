@@ -21883,3 +21883,189 @@ button.pp-process-step:hover {
   border-color: rgba(217, 120, 0, .58) !important;
   box-shadow: 0 0 0 2px rgba(217, 120, 0, .08), inset 0 1px 0 rgba(255, 255, 255, .96) !important;
 }
+
+/* Sprint 53.3 – softwareeigener Validierungsdialog statt Browser-Alert */
+.pp-software-dialog {
+  position: fixed;
+  inset: 0;
+  z-index: 1200;
+  display: grid;
+  place-items: center;
+  padding: 28px;
+}
+
+.pp-software-dialog__backdrop {
+  position: absolute;
+  inset: 0;
+  display: block;
+  width: 100%;
+  height: 100%;
+  border: 0;
+  background: rgba(11, 23, 48, .36);
+  backdrop-filter: blur(7px);
+  cursor: default;
+}
+
+.pp-software-dialog__panel {
+  position: relative;
+  z-index: 1;
+  width: min(540px, calc(100vw - 32px));
+  overflow: hidden;
+  border: .55pt solid rgba(11, 99, 206, .22);
+  border-radius: 22px;
+  background: rgba(255, 255, 255, .98);
+  box-shadow: 0 28px 80px rgba(11, 23, 48, .22);
+}
+
+.pp-software-dialog__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  min-height: 54px;
+  padding: 14px 18px 12px;
+  border-bottom: .55pt solid var(--pp-calc-line-soft, #e6edf6);
+  background: #ffffff;
+}
+
+.pp-software-dialog__head span {
+  font-size: 11px;
+  font-weight: 760;
+  letter-spacing: .13em;
+  text-transform: uppercase;
+  color: var(--pp-calc-blue, #0b63ce);
+}
+
+.pp-software-dialog__head button {
+  display: grid;
+  width: 34px;
+  height: 34px;
+  place-items: center;
+  border: .55pt solid rgba(11, 99, 206, .18);
+  border-radius: 999px;
+  background: #ffffff;
+  color: var(--pp-calc-blue-dark, #082b63);
+  font-size: 23px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.pp-software-dialog__head button:hover,
+.pp-software-dialog__head button:focus-visible {
+  border-color: rgba(11, 99, 206, .42);
+  outline: none;
+  box-shadow: 0 0 0 3px rgba(11, 99, 206, .1);
+}
+
+.pp-software-dialog__body {
+  padding: 22px 24px 10px;
+}
+
+.pp-software-dialog__body h2 {
+  margin: 0;
+  color: var(--pp-calc-heading, #18345e);
+  font-size: 22px;
+  line-height: 1.16;
+  letter-spacing: -.02em;
+}
+
+.pp-software-dialog__body p {
+  margin: 10px 0 0;
+  color: var(--pp-calc-muted, #60708a);
+  font-size: 14px;
+  line-height: 1.48;
+}
+
+.pp-software-dialog__body ul {
+  display: grid;
+  gap: 7px;
+  margin: 18px 0 0;
+  padding: 0;
+  list-style: none;
+}
+
+.pp-software-dialog__body li {
+  position: relative;
+  min-height: 34px;
+  padding: 8px 12px 8px 32px;
+  border: .55pt solid rgba(217, 120, 0, .18);
+  border-radius: 12px;
+  background: rgba(255, 247, 237, .74);
+  color: #5f3900;
+  font-size: 13px;
+  line-height: 1.35;
+}
+
+.pp-software-dialog__body li::before {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 13px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #d97800;
+  transform: translateY(-50%);
+}
+
+.pp-software-dialog__actions {
+  display: flex;
+  justify-content: flex-end;
+  padding: 14px 24px 22px;
+}
+
+.pp-software-dialog__actions button {
+  min-height: 42px;
+  border: 0;
+  border-radius: 999px;
+  background: var(--pp-calc-blue, #0b63ce);
+  color: #ffffff;
+  font-size: 13px;
+  font-weight: 760;
+  letter-spacing: .01em;
+  padding: 0 22px;
+  cursor: pointer;
+  box-shadow: 0 12px 24px rgba(11, 99, 206, .18);
+}
+
+.pp-software-dialog__actions button:hover,
+.pp-software-dialog__actions button:focus-visible {
+  background: var(--pp-calc-blue-dark, #082b63);
+  outline: none;
+}
+
+.pp-software-dialog__panel--warning {
+  border-color: rgba(217, 120, 0, .25);
+}
+
+.pp-software-dialog__panel--warning .pp-software-dialog__head span {
+  color: #a95800;
+}
+
+.pp-software-dialog__panel--warning .pp-software-dialog__actions button {
+  background: #0b63ce;
+}
+
+@media (max-width: 640px) {
+  .pp-software-dialog {
+    align-items: end;
+    padding: 16px;
+  }
+
+  .pp-software-dialog__panel {
+    width: 100%;
+    border-radius: 20px;
+  }
+
+  .pp-software-dialog__body {
+    padding: 20px 18px 8px;
+  }
+
+  .pp-software-dialog__actions {
+    padding: 12px 18px 18px;
+  }
+
+  .pp-software-dialog__actions button {
+    width: 100%;
+  }
+}

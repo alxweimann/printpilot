@@ -3908,3 +3908,21 @@ Build-Hinweis: In dieser Umgebung konnte `npm run build` nicht vollständig ausg
 - **Bottom-Navigation nicht angefasst.**
 
 Build-Prüfung: `npm run build`.
+
+### Sprint 53.3 – Validierungsdialog als Software-Popup
+
+- Die aktionsbezogene Validierung aus Sprint 53.2 nutzt jetzt keinen nativen Browser-Alert mehr.
+- Fehlende Pflichtangaben und technische Aktionsprobleme werden in einem softwareeigenen PrintPilot-Dialog angezeigt.
+- Der Dialog folgt der ruhigen Eingabemasken-Optik: weißes Panel, dezente Linien, PrintPilot-Cyan als Aktionsfarbe und nur bei echten Problemen eine warme Warnmarkierung.
+- Die Maske bleibt weiterhin im Normalzustand ruhig. Der Dialog erscheint nur nach einer ausgelösten Aktion, wenn etwas fehlt oder eine Aktion technisch nicht ausgeführt werden kann.
+- Die vorhandene Feldmarkierung und der Sprung zum ersten Reiter mit fehlender Angabe bleiben erhalten.
+- Die Dialoge wurden für folgende Fälle umgestellt:
+  - Angebot kann noch nicht erzeugt werden,
+  - Angebots-E-Mail kann noch nicht vorbereitet werden,
+  - Auftrag kann noch nicht vorbereitet werden,
+  - Angebotsdokument ist noch nicht bereit,
+  - Druckfenster wurde vom Browser blockiert.
+- Browser-eigene Dialoge werden für diese Validierung nicht mehr verwendet.
+- **Bottom-Navigation nicht angefasst.**
+
+Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `npm run build` ausführen.

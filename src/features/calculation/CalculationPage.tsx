@@ -19,6 +19,14 @@ type CalculationPageProps = {
 
 type ProductionMode = "internal" | "external" | "combined";
 type FieldBadge = "Pflicht" | "optional" | "später";
+type CalculationDialogVariant = "warning" | "info" | "success";
+type CalculationDialogState = {
+  variant: CalculationDialogVariant;
+  title: string;
+  body?: string;
+  items?: string[];
+  primaryLabel?: string;
+};
 
 const CalculationFieldValidationContext = createContext<ReadonlySet<string>>(new Set());
 type ReadinessState = "ready" | "blocked";
@@ -521,30 +529,14 @@ function getMissingFieldLabels(
     .map((field) => calculationFieldLabels[field] ?? String(field));
 }
 
-function formatMissingFieldMessage(
-  headline: string,
-  missingLabels: string[],
-  extraMessage?: string,
-) {
-  const lines = [headline, ""];
+function buildDialogItems(labels: string[]) {
+  const visibleItems = labels.slice(0, 8);
 
-  if (missingLabels.length > 0) {
-    lines.push("Bitte prüfen:");
-    lines.push(...missingLabels.slice(0, 8).map((label) => `- ${label}`));
-
-    if (missingLabels.length > 8) {
-      lines.push(`- ${missingLabels.length - 8} weitere Felder`);
-    }
+  if (labels.length > 8) {
+    visibleItems.push(`${labels.length - 8} weitere Felder`);
   }
 
-  if (extraMessage) {
-    if (missingLabels.length > 0) {
-      lines.push("");
-    }
-    lines.push(extraMessage);
-  }
-
-  return lines.join("\n");
+  return visibleItems;
 }
 
 function getReadinessLabel(missingCount: number) {
@@ -2185,6 +2177,64 @@ function CalculationOfferDocument({
   );
 }
 
+function CalculationSoftwareDialog({
+  dialog,
+  onClose,
+}: {
+  dialog: CalculationDialogState;
+  onClose: () => void;
+}) {
+  const variantLabel =
+    dialog.variant === "warning"
+      ? "Hinweis"
+      : dialog.variant === "success"
+        ? "Erledigt"
+        : "Information";
+
+  return (
+    <div className="pp-software-dialog" role="presentation">
+      <button
+        className="pp-software-dialog__backdrop"
+        type="button"
+        aria-label="Dialog schließen"
+        onClick={onClose}
+      />
+      <section
+        className={[
+          "pp-software-dialog__panel",
+          `pp-software-dialog__panel--${dialog.variant}`,
+        ].join(" ")}
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="pp-calculation-dialog-title"
+      >
+        <div className="pp-software-dialog__head">
+          <span>{variantLabel}</span>
+          <button type="button" onClick={onClose} aria-label="Dialog schließen">
+            ×
+          </button>
+        </div>
+        <div className="pp-software-dialog__body">
+          <h2 id="pp-calculation-dialog-title">{dialog.title}</h2>
+          {dialog.body ? <p>{dialog.body}</p> : null}
+          {dialog.items && dialog.items.length > 0 ? (
+            <ul>
+              {dialog.items.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          ) : null}
+        </div>
+        <div className="pp-software-dialog__actions">
+          <button type="button" onClick={onClose}>
+            {dialog.primaryLabel ?? "Verstanden"}
+          </button>
+        </div>
+      </section>
+    </div>
+  );
+}
+
 function CalculationField({
   field,
   label,
@@ -3158,6 +3208,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   const [activeTab, setActiveTab] =
     useState<CalculationTabId>("customer-order");
   const [activeValidationFields, setActiveValidationFields] = useState<Array<keyof CalculationDraft>>([]);
+  const [softwareDialog, setSoftwareDialog] = useState<CalculationDialogState | null>(null);
   const activeValidationFieldSet = useMemo(
     () => new Set(activeValidationFields.map(String)),
     [activeValidationFields],
@@ -3312,9 +3363,13 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     setActiveValidationFields(missingFields);
     focusFirstMissingFieldTab(missingFields);
 
-    window.alert(
-      formatMissingFieldMessage(headline, missingLabels, extraMessage),
-    );
+    setSoftwareDialog({
+      variant: "warning",
+      title: headline,
+      body: extraMessage,
+      items: buildDialogItems(missingLabels),
+      primaryLabel: "Angaben prüfen",
+    });
   };
 
   const showOfferValidation = () => {
@@ -3351,6 +3406,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     }
 
     setActiveValidationFields([]);
+    setSoftwareDialog(null);
     setOfferPreviewOpen(true);
     setOfferWasPrepared(true);
     setActiveTab("prices");
@@ -3363,15 +3419,18 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     }
 
     setActiveValidationFields([]);
+    setSoftwareDialog(null);
     setOfferPreviewOpen(true);
     setOfferWasPrepared(true);
 
     const offerMarkup = offerPrintRef.current?.innerHTML;
 
     if (!offerMarkup) {
-      window.alert(
-        "Das Angebotsdokument konnte noch nicht vorbereitet werden. Bitte Angebot anzeigen und danach erneut als PDF drucken.",
-      );
+      setSoftwareDialog({
+        variant: "warning",
+        title: "Angebotsdokument nicht bereit",
+        body: "Das Angebotsdokument konnte noch nicht vorbereitet werden. Bitte Angebot anzeigen und danach erneut als PDF drucken.",
+      });
       return;
     }
 
@@ -3382,9 +3441,11 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     );
 
     if (!printWindow) {
-      window.alert(
-        "Das Druckfenster wurde vom Browser blockiert. Bitte Pop-ups für PrintPilot erlauben und erneut drucken.",
-      );
+      setSoftwareDialog({
+        variant: "warning",
+        title: "Druckfenster blockiert",
+        body: "Das Druckfenster wurde vom Browser blockiert. Bitte Pop-ups für PrintPilot erlauben und erneut drucken.",
+      });
       return;
     }
 
@@ -3412,6 +3473,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     }
 
     setActiveValidationFields([]);
+    setSoftwareDialog(null);
     setOfferPreviewOpen(true);
     setOfferWasPrepared(true);
 
@@ -3447,6 +3509,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
 
     onCreateOrderDraft(draftOrder);
     setActiveValidationFields([]);
+    setSoftwareDialog(null);
     setDraftWasCreated(true);
   };
 
@@ -4885,6 +4948,12 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         </aside>
         </section>
       </CalculationFieldValidationContext.Provider>
+      {softwareDialog ? (
+        <CalculationSoftwareDialog
+          dialog={softwareDialog}
+          onClose={() => setSoftwareDialog(null)}
+        />
+      ) : null}
     </div>
   );
 }

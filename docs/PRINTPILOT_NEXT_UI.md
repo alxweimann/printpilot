@@ -3979,3 +3979,12 @@ Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `n
 - **Bottom-Navigation nicht angefasst.**
 
 Build-Prüfung: `npm run build`.
+
+## Sprint 54.1 – Kalkulation: Statuszeile und Produktionskern entfernen
+
+- Die untere Status-/Bereitschaftszeile in der Kalkulationsmaske wurde entfernt.
+- Plausibilitätsprüfungen und Pflichtfeldprüfungen bleiben intern und erscheinen nur noch über den Validierungsdialog aus Sprint 53.5.
+- Der dauerhafte rechte/untere „Produktionskern“ wurde aus der Arbeitsmaske entfernt, weil die dort gezeigten Informationen bereits in den jeweiligen Reitern fachlich gepflegt werden.
+- Angebots- und Auftragsaktionen bleiben im Reiter „Preise & Ergebnis“ sichtbar.
+- Aktionsbuttons sind dort nicht mehr vollbreit, sondern als kompakte Buttonzeile ausgeführt.
+- Die Bottom-Navigation bleibt unverändert.

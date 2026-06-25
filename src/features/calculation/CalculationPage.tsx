@@ -35,7 +35,6 @@ type CalculationDialogState = {
 };
 
 const CalculationFieldValidationContext = createContext<ReadonlySet<string>>(new Set());
-type ReadinessState = "ready" | "blocked";
 type CalculationPlausibilityGroupId =
   | "product-data"
   | "print-data"
@@ -562,14 +561,6 @@ function buildDialogItems(
   }
 
   return visibleItems;
-}
-
-function getReadinessLabel(missingCount: number) {
-  return missingCount === 0 ? "bereit" : `${missingCount} offen`;
-}
-
-function getReadinessState(missingCount: number): ReadinessState {
-  return missingCount === 0 ? "ready" : "blocked";
 }
 
 function isPlausibilityValuePrepared(value: string) {
@@ -3434,7 +3425,7 @@ function CalculationFieldAudit() {
 }
 
 export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
-  const [draftWasCreated, setDraftWasCreated] = useState(false);
+  const [, setDraftWasCreated] = useState(false);
   const [offerPreviewOpen, setOfferPreviewOpen] = useState(false);
   const [offerWasPrepared, setOfferWasPrepared] = useState(false);
   const offerPrintRef = useRef<HTMLDivElement>(null);
@@ -3483,15 +3474,6 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     [productionMode],
   );
 
-  const calculationOpenFields = useMemo(
-    () =>
-      countMissingFields(draft, [
-        ...calculationRequiredFields,
-        ...productionModeRequiredFields,
-      ]),
-    [draft, productionModeRequiredFields],
-  );
-
   const offerOpenFields = useMemo(
     () =>
       countMissingFields(draft, [
@@ -3506,7 +3488,6 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     [productionMode],
   );
 
-  const activeTabOpenRequiredFields = missingRequiredByTab[activeTab];
   const canCreateOffer = offerOpenFields === 0;
   const orderOpenFields = countMissingFields(draft, orderRequiredFields);
   const canCreateOrderDraft = orderOpenFields === 0;
@@ -3534,21 +3515,6 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     ["Termin", draft.dueDate],
     ["Material", `${draft.substrate} · ${draft.grammage}`],
     ["Maschine", `${draft.machine} · ${draft.printType}`],
-  ];
-  const orderPocketPreviewRows = [
-    ["Kunde", `${draft.customer} · ${draft.contactName}`],
-    ["Produkt", `${payload.product.label} · ${draft.finalFormat}`],
-    ["Druck", `${draft.machine} · ${draft.colorMode}`],
-    ["Material", `${draft.substrate} · ${draft.grammage}`],
-    [
-      "Weiterverarbeitung",
-      activeFinishingCount > 0
-        ? `${activeFinishingCount} aktive Schritte`
-        : "nur relevante Schritte",
-    ],
-    ["Arbeitsanweisung", draft.workInstruction],
-    ["Zusatz", draft.pocketExtraNote],
-    ["Lieferung", `${draft.shippingMethod} · ${draft.packagingPlan}`],
   ];
   const transferGroups = useMemo(
     () =>
@@ -5091,51 +5057,6 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
             ) : null}
           </div>
 
-          <div
-            className="pp-calculation-statusbar"
-            aria-label="Kalkulationsstatus und Aktionen"
-            hidden
-          >
-            <div>
-              <span>Kalkulierbar</span>
-              <b
-                className={`pp-readiness pp-readiness--${getReadinessState(calculationOpenFields)}`}
-              >
-                {getReadinessLabel(calculationOpenFields)}
-              </b>
-            </div>
-            <div>
-              <span>Angebotsfähig</span>
-              <b
-                className={`pp-readiness pp-readiness--${getReadinessState(offerOpenFields)}`}
-              >
-                {getReadinessLabel(offerOpenFields)}
-              </b>
-            </div>
-            <div>
-              <span>Auftragsfähig</span>
-              <b
-                className={`pp-readiness pp-readiness--${getReadinessState(orderOpenFields)}`}
-              >
-                {orderOpenFields > 0
-                  ? `${orderOpenFields} offen · Bereich ${activeTabOpenRequiredFields}`
-                  : "bereit"}
-              </b>
-            </div>
-            <div>
-              <span>Nutzen / Bogen</span>
-              <b>
-                {result.layout.usedSlots} Nutzen · {sheetCount} Bogen
-              </b>
-            </div>
-            <button
-              className="pp-calculation-create-button pp-calculation-create-button--bar"
-              type="button"
-              onClick={handleCreateOrderDraft}
-            >
-              Auftragsentwurf erzeugen
-            </button>
-          </div>
         </div>
 
         <div className="pp-offer-print-source" ref={offerPrintRef} aria-hidden="true">
@@ -5148,106 +5069,6 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           />
         </div>
 
-        <aside
-          className="pp-calculation-result-panel pp-calculation-result-panel--compact"
-          aria-label="Kalkulation Ergebnis"
-        >
-          <div className="pp-calculation-result-panel__head">
-            <p className="pp-eyebrow">Ergebnis</p>
-            <h2>Produktionskern</h2>
-            <span>Produktionsdaten, Nutzenplan und Preisabschluss.</span>
-          </div>
-
-          <CalculationSheetPreview payload={payload} />
-
-          <div className="pp-calculation-output-card">
-            <h3>Produktionsdaten</h3>
-            <div className="pp-calc-result-list">
-              <ResultLine
-                label="Produktionsweg"
-                value={productionModeLabel}
-              />
-              <ResultLine label="Produkt" value={payload.product.label} />
-              <ResultLine label="Druckdatei" value={draft.printFileName} />
-              <ResultLine label="Freigabe" value={draft.approvalStatus} />
-              <ResultLine
-                label="Nutzen"
-                value={`${result.layout.usedSlots} von ${result.layout.totalSlots}`}
-              />
-              <ResultLine
-                label="Bogenanzahl"
-                value={
-                  result.production.sheetsRequired
-                    ? `${formatNumber(result.production.sheetsRequired)} Bogen`
-                    : "offen"
-                }
-              />
-            </div>
-            <div className="pp-calculation-hints">
-              {(result.finishingHints ?? []).map((hint) => (
-                <span key={hint}>{hint}</span>
-              ))}
-            </div>
-          </div>
-
-          <div className="pp-calculation-output-card pp-calculation-output-card--price">
-            <h3>Preisabschluss</h3>
-            <div className="pp-calc-result-list">
-              <ResultLine label="Material" value={draft.materialCosts} />
-              <ResultLine label="Druck" value={draft.printCosts} />
-              <ResultLine label="Weiterverarbeitungskosten" value={draft.finishingCosts} />
-              <ResultLine label="Fremdkosten" value={draft.externalCosts} />
-              <ResultLine label="Verkauf netto" value={draft.salePriceNet} />
-            </div>
-          </div>
-
-          <div className="pp-calculation-output-card pp-calculation-output-card--pocket" hidden>
-            <h3>Übergabe an Auftragstasche</h3>
-            <div className="pp-calc-result-list">
-              {orderPocketPreviewRows.map(([label, value]) => (
-                <ResultLine key={label} label={label} value={value} />
-              ))}
-            </div>
-          </div>
-
-          <div hidden>
-            <CalculationTransferMapping groups={transferGroups} compact />
-          </div>
-
-          <div className="pp-calculation-action-stack">
-            <button
-              className="pp-calculation-create-button"
-              type="button"
-              onClick={handlePrepareOffer}
-            >
-              Angebot anzeigen
-            </button>
-            <button
-              className="pp-calculation-create-button pp-calculation-create-button--secondary"
-              type="button"
-              onClick={handlePrintOffer}
-            >
-              Angebot als PDF drucken
-            </button>
-            <button
-              className="pp-calculation-create-button"
-              type="button"
-              onClick={handleCreateOrderDraft}
-            >
-              Auftragsentwurf erzeugen
-            </button>
-          </div>
-
-          {draftWasCreated ? (
-            <div className="pp-calculation-create-note is-active">
-              <strong>Auftragsentwurf erzeugt</strong>
-              <p>
-                Die produktionsrelevanten Kalkulationswerte wurden in einen
-                lokalen Auftragsentwurf übernommen.
-              </p>
-            </div>
-          ) : null}
-        </aside>
         </section>
       </CalculationFieldValidationContext.Provider>
       {softwareDialog ? (

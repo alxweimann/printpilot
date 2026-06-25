@@ -22187,3 +22187,49 @@ button.pp-software-dialog__item:focus-visible {
     grid-template-columns: 1fr;
   }
 }
+
+/* Sprint 54.1 – Arbeitsmaske weiter beruhigen
+   Statusleisten, technische Ergebnis-Sidebars und vollbreite Aktionsbuttons werden
+   aus dem normalen Arbeitsfluss entfernt. Prüfungen laufen weiterhin intern und
+   erscheinen nur über den Validierungsdialog. */
+.pp-calculation-layout--tabs {
+  grid-template-columns: minmax(0, 1fr) !important;
+}
+
+.pp-calculation-layout--tabs .pp-calculation-form {
+  min-width: 0 !important;
+}
+
+.pp-calculation-statusbar,
+.pp-calculation-result-panel--compact,
+.pp-calculation-action-stack {
+  display: none !important;
+}
+
+.pp-calculation-offer-workflow__actions {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: center !important;
+  justify-content: flex-start !important;
+  gap: 10px !important;
+}
+
+.pp-calculation-offer-workflow__actions .pp-calculation-create-button {
+  width: auto !important;
+  min-width: 188px !important;
+  max-width: 260px !important;
+  min-height: 42px !important;
+  padding-inline: 18px !important;
+}
+
+.pp-calculation-offer-workflow__actions .pp-calculation-create-button--secondary {
+  min-width: 210px !important;
+}
+
+@media (max-width: 760px) {
+  .pp-calculation-offer-workflow__actions .pp-calculation-create-button,
+  .pp-calculation-offer-workflow__actions .pp-calculation-create-button--secondary {
+    width: 100% !important;
+    max-width: none !important;
+  }
+}

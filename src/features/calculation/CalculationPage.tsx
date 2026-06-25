@@ -1176,6 +1176,22 @@ function getSheetDimensionsFromDraft(draft: CalculationDraft) {
   return parseDimensionPairToMm(draft.sheetFormat, printSheet);
 }
 
+
+function formatDimensionInputValue(value: number) {
+  return Number.isInteger(value)
+    ? String(value)
+    : value.toLocaleString("de-DE", { maximumFractionDigits: 1 });
+}
+
+function normalizeDimensionInputValue(value: string, fallback: number) {
+  const parsed = parseGermanNumber(value, fallback);
+  return Number.isFinite(parsed) && parsed > 0 ? parsed : fallback;
+}
+
+function buildDimensionPairValue(widthMm: number, heightMm: number) {
+  return `${formatDimensionInputValue(widthMm)} × ${formatDimensionInputValue(heightMm)} mm`;
+}
+
 function getImpositionVariant(
   id: ImpositionOrientation,
   label: string,
@@ -1347,14 +1363,7 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
 }
 
 function formatImpositionGapLabel(gapXMm: number, gapYMm: number) {
-  const xLabel = formatMillimeterValue(gapXMm);
-  const yLabel = formatMillimeterValue(gapYMm);
-
-  if (gapXMm === gapYMm) {
-    return xLabel;
-  }
-
-  return `X ${xLabel} / Y ${yLabel}`;
+  return `X ${formatMillimeterValue(gapXMm)} / Y ${formatMillimeterValue(gapYMm)}`;
 }
 
 function getPlanTypeFromProductKind(productKind: ProductKind): CalculationImpositionResult["planType"] {
@@ -2516,6 +2525,149 @@ function CalculationSoftwareDialog({
   return createPortal(dialogMarkup, document.body);
 }
 
+function DimensionPairField({
+  field,
+  label,
+  widthLabel,
+  heightLabel,
+  widthValue,
+  heightValue,
+  onWidthChange,
+  onHeightChange,
+}: {
+  field?: keyof CalculationDraft;
+  label: string;
+  widthLabel: string;
+  heightLabel: string;
+  widthValue: string;
+  heightValue: string;
+  onWidthChange: (value: string) => void;
+  onHeightChange: (value: string) => void;
+}) {
+  const activeValidationFields = useContext(CalculationFieldValidationContext);
+  const isMissingRequired = Boolean(
+    field
+      && activeValidationFields.has(String(field))
+      && (isDraftValueMissing(widthValue) || isDraftValueMissing(heightValue)),
+  );
+
+  return (
+    <fieldset
+      className={[
+        "pp-calc-input-field pp-calc-dimension-field",
+        isMissingRequired ? "is-required-missing" : "",
+      ].filter(Boolean).join(" ")}
+      data-calculation-field={field ? String(field) : undefined}
+    >
+      <legend>{label}</legend>
+      <div className="pp-calc-dimension-field__values">
+        <label>
+          <em>{widthLabel}</em>
+          <input
+            value={widthValue}
+            onChange={(event) => onWidthChange(event.target.value)}
+            aria-label={`${label} ${widthLabel}`}
+            inputMode="decimal"
+          />
+          <small>mm</small>
+        </label>
+        <span aria-hidden="true">×</span>
+        <label>
+          <em>{heightLabel}</em>
+          <input
+            value={heightValue}
+            onChange={(event) => onHeightChange(event.target.value)}
+            aria-label={`${label} ${heightLabel}`}
+            inputMode="decimal"
+          />
+          <small>mm</small>
+        </label>
+      </div>
+    </fieldset>
+  );
+}
+
+function UnitNumberField({
+  field,
+  label,
+  value,
+  unit,
+  onValueChange,
+}: {
+  field?: keyof CalculationDraft;
+  label: string;
+  value: string;
+  unit: string;
+  onValueChange: (value: string) => void;
+}) {
+  const activeValidationFields = useContext(CalculationFieldValidationContext);
+  const isMissingRequired = Boolean(field && activeValidationFields.has(String(field)) && isDraftValueMissing(value));
+
+  return (
+    <label
+      className={[
+        "pp-calc-input-field pp-calc-unit-field",
+        isMissingRequired ? "is-required-missing" : "",
+      ].filter(Boolean).join(" ")}
+      data-calculation-field={field ? String(field) : undefined}
+    >
+      <span>
+        <strong>{label}</strong>
+      </span>
+      <span className="pp-calc-unit-field__control">
+        <input
+          value={value}
+          onChange={(event) => onValueChange(event.target.value)}
+          aria-invalid={isMissingRequired || undefined}
+          inputMode="decimal"
+        />
+        <small>{unit}</small>
+      </span>
+    </label>
+  );
+}
+
+function ChoiceButtonField({
+  field,
+  label,
+  value,
+  options,
+  onValueChange,
+}: {
+  field?: keyof CalculationDraft;
+  label: string;
+  value: string;
+  options: Array<{ value: string; label: string }>;
+  onValueChange: (value: string) => void;
+}) {
+  const activeValidationFields = useContext(CalculationFieldValidationContext);
+  const isMissingRequired = Boolean(field && activeValidationFields.has(String(field)) && isDraftValueMissing(value));
+
+  return (
+    <fieldset
+      className={[
+        "pp-calc-input-field pp-calc-choice-field pp-calc-input-field--wide",
+        isMissingRequired ? "is-required-missing" : "",
+      ].filter(Boolean).join(" ")}
+      data-calculation-field={field ? String(field) : undefined}
+    >
+      <legend>{label}</legend>
+      <div className="pp-calc-choice-field__options" role="group" aria-label={label}>
+        {options.map((option) => (
+          <button
+            key={option.value}
+            type="button"
+            className={option.value === value ? "is-active" : undefined}
+            onClick={() => onValueChange(option.value)}
+          >
+            {option.label}
+          </button>
+        ))}
+      </div>
+    </fieldset>
+  );
+}
+
 function CalculationField({
   field,
   label,
@@ -2827,6 +2979,31 @@ function ImpositionCalculatorPanel({
   result: ImpositionCalculatorResult;
   onDraftChange: (field: keyof CalculationDraft) => (value: string) => void;
 }) {
+  const sheetWidthValue = formatDimensionInputValue(result.sheet.widthMm);
+  const sheetHeightValue = formatDimensionInputValue(result.sheet.heightMm);
+  const finalWidthValue = formatDimensionInputValue(result.item.finalWidthMm);
+  const finalHeightValue = formatDimensionInputValue(result.item.finalHeightMm);
+  const updateSheetDimension = (part: "width" | "height", nextValue: string) => {
+    const nextWidth = part === "width"
+      ? normalizeDimensionInputValue(nextValue, result.sheet.widthMm)
+      : result.sheet.widthMm;
+    const nextHeight = part === "height"
+      ? normalizeDimensionInputValue(nextValue, result.sheet.heightMm)
+      : result.sheet.heightMm;
+
+    onDraftChange("printSheetFormat")(buildDimensionPairValue(nextWidth, nextHeight));
+  };
+  const updateFinalDimension = (part: "width" | "height", nextValue: string) => {
+    const nextWidth = part === "width"
+      ? normalizeDimensionInputValue(nextValue, result.item.finalWidthMm)
+      : result.item.finalWidthMm;
+    const nextHeight = part === "height"
+      ? normalizeDimensionInputValue(nextValue, result.item.finalHeightMm)
+      : result.item.finalHeightMm;
+
+    onDraftChange("finalFormat")(buildDimensionPairValue(nextWidth, nextHeight));
+  };
+
   return (
     <div className="pp-imposition-calculator pp-imposition-calculator--workbench">
       <div className="pp-imposition-calculator__editor">
@@ -2835,76 +3012,82 @@ function ImpositionCalculatorPanel({
           <strong>Nutzenplan einrichten</strong>
           <p>Beschnitt, Bogenrand, X-/Y-Zwischenschnitt und Drehregel steuern den Kalkulationsnutzen für Materialverbrauch, Bogenanzahl und Preisbildung.</p>
         </div>
-        <div className="pp-imposition-calculator__controls">
-          <CalculationField
+        <div className="pp-imposition-calculator__controls pp-imposition-calculator__controls--refined">
+          <DimensionPairField
             field="printSheetFormat"
             label="Druckbogen"
-            value={draft.printSheetFormat}
-            onValueChange={onDraftChange("printSheetFormat")}
-            badge="Pflicht"
+            widthLabel="Breite"
+            heightLabel="Höhe"
+            widthValue={sheetWidthValue}
+            heightValue={sheetHeightValue}
+            onWidthChange={(value) => updateSheetDimension("width", value)}
+            onHeightChange={(value) => updateSheetDimension("height", value)}
           />
-          <CalculationField
+          <DimensionPairField
             field="finalFormat"
             label="Endformat"
-            value={draft.finalFormat}
-            onValueChange={onDraftChange("finalFormat")}
-            badge="Pflicht"
+            widthLabel="Breite"
+            heightLabel="Höhe"
+            widthValue={finalWidthValue}
+            heightValue={finalHeightValue}
+            onWidthChange={(value) => updateFinalDimension("width", value)}
+            onHeightChange={(value) => updateFinalDimension("height", value)}
           />
-          <CalculationField
+          <UnitNumberField
             field="impositionMarginMm"
             label="Bogenrand"
             value={draft.impositionMarginMm}
+            unit="mm"
             onValueChange={onDraftChange("impositionMarginMm")}
-            hint="in Millimeter"
           />
-          <CalculationField
+          <UnitNumberField
             field="impositionGapXMm"
             label="Zwischenschnitt X-Achse"
             value={draft.impositionGapXMm}
+            unit="mm"
             onValueChange={onDraftChange("impositionGapXMm")}
-            hint="horizontal zwischen den Nutzen"
           />
-          <CalculationField
+          <UnitNumberField
             field="impositionGapYMm"
             label="Zwischenschnitt Y-Achse"
             value={draft.impositionGapYMm}
+            unit="mm"
             onValueChange={onDraftChange("impositionGapYMm")}
-            hint="vertikal zwischen den Nutzen"
           />
-          <CalculationSelect
+          <UnitNumberField
+            field="impositionManualColumns"
+            label="Manuelle Spalten"
+            value={draft.impositionManualColumns}
+            unit="Spalten"
+            onValueChange={onDraftChange("impositionManualColumns")}
+          />
+          <UnitNumberField
+            field="impositionManualRows"
+            label="Manuelle Reihen"
+            value={draft.impositionManualRows}
+            unit="Reihen"
+            onValueChange={onDraftChange("impositionManualRows")}
+          />
+          <ChoiceButtonField
             field="impositionUseBleed"
             label="Berechnungsbasis"
             value={draft.impositionUseBleed}
             options={impositionBleedModeOptions}
             onValueChange={onDraftChange("impositionUseBleed")}
           />
-          <CalculationSelect
+          <ChoiceButtonField
             field="impositionRotationMode"
             label="Drehung"
             value={draft.impositionRotationMode}
             options={impositionRotationModeOptions}
             onValueChange={onDraftChange("impositionRotationMode")}
           />
-          <CalculationSelect
+          <ChoiceButtonField
             field="impositionRasterMode"
             label="Rastermodus"
             value={draft.impositionRasterMode}
             options={impositionRasterModeOptions}
             onValueChange={onDraftChange("impositionRasterMode")}
-          />
-          <CalculationField
-            field="impositionManualColumns"
-            label="Manuelle Spalten"
-            value={draft.impositionManualColumns}
-            onValueChange={onDraftChange("impositionManualColumns")}
-            hint="z. B. 5"
-          />
-          <CalculationField
-            field="impositionManualRows"
-            label="Manuelle Reihen"
-            value={draft.impositionManualRows}
-            onValueChange={onDraftChange("impositionManualRows")}
-            hint="z. B. 5"
           />
         </div>
       </div>
@@ -2927,7 +3110,7 @@ function ImpositionCalculatorPanel({
 
         <div className="pp-imposition-calculator__metrics">
           <ResultLine label="Druckbogen" value={`${formatMillimeterValue(result.sheet.widthMm)} × ${formatMillimeterValue(result.sheet.heightMm)}`} />
-          <ResultLine label="Zwischenschnitt" value={formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)} />
+          <ResultLine label="Zwischenschnitt X / Y" value={formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)} />
           <ResultLine label="Rastermodus" value={result.settings.rasterMode === "Manuell" ? `${result.settings.manualColumns} × ${result.settings.manualRows} manuell` : "automatisch"} />
           <ResultLine label="Nettobogen" value={`${formatNumber(result.production.sheetsRequired)} Bogen`} />
           <ResultLine label="Netto produziert" value={`${formatNumber(result.production.netQuantity)} Stück`} />

@@ -4034,3 +4034,16 @@ Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `n
 - **08 Impose** bleibt weiterhin ein separates späteres Produktionsmodul; der Nutzenrechner bleibt Kalkulationswerkzeug.
 - Bottom-Navigation bleibt unverändert.
 
+
+## Sprint 55.3 – Nutzenrechner-Eingabe verbessern
+
+Der Nutzenrechner wurde in der Eingabe ergonomisch verfeinert. Ziel ist, die Fiery-ähnlichen Parameter klarer und ohne abgeschnittene Werte zu bedienen.
+
+- Druckbogen und Endformat werden nicht mehr als zusammengequetschte Textfelder dargestellt, sondern jeweils in Breite und Höhe getrennt.
+- Bogenrand sowie Zwischenschnitt X/Y zeigen die Einheit direkt am Feld.
+- Manuelle Spalten und manuelle Reihen bleiben als direkte Eingabewerte erhalten.
+- Berechnungsbasis, Drehung und Rastermodus werden als klare Auswahlbuttons statt schmaler Dropdowns angezeigt.
+- Der Ergebnisbereich zeigt den Zwischenschnitt ausdrücklich als X/Y-Wert.
+- Die Nutzenvorschau bleibt physikalisch skaliert und zentriert aus Sprint 55.1/55.2.
+- Impose/Ausschießen bleibt weiterhin ein separates späteres Modul; der Nutzenrechner bleibt Kalkulationswerkzeug.
+- Die Bottom-Navigation wurde nicht verändert.

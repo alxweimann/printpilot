@@ -157,6 +157,9 @@ type CalculationDraft = {
   impositionMarginMm: string;
   impositionUseBleed: string;
   impositionRotationMode: string;
+  impositionRasterMode: string;
+  impositionManualColumns: string;
+  impositionManualRows: string;
   setupTime: string;
   runTime: string;
   clickCosts: string;
@@ -951,6 +954,9 @@ const initialDraft: CalculationDraft = {
   impositionMarginMm: "5",
   impositionUseBleed: "Endformat",
   impositionRotationMode: "Drehung erlaubt",
+  impositionRasterMode: "Automatisch",
+  impositionManualColumns: "5",
+  impositionManualRows: "5",
   setupTime: "12 min",
   runTime: "automatisch später",
   clickCosts: "Maschinenstamm",
@@ -1059,7 +1065,7 @@ function parseFormatDimensions(label: string) {
   };
 }
 
-type ImpositionOrientation = "upright" | "rotated";
+type ImpositionOrientation = "upright" | "rotated" | "manual";
 
 type ImpositionCalculatorVariant = {
   id: ImpositionOrientation;
@@ -1073,6 +1079,9 @@ type ImpositionCalculatorVariant = {
   usablePercent: number;
   restWidthMm: number;
   restHeightMm: number;
+  isManual?: boolean;
+  isValid?: boolean;
+  issue?: string;
 };
 
 type ImpositionCalculatorResult = {
@@ -1094,6 +1103,9 @@ type ImpositionCalculatorResult = {
     marginMm: number;
     includeBleed: boolean;
     rotationMode: string;
+    rasterMode: string;
+    manualColumns: number;
+    manualRows: number;
   };
   selected: ImpositionCalculatorVariant;
   variants: ImpositionCalculatorVariant[];
@@ -1117,6 +1129,11 @@ const impositionRotationModeOptions = [
   { value: "Drehung erlaubt", label: "Drehung erlaubt" },
   { value: "nur aufrecht", label: "nur aufrecht" },
   { value: "nur gedreht", label: "nur gedreht" },
+];
+
+const impositionRasterModeOptions = [
+  { value: "Automatisch", label: "automatisch beste Variante" },
+  { value: "Manuell", label: "Raster manuell festlegen" },
 ];
 
 function parseDimensionPairToMm(
@@ -1169,15 +1186,21 @@ function getImpositionVariant(
   gapXMm: number,
   gapYMm: number,
   marginMm: number,
+  manualGrid?: { columns: number; rows: number },
 ): ImpositionCalculatorVariant {
   const usableWidth = Math.max(1, sheetWidthMm - marginMm * 2);
   const usableHeight = Math.max(1, sheetHeightMm - marginMm * 2);
-  const columns = Math.max(1, Math.floor((usableWidth + gapXMm) / Math.max(1, itemWidthMm + gapXMm)));
-  const rows = Math.max(1, Math.floor((usableHeight + gapYMm) / Math.max(1, itemHeightMm + gapYMm)));
-  const totalSlots = columns * rows;
+  const automaticColumns = Math.max(1, Math.floor((usableWidth + gapXMm) / Math.max(1, itemWidthMm + gapXMm)));
+  const automaticRows = Math.max(1, Math.floor((usableHeight + gapYMm) / Math.max(1, itemHeightMm + gapYMm)));
+  const columns = manualGrid?.columns ?? automaticColumns;
+  const rows = manualGrid?.rows ?? automaticRows;
+  const totalSlots = Math.max(1, columns * rows);
   const occupiedWidth = columns * itemWidthMm + Math.max(0, columns - 1) * gapXMm;
   const occupiedHeight = rows * itemHeightMm + Math.max(0, rows - 1) * gapYMm;
+  const isValid = occupiedWidth <= usableWidth && occupiedHeight <= usableHeight;
   const usablePercent = Math.min(100, (totalSlots * itemWidthMm * itemHeightMm) / (sheetWidthMm * sheetHeightMm) * 100);
+  const restWidthMm = Math.round((usableWidth - occupiedWidth) * 10) / 10;
+  const restHeightMm = Math.round((usableHeight - occupiedHeight) * 10) / 10;
 
   return {
     id,
@@ -1186,11 +1209,14 @@ function getImpositionVariant(
     itemHeightMm,
     columns,
     rows,
-    usedSlots: totalSlots,
+    usedSlots: isValid ? totalSlots : 0,
     totalSlots,
-    usablePercent,
-    restWidthMm: Math.max(0, Math.round((usableWidth - occupiedWidth) * 10) / 10),
-    restHeightMm: Math.max(0, Math.round((usableHeight - occupiedHeight) * 10) / 10),
+    usablePercent: isValid ? usablePercent : 0,
+    restWidthMm: Math.max(0, restWidthMm),
+    restHeightMm: Math.max(0, restHeightMm),
+    isManual: Boolean(manualGrid),
+    isValid,
+    issue: isValid ? undefined : "Raster passt mit Rand und Zwischenschnitt nicht auf den Druckbogen.",
   };
 }
 
@@ -1211,7 +1237,9 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
   const calculationHeightMm = finalHeightMm + (includeBleed ? bleedMm * 2 : 0);
   const quantity = parseInteger(draft.quantity, demoCalculationPayload.product.quantity);
   const wasteSheets = Math.max(0, parseInteger(draft.wasteSheets, 0));
-  const variants = [
+  const manualColumns = Math.max(1, parseInteger(draft.impositionManualColumns, 1));
+  const manualRows = Math.max(1, parseInteger(draft.impositionManualRows, 1));
+  const autoVariants = [
     getImpositionVariant(
       "upright",
       "aufrecht",
@@ -1245,13 +1273,41 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
 
     return true;
   });
-  const selected = [...variants].sort((a, b) => {
+  const bestAutomatic = [...autoVariants].sort((a, b) => {
     if (b.usedSlots !== a.usedSlots) {
       return b.usedSlots - a.usedSlots;
     }
 
     return b.usablePercent - a.usablePercent;
-  })[0] ?? variants[0];
+  })[0] ?? getImpositionVariant(
+    "upright",
+    "aufrecht",
+    sheet.widthMm,
+    sheet.heightMm,
+    calculationWidthMm,
+    calculationHeightMm,
+    gapXMm,
+    gapYMm,
+    marginMm,
+  );
+  const manualBase = bestAutomatic.id === "rotated"
+    ? { width: calculationHeightMm, height: calculationWidthMm, label: "manuell · gedreht" }
+    : { width: calculationWidthMm, height: calculationHeightMm, label: "manuell · aufrecht" };
+  const manualVariant = getImpositionVariant(
+    "manual",
+    manualBase.label,
+    sheet.widthMm,
+    sheet.heightMm,
+    manualBase.width,
+    manualBase.height,
+    gapXMm,
+    gapYMm,
+    marginMm,
+    { columns: manualColumns, rows: manualRows },
+  );
+  const isManualMode = draft.impositionRasterMode === "Manuell";
+  const selected = isManualMode && manualVariant.isValid ? manualVariant : bestAutomatic;
+  const variants = isManualMode ? [manualVariant, ...autoVariants] : autoVariants;
   const sheetsRequired = Math.max(1, Math.ceil(quantity / Math.max(1, selected.usedSlots)));
   const netQuantity = sheetsRequired * selected.usedSlots;
   const restQuantity = Math.max(0, netQuantity - quantity);
@@ -1272,6 +1328,9 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
       marginMm,
       includeBleed,
       rotationMode: draft.impositionRotationMode,
+      rasterMode: draft.impositionRasterMode,
+      manualColumns,
+      manualRows,
     },
     selected,
     variants,
@@ -2645,10 +2704,13 @@ function CalculationSheetPreview({
   const previewImage = payload.preview?.generatedPreview?.imageSrc;
   const previewAlt =
     payload.preview?.generatedPreview?.alt ?? "Druckdatei-Preview";
+  const sheetAspectRatio = imposition.sheet.widthMm && imposition.sheet.heightMm
+    ? `${imposition.sheet.widthMm} / ${imposition.sheet.heightMm}`
+    : undefined;
 
   return (
     <div
-      className="pp-calc-sheet-preview"
+      className="pp-calc-sheet-preview pp-calc-sheet-preview--highres"
       aria-label="Nutzenvorschau"
     >
       <div className="pp-calc-sheet-preview__bar">
@@ -2658,9 +2720,12 @@ function CalculationSheetPreview({
       <div
         className="pp-calc-sheet-preview__sheet"
         style={{
+          aspectRatio: sheetAspectRatio,
           gridTemplateColumns: `repeat(${imposition.layout.columns}, minmax(0, 1fr))`,
+          gridTemplateRows: `repeat(${imposition.layout.rows}, minmax(0, 1fr))`,
         }}
       >
+        <i className="pp-calc-sheet-preview__margin" aria-hidden="true" />
         {cells.map((cell) => {
           const isUsed = cell <= imposition.layout.usedSlots;
           return (
@@ -2674,7 +2739,7 @@ function CalculationSheetPreview({
               aria-label={isUsed ? `Nutzen ${cell}` : `leerer Platz ${cell}`}
             >
               {isUsed && previewImage ? (
-                <img src={previewImage} alt={previewAlt} loading="lazy" />
+                <img src={previewImage} alt={previewAlt} decoding="async" />
               ) : null}
             </span>
           );
@@ -2725,55 +2790,76 @@ function ImpositionCalculatorPanel({
           <p>Beschnitt, Bogenrand, X-/Y-Zwischenschnitt und Drehregel steuern den Kalkulationsnutzen für Materialverbrauch, Bogenanzahl und Preisbildung.</p>
         </div>
         <div className="pp-imposition-calculator__controls">
-        <CalculationField
-                      field="printSheetFormat"
-          label="Druckbogen"
-          value={draft.printSheetFormat}
-          onValueChange={onDraftChange("printSheetFormat")}
-          badge="Pflicht"
-        />
-        <CalculationField
-                      field="finalFormat"
-          label="Endformat"
-          value={draft.finalFormat}
-          onValueChange={onDraftChange("finalFormat")}
-          badge="Pflicht"
-        />
-        <CalculationField
-                      field="impositionMarginMm"
-          label="Bogenrand"
-          value={draft.impositionMarginMm}
-          onValueChange={onDraftChange("impositionMarginMm")}
-          hint="in Millimeter"
-        />
-        <CalculationField
-                      field="impositionGapXMm"
-          label="Zwischenschnitt X-Achse"
-          value={draft.impositionGapXMm}
-          onValueChange={onDraftChange("impositionGapXMm")}
-          hint="horizontal zwischen den Nutzen"
-        />
-        <CalculationField
-                      field="impositionGapYMm"
-          label="Zwischenschnitt Y-Achse"
-          value={draft.impositionGapYMm}
-          onValueChange={onDraftChange("impositionGapYMm")}
-          hint="vertikal zwischen den Nutzen"
-        />
-        <CalculationSelect
-                      field="impositionUseBleed"
-          label="Berechnungsbasis"
-          value={draft.impositionUseBleed}
-          options={impositionBleedModeOptions}
-          onValueChange={onDraftChange("impositionUseBleed")}
-        />
-        <CalculationSelect
-                      field="impositionRotationMode"
-          label="Drehung"
-          value={draft.impositionRotationMode}
-          options={impositionRotationModeOptions}
-          onValueChange={onDraftChange("impositionRotationMode")}
-        />
+          <CalculationField
+            field="printSheetFormat"
+            label="Druckbogen"
+            value={draft.printSheetFormat}
+            onValueChange={onDraftChange("printSheetFormat")}
+            badge="Pflicht"
+          />
+          <CalculationField
+            field="finalFormat"
+            label="Endformat"
+            value={draft.finalFormat}
+            onValueChange={onDraftChange("finalFormat")}
+            badge="Pflicht"
+          />
+          <CalculationField
+            field="impositionMarginMm"
+            label="Bogenrand"
+            value={draft.impositionMarginMm}
+            onValueChange={onDraftChange("impositionMarginMm")}
+            hint="in Millimeter"
+          />
+          <CalculationField
+            field="impositionGapXMm"
+            label="Zwischenschnitt X-Achse"
+            value={draft.impositionGapXMm}
+            onValueChange={onDraftChange("impositionGapXMm")}
+            hint="horizontal zwischen den Nutzen"
+          />
+          <CalculationField
+            field="impositionGapYMm"
+            label="Zwischenschnitt Y-Achse"
+            value={draft.impositionGapYMm}
+            onValueChange={onDraftChange("impositionGapYMm")}
+            hint="vertikal zwischen den Nutzen"
+          />
+          <CalculationSelect
+            field="impositionUseBleed"
+            label="Berechnungsbasis"
+            value={draft.impositionUseBleed}
+            options={impositionBleedModeOptions}
+            onValueChange={onDraftChange("impositionUseBleed")}
+          />
+          <CalculationSelect
+            field="impositionRotationMode"
+            label="Drehung"
+            value={draft.impositionRotationMode}
+            options={impositionRotationModeOptions}
+            onValueChange={onDraftChange("impositionRotationMode")}
+          />
+          <CalculationSelect
+            field="impositionRasterMode"
+            label="Rastermodus"
+            value={draft.impositionRasterMode}
+            options={impositionRasterModeOptions}
+            onValueChange={onDraftChange("impositionRasterMode")}
+          />
+          <CalculationField
+            field="impositionManualColumns"
+            label="Manuelle Spalten"
+            value={draft.impositionManualColumns}
+            onValueChange={onDraftChange("impositionManualColumns")}
+            hint="z. B. 5"
+          />
+          <CalculationField
+            field="impositionManualRows"
+            label="Manuelle Reihen"
+            value={draft.impositionManualRows}
+            onValueChange={onDraftChange("impositionManualRows")}
+            hint="z. B. 5"
+          />
         </div>
       </div>
 
@@ -2783,18 +2869,20 @@ function ImpositionCalculatorPanel({
 
       <div className="pp-imposition-calculator__result">
         <div className="pp-imposition-calculator__hero">
-          <span>Beste Variante</span>
+          <span>{result.selected.isManual ? "Manuelles Raster" : "Beste Variante"}</span>
           <strong>{result.label}</strong>
           <p>
             {result.selected.label} · {formatPercentValue(result.selected.usablePercent)}
             Flächennutzung · Berechnungsformat {formatMillimeterValue(result.item.calculationWidthMm)} × {formatMillimeterValue(result.item.calculationHeightMm)}
             · Zwischenschnitt {formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)}
+            {result.selected.issue ? ` · ${result.selected.issue}` : ""}
           </p>
         </div>
 
         <div className="pp-imposition-calculator__metrics">
           <ResultLine label="Druckbogen" value={`${formatMillimeterValue(result.sheet.widthMm)} × ${formatMillimeterValue(result.sheet.heightMm)}`} />
           <ResultLine label="Zwischenschnitt" value={formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)} />
+          <ResultLine label="Rastermodus" value={result.settings.rasterMode === "Manuell" ? `${result.settings.manualColumns} × ${result.settings.manualRows} manuell` : "automatisch"} />
           <ResultLine label="Nettobogen" value={`${formatNumber(result.production.sheetsRequired)} Bogen`} />
           <ResultLine label="Netto produziert" value={`${formatNumber(result.production.netQuantity)} Stück`} />
           <ResultLine label="Restmenge" value={`${formatNumber(result.production.restQuantity)} Stück`} />
@@ -2823,11 +2911,11 @@ function ImpositionCalculatorPanel({
               >
                 <th scope="row">{variant.label}</th>
                 <td>{variant.columns} × {variant.rows}</td>
-                <td>{variant.usedSlots}</td>
-                <td>{formatPercentValue(variant.usablePercent)}</td>
+                <td>{variant.isValid === false ? "passt nicht" : variant.usedSlots}</td>
+                <td>{variant.isValid === false ? "—" : formatPercentValue(variant.usablePercent)}</td>
                 <td>{formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)}</td>
                 <td>
-                  {formatMillimeterValue(variant.restWidthMm)} × {formatMillimeterValue(variant.restHeightMm)}
+                  {variant.isValid === false ? variant.issue : `${formatMillimeterValue(variant.restWidthMm)} × ${formatMillimeterValue(variant.restHeightMm)}`}
                 </td>
               </tr>
             ))}

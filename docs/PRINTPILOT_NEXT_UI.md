@@ -3988,3 +3988,25 @@ Build-Prüfung: `npm run build`.
 - Angebots- und Auftragsaktionen bleiben im Reiter „Preise & Ergebnis“ sichtbar.
 - Aktionsbuttons sind dort nicht mehr vollbreit, sondern als kompakte Buttonzeile ausgeführt.
 - Die Bottom-Navigation bleibt unverändert.
+
+## Sprint 55 – Nutzenrechner fachlich ausbauen
+
+- Der Reiter **04 Nutzenrechner** bleibt ein reines Kalkulationswerkzeug und wurde fachlich weiter ausgebaut.
+- Der Nutzenrechner kann jetzt neben der automatischen Bestvariante auch ein manuelles Raster verwenden.
+- Neue Eingaben:
+  - **Rastermodus**: automatisch beste Variante oder Raster manuell festlegen.
+  - **Manuelle Spalten**.
+  - **Manuelle Reihen**.
+- Bei manuellem Raster wird geprüft, ob das gewünschte Raster mit Bogenrand, Berechnungsformat und X-/Y-Zwischenschnitt auf den Druckbogen passt.
+- Passt das manuelle Raster nicht, bleibt die Berechnung stabil und die Variantenübersicht zeigt den Hinweis, ohne die restliche Kalkulationsmaske mit permanentem Systemrauschen zu belasten.
+- Die Vorschau wurde hochauflösender/feiner dargestellt:
+  - größere Druckbogenfläche im Reiter,
+  - korrektes Seitenverhältnis über das Druckbogenformat,
+  - feinere Raster-/Randdarstellung,
+  - sichtbarer nutzbarer Bereich,
+  - schärfere Nutzenkacheln mit dezenten Innenlinien.
+- Ergebniswerte bleiben im Nutzenrechner sichtbar: Nutzen, Ausnutzung, Nettobogen, Restmenge, Zuschussbogen und Bruttobogen.
+- Keine echte Ausschieß-Engine und kein produktionsfertiges Druckbogen-PDF in diesem Sprint. Das bleibt Aufgabe des separaten Moduls **08 Impose**.
+- Validierungsdialog und Bottom-Navigation bleiben unverändert.
+
+Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `npm run build` ausführen.

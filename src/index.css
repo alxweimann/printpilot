@@ -22069,3 +22069,45 @@ button.pp-process-step:hover {
     width: 100%;
   }
 }
+
+/* Sprint 53.5 – Validierungsdialog: fehlende Felder klickbar, Icon ohne Textüberdeckung */
+.pp-software-dialog__body li::before {
+  content: none !important;
+  display: none !important;
+}
+
+.pp-software-dialog__item {
+  display: grid;
+  width: 100%;
+  grid-template-columns: 8px 1fr;
+  align-items: center;
+  gap: 10px;
+  min-height: 34px;
+  padding: 8px 12px;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font: inherit;
+  text-align: left;
+}
+
+button.pp-software-dialog__item {
+  cursor: pointer;
+}
+
+button.pp-software-dialog__item:hover,
+button.pp-software-dialog__item:focus-visible {
+  background: rgba(217, 120, 0, .06);
+  outline: none;
+}
+
+.pp-software-dialog__item-mark {
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: #d97800;
+}
+
+.pp-software-dialog__item span:last-child {
+  min-width: 0;
+}

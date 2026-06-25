@@ -3939,3 +3939,15 @@ Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `n
 - **Bottom-Navigation nicht angefasst.**
 
 Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `npm run build` ausführen.
+
+### Sprint 53.5 – Validierungsdialog produktiver machen
+
+- Der Validierungsdialog bleibt ein softwareeigenes Overlay und wird weiterhin nur nach einer ausgelösten Aktion angezeigt.
+- Die Liste der fehlenden Angaben ist jetzt interaktiv: Ein Klick auf einen fehlenden Punkt springt zum zuständigen Reiter und fokussiert das betroffene Feld.
+- Der Hauptbutton wurde von **Angaben prüfen** zu **Zum ersten fehlenden Feld** präzisiert.
+- Die fehlenden Angaben werden weiterhin ruhig und kompakt angezeigt, aber ohne störende Überlagerung durch das Warnsymbol.
+- Das bisherige Icon-/Pseudo-Element im Dialog wurde so bereinigt, dass Markierung und Text sauber getrennt bleiben.
+- Die Feldmarkierung in der Maske bleibt unverändert: fehlende Pflichtfelder werden erst nach einer passenden Aktion gezielt hervorgehoben.
+- **Bottom-Navigation nicht angefasst.**
+
+Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `npm run build` ausführen.

@@ -21,11 +21,16 @@ type CalculationPageProps = {
 type ProductionMode = "internal" | "external" | "combined";
 type FieldBadge = "Pflicht" | "optional" | "später";
 type CalculationDialogVariant = "warning" | "info" | "success";
+type CalculationDialogItem = {
+  label: string;
+  field?: string;
+  isOverflow?: boolean;
+};
 type CalculationDialogState = {
   variant: CalculationDialogVariant;
   title: string;
   body?: string;
-  items?: string[];
+  items?: CalculationDialogItem[];
   primaryLabel?: string;
 };
 
@@ -530,11 +535,21 @@ function getMissingFieldLabels(
     .map((field) => calculationFieldLabels[field] ?? String(field));
 }
 
-function buildDialogItems(labels: string[]) {
-  const visibleItems = labels.slice(0, 8);
+function buildDialogItems(
+  fields: Array<keyof CalculationDraft>,
+  labels: string[],
+): CalculationDialogItem[] {
+  const visibleFields = fields.slice(0, 8);
+  const visibleItems: CalculationDialogItem[] = visibleFields.map((field, index) => ({
+    field: String(field),
+    label: labels[index] ?? calculationFieldLabels[field] ?? String(field),
+  }));
 
-  if (labels.length > 8) {
-    visibleItems.push(`${labels.length - 8} weitere Felder`);
+  if (fields.length > 8) {
+    visibleItems.push({
+      label: `${fields.length - 8} weitere Felder`,
+      isOverflow: true,
+    });
   }
 
   return visibleItems;
@@ -2181,9 +2196,11 @@ function CalculationOfferDocument({
 function CalculationSoftwareDialog({
   dialog,
   onClose,
+  onFocusField,
 }: {
   dialog: CalculationDialogState;
   onClose: () => void;
+  onFocusField?: (field: string) => void;
 }) {
   const variantLabel =
     dialog.variant === "warning"
@@ -2191,6 +2208,15 @@ function CalculationSoftwareDialog({
       : dialog.variant === "success"
         ? "Erledigt"
         : "Information";
+  const firstFocusableField = dialog.items?.find((item) => item.field)?.field;
+  const handlePrimaryAction = () => {
+    if (firstFocusableField) {
+      onFocusField?.(firstFocusableField);
+      return;
+    }
+
+    onClose();
+  };
 
   const dialogMarkup = (
     <div
@@ -2328,19 +2354,65 @@ function CalculationSoftwareDialog({
             >
               {dialog.items.map((item) => (
                 <li
-                  key={item}
+                  key={`${item.field ?? item.label}-${item.label}`}
+                  className={item.isOverflow ? "is-overflow-item" : undefined}
                   style={{
                     minHeight: 34,
-                    padding: "8px 12px",
+                    padding: 0,
                     border: ".55pt solid rgba(217, 120, 0, .18)",
                     borderRadius: 12,
                     background: "rgba(255, 247, 237, .74)",
                     color: "#5f3900",
                     fontSize: 13,
                     lineHeight: 1.35,
+                    overflow: "hidden",
                   }}
                 >
-                  {item}
+                  {item.field ? (
+                    <button
+                      className="pp-software-dialog__item"
+                      type="button"
+                      onClick={() => onFocusField?.(item.field ?? "")}
+                      style={{
+                        display: "grid",
+                        width: "100%",
+                        gridTemplateColumns: "8px 1fr",
+                        alignItems: "center",
+                        gap: 10,
+                        minHeight: 34,
+                        padding: "8px 12px",
+                        border: 0,
+                        background: "transparent",
+                        color: "inherit",
+                        font: "inherit",
+                        textAlign: "left",
+                        cursor: "pointer",
+                      }}
+                    >
+                      <span
+                        className="pp-software-dialog__item-mark"
+                        aria-hidden="true"
+                        style={{
+                          width: 7,
+                          height: 7,
+                          borderRadius: 999,
+                          background: "#d97800",
+                        }}
+                      />
+                      <span>{item.label}</span>
+                    </button>
+                  ) : (
+                    <span
+                      className="pp-software-dialog__item pp-software-dialog__item--static"
+                      style={{
+                        display: "block",
+                        minHeight: 34,
+                        padding: "8px 12px",
+                      }}
+                    >
+                      {item.label}
+                    </span>
+                  )}
                 </li>
               ))}
             </ul>
@@ -2356,7 +2428,7 @@ function CalculationSoftwareDialog({
         >
           <button
             type="button"
-            onClick={onClose}
+            onClick={handlePrimaryAction}
             style={{
               minHeight: 42,
               border: 0,
@@ -2416,6 +2488,7 @@ function CalculationField({
       ]
         .filter(Boolean)
         .join(" ")}
+      data-calculation-field={field ? String(field) : undefined}
     >
       <span>
         <strong>{label}</strong>
@@ -2460,6 +2533,7 @@ function CalculationSelect({
       ]
         .filter(Boolean)
         .join(" ")}
+      data-calculation-field={field ? String(field) : undefined}
     >
       <span>
         <strong>{label}</strong>
@@ -3496,6 +3570,25 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     }
   };
 
+  const focusCalculationField = (fieldName: string) => {
+    const field = fieldName as keyof CalculationDraft;
+
+    setActiveTab(getCalculationFieldTab(field));
+    setSoftwareDialog(null);
+
+    window.setTimeout(() => {
+      const fieldElement = document.querySelector<HTMLElement>(
+        `[data-calculation-field="${fieldName}"]`,
+      );
+      const controlElement = fieldElement?.querySelector<HTMLElement>(
+        "input, select, textarea",
+      );
+
+      fieldElement?.scrollIntoView({ behavior: "smooth", block: "center" });
+      controlElement?.focus({ preventScroll: true });
+    }, 120);
+  };
+
   const showValidationForFields = ({
     fields,
     headline,
@@ -3517,8 +3610,8 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
       variant: "warning",
       title: headline,
       body: extraMessage,
-      items: buildDialogItems(missingLabels),
-      primaryLabel: "Angaben prüfen",
+      items: buildDialogItems(missingFields, missingLabels),
+      primaryLabel: "Zum ersten fehlenden Feld",
     });
   };
 
@@ -5102,6 +5195,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         <CalculationSoftwareDialog
           dialog={softwareDialog}
           onClose={() => setSoftwareDialog(null)}
+          onFocusField={focusCalculationField}
         />
       ) : null}
     </div>

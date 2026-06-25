@@ -32,6 +32,7 @@ type CalculationTabId =
   | "customer-order"
   | "product-format"
   | "paper-print"
+  | "imposition"
   | "finishing"
   | "external"
   | "prices";
@@ -203,9 +204,10 @@ const calculationTabs: Array<{
   { id: "customer-order", label: "Kunde & Auftrag", shortcut: "01" },
   { id: "product-format", label: "Produkt & Format", shortcut: "02" },
   { id: "paper-print", label: "Papier & Druck", shortcut: "03" },
-  { id: "finishing", label: "Weiterverarbeitung", shortcut: "04" },
-  { id: "external", label: "Fremdproduktion", shortcut: "05" },
-  { id: "prices", label: "Preise & Ergebnis", shortcut: "06" },
+  { id: "imposition", label: "Nutzen & Ausschießen", shortcut: "04" },
+  { id: "finishing", label: "Weiterverarbeitung", shortcut: "05" },
+  { id: "external", label: "Fremdproduktion", shortcut: "06" },
+  { id: "prices", label: "Preise & Ergebnis", shortcut: "07" },
 ];
 
 const calculationPlausibilityGroups: Array<{
@@ -395,6 +397,7 @@ const requiredFieldsByTab: Record<
   ],
   "product-format": ["productKind", "productLabel", "pages", "finalFormat", "printFileName"],
   "paper-print": ["substrate", "machine", "printType"],
+  imposition: ["printSheetFormat", "finalFormat"],
   finishing: [],
   external: ["externalSupplier", "externalPrice", "externalLeadTime"],
   prices: [],
@@ -479,7 +482,7 @@ const productionModes: Array<{
   {
     id: "internal",
     label: "Eigenproduktion",
-    helper: "Maschine, Bogen, Nutzenrechner und interne Produktionszeiten",
+    helper: "Maschine, Bogen, Nutzen und interne Produktionszeiten",
   },
   {
     id: "external",
@@ -1272,7 +1275,7 @@ function buildPayloadFromDraft(
         ? activeFinishing
         : ["Weiterverarbeitung prüfen"],
       notes: [
-        `Nutzenrechner: ${impositionResult.label}`,
+        `Nutzen und Ausschießen: ${impositionResult.label}`,
         `Berechnungsbasis: ${impositionResult.settings.includeBleed ? "inklusive Beschnitt" : "Endformat"}`,
         `Zwischenschnitt: ${formatImpositionGapLabel(impositionResult.settings.gapXMm, impositionResult.settings.gapYMm)}`,
       ],
@@ -2260,7 +2263,7 @@ function CalculationSheetPreview({
   return (
     <div
       className="pp-calc-sheet-preview"
-      aria-label="Nutzenrechner Ergebnisvorschau"
+      aria-label="Nutzen- und Ausschießvorschau"
     >
       <div className="pp-calc-sheet-preview__bar">
         <span>{imposition.sheet.name}</span>
@@ -2318,16 +2321,24 @@ function formatPercentValue(value: number) {
 
 function ImpositionCalculatorPanel({
   draft,
+  payload,
   result,
   onDraftChange,
 }: {
   draft: CalculationDraft;
+  payload: CalculationToProductionPayload;
   result: ImpositionCalculatorResult;
   onDraftChange: (field: keyof CalculationDraft) => (value: string) => void;
 }) {
   return (
-    <div className="pp-imposition-calculator">
-      <div className="pp-imposition-calculator__controls">
+    <div className="pp-imposition-calculator pp-imposition-calculator--workbench">
+      <div className="pp-imposition-calculator__editor">
+        <div className="pp-imposition-calculator__editor-head">
+          <span>Nutzenrechner</span>
+          <strong>Nutzenplan einrichten</strong>
+          <p>Beschnitt, Bogenrand, X-/Y-Zwischenschnitt und Drehregel steuern den Kalkulationsnutzen und bereiten den späteren Ausschießplan vor.</p>
+        </div>
+        <div className="pp-imposition-calculator__controls">
         <CalculationField
           label="Druckbogen"
           value={draft.printSheetFormat}
@@ -2370,6 +2381,34 @@ function ImpositionCalculatorPanel({
           options={impositionRotationModeOptions}
           onValueChange={onDraftChange("impositionRotationMode")}
         />
+        </div>
+      </div>
+
+      <div className="pp-imposition-calculator__preview">
+        <CalculationSheetPreview payload={payload} />
+        <div className="pp-imposition-calculator__imposing-plan" aria-label="Ausschießplan vorbereitet">
+          <div>
+            <span>Ausschießplan / Imposing</span>
+            <strong>Vorbereitet</strong>
+            <p>
+              Der berechnete Nutzenplan bildet die Grundlage für den späteren produktionsfertigen Druckbogen.
+            </p>
+          </div>
+          <dl>
+            <div>
+              <dt>Status</dt>
+              <dd>noch kein PDF erzeugt</dd>
+            </div>
+            <div>
+              <dt>Geplant</dt>
+              <dd>Stand, Anlage, Vorderseite / Rückseite, Marken</dd>
+            </div>
+            <div>
+              <dt>Ausgabe</dt>
+              <dd>Druckbogen erzeugen folgt in eigener Engine</dd>
+            </div>
+          </dl>
+        </div>
       </div>
 
       <div className="pp-imposition-calculator__result">
@@ -2659,7 +2698,7 @@ function buildCalculationTransferGroups({
     },
     {
       title: "Druck / Nutzenplan",
-      helper: "Maschine und Nutzenrechner liefern Produktionsvorgaben, ohne in der Tasche neu zu rechnen.",
+      helper: "Maschine und Nutzenplan liefern Produktionsvorgaben, ohne in der Tasche neu zu rechnen.",
       rows: [
         {
           label: "Maschine",
@@ -2670,7 +2709,7 @@ function buildCalculationTransferGroups({
         },
         {
           label: "Nutzen",
-          source: "Nutzenrechner",
+          source: "Nutzen & Ausschießen",
           value: `${payload.imposition.layout.usedSlots} Nutzen · ${draft.impositionLabel}`,
           target: "Auftragstasche · Nutzenplan",
           kind: "order-pocket",
@@ -3014,6 +3053,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
         "customer-order": 0,
         "product-format": 0,
         "paper-print": 0,
+        imposition: 0,
         finishing: 0,
         external: 0,
         prices: 0,
@@ -3885,19 +3925,22 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     </div>
                   </div>
                 </CalculationSection>
-
-                <CalculationSection eyebrow="07B" title="Nutzenrechner">
-                  <ImpositionCalculatorPanel
-                    draft={draft}
-                    result={impositionCalculatorResult}
-                    onDraftChange={updateDraft}
-                  />
-                </CalculationSection>
               </>
             ) : null}
 
+            {activeTab === "imposition" ? (
+              <CalculationSection eyebrow="08" title="Nutzen & Ausschießen">
+                <ImpositionCalculatorPanel
+                  draft={draft}
+                  payload={payload}
+                  result={impositionCalculatorResult}
+                  onDraftChange={updateDraft}
+                />
+              </CalculationSection>
+            ) : null}
+
             {activeTab === "finishing" ? (
-              <CalculationSection eyebrow="08" title="Weiterverarbeitung">
+              <CalculationSection eyebrow="09" title="Weiterverarbeitung">
                 <div
                   className="pp-calc-finishing-matrix"
                   aria-label="Weiterverarbeitungs-Matrix"

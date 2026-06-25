@@ -3834,3 +3834,31 @@ Build-Prüfung: `npm run build`.
 - Die Bottom-Navigation wurde nicht verändert.
 
 Build-Prüfung: `npm run build`.
+
+### Sprint 52.2 – Nutzenrechner als eigener Reiter
+
+- Der Nutzenrechner wurde aus dem Reiter **Papier & Druck** herausgelöst und als eigener Reiter **Nutzenrechner** zwischen **Papier & Druck** und **Weiterverarbeitung** platziert.
+- **Papier & Druck** bleibt für Material, Maschine, Druckart und zusammenfassende Bogenwerte zuständig.
+- Der neue Reiter **Nutzenrechner** ist als Arbeitsfläche aufgebaut: links die editierbaren Fiery-ähnlichen Einstellungen, rechts daneben die Druckbogen-/Nutzenanzeige.
+- Editierbar bleiben insbesondere Druckbogenformat, Endformat, Bogenrand, Zwischenschnitt X-Achse, Zwischenschnitt Y-Achse, Berechnungsbasis und Drehregel.
+- Die Ergebniswerte und Variantenübersicht bleiben im selben Reiter sichtbar, damit der Anwender Änderungen unmittelbar kontrollieren kann.
+- Die Bottom-Navigation wurde nicht verändert.
+
+### Sprint 52.3 – Nutzen & Ausschießen zusammenführen
+
+- Der eigenständige Reiter **Nutzenrechner** wurde fachlich zu **Nutzen & Ausschießen** erweitert.
+- Der Reiter bleibt die zentrale Arbeitsfläche für den Kalkulationsnutzen und bereitet gleichzeitig das spätere Imposing/Ausschießen vor.
+- Die Reiterlogik ist damit klarer:
+  - **Papier & Druck** bleibt für Material, Maschine, Druckart und zusammenfassende Bogenwerte zuständig.
+  - **Nutzen & Ausschießen** ist für Druckbogenlayout, Nutzenberechnung und spätere Ausschießvorbereitung zuständig.
+- Links bleibt die editierbare Fiery-ähnliche Steuerung mit Druckbogen, Endformat, Bogenrand, Zwischenschnitt X-Achse, Zwischenschnitt Y-Achse, Berechnungsbasis und Drehregel.
+- Rechts daneben bleibt die Druckbogen-/Nutzenanzeige sichtbar, damit Änderungen unmittelbar kontrolliert werden können.
+- Zusätzlich wurde ein vorbereiteter Bereich **Ausschießplan / Imposing** ergänzt. Er zeigt bewusst noch keinen produktionsfertigen PDF-Export, sondern markiert die nächste fachliche Ausbaustufe:
+  - Stand / Anlage,
+  - Vorderseite / Rückseite,
+  - Marken,
+  - spätere Funktion **Druckbogen erzeugen**.
+- Die eigentliche Ausschieß-Engine und die Erzeugung produktionsfertiger Druckbogen-PDFs bleiben ein späterer, eigener Produktionssprint.
+- Die Bottom-Navigation wurde nicht verändert.
+
+Build-Prüfung: `npm run build`.

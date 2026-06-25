@@ -21665,3 +21665,182 @@ button.pp-process-step:hover {
     grid-template-columns: 1fr;
   }
 }
+
+/* Sprint 52.2 – Nutzenrechner als eigener Arbeitsreiter mit Vorschau daneben */
+.pp-imposition-calculator--workbench {
+  grid-template-columns: minmax(360px, .78fr) minmax(360px, .72fr);
+  gap: 14px;
+  align-items: start;
+}
+
+.pp-imposition-calculator__editor,
+.pp-imposition-calculator__preview,
+.pp-imposition-calculator__result {
+  min-width: 0;
+}
+
+.pp-imposition-calculator__editor {
+  display: grid;
+  gap: 12px;
+}
+
+.pp-imposition-calculator__editor-head {
+  padding: 14px 14px 13px;
+  border: 1px solid rgba(0, 159, 227, .18);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .78);
+}
+
+.pp-imposition-calculator__editor-head span {
+  display: block;
+  margin-bottom: 6px;
+  color: #009fe3;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 760;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.pp-imposition-calculator__editor-head strong {
+  display: block;
+  color: #07183a;
+  font-size: 19px;
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -.025em;
+}
+
+.pp-imposition-calculator__editor-head p {
+  margin: 7px 0 0;
+  color: #49617f;
+  font-size: 12px;
+  line-height: 1.38;
+  font-weight: 500;
+}
+
+.pp-imposition-calculator__preview {
+  display: grid;
+  gap: 10px;
+  align-self: stretch;
+}
+
+.pp-imposition-calculator__preview .pp-calc-sheet-preview {
+  height: 100%;
+  min-height: 360px;
+}
+
+.pp-imposition-calculator__preview .pp-calc-sheet-preview__sheet {
+  min-height: 260px;
+}
+
+.pp-imposition-calculator--workbench .pp-imposition-calculator__result {
+  grid-column: 1 / -1;
+  grid-template-columns: minmax(280px, .74fr) minmax(360px, 1fr);
+  align-items: stretch;
+}
+
+.pp-imposition-calculator--workbench .pp-imposition-calculator__variants {
+  grid-column: 1 / -1;
+}
+
+@media (max-width: 1180px) {
+  .pp-imposition-calculator--workbench,
+  .pp-imposition-calculator--workbench .pp-imposition-calculator__result {
+    grid-template-columns: 1fr;
+  }
+
+  .pp-imposition-calculator__preview .pp-calc-sheet-preview {
+    min-height: 0;
+  }
+
+  .pp-imposition-calculator__preview .pp-calc-sheet-preview__sheet {
+    min-height: 220px;
+  }
+}
+
+/* Sprint 52.3 – Nutzen & Ausschießen gemeinsam vorbereiten */
+.pp-imposition-calculator__imposing-plan {
+  min-width: 0;
+  display: grid;
+  gap: 12px;
+  padding: 14px;
+  border: 1px solid rgba(0, 159, 227, .18);
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .78);
+}
+
+.pp-imposition-calculator__imposing-plan span {
+  display: block;
+  margin-bottom: 6px;
+  color: #009fe3;
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 760;
+  letter-spacing: .09em;
+  text-transform: uppercase;
+}
+
+.pp-imposition-calculator__imposing-plan strong {
+  display: block;
+  color: #07183a;
+  font-size: 19px;
+  line-height: 1.08;
+  font-weight: 700;
+  letter-spacing: -.025em;
+}
+
+.pp-imposition-calculator__imposing-plan p {
+  margin: 7px 0 0;
+  color: #49617f;
+  font-size: 12px;
+  line-height: 1.38;
+  font-weight: 500;
+}
+
+.pp-imposition-calculator__imposing-plan dl {
+  display: grid;
+  gap: 0;
+  margin: 0;
+  border-top: 1px solid #edf4f9;
+}
+
+.pp-imposition-calculator__imposing-plan dl > div {
+  display: grid;
+  grid-template-columns: minmax(104px, .46fr) minmax(0, 1fr);
+  gap: 10px;
+  padding: 9px 0;
+  border-bottom: 1px solid #edf4f9;
+}
+
+.pp-imposition-calculator__imposing-plan dl > div:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.pp-imposition-calculator__imposing-plan dt,
+.pp-imposition-calculator__imposing-plan dd {
+  margin: 0;
+  min-width: 0;
+  font-size: 12px;
+  line-height: 1.32;
+}
+
+.pp-imposition-calculator__imposing-plan dt {
+  color: #009fe3;
+  font-weight: 680;
+}
+
+.pp-imposition-calculator__imposing-plan dd {
+  color: #10213f;
+  font-weight: 560;
+}
+
+@media (max-width: 1180px) {
+  .pp-imposition-calculator__imposing-plan dl > div {
+    grid-template-columns: 1fr;
+    gap: 4px;
+  }
+}

@@ -4064,3 +4064,13 @@ Der Nutzenrechner wurde in der Eingabe ergonomisch verfeinert. Ziel ist, die Fie
 - Die Steuerung ist jetzt als robuste Zeilenmatrix aufgebaut, damit keine Eingabefelder oder Auswahlbuttons mehr ineinanderlaufen.
 - Die Druckbogen-Vorschau bleibt rechts daneben und behält physikalische Skalierung sowie Zentrierung aus Sprint 55.1/55.2.
 - **Bottom-Navigation unverändert.**
+
+## Sprint 55.6 – Nutzenrechner kompakter verdichten
+
+- Die Steuerung im Reiter **04 Nutzenrechner** wurde kompakter aufgebaut, damit die Eingabefelder weniger vertikalen Platz einnehmen.
+- Druckbogen, Endformat, Bogenrand, Zwischenschnitt X/Y, manuelle Spalten/Reihen sowie Auswahlfelder bleiben vollständig sichtbar, werden aber als kompaktere Kartenmatrix geführt.
+- Der bisher große Kasten **Beste Variante** wurde entfernt und mit der Variantenübersicht kombiniert.
+- Die Variantenübersicht enthält jetzt oben die empfohlene beziehungsweise manuelle Variante als kurze Zusammenfassung und darunter die Vergleichstabelle.
+- Ergebniskennzahlen wie Druckbogen, Zwischenschnitt, Rastermodus, Nettobogen, Restmenge, Zuschussbogen und Bruttobogen werden kompakter als Kennzahlenleiste dargestellt.
+- Die physikalische Vorschau, reale Skalierung und Zentrierung aus Sprint 55.1/55.2 bleiben erhalten.
+- Keine Änderung an der Bottom-Navigation.

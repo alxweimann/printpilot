@@ -3101,17 +3101,6 @@ function ImpositionCalculatorPanel({
       </div>
 
       <div className="pp-imposition-calculator__result">
-        <div className="pp-imposition-calculator__hero">
-          <span>{result.selected.isManual ? "Manuelles Raster" : "Beste Variante"}</span>
-          <strong>{result.label}</strong>
-          <p>
-            {result.selected.label} · {formatPercentValue(result.selected.usablePercent)}
-            Flächennutzung · Berechnungsformat {formatMillimeterValue(result.item.calculationWidthMm)} × {formatMillimeterValue(result.item.calculationHeightMm)}
-            · Zwischenschnitt {formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)}
-            {result.selected.issue ? ` · ${result.selected.issue}` : ""}
-          </p>
-        </div>
-
         <div className="pp-imposition-calculator__metrics">
           <ResultLine label="Druckbogen" value={`${formatMillimeterValue(result.sheet.widthMm)} × ${formatMillimeterValue(result.sheet.heightMm)}`} />
           <ResultLine label="Zwischenschnitt X / Y" value={formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)} />
@@ -3125,6 +3114,18 @@ function ImpositionCalculatorPanel({
       </div>
 
       <div className="pp-imposition-calculator__variants" aria-label="Nutzenvarianten">
+        <div className="pp-imposition-calculator__variants-head">
+          <div>
+            <span>{result.selected.isManual ? "Manuelles Raster" : "Beste Variante"}</span>
+            <strong>{result.label}</strong>
+            <p>
+              {result.selected.label} · {formatPercentValue(result.selected.usablePercent)}
+              Flächennutzung · Berechnungsformat {formatMillimeterValue(result.item.calculationWidthMm)} × {formatMillimeterValue(result.item.calculationHeightMm)}
+              · Zwischenschnitt {formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)}
+              {result.selected.issue ? ` · ${result.selected.issue}` : ""}
+            </p>
+          </div>
+        </div>
         <table>
           <thead>
             <tr>

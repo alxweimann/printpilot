@@ -22335,3 +22335,25 @@ button.pp-software-dialog__item:focus-visible {
     min-height: 320px;
   }
 }
+
+/* Sprint 55.1 – Nutzenvorschau physikalisch skalieren */
+.pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__sheet {
+  display: block;
+  overflow: hidden;
+  padding: 0;
+}
+
+.pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__margin {
+  inset: auto;
+}
+
+.pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__item {
+  position: absolute;
+  min-width: 0;
+  min-height: 0;
+}
+
+.pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__item img {
+  object-fit: contain;
+  background: #ffffff;
+}

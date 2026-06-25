@@ -4010,3 +4010,16 @@ Build-Prüfung: `npm run build`.
 - Validierungsdialog und Bottom-Navigation bleiben unverändert.
 
 Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `npm run build` ausführen.
+
+## Sprint 55.1 – Nutzenvorschau bei manuellem Raster korrekt skalieren
+
+- Die Druckbogen-Vorschau im Reiter **04 Nutzenrechner** wurde von einer reinen CSS-Rasterfüllung auf eine physikalisch skalierte Darstellung umgestellt.
+- Manuelle Raster wie **3 × 3** werden jetzt nicht mehr über die komplette Bogenfläche gestreckt.
+- Jeder Nutzen wird anhand seiner realen Breite/Höhe relativ zum Druckbogen positioniert.
+- Bogenrand, X-Zwischenschnitt und Y-Zwischenschnitt fließen in die Vorschaupositionierung ein.
+- Restfläche bleibt sichtbar und wird nicht mehr durch gedehnte Nutzenkacheln kaschiert.
+- Die Vorschau bleibt weiterhin rein kalkulatorisch und erzeugt kein produktionsfertiges Ausschieß-PDF.
+- **08 Impose** bleibt das spätere Modul für echte Druckbogenerzeugung, Marken, Stand/Anlage und PDF-Ausgabe.
+- Validierungsdialog und Bottom-Navigation bleiben unverändert.
+
+Build-Hinweis: Bitte lokal nach dem Einspielen mit installiertem Projektstand `npm run build` ausführen.

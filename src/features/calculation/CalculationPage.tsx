@@ -2693,41 +2693,80 @@ function FinishingMatrixRow({
 
 function CalculationSheetPreview({
   payload,
+  result,
 }: {
   payload: CalculationToProductionPayload;
+  result?: ImpositionCalculatorResult;
 }) {
   const { imposition } = payload;
+  const sheetWidthMm = result?.sheet.widthMm ?? imposition.sheet.widthMm ?? 450;
+  const sheetHeightMm = result?.sheet.heightMm ?? imposition.sheet.heightMm ?? 320;
+  const columns = result?.selected.columns ?? imposition.layout.columns;
+  const rows = result?.selected.rows ?? imposition.layout.rows;
+  const totalSlots = result?.selected.totalSlots ?? imposition.layout.totalSlots;
+  const usedSlots = result?.selected.usedSlots ?? imposition.layout.usedSlots;
+  const itemWidthMm = result?.selected.itemWidthMm
+    ?? (imposition.layout.orientation === "rotated"
+      ? imposition.item.heightMm ?? 55
+      : imposition.item.widthMm ?? 85);
+  const itemHeightMm = result?.selected.itemHeightMm
+    ?? (imposition.layout.orientation === "rotated"
+      ? imposition.item.widthMm ?? 85
+      : imposition.item.heightMm ?? 55);
+  const gapXMm = result?.settings.gapXMm ?? 0;
+  const gapYMm = result?.settings.gapYMm ?? 0;
+  const marginMm = result?.settings.marginMm ?? (typeof imposition.layout.marginMm === "number"
+    ? imposition.layout.marginMm
+    : parseGermanNumber(String(imposition.layout.marginMm ?? "0"), 0));
   const cells = Array.from(
-    { length: imposition.layout.totalSlots },
+    { length: totalSlots },
     (_, index) => index + 1,
   );
   const previewImage = payload.preview?.generatedPreview?.imageSrc;
   const previewAlt =
     payload.preview?.generatedPreview?.alt ?? "Druckdatei-Preview";
-  const sheetAspectRatio = imposition.sheet.widthMm && imposition.sheet.heightMm
-    ? `${imposition.sheet.widthMm} / ${imposition.sheet.heightMm}`
+  const sheetAspectRatio = sheetWidthMm && sheetHeightMm
+    ? `${sheetWidthMm} / ${sheetHeightMm}`
+    : undefined;
+  const marginStyle = sheetWidthMm && sheetHeightMm
+    ? {
+        left: `${(marginMm / sheetWidthMm) * 100}%`,
+        top: `${(marginMm / sheetHeightMm) * 100}%`,
+        right: `${(marginMm / sheetWidthMm) * 100}%`,
+        bottom: `${(marginMm / sheetHeightMm) * 100}%`,
+      }
     : undefined;
 
   return (
     <div
-      className="pp-calc-sheet-preview pp-calc-sheet-preview--highres"
+      className="pp-calc-sheet-preview pp-calc-sheet-preview--highres pp-calc-sheet-preview--scaled"
       aria-label="Nutzenvorschau"
     >
       <div className="pp-calc-sheet-preview__bar">
         <span>{imposition.sheet.name}</span>
-        <b>{imposition.layout.usedSlots} Nutzen</b>
+        <b>{usedSlots} Nutzen</b>
       </div>
       <div
         className="pp-calc-sheet-preview__sheet"
         style={{
           aspectRatio: sheetAspectRatio,
-          gridTemplateColumns: `repeat(${imposition.layout.columns}, minmax(0, 1fr))`,
-          gridTemplateRows: `repeat(${imposition.layout.rows}, minmax(0, 1fr))`,
         }}
       >
-        <i className="pp-calc-sheet-preview__margin" aria-hidden="true" />
+        <i className="pp-calc-sheet-preview__margin" aria-hidden="true" style={marginStyle} />
         {cells.map((cell) => {
-          const isUsed = cell <= imposition.layout.usedSlots;
+          const cellIndex = cell - 1;
+          const columnIndex = cellIndex % columns;
+          const rowIndex = Math.floor(cellIndex / columns);
+          const isUsed = cell <= usedSlots;
+          const itemStyle = sheetWidthMm && sheetHeightMm
+            ? {
+                left: `${((marginMm + columnIndex * (itemWidthMm + gapXMm)) / sheetWidthMm) * 100}%`,
+                top: `${((marginMm + rowIndex * (itemHeightMm + gapYMm)) / sheetHeightMm) * 100}%`,
+                width: `${(itemWidthMm / sheetWidthMm) * 100}%`,
+                height: `${(itemHeightMm / sheetHeightMm) * 100}%`,
+              }
+            : undefined;
+
           return (
             <span
               key={cell}
@@ -2736,6 +2775,7 @@ function CalculationSheetPreview({
                   ? "pp-calc-sheet-preview__item"
                   : "pp-calc-sheet-preview__item is-empty"
               }
+              style={itemStyle}
               aria-label={isUsed ? `Nutzen ${cell}` : `leerer Platz ${cell}`}
             >
               {isUsed && previewImage ? (
@@ -2746,13 +2786,13 @@ function CalculationSheetPreview({
         })}
       </div>
       <p>
-        {imposition.sheet.widthMm && imposition.sheet.heightMm
-          ? `${imposition.sheet.widthMm} × ${imposition.sheet.heightMm} mm`
+        {sheetWidthMm && sheetHeightMm
+          ? `${sheetWidthMm} × ${sheetHeightMm} mm`
           : imposition.sheet.name}
         {" · "}
-        Raster {imposition.layout.columns} × {imposition.layout.rows}
+        Raster {columns} × {rows}
         {" · "}
-        Abstand {imposition.layout.gapMm ?? "offen"}
+        Abstand {formatImpositionGapLabel(gapXMm, gapYMm)}
       </p>
     </div>
   );
@@ -2864,7 +2904,7 @@ function ImpositionCalculatorPanel({
       </div>
 
       <div className="pp-imposition-calculator__preview">
-        <CalculationSheetPreview payload={payload} />
+        <CalculationSheetPreview payload={payload} result={result} />
       </div>
 
       <div className="pp-imposition-calculator__result">

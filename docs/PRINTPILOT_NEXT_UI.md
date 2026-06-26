@@ -4289,3 +4289,13 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Weiterverarbeitungs-Matrix verliert die harte Spreadsheet-Optik; aktive Leistungen bleiben über eine dezente Flächenmarkierung sichtbar.
 - Bei schmaleren Breiten wechseln vierteilige Kalkulationsfelder früher auf zwei Spalten, damit lange Begriffe und Werte nicht unnötig abgeschnitten werden.
 - Keine Änderung an Kalkulationslogik, Nutzenberechnung, Weiterverarbeitungsdaten, PDF-/Printlayout, Validierungsdialogen oder Bottom-Navigation.
+
+## Sprint 61.6 – Layout-Kollisionsschutz für Tabs
+
+- Die Sprint-61.5-Beruhigung wurde layoutseitig nachgeschärft, ohne Farben, Schriftgrößen oder Kalkulationslogik erneut zu verändern.
+- Die Weiterverarbeitungs-Matrix erhält feste Spaltenbreiten: **Aktiv** bleibt horizontal lesbar, Checkboxen sind zentriert und Leistungs-/Parameter-Spalten haben ausreichend Arbeitsbreite.
+- Tabellenkopftexte und lange Feldlabels dürfen sinnvoll umbrechen, aber nicht mehr buchstabenweise wie `A K T I V` zerfallen.
+- Die Nutzenrechner-Toolbar nutzt robuste Flex-Zeilen mit Mindestbreiten für Segmentbuttons, damit Texte wie **automatisch beste Variante** nicht abgeschnitten oder ineinander geschoben werden.
+- Formular-Labelspalten erhalten mehr Breite für lange Begriffe wie Weiterverarbeitungskosten, Maschinenmakulatur oder Gesamtmarge / Deckungsbeitrag.
+- Die Kalkulationsseite erhält unten mehr Sicherheitsabstand, damit die Bottom-Navigation den letzten Arbeitsbereich nicht optisch bedrängt oder verdeckt.
+- Keine Änderung an Kalkulationslogik, Nutzenberechnung, Weiterverarbeitungsdaten, PDF-/Printlayout, Farben, Schriftgrößen oder Bottom-Navigation selbst.

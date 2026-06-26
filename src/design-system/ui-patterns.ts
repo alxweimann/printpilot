@@ -1078,3 +1078,10 @@ export const sprint615Pattern = {
   description:
     "Die Kalkulations-Tabs verlieren graue Tabellenraster in Eingabemasken, Nutzenrechner und Weiterverarbeitung. Eingabefelder bleiben klar gerahmt, während Labels, Werte, Hilfstexte und Tabelleninhalte umbrechen dürfen und nicht mehr per Ellipsis abgeschnitten werden.",
 };
+
+export const sprint616Pattern = {
+  id: "calculation-tab-layout-collision-guard",
+  sprint: "61.6",
+  description:
+    "Die Kalkulations-Tabs erhalten Layout-Kollisionsschutz: Weiterverarbeitung mit horizontal lesbarer Aktiv-Spalte und festen Spaltenbreiten, Nutzenrechner-Toolbar mit robusten Flex-Zeilen und Mindestbreiten, längere Labels ohne buchstabenweisen Umbruch sowie zusätzlicher Sicherheitsabstand zur Bottom-Navigation. Farben, Schriftgrößen, Kalkulationslogik und PDF-/Printlayout bleiben unverändert.",
+};

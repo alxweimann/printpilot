@@ -26222,3 +26222,243 @@ body {
     grid-column: 1 !important;
   }
 }
+
+/* Sprint 61.6 – Layout-/Kollisionsschutz in Kalkulations-Tabs
+   Nur Layout: keine neue Farbsemantik, keine Schriftgrößenänderung,
+   keine Kalkulationslogik. Lange Labels dürfen sinnvoll umbrechen, aber nie
+   buchstabenweise; Toolbar und Tabellen schützen sich vor Überlappung. */
+.pp-calculation-page {
+  padding-bottom: calc(var(--pp-page-bottom-safe) + 156px) !important;
+  scroll-padding-bottom: calc(var(--pp-page-bottom-safe) + 156px) !important;
+}
+
+.pp-calculation-page .pp-calculation-layout,
+.pp-calculation-page .pp-calculation-layout--tabs,
+.pp-calculation-page .pp-calculation-tab-panel,
+.pp-calculation-page .pp-calc-form-section {
+  min-width: 0 !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field {
+  grid-template-columns: minmax(154px, .42fr) minmax(0, 1fr) !important;
+  gap: 10px !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span strong,
+.pp-calculation-page .pp-calc-finishing-table thead th,
+.pp-calculation-page .pp-imposition-tool__label,
+.pp-calculation-page .pp-imposition-segment > span {
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  hyphens: manual !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span strong {
+  overflow-wrap: break-word !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar {
+  overflow: visible !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar__line,
+.pp-calculation-page .pp-imposition-toolbar__line--numbers,
+.pp-calculation-page .pp-imposition-toolbar__line--modes {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+  min-width: 0 !important;
+}
+
+.pp-calculation-page .pp-imposition-tool,
+.pp-calculation-page .pp-imposition-segment {
+  flex: 1 1 auto !important;
+  min-width: 0 !important;
+  overflow: visible !important;
+}
+
+.pp-calculation-page .pp-imposition-tool--pair[data-calculation-field="printSheetFormat"] {
+  flex-basis: 260px !important;
+}
+
+.pp-calculation-page .pp-imposition-tool--pair[data-calculation-field="finalFormat"] {
+  flex-basis: 236px !important;
+}
+
+.pp-calculation-page .pp-imposition-tool--number {
+  flex-basis: 156px !important;
+}
+
+.pp-calculation-page .pp-imposition-tool--raster {
+  flex-basis: 188px !important;
+}
+
+.pp-calculation-page .pp-imposition-segment[data-calculation-field="impositionUseBleed"],
+.pp-calculation-page .pp-imposition-segment[data-calculation-field="impositionRasterMode"] {
+  flex-basis: 430px !important;
+}
+
+.pp-calculation-page .pp-imposition-segment[data-calculation-field="impositionRotationMode"] {
+  flex-basis: 500px !important;
+}
+
+.pp-calculation-page .pp-imposition-segment > div {
+  display: flex !important;
+  flex: 1 1 auto !important;
+  flex-wrap: wrap !important;
+  gap: 6px !important;
+  min-width: 0 !important;
+}
+
+.pp-calculation-page .pp-imposition-segment button {
+  flex: 1 1 max-content !important;
+  min-width: 132px !important;
+  width: auto !important;
+  padding-inline: 12px !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  line-height: 1.15 !important;
+}
+
+.pp-calculation-page .pp-imposition-segment[data-calculation-field="impositionRasterMode"] button {
+  min-width: 168px !important;
+}
+
+.pp-calculation-page .pp-imposition-tool__pair,
+.pp-calculation-page .pp-imposition-tool__number {
+  flex: 1 1 auto !important;
+}
+
+.pp-calculation-page .pp-imposition-tool__pair input,
+.pp-calculation-page .pp-imposition-tool__number input {
+  flex: 0 0 auto !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-matrix {
+  overflow-x: auto !important;
+  overflow-y: visible !important;
+  padding-bottom: 4px !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table {
+  min-width: 1280px !important;
+  table-layout: fixed !important;
+  border-spacing: 0 7px !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table__col-active {
+  width: 72px !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table__col-service {
+  width: 290px !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table__col-param {
+  width: 500px !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table__col-amount {
+  width: 190px !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table__col-production {
+  width: 228px !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table thead th {
+  min-width: 0 !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  writing-mode: horizontal-tb !important;
+  text-orientation: mixed !important;
+  vertical-align: middle !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table thead th:first-child,
+.pp-calculation-page .pp-calc-finishing-table tbody td:first-child {
+  width: 72px !important;
+  min-width: 72px !important;
+  max-width: 72px !important;
+  text-align: center !important;
+  white-space: nowrap !important;
+  word-break: keep-all !important;
+  overflow-wrap: normal !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table thead th:first-child {
+  letter-spacing: .025em !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table tbody th {
+  padding-right: 16px !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table th b,
+.pp-calculation-page .pp-calc-finishing-table th small {
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table tbody td {
+  vertical-align: middle !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table tbody td > span {
+  margin-bottom: 4px !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table td input:not([type="checkbox"]),
+.pp-calculation-page .pp-calc-finishing-table td select {
+  min-width: 0 !important;
+  width: 100% !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-check {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  width: 24px !important;
+  height: 24px !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table input[type="checkbox"] {
+  flex: 0 0 auto !important;
+}
+
+@media (max-width: 1280px) {
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field {
+    grid-template-columns: minmax(142px, .44fr) minmax(0, 1fr) !important;
+  }
+
+  .pp-calculation-page .pp-imposition-segment,
+  .pp-calculation-page .pp-imposition-tool,
+  .pp-calculation-page .pp-imposition-tool--pair[data-calculation-field="printSheetFormat"],
+  .pp-calculation-page .pp-imposition-tool--pair[data-calculation-field="finalFormat"],
+  .pp-calculation-page .pp-imposition-tool--number,
+  .pp-calculation-page .pp-imposition-tool--raster {
+    flex-basis: 290px !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pp-calculation-page .pp-imposition-segment,
+  .pp-calculation-page .pp-imposition-tool {
+    flex-basis: 100% !important;
+  }
+
+  .pp-calculation-page .pp-imposition-segment button {
+    min-width: 100% !important;
+  }
+}

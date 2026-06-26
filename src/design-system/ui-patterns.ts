@@ -1048,3 +1048,11 @@ export const sprint611Pattern = {
   description:
     "Alle App-Reiter und Kalkulations-Tabinhalte werden gegen die Referenz Kunde & Auftrag geprüft. Nutzenrechner und Weiterverarbeitung verlieren abweichende Schriftfarben und Einzelgrößen; Labels, Werte, Hilfstexte, Segmentbuttons und Tabellenwerte folgen wieder denselben UI-Tokens wie die übrigen Eingabemasken. Bottom-Navigation und PDF-/Print-Typografie bleiben getrennt.",
 };
+
+
+export const sprint612Pattern = {
+  id: "calculation-final-mask-typography-unification",
+  sprint: "61.2",
+  description:
+    "Die Kalkulationsmasken-Typografie wird mit höherer CSS-Spezifität final an Kunde & Auftrag ausgerichtet. Nutzenrechner und Weiterverarbeitung verwenden dieselben Label-, Werte-, Hilfs- und Abschnittsfarben wie die normale Eingabemaske; ältere Sprint-Overrides können diese Farben nicht mehr überstimmen.",
+};

@@ -25678,3 +25678,131 @@ body {
     grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
   }
 }
+
+/* Sprint 61.2 – Finale Kalkulationsmasken-Typografie
+   Referenz: Reiter „Kunde & Auftrag“. Nutzenrechner und Weiterverarbeitung bekommen
+   dieselben Label-, Werte- und Hilfstextfarben mit gleicher Spezifität wie alte Sprint-Overrides. */
+.pp-calculation-page {
+  --pp-mask-label-color: var(--pp-ui-label-color, #008fcf);
+  --pp-mask-value-color: var(--pp-ui-text-color, #071733);
+  --pp-mask-heading-color: var(--pp-ui-text-color, #071733);
+  --pp-mask-helper-color: var(--pp-ui-muted-color, #475569);
+  --pp-mask-section-number-bg: #eef6ff;
+  --pp-mask-section-number-color: var(--pp-ui-label-color, #008fcf);
+  --pp-mask-section-border-color: #cfdeed;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel,
+.pp-calculation-page .pp-calculation-tab-panel * {
+  text-shadow: none !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section__head > span,
+.pp-calculation-page .pp-calc-form-section__head > span {
+  color: var(--pp-mask-section-number-color) !important;
+  background: var(--pp-mask-section-number-bg) !important;
+  border: 0 !important;
+  font-size: var(--pp-ui-tab-number-size, 10px) !important;
+  font-weight: var(--pp-ui-font-weight-strong, 700) !important;
+  letter-spacing: 0 !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section__head h2,
+.pp-calculation-page .pp-calc-form-section__head h2,
+.pp-calculation-page .pp-imposition-calculator__variants-head strong,
+.pp-calculation-page .pp-imposition-calculator__editor-head strong,
+.pp-calculation-page .pp-calc-finishing-table th b {
+  color: var(--pp-mask-heading-color) !important;
+  font-size: var(--pp-ui-section-title-size, 15px) !important;
+  font-weight: var(--pp-ui-font-weight-heavy, 800) !important;
+  letter-spacing: -.012em !important;
+}
+
+.pp-calculation-page .pp-calc-input-field span,
+.pp-calculation-page .pp-calc-input-field span strong,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span strong,
+.pp-calculation-page .pp-imposition-tool__label,
+.pp-calculation-page .pp-imposition-segment > span,
+.pp-calculation-page .pp-imposition-calculator__metrics .pp-calc-result-line span,
+.pp-calculation-page .pp-imposition-calculator__variants-head span,
+.pp-calculation-page .pp-imposition-calculator__variants thead th,
+.pp-calculation-page .pp-imposition-calculator__variants table thead th,
+.pp-calculation-page .pp-calc-finishing-table thead th,
+.pp-calculation-page .pp-calc-finishing-table td span,
+.pp-calculation-page .pp-calc-finishing-table tbody td span,
+.pp-calculation-page .pp-calc-finishing-table tbody tr.is-active td span {
+  color: var(--pp-mask-label-color) !important;
+  font-size: var(--pp-ui-field-label-size, 10px) !important;
+  font-weight: var(--pp-ui-font-weight-heavy, 800) !important;
+  letter-spacing: .035em !important;
+  text-transform: uppercase !important;
+}
+
+.pp-calculation-page .pp-calc-input-field input,
+.pp-calculation-page .pp-calc-input-field select,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field input,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field select,
+.pp-calculation-page .pp-imposition-tool__pair input,
+.pp-calculation-page .pp-imposition-tool__number input,
+.pp-calculation-page .pp-imposition-segment button,
+.pp-calculation-page .pp-imposition-calculator__metrics .pp-calc-result-line b,
+.pp-calculation-page .pp-imposition-calculator__variants tbody th,
+.pp-calculation-page .pp-imposition-calculator__variants tbody td,
+.pp-calculation-page .pp-imposition-calculator__variants table tbody th,
+.pp-calculation-page .pp-imposition-calculator__variants table tbody td,
+.pp-calculation-page .pp-calc-finishing-table td,
+.pp-calculation-page .pp-calc-finishing-table tbody td,
+.pp-calculation-page .pp-calc-finishing-table td input:not([type="checkbox"]),
+.pp-calculation-page .pp-calc-finishing-table tbody td input:not([type="checkbox"]),
+.pp-calculation-page .pp-calc-finishing-table td select,
+.pp-calculation-page .pp-calc-finishing-table td strong,
+.pp-calculation-page .pp-calc-finishing-table tbody tr.is-active td,
+.pp-calculation-page .pp-calc-finishing-table tbody tr.is-active td strong {
+  color: var(--pp-mask-value-color) !important;
+  font-size: var(--pp-ui-field-value-size, 14px) !important;
+  font-weight: var(--pp-ui-font-weight-medium, 600) !important;
+  letter-spacing: 0 !important;
+}
+
+.pp-calculation-page .pp-calc-input-field small,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field small,
+.pp-calculation-page .pp-imposition-tool__pair small,
+.pp-calculation-page .pp-imposition-tool__number small,
+.pp-calculation-page .pp-imposition-calculator__variants-head p,
+.pp-calculation-page .pp-imposition-calculator__editor-head p,
+.pp-calculation-page .pp-calc-finishing-table th small,
+.pp-calculation-page .pp-calc-finishing-table tbody th small {
+  color: var(--pp-mask-helper-color) !important;
+  font-size: var(--pp-ui-field-helper-size, 11px) !important;
+  font-weight: var(--pp-ui-font-weight-medium, 600) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table th,
+.pp-calculation-page .pp-calc-finishing-table td,
+.pp-calculation-page .pp-imposition-calculator__variants th,
+.pp-calculation-page .pp-imposition-calculator__variants td {
+  border-color: var(--pp-mask-section-border-color) !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table tbody tr.is-active th,
+.pp-calculation-page .pp-calc-finishing-table tbody tr.is-active td {
+  background-color: rgba(0, 159, 227, .055) !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table tbody tr.is-active th b,
+.pp-calculation-page .pp-calc-finishing-table tbody th b {
+  color: var(--pp-mask-heading-color) !important;
+  font-size: var(--pp-ui-table-value-size, 13px) !important;
+  font-weight: var(--pp-ui-font-weight-heavy, 800) !important;
+}
+
+.pp-calculation-page .pp-imposition-segment button.is-active,
+.pp-calculation-page .pp-imposition-segment button.is-active:hover,
+.pp-calculation-page .pp-calc-production-mode button.is-active,
+.pp-calculation-page .pp-calc-production-mode button.is-active:hover {
+  color: var(--pp-mask-value-color) !important;
+  font-weight: var(--pp-ui-font-weight-strong, 700) !important;
+}

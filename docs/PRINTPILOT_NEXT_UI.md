@@ -4251,3 +4251,12 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Tab-Inhalte von Nutzenrechner und Weiterverarbeitung wurden ebenfalls auf die Kalkulationsmasken-Tokens zurückgeführt: Labels, Werte, Hilfstexte, Segmentbuttons, Tabellenköpfe und Tabellenwerte verwenden dieselbe Farb- und Größenlogik wie normale Eingabefelder.
 - Sonderstyles älterer Nutzenrechner- und Weiterverarbeitungs-Sprints werden am Ende der CSS gezielt übersteuert, damit keine versteckten Einzelgrößen oder abweichenden Schriftfarben mehr durchrutschen.
 - PDF-/Print-Dokumente bleiben typografisch getrennt und wurden nicht verändert.
+
+## Sprint 61.2 – Finale Masken-Farbangleichung
+
+- Die Screens aus **Nutzenrechner** und **Weiterverarbeitung** wurden gegen die Referenz **Kunde & Auftrag** geprüft.
+- Ursache waren ältere, spezifischere Sprint-Overrides aus der Kalkulationsmaske, die trotz Sprint 61.1 einzelne Label-, Tabellen- und Segmentfarben weiter überstimmt haben.
+- Die finale Angleichung liegt jetzt am Ende der CSS mit höherer Spezifität innerhalb `.pp-calculation-page`.
+- Abschnittsnummern, Abschnittstitel, Feldlabels, Tabellenköpfe, Tabellenwerte, Hilfstexte, Nutzenrechner-Toolbar, Segmentbuttons und Weiterverarbeitungs-Matrix verwenden dieselben UI-Farb- und Typografie-Tokens wie die Referenz **Kunde & Auftrag**.
+- Die Bottom-Navigation und PDF-/Print-Typografie bleiben weiterhin getrennt und wurden nicht verändert.
+- Keine Änderung an Kalkulationslogik, Nutzenberechnung, Weiterverarbeitungsdaten, Validierungsdialogen oder Dokumentenausgabe.

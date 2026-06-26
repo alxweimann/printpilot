@@ -1,4 +1,5 @@
 import { createContext, useContext, useMemo, useRef, useState } from "react";
+import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
 import { PrintPilotLogo } from "../../components/brand/PrintPilotLogo";
 import { demoDocumentSettings } from "../documents/document-settings";
@@ -161,7 +162,6 @@ type CalculationDraft = {
   impositionManualColumns: string;
   impositionManualRows: string;
   impositionGripperMarginMm: string;
-  impositionGuideSide: string;
   setupTime: string;
   runTime: string;
   clickCosts: string;
@@ -464,7 +464,6 @@ const calculationFieldTabOverrides: Partial<Record<keyof CalculationDraft, Calcu
   impositionGapXMm: "imposition",
   impositionGapYMm: "imposition",
   impositionGripperMarginMm: "imposition",
-  impositionGuideSide: "imposition",
 };
 
 function getCalculationFieldTab(field: keyof CalculationDraft): CalculationTabId {
@@ -550,7 +549,6 @@ const calculationFieldLabels: Partial<Record<keyof CalculationDraft, string>> = 
   impositionGapXMm: "Zwischenschnitt X-Achse",
   impositionGapYMm: "Zwischenschnitt Y-Achse",
   impositionGripperMarginMm: "Greiferrand",
-  impositionGuideSide: "Anlage",
 };
 
 function getMissingFieldLabels(
@@ -974,7 +972,6 @@ const initialDraft: CalculationDraft = {
   impositionManualColumns: "5",
   impositionManualRows: "5",
   impositionGripperMarginMm: "0",
-  impositionGuideSide: "Anlage oben",
   setupTime: "12 min",
   runTime: "automatisch später",
   clickCosts: "Maschinenstamm",
@@ -1121,7 +1118,6 @@ type ImpositionCalculatorResult = {
     gapYMm: number;
     marginMm: number;
     gripperMarginMm: number;
-    guideSide: string;
     includeBleed: boolean;
     rotationMode: string;
     rasterMode: string;
@@ -1155,12 +1151,6 @@ const impositionRotationModeOptions = [
 const impositionRasterModeOptions = [
   { value: "Automatisch", label: "automatisch beste Variante" },
   { value: "Manuell", label: "Raster manuell festlegen" },
-];
-
-const impositionGuideSideOptions = [
-  { value: "Anlage oben", label: "oben" },
-  { value: "Anlage links", label: "links" },
-  { value: "Anlage rechts", label: "rechts" },
 ];
 
 function parseDimensionPairToMm(
@@ -1379,7 +1369,6 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
       gapYMm,
       marginMm,
       gripperMarginMm,
-      guideSide: draft.impositionGuideSide,
       includeBleed,
       rotationMode: draft.impositionRotationMode,
       rasterMode: draft.impositionRasterMode,
@@ -1494,7 +1483,7 @@ function buildPayloadFromDraft(
         `Nutzenrechner: ${impositionResult.label}`,
         `Berechnungsbasis: ${impositionResult.settings.includeBleed ? "inklusive Beschnitt" : "Endformat"}`,
         `Zwischenschnitt: ${formatImpositionGapLabel(impositionResult.settings.gapXMm, impositionResult.settings.gapYMm)}`,
-        `Greiferrand: ${formatMillimeterValue(impositionResult.settings.gripperMarginMm)} · ${impositionResult.settings.guideSide}`,
+        `Greiferrand: ${formatMillimeterValue(impositionResult.settings.gripperMarginMm)}`,
       ],
     },
     machine: {
@@ -2815,12 +2804,14 @@ function CalculationSheetPreview({
           const rowIndex = Math.floor(cellIndex / columns);
           const isUsed = cell <= usedSlots;
           const itemStyle = sheetWidthMm && sheetHeightMm
-            ? {
+            ? ({
                 left: `${((centeredOffsetXMm + columnIndex * (itemWidthMm + gapXMm)) / sheetWidthMm) * 100}%`,
                 top: `${((centeredOffsetYMm + rowIndex * (itemHeightMm + gapYMm)) / sheetHeightMm) * 100}%`,
                 width: `${(itemWidthMm / sheetWidthMm) * 100}%`,
                 height: `${(itemHeightMm / sheetHeightMm) * 100}%`,
-              }
+                "--pp-rotated-content-width": `${(itemHeightMm / Math.max(1, itemWidthMm)) * 100}%`,
+                "--pp-rotated-content-height": `${(itemWidthMm / Math.max(1, itemHeightMm)) * 100}%`,
+              } as CSSProperties)
             : undefined;
 
           return (
@@ -2835,7 +2826,9 @@ function CalculationSheetPreview({
               aria-label={isUsed ? `Nutzen ${cell}` : `leerer Platz ${cell}`}
             >
               {isUsed && previewImage ? (
-                <img src={previewImage} alt={previewAlt} decoding="async" />
+                <span className="pp-calc-sheet-preview__artwork">
+                  <img src={previewImage} alt={previewAlt} decoding="async" />
+                </span>
               ) : null}
             </span>
           );
@@ -3067,22 +3060,6 @@ function ImpositionCalculatorPanel({
                 ))}
               </div>
             </div>
-
-            <div className="pp-imposition-segment" data-calculation-field="impositionGuideSide">
-              <span>Anlage</span>
-              <div role="group" aria-label="Anlage">
-                {impositionGuideSideOptions.map((option) => (
-                  <button
-                    key={option.value}
-                    type="button"
-                    className={option.value === draft.impositionGuideSide ? "is-active" : undefined}
-                    onClick={() => onDraftChange("impositionGuideSide")(option.value)}
-                  >
-                    {option.label}
-                  </button>
-                ))}
-              </div>
-            </div>
           </div>
         </div>
       </div>
@@ -3095,7 +3072,7 @@ function ImpositionCalculatorPanel({
         <div className="pp-imposition-calculator__metrics">
           <ResultLine label="Druckbogen" value={`${formatMillimeterValue(result.sheet.widthMm)} × ${formatMillimeterValue(result.sheet.heightMm)}`} />
           <ResultLine label="Zwischenschnitt X / Y" value={formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)} />
-          <ResultLine label="Greiferrand / Anlage" value={`${formatMillimeterValue(result.settings.gripperMarginMm)} · ${result.settings.guideSide}`} />
+          <ResultLine label="Greiferrand" value={formatMillimeterValue(result.settings.gripperMarginMm)} />
           <ResultLine label="Rastermodus" value={result.settings.rasterMode === "Manuell" ? `${result.settings.manualColumns} × ${result.settings.manualRows} manuell` : "automatisch"} />
           <ResultLine label="Nettobogen" value={`${formatNumber(result.production.sheetsRequired)} Bogen`} />
           <ResultLine label="Netto produziert" value={`${formatNumber(result.production.netQuantity)} Stück`} />

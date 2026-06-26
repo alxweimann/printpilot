@@ -4177,3 +4177,22 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Manuelles Raster wird bei Angebots-, E-Mail- und Auftragsaktionen geprüft. Passt das Raster nicht auf den Druckbogen, erscheint der PrintPilot-Validierungsdialog statt eines dauerhaften Systemhinweises.
 - Nutzen-, Netto-/Brutto-Bogen und Zuschuss bleiben intern für Materialverbrauch, Preisbereich und spätere Auftragstasche gekoppelt.
 - Keine echte Impose-Engine, kein Druckbogen-PDF, keine Bottom-Navigation-Änderung.
+
+## Sprint 57.1 – Gedrehte Nutzen korrekt skalieren und Anlage aus Nutzenrechner entfernen
+
+- Gedrehte Nutzen in der Vorschau drehen weiterhin den Inhalt beziehungsweise die Druckdatei-Preview mit.
+- Die Rotation wird jetzt über eine eigene, mittig platzierte Innenfläche skaliert: Der Inhalt wird nicht mehr nur gedreht, sondern korrekt in der gedrehten Nutzenfläche eingepasst.
+- Transform-Origin, Breite/Höhe und Zentrierung der gedrehten Vorschau sind auf die physikalische Nutzen-Kachel abgestimmt.
+- Die Nutzen-Kachel selbst bleibt physikalisch korrekt positioniert und skaliert.
+- **Anlage** wurde aus dem Reiter **04 Nutzenrechner** entfernt, weil sie fachlich zum späteren Modul **08 Impose** gehört.
+- Der **Greiferrand** bleibt im Nutzenrechner, da er die nutzbare Fläche und damit die Kalkulation beeinflusst.
+- Im Reiter **08 Impose** bleibt Anlage als spätere fachliche Imposition-Komponente dokumentiert.
+- Keine Änderung an Rasterlogik, Bogenverbrauch, Validierungsdialog, Bottom-Navigation oder echter Impose-Ausgabe.
+
+## Sprint 57.2 – Anlage aus Nutzenrechner bereinigen und Rotation nachschärfen
+
+- **Anlage** wurde endgültig aus der Datenstruktur und Bedienung des Reiters **04 Nutzenrechner** entfernt.
+- Im Nutzenrechner bleibt nur **Greiferrand** als produktionsrelevante Einschränkung der nutzbaren Bogenfläche.
+- Anlage, Stand, Seitenanlage, Vorderseite/Rückseite und Marken bleiben fachlich dem späteren Modul **08 Impose** zugeordnet.
+- Gedrehte Nutzen verwenden jetzt eine eigene Preview-Innenfläche: Die Kachel bleibt physikalisch korrekt positioniert, der Druckinhalt wird mittig rotiert, passend skaliert und innerhalb der Nutzenfläche zentriert.
+- Keine Änderung an Rasterlogik, Bogenverbrauch, Validierungsdialog, Bottom-Navigation oder echter Impose-Ausgabe.

@@ -24923,10 +24923,6 @@ body {
   flex: 0 0 150px !important;
 }
 
-.pp-imposition-segment[data-calculation-field="impositionGuideSide"] {
-  flex: .85 1 300px !important;
-}
-
 .pp-calc-sheet-preview__item {
   overflow: hidden !important;
 }
@@ -24945,4 +24941,81 @@ body {
 
 .pp-imposition-calculator__metrics .pp-calc-result-line b {
   white-space: normal !important;
+}
+
+
+/* Sprint 57.1 – gedrehte Nutzen sauber skalieren und Anlage aus Nutzenrechner entfernen */
+.pp-calc-sheet-preview__item {
+  overflow: hidden !important;
+  isolation: isolate;
+}
+
+.pp-calc-sheet-preview--highres .pp-calc-sheet-preview__item img,
+.pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__item img {
+  position: absolute !important;
+  inset: 0 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  transform: none !important;
+  transform-origin: 50% 50% !important;
+}
+
+.pp-calc-sheet-preview__item.is-content-rotated img,
+.pp-calc-sheet-preview--highres .pp-calc-sheet-preview__item.is-content-rotated img,
+.pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__item.is-content-rotated img {
+  left: 50% !important;
+  top: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  width: var(--pp-rotated-content-width, 100%) !important;
+  height: var(--pp-rotated-content-height, 100%) !important;
+  transform: translate(-50%, -50%) rotate(90deg) translateZ(0) !important;
+  object-fit: cover !important;
+}
+
+.pp-calc-sheet-preview__item.is-content-rotated::after {
+  border-color: rgba(0, 159, 227, .18) !important;
+}
+
+/* Sprint 57.2 – Anlage endgültig aus dem Nutzenrechner entfernen und gedrehte Vorschau zentrieren */
+.pp-calc-sheet-preview__artwork {
+  position: absolute !important;
+  left: 50% !important;
+  top: 50% !important;
+  z-index: 1 !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  transform: translate(-50%, -50%) translateZ(0) !important;
+  transform-origin: 50% 50% !important;
+  backface-visibility: hidden !important;
+}
+
+.pp-calc-sheet-preview__item.is-content-rotated .pp-calc-sheet-preview__artwork {
+  width: var(--pp-rotated-content-width, 100%) !important;
+  height: var(--pp-rotated-content-height, 100%) !important;
+  transform: translate(-50%, -50%) rotate(90deg) translateZ(0) !important;
+}
+
+.pp-calc-sheet-preview__artwork img,
+.pp-calc-sheet-preview--highres .pp-calc-sheet-preview__artwork img,
+.pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__artwork img,
+.pp-calc-sheet-preview__item.is-content-rotated .pp-calc-sheet-preview__artwork img,
+.pp-calc-sheet-preview--highres .pp-calc-sheet-preview__item.is-content-rotated .pp-calc-sheet-preview__artwork img,
+.pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__item.is-content-rotated .pp-calc-sheet-preview__artwork img {
+  position: static !important;
+  display: block !important;
+  width: 100% !important;
+  height: 100% !important;
+  object-fit: cover !important;
+  transform: none !important;
+  transform-origin: 50% 50% !important;
+}
+
+.pp-imposition-segment[data-calculation-field="impositionGuideSide"],
+.pp-imposition-tool[data-calculation-field="impositionGuideSide"] {
+  display: none !important;
 }

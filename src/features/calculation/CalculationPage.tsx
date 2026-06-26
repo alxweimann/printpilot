@@ -3011,12 +3011,7 @@ function ImpositionCalculatorPanel({
   return (
     <div className="pp-imposition-calculator pp-imposition-calculator--workbench">
       <div className="pp-imposition-calculator__editor">
-        <div className="pp-imposition-calculator__editor-head">
-          <span>Nutzenrechner</span>
-          <strong>Nutzenplan einrichten</strong>
-          <p>Beschnitt, Bogenrand, X-/Y-Zwischenschnitt und Drehregel steuern den Kalkulationsnutzen für Materialverbrauch, Bogenanzahl und Preisbildung.</p>
-        </div>
-        <div className="pp-imposition-calculator__controls pp-imposition-calculator__controls--refined">
+        <div className="pp-imposition-calculator__controls pp-imposition-calculator__controls--refined" aria-label="Nutzenrechner-Steuerung">
           <DimensionPairField
             field="printSheetFormat"
             label="Druckbogen"

@@ -4110,3 +4110,11 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Auswahlbuttons für Berechnungsbasis, Drehung und Rastermodus als kompakte Segmente geführt
 - Druckbogen-Vorschau rechts bleibt groß und unverändert physikalisch skaliert und zentriert
 - keine Änderung an Nutzenberechnung, Variantenlogik, Impose-Modul oder Bottom-Navigation
+
+## Sprint 55.10 – Nutzenrechner-Steuerung oberhalb der Vollbreiten-Vorschau
+
+- Der Reiter **04 Nutzenrechner** führt die Bedienung nicht mehr links neben der Vorschau.
+- Die Steuerung sitzt jetzt als kompakte Werkzeugleiste oberhalb der Druckbogen-Vorschau.
+- Die Druckbogen-Vorschau nutzt darunter die volle verfügbare Breite und bleibt hochauflösend/physikalisch skaliert.
+- Der Erklärungskasten **„Nutzenplan einrichten“** wurde entfernt, weil dauerhafte Erklär- und Systemhinweise in Arbeitsmasken vermieden werden.
+- Rechenlogik, Zentrierung, Variantenlogik, Validierungsdialog und Bottom-Navigation bleiben unverändert.

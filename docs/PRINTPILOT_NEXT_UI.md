@@ -4379,3 +4379,15 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Nutzenvorschau clippt die eingebettete Motivvorschau optisch auf das Endformat. Vorhandene Schnittmarken in der Quelldatei werden dadurch in der Bildschirmvorschau ausgeblendet, damit Anwender die PDF-Schnittmarken nicht mit Gap-/Nutzenabständen verwechseln.
 - Diese Beschneidung betrifft nur die Vorschauanzeige, nicht die Originaldatei, die Kalkulationslogik, die echte Nutzenberechnung oder spätere Produktions-/PDF-Ausgaben.
 - Keine Änderung an Farben, Schriftgrößen, PDF-/Printlayout oder Bottom-Navigation.
+
+## Sprint 61.15 – Nutzenplan integriert und Vorschau-Endformat korrigiert
+
+- Korrektur nach Sichtprüfung der Sprint-61.14-Maske.
+- Der Nutzenrechner bildet nun einen gemeinsamen **Nutzenplan-Block**: Toolbox und Bogenvorschau sitzen im selben Panel statt optisch als zwei getrennte Bausteine zu erscheinen.
+- Die linke Toolbox bleibt vertikal gegliedert und innerhalb des Nutzenplan-Panels integriert: **Druckbogen**, **Endformat**, **Rand / Raster**, **Gap X / Gap Y**, **Basis**, **Drehung** und **Modus**.
+- Die Bogenvorschau bleibt rechts im gleichen Nutzenplan-Panel und skaliert über die physikalischen Millimeterwerte von Druckbogen, Endformat, Raster und Gap.
+- Die Motivvorschau wird visuell stärker auf den Endformatbereich gecroppt, sodass Schnittmarken aus der Demo-Quelldatei nicht mehr als Bestandteil des Druckbilds erscheinen.
+- Gedrehte Nutzen verwenden wieder eine eigene rotierte Artwork-Box: Das Motiv wird in der Vorschau rotiert, aber proportional in die gedrehte Endformatkachel eingepasst, statt verzerrt oder zu klein dargestellt zu werden.
+- Die Fußzeile der Nutzenvorschau verwendet im Arbeitskontext die Bezeichnung **Gap** statt **Abstand**.
+- Formularsektionen erhalten eine überlagerte, saubere Außenkontur. Innere Grid- oder Zelllinien erzeugen dadurch keinen doppelten Rahmen mehr und schneiden die unteren Panel-Rundungen nicht optisch ab.
+- Keine Änderung an Farben, Schriftgrößen, Kalkulationslogik, echter Nutzenberechnung, PDF-/Printlayout oder Bottom-Navigation.

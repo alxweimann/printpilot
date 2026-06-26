@@ -2899,7 +2899,7 @@ function CalculationSheetPreview({
         {" · "}
         Raster {columns} × {rows}
         {" · "}
-        Abstand {formatImpositionGapLabel(gapXMm, gapYMm)}
+        Gap {formatImpositionGapLabel(gapXMm, gapYMm)}
       </p>
     </div>
   );
@@ -2955,8 +2955,9 @@ function ImpositionCalculatorPanel({
 
   return (
     <div className="pp-imposition-calculator pp-imposition-calculator--workbench">
-      <div className="pp-imposition-calculator__editor">
-        <div className="pp-imposition-toolbar pp-imposition-toolbar--side" aria-label="Nutzenrechner-Steuerung">
+      <div className="pp-imposition-plan" aria-label="Nutzenplan mit Steuerung und Vorschau">
+        <div className="pp-imposition-calculator__editor">
+          <div className="pp-imposition-toolbar pp-imposition-toolbar--side" aria-label="Nutzenrechner-Steuerung">
           <div className="pp-imposition-toolbar__line pp-imposition-toolbar__line--numbers">
             <div className="pp-imposition-tool pp-imposition-tool--pair" data-calculation-field="printSheetFormat">
               <span className="pp-imposition-tool__label">Druckbogen</span>
@@ -3110,11 +3111,12 @@ function ImpositionCalculatorPanel({
               </div>
             </div>
           </div>
+          </div>
         </div>
-      </div>
 
-      <div className="pp-imposition-calculator__preview">
-        <CalculationSheetPreview payload={payload} result={result} />
+        <div className="pp-imposition-calculator__preview">
+          <CalculationSheetPreview payload={payload} result={result} />
+        </div>
       </div>
 
       <div className="pp-imposition-calculator__result">

@@ -27011,3 +27011,222 @@ body {
 .pp-calculation-page .pp-calc-finishing-table tbody tr:last-child > * {
   border-bottom: 0 !important;
 }
+
+
+/* Sprint 61.12 – Visueller Konsistenz-Check Kalkulationsmaske
+   Reiner UI-Feinschliff nach der Sichtprüfung: Panels, Sektionen, Feldhöhen,
+   Innenabstände, Nutzenrechner-Toolbar und Weiterverarbeitung werden auf eine
+   gemeinsame Layoutlogik gebracht. Farben, Schriftgrößen, Inhalte,
+   Kalkulationslogik, PDF-/Printlayout und Bottom-Navigation bleiben unverändert. */
+.pp-calculation-page {
+  --pp-calc-panel-radius-final: 14px;
+  --pp-calc-section-gap-final: 10px;
+  --pp-calc-section-head-min-height-final: 32px;
+  --pp-calc-grid-pad-x-final: 10px;
+  --pp-calc-grid-pad-y-final: 10px;
+  --pp-calc-field-min-height-final: 34px;
+  --pp-calc-control-height-final: 32px;
+  --pp-calc-control-pad-x-final: 9px;
+  --pp-calc-cell-border-final: rgba(200, 208, 218, .86);
+}
+
+.pp-calculation-page .pp-calc-form-section,
+.pp-calculation-page .pp-imposition-calculator,
+.pp-calculation-page .pp-imposition-toolbar,
+.pp-calculation-page .pp-imposition-calculator__result,
+.pp-calculation-page .pp-imposition-calculator__variants,
+.pp-calculation-page .pp-calculation-output-card,
+.pp-calculation-page .pp-calc-finishing-matrix {
+  border-radius: var(--pp-calc-panel-radius-final) !important;
+  background-clip: padding-box !important;
+  overflow: hidden !important;
+  transform: none !important;
+  backface-visibility: visible !important;
+}
+
+.pp-calculation-page .pp-calc-form-section + .pp-calc-form-section {
+  margin-top: var(--pp-calc-section-gap-final) !important;
+}
+
+.pp-calculation-page .pp-calc-form-section__head {
+  min-height: var(--pp-calc-section-head-min-height-final) !important;
+  padding: 6px 10px !important;
+  align-items: center !important;
+}
+
+.pp-calculation-page .pp-calc-form-section__head > span {
+  align-self: center !important;
+}
+
+.pp-calculation-page .pp-calc-form-section__head h2 {
+  align-self: center !important;
+}
+
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid,
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid--four,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid--four {
+  padding: var(--pp-calc-grid-pad-y-final) var(--pp-calc-grid-pad-x-final) !important;
+  gap: 0 !important;
+  overflow: hidden !important;
+}
+
+.pp-calculation-page .pp-calc-input-grid + .pp-calc-input-grid,
+.pp-calculation-page .pp-calc-input-grid--four + .pp-calc-input-grid,
+.pp-calculation-page .pp-calc-input-grid + .pp-calc-input-grid--four,
+.pp-calculation-page .pp-calc-input-grid--four + .pp-calc-input-grid--four {
+  padding-top: 0 !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field--wide,
+.pp-calculation-page .pp-calc-input-field,
+.pp-calculation-page .pp-calc-input-field--wide,
+.pp-calculation-page .pp-calc-dimension-field,
+.pp-calculation-page .pp-calc-unit-field,
+.pp-calculation-page .pp-calc-choice-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field {
+  min-height: var(--pp-calc-field-min-height-final) !important;
+  align-items: stretch !important;
+  border-color: var(--pp-calc-cell-border-final) !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span,
+.pp-calculation-page .pp-calc-input-field span,
+.pp-calculation-page .pp-calc-dimension-field legend,
+.pp-calculation-page .pp-calc-choice-field legend,
+.pp-calculation-page .pp-calc-unit-field > span:first-child,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field legend,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field legend,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field > span:first-child {
+  min-height: var(--pp-calc-control-height-final) !important;
+  height: auto !important;
+  padding: 0 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  grid-row: 1 / -1 !important;
+}
+
+.pp-calculation-page .pp-calc-input-field span strong,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span strong {
+  display: block !important;
+  align-self: center !important;
+}
+
+.pp-calculation-page .pp-calc-input-field input,
+.pp-calculation-page .pp-calc-input-field select,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field input,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field select,
+.pp-calculation-page .pp-calc-finishing-table tbody td input:not([type="checkbox"]),
+.pp-calculation-page .pp-calc-finishing-table tbody td select {
+  height: var(--pp-calc-control-height-final) !important;
+  min-height: var(--pp-calc-control-height-final) !important;
+  padding-right: var(--pp-calc-control-pad-x-final) !important;
+  padding-left: var(--pp-calc-control-pad-x-final) !important;
+  align-self: stretch !important;
+}
+
+.pp-calculation-page .pp-calc-input-field textarea,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field textarea {
+  min-height: 66px !important;
+  padding: 7px var(--pp-calc-control-pad-x-final) !important;
+  align-self: stretch !important;
+  resize: vertical !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field small,
+.pp-calculation-page .pp-calc-input-field small {
+  padding: 0 var(--pp-calc-control-pad-x-final) 7px 0 !important;
+  align-self: start !important;
+}
+
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid:last-child,
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid--four:last-child,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid:last-child,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid--four:last-child {
+  border-radius: 0 0 calc(var(--pp-calc-panel-radius-final) - 1px) calc(var(--pp-calc-panel-radius-final) - 1px) !important;
+}
+
+.pp-calculation-page .pp-imposition-calculator--workbench {
+  display: grid !important;
+  gap: 12px !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar {
+  display: grid !important;
+  gap: 10px !important;
+  padding: 10px !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar__line--numbers,
+.pp-calculation-page .pp-imposition-toolbar__line--modes {
+  gap: 8px !important;
+  align-items: stretch !important;
+}
+
+.pp-calculation-page .pp-imposition-tool,
+.pp-calculation-page .pp-imposition-segment {
+  min-height: 34px !important;
+  padding: 7px 8px !important;
+  align-items: center !important;
+}
+
+.pp-calculation-page .pp-imposition-tool__pair input,
+.pp-calculation-page .pp-imposition-tool__number input {
+  height: 30px !important;
+  min-height: 30px !important;
+}
+
+.pp-calculation-page .pp-imposition-segment > div {
+  gap: 6px !important;
+}
+
+.pp-calculation-page .pp-imposition-segment button {
+  min-height: 30px !important;
+  padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-matrix {
+  margin: 10px !important;
+  border-radius: var(--pp-calc-panel-radius-final) !important;
+  overflow: hidden !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table {
+  border-collapse: separate !important;
+  border-spacing: 0 !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table th,
+.pp-calculation-page .pp-calc-finishing-table td {
+  padding-top: 8px !important;
+  padding-bottom: 8px !important;
+  vertical-align: middle !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table thead th {
+  min-height: 34px !important;
+}
+
+.pp-calculation-page .pp-calc-finishing-table tbody tr:last-child > th,
+.pp-calculation-page .pp-calc-finishing-table tbody tr:last-child > td {
+  border-bottom: 0 !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel {
+  padding-bottom: 14px !important;
+}
+
+@media (max-width: 1160px) {
+  .pp-calculation-page {
+    --pp-calc-section-gap-final: 9px;
+    --pp-calc-grid-pad-x-final: 9px;
+  }
+
+  .pp-calculation-page .pp-imposition-toolbar__line--modes {
+    grid-template-columns: 1fr !important;
+  }
+}

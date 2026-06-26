@@ -4343,3 +4343,15 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Innere Grid-Zeilen, Tabellenzeilen, Linien und Hintergründe dürfen die unteren Radiuskanten nicht mehr optisch abschneiden.
 - Letzte Grid-/Tabellenzeilen verlieren harte Bottom-Borders, damit der Außenrahmen wieder als saubere Panelkontur wirkt.
 - Keine Änderung an Farben, Schriftgrößen, Inhalten, Kalkulationslogik, Nutzenberechnung, PDF-/Printlayout oder Bottom-Navigation.
+
+
+## Sprint 61.12 – Visueller Konsistenz-Check der Kalkulationsmaske
+
+- Reiner UI-Feinschliff nach der Sichtprüfung der Kalkulationsmaske.
+- Panels, Formularsektionen, Feldraster, Nutzenrechner-Toolbar und Weiterverarbeitungs-Matrix verwenden nun einheitliche Abstände, Feldhöhen und Innenabstände.
+- Die äußeren Kästen behalten dieselbe Radiuslogik; innere Raster und Tabellen schneiden die Rundungen weiterhin nicht optisch an.
+- Eingabefelder und Selects verwenden in den Kalkulations-Tabs eine einheitliche Kontrollhöhe; Textareas bleiben höher, folgen aber derselben Werte-Achse.
+- Die Nutzenrechner-Toolbar wurde optisch beruhigt: Zahlenfelder, Segmentbuttons und Moduszeilen haben konsistentere Innenabstände und umbrechen kontrolliert.
+- Die Weiterverarbeitungs-Matrix wurde in Zeilenhöhe, Innenabständen und Tabellenabschluss an die übrigen Kalkulationsbereiche angeglichen.
+- GPU-/Transform-Hilfen auf Textcontainern wurden für diese Bereiche zurückgenommen, damit die UI-Typografie schärfer bleibt.
+- Keine Änderung an Farben, Schriftgrößen, Inhalten, Kalkulationslogik, Nutzenberechnung, PDF-/Printlayout oder Bottom-Navigation.

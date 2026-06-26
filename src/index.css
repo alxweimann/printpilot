@@ -26551,3 +26551,122 @@ body {
     max-width: none !important;
   }
 }
+
+/* Sprint 61.8 – Label-Umbrüche stabilisieren
+   Korrektur zu Sprint 61.7: Die Eingabefeld-Achse bleibt bündig, aber lange
+   Feldlabels dürfen nicht mehr in einzelne Buchstaben oder harte Silben
+   zerfallen. Die Labelspalte wird leicht verbreitert und harte `anywhere`-
+   Umbrüche werden für Formularlabels wieder aufgehoben. */
+.pp-calculation-page {
+  --pp-calc-form-label-column: 198px;
+  --pp-calc-form-label-column-compact: 182px;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field--wide,
+.pp-calculation-page .pp-calc-input-field,
+.pp-calculation-page .pp-calc-input-field--wide,
+.pp-calculation-page .pp-calc-dimension-field,
+.pp-calculation-page .pp-calc-unit-field,
+.pp-calculation-page .pp-calc-choice-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field {
+  grid-template-columns: var(--pp-calc-form-label-column) minmax(0, 1fr) !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span,
+.pp-calculation-page .pp-calc-input-field span,
+.pp-calculation-page .pp-calc-dimension-field legend,
+.pp-calculation-page .pp-calc-choice-field legend,
+.pp-calculation-page .pp-calc-unit-field > span:first-child,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field legend,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field legend,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field > span:first-child {
+  width: var(--pp-calc-form-label-column) !important;
+  max-width: var(--pp-calc-form-label-column) !important;
+  min-width: var(--pp-calc-form-label-column) !important;
+  overflow: visible !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  hyphens: manual !important;
+  text-wrap: pretty;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span strong,
+.pp-calculation-page .pp-calc-input-field span strong,
+.pp-calculation-page .pp-calc-dimension-field legend,
+.pp-calculation-page .pp-calc-choice-field legend,
+.pp-calculation-page .pp-calc-unit-field > span:first-child,
+.pp-calculation-page .pp-imposition-tool__label,
+.pp-calculation-page .pp-calc-finishing-table thead th,
+.pp-calculation-page .pp-calc-finishing-table tbody td > span {
+  min-width: 0 !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: normal !important;
+  hyphens: manual !important;
+  line-height: 1.16 !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span strong,
+.pp-calculation-page .pp-calc-input-field span strong {
+  display: block !important;
+  max-width: 100% !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field input,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field select,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field textarea,
+.pp-calculation-page .pp-calc-input-field input,
+.pp-calculation-page .pp-calc-input-field select,
+.pp-calculation-page .pp-calc-input-field textarea {
+  min-width: 0 !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field--wide,
+.pp-calculation-page .pp-calc-input-field--wide {
+  grid-column: 1 / -1 !important;
+}
+
+@media (max-width: 1280px) {
+  .pp-calculation-page {
+    --pp-calc-form-label-column: var(--pp-calc-form-label-column-compact);
+  }
+}
+
+@media (max-width: 960px) {
+  .pp-calculation-page {
+    --pp-calc-form-label-column: 168px;
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field--wide,
+  .pp-calculation-page .pp-calc-input-field,
+  .pp-calculation-page .pp-calc-input-field--wide,
+  .pp-calculation-page .pp-calc-dimension-field,
+  .pp-calculation-page .pp-calc-unit-field,
+  .pp-calculation-page .pp-calc-choice-field,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span,
+  .pp-calculation-page .pp-calc-input-field span,
+  .pp-calculation-page .pp-calc-dimension-field legend,
+  .pp-calculation-page .pp-calc-choice-field legend,
+  .pp-calculation-page .pp-calc-unit-field > span:first-child,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field legend,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field legend,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field > span:first-child {
+    width: auto !important;
+    max-width: none !important;
+    min-width: 0 !important;
+  }
+}

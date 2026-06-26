@@ -4309,3 +4309,12 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Nutzenrechner-Splitfelder und Choice-/Segmentfelder übernehmen dieselbe feste Labelspalte, damit auch dort Label und Eingabebereich nicht abhängig von der Gesamtbreite auseinanderlaufen.
 - Bei kleinen Viewports fällt das Raster weiterhin einspaltig zurück, damit keine künstliche horizontale Enge entsteht.
 - Keine Änderung an Farben, Schriftgrößen, Kalkulationslogik, Nutzenberechnung, Weiterverarbeitungsdaten, PDF-/Printlayout oder Bottom-Navigation.
+
+## Sprint 61.8 – Label-Umbrüche im Formularraster stabilisiert
+
+- Sprint 61.7 wurde nachgeschärft, weil die bündige Werte-Achse zwar korrekt war, einige lange Feldlabels aber zu stark gequetscht wurden.
+- Die Kalkulations-Labelspalte wurde leicht verbreitert, damit Begriffe wie **Kalkulationsnummer**, **Sicherheitsabstand**, **Druckbogenformat**, **Produktionshinweis**, **Angebotsgültigkeit**, **Weiterverarbeitungskosten**, **Rechnungskontrolle** und **Lieferantenrechnung** nicht mehr in harte Silben oder Einzelbuchstaben zerfallen.
+- Harte `anywhere`-Umbrüche werden für Formularlabels, Nutzenrechner-Toolbar-Labels und Weiterverarbeitungstabellenköpfe zurückgenommen.
+- Labels dürfen weiterhin normal umbrechen, aber nicht mehr buchstabenweise oder unnötig früh; die Eingabefelder bleiben trotzdem in allen Tabs bündig auf derselben Werte-Achse.
+- Breite Felder wie **Rechnung an**, **Lieferadresse**, **Zahlungsbedingungen**, **Dokumentenfuß**, **Abrechnung** und **Produktionshinweis** behalten die in Sprint 61.7 korrigierte bündige Ausrichtung.
+- Keine Änderung an Farben, Schriftgrößen, Tab-Design, Kalkulationslogik, Nutzenberechnung, Weiterverarbeitungsdaten, PDF-/Printlayout oder Bottom-Navigation.

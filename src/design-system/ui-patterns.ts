@@ -1092,3 +1092,10 @@ export const sprint617Pattern = {
   description:
     "Breite Kalkulationsfelder wie Rechnung an, Lieferadresse, Zahlungsbedingungen oder Produktionshinweise verwenden dieselbe feste Labelspalte wie normale Felder. Die Werte-/Eingabefeld-Achse bleibt dadurch in allen Tabs bündig, auch wenn Felder über beide Spalten laufen.",
 };
+
+export const sprint618Pattern = {
+  id: "calculation-form-label-wrap-guard",
+  sprint: "61.8",
+  description:
+    "Das bündige Kalkulations-Formularraster aus Sprint 61.7 wird stabilisiert: Die Labelspalte wird leicht verbreitert und harte Anywhere-Umbrüche werden für Feldlabels, Nutzenrechner-Labels und Weiterverarbeitungstabellenköpfe zurückgenommen. Lange Labels bleiben lesbar, ohne die gemeinsame Werte-/Eingabefeld-Achse aufzugeben.",
+};

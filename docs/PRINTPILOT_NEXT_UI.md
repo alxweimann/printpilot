@@ -4136,3 +4136,12 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Werte bleiben lesbar; die Toolbar wirkt weniger wie Touch-/Kachel-UI und mehr wie ein Profi-Werkzeug.
 - Der Vorschaubogen wird optisch ca. 25 % kleiner dargestellt, bleibt aber hochauflösend und physikalisch korrekt skaliert.
 - Rechenlogik, Variantenlogik, Zentrierung, Impose-Modul, Validierungsdialog und Bottom-Navigation bleiben unverändert.
+
+## Sprint 55.13 – Nutzenrechner-Toolbar an Kalkulationsfelder angleichen
+
+- Die Toolbar im Reiter **04 Nutzenrechner** übernimmt nun die Größenlogik der übrigen Kalkulations-Eingabemasken.
+- Zahlenfelder und Segmentbuttons sind nicht mehr miniaturhaft zusammengedrückt, sondern haben eine feldtypische Höhe und Lesbarkeit.
+- Die Eingabefelder bleiben kompakt, aber optisch konsistent mit den restlichen Eingabemasken.
+- Segmentbuttons für Berechnungsbasis, Drehung und Rastermodus wurden auf dieselbe Bedienhöhe gebracht wie die Eingabefelder.
+- Die Toolbar nutzt flexible Zeilen statt starrer Grid-Spalten, damit Labels und Werte nicht abgeschnitten werden.
+- Vorschauauflösung, Vorschaubogen-Skalierung, Nutzenberechnung, Zentrierung, Impose-Modul, Validierungsdialog und Bottom-Navigation bleiben unverändert.

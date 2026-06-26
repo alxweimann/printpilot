@@ -24516,3 +24516,129 @@ button.pp-software-dialog__item:focus-visible {
     width: 100% !important;
   }
 }
+
+/* Sprint 55.13 – Nutzenrechner-Toolbar an Kalkulationsfeld-Größen angleichen */
+.pp-imposition-toolbar {
+  gap: 7px !important;
+  padding: 8px 9px !important;
+}
+
+.pp-imposition-toolbar__line,
+.pp-imposition-toolbar__line--numbers,
+.pp-imposition-toolbar__line--modes {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: stretch !important;
+  gap: 7px !important;
+  grid-template-columns: none !important;
+}
+
+.pp-imposition-tool,
+.pp-imposition-segment {
+  min-height: 42px !important;
+  padding: 5px 7px !important;
+  border-radius: 8px !important;
+  border-color: rgba(0, 159, 227, .24) !important;
+}
+
+.pp-imposition-tool--pair[data-calculation-field="printSheetFormat"] {
+  flex: 0 0 248px !important;
+}
+
+.pp-imposition-tool--pair[data-calculation-field="finalFormat"] {
+  flex: 0 0 224px !important;
+}
+
+.pp-imposition-tool--number {
+  flex: 0 0 150px !important;
+}
+
+.pp-imposition-tool--raster {
+  flex: 0 0 178px !important;
+}
+
+.pp-imposition-segment[data-calculation-field="impositionUseBleed"] {
+  flex: 1 1 360px !important;
+}
+
+.pp-imposition-segment[data-calculation-field="impositionRotationMode"] {
+  flex: 1.15 1 450px !important;
+}
+
+.pp-imposition-segment[data-calculation-field="impositionRasterMode"] {
+  flex: 1 1 350px !important;
+}
+
+.pp-imposition-tool__label,
+.pp-imposition-segment > span {
+  margin-right: 9px !important;
+  font-size: 8.6px !important;
+  font-weight: 860 !important;
+  letter-spacing: .04em !important;
+}
+
+.pp-imposition-tool__pair,
+.pp-imposition-tool__number,
+.pp-imposition-segment > div {
+  gap: 5px !important;
+}
+
+.pp-imposition-tool__pair input,
+.pp-imposition-tool__number input {
+  height: 30px !important;
+  min-height: 30px !important;
+  padding: 0 8px !important;
+  border-radius: 7px !important;
+  font-size: 12px !important;
+  font-weight: 650 !important;
+}
+
+.pp-imposition-tool__pair input {
+  width: 62px !important;
+}
+
+.pp-imposition-tool__number input {
+  width: 56px !important;
+}
+
+.pp-imposition-tool__pair i {
+  font-size: 12px !important;
+}
+
+.pp-imposition-tool__pair small,
+.pp-imposition-tool__number small {
+  font-size: 8px !important;
+  font-weight: 760 !important;
+}
+
+.pp-imposition-segment button {
+  min-height: 30px !important;
+  height: 30px !important;
+  padding: 0 11px !important;
+  border-radius: 7px !important;
+  font-size: 8.8px !important;
+  font-weight: 760 !important;
+}
+
+.pp-imposition-segment button.is-active {
+  box-shadow: inset 0 -1.5px 0 var(--pp-calc-blue) !important;
+}
+
+@media (max-width: 1320px) {
+  .pp-imposition-tool--pair[data-calculation-field="printSheetFormat"],
+  .pp-imposition-tool--pair[data-calculation-field="finalFormat"],
+  .pp-imposition-tool--number,
+  .pp-imposition-tool--raster,
+  .pp-imposition-segment[data-calculation-field="impositionUseBleed"],
+  .pp-imposition-segment[data-calculation-field="impositionRotationMode"],
+  .pp-imposition-segment[data-calculation-field="impositionRasterMode"] {
+    flex: 1 1 290px !important;
+  }
+}
+
+@media (max-width: 840px) {
+  .pp-imposition-tool,
+  .pp-imposition-segment {
+    flex: 1 1 100% !important;
+  }
+}

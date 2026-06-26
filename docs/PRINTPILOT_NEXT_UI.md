@@ -4167,3 +4167,13 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Normale UI-Felder verzichten auf unnötige Schatten, die Schrift optisch weichzeichnen können; Fokuszustände bleiben sichtbar.
 - PDF-/Print-Dokumente sind bewusst nicht Teil dieser Änderung und behalten ihre eigene Print-Typografie.
 - Keine Änderung an Rechenlogik, Nutzenvorschau, Validierungsdialog, Bottom-Navigation oder Dokumentenlayouts.
+
+## Sprint 57 – Nutzenrechner fachlich stabilisieren
+
+- Nutzenrechner bleibt getrennt von Impose/Ausschießen.
+- Gedrehte Nutzen drehen in der Vorschau jetzt auch den Inhalt beziehungsweise die Druckdatei-Preview mit.
+- Greiferrand und Anlage wurden als vorbereitete Nutzenrechner-Parameter ergänzt.
+- Der Greiferrand reduziert die nutzbare Bogenhöhe in der Kalkulationsberechnung.
+- Manuelles Raster wird bei Angebots-, E-Mail- und Auftragsaktionen geprüft. Passt das Raster nicht auf den Druckbogen, erscheint der PrintPilot-Validierungsdialog statt eines dauerhaften Systemhinweises.
+- Nutzen-, Netto-/Brutto-Bogen und Zuschuss bleiben intern für Materialverbrauch, Preisbereich und spätere Auftragstasche gekoppelt.
+- Keine echte Impose-Engine, kein Druckbogen-PDF, keine Bottom-Navigation-Änderung.

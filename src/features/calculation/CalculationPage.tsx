@@ -160,6 +160,8 @@ type CalculationDraft = {
   impositionRasterMode: string;
   impositionManualColumns: string;
   impositionManualRows: string;
+  impositionGripperMarginMm: string;
+  impositionGuideSide: string;
   setupTime: string;
   runTime: string;
   clickCosts: string;
@@ -456,6 +458,13 @@ const calculationFieldTabOverrides: Partial<Record<keyof CalculationDraft, Calcu
   senderEmail: "prices",
   senderWebsite: "prices",
   salePriceNet: "prices",
+  impositionManualColumns: "imposition",
+  impositionManualRows: "imposition",
+  impositionMarginMm: "imposition",
+  impositionGapXMm: "imposition",
+  impositionGapYMm: "imposition",
+  impositionGripperMarginMm: "imposition",
+  impositionGuideSide: "imposition",
 };
 
 function getCalculationFieldTab(field: keyof CalculationDraft): CalculationTabId {
@@ -535,6 +544,13 @@ const calculationFieldLabels: Partial<Record<keyof CalculationDraft, string>> = 
   externalPrice: "Einkaufspreis Fremdproduktion",
   externalLeadTime: "Lieferzeit Fremdproduktion",
   printSheetFormat: "Druckbogenformat",
+  impositionManualColumns: "Manuelle Spalten",
+  impositionManualRows: "Manuelle Reihen",
+  impositionMarginMm: "Bogenrand",
+  impositionGapXMm: "Zwischenschnitt X-Achse",
+  impositionGapYMm: "Zwischenschnitt Y-Achse",
+  impositionGripperMarginMm: "Greiferrand",
+  impositionGuideSide: "Anlage",
 };
 
 function getMissingFieldLabels(
@@ -957,6 +973,8 @@ const initialDraft: CalculationDraft = {
   impositionRasterMode: "Automatisch",
   impositionManualColumns: "5",
   impositionManualRows: "5",
+  impositionGripperMarginMm: "0",
+  impositionGuideSide: "Anlage oben",
   setupTime: "12 min",
   runTime: "automatisch später",
   clickCosts: "Maschinenstamm",
@@ -1079,6 +1097,7 @@ type ImpositionCalculatorVariant = {
   usablePercent: number;
   restWidthMm: number;
   restHeightMm: number;
+  contentRotated: boolean;
   isManual?: boolean;
   isValid?: boolean;
   issue?: string;
@@ -1101,6 +1120,8 @@ type ImpositionCalculatorResult = {
     gapXMm: number;
     gapYMm: number;
     marginMm: number;
+    gripperMarginMm: number;
+    guideSide: string;
     includeBleed: boolean;
     rotationMode: string;
     rasterMode: string;
@@ -1134,6 +1155,12 @@ const impositionRotationModeOptions = [
 const impositionRasterModeOptions = [
   { value: "Automatisch", label: "automatisch beste Variante" },
   { value: "Manuell", label: "Raster manuell festlegen" },
+];
+
+const impositionGuideSideOptions = [
+  { value: "Anlage oben", label: "oben" },
+  { value: "Anlage links", label: "links" },
+  { value: "Anlage rechts", label: "rechts" },
 ];
 
 function parseDimensionPairToMm(
@@ -1202,10 +1229,12 @@ function getImpositionVariant(
   gapXMm: number,
   gapYMm: number,
   marginMm: number,
+  gripperMarginMm = 0,
   manualGrid?: { columns: number; rows: number },
+  contentRotated = id === "rotated",
 ): ImpositionCalculatorVariant {
   const usableWidth = Math.max(1, sheetWidthMm - marginMm * 2);
-  const usableHeight = Math.max(1, sheetHeightMm - marginMm * 2);
+  const usableHeight = Math.max(1, sheetHeightMm - marginMm * 2 - Math.max(0, gripperMarginMm));
   const automaticColumns = Math.max(1, Math.floor((usableWidth + gapXMm) / Math.max(1, itemWidthMm + gapXMm)));
   const automaticRows = Math.max(1, Math.floor((usableHeight + gapYMm) / Math.max(1, itemHeightMm + gapYMm)));
   const columns = manualGrid?.columns ?? automaticColumns;
@@ -1230,9 +1259,10 @@ function getImpositionVariant(
     usablePercent: isValid ? usablePercent : 0,
     restWidthMm: Math.max(0, restWidthMm),
     restHeightMm: Math.max(0, restHeightMm),
+    contentRotated,
     isManual: Boolean(manualGrid),
     isValid,
-    issue: isValid ? undefined : "Raster passt mit Rand und Zwischenschnitt nicht auf den Druckbogen.",
+    issue: isValid ? undefined : "Raster passt mit Rand, Greiferrand und Zwischenschnitt nicht auf den Druckbogen.",
   };
 }
 
@@ -1248,6 +1278,7 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
   const gapXMm = Math.max(0, parseGermanNumber(draft.impositionGapXMm, legacyGapMm));
   const gapYMm = Math.max(0, parseGermanNumber(draft.impositionGapYMm, legacyGapMm));
   const marginMm = Math.max(0, parseGermanNumber(draft.impositionMarginMm, 0));
+  const gripperMarginMm = Math.max(0, parseGermanNumber(draft.impositionGripperMarginMm, 0));
   const includeBleed = draft.impositionUseBleed.toLowerCase().includes("beschnitt");
   const calculationWidthMm = finalWidthMm + (includeBleed ? bleedMm * 2 : 0);
   const calculationHeightMm = finalHeightMm + (includeBleed ? bleedMm * 2 : 0);
@@ -1266,6 +1297,7 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
       gapXMm,
       gapYMm,
       marginMm,
+      gripperMarginMm,
     ),
     getImpositionVariant(
       "rotated",
@@ -1277,6 +1309,7 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
       gapXMm,
       gapYMm,
       marginMm,
+      gripperMarginMm,
     ),
   ].filter((variant) => {
     if (draft.impositionRotationMode === "nur aufrecht") {
@@ -1305,6 +1338,7 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
     gapXMm,
     gapYMm,
     marginMm,
+    gripperMarginMm,
   );
   const manualBase = bestAutomatic.id === "rotated"
     ? { width: calculationHeightMm, height: calculationWidthMm, label: "manuell · gedreht" }
@@ -1319,7 +1353,9 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
     gapXMm,
     gapYMm,
     marginMm,
+    gripperMarginMm,
     { columns: manualColumns, rows: manualRows },
+    bestAutomatic.contentRotated,
   );
   const isManualMode = draft.impositionRasterMode === "Manuell";
   const selected = isManualMode && manualVariant.isValid ? manualVariant : bestAutomatic;
@@ -1342,6 +1378,8 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
       gapXMm,
       gapYMm,
       marginMm,
+      gripperMarginMm,
+      guideSide: draft.impositionGuideSide,
       includeBleed,
       rotationMode: draft.impositionRotationMode,
       rasterMode: draft.impositionRasterMode,
@@ -1456,6 +1494,7 @@ function buildPayloadFromDraft(
         `Nutzenrechner: ${impositionResult.label}`,
         `Berechnungsbasis: ${impositionResult.settings.includeBleed ? "inklusive Beschnitt" : "Endformat"}`,
         `Zwischenschnitt: ${formatImpositionGapLabel(impositionResult.settings.gapXMm, impositionResult.settings.gapYMm)}`,
+        `Greiferrand: ${formatMillimeterValue(impositionResult.settings.gripperMarginMm)} · ${impositionResult.settings.guideSide}`,
       ],
     },
     machine: {
@@ -2724,6 +2763,8 @@ function CalculationSheetPreview({
       : imposition.item.heightMm ?? 55);
   const gapXMm = result?.settings.gapXMm ?? 0;
   const gapYMm = result?.settings.gapYMm ?? 0;
+  const gripperMarginMm = result?.settings.gripperMarginMm ?? 0;
+  const contentIsRotated = result?.selected.contentRotated ?? imposition.layout.orientation === "rotated";
   const marginMm = result?.settings.marginMm ?? (typeof imposition.layout.marginMm === "number"
     ? imposition.layout.marginMm
     : parseGermanNumber(String(imposition.layout.marginMm ?? "0"), 0));
@@ -2740,9 +2781,9 @@ function CalculationSheetPreview({
   const occupiedWidthMm = columns * itemWidthMm + Math.max(0, columns - 1) * gapXMm;
   const occupiedHeightMm = rows * itemHeightMm + Math.max(0, rows - 1) * gapYMm;
   const usableWidthMm = Math.max(1, sheetWidthMm - marginMm * 2);
-  const usableHeightMm = Math.max(1, sheetHeightMm - marginMm * 2);
+  const usableHeightMm = Math.max(1, sheetHeightMm - marginMm * 2 - gripperMarginMm);
   const centeredOffsetXMm = marginMm + Math.max(0, (usableWidthMm - occupiedWidthMm) / 2);
-  const centeredOffsetYMm = marginMm + Math.max(0, (usableHeightMm - occupiedHeightMm) / 2);
+  const centeredOffsetYMm = marginMm + gripperMarginMm + Math.max(0, (usableHeightMm - occupiedHeightMm) / 2);
   const marginStyle = sheetWidthMm && sheetHeightMm
     ? {
         left: `${(marginMm / sheetWidthMm) * 100}%`,
@@ -2785,11 +2826,11 @@ function CalculationSheetPreview({
           return (
             <span
               key={cell}
-              className={
-                isUsed
-                  ? "pp-calc-sheet-preview__item"
-                  : "pp-calc-sheet-preview__item is-empty"
-              }
+              className={[
+                "pp-calc-sheet-preview__item",
+                isUsed ? "" : "is-empty",
+                isUsed && contentIsRotated ? "is-content-rotated" : "",
+              ].filter(Boolean).join(" ")}
               style={itemStyle}
               aria-label={isUsed ? `Nutzen ${cell}` : `leerer Platz ${cell}`}
             >
@@ -2919,6 +2960,19 @@ function ImpositionCalculatorPanel({
               </span>
             </label>
 
+            <label className="pp-imposition-tool pp-imposition-tool--number" data-calculation-field="impositionGripperMarginMm">
+              <span className="pp-imposition-tool__label">Greifer</span>
+              <span className="pp-imposition-tool__number">
+                <input
+                  value={draft.impositionGripperMarginMm}
+                  onChange={(event) => onDraftChange("impositionGripperMarginMm")(event.target.value)}
+                  aria-label="Greiferrand"
+                  inputMode="decimal"
+                />
+                <small>mm</small>
+              </span>
+            </label>
+
             <label className="pp-imposition-tool pp-imposition-tool--number" data-calculation-field="impositionGapXMm">
               <span className="pp-imposition-tool__label">Schnitt X</span>
               <span className="pp-imposition-tool__number">
@@ -3013,6 +3067,22 @@ function ImpositionCalculatorPanel({
                 ))}
               </div>
             </div>
+
+            <div className="pp-imposition-segment" data-calculation-field="impositionGuideSide">
+              <span>Anlage</span>
+              <div role="group" aria-label="Anlage">
+                {impositionGuideSideOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={option.value === draft.impositionGuideSide ? "is-active" : undefined}
+                    onClick={() => onDraftChange("impositionGuideSide")(option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -3025,6 +3095,7 @@ function ImpositionCalculatorPanel({
         <div className="pp-imposition-calculator__metrics">
           <ResultLine label="Druckbogen" value={`${formatMillimeterValue(result.sheet.widthMm)} × ${formatMillimeterValue(result.sheet.heightMm)}`} />
           <ResultLine label="Zwischenschnitt X / Y" value={formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)} />
+          <ResultLine label="Greiferrand / Anlage" value={`${formatMillimeterValue(result.settings.gripperMarginMm)} · ${result.settings.guideSide}`} />
           <ResultLine label="Rastermodus" value={result.settings.rasterMode === "Manuell" ? `${result.settings.manualColumns} × ${result.settings.manualRows} manuell` : "automatisch"} />
           <ResultLine label="Nettobogen" value={`${formatNumber(result.production.sheetsRequired)} Bogen`} />
           <ResultLine label="Netto produziert" value={`${formatNumber(result.production.netQuantity)} Stück`} />
@@ -3743,6 +3814,10 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     () => calculateImpositionFromDraft(draft),
     [draft],
   );
+  const manualImpositionVariant = impositionCalculatorResult.variants.find((variant) => variant.id === "manual");
+  const hasInvalidManualImposition =
+    impositionCalculatorResult.settings.rasterMode === "Manuell" &&
+    manualImpositionVariant?.isValid === false;
   const activeFinishingCount = finishingRows.filter((row) => row.active).length;
   const result = payload.imposition;
   const productionModeLabel =
@@ -3868,7 +3943,38 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     });
   };
 
+  const showImpositionValidation = () => {
+    setActiveValidationFields([
+      "impositionManualColumns",
+      "impositionManualRows",
+      "impositionMarginMm",
+      "impositionGapXMm",
+      "impositionGapYMm",
+      "impositionGripperMarginMm",
+    ]);
+    setActiveTab("imposition");
+    setSoftwareDialog({
+      variant: "warning",
+      title: "Der Nutzenplan passt noch nicht.",
+      body: manualImpositionVariant?.issue ?? "Das manuelle Raster passt mit Rand, Greiferrand und Zwischenschnitt nicht auf den Druckbogen.",
+      items: [
+        { field: "impositionManualColumns", label: "Manuelle Spalten prüfen" },
+        { field: "impositionManualRows", label: "Manuelle Reihen prüfen" },
+        { field: "impositionMarginMm", label: "Bogenrand prüfen" },
+        { field: "impositionGapXMm", label: "Zwischenschnitt X-Achse prüfen" },
+        { field: "impositionGapYMm", label: "Zwischenschnitt Y-Achse prüfen" },
+        { field: "impositionGripperMarginMm", label: "Greiferrand prüfen" },
+      ],
+      primaryLabel: "Zum Nutzenrechner",
+    });
+  };
+
   const handlePrepareOffer = () => {
+    if (hasInvalidManualImposition) {
+      showImpositionValidation();
+      return;
+    }
+
     if (!canCreateOffer) {
       showOfferValidation();
       return;
@@ -3882,6 +3988,11 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   };
 
   const handlePrintOffer = () => {
+    if (hasInvalidManualImposition) {
+      showImpositionValidation();
+      return;
+    }
+
     if (!canCreateOffer) {
       showOfferValidation();
       return;
@@ -3931,6 +4042,11 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   };
 
   const handlePrepareOfferEmail = () => {
+    if (hasInvalidManualImposition) {
+      showImpositionValidation();
+      return;
+    }
+
     const missingEmailFields = countMissingFields(draft, [
       ...offerEmailRequiredFields,
       ...productionModeRequiredFields,
@@ -3953,6 +4069,11 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   };
 
   const handleCreateOrderDraft = () => {
+    if (hasInvalidManualImposition) {
+      showImpositionValidation();
+      return;
+    }
+
     if (!canCreateOrderDraft) {
       showOrderValidation();
       return;

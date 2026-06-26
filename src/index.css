@@ -24917,3 +24917,32 @@ body {
 .pp-calculation-page .pp-imposition-tool__number input:focus {
   box-shadow: 0 0 0 2px rgba(0, 159, 227, .12) !important;
 }
+
+/* Sprint 57 – Nutzenrechner fachlich stabilisieren */
+.pp-imposition-tool--number[data-calculation-field="impositionGripperMarginMm"] {
+  flex: 0 0 150px !important;
+}
+
+.pp-imposition-segment[data-calculation-field="impositionGuideSide"] {
+  flex: .85 1 300px !important;
+}
+
+.pp-calc-sheet-preview__item {
+  overflow: hidden !important;
+}
+
+.pp-calc-sheet-preview__item.is-content-rotated img,
+.pp-calc-sheet-preview--highres .pp-calc-sheet-preview__item.is-content-rotated img,
+.pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__item.is-content-rotated img {
+  transform: rotate(90deg) translateZ(0) !important;
+  transform-origin: 50% 50% !important;
+  object-fit: cover !important;
+}
+
+.pp-calc-sheet-preview__item.is-content-rotated::after {
+  border-color: rgba(0, 159, 227, .22) !important;
+}
+
+.pp-imposition-calculator__metrics .pp-calc-result-line b {
+  white-space: normal !important;
+}

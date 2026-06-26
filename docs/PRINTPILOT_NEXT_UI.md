@@ -4279,3 +4279,13 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Regel gilt auch für Nutzenrechner, Weiterverarbeitung, Tabellenköpfe, Tabellenwerte, Segmentbuttons und Ergebniszeilen innerhalb der Kalkulationsmaske.
 - Hilfstexte bleiben weiterhin kleiner und gedämpft, weil sie nicht Teil der Label/Wert-Paarung sind.
 - Keine Änderung an Kalkulationslogik, Nutzenberechnung, Weiterverarbeitungsdaten, PDF-/Printlayout, Validierungsdialogen oder Bottom-Navigation.
+
+## Sprint 61.5 – Tabellenlinien in Tabs reduziert und Textabschneidungen behoben
+
+- Die Kalkulations-Tabs wurden weiter beruhigt: graue Tabellen-/Rasterlinien innerhalb der Tab-Inhalte werden entfernt beziehungsweise nicht mehr als primäres Layoutmittel verwendet.
+- Eingabefelder behalten klare, dezente Feldrahmen, damit die Maske weiterhin produktiv und eindeutig bedienbar bleibt.
+- Labels, Feldwerte, Hilfstexte, Ergebniszeilen, Variantenwerte und Weiterverarbeitungstexte dürfen jetzt umbrechen und werden nicht mehr durch `ellipsis`, starre `nowrap`-Regeln oder Zeilen-Clamps abgeschnitten.
+- Der Nutzenrechner verliert harte Ergebnis- und Variantenlinien; Varianten bleiben über Spalten, Abstand und aktive Markierung lesbar.
+- Die Weiterverarbeitungs-Matrix verliert die harte Spreadsheet-Optik; aktive Leistungen bleiben über eine dezente Flächenmarkierung sichtbar.
+- Bei schmaleren Breiten wechseln vierteilige Kalkulationsfelder früher auf zwei Spalten, damit lange Begriffe und Werte nicht unnötig abgeschnitten werden.
+- Keine Änderung an Kalkulationslogik, Nutzenberechnung, Weiterverarbeitungsdaten, PDF-/Printlayout, Validierungsdialogen oder Bottom-Navigation.

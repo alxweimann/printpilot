@@ -1071,3 +1071,10 @@ export const sprint614Pattern = {
   description:
     "Feldlabels und Feldwerte in den Kalkulationsmasken verwenden dieselbe Grundschriftgröße. Unterschiede zwischen Produktart und Visitenkarte, Druckbogen und Formatwert oder Tabellenkopf und Tabellenwert entstehen nur noch über Farbe, Großschreibung und Gewicht, nicht mehr über unterschiedliche Schriftgrößen.",
 };
+
+export const sprint615Pattern = {
+  id: "calculation-tabs-calm-lines-and-no-clipping",
+  sprint: "61.5",
+  description:
+    "Die Kalkulations-Tabs verlieren graue Tabellenraster in Eingabemasken, Nutzenrechner und Weiterverarbeitung. Eingabefelder bleiben klar gerahmt, während Labels, Werte, Hilfstexte und Tabelleninhalte umbrechen dürfen und nicht mehr per Ellipsis abgeschnitten werden.",
+};

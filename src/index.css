@@ -25254,3 +25254,235 @@ body {
     justify-content: flex-start;
   }
 }
+
+/* Sprint 61 – Header-Abstand und Tab-Typografie vereinheitlichen
+   Referenz: Kalkulationsreiter „Kunde & Auftrag“. */
+:root {
+  --pp-workspace-top-gutter: 22px;
+  --pp-workspace-side-gutter: 24px;
+  --pp-tab-number-size: 10px;
+  --pp-tab-label-size: 13px;
+  --pp-tab-helper-size: 10px;
+  --pp-tab-number-weight: 760;
+  --pp-tab-label-weight: 650;
+  --pp-tab-helper-weight: 620;
+  --pp-tab-label-color: #1c355c;
+  --pp-tab-helper-color: #61708a;
+  --pp-tab-number-color: #007cb7;
+  --pp-tab-active-bg: var(--pp-blue, #009FE3);
+  --pp-tab-active-bg-2: #008dc9;
+  --pp-tab-active-text: #ffffff;
+  --pp-tab-border-color: #dfe7f0;
+  --pp-tab-muted-bg: #f8fafc;
+}
+
+.pp-calculation-page {
+  padding-top: var(--pp-workspace-top-gutter) !important;
+}
+
+.pp-orders-overview,
+.pp-order-pocket,
+#dashboard {
+  padding-top: var(--pp-workspace-top-gutter) !important;
+}
+
+#dashboard {
+  padding-right: var(--pp-workspace-side-gutter);
+  padding-bottom: var(--pp-page-bottom-safe);
+  padding-left: var(--pp-workspace-side-gutter);
+  background: #ffffff;
+}
+
+.pp-pocket-route-shell .pp-order-pocket {
+  padding-top: var(--pp-workspace-top-gutter) !important;
+}
+
+.pp-work-header,
+.pp-calculation-work-header,
+.pp-orders-work-header,
+.pp-order-pocket-work-header,
+.pp-dashboard-work-header {
+  margin-top: 0 !important;
+  margin-bottom: 14px !important;
+}
+
+.pp-calculation-tabs,
+.pp-pocket-view-tabs {
+  font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+}
+
+.pp-calculation-tabs {
+  margin: 14px 18px 0 !important;
+  border-color: var(--pp-tab-border-color) !important;
+  background: #ffffff !important;
+}
+
+.pp-calculation-tabs button,
+.pp-calculation-tabs button:nth-child(2n),
+.pp-calculation-tabs button:nth-child(3n) {
+  min-height: 66px !important;
+  padding: 14px 14px !important;
+  border-right: .45pt solid var(--pp-tab-border-color) !important;
+  background: #ffffff !important;
+  color: var(--pp-tab-label-color) !important;
+  font-size: var(--pp-tab-label-size) !important;
+  font-weight: var(--pp-tab-label-weight) !important;
+  letter-spacing: 0 !important;
+  text-shadow: none !important;
+}
+
+.pp-calculation-tabs button span {
+  width: 26px !important;
+  height: 26px !important;
+  min-width: 26px !important;
+  background: var(--pp-calc-soft-blue, #eef6ff) !important;
+  color: var(--pp-tab-number-color) !important;
+  font-size: var(--pp-tab-number-size) !important;
+  font-weight: var(--pp-tab-number-weight) !important;
+  letter-spacing: 0 !important;
+  line-height: 1 !important;
+}
+
+.pp-calculation-tabs button b {
+  color: var(--pp-tab-label-color) !important;
+  font-size: var(--pp-tab-label-size) !important;
+  font-weight: var(--pp-tab-label-weight) !important;
+  letter-spacing: -.01em !important;
+  line-height: 1.1 !important;
+}
+
+.pp-calculation-tabs button small {
+  color: var(--pp-tab-helper-color) !important;
+  font-size: var(--pp-tab-helper-size) !important;
+  font-weight: var(--pp-tab-helper-weight) !important;
+  letter-spacing: .02em !important;
+  line-height: 1.1 !important;
+  text-transform: uppercase !important;
+}
+
+.pp-calculation-tabs button.has-open-required small {
+  color: #8f5a12 !important;
+  font-size: var(--pp-tab-helper-size) !important;
+  font-weight: var(--pp-tab-helper-weight) !important;
+}
+
+.pp-calculation-tabs button.is-muted {
+  background: var(--pp-tab-muted-bg) !important;
+  opacity: .72 !important;
+}
+
+.pp-calculation-tabs button.is-muted span {
+  font-size: var(--pp-tab-number-size) !important;
+  font-weight: var(--pp-tab-number-weight) !important;
+}
+
+.pp-calculation-tabs button.is-muted b {
+  font-size: var(--pp-tab-label-size) !important;
+  font-weight: var(--pp-tab-label-weight) !important;
+}
+
+.pp-calculation-tabs button.is-muted small {
+  font-size: var(--pp-tab-helper-size) !important;
+  font-weight: var(--pp-tab-helper-weight) !important;
+}
+
+.pp-calculation-tabs button.is-active {
+  background: linear-gradient(180deg, var(--pp-tab-active-bg) 0%, var(--pp-tab-active-bg-2) 100%) !important;
+  color: var(--pp-tab-active-text) !important;
+  box-shadow: inset 0 -4px 0 rgba(255, 255, 255, .32) !important;
+}
+
+.pp-calculation-tabs button.is-active span {
+  border: .55pt solid rgba(255, 255, 255, .42) !important;
+  background: rgba(255, 255, 255, .18) !important;
+  color: var(--pp-tab-active-text) !important;
+  font-size: var(--pp-tab-number-size) !important;
+  font-weight: var(--pp-tab-number-weight) !important;
+}
+
+.pp-calculation-tabs button.is-active b,
+.pp-calculation-tabs button.is-active small,
+.pp-calculation-tabs button.is-active.has-open-required small {
+  color: var(--pp-tab-active-text) !important;
+}
+
+.pp-calculation-tabs button.is-active b {
+  font-size: var(--pp-tab-label-size) !important;
+  font-weight: var(--pp-tab-label-weight) !important;
+}
+
+.pp-calculation-tabs button.is-active small,
+.pp-calculation-tabs button.is-active.has-open-required small {
+  font-size: var(--pp-tab-helper-size) !important;
+  font-weight: var(--pp-tab-helper-weight) !important;
+  opacity: .86 !important;
+}
+
+.pp-pocket-view-tabs {
+  gap: 0 !important;
+  overflow: hidden !important;
+  border: .55pt solid var(--pp-tab-border-color) !important;
+  border-radius: 13px !important;
+  background: #ffffff !important;
+}
+
+.pp-pocket-view-tabs button {
+  min-height: 66px !important;
+  padding: 14px 14px !important;
+  border: 0 !important;
+  border-right: .45pt solid var(--pp-tab-border-color) !important;
+  border-radius: 0 !important;
+  background: #ffffff !important;
+  color: var(--pp-tab-label-color) !important;
+  box-shadow: none !important;
+}
+
+.pp-pocket-view-tabs button:last-child {
+  border-right: 0 !important;
+}
+
+.pp-pocket-view-tabs span {
+  color: var(--pp-tab-label-color) !important;
+  font-size: var(--pp-tab-label-size) !important;
+  font-weight: var(--pp-tab-label-weight) !important;
+  letter-spacing: -.01em !important;
+  line-height: 1.1 !important;
+}
+
+.pp-pocket-view-tabs small {
+  color: var(--pp-tab-helper-color) !important;
+  font-size: var(--pp-tab-helper-size) !important;
+  font-weight: var(--pp-tab-helper-weight) !important;
+  letter-spacing: .02em !important;
+  line-height: 1.1 !important;
+  text-transform: uppercase !important;
+}
+
+.pp-pocket-view-tabs button.is-active {
+  border-color: transparent !important;
+  background: linear-gradient(180deg, var(--pp-tab-active-bg) 0%, var(--pp-tab-active-bg-2) 100%) !important;
+  box-shadow: inset 0 -4px 0 rgba(255, 255, 255, .32) !important;
+}
+
+.pp-pocket-view-tabs button.is-active span,
+.pp-pocket-view-tabs button.is-active small {
+  color: var(--pp-tab-active-text) !important;
+}
+
+.pp-pocket-view-tabs button:hover:not(.is-active) {
+  background: #f8fbff !important;
+}
+
+@media (max-width: 760px) {
+  .pp-calculation-page,
+  .pp-orders-overview,
+  .pp-order-pocket,
+  #dashboard,
+  .pp-pocket-route-shell .pp-order-pocket {
+    padding-top: 16px !important;
+  }
+}
+

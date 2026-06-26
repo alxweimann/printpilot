@@ -1034,3 +1034,11 @@ export const sprint60Pattern = {
   description:
     "Der Sprint-59-Arbeitsheader wird als zentrale AppWorkHeader-Komponente auf Kalkulation, Aufträge-Übersicht, Auftragstasche-Appansicht und Dashboard übertragen. Alte tabellarische Master-/Page-Header entfallen zugunsten von Modul, Kontext, kompakten Chips und einer dominanten Hauptaktion.",
 };
+
+export const sprint61Pattern = {
+  id: "work-header-spacing-and-tab-typography",
+  sprint: "61",
+  description:
+    "App-Arbeitsseiten verwenden einen einheitlichen oberen Abstand vor dem AppWorkHeader. Kalkulations- und Auftragstaschen-Reiter übernehmen die Typografie, Farben und aktive Darstellung des Referenzreiters Kunde & Auftrag, damit keine abweichenden Einzelgrößen in Tabs entstehen.",
+};
+

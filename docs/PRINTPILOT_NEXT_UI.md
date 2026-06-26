@@ -4231,3 +4231,13 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Rücknavigation aus der Auftragstasche läuft als sekundäre Header-Aktion, damit keine zusätzliche tabellarische Toolbar über der Seite steht.
 - Sekundäre Aktionen bleiben bewusst kleiner als die Hauptaktion; der Header erklärt nicht, sondern orientiert.
 - PDF-/Print-Dokumente, Auftragstaschen-Drucklayout, Kalkulationslogik, Nutzenrechner, Validierungsdialoge und Bottom-Navigation bleiben unverändert.
+
+## Sprint 61 – Header-Abstand und Reiter-Typografie vereinheitlicht
+
+- Alle App-Arbeitsseiten erhalten denselben oberen Arbeitsraum vor dem `AppWorkHeader`, damit Kalkulation, Aufträge, Auftragstasche-Appansicht und Dashboard nicht unterschiedlich am oberen Rand hängen.
+- Die Kalkulationsmaske übernimmt damit denselben oberen Abstand wie die Auftragsübersicht; der Header klebt nicht mehr direkt am Viewport-Rand.
+- Die Reiter-Typografie wird zentral am Referenzreiter **„Kunde & Auftrag“** ausgerichtet: gleiche Schriftgröße, gleiche Schriftgewichte, gleiche Grundfarben und gleiche aktive Tab-Darstellung.
+- Die Auftragstaschen-Ansichtsreiter übernehmen dieselbe Reiterlogik, damit App-Tabs nicht mehr als separate Sonderoptik wirken.
+- Die Anpassung liegt bewusst als letzter CSS-Override, damit ältere Sprint-Overrides keine abweichenden Einzelgrößen mehr durchsetzen.
+- Keine Änderung an Kalkulationslogik, Nutzenrechner, Validierungsdialogen, PDF-/Printlayout oder Bottom-Navigation.
+

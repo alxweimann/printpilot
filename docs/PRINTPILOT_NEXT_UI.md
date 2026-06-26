@@ -4260,3 +4260,13 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Abschnittsnummern, Abschnittstitel, Feldlabels, Tabellenköpfe, Tabellenwerte, Hilfstexte, Nutzenrechner-Toolbar, Segmentbuttons und Weiterverarbeitungs-Matrix verwenden dieselben UI-Farb- und Typografie-Tokens wie die Referenz **Kunde & Auftrag**.
 - Die Bottom-Navigation und PDF-/Print-Typografie bleiben weiterhin getrennt und wurden nicht verändert.
 - Keine Änderung an Kalkulationslogik, Nutzenberechnung, Weiterverarbeitungsdaten, Validierungsdialogen oder Dokumentenausgabe.
+
+## Sprint 61.3 – Farbkorrektur nach Referenz „Kunde & Auftrag"
+
+- Sprint 61.2 wurde farblich korrigiert, weil einzelne Bereiche zu stark in ein helles PrintPilot-Blau/Cyan gerutscht waren.
+- Referenz bleibt der Reiter **Kunde & Auftrag**: Abschnittstitel, Feldwerte, Tabellenwerte und Leistungsnamen sind dunkel/navy und nicht blau.
+- Nur echte Feldlabels, Spaltenköpfe und kleine Ordnungsnummern verwenden den akzentuierten PrintPilot-Blauton.
+- Hilfstexte, Notizen und Leistungsbeschreibungen bleiben gedämpft grau-blau.
+- Nutzenrechner und Weiterverarbeitung verwenden dadurch wieder dieselbe Farbsemantik wie die normalen Eingabebereiche.
+- Keine Änderung an Kalkulationslogik, Nutzenberechnung, Weiterverarbeitungsdaten, PDF-/Printlayout, Validierungsdialogen oder Bottom-Navigation.
+

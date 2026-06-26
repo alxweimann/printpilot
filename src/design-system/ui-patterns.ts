@@ -1056,3 +1056,11 @@ export const sprint612Pattern = {
   description:
     "Die Kalkulationsmasken-Typografie wird mit höherer CSS-Spezifität final an Kunde & Auftrag ausgerichtet. Nutzenrechner und Weiterverarbeitung verwenden dieselben Label-, Werte-, Hilfs- und Abschnittsfarben wie die normale Eingabemaske; ältere Sprint-Overrides können diese Farben nicht mehr überstimmen.",
 };
+
+export const sprint613Pattern = {
+  id: "calculation-mask-color-correction",
+  sprint: "61.3",
+  description:
+    "Korrektur der Sprint-61.2-Farbangleichung: Die Kalkulationsmasken folgen wieder exakt der Referenz Kunde & Auftrag. Werte, Abschnittstitel und Leistungsnamen bleiben dunkel/navy; Hilfstexte bleiben gedämpft; nur echte Labels, Spaltenköpfe und kleine Ordnungsnummern nutzen den blauen Akzentton. Helles Cyan wird nicht als allgemeine Schriftfarbe verwendet.",
+};
+

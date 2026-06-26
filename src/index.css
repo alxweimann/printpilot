@@ -25806,3 +25806,82 @@ body {
   color: var(--pp-mask-value-color) !important;
   font-weight: var(--pp-ui-font-weight-strong, 700) !important;
 }
+
+/* Sprint 61.3 – Farbkorrektur nach Referenz „Kunde & Auftrag“
+   Korrektur zu Sprint 61.2: Die Masken dürfen nicht in helles Cyan kippen.
+   Nur echte Labels und Spaltenköpfe nutzen den akzentuierten Blauton; Werte,
+   Abschnittstitel und Leistungsnamen bleiben dunkel/navy, Hilfstexte gedämpft. */
+.pp-calculation-page {
+  --pp-ui-label-color: var(--pp-calc-blue, #0b63ce);
+  --pp-mask-label-color: var(--pp-calc-blue, #0b63ce);
+  --pp-mask-value-color: var(--pp-calc-ink, #0b1730);
+  --pp-mask-heading-color: var(--pp-calc-ink, #0b1730);
+  --pp-mask-helper-color: var(--pp-calc-muted, #60708a);
+  --pp-mask-section-number-color: var(--pp-calc-blue, #0b63ce);
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section__head h2,
+.pp-calculation-page .pp-calc-form-section__head h2,
+.pp-calculation-page .pp-imposition-calculator__variants-head strong,
+.pp-calculation-page .pp-imposition-calculator__editor-head strong,
+.pp-calculation-page .pp-calc-finishing-table tbody th b,
+.pp-calculation-page .pp-calc-finishing-table tbody tr.is-active th b,
+.pp-calculation-page .pp-imposition-calculator__variants tbody th,
+.pp-calculation-page .pp-imposition-calculator__variants table tbody th {
+  color: var(--pp-mask-heading-color) !important;
+}
+
+.pp-calculation-page .pp-calc-input-field input,
+.pp-calculation-page .pp-calc-input-field select,
+.pp-calculation-page .pp-calc-input-field textarea,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field input,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field select,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field textarea,
+.pp-calculation-page .pp-imposition-tool__pair input,
+.pp-calculation-page .pp-imposition-tool__number input,
+.pp-calculation-page .pp-imposition-segment button,
+.pp-calculation-page .pp-imposition-calculator__metrics .pp-calc-result-line b,
+.pp-calculation-page .pp-imposition-calculator__variants tbody td,
+.pp-calculation-page .pp-imposition-calculator__variants table tbody td,
+.pp-calculation-page .pp-calc-finishing-table tbody td,
+.pp-calculation-page .pp-calc-finishing-table tbody td input:not([type="checkbox"]),
+.pp-calculation-page .pp-calc-finishing-table tbody td select,
+.pp-calculation-page .pp-calc-finishing-table tbody td strong,
+.pp-calculation-page .pp-calc-finishing-table tbody tr.is-active td,
+.pp-calculation-page .pp-calc-finishing-table tbody tr.is-active td strong {
+  color: var(--pp-mask-value-color) !important;
+}
+
+.pp-calculation-page .pp-calc-input-field span,
+.pp-calculation-page .pp-calc-input-field span strong,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span strong,
+.pp-calculation-page .pp-imposition-tool__label,
+.pp-calculation-page .pp-imposition-segment > span,
+.pp-calculation-page .pp-imposition-calculator__metrics .pp-calc-result-line span,
+.pp-calculation-page .pp-imposition-calculator__variants-head span,
+.pp-calculation-page .pp-imposition-calculator__variants thead th,
+.pp-calculation-page .pp-imposition-calculator__variants table thead th,
+.pp-calculation-page .pp-calc-finishing-table thead th,
+.pp-calculation-page .pp-calc-finishing-table tbody td > span {
+  color: var(--pp-mask-label-color) !important;
+}
+
+.pp-calculation-page .pp-calc-input-field small,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field small,
+.pp-calculation-page .pp-imposition-tool__pair small,
+.pp-calculation-page .pp-imposition-tool__number small,
+.pp-calculation-page .pp-imposition-calculator__variants-head p,
+.pp-calculation-page .pp-imposition-calculator__editor-head p,
+.pp-calculation-page .pp-calc-finishing-table tbody th small,
+.pp-calculation-page .pp-calc-finishing-table th small,
+.pp-calculation-page .pp-imposition-preview-meta {
+  color: var(--pp-mask-helper-color) !important;
+}
+
+.pp-calculation-page .pp-imposition-calculator__variants tbody tr.is-selected th,
+.pp-calculation-page .pp-imposition-calculator__variants tbody tr.is-selected td,
+.pp-calculation-page .pp-calc-finishing-table tbody tr.is-active th,
+.pp-calculation-page .pp-calc-finishing-table tbody tr.is-active td {
+  color: var(--pp-mask-value-color) !important;
+}

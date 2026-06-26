@@ -1,6 +1,6 @@
 import type { KeyboardEvent } from "react";
 import { StatusPill } from "../../components/ui/StatusPill";
-import { PrintPilotLogo } from "../../components/brand/PrintPilotLogo";
+import { AppWorkHeader } from "../../components/ui/AppWorkHeader";
 import { laneGroups } from "./order-data";
 import type { OrderPreview, OrderTone, PrintPilotOrder } from "./order-data";
 
@@ -261,27 +261,26 @@ export function OrdersOverviewPage({
   onOpenOrderPocket: (order: PrintPilotOrder) => void;
 }) {
   const overviewMetrics = getOverviewMetrics(orders);
+  const metricValue = (label: string) =>
+    overviewMetrics.find((item) => item.label === label)?.value ?? "0";
+  const workHeaderChips = [
+    `${orders.length} aktive Aufträge`,
+    `${metricValue("In Produktion")} in Produktion`,
+    `${metricValue("Freigabe offen")} Freigabe offen`,
+    `${metricValue("Daten prüfen")} Daten prüfen`,
+  ];
 
   return (
     <div className="pp-orders-overview pp-orders-overview--quiet">
-      <header className="pp-master-header pp-orders-master-header pp-orders-master-header--quiet">
-        <div className="pp-header-brand">
-          <PrintPilotLogo className="pp-brand-logo" variant="app" />
-        </div>
-
-        <div className="pp-header-title-shape">
-          <h1>AUFTRÄGE-ÜBERSICHT</h1>
-          <p>Produktionscockpit · Freigaben · Termine</p>
-        </div>
-
-        <div
-          className="pp-header-job pp-header-job--overview"
-          aria-label="Aktive Aufträge"
-        >
-          <span>Aktive Aufträge</span>
-          <strong>{orders.length}</strong>
-        </div>
-      </header>
+      <AppWorkHeader
+        module="Aufträge"
+        title="Produktionsübersicht"
+        subtitle="Freigaben · Termine · Auftragstaschen"
+        chips={workHeaderChips}
+        primaryAction={{ label: "Neuer Auftrag" }}
+        className="pp-orders-work-header"
+        ariaLabel="Arbeitskopf Aufträge"
+      />
 
       <section className="pp-orders-summary pp-orders-summary--quiet" aria-label="Auftragskennzahlen">
         {overviewMetrics.map((item) => (

@@ -1027,3 +1027,10 @@ export const sprint49Pattern = {
   description:
     "Die Kalkulationsmaske definiert sichtbar, welche Daten in Auftrag und Auftragstasche übernommen werden. Produktionsrelevante Bereiche wie Kopfdaten, Kunde, Druckdaten, Material, Nutzenplan, Weiterverarbeitung, Versand und Kontrolle werden der Auftragstasche zugeordnet; Preis-, Margen- und Kostenwerte bleiben als interne Kalkulationsdaten markiert.",
 };
+
+export const sprint60Pattern = {
+  id: "unified-app-work-header",
+  sprint: "60",
+  description:
+    "Der Sprint-59-Arbeitsheader wird als zentrale AppWorkHeader-Komponente auf Kalkulation, Aufträge-Übersicht, Auftragstasche-Appansicht und Dashboard übertragen. Alte tabellarische Master-/Page-Header entfallen zugunsten von Modul, Kontext, kompakten Chips und einer dominanten Hauptaktion.",
+};

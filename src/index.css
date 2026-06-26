@@ -25049,3 +25049,208 @@ body {
     grid-template-columns: 1fr;
   }
 }
+
+/* Sprint 59 – einheitlicher Arbeitsheader für App-Masken */
+.pp-work-header {
+  width: min(100%, 1490px);
+  min-height: 78px;
+  margin: 0 auto 14px;
+  display: grid;
+  grid-template-columns: auto minmax(260px, 1fr) minmax(420px, auto) auto;
+  align-items: center;
+  gap: 18px;
+  padding: 13px 16px;
+  border: 1px solid #d9e4ef;
+  border-radius: 18px;
+  background: #ffffff;
+  box-shadow: 0 10px 26px rgba(12, 35, 67, .045);
+}
+
+.pp-work-header__brand {
+  width: 156px;
+  min-width: 156px;
+  display: flex;
+  align-items: center;
+  padding-right: 14px;
+  border-right: 1px solid #e4edf6;
+}
+
+.pp-work-header__logo {
+  display: block;
+  width: auto;
+  height: 42px;
+  max-width: 138px;
+  object-fit: contain;
+}
+
+.pp-work-header__main {
+  min-width: 0;
+  display: grid;
+  gap: 3px;
+}
+
+.pp-work-header__module {
+  color: var(--pp-calc-blue-dark, #082b63);
+  font-size: 10px;
+  line-height: 1;
+  font-weight: 780;
+  letter-spacing: .11em;
+  text-transform: uppercase;
+}
+
+.pp-work-header__main h1 {
+  margin: 0;
+  overflow: hidden;
+  color: var(--pp-ui-heading-color, #07183a);
+  font-size: 20px;
+  line-height: 1.08;
+  font-weight: 720;
+  letter-spacing: -.026em;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-work-header__main p {
+  margin: 0;
+  overflow: hidden;
+  color: var(--pp-ui-muted-color, #61728c);
+  font-size: 12px;
+  line-height: 1.2;
+  font-weight: 540;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-work-header__chips {
+  min-width: 0;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.pp-work-header__chips span {
+  min-height: 28px;
+  display: inline-flex;
+  align-items: center;
+  max-width: 220px;
+  padding: 0 10px;
+  overflow: hidden;
+  border: 1px solid rgba(0, 159, 227, .18);
+  border-radius: 999px;
+  background: #ffffff;
+  color: #23405f;
+  font-size: 11px;
+  line-height: 1;
+  font-weight: 620;
+  letter-spacing: 0;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.pp-work-header__actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 8px;
+  min-width: max-content;
+}
+
+.pp-work-header__secondary-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 6px;
+}
+
+.pp-work-header__secondary-actions button {
+  min-height: 34px;
+  padding: 0 12px;
+  border: 1px solid #d6e2ed;
+  border-radius: 999px;
+  background: #ffffff;
+  color: #28415d;
+  font-size: var(--pp-ui-button-size, 12px);
+  font-weight: 620;
+  letter-spacing: 0;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.pp-work-header__secondary-actions button:hover {
+  border-color: rgba(0, 159, 227, .34);
+  background: #f5fbff;
+}
+
+.pp-work-header__primary-action {
+  min-height: 34px;
+  padding: 0 14px;
+  border: 1px solid rgba(0, 159, 227, .52);
+  border-radius: 999px;
+  background: var(--pp-blue, #009FE3);
+  color: #ffffff;
+  font-size: var(--pp-ui-button-size, 12px);
+  font-weight: 680;
+  letter-spacing: 0;
+  cursor: pointer;
+  box-shadow: none;
+}
+
+.pp-work-header__primary-action:hover {
+  background: #008fd0;
+}
+
+.pp-work-header__primary-action:disabled {
+  cursor: not-allowed;
+  opacity: .58;
+}
+
+.pp-calculation-work-header {
+  margin-top: 0;
+}
+
+.pp-orders-work-header,
+.pp-order-pocket-work-header,
+.pp-dashboard-work-header {
+  margin-top: 0;
+}
+
+.pp-calculation-layout--tabs {
+  margin-top: 0 !important;
+}
+
+.pp-calculation-form > .pp-calculation-tabs:first-child {
+  border-top: 0 !important;
+}
+
+@media (max-width: 1480px) {
+  .pp-work-header {
+    grid-template-columns: auto minmax(260px, 1fr) auto;
+  }
+
+  .pp-work-header__chips {
+    grid-column: 2 / -1;
+    justify-content: flex-start;
+  }
+}
+
+@media (max-width: 980px) {
+  .pp-work-header {
+    grid-template-columns: 1fr;
+    align-items: start;
+  }
+
+  .pp-work-header__brand {
+    width: auto;
+    min-width: 0;
+    padding: 0 0 10px;
+    border-right: 0;
+    border-bottom: 1px solid #e4edf6;
+  }
+
+  .pp-work-header__chips,
+  .pp-work-header__actions,
+  .pp-work-header__secondary-actions {
+    justify-content: flex-start;
+  }
+}

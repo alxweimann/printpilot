@@ -1,6 +1,6 @@
 import { AppCard } from "../../components/ui/AppCard"
 import { AppMetricCard } from "../../components/ui/AppMetricCard"
-import { AppPageHeader } from "../../components/ui/AppPageHeader"
+import { AppWorkHeader } from "../../components/ui/AppWorkHeader"
 import { AppStatusBadge } from "../../components/ui/AppStatusBadge"
 
 const orderCards = [
@@ -36,16 +36,14 @@ const orderCards = [
 export function DashboardPage() {
   return (
     <div id="dashboard" className="space-y-8">
-      <AppPageHeader
-        eyebrow="Produktionszentrale"
-        title="PrintPilot Next UI"
-        description="Das neue Design startet bewusst mit großen Karten, klaren Statussignalen und einer Oberfläche, die wie das Auftragstaschen-Mockup wirkt."
-        actions={
-          <>
-            <button className="rounded-2xl bg-slate-950 px-5 py-3 text-sm font-black text-white shadow-lg shadow-slate-950/15">Neuer Auftrag</button>
-            <button className="rounded-2xl border border-slate-200 bg-white px-5 py-3 text-sm font-black text-slate-700">Auftragstasche</button>
-          </>
-        }
+      <AppWorkHeader
+        module="Dashboard"
+        title="Produktionszentrale"
+        subtitle="PrintPilot Next UI"
+        chips={["18 offene Aufträge", "7 in Produktion", "5 Versand heute", "2 Handlungsbedarf"]}
+        primaryAction={{ label: "Neuer Auftrag" }}
+        className="pp-dashboard-work-header"
+        ariaLabel="Arbeitskopf Dashboard"
       />
 
       <section className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">

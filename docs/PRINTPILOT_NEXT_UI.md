@@ -4209,3 +4209,25 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
   - manuelles Raster passt nicht.
 - Hinweise erscheinen nur aktionsbezogen über den PrintPilot-Validierungsdialog.
 - Keine Änderung an Bottom-Navigation, Rasterlogik, Bogenverbrauch oder Impose-Engine.
+
+## Sprint 59 – Einheitlicher Arbeitsheader für App-Masken
+
+- Der tabellarisch wirkende Kalkulationskopf wurde durch einen kompakten Arbeitsheader ersetzt.
+- Das neue Header-Pattern besteht aus drei logischen Zonen: Modul-/Kontextbereich, kompakte Kontext-Chips und Hauptaktion.
+- Die Kalkulationsmaske zeigt im Header nur noch arbeitsrelevante Orientierung: Modul, Projekt, Kunde, Kalkulationsnummer, Angebotsnummer, Status, Auflage, Format und Liefertermin.
+- Erklärende Texte wie Designhinweise, Systemlogik, Übergabeprüfung oder Maskenbeschreibung bleiben weiterhin aus Arbeitsmasken entfernt.
+- Der Header soll als wiederverwendbares Pattern für weitere App-Masken dienen; die Inhalte wechseln je Modul, Aufbau und Größenlogik bleiben gleich.
+- Die Hauptaktion ist im Kalkulationsheader kompakt rechts platziert und nutzt den bestehenden Angebotsworkflow.
+- Keine Änderung an Rechenlogik, Validierungsdialog, PDF-/Print-Dokumenten oder Bottom-Navigation.
+
+## Sprint 60 – Arbeitsheader auf App-Seiten übertragen
+
+- Das Sprint-59-Header-Pattern wurde als wiederverwendbare Komponente `AppWorkHeader` zentralisiert.
+- Kalkulation, Aufträge-Übersicht, Auftragstasche-Appansicht und Dashboard verwenden nun denselben kompakten Arbeitsheader.
+- Der Header folgt überall demselben Aufbau: PrintPilot-Logo, Modul, Hauptkontext, Unterkontext, kompakte Kontext-Chips und rechts eine dominante Hauptaktion.
+- Die Kalkulationsmaske zeigt zusätzlich den aktuell aktiven Reiter als Kontext-Chip, ohne in jedem Reiter eigene Kopfbereiche aufzubauen.
+- Die Aufträge-Übersicht ersetzt den alten Master-Header durch den Arbeitsheader mit Produktionskennzahlen als Chips.
+- Die Auftragstasche-Appansicht ersetzt den alten QR-/Master-Header durch den Arbeitsheader; der QR bleibt im druckbaren Auftragstaschen-/Printbereich erhalten.
+- Die Rücknavigation aus der Auftragstasche läuft als sekundäre Header-Aktion, damit keine zusätzliche tabellarische Toolbar über der Seite steht.
+- Sekundäre Aktionen bleiben bewusst kleiner als die Hauptaktion; der Header erklärt nicht, sondern orientiert.
+- PDF-/Print-Dokumente, Auftragstaschen-Drucklayout, Kalkulationslogik, Nutzenrechner, Validierungsdialoge und Bottom-Navigation bleiben unverändert.

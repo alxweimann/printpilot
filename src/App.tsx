@@ -102,14 +102,11 @@ export default function App() {
         <CalculationPage onCreateOrderDraft={upsertOrder} />
       ) : (
         <div className="pp-pocket-route-shell">
-          <div className="pp-pocket-route-toolbar" aria-label="Auftragstaschen-Navigation">
-            <button type="button" onClick={() => setActiveView('orders')}>← Zur Aufträge-Übersicht</button>
-            <span>Detailansicht · Auftragstasche {selectedOrder.id}</span>
-          </div>
           <OrderPocketPage
             order={selectedOrder}
             onOrderChange={updateSelectedOrder}
             onOrderReset={resetSelectedOrder}
+            onBackToOrders={() => setActiveView('orders')}
           />
         </div>
       )}

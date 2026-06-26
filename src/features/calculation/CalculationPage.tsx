@@ -1,7 +1,7 @@
 import { createContext, useContext, useMemo, useRef, useState } from "react";
 import type { CSSProperties } from "react";
 import { createPortal } from "react-dom";
-import { PrintPilotLogo } from "../../components/brand/PrintPilotLogo";
+import { AppWorkHeader } from "../../components/ui/AppWorkHeader";
 import { demoDocumentSettings } from "../documents/document-settings";
 import {
   createOrderDraftFromCalculation,
@@ -4125,37 +4125,37 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     setDraftWasCreated(true);
   };
 
+  const activeCalculationTabLabel =
+    calculationTabs.find((tab) => tab.id === activeTab)?.label ?? "Kalkulation";
   const workHeaderChips = [
     draft.calculationId,
     draft.offerId ? `Angebot ${draft.offerId}` : "",
     draft.offerStatus,
+    activeCalculationTabLabel,
     `${draft.quantity} Stück`,
     draft.finalFormat,
     draft.dueDate ? `Liefertermin ${draft.dueDate}` : "",
-  ].filter(Boolean);
+  ];
 
   return (
     <div className="pp-calculation-page">
-      <header className="pp-work-header pp-calculation-work-header" aria-label="Arbeitskopf Kalkulation">
-        <div className="pp-work-header__brand" aria-hidden="true">
-          <PrintPilotLogo className="pp-work-header__logo" variant="app" />
-        </div>
-        <div className="pp-work-header__main">
-          <span className="pp-work-header__module">Kalkulation</span>
-          <h1>{draft.projectName || draft.productLabel}</h1>
-          <p>{draft.customer}</p>
-        </div>
-        <div className="pp-work-header__chips" aria-label="Aktuelle Kalkulationsdaten">
-          {workHeaderChips.map((chip) => (
-            <span key={chip}>{chip}</span>
-          ))}
-        </div>
-        <div className="pp-work-header__actions">
+      <AppWorkHeader
+        module="Kalkulation"
+        title={draft.projectName || draft.productLabel}
+        subtitle={draft.customer}
+        chips={workHeaderChips}
+        secondaryActions={
           <button type="button" onClick={handleCreateOrderDraft}>
-            Angebot anzeigen
+            Auftrag anlegen
           </button>
-        </div>
-      </header>
+        }
+        primaryAction={{
+          label: offerWasPrepared ? "Angebot anzeigen" : "Angebot vorbereiten",
+          onClick: handlePrepareOffer,
+        }}
+        className="pp-calculation-work-header"
+        ariaLabel="Arbeitskopf Kalkulation"
+      />
 
       <CalculationFieldValidationContext.Provider value={activeValidationFieldSet}>
         <section className="pp-calculation-layout pp-calculation-layout--tabs">

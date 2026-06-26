@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState, type ReactNode } from "react";
 import { Panel } from "../../components/ui/Panel";
-import { PrintPilotLogo } from "../../components/brand/PrintPilotLogo";
+import { AppWorkHeader } from "../../components/ui/AppWorkHeader";
 import printPilotLogoImage from "../../assets/logo/printpilot-logo.png";
 import orderQrCode from "../../assets/qr/order-pp-2026-00481.svg";
 import digitalColorMachine from "../../assets/machines/machine-digital-color.svg";
@@ -2438,10 +2438,12 @@ export function OrderPocketPage({
   order,
   onOrderChange,
   onOrderReset,
+  onBackToOrders,
 }: {
   order: PrintPilotOrder;
   onOrderChange?: (order: PrintPilotOrder) => void;
   onOrderReset?: () => void;
+  onBackToOrders?: () => void;
 }) {
   const [localActionState, setLocalActionState] = useState<PocketActionState>(
     () => createPocketActionState(order),
@@ -2556,36 +2558,49 @@ export function OrderPocketPage({
     }));
   };
 
+  const handleWorkHeaderPrimaryAction = () => {
+    if (activeView === "print-pocket") {
+      window.print();
+      return;
+    }
+
+    setActiveView("print-pocket");
+  };
+
+  const workHeaderChips = [
+    order.id,
+    currentProductionLabel,
+    activeView === "print-pocket" ? "Auftragstasche bearbeiten" : "Auftragsdetails",
+    order.quantity,
+    order.format,
+    order.machine,
+    `Liefertermin ${order.dueDate}`,
+  ];
+
   return (
     <div className="pp-order-pocket">
-      <header className="pp-master-header">
-        <div className="pp-header-brand">
-          <PrintPilotLogo className="pp-brand-logo" variant="app" />
-        </div>
-
-        <div className="pp-header-title-shape">
-          <h1>AUFTRAGSDETAILS</h1>
-          <p>Digitale Produktionsansicht</p>
-        </div>
-
-        <div className="pp-header-job" aria-label="Auftragsnummer">
-          <span>Auftragsnummer</span>
-          <strong>{order.id}</strong>
-        </div>
-
-        <div className="pp-header-qr">
-          <img
-            className="pp-qr-code"
-            src={orderQrCode}
-            alt={`QR-Code für Auftrag ${order.id}`}
-          />
-          <span className="pp-header-qr-text">
-            <strong>Auftrag scannen</strong>
-            <small>{order.id}</small>
-            <em>in PrintPilot öffnen</em>
-          </span>
-        </div>
-      </header>
+      <AppWorkHeader
+        module="Auftrag"
+        title={order.product}
+        subtitle={order.customer}
+        chips={workHeaderChips}
+        secondaryActions={
+          onBackToOrders ? (
+            <button type="button" onClick={onBackToOrders}>
+              Zur Übersicht
+            </button>
+          ) : undefined
+        }
+        primaryAction={{
+          label:
+            activeView === "print-pocket"
+              ? "PDF drucken"
+              : "Auftragstasche bearbeiten",
+          onClick: handleWorkHeaderPrimaryAction,
+        }}
+        className="pp-order-pocket-work-header"
+        ariaLabel="Arbeitskopf Auftrag"
+      />
 
       <nav className="pp-pocket-view-tabs" aria-label="Ansicht wählen">
         <button

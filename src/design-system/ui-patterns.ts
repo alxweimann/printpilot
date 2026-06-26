@@ -1042,3 +1042,9 @@ export const sprint61Pattern = {
     "App-Arbeitsseiten verwenden einen einheitlichen oberen Abstand vor dem AppWorkHeader. Kalkulations- und Auftragstaschen-Reiter übernehmen die Typografie, Farben und aktive Darstellung des Referenzreiters Kunde & Auftrag, damit keine abweichenden Einzelgrößen in Tabs entstehen.",
 };
 
+export const sprint611Pattern = {
+  id: "mask-and-tab-typography-audit",
+  sprint: "61.1",
+  description:
+    "Alle App-Reiter und Kalkulations-Tabinhalte werden gegen die Referenz Kunde & Auftrag geprüft. Nutzenrechner und Weiterverarbeitung verlieren abweichende Schriftfarben und Einzelgrößen; Labels, Werte, Hilfstexte, Segmentbuttons und Tabellenwerte folgen wieder denselben UI-Tokens wie die übrigen Eingabemasken. Bottom-Navigation und PDF-/Print-Typografie bleiben getrennt.",
+};

@@ -25486,3 +25486,195 @@ body {
   }
 }
 
+
+/* Sprint 61.1 – Vollständiger Masken-/Tab-Audit
+   Ziel: Alle App-Reiter und Kalkulations-Tabinhalte folgen der Referenz „Kunde & Auftrag“.
+   Bottom-Navigation und PDF-/Print-Typografie bleiben bewusst getrennt. */
+:root {
+  --pp-mask-label-color: #60708a;
+  --pp-mask-value-color: #07183a;
+  --pp-mask-heading-color: #07183a;
+  --pp-mask-helper-color: #60708a;
+  --pp-mask-accent-color: #007cb7;
+  --pp-mask-label-size: 10px;
+  --pp-mask-value-size: 13.5px;
+  --pp-mask-helper-size: 10.5px;
+  --pp-mask-table-head-size: 10px;
+  --pp-mask-table-value-size: 13px;
+  --pp-mask-label-weight: 760;
+  --pp-mask-value-weight: 650;
+  --pp-mask-heading-weight: 760;
+  --pp-mask-helper-weight: 620;
+  --pp-tab-number-weight: 760;
+  --pp-tab-label-weight: 650;
+  --pp-tab-helper-weight: 620;
+  --pp-tab-required-color: var(--pp-tab-helper-color);
+}
+
+.pp-calculation-tabs,
+.pp-pocket-view-tabs {
+  color: var(--pp-tab-label-color) !important;
+}
+
+.pp-calculation-tabs {
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+}
+
+.pp-calculation-tabs button,
+.pp-calculation-tabs button:nth-child(2n),
+.pp-calculation-tabs button:nth-child(3n),
+.pp-pocket-view-tabs button {
+  color: var(--pp-tab-label-color) !important;
+  font-size: var(--pp-tab-label-size) !important;
+  font-weight: var(--pp-tab-label-weight) !important;
+}
+
+.pp-calculation-tabs button span,
+.pp-calculation-tabs button.is-muted span {
+  color: var(--pp-tab-number-color) !important;
+  font-size: var(--pp-tab-number-size) !important;
+  font-weight: var(--pp-tab-number-weight) !important;
+}
+
+.pp-calculation-tabs button b,
+.pp-calculation-tabs button.is-muted b,
+.pp-pocket-view-tabs span {
+  color: var(--pp-tab-label-color) !important;
+  font-size: var(--pp-tab-label-size) !important;
+  font-weight: var(--pp-tab-label-weight) !important;
+}
+
+.pp-calculation-tabs button small,
+.pp-calculation-tabs button.has-open-required small,
+.pp-calculation-tabs button.is-muted small,
+.pp-pocket-view-tabs small {
+  color: var(--pp-tab-helper-color) !important;
+  font-size: var(--pp-tab-helper-size) !important;
+  font-weight: var(--pp-tab-helper-weight) !important;
+}
+
+.pp-calculation-tabs button.is-active,
+.pp-pocket-view-tabs button.is-active {
+  color: var(--pp-tab-active-text) !important;
+}
+
+.pp-calculation-tabs button.is-active span,
+.pp-calculation-tabs button.is-active b,
+.pp-calculation-tabs button.is-active small,
+.pp-calculation-tabs button.is-active.has-open-required small,
+.pp-pocket-view-tabs button.is-active span,
+.pp-pocket-view-tabs button.is-active small {
+  color: var(--pp-tab-active-text) !important;
+}
+
+.pp-calculation-tab-panel,
+.pp-calculation-tab-panel .pp-calc-form-section,
+.pp-calculation-tab-panel .pp-calc-form-section * {
+  text-shadow: none !important;
+}
+
+.pp-calculation-tab-panel .pp-calc-form-section__head > span,
+.pp-imposition-tool__label,
+.pp-imposition-segment > span,
+.pp-imposition-calculator__editor-head span,
+.pp-imposition-calculator__variants-head span,
+.pp-imposition-calculator__metrics .pp-calc-result-line span,
+.pp-calc-finishing-table thead th,
+.pp-calc-finishing-table td span,
+.pp-calc-finishing-table th small,
+.pp-calc-input-field span,
+.pp-calc-input-field small {
+  color: var(--pp-mask-label-color) !important;
+  font-size: var(--pp-mask-label-size) !important;
+  font-weight: var(--pp-mask-label-weight) !important;
+  letter-spacing: .035em !important;
+}
+
+.pp-calculation-tab-panel .pp-calc-form-section__head h2,
+.pp-imposition-calculator__editor-head strong,
+.pp-imposition-calculator__variants-head strong,
+.pp-calc-finishing-table th b {
+  color: var(--pp-mask-heading-color) !important;
+  font-weight: var(--pp-mask-heading-weight) !important;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select,
+.pp-calc-input-field textarea,
+.pp-imposition-tool__pair input,
+.pp-imposition-tool__number input,
+.pp-imposition-segment button,
+.pp-imposition-calculator__metrics .pp-calc-result-line b,
+.pp-imposition-calculator__variants tbody th,
+.pp-imposition-calculator__variants td,
+.pp-calc-finishing-table td,
+.pp-calc-finishing-table td input:not([type="checkbox"]),
+.pp-calc-finishing-table td select,
+.pp-calc-finishing-table td strong {
+  color: var(--pp-mask-value-color) !important;
+  font-size: var(--pp-mask-value-size) !important;
+  font-weight: var(--pp-mask-value-weight) !important;
+  letter-spacing: -.01em !important;
+}
+
+.pp-imposition-tool__pair small,
+.pp-imposition-tool__number small,
+.pp-imposition-calculator__editor-head p,
+.pp-imposition-calculator__variants-head p,
+.pp-calc-finishing-table th small,
+.pp-calc-finishing-table td span {
+  color: var(--pp-mask-helper-color) !important;
+  font-size: var(--pp-mask-helper-size) !important;
+  font-weight: var(--pp-mask-helper-weight) !important;
+  letter-spacing: 0 !important;
+}
+
+.pp-imposition-segment button {
+  min-width: 0 !important;
+  background: #ffffff !important;
+}
+
+.pp-imposition-segment button.is-active,
+.pp-calc-production-mode button.is-active {
+  color: var(--pp-mask-value-color) !important;
+}
+
+.pp-calc-production-mode button,
+.pp-calc-production-mode button b,
+.pp-calc-production-mode button span {
+  color: var(--pp-mask-value-color) !important;
+}
+
+.pp-calc-production-mode button span {
+  color: var(--pp-mask-helper-color) !important;
+  font-size: var(--pp-mask-helper-size) !important;
+  font-weight: var(--pp-mask-helper-weight) !important;
+}
+
+.pp-calc-finishing-table thead th {
+  font-size: var(--pp-mask-table-head-size) !important;
+  font-weight: var(--pp-mask-label-weight) !important;
+}
+
+.pp-calc-finishing-table tbody th,
+.pp-calc-finishing-table tbody td,
+.pp-calc-finishing-table tbody th b,
+.pp-calc-finishing-table tbody td input:not([type="checkbox"]),
+.pp-calc-finishing-table tbody td select,
+.pp-calc-finishing-table tbody td span,
+.pp-calc-finishing-table tbody td strong {
+  font-size: var(--pp-mask-table-value-size) !important;
+}
+
+.pp-calc-finishing-table tbody tr.is-active th b,
+.pp-calc-finishing-table tbody tr.is-active td,
+.pp-calc-finishing-table tbody tr.is-active td span,
+.pp-calc-finishing-table tbody tr.is-active td strong {
+  color: var(--pp-mask-value-color) !important;
+}
+
+@media (max-width: 1180px) {
+  .pp-calculation-tabs {
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  }
+}

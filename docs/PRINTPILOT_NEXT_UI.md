@@ -4241,3 +4241,13 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Anpassung liegt bewusst als letzter CSS-Override, damit ältere Sprint-Overrides keine abweichenden Einzelgrößen mehr durchsetzen.
 - Keine Änderung an Kalkulationslogik, Nutzenrechner, Validierungsdialogen, PDF-/Printlayout oder Bottom-Navigation.
 
+
+## Sprint 61.1 – Masken- und Tab-Typografie vollständig geprüft
+
+- Alle sichtbaren App-Reiter wurden geprüft: Kalkulationsreiter, Auftragstaschen-Ansichtsreiter und die weiterhin getrennte Bottom-Navigation.
+- Die Bottom-Navigation bleibt unverändert, weil sie kein Inhaltsreiter der Arbeitsmasken ist und bereits als eigenes Navigationspattern festgelegt wurde.
+- Die Kalkulationsreiter verwenden nun durchgehend dieselben Schriftfarben, Schriftgrößen und Schriftgewichte wie die Referenz **„Kunde & Auftrag“**.
+- Die Reiter **„Nutzenrechner“** und **„Weiterverarbeitung“** wurden ausdrücklich nachgezogen: Required-/Statuszustände dürfen keine abweichenden Tab-Schriftfarben mehr erzeugen.
+- Die Tab-Inhalte von Nutzenrechner und Weiterverarbeitung wurden ebenfalls auf die Kalkulationsmasken-Tokens zurückgeführt: Labels, Werte, Hilfstexte, Segmentbuttons, Tabellenköpfe und Tabellenwerte verwenden dieselbe Farb- und Größenlogik wie normale Eingabefelder.
+- Sonderstyles älterer Nutzenrechner- und Weiterverarbeitungs-Sprints werden am Ende der CSS gezielt übersteuert, damit keine versteckten Einzelgrößen oder abweichenden Schriftfarben mehr durchrutschen.
+- PDF-/Print-Dokumente bleiben typografisch getrennt und wurden nicht verändert.

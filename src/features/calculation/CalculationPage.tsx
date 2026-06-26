@@ -3863,14 +3863,6 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   const sheetCount = result.production.sheetsRequired
     ? formatNumber(result.production.sheetsRequired)
     : "offen";
-  const calculationInfoRows = [
-    ["Kunde", draft.customer],
-    ["Produkt", payload.product.label],
-    ["Auflage", `${formatNumber(payload.product.quantity)} Stück · ${sheetCount} Bogen`],
-    ["Termin", draft.dueDate],
-    ["Material", `${draft.substrate} · ${draft.grammage}`],
-    ["Maschine", `${draft.machine} · ${draft.printType}`],
-  ];
   const transferGroups = useMemo(
     () =>
       buildCalculationTransferGroups({
@@ -4133,22 +4125,35 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     setDraftWasCreated(true);
   };
 
+  const workHeaderChips = [
+    draft.calculationId,
+    draft.offerId ? `Angebot ${draft.offerId}` : "",
+    draft.offerStatus,
+    `${draft.quantity} Stück`,
+    draft.finalFormat,
+    draft.dueDate ? `Liefertermin ${draft.dueDate}` : "",
+  ].filter(Boolean);
+
   return (
     <div className="pp-calculation-page">
-      <header className="pp-master-header pp-calculation-master-header">
-        <div className="pp-header-brand">
-          <PrintPilotLogo className="pp-brand-logo" variant="app" />
+      <header className="pp-work-header pp-calculation-work-header" aria-label="Arbeitskopf Kalkulation">
+        <div className="pp-work-header__brand" aria-hidden="true">
+          <PrintPilotLogo className="pp-work-header__logo" variant="app" />
         </div>
-        <div className="pp-header-title-shape">
-          <h1>KALKULATION</h1>
-          <p>Produktionsdaten · Preisfindung · Auftragstasche</p>
+        <div className="pp-work-header__main">
+          <span className="pp-work-header__module">Kalkulation</span>
+          <h1>{draft.projectName || draft.productLabel}</h1>
+          <p>{draft.customer}</p>
         </div>
-        <div
-          className="pp-header-job pp-header-job--overview"
-          aria-label="Kalkulationsnummer"
-        >
-          <span>Demo-Kalkulation</span>
-          <strong>{payload.calculationId ?? "CALC"}</strong>
+        <div className="pp-work-header__chips" aria-label="Aktuelle Kalkulationsdaten">
+          {workHeaderChips.map((chip) => (
+            <span key={chip}>{chip}</span>
+          ))}
+        </div>
+        <div className="pp-work-header__actions">
+          <button type="button" onClick={handleCreateOrderDraft}>
+            Angebot anzeigen
+          </button>
         </div>
       </header>
 
@@ -4158,26 +4163,6 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           className="pp-calculation-form"
           aria-label="Kalkulation Reitermaske"
         >
-          <div className="pp-calculation-form__intro pp-calculation-tabs-intro pp-calculation-tabs-intro--minimal">
-            <aside
-              className="pp-calculation-compact-info"
-              aria-label="Wichtigste Kalkulationsdaten"
-            >
-              <div className="pp-calculation-compact-info__head">
-                <span>Demo-Kalkulation</span>
-                <b>{payload.calculationId ?? "CALC"}</b>
-              </div>
-              <dl>
-                {calculationInfoRows.map(([label, value]) => (
-                  <div key={label}>
-                    <dt>{label}</dt>
-                    <dd>{value}</dd>
-                  </div>
-                ))}
-              </dl>
-            </aside>
-          </div>
-
           <nav
             className="pp-calculation-tabs"
             aria-label="Kalkulationsbereiche"

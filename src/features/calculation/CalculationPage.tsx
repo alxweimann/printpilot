@@ -27,6 +27,11 @@ type CalculationDialogItem = {
   field?: string;
   isOverflow?: boolean;
 };
+type CalculationPlausibilityIssue = {
+  field: keyof CalculationDraft;
+  label: string;
+  message: string;
+};
 type CalculationDialogState = {
   variant: CalculationDialogVariant;
   title: string;
@@ -1387,6 +1392,60 @@ function calculateImpositionFromDraft(draft: CalculationDraft): ImpositionCalcul
     },
     label: `${selected.columns} × ${selected.rows} · ${selected.usedSlots} Nutzen`,
   };
+}
+
+function getImpositionPlausibilityIssues(
+  result: ImpositionCalculatorResult,
+): CalculationPlausibilityIssue[] {
+  const issues: CalculationPlausibilityIssue[] = [];
+  const usableWidthMm = result.sheet.widthMm - result.settings.marginMm * 2;
+  const usableHeightMm =
+    result.sheet.heightMm - result.settings.marginMm * 2 - result.settings.gripperMarginMm;
+
+  if (usableWidthMm <= 0) {
+    issues.push({
+      field: "impositionMarginMm",
+      label: "Bogenrand prüfen",
+      message: "Der Bogenrand ist größer als die verfügbare Druckbogenbreite.",
+    });
+  }
+
+  if (usableHeightMm <= 0) {
+    issues.push({
+      field: "impositionGripperMarginMm",
+      label: "Greiferrand / Bogenrand prüfen",
+      message: "Greiferrand und Bogenrand lassen keine nutzbare Druckbogenhöhe mehr übrig.",
+    });
+  }
+
+  if (!result.variants.some((variant) => variant.isValid !== false)) {
+    issues.push({
+      field: "finalFormat",
+      label: "Endformat oder Druckbogen prüfen",
+      message: "Das Produktformat passt mit Rand, Greiferrand und Zwischenschnitt nicht auf den Druckbogen.",
+    });
+  }
+
+  const manualVariant = result.variants.find((variant) => variant.id === "manual");
+  if (result.settings.rasterMode === "Manuell" && manualVariant?.isValid === false) {
+    issues.push(
+      {
+        field: "impositionManualColumns",
+        label: "Manuelle Spalten prüfen",
+        message: manualVariant.issue ?? "Das manuelle Raster passt nicht auf den Druckbogen.",
+      },
+      {
+        field: "impositionManualRows",
+        label: "Manuelle Reihen prüfen",
+        message: manualVariant.issue ?? "Das manuelle Raster passt nicht auf den Druckbogen.",
+      },
+    );
+  }
+
+  return issues.filter(
+    (issue, index, allIssues) =>
+      allIssues.findIndex((currentIssue) => currentIssue.field === issue.field) === index,
+  );
 }
 
 function formatImpositionGapLabel(gapXMm: number, gapYMm: number) {
@@ -3791,10 +3850,11 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
     () => calculateImpositionFromDraft(draft),
     [draft],
   );
-  const manualImpositionVariant = impositionCalculatorResult.variants.find((variant) => variant.id === "manual");
-  const hasInvalidManualImposition =
-    impositionCalculatorResult.settings.rasterMode === "Manuell" &&
-    manualImpositionVariant?.isValid === false;
+  const impositionPlausibilityIssues = useMemo(
+    () => getImpositionPlausibilityIssues(impositionCalculatorResult),
+    [impositionCalculatorResult],
+  );
+  const hasImpositionPlausibilityIssues = impositionPlausibilityIssues.length > 0;
   const activeFinishingCount = finishingRows.filter((row) => row.active).length;
   const result = payload.imposition;
   const productionModeLabel =
@@ -3921,33 +3981,26 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   };
 
   const showImpositionValidation = () => {
-    setActiveValidationFields([
-      "impositionManualColumns",
-      "impositionManualRows",
-      "impositionMarginMm",
-      "impositionGapXMm",
-      "impositionGapYMm",
-      "impositionGripperMarginMm",
-    ]);
+    const issueFields = impositionPlausibilityIssues.map((issue) => issue.field);
+
+    setActiveValidationFields(issueFields);
     setActiveTab("imposition");
     setSoftwareDialog({
       variant: "warning",
       title: "Der Nutzenplan passt noch nicht.",
-      body: manualImpositionVariant?.issue ?? "Das manuelle Raster passt mit Rand, Greiferrand und Zwischenschnitt nicht auf den Druckbogen.",
-      items: [
-        { field: "impositionManualColumns", label: "Manuelle Spalten prüfen" },
-        { field: "impositionManualRows", label: "Manuelle Reihen prüfen" },
-        { field: "impositionMarginMm", label: "Bogenrand prüfen" },
-        { field: "impositionGapXMm", label: "Zwischenschnitt X-Achse prüfen" },
-        { field: "impositionGapYMm", label: "Zwischenschnitt Y-Achse prüfen" },
-        { field: "impositionGripperMarginMm", label: "Greiferrand prüfen" },
-      ],
-      primaryLabel: "Zum Nutzenrechner",
+      body:
+        impositionPlausibilityIssues[0]?.message ??
+        "Bitte die markierten Nutzenrechner-Angaben prüfen.",
+      items: impositionPlausibilityIssues.map((issue) => ({
+        field: issue.field,
+        label: issue.label,
+      })),
+      primaryLabel: "Zum ersten betroffenen Feld",
     });
   };
 
   const handlePrepareOffer = () => {
-    if (hasInvalidManualImposition) {
+    if (hasImpositionPlausibilityIssues) {
       showImpositionValidation();
       return;
     }
@@ -3965,7 +4018,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   };
 
   const handlePrintOffer = () => {
-    if (hasInvalidManualImposition) {
+    if (hasImpositionPlausibilityIssues) {
       showImpositionValidation();
       return;
     }
@@ -4019,7 +4072,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   };
 
   const handlePrepareOfferEmail = () => {
-    if (hasInvalidManualImposition) {
+    if (hasImpositionPlausibilityIssues) {
       showImpositionValidation();
       return;
     }
@@ -4046,7 +4099,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
   };
 
   const handleCreateOrderDraft = () => {
-    if (hasInvalidManualImposition) {
+    if (hasImpositionPlausibilityIssues) {
       showImpositionValidation();
       return;
     }
@@ -4105,16 +4158,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
           className="pp-calculation-form"
           aria-label="Kalkulation Reitermaske"
         >
-          <div className="pp-calculation-form__intro pp-calculation-tabs-intro">
-            <div>
-              <p className="pp-eyebrow">Auftragstaschen-Design</p>
-              <h2>Kalkulation</h2>
-              <p className="pp-calculation-intro-copy">
-                Eingabemaske für produktionsrelevante Kalkulationsdaten. Doppelte
-                Begriffe sind getrennt, damit die Werte sauber in Auftrag und
-                Auftragstasche übernommen werden.
-              </p>
-            </div>
+          <div className="pp-calculation-form__intro pp-calculation-tabs-intro pp-calculation-tabs-intro--minimal">
             <aside
               className="pp-calculation-compact-info"
               aria-label="Wichtigste Kalkulationsdaten"

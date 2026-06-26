@@ -4196,3 +4196,16 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Anlage, Stand, Seitenanlage, Vorderseite/Rückseite und Marken bleiben fachlich dem späteren Modul **08 Impose** zugeordnet.
 - Gedrehte Nutzen verwenden jetzt eine eigene Preview-Innenfläche: Die Kachel bleibt physikalisch korrekt positioniert, der Druckinhalt wird mittig rotiert, passend skaliert und innerhalb der Nutzenfläche zentriert.
 - Keine Änderung an Rasterlogik, Bogenverbrauch, Validierungsdialog, Bottom-Navigation oder echter Impose-Ausgabe.
+
+## Sprint 58 – Kalkulationskopf beruhigt und Nutzenrechner-Plausibilität im Hintergrund
+
+- Erklärende Kopftexte in der Kalkulationsmaske entfernt: keine sichtbaren Hinweise wie „Auftragstaschen-Design“, keine große Wiederholung „Kalkulation“ und kein Beschreibungstext zur Eingabemaske.
+- Kopfbereich zeigt nur noch kompakte Arbeitsinformationen zur aktuellen Kalkulation.
+- Grundsatz bestätigt: Arbeitsmasken erklären nicht dauerhaft Systemlogik; Plausibilitätsprüfungen laufen im Hintergrund.
+- Nutzenrechner-Plausibilität erweitert:
+  - zu großer Bogenrand,
+  - zu großer Greiferrand,
+  - Produktformat passt mit Rand/Greiferrand/Zwischenschnitt nicht auf den Druckbogen,
+  - manuelles Raster passt nicht.
+- Hinweise erscheinen nur aktionsbezogen über den PrintPilot-Validierungsdialog.
+- Keine Änderung an Bottom-Navigation, Rasterlogik, Bogenverbrauch oder Impose-Engine.

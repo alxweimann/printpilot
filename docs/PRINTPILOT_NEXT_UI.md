@@ -4327,3 +4327,11 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Lange Fachlabels wie **Weiterverarbeitungskosten**, **Kalkulationsnummer**, **Sicherheitsabstand**, **Druckbogenformat**, **Produktionshinweis**, **Angebotsgültigkeit**, **Rechnungskontrolle** und **Lieferantenrechnung** dürfen sauber umbrechen, aber nicht mehr in Eingabefelder überlaufen oder links abgeschnitten werden.
 - Der Nutzenrechner erhält ein robustes Wrap-Layout für Zahlen- und Modusleisten: Eingabewerte und Buttons werden nicht mehr zusammengedrückt, sondern umbrechen in eigene stabile Steuerblöcke.
 - Farben, Schriftgrößen, Tab-Design, Kalkulationslogik, Nutzenberechnung, Weiterverarbeitungsdaten, PDF-/Printlayout und Bottom-Navigation wurden nicht verändert.
+
+## Sprint 61.10 – Nutzenrechner-Gap und Radiuskanten
+
+- Der sichtbare **Greifer** wurde aus dem Nutzenrechner entfernt. Die interne Datenstruktur bleibt vorbereitet, wird aber nicht mehr als Bedienfeld angezeigt.
+- Die sichtbaren Nutzenrechner-Felder **Schnitt X** und **Schnitt Y** heißen jetzt **Gap X** und **Gap Y**.
+- Die Ergebnis- und Variantenanzeige im Nutzenrechner verwendet ebenfalls die Bezeichnung **Gap** statt Zwischenschnitt/Schnitt.
+- Die unteren Radiuskanten von Formular-, Ergebnis- und Nutzenrechner-Kästen wurden stabilisiert, damit Panel- und Eingabefeld-Rundungen vollständig erscheinen.
+- Farben, Schriftgrößen, Kalkulationslogik, Nutzenberechnung, PDF-/Printlayout und Bottom-Navigation wurden nicht verändert.

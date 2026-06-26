@@ -551,8 +551,8 @@ const calculationFieldLabels: Partial<Record<keyof CalculationDraft, string>> = 
   impositionManualColumns: "Manuelle Spalten",
   impositionManualRows: "Manuelle Reihen",
   impositionMarginMm: "Bogenrand",
-  impositionGapXMm: "Zwischenschnitt X-Achse",
-  impositionGapYMm: "Zwischenschnitt Y-Achse",
+  impositionGapXMm: "Gap X-Achse",
+  impositionGapYMm: "Gap Y-Achse",
   impositionGripperMarginMm: "Greiferrand",
 };
 
@@ -1541,8 +1541,7 @@ function buildPayloadFromDraft(
       notes: [
         `Nutzenrechner: ${impositionResult.label}`,
         `Berechnungsbasis: ${impositionResult.settings.includeBleed ? "inklusive Beschnitt" : "Endformat"}`,
-        `Zwischenschnitt: ${formatImpositionGapLabel(impositionResult.settings.gapXMm, impositionResult.settings.gapYMm)}`,
-        `Greiferrand: ${formatMillimeterValue(impositionResult.settings.gripperMarginMm)}`,
+        `Gap: ${formatImpositionGapLabel(impositionResult.settings.gapXMm, impositionResult.settings.gapYMm)}`,
       ],
     },
     machine: {
@@ -3012,26 +3011,14 @@ function ImpositionCalculatorPanel({
               </span>
             </label>
 
-            <label className="pp-imposition-tool pp-imposition-tool--number" data-calculation-field="impositionGripperMarginMm">
-              <span className="pp-imposition-tool__label">Greifer</span>
-              <span className="pp-imposition-tool__number">
-                <input
-                  value={draft.impositionGripperMarginMm}
-                  onChange={(event) => onDraftChange("impositionGripperMarginMm")(event.target.value)}
-                  aria-label="Greiferrand"
-                  inputMode="decimal"
-                />
-                <small>mm</small>
-              </span>
-            </label>
 
             <label className="pp-imposition-tool pp-imposition-tool--number" data-calculation-field="impositionGapXMm">
-              <span className="pp-imposition-tool__label">Schnitt X</span>
+              <span className="pp-imposition-tool__label">Gap X</span>
               <span className="pp-imposition-tool__number">
                 <input
                   value={draft.impositionGapXMm}
                   onChange={(event) => onDraftChange("impositionGapXMm")(event.target.value)}
-                  aria-label="Zwischenschnitt X-Achse"
+                  aria-label="Gap X-Achse"
                   inputMode="decimal"
                 />
                 <small>mm</small>
@@ -3039,12 +3026,12 @@ function ImpositionCalculatorPanel({
             </label>
 
             <label className="pp-imposition-tool pp-imposition-tool--number" data-calculation-field="impositionGapYMm">
-              <span className="pp-imposition-tool__label">Schnitt Y</span>
+              <span className="pp-imposition-tool__label">Gap Y</span>
               <span className="pp-imposition-tool__number">
                 <input
                   value={draft.impositionGapYMm}
                   onChange={(event) => onDraftChange("impositionGapYMm")(event.target.value)}
-                  aria-label="Zwischenschnitt Y-Achse"
+                  aria-label="Gap Y-Achse"
                   inputMode="decimal"
                 />
                 <small>mm</small>
@@ -3130,8 +3117,7 @@ function ImpositionCalculatorPanel({
       <div className="pp-imposition-calculator__result">
         <div className="pp-imposition-calculator__metrics">
           <ResultLine label="Druckbogen" value={`${formatMillimeterValue(result.sheet.widthMm)} × ${formatMillimeterValue(result.sheet.heightMm)}`} />
-          <ResultLine label="Zwischenschnitt X / Y" value={formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)} />
-          <ResultLine label="Greiferrand" value={formatMillimeterValue(result.settings.gripperMarginMm)} />
+          <ResultLine label="Gap X / Y" value={formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)} />
           <ResultLine label="Rastermodus" value={result.settings.rasterMode === "Manuell" ? `${result.settings.manualColumns} × ${result.settings.manualRows} manuell` : "automatisch"} />
           <ResultLine label="Nettobogen" value={`${formatNumber(result.production.sheetsRequired)} Bogen`} />
           <ResultLine label="Netto produziert" value={`${formatNumber(result.production.netQuantity)} Stück`} />
@@ -3149,7 +3135,7 @@ function ImpositionCalculatorPanel({
             <p>
               {result.selected.label} · {formatPercentValue(result.selected.usablePercent)}
               Flächennutzung · Berechnungsformat {formatMillimeterValue(result.item.calculationWidthMm)} × {formatMillimeterValue(result.item.calculationHeightMm)}
-              · Zwischenschnitt {formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)}
+              · Gap {formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)}
               {result.selected.issue ? ` · ${result.selected.issue}` : ""}
             </p>
           </div>
@@ -3161,7 +3147,7 @@ function ImpositionCalculatorPanel({
               <th>Raster</th>
               <th>Nutzen</th>
               <th>Ausnutzung</th>
-              <th>Zwischenschnitt</th>
+              <th>Gap</th>
               <th>Restfläche</th>
             </tr>
           </thead>

@@ -26879,3 +26879,70 @@ body {
     grid-template-columns: 1fr !important;
   }
 }
+
+/* Sprint 61.10 – Nutzenrechner bereinigen und Radiuskanten stabilisieren
+   Der Nutzenrechner zeigt keinen Greifer mehr. Schnitt X/Y wird in der
+   Arbeitsmaske als Gap X/Y geführt. Zusätzlich werden Panel- und Feldradien
+   an den unteren Kanten sauber abgeschlossen, ohne Farben, Schriftgrößen oder
+   Kalkulationslogik zu verändern. */
+.pp-calculation-page .pp-calc-form-section,
+.pp-calculation-page .pp-imposition-calculator,
+.pp-calculation-page .pp-imposition-toolbar,
+.pp-calculation-page .pp-imposition-calculator__result,
+.pp-calculation-page .pp-imposition-calculator__variants,
+.pp-calculation-page .pp-calculation-output-card,
+.pp-calculation-page .pp-calc-production-mode button {
+  border-radius: 14px !important;
+  background-clip: padding-box !important;
+  overflow: clip !important;
+}
+
+.pp-calculation-page .pp-calc-input-field input,
+.pp-calculation-page .pp-calc-input-field select,
+.pp-calculation-page .pp-calc-input-field textarea,
+.pp-calculation-page .pp-imposition-tool__pair input,
+.pp-calculation-page .pp-imposition-tool__number input,
+.pp-calculation-page .pp-imposition-segment button,
+.pp-calculation-page .pp-calc-finishing-table tbody td input:not([type="checkbox"]),
+.pp-calculation-page .pp-calc-finishing-table tbody td select {
+  border-radius: 8px !important;
+  background-clip: padding-box !important;
+}
+
+.pp-calculation-page .pp-imposition-tool--number[data-calculation-field="impositionGripperMarginMm"] {
+  display: none !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar__line--numbers {
+  display: flex !important;
+  flex-wrap: wrap !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+}
+
+.pp-calculation-page .pp-imposition-tool--pair[data-calculation-field="printSheetFormat"] {
+  flex: 1 1 220px !important;
+  min-width: 220px !important;
+}
+
+.pp-calculation-page .pp-imposition-tool--pair[data-calculation-field="finalFormat"] {
+  flex: 1 1 190px !important;
+  min-width: 190px !important;
+}
+
+.pp-calculation-page .pp-imposition-tool--number[data-calculation-field="impositionMarginMm"],
+.pp-calculation-page .pp-imposition-tool--number[data-calculation-field="impositionGapXMm"],
+.pp-calculation-page .pp-imposition-tool--number[data-calculation-field="impositionGapYMm"] {
+  flex: 0 1 142px !important;
+  min-width: 132px !important;
+}
+
+.pp-calculation-page .pp-imposition-tool--raster {
+  flex: 0 1 172px !important;
+  min-width: 154px !important;
+}
+
+.pp-calculation-page .pp-imposition-tool[data-calculation-field="impositionGapXMm"] .pp-imposition-tool__label,
+.pp-calculation-page .pp-imposition-tool[data-calculation-field="impositionGapYMm"] .pp-imposition-tool__label {
+  white-space: nowrap !important;
+}

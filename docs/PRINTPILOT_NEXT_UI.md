@@ -4145,3 +4145,25 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Segmentbuttons für Berechnungsbasis, Drehung und Rastermodus wurden auf dieselbe Bedienhöhe gebracht wie die Eingabefelder.
 - Die Toolbar nutzt flexible Zeilen statt starrer Grid-Spalten, damit Labels und Werte nicht abgeschnitten werden.
 - Vorschauauflösung, Vorschaubogen-Skalierung, Nutzenberechnung, Zentrierung, Impose-Modul, Validierungsdialog und Bottom-Navigation bleiben unverändert.
+
+## Sprint 56 – Typografie und Feldgrößen der Eingabemasken konsolidieren
+
+- Für die App-Eingabemasken wurden zentrale UI-Typografiegrößen in der Kalkulationsmaske definiert.
+- Feldlabels, Feldwerte, Hilfstexte, Tab-Beschriftungen, Buttontexte, Paneltitel und Tabellenwerte verwenden jetzt eine gemeinsame Größenlogik.
+- Der Reiter **04 Nutzenrechner** übernimmt dieselben Schriftgrößen und Bedienhöhen wie die übrigen Kalkulationsfelder.
+- Segmentbuttons im Nutzenrechner für Berechnungsbasis, Drehung und Rastermodus verwenden die gleiche Text-/Bediengröße wie andere Options- und Aktionscontrols.
+- Normale App-Masken und PDF-/Print-Dokumente bleiben typografisch getrennt: Dokumente wie Angebot und Auftragstasche behalten eigene Print-Typografie.
+- Keine Änderung an Nutzenberechnung, Vorschau, Variantenlogik, Validierungsdialog, Dokumentenausgabe oder Bottom-Navigation.
+
+
+## Sprint 56.1 – Rendering-Schärfe der App-Masken
+
+- Ziel: PrintPilot-App-Masken sollen typografisch schärfer und weniger verwaschen wirken, ohne Layout und Größen unnötig zu vergrößern.
+- Inter wird jetzt inklusive regulärer 400er-Schnitte geladen, damit Browser nicht unnötig interpolieren oder unsauber auf Ersatzgewichte ausweichen.
+- App-Masken erhalten eine zentrale Rendering-Basis mit Font-Kerning, optischer Schriftgrößensteuerung und konsistenter Schriftglättung.
+- UI-Tokens wurden auf ganze Pixelwerte normalisiert, insbesondere bei Feldwerten, Hilfstexten und Tabellenwerten.
+- Werte, Labels, Buttons und Segmentbuttons in der Kalkulationsmaske verwenden jetzt klarere Standardgewichte statt verstreuter Zwischengewichte.
+- Textfarben wurden in App-Masken etwas klarer gesetzt, damit Labels und Werte nicht verwaschen wirken.
+- Normale UI-Felder verzichten auf unnötige Schatten, die Schrift optisch weichzeichnen können; Fokuszustände bleiben sichtbar.
+- PDF-/Print-Dokumente sind bewusst nicht Teil dieser Änderung und behalten ihre eigene Print-Typografie.
+- Keine Änderung an Rechenlogik, Nutzenvorschau, Validierungsdialog, Bottom-Navigation oder Dokumentenlayouts.

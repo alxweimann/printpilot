@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
 :root {
   --pp-blue: #009FE3;
@@ -24641,4 +24641,279 @@ button.pp-software-dialog__item:focus-visible {
   .pp-imposition-segment {
     flex: 1 1 100% !important;
   }
+}
+
+/* Sprint 56 – UI-Typografie der Eingabemasken konsolidieren
+   App-Masken verwenden einheitliche UI-Größen; PDF-/Print-Dokumente bleiben davon getrennt. */
+.pp-calculation-page {
+  --pp-ui-field-label-size: 10px;
+  --pp-ui-field-value-size: 13.5px;
+  --pp-ui-field-helper-size: 10.5px;
+  --pp-ui-field-badge-size: 7.5px;
+  --pp-ui-section-title-size: 15px;
+  --pp-ui-panel-title-size: 14px;
+  --pp-ui-tab-label-size: 13px;
+  --pp-ui-tab-number-size: 10px;
+  --pp-ui-button-size: 12px;
+  --pp-ui-table-head-size: 10px;
+  --pp-ui-table-value-size: 12.5px;
+  --pp-ui-control-height: 34px;
+}
+
+.pp-calculation-tabs button,
+.pp-calculation-create-button,
+.pp-calculation-action-stack button,
+.pp-offer-action-row button,
+.pp-imposition-segment button {
+  font-size: var(--pp-ui-button-size) !important;
+}
+
+.pp-calculation-tabs button {
+  font-size: var(--pp-ui-tab-label-size) !important;
+}
+
+.pp-calculation-tabs button span,
+.pp-calc-form-section__head > span {
+  font-size: var(--pp-ui-tab-number-size) !important;
+}
+
+.pp-calc-form-section__head h2,
+.pp-calculation-tab-panel .pp-calc-form-section__head h2 {
+  font-size: var(--pp-ui-section-title-size) !important;
+}
+
+.pp-calculation-output-card h3,
+.pp-calculation-contract-box h3,
+.pp-calc-plausibility-card h3,
+.pp-calculation-field-audit h3,
+.pp-imposition-variants__summary b {
+  font-size: var(--pp-ui-panel-title-size) !important;
+}
+
+.pp-calc-input-field span,
+.pp-calculation-tab-panel .pp-calc-input-field span,
+.pp-calc-result-line span,
+.pp-calc-finishing-table thead th,
+.pp-calc-finishing-table td span,
+.pp-calculation-quick-head span,
+.pp-calculation-north-star span,
+.pp-imposition-tool__label,
+.pp-imposition-segment > span,
+.pp-imposition-metric span,
+.pp-imposition-variants th {
+  font-size: var(--pp-ui-field-label-size) !important;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select,
+.pp-calculation-tab-panel .pp-calc-input-field input,
+.pp-calculation-tab-panel .pp-calc-input-field select,
+.pp-calc-result-line b,
+.pp-calc-finishing-table td strong,
+.pp-imposition-tool__pair input,
+.pp-imposition-tool__number input,
+.pp-imposition-metric b,
+.pp-imposition-variants td {
+  font-size: var(--pp-ui-field-value-size) !important;
+}
+
+.pp-calc-input-field small,
+.pp-calculation-tab-panel .pp-calc-input-field small,
+.pp-calc-finishing-table th small,
+.pp-calculation-output-card p,
+.pp-calculation-contract-box p,
+.pp-imposition-tool__pair small,
+.pp-imposition-tool__number small,
+.pp-imposition-preview-meta,
+.pp-imposition-variants__summary small {
+  font-size: var(--pp-ui-field-helper-size) !important;
+}
+
+.pp-calc-input-field span em,
+.pp-calculation-tab-panel .pp-calc-input-field span em,
+.pp-field-badge {
+  font-size: var(--pp-ui-field-badge-size) !important;
+}
+
+.pp-calc-input-field input,
+.pp-calc-input-field select,
+.pp-calculation-tab-panel .pp-calc-input-field input,
+.pp-calculation-tab-panel .pp-calc-input-field select,
+.pp-calc-finishing-table td input:not([type="checkbox"]),
+.pp-imposition-tool__pair input,
+.pp-imposition-tool__number input,
+.pp-imposition-segment button {
+  min-height: var(--pp-ui-control-height) !important;
+  height: var(--pp-ui-control-height) !important;
+  line-height: 1.15 !important;
+}
+
+.pp-imposition-toolbar {
+  gap: 7px !important;
+}
+
+.pp-imposition-tool,
+.pp-imposition-segment {
+  min-height: 46px !important;
+  align-items: center !important;
+}
+
+.pp-imposition-tool__label,
+.pp-imposition-segment > span {
+  letter-spacing: .04em !important;
+}
+
+.pp-imposition-segment button {
+  font-weight: 760 !important;
+}
+
+.pp-imposition-tool__pair input,
+.pp-imposition-tool__number input {
+  font-weight: 650 !important;
+}
+
+.pp-imposition-tool__pair small,
+.pp-imposition-tool__number small {
+  font-weight: 740 !important;
+}
+
+
+/* Sprint 56.1 – Rendering-Schärfe der App-Masken verbessern
+   Ziel: gleiche UI-Größen, aber klarere Schrift und weniger verwaschene Maskendarstellung.
+   PDF-/Print-Dokumente bleiben bewusst getrennt. */
+:root {
+  --pp-ui-font-weight-regular: 500;
+  --pp-ui-font-weight-medium: 600;
+  --pp-ui-font-weight-strong: 700;
+  --pp-ui-font-weight-heavy: 800;
+  --pp-ui-text-color: #071733;
+  --pp-ui-label-color: #008fcf;
+  --pp-ui-muted-color: #475569;
+}
+
+html {
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+}
+
+body,
+button,
+input,
+textarea,
+select {
+  font-synthesis: none;
+  font-kerning: normal;
+  font-optical-sizing: auto;
+  font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+}
+
+body {
+  color: var(--pp-ui-text-color);
+}
+
+.pp-app,
+.pp-main,
+.pp-calculation-page,
+.pp-orders-page,
+.pp-order-pocket,
+.pp-settings-page,
+.pp-customers-page {
+  color: var(--pp-ui-text-color);
+  text-rendering: geometricPrecision;
+  -webkit-font-smoothing: subpixel-antialiased;
+  -moz-osx-font-smoothing: auto;
+}
+
+.pp-app input,
+.pp-app select,
+.pp-app textarea,
+.pp-app button {
+  transform: none;
+  text-shadow: none;
+}
+
+.pp-calculation-page {
+  --pp-ui-field-label-size: 10px;
+  --pp-ui-field-value-size: 14px;
+  --pp-ui-field-helper-size: 11px;
+  --pp-ui-field-badge-size: 8px;
+  --pp-ui-section-title-size: 15px;
+  --pp-ui-panel-title-size: 14px;
+  --pp-ui-tab-label-size: 13px;
+  --pp-ui-tab-number-size: 10px;
+  --pp-ui-button-size: 12px;
+  --pp-ui-table-head-size: 10px;
+  --pp-ui-table-value-size: 13px;
+  --pp-ui-control-height: 34px;
+}
+
+.pp-calculation-page .pp-calc-input-field span,
+.pp-calculation-page .pp-imposition-tool__label,
+.pp-calculation-page .pp-imposition-segment > span,
+.pp-calculation-page .pp-calc-result-line span,
+.pp-calculation-page .pp-calc-finishing-table thead th,
+.pp-calculation-page .pp-calc-finishing-table td span,
+.pp-calculation-page .pp-calculation-quick-head span,
+.pp-calculation-page .pp-calculation-north-star span,
+.pp-calculation-page .pp-imposition-metric span,
+.pp-calculation-page .pp-imposition-variants th {
+  color: var(--pp-ui-label-color) !important;
+  font-weight: var(--pp-ui-font-weight-heavy) !important;
+  letter-spacing: .035em !important;
+}
+
+.pp-calculation-page .pp-calc-input-field input,
+.pp-calculation-page .pp-calc-input-field select,
+.pp-calculation-page .pp-calc-finishing-table td input:not([type="checkbox"]),
+.pp-calculation-page .pp-imposition-tool__pair input,
+.pp-calculation-page .pp-imposition-tool__number input,
+.pp-calculation-page .pp-imposition-metric b,
+.pp-calculation-page .pp-imposition-variants td {
+  color: var(--pp-ui-text-color) !important;
+  font-weight: var(--pp-ui-font-weight-medium) !important;
+  letter-spacing: 0 !important;
+}
+
+.pp-calculation-page .pp-calc-input-field small,
+.pp-calculation-page .pp-calculation-output-card p,
+.pp-calculation-page .pp-calculation-contract-box p,
+.pp-calculation-page .pp-imposition-preview-meta,
+.pp-calculation-page .pp-imposition-variants__summary small {
+  color: var(--pp-ui-muted-color) !important;
+  font-weight: var(--pp-ui-font-weight-medium) !important;
+}
+
+.pp-calculation-page .pp-calculation-tabs button,
+.pp-calculation-page .pp-calculation-create-button,
+.pp-calculation-page .pp-calculation-action-stack button,
+.pp-calculation-page .pp-offer-action-row button,
+.pp-calculation-page .pp-imposition-segment button {
+  font-weight: var(--pp-ui-font-weight-strong) !important;
+  text-shadow: none !important;
+}
+
+.pp-calculation-page .pp-calc-form-section,
+.pp-calculation-page .pp-calculation-output-card,
+.pp-calculation-page .pp-imposition-calculator,
+.pp-calculation-page .pp-imposition-preview-card,
+.pp-calculation-page .pp-imposition-variants {
+  backface-visibility: hidden;
+  transform: translateZ(0);
+}
+
+.pp-calculation-page .pp-calc-input-field input,
+.pp-calculation-page .pp-calc-input-field select,
+.pp-calculation-page .pp-imposition-tool__pair input,
+.pp-calculation-page .pp-imposition-tool__number input,
+.pp-calculation-page .pp-imposition-segment button {
+  border-width: 1px !important;
+  box-shadow: none !important;
+}
+
+.pp-calculation-page .pp-calc-input-field input:focus,
+.pp-calculation-page .pp-calc-input-field select:focus,
+.pp-calculation-page .pp-imposition-tool__pair input:focus,
+.pp-calculation-page .pp-imposition-tool__number input:focus {
+  box-shadow: 0 0 0 2px rgba(0, 159, 227, .12) !important;
 }

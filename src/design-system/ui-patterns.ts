@@ -1064,3 +1064,10 @@ export const sprint613Pattern = {
     "Korrektur der Sprint-61.2-Farbangleichung: Die Kalkulationsmasken folgen wieder exakt der Referenz Kunde & Auftrag. Werte, Abschnittstitel und Leistungsnamen bleiben dunkel/navy; Hilfstexte bleiben gedämpft; nur echte Labels, Spaltenköpfe und kleine Ordnungsnummern nutzen den blauen Akzentton. Helles Cyan wird nicht als allgemeine Schriftfarbe verwendet.",
 };
 
+
+export const sprint614Pattern = {
+  id: "calculation-label-value-size-parity",
+  sprint: "61.4",
+  description:
+    "Feldlabels und Feldwerte in den Kalkulationsmasken verwenden dieselbe Grundschriftgröße. Unterschiede zwischen Produktart und Visitenkarte, Druckbogen und Formatwert oder Tabellenkopf und Tabellenwert entstehen nur noch über Farbe, Großschreibung und Gewicht, nicht mehr über unterschiedliche Schriftgrößen.",
+};

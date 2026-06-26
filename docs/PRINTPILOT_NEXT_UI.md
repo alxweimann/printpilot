@@ -4270,3 +4270,12 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Nutzenrechner und Weiterverarbeitung verwenden dadurch wieder dieselbe Farbsemantik wie die normalen Eingabebereiche.
 - Keine Änderung an Kalkulationslogik, Nutzenberechnung, Weiterverarbeitungsdaten, PDF-/Printlayout, Validierungsdialogen oder Bottom-Navigation.
 
+
+## Sprint 61.4 – Feldlabels und Feldwerte gleich groß
+
+- Die Kalkulationsmasken wurden typografisch weiter an die Referenz **Kunde & Auftrag** angepasst.
+- Feldlabels und Feldwerte verwenden nun dieselbe Grundschriftgröße, damit z. B. **PRODUKTART** und **Visitenkarte** optisch gleich groß wirken.
+- Der Unterschied zwischen Label und Wert entsteht nur noch über Farbe, Großschreibung, Gewicht und Position, nicht mehr über unterschiedliche Schriftgrößen.
+- Die Regel gilt auch für Nutzenrechner, Weiterverarbeitung, Tabellenköpfe, Tabellenwerte, Segmentbuttons und Ergebniszeilen innerhalb der Kalkulationsmaske.
+- Hilfstexte bleiben weiterhin kleiner und gedämpft, weil sie nicht Teil der Label/Wert-Paarung sind.
+- Keine Änderung an Kalkulationslogik, Nutzenberechnung, Weiterverarbeitungsdaten, PDF-/Printlayout, Validierungsdialogen oder Bottom-Navigation.

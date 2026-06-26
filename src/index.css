@@ -25885,3 +25885,103 @@ body {
 .pp-calculation-page .pp-calc-finishing-table tbody tr.is-active td {
   color: var(--pp-mask-value-color) !important;
 }
+
+/* Sprint 61.4 – Feldlabels und Feldwerte gleich groß
+   Referenz: In den Kalkulationsmasken dürfen Label und Wert nicht mehr über
+   verschiedene Schriftgrößen getrennt werden. Produktart und Visitenkarte,
+   Druckbogen und Formatwert sowie Tabellenkopf und Tabellenwert nutzen dieselbe
+   Grundgröße; Unterschied entsteht nur noch über Farbe, Großschreibung und Gewicht. */
+.pp-calculation-page {
+  --pp-ui-field-size: 14px;
+  --pp-ui-field-label-size: var(--pp-ui-field-size);
+  --pp-ui-field-value-size: var(--pp-ui-field-size);
+  --pp-ui-table-head-size: var(--pp-ui-field-size);
+  --pp-ui-table-value-size: var(--pp-ui-field-size);
+  --pp-mask-label-size: var(--pp-ui-field-size);
+  --pp-mask-value-size: var(--pp-ui-field-size);
+  --pp-mask-table-head-size: var(--pp-ui-field-size);
+  --pp-mask-table-value-size: var(--pp-ui-field-size);
+}
+
+.pp-calculation-page .pp-calc-input-field span,
+.pp-calculation-page .pp-calc-input-field span strong,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span strong,
+.pp-calculation-page .pp-imposition-tool__label,
+.pp-calculation-page .pp-imposition-segment > span,
+.pp-calculation-page .pp-imposition-calculator__metrics .pp-calc-result-line span,
+.pp-calculation-page .pp-imposition-calculator__variants-head span,
+.pp-calculation-page .pp-imposition-calculator__variants thead th,
+.pp-calculation-page .pp-imposition-calculator__variants table thead th,
+.pp-calculation-page .pp-calc-finishing-table thead th,
+.pp-calculation-page .pp-calc-finishing-table tbody td > span,
+.pp-calculation-page .pp-calc-finishing-table td span,
+.pp-calculation-page .pp-calc-result-line span,
+.pp-calculation-page .pp-imposition-metric span,
+.pp-calculation-page .pp-imposition-variants th {
+  font-size: var(--pp-ui-field-size) !important;
+  line-height: 1.15 !important;
+}
+
+.pp-calculation-page .pp-calc-input-field input,
+.pp-calculation-page .pp-calc-input-field select,
+.pp-calculation-page .pp-calc-input-field textarea,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field input,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field select,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field textarea,
+.pp-calculation-page .pp-imposition-tool__pair input,
+.pp-calculation-page .pp-imposition-tool__number input,
+.pp-calculation-page .pp-imposition-segment button,
+.pp-calculation-page .pp-imposition-calculator__metrics .pp-calc-result-line b,
+.pp-calculation-page .pp-imposition-calculator__variants tbody th,
+.pp-calculation-page .pp-imposition-calculator__variants tbody td,
+.pp-calculation-page .pp-imposition-calculator__variants table tbody th,
+.pp-calculation-page .pp-imposition-calculator__variants table tbody td,
+.pp-calculation-page .pp-calc-finishing-table tbody th b,
+.pp-calculation-page .pp-calc-finishing-table tbody tr.is-active th b,
+.pp-calculation-page .pp-calc-finishing-table tbody td,
+.pp-calculation-page .pp-calc-finishing-table tbody td input:not([type="checkbox"]),
+.pp-calculation-page .pp-calc-finishing-table tbody td select,
+.pp-calculation-page .pp-calc-finishing-table tbody td strong,
+.pp-calculation-page .pp-calc-finishing-table tbody tr.is-active td,
+.pp-calculation-page .pp-calc-finishing-table tbody tr.is-active td strong,
+.pp-calculation-page .pp-imposition-metric b,
+.pp-calculation-page .pp-imposition-variants td {
+  font-size: var(--pp-ui-field-size) !important;
+  line-height: 1.15 !important;
+}
+
+.pp-calculation-page .pp-calc-input-field span,
+.pp-calculation-page .pp-calc-input-field span strong,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span strong,
+.pp-calculation-page .pp-imposition-tool__label,
+.pp-calculation-page .pp-imposition-segment > span,
+.pp-calculation-page .pp-imposition-calculator__metrics .pp-calc-result-line span,
+.pp-calculation-page .pp-imposition-calculator__variants-head span,
+.pp-calculation-page .pp-imposition-calculator__variants thead th,
+.pp-calculation-page .pp-imposition-calculator__variants table thead th,
+.pp-calculation-page .pp-calc-finishing-table thead th,
+.pp-calculation-page .pp-calc-finishing-table tbody td > span {
+  font-weight: var(--pp-ui-font-weight-heavy, 800) !important;
+  letter-spacing: .025em !important;
+  text-transform: uppercase !important;
+}
+
+.pp-calculation-page .pp-calc-input-field input,
+.pp-calculation-page .pp-calc-input-field select,
+.pp-calculation-page .pp-calc-input-field textarea,
+.pp-calculation-page .pp-imposition-tool__pair input,
+.pp-calculation-page .pp-imposition-tool__number input,
+.pp-calculation-page .pp-imposition-segment button,
+.pp-calculation-page .pp-imposition-calculator__metrics .pp-calc-result-line b,
+.pp-calculation-page .pp-imposition-calculator__variants tbody td,
+.pp-calculation-page .pp-imposition-calculator__variants table tbody td,
+.pp-calculation-page .pp-calc-finishing-table tbody td,
+.pp-calculation-page .pp-calc-finishing-table tbody td input:not([type="checkbox"]),
+.pp-calculation-page .pp-calc-finishing-table tbody td select,
+.pp-calculation-page .pp-calc-finishing-table tbody td strong {
+  font-weight: var(--pp-ui-font-weight-medium, 600) !important;
+  letter-spacing: 0 !important;
+  text-transform: none !important;
+}

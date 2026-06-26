@@ -4085,3 +4085,15 @@ Der Nutzenrechner wurde in der Eingabe ergonomisch verfeinert. Ziel ist, die Fie
 - „Beste Variante“ und Variantenvergleich bleiben in einem gemeinsamen Bereich; der separate große Ergebnisraum wird nicht wieder eingeführt.
 - Die physikalische Skalierung und Zentrierung des manuellen Rasters bleiben unverändert.
 - Bottom-Navigation unverändert.
+
+## Sprint 55.8 – Nutzenrechner-Eingaben entklobigen
+
+Die Eingabefelder im Reiter **04 Nutzenrechner** wurden nochmals verdichtet. Ziel ist eine klare Arbeitszeilen-Logik statt großer Touch-/Kachel-Felder.
+
+- linke Steuerung als kompakte Zeilen aufgebaut
+- Zahlenfelder für Bogenrand, Zwischenschnitt X/Y und manuelles Raster flacher gesetzt
+- Druckbogen- und Endformatfelder bleiben getrennt nach Breite/Höhe, wirken aber weniger massiv
+- Einheiten bleiben sichtbar, nehmen aber weniger Raum ein
+- Auswahlbuttons für Berechnungsbasis, Drehung und Rastermodus kompakter gesetzt
+- Druckbogen-Vorschau rechts bleibt groß und unverändert physikalisch skaliert
+- keine Logikänderung, keine Impose-Engine, Bottom-Navigation unverändert

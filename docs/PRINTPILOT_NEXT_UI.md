@@ -4367,3 +4367,15 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die sichtbaren Nutzenrechner-Felder bleiben **Druckbogen**, **Endformat**, **Rand**, **Gap X**, **Gap Y** und **Raster**; ein sichtbares Greifer-Feld gibt es weiterhin nicht.
 - Formularsektionen verlieren innere Zell-Borders am unteren Abschluss, damit äußere Panel-Radien und Rahmen nicht doppelt oder abgeschnitten wirken.
 - Keine Änderung an Farben, Schriftgrößen, Kalkulationslogik, Nutzenberechnung, PDF-/Printlayout oder Bottom-Navigation.
+
+## Sprint 61.14 – Produktart-Dropdown, Fokuszustand und Nutzenrechner-Seitenlayout
+
+- Korrektur nach Sichtprüfung der Sprint-61.13-Maske.
+- Das Select-Feld **Produktart** erhält eine stabilere Kontrollhöhe, sauberen Innenabstand und einen sichtbaren Pfeilbereich, damit Dropdowns nicht angeschnitten wirken.
+- Der Fokuszustand in Eingabezeilen wurde reduziert: kein großer linker blauer Balken mehr, sondern nur noch ein dezenter blauer Feldrahmen bzw. Fokus-Glow am aktiven Control.
+- Die Nutzenrechner-Toolbox sitzt nun links neben der Nutzenvorschau statt gedrängt oberhalb der Vorschau.
+- Die Toolbox ist vertikal gegliedert: **Druckbogen**, **Endformat**, danach **Rand / Raster** nebeneinander und zuletzt **Gap X / Gap Y** nebeneinander; darunter folgen **Basis**, **Drehung** und **Modus** als eigene Bediengruppen.
+- Das sichtbare **Greifer**-Feld bleibt entfernt; die sichtbaren Abstandsfelder heißen weiterhin **Gap X** und **Gap Y**.
+- Die Nutzenvorschau clippt die eingebettete Motivvorschau optisch auf das Endformat. Vorhandene Schnittmarken in der Quelldatei werden dadurch in der Bildschirmvorschau ausgeblendet, damit Anwender die PDF-Schnittmarken nicht mit Gap-/Nutzenabständen verwechseln.
+- Diese Beschneidung betrifft nur die Vorschauanzeige, nicht die Originaldatei, die Kalkulationslogik, die echte Nutzenberechnung oder spätere Produktions-/PDF-Ausgaben.
+- Keine Änderung an Farben, Schriftgrößen, PDF-/Printlayout oder Bottom-Navigation.

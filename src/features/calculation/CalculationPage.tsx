@@ -2884,7 +2884,7 @@ function CalculationSheetPreview({
               aria-label={isUsed ? `Nutzen ${cell}` : `leerer Platz ${cell}`}
             >
               {isUsed && previewImage ? (
-                <span className="pp-calc-sheet-preview__artwork">
+                <span className="pp-calc-sheet-preview__artwork pp-calc-sheet-preview__artwork--trimmed">
                   <img src={previewImage} alt={previewAlt} decoding="async" />
                 </span>
               ) : null}
@@ -2956,7 +2956,7 @@ function ImpositionCalculatorPanel({
   return (
     <div className="pp-imposition-calculator pp-imposition-calculator--workbench">
       <div className="pp-imposition-calculator__editor">
-        <div className="pp-imposition-toolbar" aria-label="Nutzenrechner-Steuerung">
+        <div className="pp-imposition-toolbar pp-imposition-toolbar--side" aria-label="Nutzenrechner-Steuerung">
           <div className="pp-imposition-toolbar__line pp-imposition-toolbar__line--numbers">
             <div className="pp-imposition-tool pp-imposition-tool--pair" data-calculation-field="printSheetFormat">
               <span className="pp-imposition-tool__label">Druckbogen</span>
@@ -2998,63 +2998,66 @@ function ImpositionCalculatorPanel({
               </span>
             </div>
 
-            <label className="pp-imposition-tool pp-imposition-tool--number" data-calculation-field="impositionMarginMm">
-              <span className="pp-imposition-tool__label">Rand</span>
-              <span className="pp-imposition-tool__number">
-                <input
-                  value={draft.impositionMarginMm}
-                  onChange={(event) => onDraftChange("impositionMarginMm")(event.target.value)}
-                  aria-label="Bogenrand"
-                  inputMode="decimal"
-                />
-                <small>mm</small>
-              </span>
-            </label>
+            <div className="pp-imposition-toolbar__field-row pp-imposition-toolbar__field-row--compact">
+              <label className="pp-imposition-tool pp-imposition-tool--number" data-calculation-field="impositionMarginMm">
+                <span className="pp-imposition-tool__label">Rand</span>
+                <span className="pp-imposition-tool__number">
+                  <input
+                    value={draft.impositionMarginMm}
+                    onChange={(event) => onDraftChange("impositionMarginMm")(event.target.value)}
+                    aria-label="Bogenrand"
+                    inputMode="decimal"
+                  />
+                  <small>mm</small>
+                </span>
+              </label>
 
+              <div className="pp-imposition-tool pp-imposition-tool--pair pp-imposition-tool--raster">
+                <span className="pp-imposition-tool__label">Raster</span>
+                <span className="pp-imposition-tool__pair">
+                  <input
+                    value={draft.impositionManualColumns}
+                    onChange={(event) => onDraftChange("impositionManualColumns")(event.target.value)}
+                    aria-label="Manuelle Spalten"
+                    inputMode="numeric"
+                  />
+                  <i aria-hidden="true">×</i>
+                  <input
+                    value={draft.impositionManualRows}
+                    onChange={(event) => onDraftChange("impositionManualRows")(event.target.value)}
+                    aria-label="Manuelle Reihen"
+                    inputMode="numeric"
+                  />
+                </span>
+              </div>
+            </div>
 
-            <label className="pp-imposition-tool pp-imposition-tool--number" data-calculation-field="impositionGapXMm">
-              <span className="pp-imposition-tool__label">Gap X</span>
-              <span className="pp-imposition-tool__number">
-                <input
-                  value={draft.impositionGapXMm}
-                  onChange={(event) => onDraftChange("impositionGapXMm")(event.target.value)}
-                  aria-label="Gap X-Achse"
-                  inputMode="decimal"
-                />
-                <small>mm</small>
-              </span>
-            </label>
+            <div className="pp-imposition-toolbar__field-row pp-imposition-toolbar__field-row--compact">
+              <label className="pp-imposition-tool pp-imposition-tool--number" data-calculation-field="impositionGapXMm">
+                <span className="pp-imposition-tool__label">Gap X</span>
+                <span className="pp-imposition-tool__number">
+                  <input
+                    value={draft.impositionGapXMm}
+                    onChange={(event) => onDraftChange("impositionGapXMm")(event.target.value)}
+                    aria-label="Gap X-Achse"
+                    inputMode="decimal"
+                  />
+                  <small>mm</small>
+                </span>
+              </label>
 
-            <label className="pp-imposition-tool pp-imposition-tool--number" data-calculation-field="impositionGapYMm">
-              <span className="pp-imposition-tool__label">Gap Y</span>
-              <span className="pp-imposition-tool__number">
-                <input
-                  value={draft.impositionGapYMm}
-                  onChange={(event) => onDraftChange("impositionGapYMm")(event.target.value)}
-                  aria-label="Gap Y-Achse"
-                  inputMode="decimal"
-                />
-                <small>mm</small>
-              </span>
-            </label>
-
-            <div className="pp-imposition-tool pp-imposition-tool--pair pp-imposition-tool--raster">
-              <span className="pp-imposition-tool__label">Raster</span>
-              <span className="pp-imposition-tool__pair">
-                <input
-                  value={draft.impositionManualColumns}
-                  onChange={(event) => onDraftChange("impositionManualColumns")(event.target.value)}
-                  aria-label="Manuelle Spalten"
-                  inputMode="numeric"
-                />
-                <i aria-hidden="true">×</i>
-                <input
-                  value={draft.impositionManualRows}
-                  onChange={(event) => onDraftChange("impositionManualRows")(event.target.value)}
-                  aria-label="Manuelle Reihen"
-                  inputMode="numeric"
-                />
-              </span>
+              <label className="pp-imposition-tool pp-imposition-tool--number" data-calculation-field="impositionGapYMm">
+                <span className="pp-imposition-tool__label">Gap Y</span>
+                <span className="pp-imposition-tool__number">
+                  <input
+                    value={draft.impositionGapYMm}
+                    onChange={(event) => onDraftChange("impositionGapYMm")(event.target.value)}
+                    aria-label="Gap Y-Achse"
+                    inputMode="decimal"
+                  />
+                  <small>mm</small>
+                </span>
+              </label>
             </div>
           </div>
 

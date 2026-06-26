@@ -26670,3 +26670,212 @@ body {
     min-width: 0 !important;
   }
 }
+
+/* Sprint 61.9 – Formularraster final stabilisieren
+   Korrektur zu Sprint 61.8: Die Werte-Achse bleibt bündig, aber die normalen
+   Vierer-Raster werden in der Kalkulation als zwei stabile Feldspalten geführt.
+   Dadurch werden Labels nicht mehr abgeschnitten, laufen nicht in Eingabefelder
+   und lange deutsche Fachbegriffe bleiben lesbar. */
+.pp-calculation-page {
+  --pp-calc-form-label-column: 224px;
+  --pp-calc-form-label-column-compact: 196px;
+  --pp-calc-form-field-min-width: 0px;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-grid--four,
+.pp-calculation-page .pp-calc-input-grid--four {
+  grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+  align-items: start !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field--wide,
+.pp-calculation-page .pp-calc-input-field,
+.pp-calculation-page .pp-calc-input-field--wide,
+.pp-calculation-page .pp-calc-dimension-field,
+.pp-calculation-page .pp-calc-unit-field,
+.pp-calculation-page .pp-calc-choice-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field {
+  grid-template-columns: minmax(var(--pp-calc-form-label-column), var(--pp-calc-form-label-column)) minmax(var(--pp-calc-form-field-min-width), 1fr) !important;
+  column-gap: 12px !important;
+  overflow: visible !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field--wide,
+.pp-calculation-page .pp-calc-input-field--wide {
+  grid-column: 1 / -1 !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span,
+.pp-calculation-page .pp-calc-input-field span,
+.pp-calculation-page .pp-calc-dimension-field legend,
+.pp-calculation-page .pp-calc-choice-field legend,
+.pp-calculation-page .pp-calc-unit-field > span:first-child,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field legend,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field legend,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field > span:first-child {
+  width: var(--pp-calc-form-label-column) !important;
+  min-width: var(--pp-calc-form-label-column) !important;
+  max-width: var(--pp-calc-form-label-column) !important;
+  overflow: visible !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  hyphens: manual !important;
+  text-overflow: clip !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span strong,
+.pp-calculation-page .pp-calc-input-field span strong {
+  display: block !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+  white-space: normal !important;
+  word-break: normal !important;
+  overflow-wrap: break-word !important;
+  hyphens: manual !important;
+  text-overflow: clip !important;
+  line-height: 1.16 !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field input,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field select,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field textarea,
+.pp-calculation-page .pp-calc-input-field input,
+.pp-calculation-page .pp-calc-input-field select,
+.pp-calculation-page .pp-calc-input-field textarea {
+  min-width: 0 !important;
+  width: 100% !important;
+  justify-self: stretch !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field small,
+.pp-calculation-page .pp-calc-input-field small {
+  grid-column: 2 !important;
+  max-width: 100% !important;
+  overflow-wrap: break-word !important;
+}
+
+/* Nutzenrechner: Steuerleisten dürfen umbrechen, statt die Buttons oder Werte
+   zusammenzudrücken. Die Logik und Schriftgrößen bleiben unverändert. */
+.pp-calculation-page .pp-imposition-toolbar,
+.pp-calculation-page .pp-imposition-toolbar__line,
+.pp-calculation-page .pp-imposition-toolbar__line--numbers,
+.pp-calculation-page .pp-imposition-toolbar__line--modes {
+  overflow: visible !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar__line--numbers,
+.pp-calculation-page .pp-imposition-toolbar__line--modes {
+  display: grid !important;
+  grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)) !important;
+  align-items: stretch !important;
+  gap: 8px !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar__line--modes {
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)) !important;
+}
+
+.pp-calculation-page .pp-imposition-tool,
+.pp-calculation-page .pp-imposition-segment,
+.pp-calculation-page .pp-imposition-tool--pair[data-calculation-field="printSheetFormat"],
+.pp-calculation-page .pp-imposition-tool--pair[data-calculation-field="finalFormat"],
+.pp-calculation-page .pp-imposition-tool--number,
+.pp-calculation-page .pp-imposition-tool--raster,
+.pp-calculation-page .pp-imposition-segment[data-calculation-field="impositionUseBleed"],
+.pp-calculation-page .pp-imposition-segment[data-calculation-field="impositionRotationMode"],
+.pp-calculation-page .pp-imposition-segment[data-calculation-field="impositionRasterMode"] {
+  width: auto !important;
+  min-width: 0 !important;
+  max-width: none !important;
+  flex: initial !important;
+  flex-basis: auto !important;
+  overflow: visible !important;
+}
+
+.pp-calculation-page .pp-imposition-tool__label,
+.pp-calculation-page .pp-imposition-segment > span {
+  flex: 0 0 auto !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+.pp-calculation-page .pp-imposition-tool__pair,
+.pp-calculation-page .pp-imposition-tool__number,
+.pp-calculation-page .pp-imposition-segment > div {
+  min-width: 0 !important;
+  max-width: 100% !important;
+  overflow: visible !important;
+}
+
+.pp-calculation-page .pp-imposition-segment button {
+  min-width: 150px !important;
+  max-width: 100% !important;
+  white-space: normal !important;
+}
+
+.pp-calculation-page .pp-imposition-segment[data-calculation-field="impositionRasterMode"] button {
+  min-width: 220px !important;
+}
+
+.pp-calculation-page .pp-imposition-tool__pair input,
+.pp-calculation-page .pp-imposition-tool__number input {
+  min-width: 58px !important;
+}
+
+@media (max-width: 1280px) {
+  .pp-calculation-page {
+    --pp-calc-form-label-column: var(--pp-calc-form-label-column-compact);
+  }
+}
+
+@media (max-width: 920px) {
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-grid--four,
+  .pp-calculation-page .pp-calc-input-grid--four {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-calculation-page {
+    --pp-calc-form-label-column: auto;
+  }
+
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field--wide,
+  .pp-calculation-page .pp-calc-input-field,
+  .pp-calculation-page .pp-calc-input-field--wide,
+  .pp-calculation-page .pp-calc-dimension-field,
+  .pp-calculation-page .pp-calc-unit-field,
+  .pp-calculation-page .pp-calc-choice-field,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span,
+  .pp-calculation-page .pp-calc-input-field span,
+  .pp-calculation-page .pp-calc-dimension-field legend,
+  .pp-calculation-page .pp-calc-choice-field legend,
+  .pp-calculation-page .pp-calc-unit-field > span:first-child,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field legend,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field legend,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field > span:first-child,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field small,
+  .pp-calculation-page .pp-calc-input-field small {
+    grid-column: auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  .pp-calculation-page .pp-imposition-toolbar__line--numbers,
+  .pp-calculation-page .pp-imposition-toolbar__line--modes {
+    grid-template-columns: 1fr !important;
+  }
+}

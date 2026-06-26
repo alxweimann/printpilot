@@ -4335,3 +4335,11 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Ergebnis- und Variantenanzeige im Nutzenrechner verwendet ebenfalls die Bezeichnung **Gap** statt Zwischenschnitt/Schnitt.
 - Die unteren Radiuskanten von Formular-, Ergebnis- und Nutzenrechner-Kästen wurden stabilisiert, damit Panel- und Eingabefeld-Rundungen vollständig erscheinen.
 - Farben, Schriftgrößen, Kalkulationslogik, Nutzenberechnung, PDF-/Printlayout und Bottom-Navigation wurden nicht verändert.
+
+## Sprint 61.11 – Panel-Radien sauber schließen
+
+- Reiner Radius-/Kanten-Fix für Kalkulationsmasken und Nutzenrechner.
+- Äußere Formular-, Ergebnis- und Nutzenrechner-Kästen behalten eine saubere, geschlossene Rundung an den unteren Ecken.
+- Innere Grid-Zeilen, Tabellenzeilen, Linien und Hintergründe dürfen die unteren Radiuskanten nicht mehr optisch abschneiden.
+- Letzte Grid-/Tabellenzeilen verlieren harte Bottom-Borders, damit der Außenrahmen wieder als saubere Panelkontur wirkt.
+- Keine Änderung an Farben, Schriftgrößen, Inhalten, Kalkulationslogik, Nutzenberechnung, PDF-/Printlayout oder Bottom-Navigation.

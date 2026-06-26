@@ -26946,3 +26946,68 @@ body {
 .pp-calculation-page .pp-imposition-tool[data-calculation-field="impositionGapYMm"] .pp-imposition-tool__label {
   white-space: nowrap !important;
 }
+
+/* Sprint 61.11 – Panel-Radien sauber schließen
+   Korrektur zu Sprint 61.10: Die äußeren Formular- und Nutzenrechner-Kästen
+   behalten ihre ruhige Kontur, aber innere Zeilen, Borders und Hintergründe
+   dürfen die unteren Radiuskanten nicht mehr optisch anschneiden. Farben,
+   Schriftgrößen, Inhalte und Berechnungslogik bleiben unverändert. */
+.pp-calculation-page .pp-calc-form-section,
+.pp-calculation-page .pp-imposition-calculator,
+.pp-calculation-page .pp-imposition-toolbar,
+.pp-calculation-page .pp-imposition-calculator__result,
+.pp-calculation-page .pp-imposition-calculator__variants,
+.pp-calculation-page .pp-calculation-output-card {
+  position: relative !important;
+  border-radius: 14px !important;
+  overflow: hidden !important;
+  background: #ffffff !important;
+  background-clip: padding-box !important;
+  isolation: isolate !important;
+}
+
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid:last-child,
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid--four:last-child,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid:last-child,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid--four:last-child {
+  overflow: hidden !important;
+  border-radius: 0 0 13px 13px !important;
+  background-clip: padding-box !important;
+}
+
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid:last-child > .pp-calc-input-field:nth-last-child(-n + 2),
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid--four:last-child > .pp-calc-input-field:nth-last-child(-n + 2),
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid:last-child > .pp-calc-input-field:nth-last-child(-n + 2),
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid--four:last-child > .pp-calc-input-field:nth-last-child(-n + 2),
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid:last-child > .pp-calc-input-field--wide:last-child,
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid--four:last-child > .pp-calc-input-field--wide:last-child {
+  border-bottom: 0 !important;
+}
+
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid:last-child > .pp-calc-input-field:last-child,
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid--four:last-child > .pp-calc-input-field:last-child,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid:last-child > .pp-calc-input-field:last-child,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid--four:last-child > .pp-calc-input-field:last-child {
+  border-bottom-right-radius: 13px !important;
+}
+
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid:last-child > .pp-calc-input-field:nth-last-child(2),
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid--four:last-child > .pp-calc-input-field:nth-last-child(2),
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid:last-child > .pp-calc-input-field:nth-last-child(2),
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid--four:last-child > .pp-calc-input-field:nth-last-child(2),
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid:last-child > .pp-calc-input-field--wide:last-child,
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid--four:last-child > .pp-calc-input-field--wide:last-child {
+  border-bottom-left-radius: 13px !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar,
+.pp-calculation-page .pp-imposition-calculator__result,
+.pp-calculation-page .pp-imposition-calculator__variants {
+  clip-path: inset(0 round 14px) !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar__line:last-child,
+.pp-calculation-page .pp-imposition-calculator__variants table tr:last-child > *,
+.pp-calculation-page .pp-calc-finishing-table tbody tr:last-child > * {
+  border-bottom: 0 !important;
+}

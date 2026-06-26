@@ -26462,3 +26462,92 @@ body {
     min-width: 100% !important;
   }
 }
+
+/* Sprint 61.7 – Formularraster bündig ausrichten
+   Breite Felder wie Rechnung an, Lieferadresse, Zahlungsbedingungen oder
+   Produktionshinweise dürfen über beide Inhalts-Spalten laufen, starten aber
+   mit derselben festen Labelspalte wie normale Felder. Dadurch beginnt jedes
+   Eingabefeld im jeweiligen Tab bündig auf derselben Wert-Achse. */
+.pp-calculation-page {
+  --pp-calc-form-label-column: 166px;
+  --pp-calc-form-label-column-compact: 154px;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field--wide,
+.pp-calculation-page .pp-calc-input-field,
+.pp-calculation-page .pp-calc-input-field--wide {
+  grid-template-columns: var(--pp-calc-form-label-column) minmax(0, 1fr) !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field--wide,
+.pp-calculation-page .pp-calc-input-field--wide {
+  grid-column: 1 / -1 !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span,
+.pp-calculation-page .pp-calc-input-field span {
+  width: var(--pp-calc-form-label-column) !important;
+  max-width: var(--pp-calc-form-label-column) !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field input,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field select,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field textarea,
+.pp-calculation-page .pp-calc-input-field input,
+.pp-calculation-page .pp-calc-input-field select,
+.pp-calculation-page .pp-calc-input-field textarea {
+  justify-self: stretch !important;
+}
+
+.pp-calculation-page .pp-calc-dimension-field,
+.pp-calculation-page .pp-calc-unit-field,
+.pp-calculation-page .pp-calc-choice-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field {
+  grid-template-columns: var(--pp-calc-form-label-column) minmax(0, 1fr) !important;
+}
+
+.pp-calculation-page .pp-calc-dimension-field legend,
+.pp-calculation-page .pp-calc-choice-field legend,
+.pp-calculation-page .pp-calc-unit-field > span:first-child,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field legend,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field legend,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field > span:first-child {
+  width: var(--pp-calc-form-label-column) !important;
+  max-width: var(--pp-calc-form-label-column) !important;
+}
+
+@media (max-width: 1280px) {
+  .pp-calculation-page {
+    --pp-calc-form-label-column: var(--pp-calc-form-label-column-compact);
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field--wide,
+  .pp-calculation-page .pp-calc-input-field,
+  .pp-calculation-page .pp-calc-input-field--wide,
+  .pp-calculation-page .pp-calc-dimension-field,
+  .pp-calculation-page .pp-calc-unit-field,
+  .pp-calculation-page .pp-calc-choice-field,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field span,
+  .pp-calculation-page .pp-calc-input-field span,
+  .pp-calculation-page .pp-calc-dimension-field legend,
+  .pp-calculation-page .pp-calc-choice-field legend,
+  .pp-calculation-page .pp-calc-unit-field > span:first-child,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field legend,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field legend,
+  .pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field > span:first-child {
+    width: auto !important;
+    max-width: none !important;
+  }
+}

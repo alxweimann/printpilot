@@ -1085,3 +1085,10 @@ export const sprint616Pattern = {
   description:
     "Die Kalkulations-Tabs erhalten Layout-Kollisionsschutz: Weiterverarbeitung mit horizontal lesbarer Aktiv-Spalte und festen Spaltenbreiten, Nutzenrechner-Toolbar mit robusten Flex-Zeilen und Mindestbreiten, längere Labels ohne buchstabenweisen Umbruch sowie zusätzlicher Sicherheitsabstand zur Bottom-Navigation. Farben, Schriftgrößen, Kalkulationslogik und PDF-/Printlayout bleiben unverändert.",
 };
+
+export const sprint617Pattern = {
+  id: "calculation-form-grid-axis-alignment",
+  sprint: "61.7",
+  description:
+    "Breite Kalkulationsfelder wie Rechnung an, Lieferadresse, Zahlungsbedingungen oder Produktionshinweise verwenden dieselbe feste Labelspalte wie normale Felder. Die Werte-/Eingabefeld-Achse bleibt dadurch in allen Tabs bündig, auch wenn Felder über beide Spalten laufen.",
+};

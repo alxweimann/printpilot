@@ -4299,3 +4299,13 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Formular-Labelspalten erhalten mehr Breite für lange Begriffe wie Weiterverarbeitungskosten, Maschinenmakulatur oder Gesamtmarge / Deckungsbeitrag.
 - Die Kalkulationsseite erhält unten mehr Sicherheitsabstand, damit die Bottom-Navigation den letzten Arbeitsbereich nicht optisch bedrängt oder verdeckt.
 - Keine Änderung an Kalkulationslogik, Nutzenberechnung, Weiterverarbeitungsdaten, PDF-/Printlayout, Farben, Schriftgrößen oder Bottom-Navigation selbst.
+
+## Sprint 61.7 – Formularraster bündig ausgerichtet
+
+- Alle Kalkulations-Tabs wurden auf breite Eingabezeilen geprüft, die über beide Inhalts-Spalten laufen.
+- Breite Felder wie **Rechnung an**, **Lieferadresse**, **Kundenhinweis**, **Interne Notiz**, **Verpackung**, **Druckdatei**, **Ablageort / Link**, **Produktionshinweis**, **Zahlungsbedingungen**, **Dokumentenfuß**, **Abrechnung** und **Rechnungskontrolle** starten nun mit derselben festen Labelspalte wie normale Felder.
+- Dadurch beginnt die Werte-/Eingabefeld-Achse auch bei `wide`-Feldern bündig mit den übrigen Eingabefeldern im Tab und rutscht nicht mehr zu weit nach rechts.
+- Die Regel gilt zentral über das Kalkulations-Formularraster und nicht als Einzelkorrektur pro Feld.
+- Nutzenrechner-Splitfelder und Choice-/Segmentfelder übernehmen dieselbe feste Labelspalte, damit auch dort Label und Eingabebereich nicht abhängig von der Gesamtbreite auseinanderlaufen.
+- Bei kleinen Viewports fällt das Raster weiterhin einspaltig zurück, damit keine künstliche horizontale Enge entsteht.
+- Keine Änderung an Farben, Schriftgrößen, Kalkulationslogik, Nutzenberechnung, Weiterverarbeitungsdaten, PDF-/Printlayout oder Bottom-Navigation.

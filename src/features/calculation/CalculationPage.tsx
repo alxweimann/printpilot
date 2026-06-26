@@ -2525,153 +2525,6 @@ function CalculationSoftwareDialog({
   return createPortal(dialogMarkup, document.body);
 }
 
-function DimensionPairField({
-  field,
-  label,
-  widthLabel,
-  heightLabel,
-  widthValue,
-  heightValue,
-  onWidthChange,
-  onHeightChange,
-}: {
-  field?: keyof CalculationDraft;
-  label: string;
-  widthLabel: string;
-  heightLabel: string;
-  widthValue: string;
-  heightValue: string;
-  onWidthChange: (value: string) => void;
-  onHeightChange: (value: string) => void;
-}) {
-  const activeValidationFields = useContext(CalculationFieldValidationContext);
-  const isMissingRequired = Boolean(
-    field
-      && activeValidationFields.has(String(field))
-      && (isDraftValueMissing(widthValue) || isDraftValueMissing(heightValue)),
-  );
-
-  return (
-    <div
-      className={[
-        "pp-calc-input-field pp-calc-dimension-field pp-calc-input-field--control-card",
-        isMissingRequired ? "is-required-missing" : "",
-      ].filter(Boolean).join(" ")}
-      data-calculation-field={field ? String(field) : undefined}
-    >
-      <div className="pp-calc-input-field__label">
-        <strong>{label}</strong>
-      </div>
-      <div className="pp-calc-dimension-field__values">
-        <label>
-          <em>{widthLabel}</em>
-          <input
-            value={widthValue}
-            onChange={(event) => onWidthChange(event.target.value)}
-            aria-label={`${label} ${widthLabel}`}
-            inputMode="decimal"
-          />
-          <small>mm</small>
-        </label>
-        <span aria-hidden="true">×</span>
-        <label>
-          <em>{heightLabel}</em>
-          <input
-            value={heightValue}
-            onChange={(event) => onHeightChange(event.target.value)}
-            aria-label={`${label} ${heightLabel}`}
-            inputMode="decimal"
-          />
-          <small>mm</small>
-        </label>
-      </div>
-    </div>
-  );
-}
-
-function UnitNumberField({
-  field,
-  label,
-  value,
-  unit,
-  onValueChange,
-}: {
-  field?: keyof CalculationDraft;
-  label: string;
-  value: string;
-  unit: string;
-  onValueChange: (value: string) => void;
-}) {
-  const activeValidationFields = useContext(CalculationFieldValidationContext);
-  const isMissingRequired = Boolean(field && activeValidationFields.has(String(field)) && isDraftValueMissing(value));
-
-  return (
-    <label
-      className={[
-        "pp-calc-input-field pp-calc-unit-field",
-        isMissingRequired ? "is-required-missing" : "",
-      ].filter(Boolean).join(" ")}
-      data-calculation-field={field ? String(field) : undefined}
-    >
-      <span>
-        <strong>{label}</strong>
-      </span>
-      <span className="pp-calc-unit-field__control">
-        <input
-          value={value}
-          onChange={(event) => onValueChange(event.target.value)}
-          aria-invalid={isMissingRequired || undefined}
-          inputMode="decimal"
-        />
-        <small>{unit}</small>
-      </span>
-    </label>
-  );
-}
-
-function ChoiceButtonField({
-  field,
-  label,
-  value,
-  options,
-  onValueChange,
-}: {
-  field?: keyof CalculationDraft;
-  label: string;
-  value: string;
-  options: Array<{ value: string; label: string }>;
-  onValueChange: (value: string) => void;
-}) {
-  const activeValidationFields = useContext(CalculationFieldValidationContext);
-  const isMissingRequired = Boolean(field && activeValidationFields.has(String(field)) && isDraftValueMissing(value));
-
-  return (
-    <div
-      className={[
-        "pp-calc-input-field pp-calc-choice-field pp-calc-input-field--wide pp-calc-input-field--control-card",
-        isMissingRequired ? "is-required-missing" : "",
-      ].filter(Boolean).join(" ")}
-      data-calculation-field={field ? String(field) : undefined}
-    >
-      <div className="pp-calc-input-field__label">
-        <strong>{label}</strong>
-      </div>
-      <div className="pp-calc-choice-field__options" role="group" aria-label={label}>
-        {options.map((option) => (
-          <button
-            key={option.value}
-            type="button"
-            className={option.value === value ? "is-active" : undefined}
-            onClick={() => onValueChange(option.value)}
-          >
-            {option.label}
-          </button>
-        ))}
-      </div>
-    </div>
-  );
-}
-
 function CalculationField({
   field,
   label,
@@ -3011,83 +2864,156 @@ function ImpositionCalculatorPanel({
   return (
     <div className="pp-imposition-calculator pp-imposition-calculator--workbench">
       <div className="pp-imposition-calculator__editor">
-        <div className="pp-imposition-calculator__controls pp-imposition-calculator__controls--refined" aria-label="Nutzenrechner-Steuerung">
-          <DimensionPairField
-            field="printSheetFormat"
-            label="Druckbogen"
-            widthLabel="Breite"
-            heightLabel="Höhe"
-            widthValue={sheetWidthValue}
-            heightValue={sheetHeightValue}
-            onWidthChange={(value) => updateSheetDimension("width", value)}
-            onHeightChange={(value) => updateSheetDimension("height", value)}
-          />
-          <DimensionPairField
-            field="finalFormat"
-            label="Endformat"
-            widthLabel="Breite"
-            heightLabel="Höhe"
-            widthValue={finalWidthValue}
-            heightValue={finalHeightValue}
-            onWidthChange={(value) => updateFinalDimension("width", value)}
-            onHeightChange={(value) => updateFinalDimension("height", value)}
-          />
-          <UnitNumberField
-            field="impositionMarginMm"
-            label="Bogenrand"
-            value={draft.impositionMarginMm}
-            unit="mm"
-            onValueChange={onDraftChange("impositionMarginMm")}
-          />
-          <UnitNumberField
-            field="impositionGapXMm"
-            label="Zwischenschnitt X-Achse"
-            value={draft.impositionGapXMm}
-            unit="mm"
-            onValueChange={onDraftChange("impositionGapXMm")}
-          />
-          <UnitNumberField
-            field="impositionGapYMm"
-            label="Zwischenschnitt Y-Achse"
-            value={draft.impositionGapYMm}
-            unit="mm"
-            onValueChange={onDraftChange("impositionGapYMm")}
-          />
-          <UnitNumberField
-            field="impositionManualColumns"
-            label="Manuelle Spalten"
-            value={draft.impositionManualColumns}
-            unit="Spalten"
-            onValueChange={onDraftChange("impositionManualColumns")}
-          />
-          <UnitNumberField
-            field="impositionManualRows"
-            label="Manuelle Reihen"
-            value={draft.impositionManualRows}
-            unit="Reihen"
-            onValueChange={onDraftChange("impositionManualRows")}
-          />
-          <ChoiceButtonField
-            field="impositionUseBleed"
-            label="Berechnungsbasis"
-            value={draft.impositionUseBleed}
-            options={impositionBleedModeOptions}
-            onValueChange={onDraftChange("impositionUseBleed")}
-          />
-          <ChoiceButtonField
-            field="impositionRotationMode"
-            label="Drehung"
-            value={draft.impositionRotationMode}
-            options={impositionRotationModeOptions}
-            onValueChange={onDraftChange("impositionRotationMode")}
-          />
-          <ChoiceButtonField
-            field="impositionRasterMode"
-            label="Rastermodus"
-            value={draft.impositionRasterMode}
-            options={impositionRasterModeOptions}
-            onValueChange={onDraftChange("impositionRasterMode")}
-          />
+        <div className="pp-imposition-toolbar" aria-label="Nutzenrechner-Steuerung">
+          <div className="pp-imposition-toolbar__line pp-imposition-toolbar__line--numbers">
+            <div className="pp-imposition-tool pp-imposition-tool--pair" data-calculation-field="printSheetFormat">
+              <span className="pp-imposition-tool__label">Druckbogen</span>
+              <span className="pp-imposition-tool__pair">
+                <input
+                  value={sheetWidthValue}
+                  onChange={(event) => updateSheetDimension("width", event.target.value)}
+                  aria-label="Druckbogen Breite"
+                  inputMode="decimal"
+                />
+                <i aria-hidden="true">×</i>
+                <input
+                  value={sheetHeightValue}
+                  onChange={(event) => updateSheetDimension("height", event.target.value)}
+                  aria-label="Druckbogen Höhe"
+                  inputMode="decimal"
+                />
+                <small>mm</small>
+              </span>
+            </div>
+
+            <div className="pp-imposition-tool pp-imposition-tool--pair" data-calculation-field="finalFormat">
+              <span className="pp-imposition-tool__label">Endformat</span>
+              <span className="pp-imposition-tool__pair">
+                <input
+                  value={finalWidthValue}
+                  onChange={(event) => updateFinalDimension("width", event.target.value)}
+                  aria-label="Endformat Breite"
+                  inputMode="decimal"
+                />
+                <i aria-hidden="true">×</i>
+                <input
+                  value={finalHeightValue}
+                  onChange={(event) => updateFinalDimension("height", event.target.value)}
+                  aria-label="Endformat Höhe"
+                  inputMode="decimal"
+                />
+                <small>mm</small>
+              </span>
+            </div>
+
+            <label className="pp-imposition-tool pp-imposition-tool--number" data-calculation-field="impositionMarginMm">
+              <span className="pp-imposition-tool__label">Rand</span>
+              <span className="pp-imposition-tool__number">
+                <input
+                  value={draft.impositionMarginMm}
+                  onChange={(event) => onDraftChange("impositionMarginMm")(event.target.value)}
+                  aria-label="Bogenrand"
+                  inputMode="decimal"
+                />
+                <small>mm</small>
+              </span>
+            </label>
+
+            <label className="pp-imposition-tool pp-imposition-tool--number" data-calculation-field="impositionGapXMm">
+              <span className="pp-imposition-tool__label">Schnitt X</span>
+              <span className="pp-imposition-tool__number">
+                <input
+                  value={draft.impositionGapXMm}
+                  onChange={(event) => onDraftChange("impositionGapXMm")(event.target.value)}
+                  aria-label="Zwischenschnitt X-Achse"
+                  inputMode="decimal"
+                />
+                <small>mm</small>
+              </span>
+            </label>
+
+            <label className="pp-imposition-tool pp-imposition-tool--number" data-calculation-field="impositionGapYMm">
+              <span className="pp-imposition-tool__label">Schnitt Y</span>
+              <span className="pp-imposition-tool__number">
+                <input
+                  value={draft.impositionGapYMm}
+                  onChange={(event) => onDraftChange("impositionGapYMm")(event.target.value)}
+                  aria-label="Zwischenschnitt Y-Achse"
+                  inputMode="decimal"
+                />
+                <small>mm</small>
+              </span>
+            </label>
+
+            <div className="pp-imposition-tool pp-imposition-tool--pair pp-imposition-tool--raster">
+              <span className="pp-imposition-tool__label">Raster</span>
+              <span className="pp-imposition-tool__pair">
+                <input
+                  value={draft.impositionManualColumns}
+                  onChange={(event) => onDraftChange("impositionManualColumns")(event.target.value)}
+                  aria-label="Manuelle Spalten"
+                  inputMode="numeric"
+                />
+                <i aria-hidden="true">×</i>
+                <input
+                  value={draft.impositionManualRows}
+                  onChange={(event) => onDraftChange("impositionManualRows")(event.target.value)}
+                  aria-label="Manuelle Reihen"
+                  inputMode="numeric"
+                />
+              </span>
+            </div>
+          </div>
+
+          <div className="pp-imposition-toolbar__line pp-imposition-toolbar__line--modes">
+            <div className="pp-imposition-segment" data-calculation-field="impositionUseBleed">
+              <span>Basis</span>
+              <div role="group" aria-label="Berechnungsbasis">
+                {impositionBleedModeOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={option.value === draft.impositionUseBleed ? "is-active" : undefined}
+                    onClick={() => onDraftChange("impositionUseBleed")(option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="pp-imposition-segment" data-calculation-field="impositionRotationMode">
+              <span>Drehung</span>
+              <div role="group" aria-label="Drehung">
+                {impositionRotationModeOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={option.value === draft.impositionRotationMode ? "is-active" : undefined}
+                    onClick={() => onDraftChange("impositionRotationMode")(option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="pp-imposition-segment" data-calculation-field="impositionRasterMode">
+              <span>Modus</span>
+              <div role="group" aria-label="Rastermodus">
+                {impositionRasterModeOptions.map((option) => (
+                  <button
+                    key={option.value}
+                    type="button"
+                    className={option.value === draft.impositionRasterMode ? "is-active" : undefined}
+                    onClick={() => onDraftChange("impositionRasterMode")(option.value)}
+                  >
+                    {option.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+          </div>
         </div>
       </div>
 

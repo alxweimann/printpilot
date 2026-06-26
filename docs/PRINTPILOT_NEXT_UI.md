@@ -4127,3 +4127,12 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Druckbogen-Vorschau bleibt über die volle verfügbare Breite angelegt und erhält ein nochmals dezenteres Hintergrundraster.
 - Der Bereich bleibt frei von Erklärungskästen, Statusrauschen, Pflicht-/Optional-Badges und dauerhaften Systemhinweisen.
 - Keine Änderung an Nutzenberechnung, physikalischer Skalierung, Zentrierung, Variantenlogik, Impose-Modul oder Bottom-Navigation.
+
+## Sprint 55.12 – Nutzenrechner-Toolbar neu strukturieren
+
+- Die Toolbar im Reiter **04 Nutzenrechner** wurde nicht weiter zusammengedrückt, sondern als saubere Inline-Werkzeugleiste neu aufgebaut.
+- Formatwerte laufen jetzt als kompakte technische Controls: **Druckbogen 450 × 320 mm**, **Endformat 85 × 55 mm**, **Rand**, **Schnitt X/Y** und **Raster**.
+- Berechnungsbasis, Drehung und Rastermodus werden als schlanke Segment-Controls geführt.
+- Die Werte bleiben lesbar; die Toolbar wirkt weniger wie Touch-/Kachel-UI und mehr wie ein Profi-Werkzeug.
+- Der Vorschaubogen wird optisch ca. 25 % kleiner dargestellt, bleibt aber hochauflösend und physikalisch korrekt skaliert.
+- Rechenlogik, Variantenlogik, Zentrierung, Impose-Modul, Validierungsdialog und Bottom-Navigation bleiben unverändert.

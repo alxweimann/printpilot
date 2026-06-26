@@ -4118,3 +4118,12 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Druckbogen-Vorschau nutzt darunter die volle verfügbare Breite und bleibt hochauflösend/physikalisch skaliert.
 - Der Erklärungskasten **„Nutzenplan einrichten“** wurde entfernt, weil dauerhafte Erklär- und Systemhinweise in Arbeitsmasken vermieden werden.
 - Rechenlogik, Zentrierung, Variantenlogik, Validierungsdialog und Bottom-Navigation bleiben unverändert.
+
+## Sprint 55.11 – Nutzenrechner als Profi-Toolbar verdichten
+
+- Die Steuerung im Reiter **04 Nutzenrechner** wurde nochmals von Eingabe-Karten zu einer flachen Werkzeugleiste verdichtet.
+- Die Toolbar nutzt zwei kompakte Zeilen: oben Format-, Rand-, Zwischenschnitt- und Rasterwerte; darunter Berechnungsbasis, Drehung und Rastermodus.
+- Eingabefelder, Einheiten und Auswahlsegmente sind deutlich flacher, damit die Druckbogen-Vorschau früher sichtbar wird.
+- Die Druckbogen-Vorschau bleibt über die volle verfügbare Breite angelegt und erhält ein nochmals dezenteres Hintergrundraster.
+- Der Bereich bleibt frei von Erklärungskästen, Statusrauschen, Pflicht-/Optional-Badges und dauerhaften Systemhinweisen.
+- Keine Änderung an Nutzenberechnung, physikalischer Skalierung, Zentrierung, Variantenlogik, Impose-Modul oder Bottom-Navigation.

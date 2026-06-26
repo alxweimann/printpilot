@@ -24122,3 +24122,205 @@ button.pp-software-dialog__item:focus-visible {
     grid-column: auto !important;
   }
 }
+
+/* Sprint 55.11: Nutzenrechner als flache Profi-Toolbar */
+.pp-imposition-calculator--workbench {
+  gap: 9px !important;
+}
+
+.pp-imposition-calculator__editor {
+  grid-column: 1 / -1 !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.pp-imposition-calculator__controls--refined {
+  display: grid !important;
+  grid-template-columns: repeat(16, minmax(0, 1fr)) !important;
+  gap: 5px !important;
+  padding: 6px !important;
+  border: .55pt solid rgba(0, 159, 227, .16) !important;
+  border-radius: 11px !important;
+  background: rgba(255, 255, 255, .96) !important;
+  box-shadow: none !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-input-field--control-card,
+.pp-imposition-calculator__controls--refined .pp-calc-unit-field,
+.pp-imposition-calculator__controls--refined .pp-calc-choice-field,
+.pp-calculation-tab-panel .pp-imposition-calculator__controls--refined .pp-calc-choice-field {
+  display: grid !important;
+  grid-template-rows: 15px 26px !important;
+  min-height: 42px !important;
+  max-height: 42px !important;
+  padding: 0 !important;
+  border: .55pt solid rgba(0, 159, 227, .18) !important;
+  border-radius: 7px !important;
+  background: #ffffff !important;
+  overflow: hidden !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-input-field--control-card:nth-child(1),
+.pp-imposition-calculator__controls--refined .pp-calc-input-field--control-card:nth-child(2) {
+  grid-column: span 3 !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-unit-field:nth-child(3),
+.pp-imposition-calculator__controls--refined .pp-calc-unit-field:nth-child(4),
+.pp-imposition-calculator__controls--refined .pp-calc-unit-field:nth-child(5),
+.pp-imposition-calculator__controls--refined .pp-calc-unit-field:nth-child(6),
+.pp-imposition-calculator__controls--refined .pp-calc-unit-field:nth-child(7) {
+  grid-column: span 2 !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-choice-field:nth-child(8) {
+  grid-column: span 5 !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-choice-field:nth-child(9) {
+  grid-column: span 6 !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-choice-field:nth-child(10) {
+  grid-column: span 5 !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-input-field__label,
+.pp-imposition-calculator__controls--refined .pp-calc-unit-field > span:first-child {
+  min-height: 15px !important;
+  height: 15px !important;
+  padding: 3px 7px 1px !important;
+  border-bottom: .55pt solid rgba(0, 159, 227, .10) !important;
+  background: #ffffff !important;
+  font-size: 7.4px !important;
+  font-weight: 850 !important;
+  line-height: 1 !important;
+  letter-spacing: .04em !important;
+  white-space: nowrap !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-input-field__label strong,
+.pp-imposition-calculator__controls--refined .pp-calc-unit-field > span:first-child strong {
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-dimension-field__values,
+.pp-imposition-calculator__controls--refined .pp-calc-choice-field__options {
+  min-height: 26px !important;
+  height: 26px !important;
+  padding: 3px 5px !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-dimension-field__values {
+  grid-template-columns: minmax(0, 1fr) 9px minmax(0, 1fr) !important;
+  gap: 3px !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-dimension-field__values label,
+.pp-imposition-calculator__controls--refined .pp-calc-unit-field__control {
+  min-height: 20px !important;
+  height: 20px !important;
+  border-radius: 5px !important;
+  grid-template-columns: minmax(0, 1fr) 26px !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-unit-field__control {
+  margin: 3px 5px !important;
+  height: 20px !important;
+  min-height: 20px !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-dimension-field__values input,
+.pp-imposition-calculator__controls--refined .pp-calc-unit-field__control input {
+  min-height: 19px !important;
+  height: 19px !important;
+  padding: 0 6px !important;
+  font-size: 10.5px !important;
+  font-weight: 660 !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-dimension-field__values small,
+.pp-imposition-calculator__controls--refined .pp-calc-unit-field__control small {
+  padding-right: 4px !important;
+  font-size: 6.8px !important;
+  font-weight: 720 !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-dimension-field__values > span {
+  font-size: 9px !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-choice-field__options {
+  display: grid !important;
+  grid-auto-flow: column !important;
+  grid-auto-columns: minmax(0, 1fr) !important;
+  gap: 4px !important;
+}
+
+.pp-imposition-calculator__controls--refined .pp-calc-choice-field__options button {
+  flex: initial !important;
+  min-height: 20px !important;
+  height: 20px !important;
+  padding: 2px 7px !important;
+  border-radius: 5px !important;
+  font-size: 7.8px !important;
+  font-weight: 770 !important;
+  line-height: 1 !important;
+  white-space: nowrap !important;
+}
+
+.pp-imposition-calculator__preview .pp-calc-sheet-preview {
+  padding: 10px 12px 12px !important;
+}
+
+.pp-imposition-calculator__preview .pp-calc-sheet-preview__bar {
+  margin-bottom: 6px !important;
+}
+
+.pp-imposition-calculator__preview .pp-calc-sheet-preview__sheet,
+.pp-calc-sheet-preview--highres .pp-calc-sheet-preview__sheet {
+  max-width: 1380px !important;
+  background:
+    linear-gradient(90deg, rgba(0, 159, 227, .012) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(0, 159, 227, .012) 1px, transparent 1px),
+    #ffffff !important;
+  background-size: 18px 18px, 18px 18px, auto !important;
+}
+
+@media (max-width: 1280px) {
+  .pp-imposition-calculator__controls--refined {
+    grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+  }
+
+  .pp-imposition-calculator__controls--refined .pp-calc-input-field--control-card:nth-child(1),
+  .pp-imposition-calculator__controls--refined .pp-calc-input-field--control-card:nth-child(2),
+  .pp-imposition-calculator__controls--refined .pp-calc-unit-field:nth-child(3),
+  .pp-imposition-calculator__controls--refined .pp-calc-unit-field:nth-child(4),
+  .pp-imposition-calculator__controls--refined .pp-calc-unit-field:nth-child(5),
+  .pp-imposition-calculator__controls--refined .pp-calc-unit-field:nth-child(6),
+  .pp-imposition-calculator__controls--refined .pp-calc-unit-field:nth-child(7) {
+    grid-column: span 2 !important;
+  }
+
+  .pp-imposition-calculator__controls--refined .pp-calc-choice-field:nth-child(8),
+  .pp-imposition-calculator__controls--refined .pp-calc-choice-field:nth-child(9),
+  .pp-imposition-calculator__controls--refined .pp-calc-choice-field:nth-child(10) {
+    grid-column: span 4 !important;
+  }
+}
+
+@media (max-width: 760px) {
+  .pp-imposition-calculator__controls--refined {
+    grid-template-columns: 1fr !important;
+  }
+
+  .pp-imposition-calculator__controls--refined .pp-calc-input-field--control-card:nth-child(n),
+  .pp-imposition-calculator__controls--refined .pp-calc-unit-field:nth-child(n),
+  .pp-imposition-calculator__controls--refined .pp-calc-choice-field:nth-child(n) {
+    grid-column: auto !important;
+    max-height: none !important;
+  }
+}

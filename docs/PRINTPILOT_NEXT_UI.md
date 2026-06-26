@@ -4097,3 +4097,16 @@ Die Eingabefelder im Reiter **04 Nutzenrechner** wurden nochmals verdichtet. Zie
 - Auswahlbuttons für Berechnungsbasis, Drehung und Rastermodus kompakter gesetzt
 - Druckbogen-Vorschau rechts bleibt groß und unverändert physikalisch skaliert
 - keine Logikänderung, keine Impose-Engine, Bottom-Navigation unverändert
+
+## Sprint 55.9 – Nutzenrechner als kompaktes Werkzeugpanel
+
+Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, sondern als technisches Werkzeugpanel neu verdichtet. Ziel ist eine deutlich weniger klobige Bedienfläche mit mehr Raum für die Druckbogen-Vorschau.
+
+- linkes Bedienpanel weiter verschmälert und als kompakte Einstellmatrix geführt
+- Zeilenhöhe der Eingabeparameter reduziert
+- Labelspalte, Zahlenfelder und Einheiten deutlich platzsparender gesetzt
+- Druckbogen und Endformat bleiben als Breite/Höhe steuerbar, wirken aber nicht mehr wie große Kacheln
+- Bogenrand, Zwischenschnitt X/Y und manuelle Spalten/Reihen laufen als schlanke Arbeitszeilen
+- Auswahlbuttons für Berechnungsbasis, Drehung und Rastermodus als kompakte Segmente geführt
+- Druckbogen-Vorschau rechts bleibt groß und unverändert physikalisch skaliert und zentriert
+- keine Änderung an Nutzenberechnung, Variantenlogik, Impose-Modul oder Bottom-Navigation

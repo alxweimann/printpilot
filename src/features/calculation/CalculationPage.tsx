@@ -5154,7 +5154,7 @@ export function CalculationPage({ onCreateOrderDraft }: CalculationPageProps) {
                     />
                     <CalculationField
                       field="finishingCosts"
-                      label="Weiterverarbeitungskosten"
+                      label="Weiterverarb. Kosten"
                       value={draft.finishingCosts}
                       onValueChange={updateDraft("finishingCosts")}
                       badge="später"

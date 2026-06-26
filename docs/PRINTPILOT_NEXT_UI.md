@@ -4355,3 +4355,15 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Weiterverarbeitungs-Matrix wurde in Zeilenhöhe, Innenabständen und Tabellenabschluss an die übrigen Kalkulationsbereiche angeglichen.
 - GPU-/Transform-Hilfen auf Textcontainern wurden für diese Bereiche zurückgenommen, damit die UI-Typografie schärfer bleibt.
 - Keine Änderung an Farben, Schriftgrößen, Inhalten, Kalkulationslogik, Nutzenberechnung, PDF-/Printlayout oder Bottom-Navigation.
+
+
+## Sprint 61.13 – Formularabstände, Nutzenrechner-Toolbar und Panel-Kanten korrigiert
+
+- Korrektur nach Sichtprüfung der Sprint-61.12-Maske.
+- Formularzeilen erhalten wieder mehr vertikale Luft zwischen Eingabefeld und nächster Label-/Wert-Zeile, ohne die Maske insgesamt unnötig groß zu machen.
+- Breite und normale Felder behalten eine bündige Werte-Achse; Labels laufen nicht mehr in Eingabefelder hinein.
+- Das lange Label **Weiterverarb. Kosten** ersetzt die zu lange Einwort-Variante **Weiterverarbeitungskosten**, damit der Preisbereich fachlich lesbar bleibt und nicht kollidiert.
+- Die Nutzenrechner-Toolbar ist jetzt klarer gegliedert: Zahlenfelder, Basis, Drehung und Modus verwenden stabile Grid-Zeilen statt zusammengeschobener Flex-Blöcke.
+- Die sichtbaren Nutzenrechner-Felder bleiben **Druckbogen**, **Endformat**, **Rand**, **Gap X**, **Gap Y** und **Raster**; ein sichtbares Greifer-Feld gibt es weiterhin nicht.
+- Formularsektionen verlieren innere Zell-Borders am unteren Abschluss, damit äußere Panel-Radien und Rahmen nicht doppelt oder abgeschnitten wirken.
+- Keine Änderung an Farben, Schriftgrößen, Kalkulationslogik, Nutzenberechnung, PDF-/Printlayout oder Bottom-Navigation.

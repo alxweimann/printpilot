@@ -4425,3 +4425,11 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die kleinere Schrift bleibt ausschließlich auf die Nutzenrechner-Toolbox begrenzt; die globale App-Typografie bleibt unverändert.
 - Die Nutzenvorschau vermeidet zusätzliche Skalierung über die Nutzenkachel, damit QR-Code und kleine Schrift in der Bildschirmvorschau schärfer bleiben.
 - Die sichtbaren Nutzenlinien wurden weiter dezent gehalten; die Vorschau bleibt eine reine Bildschirmdarstellung und ändert keine Produktions-PDF- oder Kalkulationslogik.
+
+### Sprint 61.20 – Nutzenvorschau auf Endformat normalisieren
+
+- Die Nutzenvorschau verwendet für das Wohlstandsmeister-Demo-PDF eine normalisierte Endformat-Preview ohne sichtbare Schnittmarken.
+- Die Vorschaukacheln werden nicht mehr über verschobene Crop-Offets repariert, sondern zeigen eine auf das Endformat zugeschnittene, mittig platzierte Motivfläche.
+- Gedrehte Nutzen verwenden dieselbe Endformat-Preview und rotieren die Kachel, damit Crop-Ursprung, Skalierung und Zentrierung gleich bleiben.
+- Die Änderung betrifft ausschließlich die Bildschirmvorschau des Nutzenrechners. Original-PDF, Kalkulationslogik, Nutzenberechnung und Print-/PDF-Ausgabe bleiben unverändert.
+- Für spätere echte PDF-Toolbox/Preflight-Integration ist festzuhalten: Produktions-PDFs sollen anhand TrimBox/BleedBox/MediaBox/CropBox bzw. erkannter Schnittmarken normalisiert werden, bevor sie in der Nutzenvorschau angezeigt werden.

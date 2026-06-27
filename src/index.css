@@ -28463,3 +28463,57 @@ body {
 .pp-calculation-page .pp-calc-sheet-preview--highres .pp-calc-sheet-preview__item::after {
   border-color: rgba(17, 34, 65, .10) !important;
 }
+
+/* Sprint 61.20 – Nutzenvorschau normalisieren: Endformat-Preview ohne Schnittmarken
+   Die Ausschießvorschau verwendet eine normalisierte Endformat-Kachel. Das Motiv wird
+   mittig und maßhaltig dargestellt; gedrehte Nutzen rotieren die Endformat-Kachel,
+   nicht den Crop-Ursprung. */
+.pp-calculation-page .pp-calc-sheet-preview__artwork,
+.pp-calculation-page .pp-calc-sheet-preview__artwork--trimmed {
+  position: absolute !important;
+  inset: 0 !important;
+  left: auto !important;
+  top: auto !important;
+  width: 100% !important;
+  height: 100% !important;
+  overflow: hidden !important;
+  transform: none !important;
+  background: #ffffff !important;
+}
+
+.pp-calculation-page .pp-calc-sheet-preview__item.is-content-rotated .pp-calc-sheet-preview__artwork,
+.pp-calculation-page .pp-calc-sheet-preview__item.is-content-rotated .pp-calc-sheet-preview__artwork--trimmed {
+  inset: auto !important;
+  left: 50% !important;
+  top: 50% !important;
+  width: var(--pp-rotated-content-width, 100%) !important;
+  height: var(--pp-rotated-content-height, 100%) !important;
+  transform: translate(-50%, -50%) rotate(90deg) !important;
+}
+
+.pp-calculation-page .pp-calc-sheet-preview__artwork--trimmed img,
+.pp-calculation-page .pp-calc-sheet-preview--highres .pp-calc-sheet-preview__artwork--trimmed img,
+.pp-calculation-page .pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__artwork--trimmed img,
+.pp-calculation-page .pp-calc-sheet-preview__item.is-content-rotated .pp-calc-sheet-preview__artwork--trimmed img,
+.pp-calculation-page .pp-calc-sheet-preview--highres .pp-calc-sheet-preview__item.is-content-rotated .pp-calc-sheet-preview__artwork--trimmed img,
+.pp-calculation-page .pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__item.is-content-rotated .pp-calc-sheet-preview__artwork--trimmed img {
+  position: absolute !important;
+  inset: 0 !important;
+  left: 0 !important;
+  top: 0 !important;
+  width: 100% !important;
+  height: 100% !important;
+  max-width: none !important;
+  max-height: none !important;
+  display: block !important;
+  object-fit: cover !important;
+  object-position: 50% 50% !important;
+  transform: none !important;
+  filter: none !important;
+  image-rendering: auto !important;
+}
+
+.pp-calculation-page .pp-calc-sheet-preview__item::after,
+.pp-calculation-page .pp-calc-sheet-preview--highres .pp-calc-sheet-preview__item::after {
+  border-color: rgba(17, 34, 65, .08) !important;
+}

@@ -1,5 +1,6 @@
 import flyerPreview from "../../assets/order-previews/flyer-dinlang.png";
 import realBusinessCardPreview from "../../assets/order-previews/wohlstandsmeister-vika.png";
+import realBusinessCardTrimmedPreview from "../../assets/order-previews/wohlstandsmeister-vika-trimmed.png";
 import letterheadPreview from "../../assets/order-previews/aw-briefbogen.png";
 import realBusinessCardPdf from "../../assets/order-files/wohlstandsmeister-vika.pdf";
 import letterheadPdf from "../../assets/order-files/aw-briefbogen.pdf";
@@ -1553,8 +1554,8 @@ export const demoCalculationPayload: CalculationToProductionPayload = {
       role: "preview",
       filename: "wohlstandsmeister-vika.png",
       label: "PDF-Preview",
-      imageSrc: realBusinessCardPreview,
-      alt: "PDF-Vorschau Wohlstandsmeister Visitenkarte mit QR-Code und Beschnittmarken",
+      imageSrc: realBusinessCardTrimmedPreview,
+      alt: "normalisierte Endformat-Vorschau Wohlstandsmeister Visitenkarte ohne Schnittmarken",
       category: "Preview-Bild",
       size: "6 Seiten · 3,1 MB",
       createdAt: { date: "31.05.2026", time: "09:40" },

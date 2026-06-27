@@ -4475,3 +4475,11 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die markierte Papierfläche ist bewusst technisch-rechteckig ausgeführt; abgerundete Ecken wurden an dieser Stelle entfernt.
 - Zusätzliche Kopf-/Fußinformationen der Vorschau bleiben im Workbench-Kontext ausgeblendet, damit keine doppelten SRA3-/Raster-/Gap-Angaben erscheinen.
 - Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, globale Typografie und Bottom-Navigation bleiben unverändert.
+
+### Sprint 61.26 – Toolbox eingerückt und Papierkontur präzisiert
+
+- Die Nutzenrechner-Toolbox wurde im Workbench-Bereich nach rechts eingerückt, damit sie nicht mehr direkt am linken Rand der Kalkulationssektion klebt.
+- Der Abstand zwischen Toolbox und Bogenvorschau wurde leicht erhöht, damit beide Bereiche ruhiger und klarer getrennt wirken, ohne neue Rahmen einzuführen.
+- Die magenta gestrichelte Papierformat-Markierung wurde enger und präziser auf das tatsächliche Papierformat gesetzt.
+- Die Papierkontur bleibt weiterhin technisch rechteckig und ohne abgerundete Ecken.
+- Zusätzliche Rahmen um Toolbox und Nutzenplan bleiben entfernt; Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, globale Typografie und Bottom-Navigation bleiben unverändert.

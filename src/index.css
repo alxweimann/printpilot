@@ -29081,3 +29081,39 @@ body {
 .pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field {
   column-gap: var(--pp-calc-form-label-field-gap) !important;
 }
+
+/* Sprint 61.32 – Zweispaltiges Formularraster horizontal korrigieren
+   Korrektur zu Sprint 61.31: Die 5-mm-Regel betrifft den Abstand zwischen
+   dem Ende eines linken Eingabefelds und dem danebenstehenden rechten
+   Label/Text im zweispaltigen Formularraster. Die vertikalen Zeilenabstände
+   bleiben unverändert kompakt. */
+.pp-calculation-page {
+  --pp-calc-form-row-gap: 9px;
+  --pp-calc-form-label-field-gap: 24px;
+  --pp-calc-form-field-to-next-label-gap: 19px;
+}
+
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid,
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid--four,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid--four {
+  row-gap: var(--pp-calc-form-row-gap) !important;
+}
+
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid--four,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-form-section > .pp-calc-input-grid--four {
+  column-gap: var(--pp-calc-form-field-to-next-label-gap) !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field--wide,
+.pp-calculation-page .pp-calc-input-field,
+.pp-calculation-page .pp-calc-input-field--wide,
+.pp-calculation-page .pp-calc-dimension-field,
+.pp-calculation-page .pp-calc-unit-field,
+.pp-calculation-page .pp-calc-choice-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field {
+  column-gap: var(--pp-calc-form-label-field-gap) !important;
+}

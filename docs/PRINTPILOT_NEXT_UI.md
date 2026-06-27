@@ -4527,3 +4527,12 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Der vertikale Abstand zwischen Formularzeilen wurde wieder auf den kompakten Maskenstandard zurückgesetzt.
 - Der horizontale Mindestabstand von ca. 5 mm zwischen Label und Eingabefeld bleibt als dauerhaftes Formularraster-Pattern bestehen.
 - Nutzenrechner, Farben, globale Typografie, Kalkulationslogik, PDF-/Printlayout und Bottom-Navigation bleiben unverändert.
+
+### Sprint 61.32 – Zweispaltiges Formularraster horizontal korrigiert
+
+- Korrektur zu Sprint 61.31: Der kritische Abstand sitzt im zweispaltigen Formularraster zwischen dem Ende eines linken Eingabefelds und dem danebenstehenden rechten Label/Text.
+- Für `pp-calc-input-grid--four` wurde der horizontale Spaltenabstand auf ca. 5 mm stabilisiert, damit rechte Labels nicht mehr direkt am linken Eingabefeld kleben.
+- Der interne Abstand zwischen Feldlabel und zugehörigem Eingabefeld bleibt unverändert als Formularstandard bestehen.
+- Die vertikalen Zeilenabstände wurden nicht verändert und bleiben auf dem kompakten Maskenstandard.
+- Diese horizontale 5-mm-Regel gilt als Designsystem-Vorgabe für bestehende und künftige zweispaltige PrintPilot-Masken.
+- Nutzenrechner, Farben, globale Typografie, Kalkulationslogik, PDF-/Printlayout und Bottom-Navigation bleiben unverändert.

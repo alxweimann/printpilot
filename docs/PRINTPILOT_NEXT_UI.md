@@ -4416,3 +4416,12 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die lokale Kompakt-Typografie bleibt auf die Nutzenrechner-Toolbox begrenzt; globale App-Schriftgrößen und Farben bleiben unverändert.
 - Die Vorschaukacheln wurden minimal zurückgenommen und ihre Hilfslinien dezenter gesetzt, damit der Nutzenplan ruhiger wirkt, ohne die Berechnungslogik zu verändern.
 - Keine Änderung an Kalkulationslogik, Nutzenberechnung, PDF-/Printlayout oder Bottom-Navigation.
+
+### Sprint 61.19 – Nutzenrechner-Toolbox einspaltig und Vorschauqualität stabilisiert
+
+- Die Nutzenrechner-Toolbox bleibt links bündig am Druckbogenrahmen, zeigt ihre Spezifikationen aber wieder als klare einspaltige Liste.
+- Reihenfolge in der Toolbox: Druckbogen, Endformat, Rand, Raster, Gap X, Gap Y.
+- Basis, Drehung und Modus erhalten mehr Abstand zueinander und wirken dadurch weniger gedrängt.
+- Die kleinere Schrift bleibt ausschließlich auf die Nutzenrechner-Toolbox begrenzt; die globale App-Typografie bleibt unverändert.
+- Die Nutzenvorschau vermeidet zusätzliche Skalierung über die Nutzenkachel, damit QR-Code und kleine Schrift in der Bildschirmvorschau schärfer bleiben.
+- Die sichtbaren Nutzenlinien wurden weiter dezent gehalten; die Vorschau bleibt eine reine Bildschirmdarstellung und ändert keine Produktions-PDF- oder Kalkulationslogik.

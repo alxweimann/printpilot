@@ -28348,3 +28348,118 @@ body {
     padding-bottom: 0 !important;
   }
 }
+
+/* Sprint 61.19 – Nutzenrechner-Toolbox einspaltig und Vorschau schärfer */
+.pp-calculation-page .pp-imposition-toolbar--side,
+.pp-calculation-page .pp-imposition-toolbar {
+  justify-content: flex-start !important;
+  gap: 18px !important;
+  padding: 12px 10px 12px !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--numbers {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+  align-content: start !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__field-row,
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__field-row--compact {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 8px !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-tool,
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__field-row .pp-imposition-tool,
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__field-row--compact .pp-imposition-tool {
+  display: grid !important;
+  grid-template-columns: 82px minmax(0, 1fr) !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-tool__label {
+  min-width: 0 !important;
+  max-width: none !important;
+  white-space: nowrap !important;
+  overflow: visible !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-tool__pair,
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-tool__number {
+  min-width: 0 !important;
+  justify-content: flex-start !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-tool__pair input,
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-tool__number input,
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-tool[data-calculation-field="printSheetFormat"] .pp-imposition-tool__pair input,
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-tool[data-calculation-field="finalFormat"] .pp-imposition-tool__pair input {
+  width: 41px !important;
+  min-width: 41px !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--modes {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 18px !important;
+  margin-top: 6px !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-segment {
+  display: grid !important;
+  grid-template-columns: 82px minmax(0, 1fr) !important;
+  align-items: start !important;
+  gap: 8px !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-segment > div {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 6px !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-segment button {
+  width: 100% !important;
+  height: 22px !important;
+  min-height: 22px !important;
+  padding: 0 7px !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-segment[data-calculation-field="impositionRasterMode"] button {
+  min-height: 24px !important;
+  height: auto !important;
+  line-height: 1.05 !important;
+}
+
+.pp-calculation-page .pp-calc-sheet-preview__item,
+.pp-calculation-page .pp-calc-sheet-preview--highres .pp-calc-sheet-preview__item,
+.pp-calculation-page .pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__item {
+  transform: none !important;
+  image-rendering: auto !important;
+}
+
+.pp-calculation-page .pp-calc-sheet-preview__artwork,
+.pp-calculation-page .pp-calc-sheet-preview--highres .pp-calc-sheet-preview__artwork,
+.pp-calculation-page .pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__artwork {
+  image-rendering: auto !important;
+  backface-visibility: visible !important;
+}
+
+.pp-calculation-page .pp-calc-sheet-preview__artwork img,
+.pp-calculation-page .pp-calc-sheet-preview--highres .pp-calc-sheet-preview__artwork img,
+.pp-calculation-page .pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__artwork img {
+  image-rendering: auto !important;
+  transform: none !important;
+  filter: none !important;
+}
+
+.pp-calculation-page .pp-calc-sheet-preview__item::after,
+.pp-calculation-page .pp-calc-sheet-preview--highres .pp-calc-sheet-preview__item::after {
+  border-color: rgba(17, 34, 65, .10) !important;
+}

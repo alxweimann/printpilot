@@ -4536,3 +4536,12 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die vertikalen Zeilenabstände wurden nicht verändert und bleiben auf dem kompakten Maskenstandard.
 - Diese horizontale 5-mm-Regel gilt als Designsystem-Vorgabe für bestehende und künftige zweispaltige PrintPilot-Masken.
 - Nutzenrechner, Farben, globale Typografie, Kalkulationslogik, PDF-/Printlayout und Bottom-Navigation bleiben unverändert.
+
+
+### Sprint 61.34 – Rücksetzung Formularraster Sprint 61.33
+
+- Der 4-Spalten-Formularraster-Umbau aus Sprint 61.33 wurde vollständig neutralisiert, weil er zu stark in bestehende Maskenlayouts eingegriffen hat.
+- Der stabile Stand aus Sprint 61.32 bleibt die Referenz für das aktuelle Formularlayout: vorhandene Feldlogik beibehalten, keine strukturelle Raster-Umstellung, keine Änderung der vertikalen Zeilenabstände.
+- Nutzenrechner, zentrierter Nutzenblock, Druckbogen-Kontur und gestrichelte Randlinie bleiben erhalten.
+- Die fachliche Designregel bleibt bestehen: Zwischen linkem Eingabefeld und danebenstehendem rechtem Label/Text soll horizontal mindestens ca. 5 mm Abstand eingehalten werden. Diese Regel wird künftig nur noch vorsichtig und lokal bzw. über klar geprüfte Tokens umgesetzt, nicht durch ein flächiges Grid-Refactoring.
+- Header, PDF-/Printlayout, Farben, globale Typografie, Kalkulationslogik und Bottom-Navigation bleiben unverändert.

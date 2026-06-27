@@ -2797,7 +2797,6 @@ function CalculationSheetPreview({
   const sheetWidthMm = result?.sheet.widthMm ?? imposition.sheet.widthMm ?? 450;
   const sheetHeightMm = result?.sheet.heightMm ?? imposition.sheet.heightMm ?? 320;
   const columns = result?.selected.columns ?? imposition.layout.columns;
-  const rows = result?.selected.rows ?? imposition.layout.rows;
   const totalSlots = result?.selected.totalSlots ?? imposition.layout.totalSlots;
   const usedSlots = result?.selected.usedSlots ?? imposition.layout.usedSlots;
   const itemWidthMm = result?.selected.itemWidthMm
@@ -2825,12 +2824,8 @@ function CalculationSheetPreview({
   const sheetAspectRatio = sheetWidthMm && sheetHeightMm
     ? `${sheetWidthMm} / ${sheetHeightMm}`
     : undefined;
-  const occupiedWidthMm = columns * itemWidthMm + Math.max(0, columns - 1) * gapXMm;
-  const occupiedHeightMm = rows * itemHeightMm + Math.max(0, rows - 1) * gapYMm;
-  const usableWidthMm = Math.max(1, sheetWidthMm - marginMm * 2);
-  const usableHeightMm = Math.max(1, sheetHeightMm - marginMm * 2 - gripperMarginMm);
-  const centeredOffsetXMm = marginMm + Math.max(0, (usableWidthMm - occupiedWidthMm) / 2);
-  const centeredOffsetYMm = marginMm + gripperMarginMm + Math.max(0, (usableHeightMm - occupiedHeightMm) / 2);
+  const startOffsetXMm = marginMm;
+  const startOffsetYMm = marginMm + gripperMarginMm;
   const marginStyle = sheetWidthMm && sheetHeightMm
     ? {
         left: `${(marginMm / sheetWidthMm) * 100}%`,
@@ -2859,8 +2854,8 @@ function CalculationSheetPreview({
           const isUsed = cell <= usedSlots;
           const itemStyle = sheetWidthMm && sheetHeightMm
             ? ({
-                left: `${((centeredOffsetXMm + columnIndex * (itemWidthMm + gapXMm)) / sheetWidthMm) * 100}%`,
-                top: `${((centeredOffsetYMm + rowIndex * (itemHeightMm + gapYMm)) / sheetHeightMm) * 100}%`,
+                left: `${((startOffsetXMm + columnIndex * (itemWidthMm + gapXMm)) / sheetWidthMm) * 100}%`,
+                top: `${((startOffsetYMm + rowIndex * (itemHeightMm + gapYMm)) / sheetHeightMm) * 100}%`,
                 width: `${(itemWidthMm / sheetWidthMm) * 100}%`,
                 height: `${(itemHeightMm / sheetHeightMm) * 100}%`,
                 "--pp-rotated-content-width": `${(itemHeightMm / Math.max(1, itemWidthMm)) * 100}%`,

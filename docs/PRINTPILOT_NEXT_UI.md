@@ -4483,3 +4483,13 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die magenta gestrichelte Papierformat-Markierung wurde enger und präziser auf das tatsächliche Papierformat gesetzt.
 - Die Papierkontur bleibt weiterhin technisch rechteckig und ohne abgerundete Ecken.
 - Zusätzliche Rahmen um Toolbox und Nutzenplan bleiben entfernt; Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, globale Typografie und Bottom-Navigation bleiben unverändert.
+
+### Sprint 61.27 – Maßhaltige Nutzenvorschau für alle Formate
+
+- Die Nutzenvorschau verwendet das Druckbogenformat jetzt als echte 100-%-Referenzfläche.
+- Die magenta gestrichelte Kontur liegt auf dem vollständigen Papier-/Druckbogenformat und nicht mehr auf dem Nutzenblock oder einem inneren Vorschaubereich.
+- Nutzenpositionen werden in der Vorschau ausschließlich aus mm-Werten abgeleitet: `left = Rand + Spalte × (Endformat + Gap X)`, `top = Rand + Reihe × (Endformat + Gap Y)`, `width = Endformat`, `height = Endformat`.
+- Bei gedrehten Varianten werden Breite/Höhe der Nutzen korrekt getauscht, das Papierformat bleibt unverändert maßgeblich.
+- Die zusätzliche Margin-Hilfslinie wurde ausgeblendet, damit die magenta Kontur eindeutig das Papierformat kennzeichnet.
+- Die linke Nutzenrechner-Toolbox wurde etwas schmaler gesetzt, damit die Bogenvorschau mehr Raum erhält.
+- Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, globale Typografie und Bottom-Navigation bleiben unverändert.

@@ -3123,56 +3123,37 @@ function ImpositionCalculatorPanel({
               value={result.settings.rasterMode === "Manuell" ? `${result.settings.manualColumns} × ${result.settings.manualRows} manuell` : "automatisch"}
             />
           </div>
+
+          <div className="pp-imposition-toolbar__line pp-imposition-toolbar__line--variants" aria-label="Nutzenvarianten">
+            <div className="pp-imposition-toolbox-variant-summary">
+              <span>{result.selected.isManual ? "Manuelles Raster" : "Beste Variante"}</span>
+              <strong>{result.label} · {result.selected.isValid === false ? "passt nicht" : `${result.selected.usedSlots} Nutzen`}</strong>
+              <p>
+                {result.selected.label} · {result.selected.isValid === false ? result.selected.issue : formatPercentValue(result.selected.usablePercent)}
+                {result.selected.isValid !== false ? ` Ausnutzung · Rest ${formatMillimeterValue(result.selected.restWidthMm)} × ${formatMillimeterValue(result.selected.restHeightMm)}` : ""}
+              </p>
+            </div>
+            <div className="pp-imposition-toolbox-variants-table" role="table" aria-label="Variantenvergleich">
+              {result.variants.map((variant) => (
+                <div
+                  key={variant.id}
+                  className={variant.id === result.selected.id ? "is-selected" : undefined}
+                  role="row"
+                >
+                  <span role="cell">{variant.label}</span>
+                  <b role="cell">{variant.columns} × {variant.rows}</b>
+                  <span role="cell">{variant.isValid === false ? "passt nicht" : `${variant.usedSlots} N`}</span>
+                  <span role="cell">{variant.isValid === false ? "—" : formatPercentValue(variant.usablePercent)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
           </div>
         </div>
 
         <div className="pp-imposition-calculator__preview">
           <CalculationSheetPreview payload={payload} result={result} />
         </div>
-      </div>
-
-      <div className="pp-imposition-calculator__variants" aria-label="Nutzenvarianten">
-        <div className="pp-imposition-calculator__variants-head">
-          <div>
-            <span>{result.selected.isManual ? "Manuelles Raster" : "Beste Variante"}</span>
-            <strong>{result.label}</strong>
-            <p>
-              {result.selected.label} · {formatPercentValue(result.selected.usablePercent)}
-              Flächennutzung · Berechnungsformat {formatMillimeterValue(result.item.calculationWidthMm)} × {formatMillimeterValue(result.item.calculationHeightMm)}
-              · Gap {formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)}
-              {result.selected.issue ? ` · ${result.selected.issue}` : ""}
-            </p>
-          </div>
-        </div>
-        <table>
-          <thead>
-            <tr>
-              <th>Variante</th>
-              <th>Raster</th>
-              <th>Nutzen</th>
-              <th>Ausnutzung</th>
-              <th>Gap</th>
-              <th>Restfläche</th>
-            </tr>
-          </thead>
-          <tbody>
-            {result.variants.map((variant) => (
-              <tr
-                key={variant.id}
-                className={variant.id === result.selected.id ? "is-selected" : undefined}
-              >
-                <th scope="row">{variant.label}</th>
-                <td>{variant.columns} × {variant.rows}</td>
-                <td>{variant.isValid === false ? "passt nicht" : variant.usedSlots}</td>
-                <td>{variant.isValid === false ? "—" : formatPercentValue(variant.usablePercent)}</td>
-                <td>{formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)}</td>
-                <td>
-                  {variant.isValid === false ? variant.issue : `${formatMillimeterValue(variant.restWidthMm)} × ${formatMillimeterValue(variant.restHeightMm)}`}
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
       </div>
     </div>
   );

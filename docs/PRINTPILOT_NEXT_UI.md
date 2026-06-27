@@ -4441,3 +4441,11 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die linke Toolbox bündelt damit Eingabeparameter und unmittelbare Rechenergebnisse an einer Stelle; die rechte Bogenvorschau bleibt ruhiger und wird nicht mehr durch eine zusätzliche Ergebnisbox unterbrochen.
 - Die separate Ergebnisbox des Nutzenrechners wurde entfernt bzw. für den Workbench-Kontext ausgeblendet; die Varianten-Tabelle mit bester/manueller Variante bleibt erhalten.
 - Keine Änderung an Kalkulationslogik, Nutzenberechnung, PDF-/Printausgabe, globaler Typografie, Farben oder Bottom-Navigation.
+
+### Sprint 61.22 – Variantenvergleich in Toolbox integriert
+
+- Die bisherige Box **Beste Variante** inklusive Variantenvergleich wurde in die linke Nutzenrechner-Toolbox integriert.
+- Die Toolbox enthält damit jetzt Eingabeparameter, unmittelbare Ergebniswerte, beste Variante und den kompakten Variantenvergleich an einer Stelle.
+- Der große Variantenblock unter der Vorschau entfällt im Workbench-Kontext; rechts bleibt ausschließlich die ruhige Bogenvorschau.
+- Kompakter Variantenvergleich in der Toolbox: Variante, Raster, Nutzenanzahl und Ausnutzung. Die empfohlene/ausgewählte Variante wird dezent markiert.
+- Keine Änderung an Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, globaler Typografie, Farben oder Bottom-Navigation.

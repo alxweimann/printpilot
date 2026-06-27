@@ -28575,3 +28575,92 @@ body {
     text-align: left !important;
   }
 }
+
+/* Sprint 61.22 – Variantenvergleich in die Nutzenrechner-Toolbox integrieren
+   Beste Variante und Variantenvergleich stehen kompakt links in der Toolbox. Der
+   große Variantenblock unter der Vorschau entfällt dadurch vollständig; die
+   Vorschau rechts bleibt frei und ruhig. */
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--variants {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 7px !important;
+  margin-top: 0 !important;
+  padding-top: 10px !important;
+  border-top: 1px solid rgba(0, 148, 218, .18) !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbox-variant-summary {
+  display: grid !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbox-variant-summary span {
+  color: var(--pp-blue-700, #005fbd) !important;
+  font-size: 9.8px !important;
+  line-height: 1.08 !important;
+  font-weight: 850 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .01em !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbox-variant-summary strong {
+  color: var(--pp-text-strong, #061a3a) !important;
+  font-size: 11px !important;
+  line-height: 1.12 !important;
+  font-weight: 850 !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbox-variant-summary p {
+  margin: 0 !important;
+  color: var(--pp-text-muted, #587091) !important;
+  font-size: 9.4px !important;
+  line-height: 1.18 !important;
+  font-weight: 700 !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbox-variants-table {
+  display: grid !important;
+  gap: 2px !important;
+  min-width: 0 !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbox-variants-table > div {
+  display: grid !important;
+  grid-template-columns: minmax(54px, .9fr) minmax(34px, .58fr) minmax(42px, .65fr) minmax(42px, .7fr) !important;
+  align-items: center !important;
+  gap: 5px !important;
+  min-width: 0 !important;
+  min-height: 18px !important;
+  padding: 2px 4px !important;
+  border-radius: 6px !important;
+  background: transparent !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbox-variants-table > div.is-selected {
+  background: rgba(0, 159, 227, .075) !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbox-variants-table span,
+.pp-calculation-page .pp-imposition-toolbox-variants-table b {
+  min-width: 0 !important;
+  color: var(--pp-text-strong, #061a3a) !important;
+  font-size: 9.5px !important;
+  line-height: 1.08 !important;
+  font-weight: 750 !important;
+  white-space: nowrap !important;
+  overflow: hidden !important;
+  text-overflow: ellipsis !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbox-variants-table b {
+  font-weight: 850 !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbox-variants-table > div.is-selected span:first-child::after {
+  content: "" !important;
+}
+
+.pp-calculation-page .pp-imposition-calculator--workbench .pp-imposition-calculator__variants {
+  display: none !important;
+}

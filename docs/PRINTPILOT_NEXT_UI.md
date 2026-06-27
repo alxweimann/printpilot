@@ -4408,3 +4408,11 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Label- und Eingabespalten der Toolbox wurden verbreitert bzw. kompakter abgestimmt, damit **Druckbogen**, **Raster** und **Gap X/Y** nicht abgeschnitten werden oder sich überlagern.
 - Segmentbuttons in **Basis**, **Drehung** und **Modus** bleiben kompakt und laufen nicht mehr in das Raster-/Gap-Feldlayout hinein.
 - Keine Änderung an Farben, globalen Schriftgrößen, Kalkulationslogik, Nutzenberechnung, PDF-/Printlayout oder Bottom-Navigation.
+
+### Sprint 61.18 – Nutzenrechner-Toolbox bündig zum Druckbogenrahmen
+
+- Die linke Nutzenrechner-Toolbox startet nun erst auf Höhe des eigentlichen Druckbogen-/Vorschaurahmens, nicht mehr auf Höhe der grauen Bogenkopfzeile.
+- Die Toolbox bleibt visuell auf die Höhe des Druckbogenrahmens bezogen, erhält aber eine ruhigere innere Verteilung: Parameter, Basis, Drehung und Modus kleben nicht mehr extrem oben bzw. unten im langen Bedienfeld.
+- Die lokale Kompakt-Typografie bleibt auf die Nutzenrechner-Toolbox begrenzt; globale App-Schriftgrößen und Farben bleiben unverändert.
+- Die Vorschaukacheln wurden minimal zurückgenommen und ihre Hilfslinien dezenter gesetzt, damit der Nutzenplan ruhiger wirkt, ohne die Berechnungslogik zu verändern.
+- Keine Änderung an Kalkulationslogik, Nutzenberechnung, PDF-/Printlayout oder Bottom-Navigation.

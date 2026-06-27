@@ -4493,3 +4493,13 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die zusätzliche Margin-Hilfslinie wurde ausgeblendet, damit die magenta Kontur eindeutig das Papierformat kennzeichnet.
 - Die linke Nutzenrechner-Toolbox wurde etwas schmaler gesetzt, damit die Bogenvorschau mehr Raum erhält.
 - Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, globale Typografie und Bottom-Navigation bleiben unverändert.
+
+### Sprint 61.28 – Nutzenblock zentrieren und 5-mm-Formularabstand stabilisieren
+
+- Die Nutzenvorschau wurde für den Digitaldruck korrigiert: Der komplette Nutzenblock wird jetzt innerhalb des Druckbogen-/Papierformats zentriert.
+- Die Positionierung erfolgt weiter maßhaltig aus den mm-Werten von Druckbogen, Endformat, Raster und Gap; der eingestellte Rand bleibt als fachlicher Mindestabstand/Prüfwert erhalten.
+- Formel der Vorschauplatzierung: `Start X = (Bogenbreite - Nutzenblockbreite) / 2`, `Start Y = (Bogenhöhe - Nutzenblockhöhe) / 2`.
+- Für gedrehte Varianten werden die getauschten Nutzenmaße ebenfalls zentriert innerhalb des unveränderten Papierformats berechnet.
+- Die linke Nutzenrechner-Toolbox wurde nochmals etwas schmaler gesetzt, damit mehr Fläche für die maßhaltige Bogenvorschau bleibt.
+- In den Kalkulationsformularen gilt nun ein stabiler Mindestabstand von ca. 5 mm zwischen Eingabezeile und nächstem Feldpunkt.
+- Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, globale Typografie und Bottom-Navigation bleiben unverändert.

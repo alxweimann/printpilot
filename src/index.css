@@ -28912,3 +28912,33 @@ body {
     padding-right: 14px !important;
   }
 }
+
+/* Sprint 61.28 – Nutzenblock im Digitaldruck zentrieren und Formularabstand stabilisieren
+   Der Nutzenblock wird innerhalb des Papierformats zentriert; der eingestellte Rand
+   bleibt fachlich Mindestabstand/Prüfwert. Formularraster in den Kalkulationsmasken
+   erhalten einen Mindestabstand von ca. 5 mm zwischen Eingabezeile und nächstem Feldpunkt. */
+.pp-calculation-page {
+  --pp-calc-form-row-gap: 20px;
+  --pp-calc-toolbox-width-compact: 300px;
+  --pp-calc-toolbox-label-width: 74px;
+}
+
+.pp-calculation-page .pp-calc-input-grid,
+.pp-calculation-page .pp-calc-input-grid--four,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-grid,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-grid--four,
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid,
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid--four {
+  row-gap: var(--pp-calc-form-row-gap) !important;
+}
+
+.pp-calculation-page .pp-imposition-plan {
+  grid-template-columns: minmax(276px, var(--pp-calc-toolbox-width-compact)) minmax(0, 1fr) !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-tool,
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__field-row .pp-imposition-tool,
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__field-row--compact .pp-imposition-tool,
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-segment {
+  grid-template-columns: var(--pp-calc-toolbox-label-width) minmax(0, 1fr) !important;
+}

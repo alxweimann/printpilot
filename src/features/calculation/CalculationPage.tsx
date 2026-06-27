@@ -2797,6 +2797,7 @@ function CalculationSheetPreview({
   const sheetWidthMm = result?.sheet.widthMm ?? imposition.sheet.widthMm ?? 450;
   const sheetHeightMm = result?.sheet.heightMm ?? imposition.sheet.heightMm ?? 320;
   const columns = result?.selected.columns ?? imposition.layout.columns;
+  const rows = result?.selected.rows ?? imposition.layout.rows;
   const totalSlots = result?.selected.totalSlots ?? imposition.layout.totalSlots;
   const usedSlots = result?.selected.usedSlots ?? imposition.layout.usedSlots;
   const itemWidthMm = result?.selected.itemWidthMm
@@ -2809,7 +2810,6 @@ function CalculationSheetPreview({
       : imposition.item.heightMm ?? 55);
   const gapXMm = result?.settings.gapXMm ?? 0;
   const gapYMm = result?.settings.gapYMm ?? 0;
-  const gripperMarginMm = result?.settings.gripperMarginMm ?? 0;
   const contentIsRotated = result?.selected.contentRotated ?? imposition.layout.orientation === "rotated";
   const marginMm = result?.settings.marginMm ?? (typeof imposition.layout.marginMm === "number"
     ? imposition.layout.marginMm
@@ -2824,8 +2824,10 @@ function CalculationSheetPreview({
   const sheetAspectRatio = sheetWidthMm && sheetHeightMm
     ? `${sheetWidthMm} / ${sheetHeightMm}`
     : undefined;
-  const startOffsetXMm = marginMm;
-  const startOffsetYMm = marginMm + gripperMarginMm;
+  const occupiedWidthMm = columns * itemWidthMm + Math.max(0, columns - 1) * gapXMm;
+  const occupiedHeightMm = rows * itemHeightMm + Math.max(0, rows - 1) * gapYMm;
+  const startOffsetXMm = Math.max(0, (sheetWidthMm - occupiedWidthMm) / 2);
+  const startOffsetYMm = Math.max(0, (sheetHeightMm - occupiedHeightMm) / 2);
   const marginStyle = sheetWidthMm && sheetHeightMm
     ? {
         left: `${(marginMm / sheetWidthMm) * 100}%`,

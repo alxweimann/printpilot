@@ -4512,3 +4512,18 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Der eingegebene Rand wird innerhalb des Druckbogens zusätzlich als gestrichelte Innenlinie dargestellt.
 - Der Nutzenblock bleibt weiterhin im Digitaldruck zentriert; Rand dient als Mindestabstand/Prüfwert.
 - Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, globale Typografie und Bottom-Navigation bleiben unverändert.
+
+### Sprint 61.30 – 5-mm-Label-Feld-Abstand als Formularstandard
+
+- Für PrintPilot-Formulare wurde der horizontale Mindestabstand zwischen Label/Text und danebenstehendem Eingabefeld als dauerhaftes Pattern festgelegt.
+- Der Abstand zwischen Labelspalte und Eingabefeld beträgt in der Kalkulation jetzt mindestens ca. 5 mm; zusätzlich erhält die Labelseite einen kleinen Sicherheitsabstand, damit Texte nicht optisch an das Feld stoßen.
+- Die vertikale Zeilenlogik bleibt kompakt; die Änderung betrifft bewusst den horizontalen Label-Feld-Abstand, nicht die Höhe zwischen Formularzeilen.
+- Die Regel gilt als Designsystem-Vorgabe auch für kommende Masken und Module.
+- Nutzenrechner, PDF-/Printlayout, globale Typografie, Farben, Kalkulationslogik und Bottom-Navigation bleiben unverändert.
+
+### Sprint 61.31 – Vertikalen Formularabstand zurückgesetzt
+
+- Korrektur zu Sprint 61.30: Die 5-mm-Regel betrifft ausschließlich den **horizontalen** Abstand zwischen Formularlabel/Text und danebenstehendem Eingabefeld.
+- Der vertikale Abstand zwischen Formularzeilen wurde wieder auf den kompakten Maskenstandard zurückgesetzt.
+- Der horizontale Mindestabstand von ca. 5 mm zwischen Label und Eingabefeld bleibt als dauerhaftes Formularraster-Pattern bestehen.
+- Nutzenrechner, Farben, globale Typografie, Kalkulationslogik, PDF-/Printlayout und Bottom-Navigation bleiben unverändert.

@@ -2845,10 +2845,6 @@ function CalculationSheetPreview({
       className="pp-calc-sheet-preview pp-calc-sheet-preview--highres pp-calc-sheet-preview--scaled"
       aria-label="Nutzenvorschau"
     >
-      <div className="pp-calc-sheet-preview__bar">
-        <span>{imposition.sheet.name}</span>
-        <b>{usedSlots} Nutzen</b>
-      </div>
       <div
         className="pp-calc-sheet-preview__sheet"
         style={{
@@ -2892,15 +2888,6 @@ function CalculationSheetPreview({
           );
         })}
       </div>
-      <p>
-        {sheetWidthMm && sheetHeightMm
-          ? `${sheetWidthMm} × ${sheetHeightMm} mm`
-          : imposition.sheet.name}
-        {" · "}
-        Raster {columns} × {rows}
-        {" · "}
-        Gap {formatImpositionGapLabel(gapXMm, gapYMm)}
-      </p>
     </div>
   );
 }

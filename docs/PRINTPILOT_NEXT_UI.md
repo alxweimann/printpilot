@@ -4457,3 +4457,12 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Produktionswerte (`Netto produziert`, `Nettobogen`, `Zuschussbogen`, `Bruttobogen`, `Restmenge`, `Rastermodus`) folgen darunter.
 - Zwischen den drei Hauptblöcken der Toolbox gelten einheitliche vertikale Abstände und Trennlinien.
 - Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, Farben, globale Typografie und Bottom-Navigation bleiben unverändert.
+
+### Sprint 61.24 – Nutzenrechner-Rahmen und doppelte Vorschauinfos bereinigt
+
+- Der Nutzenrechner zeigt im Workbench-Kontext keine doppelte Rahmenstruktur mehr zwischen Abschnittstitel, Toolbox und Bogenvorschau.
+- Der zusätzliche Rahmen um den gemeinsamen Toolbox-/Vorschau-Bereich wurde entfernt; sichtbar bleiben die äußere Kalkulationssektion, die linke Toolbox und der eigentliche Vorschaurahmen des Druckbogens.
+- Die Kopfzeile der Bogenvorschau mit `SRA3 · 450 × 320 mm` und `25 Nutzen` wurde entfernt, weil Druckbogen, Raster, Gap, beste Variante und Produktionswerte bereits in der Toolbox stehen.
+- Die Fußzeile unter der Vorschau mit Druckbogen-/Raster-/Gap-Werten wurde ebenfalls entfernt, damit keine doppelten Informationen erscheinen.
+- Rechts bleibt damit ausschließlich die saubere Bogenvorschau; links bündelt die Toolbox Eingaben, Varianten und Ergebniswerte.
+- Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, Farben, globale Typografie und Bottom-Navigation bleiben unverändert.

@@ -28683,3 +28683,59 @@ body {
 .pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--metrics {
   margin-top: 14px !important;
 }
+
+
+/* Sprint 61.24 – Nutzenrechner-Rahmen und doppelte Vorschauinfos bereinigen
+   Der Nutzenrechner zeigt nur noch einen Workbench-Rahmen und keine doppelten
+   SRA3-/Raster-/Gap-Informationen mehr. Eingaben, Produktionswerte und
+   Varianten stehen links in der Toolbox; rechts bleibt ausschließlich die
+   saubere Bogenvorschau. */
+.pp-calculation-page .pp-imposition-calculator--workbench {
+  gap: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.pp-calculation-page .pp-imposition-plan {
+  border: 0 !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+  overflow: visible !important;
+}
+
+.pp-calculation-page .pp-imposition-calculator__editor,
+.pp-calculation-page .pp-imposition-calculator__preview {
+  border: 0 !important;
+  box-shadow: none !important;
+  background: transparent !important;
+}
+
+.pp-calculation-page .pp-imposition-calculator__preview .pp-calc-sheet-preview {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: center !important;
+  gap: 0 !important;
+  border: 0 !important;
+  padding: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.pp-calculation-page .pp-imposition-calculator__preview .pp-calc-sheet-preview__bar,
+.pp-calculation-page .pp-imposition-calculator__preview .pp-calc-sheet-preview > p {
+  display: none !important;
+}
+
+.pp-calculation-page .pp-imposition-calculator__preview .pp-calc-sheet-preview__sheet,
+.pp-calculation-page .pp-calc-sheet-preview--highres .pp-calc-sheet-preview__sheet,
+.pp-calculation-page .pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__sheet {
+  margin: 0 !important;
+  box-shadow: none !important;
+}
+
+.pp-calculation-page .pp-calc-form-section:has(.pp-imposition-calculator--workbench) {
+  padding-bottom: 16px !important;
+}

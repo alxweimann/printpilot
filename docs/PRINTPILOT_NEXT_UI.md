@@ -4433,3 +4433,11 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Gedrehte Nutzen verwenden dieselbe Endformat-Preview und rotieren die Kachel, damit Crop-Ursprung, Skalierung und Zentrierung gleich bleiben.
 - Die Änderung betrifft ausschließlich die Bildschirmvorschau des Nutzenrechners. Original-PDF, Kalkulationslogik, Nutzenberechnung und Print-/PDF-Ausgabe bleiben unverändert.
 - Für spätere echte PDF-Toolbox/Preflight-Integration ist festzuhalten: Produktions-PDFs sollen anhand TrimBox/BleedBox/MediaBox/CropBox bzw. erkannter Schnittmarken normalisiert werden, bevor sie in der Nutzenvorschau angezeigt werden.
+
+### Sprint 61.21 – Nutzen-Ergebniswerte in Toolbox integriert
+
+- Die wichtigsten Ergebniswerte des Nutzenrechners stehen jetzt direkt in der linken Toolbox statt in einer separaten Ergebnisbox unter der Vorschau.
+- In die Toolbox integriert wurden: Netto produziert, Nettobogen, Zuschussbogen, Bruttobogen, Restmenge und Rastermodus.
+- Die linke Toolbox bündelt damit Eingabeparameter und unmittelbare Rechenergebnisse an einer Stelle; die rechte Bogenvorschau bleibt ruhiger und wird nicht mehr durch eine zusätzliche Ergebnisbox unterbrochen.
+- Die separate Ergebnisbox des Nutzenrechners wurde entfernt bzw. für den Workbench-Kontext ausgeblendet; die Varianten-Tabelle mit bester/manueller Variante bleibt erhalten.
+- Keine Änderung an Kalkulationslogik, Nutzenberechnung, PDF-/Printausgabe, globaler Typografie, Farben oder Bottom-Navigation.

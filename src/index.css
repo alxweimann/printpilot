@@ -28517,3 +28517,61 @@ body {
 .pp-calculation-page .pp-calc-sheet-preview--highres .pp-calc-sheet-preview__item::after {
   border-color: rgba(17, 34, 65, .08) !important;
 }
+
+/* Sprint 61.21 – Nutzen-Ergebniswerte in die linke Toolbox integrieren */
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--metrics {
+  display: grid !important;
+  grid-template-columns: 1fr !important;
+  gap: 6px !important;
+  margin-top: auto !important;
+  padding-top: 12px !important;
+  border-top: 1px solid rgba(0, 148, 218, .18) !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--metrics .pp-calc-result-line {
+  display: grid !important;
+  grid-template-columns: minmax(92px, 1fr) auto !important;
+  align-items: baseline !important;
+  gap: 8px !important;
+  min-height: 16px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--metrics .pp-calc-result-line span,
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--metrics .pp-calc-result-line b {
+  font-size: 9.8px !important;
+  line-height: 1.18 !important;
+  white-space: normal !important;
+  overflow: visible !important;
+  text-overflow: clip !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--metrics .pp-calc-result-line span {
+  color: var(--pp-blue-700, #005fbd) !important;
+  font-weight: 800 !important;
+  text-transform: uppercase !important;
+  letter-spacing: .01em !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--metrics .pp-calc-result-line b {
+  color: var(--pp-text-strong, #061a3a) !important;
+  font-weight: 750 !important;
+  text-align: right !important;
+}
+
+.pp-calculation-page .pp-imposition-calculator--workbench .pp-imposition-calculator__result {
+  display: none !important;
+}
+
+@media (max-width: 1180px) {
+  .pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--metrics .pp-calc-result-line {
+    grid-template-columns: 1fr !important;
+    gap: 1px !important;
+  }
+
+  .pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--metrics .pp-calc-result-line b {
+    text-align: left !important;
+  }
+}

@@ -3111,24 +3111,23 @@ function ImpositionCalculatorPanel({
               </div>
             </div>
           </div>
+
+          <div className="pp-imposition-toolbar__line pp-imposition-toolbar__line--metrics" aria-label="Nutzenrechner-Ergebniswerte">
+            <ResultLine label="Netto produziert" value={`${formatNumber(result.production.netQuantity)} Stück`} />
+            <ResultLine label="Nettobogen" value={`${formatNumber(result.production.sheetsRequired)} Bogen`} />
+            <ResultLine label="Zuschussbogen" value={`${formatNumber(result.production.wasteSheets)} Bogen`} />
+            <ResultLine label="Bruttobogen" value={`${formatNumber(result.production.grossSheets)} Bogen`} />
+            <ResultLine label="Restmenge" value={`${formatNumber(result.production.restQuantity)} Stück`} />
+            <ResultLine
+              label="Rastermodus"
+              value={result.settings.rasterMode === "Manuell" ? `${result.settings.manualColumns} × ${result.settings.manualRows} manuell` : "automatisch"}
+            />
+          </div>
           </div>
         </div>
 
         <div className="pp-imposition-calculator__preview">
           <CalculationSheetPreview payload={payload} result={result} />
-        </div>
-      </div>
-
-      <div className="pp-imposition-calculator__result">
-        <div className="pp-imposition-calculator__metrics">
-          <ResultLine label="Druckbogen" value={`${formatMillimeterValue(result.sheet.widthMm)} × ${formatMillimeterValue(result.sheet.heightMm)}`} />
-          <ResultLine label="Gap X / Y" value={formatImpositionGapLabel(result.settings.gapXMm, result.settings.gapYMm)} />
-          <ResultLine label="Rastermodus" value={result.settings.rasterMode === "Manuell" ? `${result.settings.manualColumns} × ${result.settings.manualRows} manuell` : "automatisch"} />
-          <ResultLine label="Nettobogen" value={`${formatNumber(result.production.sheetsRequired)} Bogen`} />
-          <ResultLine label="Netto produziert" value={`${formatNumber(result.production.netQuantity)} Stück`} />
-          <ResultLine label="Restmenge" value={`${formatNumber(result.production.restQuantity)} Stück`} />
-          <ResultLine label="Zuschussbogen" value={`${formatNumber(result.production.wasteSheets)} Bogen`} />
-          <ResultLine label="Bruttobogen" value={`${formatNumber(result.production.grossSheets)} Bogen`} />
         </div>
       </div>
 

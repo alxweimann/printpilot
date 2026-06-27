@@ -28664,3 +28664,22 @@ body {
 .pp-calculation-page .pp-imposition-calculator--workbench .pp-imposition-calculator__variants {
   display: none !important;
 }
+
+/* Sprint 61.23 – Toolbox-Blöcke im Nutzenrechner sauber sortieren
+   Beste Variante/Varianten stehen direkt nach den Modus-Aktionen; die Ergebniswerte
+   folgen darunter. Zwischen Aktionen, Varianten und Ergebniswerten gilt derselbe
+   ruhige Blockabstand. */
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--variants,
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--metrics {
+  margin-top: 14px !important;
+  padding-top: 14px !important;
+  border-top: 1px solid rgba(0, 148, 218, .18) !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--modes {
+  margin-bottom: 0 !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-toolbar__line--metrics {
+  margin-top: 14px !important;
+}

@@ -4449,3 +4449,11 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Der große Variantenblock unter der Vorschau entfällt im Workbench-Kontext; rechts bleibt ausschließlich die ruhige Bogenvorschau.
 - Kompakter Variantenvergleich in der Toolbox: Variante, Raster, Nutzenanzahl und Ausnutzung. Die empfohlene/ausgewählte Variante wird dezent markiert.
 - Keine Änderung an Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, globaler Typografie, Farben oder Bottom-Navigation.
+
+### Sprint 61.23 – Nutzenrechner-Toolbox sortieren
+
+- In der linken Nutzenrechner-Toolbox wurde die Reihenfolge der kompakten Ergebnisblöcke bereinigt.
+- `Beste Variante` und der Variantenvergleich stehen jetzt direkt nach den Modus-/Aktionsbuttons.
+- Die Produktionswerte (`Netto produziert`, `Nettobogen`, `Zuschussbogen`, `Bruttobogen`, `Restmenge`, `Rastermodus`) folgen darunter.
+- Zwischen den drei Hauptblöcken der Toolbox gelten einheitliche vertikale Abstände und Trennlinien.
+- Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, Farben, globale Typografie und Bottom-Navigation bleiben unverändert.

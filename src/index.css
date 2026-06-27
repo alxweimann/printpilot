@@ -28942,3 +28942,57 @@ body {
 .pp-calculation-page .pp-imposition-toolbar--side .pp-imposition-segment {
   grid-template-columns: var(--pp-calc-toolbox-label-width) minmax(0, 1fr) !important;
 }
+
+/* Sprint 61.29 – Label-Feld-Abstand, Druckbogenlinie und Randlinie korrigieren
+   Korrektur zu Sprint 61.28: Der Mindestabstand betrifft horizontal den Abstand
+   zwischen Labeltext und Eingabefeld. Die Zeilenhöhe wird wieder kompakter.
+   In der Nutzenvorschau ist der Druckbogen eine durchgehende Magenta-Kontur;
+   der eingegebene Rand wird als gestrichelte Innenlinie dargestellt. */
+.pp-calculation-page {
+  --pp-calc-form-row-gap: 10px;
+  --pp-calc-form-label-field-gap: 22px;
+}
+
+.pp-calculation-page .pp-calc-input-grid,
+.pp-calculation-page .pp-calc-input-grid--four,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-grid,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-grid--four,
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid,
+.pp-calculation-page .pp-calc-form-section > .pp-calc-input-grid--four {
+  row-gap: var(--pp-calc-form-row-gap) !important;
+}
+
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-input-field--wide,
+.pp-calculation-page .pp-calc-input-field,
+.pp-calculation-page .pp-calc-input-field--wide,
+.pp-calculation-page .pp-calc-dimension-field,
+.pp-calculation-page .pp-calc-unit-field,
+.pp-calculation-page .pp-calc-choice-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-dimension-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-unit-field,
+.pp-calculation-page .pp-calculation-tab-panel .pp-calc-choice-field {
+  column-gap: var(--pp-calc-form-label-field-gap) !important;
+}
+
+.pp-calculation-page .pp-imposition-calculator__preview .pp-calc-sheet-preview__sheet,
+.pp-calculation-page .pp-calc-sheet-preview--highres .pp-calc-sheet-preview__sheet,
+.pp-calculation-page .pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__sheet {
+  border: 1.35px solid rgba(203, 0, 114, .72) !important;
+  border-radius: 0 !important;
+}
+
+.pp-calculation-page .pp-calc-sheet-preview__margin,
+.pp-calculation-page .pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__margin {
+  display: block !important;
+  position: absolute !important;
+  z-index: 2 !important;
+  left: var(--pp-sheet-margin-left, 0) !important;
+  top: var(--pp-sheet-margin-top, 0) !important;
+  right: var(--pp-sheet-margin-right, 0) !important;
+  bottom: var(--pp-sheet-margin-bottom, 0) !important;
+  border: 1.1px dashed rgba(203, 0, 114, .52) !important;
+  border-radius: 0 !important;
+  pointer-events: none !important;
+  background: transparent !important;
+}

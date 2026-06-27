@@ -2829,12 +2829,16 @@ function CalculationSheetPreview({
   const startOffsetXMm = Math.max(0, (sheetWidthMm - occupiedWidthMm) / 2);
   const startOffsetYMm = Math.max(0, (sheetHeightMm - occupiedHeightMm) / 2);
   const marginStyle = sheetWidthMm && sheetHeightMm
-    ? {
+    ? ({
         left: `${(marginMm / sheetWidthMm) * 100}%`,
         top: `${(marginMm / sheetHeightMm) * 100}%`,
         right: `${(marginMm / sheetWidthMm) * 100}%`,
         bottom: `${(marginMm / sheetHeightMm) * 100}%`,
-      }
+        "--pp-sheet-margin-left": `${(marginMm / sheetWidthMm) * 100}%`,
+        "--pp-sheet-margin-top": `${(marginMm / sheetHeightMm) * 100}%`,
+        "--pp-sheet-margin-right": `${(marginMm / sheetWidthMm) * 100}%`,
+        "--pp-sheet-margin-bottom": `${(marginMm / sheetHeightMm) * 100}%`,
+      } as CSSProperties)
     : undefined;
 
   return (

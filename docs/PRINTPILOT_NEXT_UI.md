@@ -4503,3 +4503,12 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die linke Nutzenrechner-Toolbox wurde nochmals etwas schmaler gesetzt, damit mehr Fläche für die maßhaltige Bogenvorschau bleibt.
 - In den Kalkulationsformularen gilt nun ein stabiler Mindestabstand von ca. 5 mm zwischen Eingabezeile und nächstem Feldpunkt.
 - Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, globale Typografie und Bottom-Navigation bleiben unverändert.
+
+### Sprint 61.29 – Label-Feld-Abstand, Druckbogenlinie und Randlinie korrigiert
+
+- Der in Sprint 61.28 irrtümlich vergrößerte vertikale Formularabstand wurde wieder kompakter gesetzt.
+- Stattdessen wurde der horizontale Abstand zwischen Feldlabel und Eingabefeld erhöht, damit Labels wie `Auftragsart`, `Korrektur bis` oder `Kundenreferenz` nicht zu dicht am Eingabefeld sitzen.
+- In der Nutzenvorschau wird das Papier-/Druckbogenformat jetzt als durchgehende Magenta-Kontur dargestellt.
+- Der eingegebene Rand wird innerhalb des Druckbogens zusätzlich als gestrichelte Innenlinie dargestellt.
+- Der Nutzenblock bleibt weiterhin im Digitaldruck zentriert; Rand dient als Mindestabstand/Prüfwert.
+- Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, globale Typografie und Bottom-Navigation bleiben unverändert.

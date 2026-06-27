@@ -4466,3 +4466,12 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Fußzeile unter der Vorschau mit Druckbogen-/Raster-/Gap-Werten wurde ebenfalls entfernt, damit keine doppelten Informationen erscheinen.
 - Rechts bleibt damit ausschließlich die saubere Bogenvorschau; links bündelt die Toolbox Eingaben, Varianten und Ergebniswerte.
 - Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, Farben, globale Typografie und Bottom-Navigation bleiben unverändert.
+
+### Sprint 61.25 – Nutzenrechner ohne Zusatzrahmen, Papierformat in Magenta
+
+- Im Nutzenrechner wurden der separate Rahmen um die linke Toolbox und der zusätzliche Rahmen um den rechten Nutzenplan entfernt.
+- Die linke Toolbox und die rechte Bogenvorschau wirken dadurch wie ein gemeinsamer, ruhiger Arbeitsbereich ohne doppelte Kastenstruktur.
+- Die gestrichelte Markierung des Papier-/Druckbogenformats wird jetzt dezent in Magenta dargestellt, damit sofort klar ist, wo das Papierformat liegt.
+- Die markierte Papierfläche ist bewusst technisch-rechteckig ausgeführt; abgerundete Ecken wurden an dieser Stelle entfernt.
+- Zusätzliche Kopf-/Fußinformationen der Vorschau bleiben im Workbench-Kontext ausgeblendet, damit keine doppelten SRA3-/Raster-/Gap-Angaben erscheinen.
+- Kalkulationslogik, Nutzenberechnung, Vorschau-Crop, PDF-/Printausgabe, globale Typografie und Bottom-Navigation bleiben unverändert.

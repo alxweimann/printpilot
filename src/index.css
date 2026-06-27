@@ -28739,3 +28739,55 @@ body {
 .pp-calculation-page .pp-calc-form-section:has(.pp-imposition-calculator--workbench) {
   padding-bottom: 16px !important;
 }
+
+/* Sprint 61.25 – Nutzenrechner ohne Zusatzrahmen, Papierformat technisch markieren
+   Die linke Toolbox und der rechte Nutzenplan erscheinen ohne eigene Rahmen.
+   Die Papierfläche wird als echtes Rechteck gezeigt und die gestrichelte
+   Markierung des Papierformats wird dezent in Magenta hervorgehoben. */
+.pp-calculation-page .pp-imposition-plan,
+.pp-calculation-page .pp-imposition-calculator__editor,
+.pp-calculation-page .pp-imposition-calculator__preview,
+.pp-calculation-page .pp-imposition-toolbar--side,
+.pp-calculation-page .pp-imposition-toolbar {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.pp-calculation-page .pp-imposition-plan {
+  padding: 0 !important;
+  gap: 18px !important;
+}
+
+.pp-calculation-page .pp-imposition-toolbar--side,
+.pp-calculation-page .pp-imposition-toolbar {
+  padding: 0 !important;
+  overflow: visible !important;
+}
+
+.pp-calculation-page .pp-imposition-calculator__preview .pp-calc-sheet-preview,
+.pp-calculation-page .pp-imposition-calculator__preview .pp-calc-sheet-preview__sheet,
+.pp-calculation-page .pp-calc-sheet-preview--highres .pp-calc-sheet-preview__sheet,
+.pp-calculation-page .pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__sheet {
+  border: 0 !important;
+  border-radius: 0 !important;
+  background: transparent !important;
+  box-shadow: none !important;
+}
+
+.pp-calculation-page .pp-imposition-calculator__preview .pp-calc-sheet-preview__sheet,
+.pp-calculation-page .pp-calc-sheet-preview--highres .pp-calc-sheet-preview__sheet,
+.pp-calculation-page .pp-calc-sheet-preview--scaled .pp-calc-sheet-preview__sheet {
+  overflow: visible !important;
+}
+
+.pp-calculation-page .pp-calc-sheet-preview__margin {
+  border: 1.4px dashed rgba(203, 0, 114, .62) !important;
+  border-radius: 0 !important;
+}
+
+.pp-calculation-page .pp-imposition-calculator__preview .pp-calc-sheet-preview__bar,
+.pp-calculation-page .pp-imposition-calculator__preview .pp-calc-sheet-preview > p {
+  display: none !important;
+}

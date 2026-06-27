@@ -4391,3 +4391,11 @@ Die linke Eingabe im Reiter **04 Nutzenrechner** wurde nicht nur verkleinert, so
 - Die Fußzeile der Nutzenvorschau verwendet im Arbeitskontext die Bezeichnung **Gap** statt **Abstand**.
 - Formularsektionen erhalten eine überlagerte, saubere Außenkontur. Innere Grid- oder Zelllinien erzeugen dadurch keinen doppelten Rahmen mehr und schneiden die unteren Panel-Rundungen nicht optisch ab.
 - Keine Änderung an Farben, Schriftgrößen, Kalkulationslogik, echter Nutzenberechnung, PDF-/Printlayout oder Bottom-Navigation.
+
+### Sprint 61.16 – Formularabstand und Nutzenrechner kompakt stabilisieren
+
+- Formularzeilen in der Kalkulationsmaske erhalten nun einen festen vertikalen Abstand von ca. 5 mm zwischen Eingabezeile und nächstem Feldpunkt.
+- Die Nutzenrechner-Toolbox wurde als ein gemeinsamer kompakter Eingabeblock stabilisiert. Einzelrahmen um Druckbogen, Endformat, Rand, Raster, Gap, Basis, Drehung und Modus wurden zugunsten eines gemeinsamen Toolbox-Rahmens zurückgenommen.
+- Die Toolbox bleibt links in den Nutzenplan integriert, wirkt aber weniger massiv und vermeidet Overlay-Probleme bei Raster- und Gap-Feldern.
+- Die Nutzenvorschau verwendet kleinere, stärker auf Endformat gecroppte Kacheln. Schnittmarken aus der Demo-Vorschau werden optisch weiter ausgeblendet, ohne Originaldatei, Kalkulationslogik oder PDF-/Printausgabe zu verändern.
+- Farben, Schriftgrößen, Nutzenberechnung, PDF-/Printlayout und Bottom-Navigation wurden nicht verändert.

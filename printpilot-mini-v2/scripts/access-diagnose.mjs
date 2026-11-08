@@ -5,6 +5,14 @@ const account=process.env.CF_PRINTPILOT_ACCOUNT_ID;
 if(!token||!/^[a-f0-9]{32}$/i.test(account||'')){
   throw new Error('Missing Access token or account ID (configure GitHub Actions secrets).');
 }
+const verify=await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}});
+let verifyResult={};try{verifyResult=await verify.json()}catch(_){}
+console.log('Access token secret present: '+Boolean(token));
+console.log('Access token format plausible: '+(/^[A-Za-z0-9_-]{20,200}$/.test(token)));
+console.log('Token verification HTTP status: '+verify.status);
+console.log('Token verification success: '+Boolean(verifyResult.success));
+console.log('Token verification state: '+String(verifyResult.result?.status||'unavailable'));
+if(!verify.ok||!verifyResult.success)throw new Error('Cloudflare token verification failed; inspect GitHub secret, token validity, or access.');
 const origin='https://api.cloudflare.com/client/v4/accounts/'+account;
 async function get(url) {
   const response=await fetch(origin+url,{headers:{Authorization:'Bearer '+token,Accept:'application/json'}});

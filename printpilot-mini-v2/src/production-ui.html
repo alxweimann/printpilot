@@ -467,22 +467,16 @@ function updateBoardHint(){
   :selectedMove?'Auftrag ausgewählt: Zielkarte antippen, um ihn dahinter einzusortieren, oder einen leeren Bereich im Zieltag antippen.'
  :'Auftrag am Griff ⠿ ziehen, auch zwischen zwei Karten · alternativ Griff und Zielkarte antippen.';
 }
-function reorderJob(id,date,relativeId=null,after=true){
+async function reorderJob(id,date,relativeId=null,after=true){
  if(!boardUnlocked||document.body.classList.contains('display-only'))return;
- const from=jobs.findIndex(x=>x.id===id);
- if(from<0||!/^\d{4}-\d{2}-\d{2}$/.test(date))return;
- const source=jobs[from],oldDate=source.date;
- if(source.fixed&&date!==oldDate&&!confirm('Fixtermin von '+displayDate(oldDate)+' auf '+displayDate(date)+' verschieben?'))return;
- if(relativeId===id)return;
- const before=jobs.slice();
- jobs.splice(from,1);
- source.date=date;
- let insert=-1;
- if(relativeId){const to=jobs.findIndex(x=>x.id===relativeId&&x.date===date);if(to>=0)insert=to+(after?1:0)}
- if(insert<0){const last=jobs.findLastIndex(x=>x.date===date);insert=last>=0?last+1:jobs.length}
- jobs.splice(insert,0,source);
- try{save()}catch(e){jobs=before;render();return}
- render();
+ const source=jobs.find(j=>j.id===id);if(!source||!/^\d{4}-\d{2}-\d{2}$/.test(date)||relativeId===id)return;
+ let confirmFixedMove=false;
+ if(source.fixed&&date!==source.date){
+  confirmFixedMove=confirm('Fixtermin von '+displayDate(source.date)+' auf '+displayDate(date)+' verschieben?');
+  if(!confirmFixedMove)return;
+ }
+ await commitRemote(()=>api('jobs/'+encodeURIComponent(id)+'/move','POST',
+  {date,relativeId,after,revision:source.revision,confirmFixedMove}));
 }
 function positionAtPoint(x,y){
  const el=document.elementFromPoint(x,y);
@@ -555,34 +549,31 @@ function renderArchive(){
  $('archiveCount').textContent=String(archived.length);
  $('archiveList').innerHTML=archived.length?archived.map(j=>`<div class="archive-item"><div><strong>${esc(j.id)} · ${esc(j.customer)}</strong><small>${esc(j.product)} · ${esc(j.quantity||'')} · ${displayDate(j.date)}</small></div><div class="archive-actions"><button class="btn" data-restore-id="${esc(j.id)}">Wiederherstellen</button><button class="btn danger" data-delete-archived="${esc(j.id)}">Endgültig löschen</button></div></div>`).join(''):'<div class="archive-empty">Noch keine erledigten Aufträge abgelegt.</div>';
 }
-function archiveJob(id){
+async function archiveJob(id){
  if(document.body.classList.contains('display-only'))return;
  const j=jobs.find(x=>x.id===id);if(!j||j.archived||j.status!=='Fertig')return;
- if(!confirm('Auftrag '+j.id+' in „Erledigte Aufträge“ verschieben?'))return;
- const previous=jobs.map(x=>({...x}));
- j.archived=true;j.archivedAt=new Date().toISOString();
- try{save()}catch(e){jobs=previous;alert('Ablage konnte nicht gespeichert werden.');return}
- render();
+ if(!confirm('Auftrag '+id+' in „Erledigte Aufträge“ verschieben?'))return;
+ await commitRemote(()=>api('jobs/'+encodeURIComponent(id)+'/archive','POST',{revision:j.revision}));
 }
-function restoreJob(id){
+async function restoreJob(id){
  if(document.body.classList.contains('display-only'))return;
  const j=jobs.find(x=>x.id===id&&x.archived);if(!j)return;
- const previous=jobs.map(x=>({...x}));j.archived=false;delete j.archivedAt;
- try{save()}catch(e){jobs=previous;alert('Wiederherstellung fehlgeschlagen.');return}
- render();$('archiveDetails').open=true;
+ const ok=await commitRemote(()=>api('jobs/'+encodeURIComponent(id)+'/restore','POST',{revision:j.revision}));
+ if(ok)$('archiveDetails').open=true;
 }
-document.addEventListener('click',e=>{
+document.addEventListener('click',async e=>{
  const archive=e.target.closest('[data-archive-id]'),restore=e.target.closest('[data-restore-id]'),del=e.target.closest('[data-delete-archived]');
- if(archive){archiveJob(archive.dataset.archiveId);return}
- if(restore){restoreJob(restore.dataset.restoreId);return}
+ if(archive){await archiveJob(archive.dataset.archiveId);return}
+ if(restore){await restoreJob(restore.dataset.restoreId);return}
  if(del){
-  const id=del.dataset.deleteArchived;const j=jobs.find(x=>x.id===id&&x.archived);if(!j||document.body.classList.contains('display-only'))return;
-  if(!confirm('Auftrag '+id+' ENDGÜLTIG löschen? Dies kann nicht rückgängig gemacht werden. Bitte vorher eine Sicherung erstellen.'))return;
-  const before=jobs;jobs=jobs.filter(x=>x!==j);
-  try{save()}catch(e){jobs=before;alert('Löschen fehlgeschlagen.');return}
-  render();$('archiveDetails').open=true;
+  const id=del.dataset.deleteArchived,j=jobs.find(x=>x.id===id&&x.archived);
+  if(!j||remoteRole!=='admin'||document.body.classList.contains('display-only'))return;
+  if(!confirm('Auftrag '+id+' ENDGÜLTIG löschen? Bitte vorher eine Sicherung erstellen.'))return;
+  const ok=await commitRemote(()=>api('jobs/'+encodeURIComponent(id),'DELETE',{revision:j.revision}));
+  if(ok)$('archiveDetails').open=true;
  }
 });
+
 const demoJobs=[
  ['Nordlicht Medien','Flyer DIN A5','8.000','Schneiden, Verpacken','Freigegeben'],
  ['Musterverein Süd','Broschüre A4','1.200','Heften, Schneiden, Verpacken','In Produktion'],

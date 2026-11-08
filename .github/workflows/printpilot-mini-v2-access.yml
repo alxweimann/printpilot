@@ -53,7 +53,7 @@ jobs:
           script: |
             const fs = require('node:fs');
             const lines = fs.readFileSync('access-check.log', 'utf8')
-              .split('\n').filter(line => /^(Staging Access app exists:|Worker-scoped destinations:|Access policies linked:|Display policy linked:|Cloudflare member policy linked:|Available identity provider types:|Application selects specific identity providers:|One-time PIN provider allowed by application:|Automatic identity redirect:|Linked policy detail endpoint unavailable:|Identity provider listing unavailable:|READ-ONLY check completed\.|Diagnostic exit status:|Error: )/.test(line))
+              .split('\n').filter(line => /^(Staging Access app exists:|Worker-scoped destinations:|Access policies linked:|Display policy linked:|Cloudflare member policy linked:|Available identity provider types:|Application selects specific identity providers:|One-time PIN provider allowed by application:|Automatic identity redirect:|Linked policy detail endpoint unavailable:|Identity provider listing unavailable:|READ-ONLY check completed\.|Diagnostic exit status:|Access token secret present:|Access token format plausible:|Token verification HTTP status:|Token verification success:|Token verification state:|Error: )/.test(line))
               .map(line => line.slice(0, 250));
             const data = JSON.stringify({
               type: 'printpilot-v2-staging-readonly-diagnostics',

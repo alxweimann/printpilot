@@ -48,7 +48,8 @@ export default {
   try{
    if(path==='/api/v2/me'&&method==='GET')return reply(user);
    if(path==='/api/v2/jobs'&&method==='GET'){
-    const rows=await db.prepare('SELECT * FROM jobs ORDER BY archived ASC, planned_date ASC, position ASC, id ASC LIMIT 5000').all();
+    const rows=await db.prepare('SELECT * FROM jobs ORDER BY archived ASC, planned_date ASC, position ASC, id ASC LIMIT 5001').all();
+    if((rows.results||[]).length>5000)return failure(409,'Mehr als 5.000 Aufträge: vollständige Liste kann nicht sicher geladen werden. Daten nicht überschreiben.');
     return reply({jobs:(rows.results||[]).map(rowToJob)});
    }
    if(path==='/api/v2/machines'&&method==='GET'){
@@ -64,7 +65,7 @@ export default {
     const data=await body(request),j=normalizeJob(data);
     if(!j)return failure(422,'Pflichtfelder, Datum oder Status ungültig');
     if(await db.prepare('SELECT id FROM jobs WHERE id=?').bind(j.id).first())return failure(409,'Auftragsnummer existiert bereits');
-    const next=(await db.prepare('SELECT COALESCE(MAX(position),0)+1 AS p FROM jobs WHERE planned_date=?').bind(j.date).first()).p;
+    const next=(await db.prepare('SELECT COALESCE(MAX(position),0)+1024 AS p FROM jobs WHERE planned_date=? AND archived=0').bind(j.date).first()).p;
     const batch=await db.batch([
      db.prepare('INSERT OR IGNORE INTO jobs(id,payload,planned_date,status,position,updated_by) VALUES(?,?,?,?,?,?)').bind(j.id,JSON.stringify(j),j.date,j.status,next,user.email),
      audit(db,user.email,'create',j.id,null,j)
@@ -139,12 +140,20 @@ export default {
     const next={...storedPayload,...validated};
     if(previous.fixed&&next.date!==previous.date&&data.confirmFixedMove!==true)return failure(409,'Fixtermin: Verschieben muss ausdrücklich bestätigt werden');
     const nextRev=beforeRow.revision+1;
+    // A normal form edit can change the planned date, not only the dedicated
+    // move endpoint. Place such jobs at the END of the new day's queue.
+    // Never inherit a position from the old day.
+    let nextPosition=beforeRow.position;
+    if(next.date!==previous.date){
+      const tail=await db.prepare('SELECT COALESCE(MAX(position),0)+1024 AS p FROM jobs WHERE planned_date=? AND archived=0 AND id<>?').bind(next.date,id).first();
+      nextPosition=tail.p;
+    }
     const batch=await db.batch([
-     db.prepare('UPDATE jobs SET payload=?,planned_date=?,status=?,revision=?,updated_at=CURRENT_TIMESTAMP,updated_by=? WHERE id=? AND revision=?').bind(JSON.stringify(next),next.date,next.status,nextRev,user.email,id,beforeRow.revision),
-     audit(db,user.email,'update',id,previous,{...next,revision:nextRev,archived:previous.archived})
+     db.prepare('UPDATE jobs SET payload=?,planned_date=?,status=?,position=?,revision=?,updated_at=CURRENT_TIMESTAMP,updated_by=? WHERE id=? AND revision=?').bind(JSON.stringify(next),next.date,next.status,nextPosition,nextRev,user.email,id,beforeRow.revision),
+     audit(db,user.email,'update',id,previous,{...next,position:nextPosition,revision:nextRev,archived:previous.archived})
     ]);
     if(batch[0].meta?.changes!==1)return failure(409,'Auftrag wurde zwischenzeitlich geändert');
-    return reply({job:{...next,revision:nextRev,archived:previous.archived}});
+    return reply({job:{...next,revision:nextRev,position:nextPosition,archived:previous.archived}});
    }
    if(!action&&method==='DELETE'){
     if(user.role!=='admin')return failure(403,'Nur Administrator darf endgültig löschen');

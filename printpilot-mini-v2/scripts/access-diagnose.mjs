@@ -1,14 +1,14 @@
 // Read-only Access diagnostics. Never print credentials, e-mails or policy rules.
 // Deliberately does not modify Access settings or other Workers.
-const token=String(process.env.CF_PRINTPILOT_ACCESS_TOKEN||'').trim().replace(/^Bearer\s+/i,'').replace(/^['\"]|['\"]$/g,'').trim();
+const token=String(process.env.CF_PRINTPILOT_ACCESS_TOKEN||process.env.CF_PRINTPILOT_TOKEN||'').trim().replace(/^Bearer\s+/i,'').replace(/^['\"]|['\"]$/g,'').trim();
 const account=process.env.CF_PRINTPILOT_ACCOUNT_ID;
 if(!token||!/^[a-f0-9]{32}$/i.test(account||'')){
   throw new Error('Missing Access token or account ID (configure GitHub Actions secrets).');
 }
 const verify=await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}});
 let verifyResult={};try{verifyResult=await verify.json()}catch(_){}
-console.log('Access token secret present: '+Boolean(token));
-console.log('Access token format plausible: '+(/^[A-Za-z0-9_-]{20,200}$/.test(token)));
+console.log('Access-capable token secret present: '+Boolean(token));
+console.log('Access-capable token format plausible: '+(/^[A-Za-z0-9_-]{20,200}$/.test(token)));
 console.log('Token verification HTTP status: '+verify.status);
 console.log('Token verification success: '+Boolean(verifyResult.success));
 console.log('Token verification state: '+String(verifyResult.result?.status||'unavailable'));

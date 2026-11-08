@@ -72,13 +72,46 @@ export default {
     if(batch[0].meta?.changes!==1)return failure(409,'Auftragsnummer wurde bereits vergeben');
     return reply({job:{...j,revision:1,archived:false,position:next}},201);
    }
-   const match=path.match(/^\/api\/v2\/jobs\/([^/]+)(?:\/(archive|restore))?$/);
+   const match=path.match(/^\/api\/v2\/jobs\/([^/]+)(?:\/(archive|restore|move))?$/);
    if(!match)return failure(404,'Nicht gefunden');
    const id=decodeURIComponent(match[1]),action=match[2];
    if(id.length>40)return failure(400,'Ungültige Auftragsnummer');
    const beforeRow=await db.prepare('SELECT * FROM jobs WHERE id=?').bind(id).first();
    if(!beforeRow)return failure(404,'Auftrag nicht gefunden');
    const previous=rowToJob(beforeRow);
+   if(action==='move'&&method==='POST'){
+    const data=await body(request);
+    if(!Number.isSafeInteger(data.revision)||data.revision!==beforeRow.revision)return failure(409,'Auftrag wurde zwischenzeitlich geändert');
+    if(previous.archived)return failure(409,'Archivierte Aufträge können nicht verschoben werden');
+    if(!validDate(data.date))return failure(422,'Ungültiges Zieldatum');
+    if(previous.fixed&&data.date!==previous.date&&data.confirmFixedMove!==true)return failure(409,'Fixtermin: Verschieben muss ausdrücklich bestätigt werden');
+    const relativeId=data.relativeId===null||data.relativeId===undefined?null:String(data.relativeId);
+    if(relativeId!==null&&(relativeId.length>40||relativeId===id))return failure(422,'Ungültiger Bezug');
+    const targetRows=await db.prepare('SELECT id,position FROM jobs WHERE planned_date=? AND archived=0 AND id<>? ORDER BY position ASC,id ASC').bind(data.date,id).all();
+    const target=targetRows.results||[];
+    let index=target.length;
+    if(relativeId!==null){
+      const i=target.findIndex(x=>x.id===relativeId);
+      if(i<0)return failure(409,'Zielauftrag nicht mehr vorhanden');
+      index=i+(data.after===true?1:0);
+    }
+    const prev=index>0?Number(target[index-1].position):null;
+    const next=index<target.length?Number(target[index].position):null;
+    // Real-valued midpoint allows insertion without shifting other jobs.
+    // If precision is exhausted, require controlled reindexing rather than
+    // silently changing any unrelated record.
+    const position=prev===null&&next===null?1024:
+      prev===null?next-1024:next===null?prev+1024:(prev+next)/2;
+    if(!Number.isFinite(position)||(prev!==null&&position<=prev)||(next!==null&&position>=next))
+      return failure(409,'Sortierung benötigt eine Neuordnung. Keine Daten verändert.');
+    const rev=beforeRow.revision+1;
+    const batch=await db.batch([
+      db.prepare('UPDATE jobs SET planned_date=?,position=?,revision=?,updated_at=CURRENT_TIMESTAMP,updated_by=? WHERE id=? AND revision=? AND archived=0').bind(data.date,position,rev,user.email,id,beforeRow.revision),
+      audit(db,user.email,'move',id,previous,{...previous,date:data.date,position,revision:rev})
+    ]);
+    if(batch[0].meta?.changes!==1)return failure(409,'Auftrag wurde zwischenzeitlich geändert');
+    return reply({ok:true,revision:rev,date:data.date,position});
+   }
    if(action&&method==='POST'){
     const data=await body(request);
     if(!Number.isSafeInteger(data.revision)||data.revision!==beforeRow.revision)return failure(409,'Auftrag wurde zwischenzeitlich geändert');

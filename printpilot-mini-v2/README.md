@@ -54,3 +54,9 @@ End-to-End-Tests mit D1 und echten Access-Identitäten, insbesondere Konflikt- u
 - Bei gleichzeitig geänderten Aufträgen zeigt die Staging-Bearbeitung die abweichenden Felder aus den **eigenen, ungespeicherten Eingaben** und dem **aktuellen Serverstand** nebeneinander. Der Benutzer kann die aktuelle Serverversion nur durch einen separaten, bestätigten Schritt übernehmen. Es gibt **keinen automatischen Merge und keinen stillen Retry**.
 - Bei einem normalen `PUT` bleiben bislang gespeicherte Zusatzfelder, die der aktuelle Editor nicht kennt (z. B. ältere Datenreferenzen), erhalten. Unbekannte, vom Client neu eingeschleuste Felder werden hingegen nicht ungeprüft übernommen.
 - Regressionstests für beide Anforderungen befinden sich in `test/staging.test.mjs`. Diese Tests werden durch den GitHub-Actions-Workflow ausgeführt; ein aktueller erfolgreicher Workflow-Lauf wurde hier noch nicht bestätigt.
+
+## Zusätzliche Schutzprüfungen bei Terminwechseln
+
+- Ein normaler Formular-Edit mit verändertem Termin setzt die Auftragsposition ans Ende der Ziel-Tagesliste. Bisherige Zusatzfelder bleiben erhalten. Das gilt unabhängig von der separaten `/move`-Funktion.
+- Der Abruf zentraler Aufträge prüft einen zusätzlichen Datensatz (`LIMIT 5001`). Bei mehr als 5.000 Aufträgen wird ein Fehler gemeldet statt einer scheinbar vollständigen, aber abgeschnittenen Liste. Vor realem Betrieb mit dieser Größenordnung sind Pagination und ein angepasster Datenladeprozess erforderlich.
+- Beide Fälle sind als Regressionstests in `test/staging.test.mjs` ergänzt. Die laufende Version 1.12.1 und der Cloudflare-Produktivworker wurden nicht verändert.

@@ -169,7 +169,7 @@ dialog textarea{min-height:75px;resize:vertical}
   const job={id:field('id').value.trim(),date:field('date').value,customer:field('customer').value.trim(),product:field('product').value.trim(),
    quantity:field('quantity').value.trim(),machine:field('machine').value,status:field('status').value,fixed:field('fixed').checked,
    steps:field('steps').value.split(',').map(x=>x.trim()).filter(Boolean),notes:field('notes').value.trim()};
-  if(old)job.revision=editingRevision;
+  if(old){job.revision=editingRevision;if(old.fixed&&old.date!==job.date){if(!confirm('Fixtermin von '+old.date+' auf '+job.date+' verschieben?'))return;job.confirmFixedMove=true;}}
   editBusy=true;$('saveEdit').disabled=true;$('saveError').textContent='';
   try{await api(old?'jobs/'+encodeURIComponent(old.id):'jobs',old?'PUT':'POST',job);$('editDialog').close();await refresh();}
   catch(e){$('saveError').textContent=e.message;}

@@ -122,6 +122,21 @@
 body.display-only .move-handle{display:none!important}
 @media(max-width:600px){.move-handle{min-height:40px;min-width:40px}}
 
+
+/* v1.6: streamlined due date, persistent touch ordering inside each day */
+.week-grid .compact-due,.board .week-grid .compact-due{
+ display:inline-flex;align-items:baseline;gap:5px;flex-wrap:wrap;
+ background:transparent;color:#d9e8f2;padding:1px 0;border-radius:0;
+}
+.week-grid .compact-due{color:#284a61}
+.week-grid .compact-due .due-label{font-size:11px;font-weight:600;letter-spacing:0;opacity:.8;text-transform:none}
+.week-grid .compact-due .due-value{font-size:14px;font-weight:900;font-variant-numeric:tabular-nums}
+.week-grid .compact-due.fixed,.board .week-grid .compact-due.fixed{background:transparent;color:#ff7f89}
+.week-grid .compact-due.overdue,.board .week-grid .compact-due.overdue{background:transparent;color:#ff7f89;outline:0}
+.week-grid .compact-due .due-flag{font-size:10px;font-weight:800;color:inherit;text-transform:uppercase}
+.board .compact-card.drop-before{box-shadow:0 -4px 0 #f5d969}
+.board .compact-card.drop-after{box-shadow:0 4px 0 #f5d969}
+
 </style>
 </head>
 <body>
@@ -132,7 +147,7 @@ body.display-only .move-handle{display:none!important}
 <main><section id="listView"><div class="toolbar"><input type="search" id="search" placeholder="Auftrag, Kunde oder Produkt suchen …" aria-label="Aufträge suchen"><select id="statusFilter"><option value="">Alle Status</option></select><select id="sortBy"><option value="date">Nach Termin</option><option value="number">Nach Auftragsnummer</option></select></div><div class="jobs" id="jobs"></div></section>
 
 <section id="boardView" class="hide"><div class="board"><div class="eyebrow">PRINTPILOT / PRODUKTION</div><div class="week-head" style="margin-top:7px"><h2 id="boardTitle">Wochenübersicht</h2><div class="weeknav"><button class="btn" id="boardPrev">←</button><button class="btn" id="boardToday" title="Zur aktuellen Woche">Heute</button><button class="btn" id="boardNext">→</button><button class="btn" id="fullscreen" title="Vollbildmodus">⛶ <span class="full-label">Vollbild</span></button></div></div><div class="week-grid" id="boardGrid"></div><div class="board-caption"><span id="boardHint">Wochenübersicht · Im Verwaltungsmodus per Touch verschieben · noch keine Synchronisierung zwischen Geräten</span></div></div></section></main>
-<div class="footer">Testversion 1.5.1 · Speicherung nur in diesem Browser (localStorage) · keine Synchronisierung zwischen Geräten · keine Cloud-Anmeldung</div>
+<div class="footer">Testversion 1.6 · Speicherung nur in diesem Browser (localStorage) · keine Synchronisierung zwischen Geräten · keine Cloud-Anmeldung</div>
 </div>
 <div class="modal-wrap hide" id="modalWrap" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><h2 id="modalTitle">Neuer Auftrag</h2><form id="jobForm"><div class="formgrid"><div class="field"><label for="number">Auftragsnummer *</label><input id="number" maxlength="40" required></div><div class="field"><label for="date">Fertigstellung *</label><input id="date" type="date" required></div><div class="field full"><label for="customer">Kunde *</label><input id="customer" maxlength="120" required></div><div class="field"><label for="product">Produkt *</label><input id="product" maxlength="160" required></div><div class="field"><label for="quantity">Auflage</label><input id="quantity" maxlength="50" placeholder="z. B. 5.000 Stück"></div><div class="field"><label for="machine">Druckmaschine</label><select id="machine"></select></div><div class="field"><label for="status">Status</label><select id="status"></select></div><div class="field full"><label class="checkrow"><input type="checkbox" id="fixed" style="width:auto"> <strong>Fixtermin – Datum rot hervorheben</strong></label></div><div class="field full"><span>Weiterverarbeitung (optional)</span><div class="steps" id="stepButtons"></div></div><div class="field full"><label for="notes">Notiz (optional)</label><textarea id="notes" maxlength="500" placeholder="Nur wenn nötig"></textarea></div></div><div class="formfoot"><button class="btn danger hide" type="button" id="deleteBtn">Auftrag löschen</button><div class="actions" style="margin-left:auto"><button class="btn" type="button" id="cancelBtn">Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div></div></form></div></div>
 <div class="modal-wrap hide" id="machineModal" role="dialog" aria-modal="true" aria-labelledby="machineTitle"><div class="modal machine-modal"><div class="machine-modal-head"><div><h2 id="machineTitle">Druckmaschinen verwalten</h2><p class="muted">Hier bestimmst du selbst, welche Maschinen zur Auswahl stehen.</p></div><button class="btn" type="button" id="closeMachines" aria-label="Schließen">✕</button></div><form id="machineForm" class="machine-add"><label for="newMachine">Neue Maschine</label><div class="machine-add-row"><input id="newMachine" maxlength="100" placeholder="Maschinenname" required><button class="btn primary" type="submit">＋ Hinzufügen</button></div></form><div id="machineList" class="machine-list"></div><p class="machine-hint">Umbenennen ändert auch die Maschinenbezeichnung in vorhandenen Aufträgen. Entfernen blendet die Maschine aus der Auswahl aus; bestehende Aufträge behalten ihre Angabe.</p></div></div>
@@ -164,61 +179,100 @@ function calmRows(j){const rows=[['Produkt',j.product||'—'],['Auflage',j.quant
 function renderList(){const q=$('search').value.trim().toLocaleLowerCase('de'),filter=$('statusFilter').value;let shown=jobs.filter(j=>(!filter||j.status===filter)&&(!q||[j.id,j.customer,j.product,j.quantity,j.machine].join(' ').toLocaleLowerCase('de').includes(q)));shown.sort((a,b)=>$('sortBy').value==='number'?a.id.localeCompare(b.id,'de',{numeric:true}):a.date.localeCompare(b.date)||a.id.localeCompare(b.id,'de',{numeric:true}));$('jobs').innerHTML=shown.length?shown.map(j=>`<article class="job" style="--status:${statusColor(j.status)}"><div class="job-head"><div class="job-title">${esc(j.id)} · ${esc(j.customer)}</div>${dateBadge(j)}</div>${calmRows(j)}<div class="job-foot"><span class="calm-status" style="color:var(--status)">${esc(j.status)}</span><div class="actions"><select aria-label="Status für Auftrag ${esc(j.id)} ändern" data-status-id="${esc(j.id)}">${statusOptions(j.status)}</select><button class="btn" data-edit="${esc(j.id)}">Bearbeiten</button></div></div></article>`).join(''):'<div class="empty"><h3>Noch keine passenden Aufträge</h3><p class="muted">Mit „＋ Auftrag“ legst du den ersten Auftrag an.</p></div>'}
 function weekRange(){const end=new Date(week);end.setDate(week.getDate()+4);return `${week.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})} – ${end.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})}`}
 function compactRows(j){const rows=[['Produkt',j.product||'—'],['Auflage',j.quantity||'—'],['Maschine',j.machine||'—']];const steps=Array.isArray(j.steps)?j.steps:[];const processing=steps.length?steps.map(esc).join(' · '):'—';return `<div class="compact-rows">${rows.map(([label,value])=>`<div class="compact-row"><span class="compact-label">${esc(label)}</span><span class="compact-value">${esc(value)}</span></div>`).join('')}<div class="compact-row processing-row"><span class="compact-label">Verarbeitung</span><span class="compact-value processing-value">${processing}</span></div></div>`}
-function compactDateBadge(j){const late=j.status!=='Fertig'&&j.date<today();return `<span class="compact-due ${j.fixed?'fixed':''} ${late?'overdue':''}" title="Fertigstellungstermin"><span class="due-label">TERMIN</span><span class="due-value">${displayDate(j.date)}</span>${j.fixed?'<span class="due-flag">FIX</span>':''}${late?'<span class="due-flag">ÜBERFÄLLIG</span>':''}</span>`}
-function weekMarkup(board){let str='';for(let offset=0;offset<5;offset++){const d=new Date(week);d.setDate(week.getDate()+offset);const day=iso(d),dayjobs=jobs.filter(j=>j.date===day).sort((a,b)=>Number(b.fixed)-Number(a.fixed));str+=`<div class="day day-${offset}" data-drop-date="${day}"><div class="day-head"><span>${['Mo','Di','Mi','Do','Fr'][offset]}</span><span>${displayDate(day)}</span></div><div class="day-body">${dayjobs.map(j=>`<article class="week-card compact-card" style="--status:${statusColor(j.status)}"><div class="compact-head"><strong>${esc(j.id)} · ${esc(j.customer)}</strong>${!document.body.classList.contains('display-only')? `<button type="button" class="move-handle" data-move-id="${esc(j.id)}" aria-label="Auftrag ${esc(j.id)} auf anderen Wochentag verschieben" title="Halten und auf anderen Tag ziehen oder antippen">⠿</button>`:''}</div>${compactRows(j)}<div class="compact-foot">${compactDateBadge(j)}<span class="compact-status" style="color:var(--status)">${esc(j.status)}</span></div></article>`).join('')||'<span class="no-jobs">–</span>'}</div></div>`}return str}
+function compactDateBadge(j){const late=j.status!=='Fertig'&&j.date<today();return `<span class="compact-due ${j.fixed?'fixed':''} ${late?'overdue':''}" title="Fertigstellungstermin"><span class="due-label">Termin</span><span class="due-value">${displayDate(j.date)}</span>${j.fixed?'<span class="due-flag">FIX</span>':''}${late?'<span class="due-flag">Überfällig</span>':''}</span>`}
+function weekMarkup(board){let str='';for(let offset=0;offset<5;offset++){const d=new Date(week);d.setDate(week.getDate()+offset);const day=iso(d),dayjobs=jobs.filter(j=>j.date===day);str+=`<div class="day day-${offset}" data-drop-date="${day}"><div class="day-head"><span>${['Mo','Di','Mi','Do','Fr'][offset]}</span><span>${displayDate(day)}</span></div><div class="day-body">${dayjobs.map(j=>`<article class="week-card compact-card" data-job-id="${esc(j.id)}" style="--status:${statusColor(j.status)}"><div class="compact-head"><strong>${esc(j.id)} · ${esc(j.customer)}</strong>${!document.body.classList.contains('display-only')? `<button type="button" class="move-handle" data-move-id="${esc(j.id)}" aria-label="Auftrag ${esc(j.id)} auf anderen Wochentag verschieben" title="Halten und auf anderen Tag ziehen oder antippen">⠿</button>`:''}</div>${compactRows(j)}<div class="compact-foot">${compactDateBadge(j)}<span class="compact-status" style="color:var(--status)">${esc(j.status)}</span></div></article>`).join('')||'<span class="no-jobs">–</span>'}</div></div>`}return str}
 function renderWeek(){const heading=`Woche ${weekRange()}`;$('boardTitle').textContent=heading;$('boardGrid').innerHTML=weekMarkup(true);selectedMove=null;updateBoardHint()}
 function render(){renderMetrics();renderList();renderWeek()}
 function setView(v){view=v;document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));['list','board'].forEach(x=>$(x+'View').classList.toggle('hide',v!==x));render()}
 
-function updateBoardHint(){const h=$('boardHint');if(!h)return;h.textContent=document.body.classList.contains('display-only')
-?'Nur-Lese-Ansicht · automatisch im selben Browser aktualisiert · noch keine geräteübergreifende Synchronisierung'
-:selectedMove?'Zieltag antippen, um den ausgewählten Auftrag zu verschieben. Erneut auf den Griff tippen zum Abbrechen.':'Auftrag am Griff ⠿ halten und auf einen Tag ziehen oder Griff und Zieltag antippen · noch keine Gerätesynchronisierung'}
-function moveToDate(id,date){
+
+function updateBoardHint(){
+ const h=$('boardHint');if(!h)return;
+ h.textContent=document.body.classList.contains('display-only')
+ ?'Nur-Lese-Ansicht · automatisch im selben Browser aktualisiert · noch keine geräteübergreifende Synchronisierung'
+ :selectedMove?'Auftrag ausgewählt: Zielkarte antippen, um ihn dahinter einzusortieren, oder einen leeren Bereich im Zieltag antippen.'
+ :'Auftrag am Griff ⠿ ziehen, auch zwischen zwei Karten · alternativ Griff und Zielkarte antippen.';
+}
+function reorderJob(id,date,relativeId=null,after=true){
  if(document.body.classList.contains('display-only'))return;
- const j=jobs.find(x=>x.id===id);
- if(!j||!/^\d{4}-\d{2}-\d{2}$/.test(date)||j.date===date)return;
- const old=j.date;
- if(j.fixed&&!confirm('Fixtermin von '+displayDate(old)+' auf '+displayDate(date)+' verschieben?'))return;
- j.date=date;
- try{save()}catch(e){j.date=old;render();return}
+ const from=jobs.findIndex(x=>x.id===id);
+ if(from<0||!/^\d{4}-\d{2}-\d{2}$/.test(date))return;
+ const source=jobs[from],oldDate=source.date;
+ if(source.fixed&&date!==oldDate&&!confirm('Fixtermin von '+displayDate(oldDate)+' auf '+displayDate(date)+' verschieben?'))return;
+ if(relativeId===id)return;
+ const before=jobs.slice();
+ jobs.splice(from,1);
+ source.date=date;
+ let insert=-1;
+ if(relativeId){const to=jobs.findIndex(x=>x.id===relativeId&&x.date===date);if(to>=0)insert=to+(after?1:0)}
+ if(insert<0){const last=jobs.findLastIndex(x=>x.date===date);insert=last>=0?last+1:jobs.length}
+ jobs.splice(insert,0,source);
+ try{save()}catch(e){jobs=before;render();return}
  render();
 }
-function highlightTarget(date){document.querySelectorAll('#boardGrid .day').forEach(x=>x.classList.toggle('move-target',x.dataset.dropDate===date))}
-function clearDrag(){if(dragState?.preview)dragState.preview.remove();dragState=null;highlightTarget(null);document.querySelectorAll('#boardGrid .is-moving').forEach(x=>x.classList.remove('is-moving'))}
+function positionAtPoint(x,y){
+ const el=document.elementFromPoint(x,y);
+ const day=el?.closest('#boardGrid [data-drop-date]');
+ if(!day)return null;
+ const card=el.closest('[data-job-id]');
+ const rect=card?.getBoundingClientRect();
+ return {date:day.dataset.dropDate,relativeId:card?.dataset.jobId||null,after:!rect||y>=rect.top+rect.height/2};
+}
+function markDrop(pos){
+ document.querySelectorAll('#boardGrid [data-drop-date]').forEach(x=>x.classList.toggle('move-target',x.dataset.dropDate===pos?.date));
+ document.querySelectorAll('#boardGrid [data-job-id]').forEach(x=>{
+  x.classList.toggle('drop-before',!!pos&&x.dataset.jobId===pos.relativeId&&!pos.after);
+  x.classList.toggle('drop-after',!!pos&&x.dataset.jobId===pos.relativeId&&pos.after);
+ });
+}
+function clearDrag(){
+ if(dragState?.preview)dragState.preview.remove();
+ dragState=null;
+ markDrop(null);
+ document.querySelectorAll('#boardGrid .is-moving').forEach(x=>x.classList.remove('is-moving'));
+}
 $('boardGrid').addEventListener('pointerdown',e=>{
- const grip=e.target.closest('[data-move-id]');if(!grip||document.body.classList.contains('display-only')||e.button!==0)return;
+ const grip=e.target.closest('[data-move-id]');
+ if(!grip||document.body.classList.contains('display-only')||e.button!==0)return;
  const id=grip.dataset.moveId,card=grip.closest('.week-card');
- dragState={id,startX:e.clientX,startY:e.clientY,x:e.clientX,y:e.clientY,active:false,source:card,preview:null};
+ dragState={id,startX:e.clientX,startY:e.clientY,active:false,source:card,preview:null};
  try{grip.setPointerCapture(e.pointerId)}catch(_){}
 });
 $('boardGrid').addEventListener('pointermove',e=>{
  if(!dragState)return;
- const d=dragState;d.x=e.clientX;d.y=e.clientY;
+ const d=dragState;
  if(!d.active&&Math.hypot(e.clientX-d.startX,e.clientY-d.startY)<7)return;
- if(!d.active){d.active=true;d.source.classList.add('is-moving');d.preview=document.createElement('div');d.preview.className='drag-preview';const j=jobs.find(x=>x.id===d.id);d.preview.textContent=j?j.id+' · '+j.customer:'Auftrag';document.body.appendChild(d.preview)}
- d.preview.style.left=Math.min(window.innerWidth-215,Math.max(5,e.clientX+12))+'px';d.preview.style.top=Math.max(5,e.clientY+12)+'px';
- const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('#boardGrid [data-drop-date]');highlightTarget(target?.dataset.dropDate||null);
+ if(!d.active){
+  d.active=true;d.source.classList.add('is-moving');
+  d.preview=document.createElement('div');d.preview.className='drag-preview';
+  const j=jobs.find(x=>x.id===d.id);d.preview.textContent=j?j.id+' · '+j.customer:'Auftrag';
+  document.body.appendChild(d.preview);
+ }
+ d.preview.style.left=Math.min(window.innerWidth-215,Math.max(5,e.clientX+12))+'px';
+ d.preview.style.top=Math.max(5,e.clientY+12)+'px';
+ markDrop(positionAtPoint(e.clientX,e.clientY));
  e.preventDefault();
 });
 $('boardGrid').addEventListener('pointerup',e=>{
  if(!dragState)return;
- const d=dragState;
- const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('#boardGrid [data-drop-date]'),date=target?.dataset.dropDate;
+ const d=dragState,pos=positionAtPoint(e.clientX,e.clientY);
  clearDrag();
- if(d.active){selectedMove=null;if(date)moveToDate(d.id,date);else updateBoardHint()}
+ if(d.active){selectedMove=null;if(pos)reorderJob(d.id,pos.date,pos.relativeId,pos.after);else updateBoardHint()}
  else{selectedMove=selectedMove===d.id?null:d.id;updateBoardHint()}
 });
 $('boardGrid').addEventListener('pointercancel',()=>{clearDrag();selectedMove=null;updateBoardHint()});
 $('boardGrid').addEventListener('click',e=>{
  if(e.target.closest('[data-move-id]')||!selectedMove||document.body.classList.contains('display-only'))return;
- const target=e.target.closest('[data-drop-date]');if(!target)return;
- const id=selectedMove;selectedMove=null;moveToDate(id,target.dataset.dropDate);updateBoardHint();
+ const day=e.target.closest('[data-drop-date]');if(!day)return;
+ const card=e.target.closest('[data-job-id]');
+ const id=selectedMove;selectedMove=null;
+ reorderJob(id,day.dataset.dropDate,card?.dataset.jobId||null,true);
+ updateBoardHint();
 });
 $('boardGrid').addEventListener('keydown',e=>{
  const grip=e.target.closest('[data-move-id]');if(!grip)return;
  if(e.key==='Enter'||e.key===' '){e.preventDefault();selectedMove=selectedMove===grip.dataset.moveId?null:grip.dataset.moveId;updateBoardHint()}
 });
-
 function openForm(id){editing=id;const j=jobs.find(x=>x.id===id);$('modalTitle').textContent=j?'Auftrag bearbeiten':'Neuer Auftrag';$('number').value=j?.id||'';$('date').value=j?.date||today();$('customer').value=j?.customer||'';$('product').value=j?.product||'';$('quantity').value=j?.quantity||'';renderMachineOptions(j?.machine||'');$('status').value=j?.status||statuses[0];$('fixed').checked=!!j?.fixed;$('notes').value=j?.notes||'';chosenSteps=[...(j?.steps||[])];renderStepButtons();$('deleteBtn').classList.toggle('hide',!j);$('modalWrap').classList.remove('hide');setTimeout(()=>$('number').focus(),0)}
 function renderStepButtons(){$('stepButtons').innerHTML=processes.map(x=>`<button type="button" class="step ${chosenSteps.includes(x)?'on':''}" data-step="${esc(x)}" aria-pressed="${chosenSteps.includes(x)}">${chosenSteps.includes(x)?'✓ ':''}${esc(x)}</button>`).join('')}
 function closeForm(){$('modalWrap').classList.add('hide');editing=null}

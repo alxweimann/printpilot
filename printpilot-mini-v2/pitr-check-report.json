@@ -1,0 +1,10 @@
+{
+  "kind": "printpilot-mini-v2-pitr-readonly",
+  "staging_db_verified": true,
+  "d1_version": "production",
+  "time_travel_bookmark_available": true,
+  "read_only": true,
+  "checked_at": "2026-11-08T15:54:56.191Z",
+  "workflow_result": "success",
+  "run_id": 42497187254
+}

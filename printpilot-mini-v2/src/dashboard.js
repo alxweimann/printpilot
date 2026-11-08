@@ -60,9 +60,13 @@ dialog textarea{min-height:75px;resize:vertical}
 .day.day-2{background:#322747}
 .day.day-3{background:#45263c}
 .day.day-4{background:#493521}
+
+#boardLock[aria-pressed="false"]{background:#ffe4b8;color:#6a4009}
+#boardLock[aria-pressed="true"]{background:#c7f1d8;color:#205739}
+.move-target{border:1px solid #b5dae9;border-radius:6px;padding:6px;color:#19465d;background:#f4fbff;min-width:0;max-width:100%;font-size:11px}
 </style></head><body><main>
 <header><div><div class="muted">PRINTPILOT / STAGING – NUR ANZEIGE</div><h1>Produktionsplan 2.0</h1><div id="identity" class="muted">Anmeldung wird geprüft …</div></div>
-<div><button id="prev" type="button" aria-label="Vorige Woche">←</button> <button id="next" type="button" aria-label="Nächste Woche">→</button> <button id="reload" type="button">Aktualisieren</button> <button id="newJob" type="button" hidden>＋ Auftrag</button></div></header>
+<div><button id="prev" type="button" aria-label="Vorige Woche">←</button> <button id="next" type="button" aria-label="Nächste Woche">→</button> <button id="reload" type="button">Aktualisieren</button> <button id="newJob" type="button" hidden>＋ Auftrag</button> <button id="boardLock" type="button" aria-pressed="false" hidden>🔒 Gesperrt</button></div></header>
 <div id="stats" class="summary"></div><div class="view-title"><h2 id="weekTitle"></h2><button id="backWeek" type="button" hidden>← Wochenansicht</button></div><div id="error" role="alert"></div><div class="week" id="week"></div>
 <details class="archive" id="archive"><summary>✓ Erledigte Aufträge <span id="archiveCount">0</span></summary><div id="archivedRows"></div></details>
 <p class="muted">Geschützte D1-Testumgebung · automatische Aktualisierung alle 15 Sekunden · kein Import aus bisherigen Browserdaten</p>
@@ -89,7 +93,7 @@ dialog textarea{min-height:75px;resize:vertical}
  function iso(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
  function monday(d){const x=new Date(d);x.setHours(12,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
  function fmt(d){return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});}
- let start=monday(new Date()),jobs=[],userRole='display',editingId=null,editingRevision=null,editBusy=false,selectedDay=null;
+ let start=monday(new Date()),jobs=[],userRole='display',editingId=null,editingRevision=null,editBusy=false,selectedDay=null,boardUnlocked=false;
  async function api(path,method='GET',payload){const headers={Accept:'application/json'};if(method!=='GET'){headers['Content-Type']='application/json';headers['X-Requested-With']='PrintPilotMini';}const res=await fetch('/api/v2/'+path,{method,credentials:'same-origin',cache:'no-store',headers,body:method==='GET'?undefined:JSON.stringify(payload||{})});
   if(!res.ok){let info={};try{info=await res.json()}catch(_){}const msg=info.error||('API-Fehler '+res.status);throw Error(res.status===409?msg+' – Zwischenzeitlich geändert. Bitte neu laden.':res.status===403?'Keine Berechtigung':msg);}return res.json();}
  function text(tag,cls,value){const el=document.createElement(tag);if(cls)el.className=cls;el.textContent=String(value??'');return el;}
@@ -109,7 +113,27 @@ dialog textarea{min-height:75px;resize:vertical}
    if(!rows.length)cards.appendChild(text('div','empty','Keine Aufträge'));
    for(const j of rows){
     const c=text('article','card','');c.append(text('div','number',j.id),text('div','customer',j.customer),text('div','product',j.product+' · '+(j.quantity||'—')),text('div','status',j.status));
-    if(j.notes)c.appendChild(text('div','notes','Notiz: '+j.notes));if(userRole!=='display'){const actions=text('div','card-actions','');const edit=text('button','','Bearbeiten');edit.type='button';edit.onclick=()=>openEditor(j.id);actions.appendChild(edit);if(j.status==='Fertig'&&!j.archived){const archive=text('button','','✓ Ablegen');archive.type='button';archive.onclick=()=>archiveJob(j);actions.appendChild(archive);}c.appendChild(actions);}cards.appendChild(c);
+    if(j.notes)c.appendChild(text('div','notes','Notiz: '+j.notes));
+    if(userRole!=='display'){const actions=text('div','card-actions','');
+     if(boardUnlocked){
+      const move=text('select','move-target','');
+      move.setAttribute('aria-label','Auftrag '+j.id+' auf anderen Wochentag verschieben');
+      const selected=text('option','','Verschieben nach …');selected.value='';move.appendChild(selected);
+      for(let offset=0;offset<5;offset++){
+       const date=new Date(start);date.setDate(start.getDate()+offset);const target=iso(date);
+       if(target===j.date)continue;
+       const option=text('option','',['Mo','Di','Mi','Do','Fr'][offset]+' · '+fmt(date));option.value=target;move.appendChild(option);
+      }
+      move.onchange=async()=>{const target=move.value;move.value='';if(target)await moveJob(j,target);};
+      actions.appendChild(move);
+      const ordered=rows;
+      const index=ordered.findIndex(x=>x.id===j.id);
+      for(const delta of [-1,1]){if(index+delta<0||index+delta>=ordered.length)continue;
+       const b=text('button','',delta===-1?'↑ Hoch':'↓ Runter');b.type='button';
+       b.onclick=()=>reorderWithinDay(j,ordered[index+delta],delta>0);actions.appendChild(b);
+      }
+     }
+     const edit=text('button','','Bearbeiten');edit.type='button';edit.onclick=()=>openEditor(j.id);actions.appendChild(edit);if(j.status==='Fertig'&&!j.archived){const archive=text('button','','✓ Ablegen');archive.type='button';archive.onclick=()=>archiveJob(j);actions.appendChild(archive);}c.appendChild(actions);}cards.appendChild(c);
    }
    day.appendChild(cards);root.appendChild(day);
   }
@@ -135,8 +159,17 @@ dialog textarea{min-height:75px;resize:vertical}
   }
  }
  async function refresh(){try{const [me,listed]=await Promise.all([api('me'),api('jobs')]);if(!Array.isArray(listed.jobs))throw Error('Ungültige Auftragsliste');
-  jobs=listed.jobs;userRole=me.role;$('newJob').hidden=userRole==='display';$('identity').textContent=me.email+' · '+me.role;$('error').textContent='';render();
+  jobs=listed.jobs;userRole=me.role;$('newJob').hidden=userRole==='display';$('boardLock').hidden=userRole==='display';if(userRole==='display')boardUnlocked=false;renderLock();$('identity').textContent=me.email+' · '+me.role;$('error').textContent='';render();
  }catch(e){$('error').textContent=e.message+' – letzte erfolgreiche Anzeige bleibt bestehen.';}}
+ function renderLock(){const btn=$('boardLock');btn.textContent=boardUnlocked?'🔓 Entsperrt':'🔒 Gesperrt';btn.setAttribute('aria-pressed',String(boardUnlocked));}
+ async function moveJob(j,date,relativeId=null,after=true){
+  if(!boardUnlocked||userRole==='display')return;
+  const confirmFixedMove=Boolean(j.fixed&&j.date!==date&&confirm('Fixtermin '+j.id+' wirklich verschieben?'));
+  if(j.fixed&&j.date!==date&&!confirmFixedMove)return;
+  try{await api('jobs/'+encodeURIComponent(j.id)+'/move','POST',{revision:j.revision,date,relativeId,after,confirmFixedMove});await refresh();}
+  catch(e){$('error').textContent=e.message+' – Die Position wurde nicht verändert.';}
+ }
+ async function reorderWithinDay(j,neighbor,after){return moveJob(j,j.date,neighbor.id,after);}
  const statuses=['Neu / ungeprüft','Daten fehlen','Auftragstasche fehlt','In Korrektur','Wartet auf Freigabe','Freigegeben','In Produktion','Weiterverarbeitung','Fertig','Problem / Verzögerung'];
  const form=$('editForm');
  for(const value of statuses){const opt=document.createElement('option');opt.value=value;opt.textContent=value;form.elements.namedItem('status').appendChild(opt);}
@@ -176,6 +209,7 @@ dialog textarea{min-height:75px;resize:vertical}
   finally{editBusy=false;$('saveEdit').disabled=false;}
  });
  $('newJob').onclick=()=>openEditor(null);
+ $('boardLock').onclick=()=>{if(userRole==='display')return;boardUnlocked=!boardUnlocked;renderLock();render();};
  $('backWeek').onclick=()=>{selectedDay=null;render();};
  $('editDialog').addEventListener('cancel',e=>{if(editBusy)e.preventDefault();});
  $('cancelEdit').onclick=()=>{if(!editBusy)$('editDialog').close()};

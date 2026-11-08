@@ -652,27 +652,58 @@ $('previewToday').onclick=()=>{previewToday=!previewToday;if(previewToday){const
 $('fullscreen').onclick=()=>{if(!document.fullscreenElement){$('boardView').requestFullscreen?.().catch(()=>alert('Vollbild wird von diesem Browser nicht unterstützt.'))}else document.exitFullscreen?.()};
 $('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify({version:2,exported:new Date().toISOString(),jobs,machines},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`printpilot-mini-sicherung-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 
-function persistMachines(){if(machineReadError){alert('Maschinenliste ist nicht lesbar. Bitte zunächst eine Sicherung prüfen.');return false;}try{localStorage.setItem(MACHINES_STORE,JSON.stringify(machines));return true}catch(e){alert('Maschinen konnten nicht gespeichert werden.');return false}}
-function renderMachineOptions(selected){const names=[...machines];if(selected&&!names.includes(selected))names.push(selected);$('machine').innerHTML='<option value="">— Keine Angabe —</option>'+names.map(m=>`<option value="${esc(m)}">${esc(m)}${machines.includes(m)?'':' (bisheriger Auftrag)'}</option>`).join('');$('machine').value=selected||''}
-function renderMachines(){$('machineList').innerHTML=machines.length?machines.map((m,i)=>`<div class="machine-item"><span>${esc(m)}</span><div class="actions"><button type="button" class="btn" data-rename-machine="${i}">Umbenennen</button><button type="button" class="btn danger" data-remove-machine="${i}">Entfernen</button></div></div>`).join(''):'<div class="machine-empty">Noch keine Maschinen angelegt.</div>'}
-function showMachines(){$('machineModal').classList.remove('hide');renderMachines();$('newMachine').focus()}
+function persistMachines(){throw Error('Lokaler Maschinenspeicher in PrintPilot 2.0 deaktiviert.')}
+function renderMachineOptions(selected){
+ const names=[...machines];if(selected&&!names.includes(selected))names.push(selected);
+ $('machine').innerHTML='<option value="">— Keine Angabe —</option>'+names.map(m=>`<option value="${esc(m)}">${esc(m)}${machines.includes(m)?'':' (bisheriger Auftrag)'}</option>`).join('');
+ $('machine').value=selected||'';
+}
+function renderMachines(){
+ $('machineList').innerHTML=machines.length?machines.map((m,i)=>`<div class="machine-item"><span>${esc(m)}</span><div class="actions"><button type="button" class="btn" data-rename-machine="${i}">Umbenennen</button><button type="button" class="btn danger" data-remove-machine="${i}">Entfernen</button></div></div>`).join(''):'<div class="machine-empty">Noch keine Maschinen angelegt.</div>';
+ if(remoteRole!=='admin')$('machineList').querySelectorAll('button').forEach(b=>b.disabled=true);
+ $('machineForm').querySelector('button[type=submit]').disabled=remoteRole!=='admin';
+}
+function showMachines(){if(!remoteReady||document.body.classList.contains('display-only'))return;$('machineModal').classList.remove('hide');renderMachines();$('newMachine').focus()}
 function closeMachines(){$('machineModal').classList.add('hide')}
 $('manageMachinesBtn').onclick=showMachines;
 $('closeMachines').onclick=closeMachines;
 $('machineModal').onclick=e=>{if(e.target===$('machineModal'))closeMachines()};
-$('machineForm').onsubmit=e=>{e.preventDefault();const name=$('newMachine').value.trim();if(!name)return;if(machines.some(m=>m.toLocaleLowerCase('de')===name.toLocaleLowerCase('de'))){alert('Maschine existiert bereits.');return;}const previous=[...machines];machines.push(name);if(!persistMachines()){machines=previous;return;}$('newMachine').value='';renderMachines();renderMachineOptions('')};
-$('machineList').onclick=e=>{const rename=e.target.closest('[data-rename-machine]'),remove=e.target.closest('[data-remove-machine]');if(rename){const i=Number(rename.dataset.renameMachine),oldName=machines[i];if(!oldName)return;const answer=prompt('Maschine umbenennen:',oldName);if(answer===null)return;const newName=answer.trim();if(!newName)return;if(machines.some((m,k)=>k!==i&&m.toLocaleLowerCase('de')===newName.toLocaleLowerCase('de'))){alert('Dieser Name existiert bereits.');return;}if(oldName===newName)return;const oldMachines=[...machines],oldJobs=jobs.map(j=>({...j}));machines[i]=newName;jobs=jobs.map(j=>j.machine===oldName?{...j,machine:newName}:j);if(!persistMachines()){machines=oldMachines;jobs=oldJobs;return;}try{save()}catch(e){machines=oldMachines;jobs=oldJobs;persistMachines();return;}renderMachines();renderMachineOptions('');render();}else if(remove){const i=Number(remove.dataset.removeMachine),name=machines[i];if(!name)return;if(!confirm('Maschine „'+name+'“ aus der Auswahl entfernen? Bestehende Aufträge behalten ihre Angabe.'))return;const previous=[...machines];machines.splice(i,1);if(!persistMachines()){machines=previous;return;}renderMachines();renderMachineOptions('');render();}}
+$('machineForm').onsubmit=async e=>{
+ e.preventDefault();if(remoteRole!=='admin')return;
+ const name=$('newMachine').value.trim();if(!name)return;
+ const ok=await commitRemote(()=>api('machines','POST',{name}));
+ if(ok){$('newMachine').value='';renderMachines();renderMachineOptions('')}
+};
+$('machineList').onclick=async e=>{
+ if(remoteRole!=='admin')return;
+ const rename=e.target.closest('[data-rename-machine]'),remove=e.target.closest('[data-remove-machine]');
+ if(rename){
+  const name=machines[Number(rename.dataset.renameMachine)];if(!name)return;
+  const ans=prompt('Maschine umbenennen (nur möglich, wenn kein Auftrag mehr darauf verweist):',name);
+  if(ans===null||!ans.trim()||ans.trim()===name)return;
+  const ok=await commitRemote(()=>api('machines/'+encodeURIComponent(name),'PUT',{name:ans.trim()}));
+  if(ok)renderMachines();
+ }else if(remove){
+  const name=machines[Number(remove.dataset.removeMachine)];if(!name)return;
+  if(!confirm('Maschine „'+name+'“ aus der Liste entfernen? Bestehende Aufträge behalten ihre Angabe.'))return;
+  const ok=await commitRemote(()=>api('machines/'+encodeURIComponent(name),'DELETE',{}));
+  if(ok)renderMachines();
+ }
+};
 
 $('statusFilter').innerHTML+=[...statuses].map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');$('status').innerHTML=statusOptions(statuses[0]);renderMachineOptions('');
-window.addEventListener('storage',e=>{if(e.key===STORE){try{jobs=JSON.parse(e.newValue||'[]');render()}catch(_){}}});
+// All shared data is loaded from the central D1 API, never from localStorage.
 // Refresh when reopened after midnight; keep manual navigation until user selects 'Heute'.
 function refreshIfDateChanged(){const d=today();if(d!==lastDay){lastDay=d;if(!pinnedWeek)week=monday(new Date());render()}}
-document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshIfDateChanged()});
-window.addEventListener('focus',refreshIfDateChanged);
+document.addEventListener('visibilitychange',()=>{if(!document.hidden){refreshIfDateChanged();syncRemote()}});
+window.addEventListener('focus',()=>{refreshIfDateChanged();syncRemote()});
 setInterval(refreshIfDateChanged,60000);
-// Browser-only display URL: ?display=1 (not an access control; never publish sensitive customer data).
+setInterval(()=>{if(!document.hidden&&!dragState)syncRemote()},15000);
+// The URL display mode is cosmetic; the server independently enforces roles.
 if(new URLSearchParams(location.search).get('display')==='1'){document.body.classList.add('display-only');setView('board')}
 else render();
+syncRemote(true);
+
 })();
 </script>
 </body></html>

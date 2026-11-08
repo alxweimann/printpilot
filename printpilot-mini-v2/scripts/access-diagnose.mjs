@@ -18,16 +18,16 @@ const apps=await get('/access/apps?per_page=1000');
 const matches=apps.filter(a=>a.name===appName);
 if(matches.length!==1)throw new Error('Expected one exact staging Access app; found '+matches.length+'. No changes attempted.');
 const app=matches[0];
-if(!String(app.domain||'').includes('printpilot-mini-v2-staging')&&
-   !JSON.stringify(app.destinations||[]).includes('printpilot-mini-v2-staging'))
-  throw new Error('Staging Worker domain mismatch. Stop.');
-const policies=app.policies||[];
+// The Cloudflare Workers application uses worker_id destinations, not necessarily a hostname.
+if(!Array.isArray(app.destinations)||!app.destinations.some(d=>String(d.type||'').includes('worker')))
+  throw new Error('App does not target a Worker. Stop.');
+const policies=await get('/access/apps/'+encodeURIComponent(app.id)+'/policies');
 const display=policies.find(p=>p.id==='8a921393-c7e0-4fc0-8380-7f354c0700b0'||p.name==='PrintPilot – Anzeige');
 const cloudflare=policies.find(p=>p.name==='Cloudflare account members');
 const idps=await get('/access/identity_providers');
 const types=idps.map(i=>i.type).sort();
 const selected=app.allowed_idps||[];
-const pinProviders=idps.filter(i=>i.type==='onetimepin'||i.type==='one_time_pin'||i.type==='onetime_pin');
+const pinProviders=idps.filter(i=>/one.?time.?pin/i.test(String(i.type||'')));
 const pinAllowed=pinProviders.some(p=>selected.includes(p.id))||(!selected.length&&pinProviders.length>0);
 console.log('Staging Access app exists: yes');
 console.log('Access policies linked: '+policies.length);

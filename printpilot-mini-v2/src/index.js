@@ -129,8 +129,14 @@ export default {
    if(!action&&method==='PUT'){
     const data=await body(request);
     if(!Number.isSafeInteger(data.revision)||data.revision!==beforeRow.revision)return failure(409,'Auftrag wurde zwischenzeitlich geändert');
-    const next=normalizeJob(data);
-    if(!next||next.id!==id)return failure(422,'Auftragsdaten ungültig');
+    const validated=normalizeJob(data);
+    if(!validated||validated.id!==id)return failure(422,'Auftragsdaten ungültig');
+    // Preserve original, unmodified extension fields (e.g. legacy import metadata)
+    // while applying only the explicitly validated editable fields from the client.
+    // Never copy client-supplied unknown properties into the persisted payload.
+    const storedPayload=safeJson(beforeRow.payload);
+    if(!storedPayload||typeof storedPayload!=='object'||Array.isArray(storedPayload))return failure(500,'Gespeicherter Auftrag ist beschädigt');
+    const next={...storedPayload,...validated};
     if(previous.fixed&&next.date!==previous.date&&data.confirmFixedMove!==true)return failure(409,'Fixtermin: Verschieben muss ausdrücklich bestätigt werden');
     const nextRev=beforeRow.revision+1;
     const batch=await db.batch([

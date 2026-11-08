@@ -1,6 +1,6 @@
 {
   "type": "printpilot-v2-staging-readonly-diagnostics",
-  "generated_at": "2026-11-08T13:36:39.665Z",
+  "generated_at": "2026-11-08T13:38:19.387Z",
   "conclusion": "requires-diagnosis",
   "lines": [
     "Error: Cloudflare API HTTP 400 for /access/apps — 9106: Authentication failed (status: 400)",

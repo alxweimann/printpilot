@@ -14,7 +14,7 @@ async function get(url) {
   return data.result;
 }
 const appName='printpilot-mini-v2-staging - Cloudflare Workers';
-const apps=await get('/access/apps?per_page=1000');
+const apps=await get('/access/apps?per_page=100');
 const matches=apps.filter(a=>a.name===appName);
 if(matches.length!==1)throw new Error('Expected one exact staging Access app; found '+matches.length+'. No changes attempted.');
 const app=matches[0];

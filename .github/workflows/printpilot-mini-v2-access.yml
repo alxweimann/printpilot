@@ -23,6 +23,7 @@ jobs:
         with:
           node-version: '22'
       # Re-run after normalizing stored Access token formatting.
+      # Recheck after Access token rotation; no Cloudflare mutations.
       - name: Diagnose staging Access settings without modifying Cloudflare
         shell: bash
         run: |

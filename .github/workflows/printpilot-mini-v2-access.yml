@@ -1,0 +1,22 @@
+name: PrintPilot Mini v2 - Access diagnostics (read-only)
+on:
+  workflow_dispatch:
+permissions:
+  contents: read
+jobs:
+  access-diagnose:
+    runs-on: ubuntu-latest
+    environment: printpilot-mini-v2-staging
+    env:
+      CF_PRINTPILOT_ACCESS_TOKEN: ${{ secrets.CF_PRINTPILOT_ACCESS_TOKEN }}
+      CF_PRINTPILOT_ACCOUNT_ID: ${{ secrets.CF_PRINTPILOT_ACCOUNT_ID }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: feature/printpilot-mini-v2-secure-backend
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check Access configuration without modifying it
+        run: node printpilot-mini-v2/scripts/access-diagnose.mjs

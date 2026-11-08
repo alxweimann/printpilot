@@ -1,3 +1,4 @@
+import {dashboardHtml} from './dashboard.js';
 // PrintPilot Mini 2.0 — isolated staging API. Fail closed without Cloudflare Access.
 const STATUSES = new Set(['Neu / ungeprüft','Daten fehlen','Auftragstasche fehlt','In Korrektur','Wartet auf Freigabe','Freigegeben','In Produktion','Weiterverarbeitung','Fertig','Problem / Verzögerung']);
 const ROLES = new Set(['admin','production','display']);
@@ -32,7 +33,7 @@ async function checkedIdentity(ctx,db){
 export default {
  async fetch(request,env,ctx){
   const url=new URL(request.url);
-  if(!url.pathname.startsWith('/api/v2/'))return failure(404,'Nicht gefunden');
+  if(url.pathname!=='/'&&!url.pathname.startsWith('/api/v2/'))return failure(404,'Nicht gefunden');
   if(!env.DB)return failure(503,'Datenbank nicht konfiguriert');
   let user;
   try{user=await checkedIdentity(ctx,env.DB)}catch(e){return failure(503,'Authentifizierung nicht verfügbar')}
@@ -43,6 +44,7 @@ export default {
    if(request.headers.get('X-Requested-With')!=='PrintPilotMini'||!/^application\/json(?:\s*;|$)/i.test(request.headers.get('content-type')||''))return failure(415,'JSON-Anfrage mit Schutzheader erforderlich');
   }
   const path=url.pathname,db=env.DB;
+  if(path==='/'&&method==='GET')return new Response(dashboardHtml,{headers:{'content-type':'text/html; charset=utf-8','cache-control':'no-store','content-security-policy':"default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; img-src 'none'; base-uri 'none'; frame-ancestors 'none'; form-action 'none'",'x-content-type-options':'nosniff','referrer-policy':'no-referrer'}});
   try{
    if(path==='/api/v2/me'&&method==='GET')return reply(user);
    if(path==='/api/v2/jobs'&&method==='GET'){

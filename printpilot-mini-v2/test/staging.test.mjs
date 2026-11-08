@@ -137,3 +137,40 @@ test('staging editor offers explicit conflict review without silently merging',(
  assert.match(dashboardHtml,/ungespeicherten Eingaben verwerfen/);
  assert.match(dashboardHtml,/editingRevision=latest.revision/);
 });
+
+test('ordinary form date change assigns queue position on target day',async()=>{
+ const original={...sample,date:'2026-11-09',legacyReference:'OLD-100'};
+ let changed=null;
+ const db={
+  prepare(sql){let params=[];return{
+   bind(...values){params=values;return this},
+   async first(){
+    if(sql.startsWith('SELECT role'))return {role:'admin'};
+    if(sql.startsWith('SELECT * FROM jobs'))return {id:original.id,payload:JSON.stringify(original),revision:5,archived:0,position:1024,updated_at:'2026-11-08'};
+    if(sql.startsWith('SELECT COALESCE(MAX(position),0)+1024'))return {p:4096};
+    return null;
+   },
+   get params(){return params}
+  }},
+  async batch(statements){changed=statements[0].params;return [{meta:{changes:1}},{meta:{changes:1}}]}
+ };
+ const response=await worker.fetch(request('/api/v2/jobs/TEST-001',{
+  method:'PUT',headers:{'Content-Type':'application/json','X-Requested-With':'PrintPilotMini'},
+  body:JSON.stringify({...sample,date:'2026-11-10',revision:5})}),{DB:db},ctx);
+ assert.equal(response.status,200);
+ assert.equal(changed[3],4096);
+ assert.equal(JSON.parse(changed[0]).date,'2026-11-10');
+ assert.equal(JSON.parse(changed[0]).legacyReference,'OLD-100');
+ assert.equal((await response.json()).job.position,4096);
+});
+test('central job list rejects silent truncation at 5000 records',async()=>{
+ const sampleRow={id:sample.id,payload:JSON.stringify(sample),revision:1,archived:0,position:1};
+ const db={prepare(sql){return{
+  bind(){return this},
+  async first(){return {role:'display'}},
+  async all(){assert.match(sql,/LIMIT 5001/);return {results:Array.from({length:5001},()=>sampleRow)}}
+ }}};
+ const response=await worker.fetch(request('/api/v2/jobs'),{DB:db},ctx);
+ assert.equal(response.status,409);
+ assert.match(await response.text(),/vollständige Liste/);
+});

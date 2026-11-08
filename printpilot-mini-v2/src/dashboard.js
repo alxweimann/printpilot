@@ -12,20 +12,50 @@ h1{font-size:23px;margin:2px 0 4px}.muted{color:#a4bdcb;font-size:13px}button{ba
 .cards{padding:7px;display:grid;align-content:start;gap:7px}.card{background:#263f53;padding:10px;border-radius:7px;overflow-wrap:anywhere}.number{font-size:15px;font-weight:850}.customer{color:#9fe0ee;font-weight:650;font-size:13px;margin:2px 0 9px}.product{font-size:12px}.status{font-size:11px;color:#f6d994;margin-top:8px}.notes{color:#ffedb3;font-size:12px;margin-top:6px;white-space:pre-wrap}.empty{padding:12px;font-size:13px;color:#c1d7e4}
 #error{color:#ffd4d4;padding:12px 0}.tag{font-size:11px;background:#3c6074;padding:5px 9px;border-radius:6px}
 @media(max-width:900px){.week{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:520px){.week{grid-template-columns:1fr}body{padding:12px}}
+
+dialog{background:#fff;color:#203243;border:0;border-radius:14px;width:min(660px,96vw);max-height:92vh;overflow:auto;padding:24px;box-shadow:0 20px 70px #0008}
+dialog::backdrop{background:#061421b3}
+dialog h2{margin-top:0}dialog label{font-size:13px;font-weight:700;display:grid;gap:5px}
+dialog input,dialog select,dialog textarea{min-width:0;width:100%;padding:9px;border:1px solid #c5d8e4;border-radius:7px;font:inherit;background:#fff;color:#203243}
+dialog .checkbox{display:flex;align-items:center;gap:7px}dialog .checkbox input{width:auto}
+dialog textarea{min-height:75px;resize:vertical}
+.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:12px}.formgrid .wide{grid-column:1/-1}
+.formactions{display:flex;justify-content:flex-end;gap:8px;margin-top:14px}
+#saveError{color:#af2a36;font-size:13px;min-height:18px}
+.card-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
+.card-actions button{font-size:11px;padding:6px 8px;border-radius:6px}
+@media(max-width:540px){.formgrid{grid-template-columns:1fr}.formgrid .wide{grid-column:auto}}
 </style></head><body><main>
 <header><div><div class="muted">PRINTPILOT / STAGING – NUR ANZEIGE</div><h1>Produktionsplan 2.0</h1><div id="identity" class="muted">Anmeldung wird geprüft …</div></div>
-<div><button id="prev" type="button" aria-label="Vorige Woche">←</button> <button id="next" type="button" aria-label="Nächste Woche">→</button> <button id="reload" type="button">Aktualisieren</button></div></header>
+<div><button id="prev" type="button" aria-label="Vorige Woche">←</button> <button id="next" type="button" aria-label="Nächste Woche">→</button> <button id="reload" type="button">Aktualisieren</button> <button id="newJob" type="button" hidden>＋ Auftrag</button></div></header>
 <div id="stats" class="summary"></div><h2 id="weekTitle"></h2><div id="error" role="alert"></div><div class="week" id="week"></div>
 <p class="muted">Geschützte D1-Testanzeige · automatische Aktualisierung alle 15 Sekunden · noch keine Bearbeitungsfunktion · keine Übernahme von Browserdaten</p>
-</main><script>
+</main>
+<dialog id="editDialog"><form id="editForm">
+<h2 id="editTitle">Auftrag</h2>
+<div class="formgrid">
+<label>Auftragsnummer <input name="id" required maxlength="40"></label>
+<label>Fertigstellung <input name="date" type="date" required></label>
+<label>Kunde <input name="customer" required maxlength="120"></label>
+<label>Produkt <input name="product" required maxlength="160"></label>
+<label>Auflage <input name="quantity" maxlength="50"></label>
+<label>Maschine <input name="machine" maxlength="120"></label>
+<label>Status <select name="status"></select></label>
+<label class="checkbox"><input name="fixed" type="checkbox"> Fixtermin</label>
+<label class="wide">Verarbeitung (Komma getrennt) <input name="steps"></label>
+<label class="wide">Notiz <textarea name="notes" maxlength="500"></textarea></label>
+</div><p id="saveError" role="alert"></p>
+<div class="formactions"><button id="cancelEdit" type="button">Abbrechen</button><button id="saveEdit" type="submit">Speichern</button></div>
+</form></dialog>
+<script>
 (function(){'use strict';
  const $=id=>document.getElementById(id);
  function iso(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
  function monday(d){const x=new Date(d);x.setHours(12,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
  function fmt(d){return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});}
- let start=monday(new Date()),jobs=[];
- async function api(path){const res=await fetch('/api/v2/'+path,{credentials:'same-origin',cache:'no-store',headers:{Accept:'application/json'}});
-  if(!res.ok)throw Error(res.status===403?'Keine Berechtigung':('API-Fehler '+res.status));return res.json();}
+ let start=monday(new Date()),jobs=[],userRole='display',editingId=null,editBusy=false;
+ async function api(path,method='GET',payload){const headers={Accept:'application/json'};if(method!=='GET'){headers['Content-Type']='application/json';headers['X-Requested-With']='PrintPilotMini';}const res=await fetch('/api/v2/'+path,{method,credentials:'same-origin',cache:'no-store',headers,body:method==='GET'?undefined:JSON.stringify(payload||{})});
+  if(!res.ok){let info={};try{info=await res.json()}catch(_){}const msg=info.error||('API-Fehler '+res.status);throw Error(res.status===409?msg+' – Zwischenzeitlich geändert. Bitte neu laden.':res.status===403?'Keine Berechtigung':msg);}return res.json();}
  function text(tag,cls,value){const el=document.createElement(tag);if(cls)el.className=cls;el.textContent=String(value??'');return el;}
  function render(){
   const until=new Date(start);until.setDate(start.getDate()+4);
@@ -38,19 +68,51 @@ h1{font-size:23px;margin:2px 0 4px}.muted{color:#a4bdcb;font-size:13px}button{ba
    if(!rows.length)cards.appendChild(text('div','empty','Keine Aufträge'));
    for(const j of rows){
     const c=text('article','card','');c.append(text('div','number',j.id),text('div','customer',j.customer),text('div','product',j.product+' · '+(j.quantity||'—')),text('div','status',j.status));
-    if(j.notes)c.appendChild(text('div','notes','Notiz: '+j.notes));cards.appendChild(c);
+    if(j.notes)c.appendChild(text('div','notes','Notiz: '+j.notes));if(userRole!=='display'){const actions=text('div','card-actions','');const edit=text('button','','Bearbeiten');edit.type='button';edit.onclick=()=>openEditor(j.id);actions.appendChild(edit);if(j.status==='Fertig'&&!j.archived){const archive=text('button','','✓ Ablegen');archive.type='button';archive.onclick=()=>archiveJob(j);actions.appendChild(archive);}c.appendChild(actions);}cards.appendChild(c);
    }
    day.appendChild(cards);root.appendChild(day);
   }
   const active=jobs.filter(j=>!j.archived);$('stats').replaceChildren(text('div','metric','Aktive Aufträge: '+active.length),text('div','metric','Archiviert: '+(jobs.length-active.length)));
  }
  async function refresh(){try{const [me,listed]=await Promise.all([api('me'),api('jobs')]);if(!Array.isArray(listed.jobs))throw Error('Ungültige Auftragsliste');
-  jobs=listed.jobs;$('identity').textContent=me.email+' · '+me.role;$('error').textContent='';render();
+  jobs=listed.jobs;userRole=me.role;$('newJob').hidden=userRole==='display';$('identity').textContent=me.email+' · '+me.role;$('error').textContent='';render();
  }catch(e){$('error').textContent=e.message+' – letzte erfolgreiche Anzeige bleibt bestehen.';}}
+ const statuses=['Neu / ungeprüft','Daten fehlen','Auftragstasche fehlt','In Korrektur','Wartet auf Freigabe','Freigegeben','In Produktion','Weiterverarbeitung','Fertig','Problem / Verzögerung'];
+ const form=$('editForm');
+ for(const value of statuses){const opt=document.createElement('option');opt.value=value;opt.textContent=value;form.elements.namedItem('status').appendChild(opt);}
+ function field(name){return form.elements.namedItem(name);}
+ function openEditor(id){
+  if(userRole==='display')return;
+  const job=id?jobs.find(x=>x.id===id):null;if(id&&!job)return;
+  editingId=id||null;$('editTitle').textContent=job?'Auftrag bearbeiten':'Neuer Auftrag';
+  for(const name of ['id','date','customer','product','quantity','machine','notes'])field(name).value=job?.[name]||'';
+  field('id').readOnly=Boolean(job);field('date').value=job?.date||iso(new Date());
+  field('status').value=job?.status||statuses[0];field('fixed').checked=Boolean(job?.fixed);
+  field('steps').value=(job?.steps||[]).join(', ');$('saveError').textContent='';$('editDialog').showModal();
+ }
+ async function archiveJob(job){
+  if(userRole==='display'||!confirm('Fertigen Auftrag '+job.id+' archivieren?'))return;
+  try{await api('jobs/'+encodeURIComponent(job.id)+'/archive','POST',{revision:job.revision});await refresh();}
+  catch(e){$('error').textContent=e.message;}
+ }
+ form.addEventListener('submit',async event=>{
+  event.preventDefault();if(editBusy||userRole==='display')return;
+  const old=editingId?jobs.find(j=>j.id===editingId):null;if(editingId&&!old)return;
+  const job={id:field('id').value.trim(),date:field('date').value,customer:field('customer').value.trim(),product:field('product').value.trim(),
+   quantity:field('quantity').value.trim(),machine:field('machine').value,status:field('status').value,fixed:field('fixed').checked,
+   steps:field('steps').value.split(',').map(x=>x.trim()).filter(Boolean),notes:field('notes').value.trim()};
+  if(old)job.revision=old.revision;
+  editBusy=true;$('saveEdit').disabled=true;$('saveError').textContent='';
+  try{await api(old?'jobs/'+encodeURIComponent(old.id):'jobs',old?'PUT':'POST',job);$('editDialog').close();await refresh();}
+  catch(e){$('saveError').textContent=e.message;}
+  finally{editBusy=false;$('saveEdit').disabled=false;}
+ });
+ $('newJob').onclick=()=>openEditor(null);
+ $('cancelEdit').onclick=()=>{if(!editBusy)$('editDialog').close()};
  $('prev').onclick=()=>{start.setDate(start.getDate()-7);render();};
  $('next').onclick=()=>{start.setDate(start.getDate()+7);render();};
  $('reload').onclick=refresh;
  document.addEventListener('visibilitychange',()=>{if(!document.hidden)refresh()});
- setInterval(()=>{if(!document.hidden)refresh()},15000);refresh();
+ setInterval(()=>{if(!document.hidden&&!$('editDialog').open)refresh()},15000);refresh();
 })();
 </script></body></html>`;

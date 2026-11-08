@@ -49,6 +49,17 @@ dialog textarea{min-height:75px;resize:vertical}
 .archive-details small{color:#a4bdcb}
 .danger{background:#ffdddd;color:#813030}
 @media(max-width:700px){.week.single-day .cards{grid-template-columns:1fr}.archive-row{flex-direction:column;align-items:flex-start}}
+
+.day.day-0 .day-title{background:#237ccb}
+.day.day-1 .day-title{background:#238e60}
+.day.day-2 .day-title{background:#7951b8}
+.day.day-3 .day-title{background:#b73585}
+.day.day-4 .day-title{background:#c76d24}
+.day.day-0{background:#193a57}
+.day.day-1{background:#193e34}
+.day.day-2{background:#322747}
+.day.day-3{background:#45263c}
+.day.day-4{background:#493521}
 </style></head><body><main>
 <header><div><div class="muted">PRINTPILOT / STAGING – NUR ANZEIGE</div><h1>Produktionsplan 2.0</h1><div id="identity" class="muted">Anmeldung wird geprüft …</div></div>
 <div><button id="prev" type="button" aria-label="Vorige Woche">←</button> <button id="next" type="button" aria-label="Nächste Woche">→</button> <button id="reload" type="button">Aktualisieren</button> <button id="newJob" type="button" hidden>＋ Auftrag</button></div></header>
@@ -90,7 +101,7 @@ dialog textarea{min-height:75px;resize:vertical}
   const root=$('week');root.replaceChildren();
   for(let i=0;i<5;i++){
    if(selectedDay!==null&&selectedDay!==i)continue;
-   const dt=new Date(start);dt.setDate(start.getDate()+i);const day=document.createElement('section');day.className='day';
+   const dt=new Date(start);dt.setDate(start.getDate()+i);const day=document.createElement('section');day.className='day day-'+i;
    const heading=text('button','day-title',['Mo','Di','Mi','Do','Fr'][i]+' · '+fmt(dt)+(selectedDay===null?'  ⤢':''));
    heading.type='button';heading.title='Tag groß anzeigen';heading.onclick=()=>{selectedDay=i;render();};
    day.appendChild(heading);

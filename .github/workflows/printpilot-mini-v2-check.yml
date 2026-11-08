@@ -1,0 +1,33 @@
+name: PrintPilot Mini v2 checks
+on:
+  push:
+    branches:
+      - feature/printpilot-mini-v2-secure-backend
+    paths:
+      - 'printpilot-mini-v2/**'
+      - '.github/workflows/printpilot-mini-v2-check.yml'
+  pull_request:
+    paths:
+      - 'printpilot-mini-v2/**'
+      - '.github/workflows/printpilot-mini-v2-check.yml'
+permissions:
+  contents: read
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: printpilot-mini-v2
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check API and dashboard JavaScript syntax
+        run: |
+          node --check src/index.js
+          node --check src/dashboard.js
+          node --check src/api-client.js
+          node --check src/migration.js
+      - name: Unit tests
+        run: npm test

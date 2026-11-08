@@ -1,5 +1,9 @@
 name: PrintPilot Mini v2 – isolated staging deploy
 on:
+  push:
+    branches: [main]
+    paths:
+      - '.github/workflows/printpilot-mini-v2-staging-deploy.yml'
   workflow_dispatch:
     inputs:
       confirmation:
@@ -13,7 +17,7 @@ concurrency:
   cancel-in-progress: false
 jobs:
   deploy-staging:
-    if: github.ref == 'refs/heads/main' && inputs.confirmation == 'DEPLOY_PRINTPILOT_V2_STAGING_ONLY'
+    if: github.ref == 'refs/heads/main' && (github.event_name == 'push' || inputs.confirmation == 'DEPLOY_PRINTPILOT_V2_STAGING_ONLY')
     runs-on: ubuntu-latest
     environment: printpilot-mini-v2-staging
     defaults:
@@ -56,3 +60,33 @@ jobs:
         run: npx wrangler d1 migrations apply printpilot-mini-v2-staging --remote --config wrangler.jsonc
       - name: Deploy only new v2 staging Worker
         run: npx wrangler deploy --config wrangler.jsonc
+
+  record-result:
+    if: always() && github.ref == 'refs/heads/main'
+    needs: [deploy-staging]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/github-script@v7
+        with:
+          script: |
+            const {owner,repo}=context.repo;
+            const path='printpilot-mini-v2/staging-deploy-report.json';
+            const status='${{ needs.deploy-staging.result }}';
+            const report=JSON.stringify({
+              kind:'printpilot-mini-v2-staging-deploy',
+              run_id:context.runId,
+              status,
+              completed_at:new Date().toISOString(),
+              target:'printpilot-mini-v2-staging',
+              source_branch:'feature/printpilot-mini-v2-secure-backend'
+            },null,2)+'\n';
+            let sha;
+            try{sha=(await github.rest.repos.getContent({owner,repo,path,ref:'main'})).data.sha}
+            catch(e){if(e.status!==404)throw e}
+            await github.rest.repos.createOrUpdateFileContents({
+              owner,repo,path,branch:'main',sha,
+              message:'Record isolated PrintPilot v2 staging deployment result',
+              content:Buffer.from(report).toString('base64')
+            });

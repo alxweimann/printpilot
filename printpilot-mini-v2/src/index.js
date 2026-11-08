@@ -97,6 +97,7 @@ export default {
     if(!Number.isSafeInteger(data.revision)||data.revision!==beforeRow.revision)return failure(409,'Auftrag wurde zwischenzeitlich geändert');
     const next=normalizeJob(data);
     if(!next||next.id!==id)return failure(422,'Auftragsdaten ungültig');
+    if(previous.fixed&&next.date!==previous.date&&data.confirmFixedMove!==true)return failure(409,'Fixtermin: Verschieben muss ausdrücklich bestätigt werden');
     const nextRev=beforeRow.revision+1;
     const batch=await db.batch([
      db.prepare('UPDATE jobs SET payload=?,planned_date=?,status=?,revision=?,updated_at=CURRENT_TIMESTAMP,updated_by=? WHERE id=? AND revision=?').bind(JSON.stringify(next),next.date,next.status,nextRev,user.email,id,beforeRow.revision),

@@ -7,7 +7,7 @@ function fixture(role='display', identity=true, active=true) {
   let mutations=0;
   const db={
     prepare(sql) {
-      if (!sql.startsWith('SELECT role FROM users')) mutations++;
+      if (/^(?:INSERT|UPDATE|DELETE|REPLACE)\\b/i.test(sql)) mutations++;
       return {bind(){return this}, async first(){
         if (sql.startsWith('SELECT role FROM users')) return active?{role}:null;
         return null;

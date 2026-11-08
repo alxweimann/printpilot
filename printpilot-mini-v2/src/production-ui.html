@@ -349,9 +349,13 @@ body.display-only .board-lock{display:none!important}
 .board .week-grid.single-day-view .compact-note-label,.board .week-grid.single-day-view .compact-note-text{font-size:15px}
 @media(max-width:800px){.board .week-grid.single-day-view .compact-note{grid-template-columns:104px minmax(0,1fr)}}
 
+
+#remoteState{position:fixed;bottom:8px;left:10px;z-index:1000;font-size:12px;font-weight:700;background:#17354a;border:1px solid #406477;border-radius:9px;padding:7px 11px;color:#c8e9f6;box-shadow:0 3px 12px #0002}
+#remoteState.remote-ok{background:#154b40;color:#dcfff0}
+#remoteState.remote-error{background:#7f2830;color:#fff}
 </style>
 </head>
-<body>
+<body><div id="remoteState" class="remote-wait" role="status" aria-live="polite">Verbindung zur geschützten D1-Datenbank wird hergestellt …</div>
 <div class="shell">
 <header class="top"><div class="brand"><div class="logo">P</div><div><div class="eyebrow">PRINTPILOT MINI</div><h1>Produktionsplanung</h1><div class="muted" style="font-size:12px">Schnell verwalten. Klar ansehen.</div></div></div><div class="top-actions"><button class="btn" id="manageMachinesBtn" title="Druckmaschinen verwalten">⚙ Maschinen</button><button class="btn" id="exportBtn" title="Lokale Datensicherung herunterladen">↧ Sicherung</button><button class="btn" id="demoWeekBtn" title="Beispielaufträge für nächste Woche anlegen">Testwoche befüllen</button><button class="btn primary" id="addBtn">＋ Auftrag</button></div></header>
 <nav class="tabs" id="tabs"><button data-view="list" class="active">Aufträge</button><button data-view="board">Produktionstafel</button></nav>
@@ -360,7 +364,7 @@ body.display-only .board-lock{display:none!important}
 
 <section id="boardView" class="hide"><div class="board"><div class="eyebrow">PRINTPILOT / PRODUKTION</div><div class="week-head" style="margin-top:7px"><h2 id="boardTitle">Wochenübersicht</h2><div class="weeknav"><button class="btn back-week-btn hide" id="backToWeek" type="button">← Wochenansicht</button><button class="btn" id="boardPrev">←</button><button class="btn" id="boardToday" title="Zur aktuellen Woche">Heute</button><button class="btn preview-today-btn" id="previewToday" type="button" aria-pressed="false" title="Heutige Spaltenmarkierung testweise anzeigen">Vorschau</button><button class="btn" id="boardNext">→</button><button class="btn board-lock" id="boardLock" type="button" aria-pressed="false" title="Verschieben der Aufträge gesperrt">🔒 Gesperrt</button><button class="btn" id="fullscreen" title="Vollbildmodus">⛶ <span class="full-label">Vollbild</span></button></div></div><div class="week-grid" id="boardGrid"></div><div class="board-caption"><span id="boardHint">Wochenübersicht · Im Verwaltungsmodus per Touch verschieben · noch keine Synchronisierung zwischen Geräten</span></div></div></section></main>
 <section id="archiveSection" class="archive-section"><details id="archiveDetails"><summary><span>✓ Erledigte Aufträge <strong id="archiveCount">0</strong></span><span class="archive-chevron">▾</span></summary><div class="archive-list" id="archiveList"></div></details></section>
-<div class="footer">Testversion 1.12 · Speicherung nur in diesem Browser (localStorage) · keine Synchronisierung zwischen Geräten · keine Cloud-Anmeldung</div>
+<div class="footer">PrintPilot Mini 2.0 – STAGING · Cloudflare D1 · Geschützte Anmeldung · Live-Synchronisierung</div>
 </div>
 <div class="modal-wrap hide" id="modalWrap" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><h2 id="modalTitle">Neuer Auftrag</h2><form id="jobForm"><div class="formgrid"><div class="field"><label for="number">Auftragsnummer *</label><input id="number" maxlength="40" required></div><div class="field"><label for="date">Fertigstellung *</label><input id="date" type="date" required></div><div class="field full"><label for="customer">Kunde *</label><input id="customer" maxlength="120" required></div><div class="field"><label for="product">Produkt *</label><input id="product" maxlength="160" required></div><div class="field"><label for="quantity">Auflage</label><input id="quantity" maxlength="50" placeholder="z. B. 5.000 Stück"></div><div class="field"><label for="machine">Druckmaschine</label><select id="machine"></select></div><div class="field"><label for="status">Status</label><select id="status"></select></div><div class="field full"><label class="checkrow"><input type="checkbox" id="fixed" style="width:auto"> <strong>Fixtermin – Datum rot hervorheben</strong></label></div><div class="field full"><span>Weiterverarbeitung (optional)</span><div class="steps" id="stepButtons"></div></div><div class="field full"><label for="notes">Notiz (optional)</label><textarea id="notes" maxlength="500" placeholder="Nur wenn nötig"></textarea></div></div><div class="formfoot"><button class="btn danger hide" type="button" id="deleteBtn">Auftrag löschen</button><div class="actions" style="margin-left:auto"><button class="btn" type="button" id="cancelBtn">Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div></div></form></div></div>
 <div class="modal-wrap hide" id="machineModal" role="dialog" aria-modal="true" aria-labelledby="machineTitle"><div class="modal machine-modal"><div class="machine-modal-head"><div><h2 id="machineTitle">Druckmaschinen verwalten</h2><p class="muted">Hier bestimmst du selbst, welche Maschinen zur Auswahl stehen.</p></div><button class="btn" type="button" id="closeMachines" aria-label="Schließen">✕</button></div><form id="machineForm" class="machine-add"><label for="newMachine">Neue Maschine</label><div class="machine-add-row"><input id="newMachine" maxlength="100" placeholder="Maschinenname" required><button class="btn primary" type="submit">＋ Hinzufügen</button></div></form><div id="machineList" class="machine-list"></div><p class="machine-hint">Umbenennen ändert auch die Maschinenbezeichnung in vorhandenen Aufträgen. Entfernen blendet die Maschine aus der Auswahl aus; bestehende Aufträge behalten ihre Angabe.</p></div></div>
@@ -370,7 +374,7 @@ const STORE='printpilot-mini-v1-jobs';
 const statuses=['Neu / ungeprüft','Daten fehlen','Auftragstasche fehlt','In Korrektur','Wartet auf Freigabe','Freigegeben','In Produktion','Weiterverarbeitung','Fertig','Problem / Verzögerung'];
 const colors=['#80919e','#d25843','#b7653c','#cc5454','#ca8b32','#3384c7','#148c99','#8064bb','#29966c','#b53d51'];
 const MACHINES_STORE='printpilot-mini-v12-machines';
-let machines=[];let machineReadError=false;try{const raw=localStorage.getItem(MACHINES_STORE);if(raw!==null){const values=JSON.parse(raw);if(!Array.isArray(values)||!values.every(v=>typeof v==='string'))throw Error('Ungültige Maschinenliste');machines=[...new Set(values.map(x=>x.trim()).filter(Boolean))];}}catch(e){machineReadError=true;alert('Maschinenliste konnte nicht gelesen werden. Sie wird nicht überschrieben.');}
+let machines=[];let machineReadError=false;
 const processes=['Schneiden','Falzen','Rillen','Nuten','Heften','Laminieren','Konturschneiden','Perforieren','Lochen','Kuvertieren','Verpacken','Sonstiges'];
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -379,10 +383,51 @@ const localDate=s=>new Date(s+'T12:00:00');
 const displayDate=s=>localDate(s).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});
 const monday=d=>{const a=new Date(d);a.setHours(12,0,0,0);a.setDate(a.getDate()-((a.getDay()+6)%7));return a};
 const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
-let jobs=[];let jobsReadError=false;try{const data=JSON.parse(localStorage.getItem(STORE)||'[]');if(Array.isArray(data))jobs=data.filter(x=>x&&typeof x.id==='string'&&typeof x.date==='string');}catch(e){jobsReadError=true;alert('Gespeicherte Aufträge konnten nicht gelesen werden. Daten werden nicht überschrieben.');}
+let jobs=[];let jobsReadError=false;
+let remoteRole='display',remoteReady=false,remoteBusy=false,remoteLoading=false;
+async function api(path,method='GET',payload){
+ const headers={Accept:'application/json'};
+ if(method!=='GET'){headers['Content-Type']='application/json';headers['X-Requested-With']='PrintPilotMini'}
+ let res;
+ try{res=await fetch('/api/v2/'+path,{method,headers,credentials:'same-origin',cache:'no-store',body:method==='GET'?undefined:JSON.stringify(payload??{})})}
+ catch(e){throw Error('Verbindung fehlgeschlagen. Keine Änderung bestätigt.')}
+ let data={};try{data=await res.json()}catch(_){}
+ if(!res.ok){const e=Error(data.error||('API-Fehler '+res.status));e.status=res.status;throw e}
+ return data;
+}
+async function syncRemote(force=false){
+ if(remoteLoading||remoteBusy||(!force&&!$('modalWrap').classList.contains('hide'))||!$('machineModal').classList.contains('hide'))return;
+ remoteLoading=true;
+ try{
+  const [identity,result,machineResult]=await Promise.all([api('me'),api('jobs'),api('machines')]);
+  if(!Array.isArray(result.jobs)||!Array.isArray(machineResult.machines))throw Error('Ungültige Serverantwort');
+  jobs=result.jobs;machines=machineResult.machines;remoteRole=identity.role;
+  jobs.sort((a,b)=>a.date.localeCompare(b.date)||(a.position??0)-(b.position??0)||a.id.localeCompare(b.id,'de',{numeric:true}));
+  remoteReady=true;
+  if(remoteRole==='display'||new URLSearchParams(location.search).get('display')==='1'){
+    document.body.classList.add('display-only');boardUnlocked=false;view='board';
+  }
+  const status=$('remoteState');if(status){status.textContent='● Synchronisiert · '+identity.role;status.className='remote-ok'}
+  renderMachineOptions($('machine').value||'');
+  render();
+ }catch(e){const status=$('remoteState');if(status){status.textContent='● Keine Synchronisierung: '+e.message;status.className='remote-error'};}
+ finally{remoteLoading=false}
+}
+async function commitRemote(operation){
+ if(remoteBusy||!remoteReady){alert('Serverdaten noch nicht bereit oder Speichervorgang läuft.');return false}
+ remoteBusy=true;
+ try{await operation();remoteBusy=false;await syncRemote(true);return true}
+ catch(e){
+  remoteBusy=false;
+  if(e.status===409)alert('Konflikt: '+e.message+'\nBitte die Serverdaten prüfen. Es wurde nichts überschrieben.');
+  else alert('Nicht gespeichert: '+e.message);
+  await syncRemote(false);return false;
+ }
+}
+
 let view='list',week=monday(new Date()),editing=null,chosenSteps=[];
 let pinnedWeek=false,lastDay=today(),selectedMove=null,dragState=null,previewToday=false,boardUnlocked=false,selectedDayOffset=null;const expandedJobs=new Set();
-function save(){if(jobsReadError)throw Error('Bestehende Aufträge sind nicht lesbar. Speichern gesperrt.');try{localStorage.setItem(STORE,JSON.stringify(jobs))}catch(e){alert('Speichern fehlgeschlagen: Browser-Speicher nicht verfügbar. Bitte keine neuen Daten eingeben.');throw e}}
+function save(){throw Error('Lokale Speicherung in PrintPilot 2.0 deaktiviert. API erforderlich.')}
 function statusColor(s){return colors[Math.max(0,statuses.indexOf(s))]}
 function statusOptions(selected){return statuses.map(s=>`<option value="${esc(s)}" ${s===selected?'selected':''}>${esc(s)}</option>`).join('')}
 function dateBadge(j){return `<span class="pill date ${j.fixed?'fixed':''} ${j.status!=='Fertig'&&j.date<today()?'overdue':''}">${displayDate(j.date)}${j.fixed?' · FIX':''}${j.status!=='Fertig'&&j.date<today()?' · ÜBERFÄLLIG':''}</span>`}

@@ -55,6 +55,7 @@ jobs:
       - name: Install Wrangler
         run: npm install --no-save --no-package-lock wrangler@4
       # Release: remove obsolete Testwoche demo controls; staging only.
+      # Deploy admin-only direct delete after 46 passing regression tests.
       - name: Test application before any changes to Cloudflare
         run: npm test
       - name: Apply migrations to isolated D1 only

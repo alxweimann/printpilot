@@ -103,3 +103,37 @@ test('locked staging board has move control only for authorized roles',()=>{
  assert.match(dashboardHtml,/boardUnlocked=false/);
  assert.match(dashboardHtml,/if\(!boardUnlocked\|\|userRole==='display'\)return/);
 });
+
+test('existing metadata is preserved, while unsolicited client fields are rejected',async()=>{
+ const original={...sample,notes:'Sonderhinweis',legacyReference:'ALT-88',demo:true};
+ let update=null;
+ const db={
+  prepare(sql){let args=[];return{
+   bind(...values){args=values;return this},
+   async first(){
+    if(sql.startsWith('SELECT role'))return {role:'admin'};
+    if(sql.startsWith('SELECT * FROM jobs'))return {id:original.id,payload:JSON.stringify(original),revision:2,archived:0,position:1200,updated_at:'2026-11-08'};
+    return null;
+   },
+   get params(){return args}
+  }},
+  async batch(statements){update=statements[0].params;return [{meta:{changes:1}},{meta:{changes:1}}]}
+ };
+ const changed={...sample,customer:'Neuer Kunde',notes:'Andere Notiz',revision:2,legacyReference:'GEFÄLSCHT',extraField:'unerlaubt'};
+ const response=await worker.fetch(request('/api/v2/jobs/TEST-001',{
+  method:'PUT',headers:{'Content-Type':'application/json','X-Requested-With':'PrintPilotMini'},
+  body:JSON.stringify(changed)}),{DB:db},ctx);
+ assert.equal(response.status,200);
+ const saved=JSON.parse(update[0]);
+ assert.equal(saved.customer,'Neuer Kunde');
+ assert.equal(saved.notes,'Andere Notiz');
+ assert.equal(saved.legacyReference,'ALT-88');
+ assert.equal(saved.demo,true);
+ assert.equal(saved.extraField,undefined);
+});
+test('staging editor offers explicit conflict review without silently merging',()=>{
+ assert.match(dashboardHtml,/id="conflictReview"/);
+ assert.match(dashboardHtml,/id="loadServerVersion"/);
+ assert.match(dashboardHtml,/ungespeicherten Eingaben verwerfen/);
+ assert.match(dashboardHtml,/editingRevision=latest.revision/);
+});

@@ -1,0 +1,58 @@
+name: PrintPilot Mini v2 – isolated staging deploy
+on:
+  workflow_dispatch:
+    inputs:
+      confirmation:
+        description: 'Type DEPLOY_PRINTPILOT_V2_STAGING_ONLY'
+        required: true
+        type: string
+permissions:
+  contents: read
+concurrency:
+  group: printpilot-mini-v2-staging-deploy
+  cancel-in-progress: false
+jobs:
+  deploy-staging:
+    if: github.ref == 'refs/heads/main' && inputs.confirmation == 'DEPLOY_PRINTPILOT_V2_STAGING_ONLY'
+    runs-on: ubuntu-latest
+    environment: printpilot-mini-v2-staging
+    defaults:
+      run:
+        working-directory: printpilot-mini-v2
+    env:
+      CLOUDFLARE_API_TOKEN: ${{ secrets.CF_PRINTPILOT_TOKEN }}
+      CLOUDFLARE_ACCOUNT_ID: ${{ secrets.CF_PRINTPILOT_ACCOUNT_ID }}
+      PRINTPILOT_D1_ID: ${{ secrets.CF_PRINTPILOT_D1_ID }}
+    steps:
+      - name: Checkout ONLY the separate v2 test branch
+        uses: actions/checkout@v4
+        with:
+          ref: feature/printpilot-mini-v2-secure-backend
+          persist-credentials: false
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Check required secrets without printing them
+        run: |
+          test -n "$CLOUDFLARE_API_TOKEN" || (echo "Missing CF_PRINTPILOT_TOKEN" && exit 1)
+          test -n "$CLOUDFLARE_ACCOUNT_ID" || (echo "Missing CF_PRINTPILOT_ACCOUNT_ID" && exit 1)
+          test -n "$PRINTPILOT_D1_ID" || (echo "Missing CF_PRINTPILOT_D1_ID" && exit 1)
+      - name: Generate config restricted to staging
+        run: |
+          node --input-type=module -e '
+            import fs from "node:fs";
+            const template = fs.readFileSync("wrangler.example.jsonc", "utf8");
+            const id=process.env.PRINTPILOT_D1_ID;
+            if(!/^[0-9a-f]{8}-[0-9a-f-]{27,}$/i.test(id)) throw new Error("Invalid D1 UUID");
+            if (!template.includes("\"name\": \"printpilot-mini-v2-staging\""))
+              throw new Error("Worker name mismatch – refusing deployment");
+            fs.writeFileSync("wrangler.jsonc", template.replace("REPLACE_WITH_D1_DATABASE_UUID", id));
+          '
+      - name: Install Wrangler
+        run: npm install --no-save --no-package-lock wrangler@4
+      - name: Test application before any changes to Cloudflare
+        run: npm test
+      - name: Apply migrations to isolated D1 only
+        run: npx wrangler d1 migrations apply printpilot-mini-v2-staging --remote --config wrangler.jsonc
+      - name: Deploy only new v2 staging Worker
+        run: npx wrangler deploy --config wrangler.jsonc

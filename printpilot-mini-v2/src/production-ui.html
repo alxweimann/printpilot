@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="de">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#102638"><title>PrintPilot Mini – Produktionsplanung</title>
+<style>
+:root{font-family:Inter,"Segoe UI",Arial,sans-serif;color:#203243;background:#f2f6f9;font-synthesis:none}*{box-sizing:border-box}body{margin:0}button,input,select,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}.shell{max-width:1480px;margin:auto;padding:22px 26px 70px}.top{display:flex;gap:16px;align-items:center;justify-content:space-between;margin-bottom:22px}.brand{display:flex;gap:12px;align-items:center}.logo{height:44px;width:44px;background:#d5f3ff;border-radius:12px;display:grid;place-items:center;color:#126b94;font-size:25px;font-weight:900}.eyebrow{letter-spacing:.14em;color:#5085a1;font-size:10px;font-weight:800}.top h1{font-size:23px;margin:3px 0}.muted{color:#718395}.top-actions,.tabs,.actions{display:flex;gap:8px;flex-wrap:wrap}.btn{border:1px solid #d6e1e9;border-radius:10px;background:#fff;color:#244355;padding:10px 14px;font-weight:650}.btn:hover{border-color:#6db4d1}.primary{background:#147ba5;color:white;border-color:#147ba5}.danger{background:#fff;color:#b33d3d;border-color:#f0c6c6}.tabs{margin-bottom:18px}.tabs button{background:transparent;border:0;padding:10px 17px;color:#617b8e;font-weight:750;border-bottom:3px solid transparent}.tabs button.active{color:#116e97;border-bottom-color:#24a6d0}.metric-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:18px}.metric{background:#fff;border:1px solid #e0e9ee;border-radius:14px;padding:16px}.metric span{display:block;color:#697e8e;font-size:12px}.metric b{font-size:27px;font-weight:800}.toolbar{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin:13px 0 18px}.toolbar input,.toolbar select{border:1px solid #d6e1e9;background:white;border-radius:9px;padding:10px 12px;min-width:160px}.toolbar input{flex:1}.jobs{display:grid;gap:10px}.job{background:white;border:1px solid #e0e7ec;border-radius:12px;padding:15px;border-left:5px solid var(--status)}.job-head,.job-foot{display:flex;gap:12px;align-items:flex-start;justify-content:space-between}.job-title{font-weight:800;font-size:16px}.job-sub{color:#748595;margin-top:4px;font-size:13px}.job-meta{display:flex;gap:8px;flex-wrap:wrap;margin-top:13px}.pill{display:inline-flex;gap:5px;align-items:center;border-radius:7px;padding:6px 9px;background:#eff4f7;color:#486172;font-size:12px;font-weight:600}.date{background:#edf2f6;color:#324c61;font-weight:750}.date.fixed{background:#be3f4f;color:white}.date.overdue{outline:2px solid #e23a4a}.status{border-radius:7px;background:var(--status);color:white;padding:7px 10px;font-size:12px;font-weight:750;white-space:nowrap}.job-foot{margin-top:13px;align-items:center}.job-foot select{border-radius:8px;border:1px solid #d6e1e9;padding:7px;background:white;max-width:210px}.empty{padding:65px 20px;text-align:center;border:1px dashed #bfd3df;border-radius:16px;background:#fff}.empty h3{margin-bottom:7px}.week-head{display:flex;align-items:center;justify-content:space-between;gap:12px;margin:4px 0 15px}.week-head h2{font-size:19px;margin:0}.weeknav{display:flex;gap:8px}.week-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}.day{min-width:0;border:1px solid #dfe9ef;background:#fff;border-radius:12px;overflow:hidden;min-height:260px}.day-head{background:#e6f3f9;padding:12px;color:#205574;font-size:13px;font-weight:800;display:flex;justify-content:space-between}.day-body{padding:9px;display:grid;align-content:start;gap:8px}.week-card{border-left:5px solid var(--status);background:#f2f6fa;border-radius:8px;padding:10px;overflow-wrap:anywhere}.week-card strong{font-size:13px}.week-card p{font-size:12px;color:#4b6070;margin:6px 0}.week-card .status{display:inline-block;font-size:10px}.week-card .pill{font-size:11px;margin-top:5px}.board{background:#0e2030;color:#e3f0f8;border-radius:18px;padding:23px;min-height:70vh}.board .eyebrow{color:#85d9ef}.board .week-head h2{font-size:27px}.board .day{background:#172e42;border-color:#28465a}.board .day-head{background:#24475e;color:#d4f3ff;font-size:16px}.board .week-card{background:#244054;color:white}.board .week-card strong{font-size:16px}.board .week-card p{color:#c5d6e1;font-size:13px}.board .pill{background:#34576e;color:white}.board .date{background:#42647a;color:white}.board .date.fixed{background:#c44751}.board .week-grid{gap:9px}.board .day{min-height:370px}.board .day-body{gap:10px}.board .week-card{padding:13px}.board .status{margin-top:7px}.board .board-caption{font-size:12px;color:#97b1c4;margin-top:15px}.modal-wrap{position:fixed;inset:0;z-index:50;background:#122433a8;display:flex;align-items:center;justify-content:center;padding:15px}.modal{background:white;border-radius:16px;width:min(650px,100%);max-height:94vh;overflow:auto;padding:23px;box-shadow:0 20px 90px #031c2b40}.modal h2{margin:0 0 16px}.formgrid{display:grid;grid-template-columns:1fr 1fr;gap:13px}.field{display:flex;flex-direction:column;gap:6px}.field.full{grid-column:1/-1}.field label,.field>span{font-size:12px;font-weight:750;color:#405b6e}.field input,.field select,.field textarea{width:100%;border:1px solid #d3e0e8;border-radius:9px;padding:11px;color:#294456;background:#fff}.field textarea{resize:vertical;min-height:65px}.checkrow{display:flex;gap:8px;align-items:center}.steps{display:flex;gap:8px;flex-wrap:wrap}.step{padding:8px 10px;border:1px solid #cbdce6;background:#f3f7fa;color:#34586e;border-radius:9px;font-size:12px}.step.on{background:#d6f2fa;border-color:#2c9abf;color:#0c668a}.formfoot{display:flex;justify-content:space-between;gap:10px;margin-top:22px}.footer{color:#8494a1;font-size:11px;margin:15px 2px}.hide{display:none!important}body.display-only .shell{max-width:none;padding:20px}body.display-only .top,body.display-only .tabs,body.display-only .metric-grid,body.display-only .footer{display:none}body.display-only .board{min-height:calc(100vh - 40px)}
+@media(max-width:860px){.shell{padding:15px 12px 50px}.top h1{font-size:20px}.metric-grid{grid-template-columns:repeat(2,1fr)}.week-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.day{min-height:160px}.board .week-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.board .day{min-height:210px}.board .week-head h2{font-size:19px}}
+@media(max-width:520px){.top{align-items:flex-start}.top-actions{justify-content:flex-end}.top-actions .btn{padding:8px}.tabs{gap:3px}.tabs button{font-size:12px;padding:10px}.formgrid{grid-template-columns:1fr}.field.full{grid-column:1}.week-grid{grid-template-columns:1fr}.board .week-grid{grid-template-columns:1fr}.day{min-height:0}.board .day{min-height:0}.job-head{flex-wrap:wrap}.job-foot{flex-wrap:wrap}.toolbar input{min-width:100%}}
+
+/* v1.1: tablet/wallboard/mobile specific layout, no change to job data */
+.week-head{flex-wrap:wrap}.week-head h2{min-width:0;overflow-wrap:anywhere}.weeknav{display:flex;gap:6px;align-items:center;flex-wrap:nowrap}.weeknav .btn{padding:9px 12px;white-space:nowrap}.board .week-head{align-items:center}
+.board .week-grid{grid-template-columns:repeat(5,minmax(0,1fr))}
+@media (min-width:861px) and (max-width:1200px){.board{padding:16px}.board .week-grid{gap:6px}.board .week-card{padding:9px}.board .week-card strong{font-size:13px}}
+@media (max-width:860px){.board .week-grid{grid-template-columns:repeat(2,minmax(0,1fr))}.board .week-head h2{font-size:19px}.board .week-head{gap:10px}.board .weeknav .btn{padding:9px 10px}}
+@media (max-width:600px){.shell{padding:12px 10px 35px}.board{border-radius:14px;padding:14px;min-height:0}.board .eyebrow{font-size:10px}.board .week-head{display:flex;align-items:stretch;gap:10px}.board .week-head h2{font-size:21px;line-height:1.2;width:100%}.board .weeknav{width:100%;display:grid;grid-template-columns:44px 1fr 44px 47px;gap:6px}.board .weeknav .btn{min-width:0;padding:8px 5px;font-size:13px;border-radius:9px}.board .weeknav #boardToday{font-size:13px}.board .weeknav #fullscreen{font-size:20px}.board .weeknav .full-label{display:none}.board .week-grid{grid-template-columns:1fr;gap:8px}.board .day{min-height:0;border-radius:10px}.board .day-head{padding:9px 13px;font-size:14px}.board .day-body{padding:7px;gap:7px}.board .week-card{padding:10px}.board .week-card strong{font-size:14px}.board .week-card p{margin:4px 0;font-size:12px}.board .board-caption{font-size:11px;line-height:1.5}.board .day-body:has(> .no-jobs){padding:4px 12px}.board .no-jobs{font-size:12px}.metric-grid{gap:7px}.metric{padding:12px}.metric b{font-size:23px}.top-actions .btn{padding:9px;font-size:12px}}
+@media (min-width:861px){body.display-only .board{min-height:calc(100vh - 40px)}body.display-only .board .week-grid{grid-template-columns:repeat(5,minmax(0,1fr))}}
+
+/* v1.2 – ruhige Listenzeilen, keine inneren Kästchen */
+.job,.week-card{overflow:hidden}
+.job{padding:0;border-left:0;border-top:3px solid var(--status)}
+.job-head{padding:13px 15px;background:#e8f1f7;align-items:center}
+.job-foot{padding:11px 15px;margin-top:0;border-top:1px solid #e2eaf0}
+.calm-rows{display:grid;gap:0}
+.calm-row{display:grid;grid-template-columns:minmax(83px,32%) minmax(0,1fr);align-items:start;gap:8px;padding:8px 13px;line-height:1.35;overflow-wrap:anywhere}
+.calm-row:nth-child(odd){background:#eff5f8}.calm-row:nth-child(even){background:#e5eef4}
+.calm-label{font-size:12px;color:#657e90}.calm-value{font-size:13px;font-weight:600;color:#244357}
+.calm-status{font-size:12px;font-weight:800;line-height:1.35}
+.week-card{padding:0!important;border-left:0!important;border-top:3px solid var(--status);border-radius:8px}
+.calm-card-head{background:#dcebf4;padding:9px 10px;display:flex;align-items:flex-start;justify-content:space-between;gap:6px;flex-wrap:wrap}
+.calm-card-head strong{min-width:0;overflow-wrap:anywhere}
+.week-card .calm-row{grid-template-columns:minmax(0,1fr);gap:2px;padding:6px 10px}
+.week-card .calm-label{font-size:10px}.week-card .calm-value{font-size:12px}
+.week-card .calm-status{padding:8px 10px;background:#e5eef4}
+.week-card .date{font-size:11px;padding:4px 6px;white-space:normal}
+.board .week-card .calm-card-head{background:#31526a}
+.board .week-card .calm-row:nth-child(odd){background:#20384b}
+.board .week-card .calm-row:nth-child(even){background:#29445a}
+.board .week-card .calm-label{color:#a1bbcb}.board .week-card .calm-value{color:#f1f7fb}
+.board .week-card .calm-status{background:#20384b}
+.board .week-card .date{background:#42647a;color:white}.board .week-card .date.fixed{background:#c44751;color:white}
+.board .week-card strong{font-size:14px}
+.machine-modal{max-width:600px}.machine-modal-head{display:flex;justify-content:space-between;align-items:start;gap:10px}
+.machine-modal-head h2{margin:0 0 6px}.machine-modal-head p{margin:0 0 20px;font-size:13px}
+.machine-add label{font-size:12px;font-weight:750;color:#405b6e}.machine-add-row{display:flex;gap:8px;margin-top:7px}
+.machine-add-row input{flex:1;min-width:0;border:1px solid #d3e0e8;border-radius:9px;padding:11px}
+.machine-list{margin-top:18px}.machine-item{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:9px 0;border-bottom:1px solid #e5edf3}
+.machine-item span{font-weight:650;overflow-wrap:anywhere}.machine-item .btn{font-size:12px;padding:7px}
+.machine-empty,.machine-hint{font-size:12px;color:#718395}.machine-hint{line-height:1.5;margin:17px 0 0}
+@media(max-width:520px){.machine-item{align-items:flex-start;flex-direction:column}.machine-add-row{flex-wrap:wrap}.machine-add-row button{width:100%}.top-actions{gap:5px}.top-actions .btn{font-size:11px}.calm-card-head{align-items:center}}
+
+/* v1.3: distinct weekday palette and compact production cards */
+.week-grid>.day{--day-head:#237ccb;--day-bg:#dcecf9;--day-border:#a6cbea;background:var(--day-bg);border-color:var(--day-border)}
+.week-grid>.day:nth-child(1){--day-head:#237ccb;--day-bg:#dcecf9;--day-border:#a6cbea}
+.week-grid>.day:nth-child(2){--day-head:#238e60;--day-bg:#d9eee3;--day-border:#a3d6b9}
+.week-grid>.day:nth-child(3){--day-head:#7951b8;--day-bg:#e9def7;--day-border:#c7b2e7}
+.week-grid>.day:nth-child(4){--day-head:#b73585;--day-bg:#f5deec;--day-border:#e4accf}
+.week-grid>.day:nth-child(5){--day-head:#c76d24;--day-bg:#f9e7d5;--day-border:#edc395}
+.week-grid>.day>.day-head,.board .week-grid>.day>.day-head{background:var(--day-head);color:#fff;padding:10px 12px;font-size:15px}
+.week-grid>.day>.day-body{padding:7px;gap:7px}
+.week-grid .compact-card{padding:0!important;border:0!important;border-left:3px solid var(--status)!important;border-radius:7px;background:#f7fafd;box-shadow:0 1px 3px #172b3c14;overflow:hidden}
+.week-grid .compact-head{padding:7px 9px 5px;background:#eaf1f6;line-height:1.25}
+.week-grid .compact-head strong{display:block;font-size:13px;line-height:1.3;overflow-wrap:anywhere}
+.week-grid .compact-rows{display:grid}
+.week-grid .compact-row{display:grid;grid-template-columns:76px minmax(0,1fr);gap:6px;padding:4px 8px;align-items:start;line-height:1.35}
+.week-grid .compact-row:nth-child(odd){background:#f1f6f9}
+.week-grid .compact-row:nth-child(even){background:#e7f0f5}
+.week-grid .compact-label{font-size:11px;font-weight:500;color:#526a79;line-height:1.35}
+.week-grid .compact-value{font-size:11px;font-weight:600;color:#233e51;line-height:1.35;overflow-wrap:anywhere;min-width:0}
+.week-grid .compact-foot{display:flex;justify-content:space-between;align-items:center;gap:5px;flex-wrap:wrap;padding:5px 8px;background:#eaf1f6}
+.week-grid .compact-foot .date{margin:0;padding:0;background:transparent;color:#344f61;font-size:10px;font-weight:750}
+.week-grid .compact-foot .date.fixed{background:#bd3f50;color:#fff;padding:3px 5px;border-radius:4px}
+.week-grid .compact-status{font-size:11px;font-weight:800;line-height:1.2;overflow-wrap:anywhere}
+.board .week-grid>.day{--day-bg:#193a57;--day-border:#356b94;background:var(--day-bg);border-color:var(--day-border)}
+.board .week-grid>.day:nth-child(1){--day-bg:#193a57;--day-border:#356b94}
+.board .week-grid>.day:nth-child(2){--day-bg:#193e34;--day-border:#347b5b}
+.board .week-grid>.day:nth-child(3){--day-bg:#322747;--day-border:#70569b}
+.board .week-grid>.day:nth-child(4){--day-bg:#45263c;--day-border:#91516f}
+.board .week-grid>.day:nth-child(5){--day-bg:#493521;--day-border:#986e42}
+.board .week-grid>.day>.day-body .no-jobs{color:#b9d0df}
+.board .week-grid .compact-card{background:#213448;box-shadow:0 1px 3px #06132140}
+.board .week-grid .compact-head{background:#2d475b}
+.board .week-grid .compact-head strong{color:#f7fbfd;font-size:13px}
+.board .week-grid .compact-row:nth-child(odd){background:#20374b}
+.board .week-grid .compact-row:nth-child(even){background:#294257}
+.board .week-grid .compact-label{color:#a7c0ce}
+.board .week-grid .compact-value{color:#f0f7fb;font-size:11px}
+.board .week-grid .compact-foot{background:#233a4f}
+.board .week-grid .compact-foot .date{color:#dbeaf4}
+.board .week-grid .compact-foot .date.fixed{color:#fff;background:#c44751}
+.board .week-grid .compact-status{font-size:11px}
+@media(min-width:861px){.board .week-grid>.day{min-height:300px}.board .week-grid>.day>.day-body{gap:6px;padding:6px}}
+@media(max-width:600px){.board .week-grid>.day{min-height:0}.board .week-grid>.day>.day-head{padding:9px 12px}.week-grid .compact-row{grid-template-columns:76px minmax(0,1fr)}}
+
+
+/* v1.4: prominent due date and space for 2-3 lines of processing */
+.week-grid .processing-row{grid-template-columns:76px minmax(0,1fr);gap:6px;align-items:start;padding:4px 8px 5px}
+.week-grid .processing-value{line-height:1.35;white-space:normal;overflow-wrap:anywhere}
+.week-grid .compact-foot{align-items:center;gap:6px}
+.week-grid .compact-due{display:inline-flex;align-items:baseline;flex-wrap:wrap;gap:4px;padding:4px 7px;border-radius:5px;background:#cce3f1;color:#173a55;line-height:1.2}
+.week-grid .due-label{font-size:9px;letter-spacing:.035em;font-weight:800;opacity:.9}
+.week-grid .due-value{font-size:14px;font-weight:900;white-space:nowrap;font-variant-numeric:tabular-nums}
+.week-grid .due-flag{font-size:10px;font-weight:900;white-space:nowrap}
+.week-grid .compact-due.fixed{background:#bb3549;color:white}
+.week-grid .compact-due.overdue{background:#ad2634;color:white;outline:1px solid #f3a1a7}
+.board .week-grid .compact-due{background:#3d657d;color:#fff}
+.board .week-grid .compact-due.fixed{background:#bb3549}
+.board .week-grid .compact-due.overdue{background:#ad2634}
+@media(max-width:600px){.week-grid .compact-due{padding:5px 8px}.week-grid .due-value{font-size:15px}}
+
+
+/* v1.5: one production board, touch-optimized admin date moves */
+.board .compact-head{display:flex;justify-content:space-between;gap:6px;align-items:flex-start}
+.board .compact-head strong{min-width:0;flex:1}
+.move-handle{border:1px solid #67899e;background:#395b70;color:#fff;border-radius:5px;min-width:34px;min-height:34px;display:grid;place-items:center;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;font-size:23px;line-height:1;padding:1px 5px;flex:none}
+.move-handle:focus-visible{outline:3px solid #a8e8fa;outline-offset:1px}
+.move-handle:active{cursor:grabbing}
+.board .day.move-target{outline:3px dashed #f8d26d;outline-offset:-4px}
+.board .compact-card.is-moving{opacity:.43}
+.board .day.move-selected{outline:2px solid #a8e8fa;outline-offset:-3px}
+.drag-preview{position:fixed;z-index:9999;pointer-events:none;background:#e7f4fa;color:#183449;border:2px solid #48b1d8;border-radius:8px;box-shadow:0 8px 24px #0007;max-width:210px;font-size:12px;font-weight:800;padding:9px 12px;line-height:1.3}
+body.display-only .move-handle{display:none!important}
+@media(max-width:600px){.move-handle{min-height:40px;min-width:40px}}
+
+
+/* v1.6: streamlined due date, persistent touch ordering inside each day */
+.week-grid .compact-due,.board .week-grid .compact-due{
+ display:inline-flex;align-items:baseline;gap:5px;flex-wrap:wrap;
+ background:transparent;color:#d9e8f2;padding:1px 0;border-radius:0;
+}
+.week-grid .compact-due{color:#284a61}
+.week-grid .compact-due .due-label{font-size:11px;font-weight:600;letter-spacing:0;opacity:.8;text-transform:none}
+.week-grid .compact-due .due-value{font-size:14px;font-weight:900;font-variant-numeric:tabular-nums}
+.week-grid .compact-due.fixed,.board .week-grid .compact-due.fixed{background:transparent;color:#ff7f89}
+.week-grid .compact-due.overdue,.board .week-grid .compact-due.overdue{background:transparent;color:#ff7f89;outline:0}
+.week-grid .compact-due .due-flag{font-size:10px;font-weight:800;color:inherit;text-transform:uppercase}
+.board .compact-card.drop-before{box-shadow:0 -4px 0 #f5d969}
+.board .compact-card.drop-after{box-shadow:0 4px 0 #f5d969}
+
+
+/* v1.7: clear two-line identity and cleaner, consistent processing layout */
+.week-grid .compact-head,.board .week-grid .compact-head{display:flex;align-items:flex-start;gap:6px;padding:8px 9px 7px}
+.week-grid .order-ident{display:flex;flex:1;min-width:0;flex-direction:column;gap:2px;line-height:1.22}
+.week-grid .order-number{font-size:13px;font-weight:850;color:#183b56;letter-spacing:.025em;white-space:nowrap}
+.week-grid .order-customer{font-size:12px;font-weight:650;color:#267d9e;overflow-wrap:break-word;hyphens:manual}
+.board .week-grid .order-number{color:#f7fbfd}
+.board .week-grid .order-customer{color:#9fe0ee}
+.week-grid .compact-row,.week-grid .processing-row{grid-template-columns:70px minmax(0,1fr);gap:6px;align-items:start;padding:5px 8px;line-height:1.32}
+.week-grid .compact-label,.week-grid .compact-value,.week-grid .processing-value{font-size:11px;line-height:1.32}
+.week-grid .compact-label{font-weight:500}
+.week-grid .compact-value{font-weight:650}
+.week-grid .processing-value{min-width:0}
+.week-grid .process-steps{display:flex;flex-wrap:wrap;gap:2px 5px;align-items:baseline;min-width:0}
+.week-grid .process-step{display:inline-flex;white-space:nowrap;align-items:baseline;gap:4px;max-width:100%;font-size:inherit;line-height:inherit}
+.week-grid .process-separator{opacity:.6}
+.board .week-grid .compact-row,.board .week-grid .processing-row{grid-template-columns:70px minmax(0,1fr)}
+@media(max-width:600px){.week-grid .compact-row,.week-grid .processing-row,.board .week-grid .compact-row,.board .week-grid .processing-row{grid-template-columns:70px minmax(0,1fr)}}
+
+
+/* v1.7.1: clean process wrapping and consistent footer rhythm */
+.week-grid .process-steps{display:flex;flex-wrap:wrap;align-items:baseline;gap:2px 8px}
+.week-grid .process-step{display:inline-block;white-space:nowrap;max-width:100%;font-size:inherit;line-height:inherit}
+.week-grid .compact-foot,.board .week-grid .compact-foot{
+  display:flex;flex-direction:column;align-items:flex-start;justify-content:flex-start;
+  gap:2px;padding:6px 8px;
+}
+.week-grid .compact-status,.board .week-grid .compact-status{font-size:11px;line-height:1.3}
+
+/* v1.8: responsive card typography based on actual weekday column width */
+.week-grid>.day{container-type:inline-size}
+.week-grid .compact-label,
+.week-grid .compact-value,
+.week-grid .processing-value{
+  font-size:clamp(11px,3.6cqi,15px);
+  line-height:1.32;
+}
+.week-grid .order-number{font-size:clamp(14px,4.7cqi,20px);line-height:1.2}
+.week-grid .order-customer{font-size:clamp(12px,4.1cqi,17px);line-height:1.28}
+.week-grid .compact-status{font-size:clamp(11px,3.6cqi,15px)}
+.week-grid .compact-due .due-label{font-size:clamp(10px,3.3cqi,13px)}
+.week-grid .compact-due .due-value{font-size:clamp(14px,4.1cqi,18px)}
+.week-grid .compact-row,.week-grid .processing-row,
+.board .week-grid .compact-row,.board .week-grid .processing-row{
+  grid-template-columns:clamp(70px,27cqi,104px) minmax(0,1fr);
+}
+.week-grid .process-steps,.week-grid .process-step{font-size:inherit;line-height:inherit}
+@supports not (font-size:1cqi){
+  .week-grid .compact-label,.week-grid .compact-value,.week-grid .processing-value,.week-grid .compact-status{font-size:11px}
+  .week-grid .order-number{font-size:14px}
+  .week-grid .order-customer{font-size:12px}
+}
+
+/* v1.9: high-density day scrolling and collapsible completed job archive */
+.board .day{display:flex;flex-direction:column;min-height:0}
+.board .day-head{flex:none}
+.board .day-body{display:flex;flex-direction:column;overflow:visible;max-height:none;min-height:145px;touch-action:auto}
+.board .compact-card{flex:none}
+@media(min-width:861px){.board .week-grid>.day{min-height:0}}
+@media(max-width:600px){.board .day-body{max-height:none;min-height:32px}}
+.archive-section{margin:18px 0 8px}
+.archive-section details{background:#fff;border:1px solid #dbe6ed;border-radius:12px;overflow:hidden}
+.archive-section summary{display:flex;cursor:pointer;justify-content:space-between;align-items:center;padding:14px 18px;color:#254459;font-weight:800;list-style:none}
+.archive-section summary::-webkit-details-marker{display:none}
+.archive-section summary strong{background:#e4eff5;color:#225776;border-radius:12px;padding:3px 9px;margin-left:8px}
+.archive-chevron{color:#5d7e92}
+.archive-list{padding:0 16px 10px}
+.archive-empty{padding:18px 2px;color:#72879a;font-size:13px}
+.archive-item{display:flex;align-items:center;justify-content:space-between;gap:14px;border-top:1px solid #e4edf2;padding:11px 0}
+.archive-item small{display:block;color:#748a9a;font-size:12px;margin-top:4px}
+.archive-actions{display:flex;flex-wrap:wrap;gap:6px}
+.archive-actions .btn{padding:7px 10px;font-size:12px}
+.mini-archive{background:transparent;border:1px solid #638a9d;color:#e1f1f9;border-radius:5px;font-size:10px;padding:3px 6px;cursor:pointer}
+body.display-only #archiveSection,body.display-only #demoWeekBtn,body.display-only .mini-archive{display:none!important}
+@media(max-width:650px){.archive-item{align-items:stretch;flex-direction:column}}
+
+
+/* v1.9.2: a single scrolling fullscreen board (including touch devices) */
+#boardView:fullscreen,
+#boardView:-webkit-full-screen {
+  width:100%;
+  height:100vh;
+  height:100dvh;
+  max-height:100vh;
+  max-height:100dvh;
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+  background:#0e2030;
+}
+#boardView:fullscreen .board,
+#boardView:-webkit-full-screen .board {
+  min-height:100%;
+  height:auto;
+  overflow:visible;
+  border-radius:0;
+}
+#boardView:fullscreen .week-grid,
+#boardView:-webkit-full-screen .week-grid {
+  overflow:visible;
+  height:auto;
+}
+#boardView:fullscreen .day,
+#boardView:-webkit-full-screen .day,
+#boardView:fullscreen .day-body,
+#boardView:-webkit-full-screen .day-body {
+  max-height:none;
+  overflow:visible;
+}
+
+/* v1.10: highlight today's full column and keep weekday headings visible while scrolling */
+.board .week-grid>.day{overflow:visible}
+.board .week-grid>.day>.day-head{
+  position:sticky;top:0;z-index:4;
+  border-radius:10px 10px 0 0;
+  box-shadow:0 2px 4px #07162230;
+}
+.board .week-grid>.day.today-column{
+  border:2px solid #f9e17a;
+  box-shadow:inset 0 0 0 2px #f9e17a24,0 0 0 1px #f9e17a52;
+  background:color-mix(in srgb,var(--day-bg) 86%,#ffffff 14%);
+}
+.board .week-grid>.day.today-column>.day-head{
+  box-shadow:inset 0 -4px 0 #f9e17a,0 3px 8px #06142155;
+}
+.board .today-marker{
+  display:inline-block;
+  margin-left:5px;
+  padding:2px 5px;
+  background:#fff4bb;
+  color:#2d3440;
+  border-radius:4px;
+  font-size:10px;
+  line-height:1.1;
+  font-weight:900;
+  letter-spacing:.035em;
+  vertical-align:middle;
+  white-space:nowrap;
+}
+#boardView:fullscreen .board .day-head,
+#boardView:-webkit-full-screen .board .day-head{top:0}
+@supports not (background:color-mix(in srgb,red,white)){
+  .board .week-grid>.day.today-column{background:var(--day-bg)}
+}
+
+
+/* Temporary today highlight preview: no changes to jobs or dates */
+.preview-today-btn[aria-pressed="true"]{background:#fff2b0;border-color:#c8a632;color:#45390d}
+body.display-only .preview-today-btn{display:none!important}
+@media(max-width:600px){.board .weeknav{grid-template-columns:44px minmax(0,1fr) minmax(0,1fr) 44px 47px}.board .weeknav .preview-today-btn{font-size:11px;padding:7px 4px}}
+
+/* v1.11: expandable job cards and lock-first production board */
+.collapsible-job{overflow:hidden}
+.job-toggle{display:flex;width:100%;align-items:center;justify-content:space-between;gap:16px;padding:12px 15px;background:#e8f1f7;border:0;color:#244357;text-align:left;cursor:pointer}
+.job-toggle:hover{background:#dcebf4}
+.job-toggle:focus-visible{outline:3px solid #24a6d0;outline-offset:-3px}
+.job-summary{display:flex;flex-direction:column;gap:3px;min-width:0;flex:1}
+.job-number{font-size:14px;font-weight:850;color:#203d52}
+.job-customer{font-size:13px;font-weight:650;color:#237da2;overflow-wrap:anywhere}
+.job-product{font-size:12px;color:#667e90;overflow-wrap:anywhere}
+.job-summary-right{display:flex;align-items:center;justify-content:flex-end;flex-wrap:wrap;gap:9px;max-width:55%}
+.job-summary-right .date{margin:0;white-space:nowrap}
+.job-chevron{font-size:22px;font-weight:700;line-height:1;color:#547589;padding:0 3px}
+.job-details{border-top:1px solid #d8e5ec}
+.job-details .job-foot{display:flex;justify-content:flex-end}
+.board .board-lock{background:#ffdca3;color:#653b06;border-color:#eeb05b;font-weight:800}
+.board .board-lock[aria-pressed="true"]{background:#c6f2d9;color:#17543b;border-color:#4baa79}
+body.display-only .board-lock{display:none!important}
+@media(max-width:600px){.job-toggle{gap:8px;padding:10px}.job-summary-right{flex-direction:column;align-items:flex-end;gap:4px;max-width:44%}.job-summary-right .date{font-size:10px}.board .weeknav{display:flex;flex-wrap:wrap}.board .weeknav .btn{flex:0 0 auto}.board .weeknav .board-lock{font-size:12px;padding:8px 9px}}
+
+
+/* v1.12: selectable enlarged day view, without a separate scrolling pane */
+.board .week-grid>.day.day-not-selected{display:none!important}
+.board .week-grid.single-day-view{grid-template-columns:minmax(0,1fr)!important}
+.board .week-grid.single-day-view>.day{width:100%;min-height:0}
+.board .week-grid>.day>.day-head{padding:0}
+.day-view-trigger{width:100%;display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 12px;background:transparent;color:inherit;border:0;font:inherit;font-size:inherit;font-weight:800;text-align:left;cursor:pointer}
+.day-view-trigger:hover{background:#ffffff1a}
+.day-view-trigger:focus-visible{outline:3px solid #f9e17a;outline-offset:-3px}
+.day-view-icon{font-size:14px;opacity:.8;margin-left:auto}
+.board .week-grid.single-day-view .day-view-trigger{padding:14px 18px;font-size:20px}
+.board .week-grid.single-day-view .day-body{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;padding:14px;align-items:start}
+.board .week-grid.single-day-view .compact-card{width:100%;align-self:start}
+.board .week-grid.single-day-view .compact-head{padding:12px 15px}
+.board .week-grid.single-day-view .compact-row,
+.board .week-grid.single-day-view .processing-row{padding:9px 15px;grid-template-columns:110px minmax(0,1fr)}
+.board .week-grid.single-day-view .compact-label,
+.board .week-grid.single-day-view .compact-value{font-size:15px;line-height:1.35}
+.board .week-grid.single-day-view .order-number{font-size:19px}
+.board .week-grid.single-day-view .order-customer{font-size:17px}
+.board .week-grid.single-day-view .compact-status{font-size:15px}
+.board .week-grid.single-day-view .compact-foot{padding:10px 15px}
+.board .week-grid.single-day-view .compact-due .due-value{font-size:18px}
+.board .week-grid.single-day-view .compact-due .due-label{font-size:13px}
+.board .back-week-btn{background:#e0f2f9;color:#194c67;border-color:#a4d5e7}
+@media(max-width:800px){
+ .board .week-grid.single-day-view .day-body{grid-template-columns:minmax(0,1fr)}
+ .board .week-grid.single-day-view .compact-row,
+ .board .week-grid.single-day-view .processing-row{grid-template-columns:104px minmax(0,1fr)}
+}
+
+
+/* PrintPilot Mini: notes visible on production cards only when present */
+.board .week-grid .compact-note{display:grid;grid-template-columns:clamp(70px,27cqi,104px) minmax(0,1fr);gap:6px;padding:6px 8px;background:#34495b;border-top:1px solid #536577;align-items:start}
+.board .week-grid .compact-note-label{font-size:clamp(11px,3.6cqi,15px);color:#b9ccd9;font-weight:600;line-height:1.35}
+.board .week-grid .compact-note-text{font-size:clamp(11px,3.6cqi,15px);color:#fff1bc;font-weight:600;line-height:1.4;white-space:pre-wrap;overflow-wrap:anywhere;min-width:0}
+.board .week-grid.single-day-view .compact-note{grid-template-columns:110px minmax(0,1fr);padding:9px 15px}
+.board .week-grid.single-day-view .compact-note-label,.board .week-grid.single-day-view .compact-note-text{font-size:15px}
+@media(max-width:800px){.board .week-grid.single-day-view .compact-note{grid-template-columns:104px minmax(0,1fr)}}
+
+</style>
+</head>
+<body>
+<div class="shell">
+<header class="top"><div class="brand"><div class="logo">P</div><div><div class="eyebrow">PRINTPILOT MINI</div><h1>Produktionsplanung</h1><div class="muted" style="font-size:12px">Schnell verwalten. Klar ansehen.</div></div></div><div class="top-actions"><button class="btn" id="manageMachinesBtn" title="Druckmaschinen verwalten">⚙ Maschinen</button><button class="btn" id="exportBtn" title="Lokale Datensicherung herunterladen">↧ Sicherung</button><button class="btn" id="demoWeekBtn" title="Beispielaufträge für nächste Woche anlegen">Testwoche befüllen</button><button class="btn primary" id="addBtn">＋ Auftrag</button></div></header>
+<nav class="tabs" id="tabs"><button data-view="list" class="active">Aufträge</button><button data-view="board">Produktionstafel</button></nav>
+<section class="metric-grid" id="metrics"></section>
+<main><section id="listView"><div class="toolbar"><input type="search" id="search" placeholder="Auftrag, Kunde oder Produkt suchen …" aria-label="Aufträge suchen"><select id="statusFilter"><option value="">Alle Status</option></select><select id="sortBy"><option value="date">Nach Termin</option><option value="number">Nach Auftragsnummer</option></select></div><div class="jobs" id="jobs"></div></section>
+
+<section id="boardView" class="hide"><div class="board"><div class="eyebrow">PRINTPILOT / PRODUKTION</div><div class="week-head" style="margin-top:7px"><h2 id="boardTitle">Wochenübersicht</h2><div class="weeknav"><button class="btn back-week-btn hide" id="backToWeek" type="button">← Wochenansicht</button><button class="btn" id="boardPrev">←</button><button class="btn" id="boardToday" title="Zur aktuellen Woche">Heute</button><button class="btn preview-today-btn" id="previewToday" type="button" aria-pressed="false" title="Heutige Spaltenmarkierung testweise anzeigen">Vorschau</button><button class="btn" id="boardNext">→</button><button class="btn board-lock" id="boardLock" type="button" aria-pressed="false" title="Verschieben der Aufträge gesperrt">🔒 Gesperrt</button><button class="btn" id="fullscreen" title="Vollbildmodus">⛶ <span class="full-label">Vollbild</span></button></div></div><div class="week-grid" id="boardGrid"></div><div class="board-caption"><span id="boardHint">Wochenübersicht · Im Verwaltungsmodus per Touch verschieben · noch keine Synchronisierung zwischen Geräten</span></div></div></section></main>
+<section id="archiveSection" class="archive-section"><details id="archiveDetails"><summary><span>✓ Erledigte Aufträge <strong id="archiveCount">0</strong></span><span class="archive-chevron">▾</span></summary><div class="archive-list" id="archiveList"></div></details></section>
+<div class="footer">Testversion 1.12 · Speicherung nur in diesem Browser (localStorage) · keine Synchronisierung zwischen Geräten · keine Cloud-Anmeldung</div>
+</div>
+<div class="modal-wrap hide" id="modalWrap" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><h2 id="modalTitle">Neuer Auftrag</h2><form id="jobForm"><div class="formgrid"><div class="field"><label for="number">Auftragsnummer *</label><input id="number" maxlength="40" required></div><div class="field"><label for="date">Fertigstellung *</label><input id="date" type="date" required></div><div class="field full"><label for="customer">Kunde *</label><input id="customer" maxlength="120" required></div><div class="field"><label for="product">Produkt *</label><input id="product" maxlength="160" required></div><div class="field"><label for="quantity">Auflage</label><input id="quantity" maxlength="50" placeholder="z. B. 5.000 Stück"></div><div class="field"><label for="machine">Druckmaschine</label><select id="machine"></select></div><div class="field"><label for="status">Status</label><select id="status"></select></div><div class="field full"><label class="checkrow"><input type="checkbox" id="fixed" style="width:auto"> <strong>Fixtermin – Datum rot hervorheben</strong></label></div><div class="field full"><span>Weiterverarbeitung (optional)</span><div class="steps" id="stepButtons"></div></div><div class="field full"><label for="notes">Notiz (optional)</label><textarea id="notes" maxlength="500" placeholder="Nur wenn nötig"></textarea></div></div><div class="formfoot"><button class="btn danger hide" type="button" id="deleteBtn">Auftrag löschen</button><div class="actions" style="margin-left:auto"><button class="btn" type="button" id="cancelBtn">Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div></div></form></div></div>
+<div class="modal-wrap hide" id="machineModal" role="dialog" aria-modal="true" aria-labelledby="machineTitle"><div class="modal machine-modal"><div class="machine-modal-head"><div><h2 id="machineTitle">Druckmaschinen verwalten</h2><p class="muted">Hier bestimmst du selbst, welche Maschinen zur Auswahl stehen.</p></div><button class="btn" type="button" id="closeMachines" aria-label="Schließen">✕</button></div><form id="machineForm" class="machine-add"><label for="newMachine">Neue Maschine</label><div class="machine-add-row"><input id="newMachine" maxlength="100" placeholder="Maschinenname" required><button class="btn primary" type="submit">＋ Hinzufügen</button></div></form><div id="machineList" class="machine-list"></div><p class="machine-hint">Umbenennen ändert auch die Maschinenbezeichnung in vorhandenen Aufträgen. Entfernen blendet die Maschine aus der Auswahl aus; bestehende Aufträge behalten ihre Angabe.</p></div></div>
+<script>
+(()=>{'use strict';
+const STORE='printpilot-mini-v1-jobs';
+const statuses=['Neu / ungeprüft','Daten fehlen','Auftragstasche fehlt','In Korrektur','Wartet auf Freigabe','Freigegeben','In Produktion','Weiterverarbeitung','Fertig','Problem / Verzögerung'];
+const colors=['#80919e','#d25843','#b7653c','#cc5454','#ca8b32','#3384c7','#148c99','#8064bb','#29966c','#b53d51'];
+const MACHINES_STORE='printpilot-mini-v12-machines';
+let machines=[];let machineReadError=false;try{const raw=localStorage.getItem(MACHINES_STORE);if(raw!==null){const values=JSON.parse(raw);if(!Array.isArray(values)||!values.every(v=>typeof v==='string'))throw Error('Ungültige Maschinenliste');machines=[...new Set(values.map(x=>x.trim()).filter(Boolean))];}}catch(e){machineReadError=true;alert('Maschinenliste konnte nicht gelesen werden. Sie wird nicht überschrieben.');}
+const processes=['Schneiden','Falzen','Rillen','Nuten','Heften','Laminieren','Konturschneiden','Perforieren','Lochen','Kuvertieren','Verpacken','Sonstiges'];
+const $=id=>document.getElementById(id);
+const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const today=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
+const localDate=s=>new Date(s+'T12:00:00');
+const displayDate=s=>localDate(s).toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});
+const monday=d=>{const a=new Date(d);a.setHours(12,0,0,0);a.setDate(a.getDate()-((a.getDay()+6)%7));return a};
+const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+let jobs=[];let jobsReadError=false;try{const data=JSON.parse(localStorage.getItem(STORE)||'[]');if(Array.isArray(data))jobs=data.filter(x=>x&&typeof x.id==='string'&&typeof x.date==='string');}catch(e){jobsReadError=true;alert('Gespeicherte Aufträge konnten nicht gelesen werden. Daten werden nicht überschrieben.');}
+let view='list',week=monday(new Date()),editing=null,chosenSteps=[];
+let pinnedWeek=false,lastDay=today(),selectedMove=null,dragState=null,previewToday=false,boardUnlocked=false,selectedDayOffset=null;const expandedJobs=new Set();
+function save(){if(jobsReadError)throw Error('Bestehende Aufträge sind nicht lesbar. Speichern gesperrt.');try{localStorage.setItem(STORE,JSON.stringify(jobs))}catch(e){alert('Speichern fehlgeschlagen: Browser-Speicher nicht verfügbar. Bitte keine neuen Daten eingeben.');throw e}}
+function statusColor(s){return colors[Math.max(0,statuses.indexOf(s))]}
+function statusOptions(selected){return statuses.map(s=>`<option value="${esc(s)}" ${s===selected?'selected':''}>${esc(s)}</option>`).join('')}
+function dateBadge(j){return `<span class="pill date ${j.fixed?'fixed':''} ${j.status!=='Fertig'&&j.date<today()?'overdue':''}">${displayDate(j.date)}${j.fixed?' · FIX':''}${j.status!=='Fertig'&&j.date<today()?' · ÜBERFÄLLIG':''}</span>`}
+function renderMetrics(){const active=jobs.filter(j=>!j.archived);const open=active.filter(j=>j.status!=='Fertig');const stats=[['Offene Aufträge',open.length],['Heute fällig',open.filter(j=>j.date===today()).length],['Überfällig',open.filter(j=>j.date<today()).length],['Fertig',active.length-open.length]];$('metrics').innerHTML=stats.map(([label,n])=>`<div class="metric"><span>${label}</span><b>${n}</b></div>`).join('')}
+function qtyText(j){return j.quantity?`${esc(j.quantity)}`:'—'}
+function calmRows(j){const rows=[['Produkt',j.product||'—'],['Auflage',j.quantity||'—'],['Maschine',j.machine||'—'],['Verarbeitung',j.steps?.length?j.steps.join(' · '):'—']];return `<div class="calm-rows">${rows.map(([label,value])=>`<div class="calm-row"><span class="calm-label">${esc(label)}</span><span class="calm-value">${esc(value)}</span></div>`).join('')}</div>`}
+function renderList(){
+ const q=$('search').value.trim().toLocaleLowerCase('de'),filter=$('statusFilter').value;
+ let shown=jobs.filter(j=>!j.archived&&(!filter||j.status===filter)&&(!q||[j.id,j.customer,j.product,j.quantity,j.machine].join(' ').toLocaleLowerCase('de').includes(q)));
+ shown.sort((a,b)=>$('sortBy').value==='number'?a.id.localeCompare(b.id,'de',{numeric:true}):a.date.localeCompare(b.date)||a.id.localeCompare(b.id,'de',{numeric:true}));
+ $('jobs').innerHTML=shown.length?shown.map(j=>{
+  const opened=expandedJobs.has(j.id);
+  return `<article class="job collapsible-job" style="--status:${statusColor(j.status)}">
+   <button class="job-toggle" type="button" data-expand-id="${esc(j.id)}" aria-expanded="${opened}" aria-label="Auftrag ${esc(j.id)} ${opened?'zuklappen':'aufklappen'}">
+    <span class="job-summary"><strong class="job-number">${esc(j.id)}</strong><span class="job-customer">${esc(j.customer)}</span><span class="job-product">${esc(j.product)} · ${esc(j.quantity||'—')}</span></span>
+    <span class="job-summary-right">${dateBadge(j)}<span class="calm-status" style="color:var(--status)">${esc(j.status)}</span><span class="job-chevron" aria-hidden="true">${opened?'⌃':'⌄'}</span></span>
+   </button>
+   ${opened?`<div class="job-details">${calmRows(j)}<div class="job-foot"><div class="actions"><select aria-label="Status für Auftrag ${esc(j.id)} ändern" data-status-id="${esc(j.id)}">${statusOptions(j.status)}</select><button class="btn" data-edit="${esc(j.id)}">Bearbeiten</button>${j.status==='Fertig'?`<button class="btn" data-archive-id="${esc(j.id)}">Erledigt ablegen</button>`:''}</div></div></div>`:''}
+  </article>`;
+ }).join(''):'<div class="empty"><h3>Noch keine passenden Aufträge</h3><p class="muted">Mit „＋ Auftrag“ legst du den ersten Auftrag an.</p></div>'
+}
+function weekRange(){const end=new Date(week);end.setDate(week.getDate()+4);return `${week.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})} – ${end.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})}`}
+function compactRows(j){const rows=[['Produkt',j.product||'—'],['Auflage',j.quantity||'—'],['Maschine',j.machine||'—']];const steps=Array.isArray(j.steps)?j.steps:[];const processing=steps.length?`<span class="process-steps">${steps.map(esc).join(', ')}</span>`:'—';return `<div class="compact-rows">${rows.map(([label,value])=>`<div class="compact-row"><span class="compact-label">${esc(label)}</span><span class="compact-value">${esc(value)}</span></div>`).join('')}<div class="compact-row processing-row"><span class="compact-label">Verarbeitung</span><span class="compact-value processing-value">${processing}</span></div></div>`}
+function compactDateBadge(j){const late=j.status!=='Fertig'&&j.date<today();return `<span class="compact-due ${j.fixed?'fixed':''} ${late?'overdue':''}" title="Fertigstellungstermin"><span class="due-label">Termin</span><span class="due-value">${displayDate(j.date)}</span>${j.fixed?'<span class="due-flag">FIX</span>':''}${late?'<span class="due-flag">Überfällig</span>':''}</span>`}
+function weekMarkup(board){let str='';for(let offset=0;offset<5;offset++){const d=new Date(week);d.setDate(week.getDate()+offset);const day=iso(d),isRealToday=day===today(),isPreview=previewToday&&offset===0,isToday=isRealToday||isPreview,dayjobs=jobs.filter(j=>j.date===day&&!j.archived);str+=`<div class="day day-${offset}${isToday?' today-column':''}${selectedDayOffset!==null&&selectedDayOffset!==offset?' day-not-selected':''}" data-drop-date="${day}"><div class="day-head"><button type="button" class="day-view-trigger" data-select-day="${offset}" title="${['Montag','Dienstag','Mittwoch','Donnerstag','Freitag'][offset]} groß anzeigen"><span>${['Mo','Di','Mi','Do','Fr'][offset]}${isToday?` <span class="today-marker">${isPreview&&!isRealToday?'● VORSCHAU':'● HEUTE'}</span>`:''}</span><span>${displayDate(day)}</span><span class="day-view-icon" aria-hidden="true">⤢</span></button></div><div class="day-body">${dayjobs.map(j=>`<article class="week-card compact-card" data-job-id="${esc(j.id)}" style="--status:${statusColor(j.status)}"><div class="compact-head"><div class="order-ident"><span class="order-number">${esc(j.id)}</span><span class="order-customer">${esc(j.customer)}</span></div>${boardUnlocked&&!document.body.classList.contains('display-only')? `<button type="button" class="move-handle" data-move-id="${esc(j.id)}" aria-label="Auftrag ${esc(j.id)} auf anderen Wochentag verschieben" title="Halten und auf anderen Tag ziehen oder antippen">⠿</button>`:''}</div>${compactRows(j)}${j.notes&&String(j.notes).trim()?`<div class="compact-note"><span class="compact-note-label">Notiz</span><span class="compact-note-text">${esc(j.notes)}</span></div>`:""}<div class="compact-foot">${compactDateBadge(j)}<span class="compact-status" style="color:var(--status)">${esc(j.status)}</span>${j.status==='Fertig'&&!document.body.classList.contains('display-only')?`<button type="button" class="mini-archive" data-archive-id="${esc(j.id)}">✓ Ablegen</button>`:''} </div></article>`).join('')||'<span class="no-jobs">–</span>'}</div></div>`}return str}
+function renderWeek(){updateBoardLock();$('backToWeek').classList.toggle('hide',selectedDayOffset===null);$('boardGrid').classList.toggle('single-day-view',selectedDayOffset!==null);if($('previewToday')){$('previewToday').textContent=previewToday?'Vorschau aus':'Vorschau';$('previewToday').setAttribute('aria-pressed',String(previewToday));}const heading=selectedDayOffset===null?`Woche ${weekRange()}`:`${['Montag','Dienstag','Mittwoch','Donnerstag','Freitag'][selectedDayOffset]} · ${displayDate(iso(new Date(week.getFullYear(),week.getMonth(),week.getDate()+selectedDayOffset,12)))}`;$('boardTitle').textContent=heading;$('boardGrid').innerHTML=weekMarkup(true);selectedMove=null;updateBoardHint()}
+function render(){renderMetrics();renderList();renderWeek();renderArchive()}
+function setView(v){view=v;document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));['list','board'].forEach(x=>$(x+'View').classList.toggle('hide',v!==x));render()}
+
+
+function updateBoardLock(){const btn=$('boardLock');if(!btn)return;btn.textContent=boardUnlocked?'🔓 Entsperrt':'🔒 Gesperrt';btn.setAttribute('aria-pressed',String(boardUnlocked));btn.title=boardUnlocked?'Verschieben wieder sperren':'Verschieben der Aufträge erlauben';}
+function updateBoardHint(){
+ const h=$('boardHint');if(!h)return;
+ h.textContent=document.body.classList.contains('display-only')
+ ?'Nur-Lese-Ansicht · automatisch im selben Browser aktualisiert · noch keine geräteübergreifende Synchronisierung'
+ :!boardUnlocked?'🔒 Produktionstafel gesperrt · Zum Verschieben oben entsperren.'
+  :selectedMove?'Auftrag ausgewählt: Zielkarte antippen, um ihn dahinter einzusortieren, oder einen leeren Bereich im Zieltag antippen.'
+ :'Auftrag am Griff ⠿ ziehen, auch zwischen zwei Karten · alternativ Griff und Zielkarte antippen.';
+}
+function reorderJob(id,date,relativeId=null,after=true){
+ if(!boardUnlocked||document.body.classList.contains('display-only'))return;
+ const from=jobs.findIndex(x=>x.id===id);
+ if(from<0||!/^\d{4}-\d{2}-\d{2}$/.test(date))return;
+ const source=jobs[from],oldDate=source.date;
+ if(source.fixed&&date!==oldDate&&!confirm('Fixtermin von '+displayDate(oldDate)+' auf '+displayDate(date)+' verschieben?'))return;
+ if(relativeId===id)return;
+ const before=jobs.slice();
+ jobs.splice(from,1);
+ source.date=date;
+ let insert=-1;
+ if(relativeId){const to=jobs.findIndex(x=>x.id===relativeId&&x.date===date);if(to>=0)insert=to+(after?1:0)}
+ if(insert<0){const last=jobs.findLastIndex(x=>x.date===date);insert=last>=0?last+1:jobs.length}
+ jobs.splice(insert,0,source);
+ try{save()}catch(e){jobs=before;render();return}
+ render();
+}
+function positionAtPoint(x,y){
+ const el=document.elementFromPoint(x,y);
+ const day=el?.closest('#boardGrid [data-drop-date]');
+ if(!day)return null;
+ const card=el.closest('[data-job-id]');
+ const rect=card?.getBoundingClientRect();
+ return {date:day.dataset.dropDate,relativeId:card?.dataset.jobId||null,after:!rect||y>=rect.top+rect.height/2};
+}
+function markDrop(pos){
+ document.querySelectorAll('#boardGrid [data-drop-date]').forEach(x=>x.classList.toggle('move-target',x.dataset.dropDate===pos?.date));
+ document.querySelectorAll('#boardGrid [data-job-id]').forEach(x=>{
+  x.classList.toggle('drop-before',!!pos&&x.dataset.jobId===pos.relativeId&&!pos.after);
+  x.classList.toggle('drop-after',!!pos&&x.dataset.jobId===pos.relativeId&&pos.after);
+ });
+}
+function clearDrag(){
+ if(dragState?.preview)dragState.preview.remove();
+ dragState=null;
+ markDrop(null);
+ document.querySelectorAll('#boardGrid .is-moving').forEach(x=>x.classList.remove('is-moving'));
+}
+$('boardGrid').addEventListener('pointerdown',e=>{
+ const grip=e.target.closest('[data-move-id]');
+ if(!boardUnlocked||!grip||document.body.classList.contains('display-only')||e.button!==0)return;
+ const id=grip.dataset.moveId,card=grip.closest('.week-card');
+ dragState={id,startX:e.clientX,startY:e.clientY,active:false,source:card,preview:null};
+ try{grip.setPointerCapture(e.pointerId)}catch(_){}
+});
+$('boardGrid').addEventListener('pointermove',e=>{
+ if(!boardUnlocked||!dragState)return;
+ const d=dragState;
+ if(!d.active&&Math.hypot(e.clientX-d.startX,e.clientY-d.startY)<7)return;
+ if(!d.active){
+  d.active=true;d.source.classList.add('is-moving');
+  d.preview=document.createElement('div');d.preview.className='drag-preview';
+  const j=jobs.find(x=>x.id===d.id);d.preview.textContent=j?j.id+' · '+j.customer:'Auftrag';
+  document.body.appendChild(d.preview);
+ }
+ d.preview.style.left=Math.min(window.innerWidth-215,Math.max(5,e.clientX+12))+'px';
+ d.preview.style.top=Math.max(5,e.clientY+12)+'px';
+ markDrop(positionAtPoint(e.clientX,e.clientY));
+ e.preventDefault();
+});
+$('boardGrid').addEventListener('pointerup',e=>{
+ if(!boardUnlocked||!dragState)return;
+ const d=dragState,pos=positionAtPoint(e.clientX,e.clientY);
+ clearDrag();
+ if(d.active){selectedMove=null;if(pos)reorderJob(d.id,pos.date,pos.relativeId,pos.after);else updateBoardHint()}
+ else{selectedMove=selectedMove===d.id?null:d.id;updateBoardHint()}
+});
+$('boardGrid').addEventListener('pointercancel',()=>{clearDrag();selectedMove=null;updateBoardHint()});
+$('boardGrid').addEventListener('click',e=>{
+ const dayView=e.target.closest('[data-select-day]');
+ if(dayView){if(dragState?.active)return;selectedDayOffset=Number(dayView.dataset.selectDay);selectedMove=null;renderWeek();if(document.fullscreenElement===$('boardView'))$('boardView').scrollTo({top:0});return}
+ if(!boardUnlocked||e.target.closest('[data-move-id]')||!selectedMove||document.body.classList.contains('display-only'))return;
+ const day=e.target.closest('[data-drop-date]');if(!day)return;
+ const card=e.target.closest('[data-job-id]');
+ const id=selectedMove;selectedMove=null;
+ reorderJob(id,day.dataset.dropDate,card?.dataset.jobId||null,true);
+ updateBoardHint();
+});
+$('boardGrid').addEventListener('keydown',e=>{
+ const grip=e.target.closest('[data-move-id]');if(!boardUnlocked||!grip)return;
+ if(e.key==='Enter'||e.key===' '){e.preventDefault();selectedMove=selectedMove===grip.dataset.moveId?null:grip.dataset.moveId;updateBoardHint()}
+});
+
+function renderArchive(){
+ const archived=jobs.filter(j=>j.archived);
+ $('archiveCount').textContent=String(archived.length);
+ $('archiveList').innerHTML=archived.length?archived.map(j=>`<div class="archive-item"><div><strong>${esc(j.id)} · ${esc(j.customer)}</strong><small>${esc(j.product)} · ${esc(j.quantity||'')} · ${displayDate(j.date)}</small></div><div class="archive-actions"><button class="btn" data-restore-id="${esc(j.id)}">Wiederherstellen</button><button class="btn danger" data-delete-archived="${esc(j.id)}">Endgültig löschen</button></div></div>`).join(''):'<div class="archive-empty">Noch keine erledigten Aufträge abgelegt.</div>';
+}
+function archiveJob(id){
+ if(document.body.classList.contains('display-only'))return;
+ const j=jobs.find(x=>x.id===id);if(!j||j.archived||j.status!=='Fertig')return;
+ if(!confirm('Auftrag '+j.id+' in „Erledigte Aufträge“ verschieben?'))return;
+ const previous=jobs.map(x=>({...x}));
+ j.archived=true;j.archivedAt=new Date().toISOString();
+ try{save()}catch(e){jobs=previous;alert('Ablage konnte nicht gespeichert werden.');return}
+ render();
+}
+function restoreJob(id){
+ if(document.body.classList.contains('display-only'))return;
+ const j=jobs.find(x=>x.id===id&&x.archived);if(!j)return;
+ const previous=jobs.map(x=>({...x}));j.archived=false;delete j.archivedAt;
+ try{save()}catch(e){jobs=previous;alert('Wiederherstellung fehlgeschlagen.');return}
+ render();$('archiveDetails').open=true;
+}
+document.addEventListener('click',e=>{
+ const archive=e.target.closest('[data-archive-id]'),restore=e.target.closest('[data-restore-id]'),del=e.target.closest('[data-delete-archived]');
+ if(archive){archiveJob(archive.dataset.archiveId);return}
+ if(restore){restoreJob(restore.dataset.restoreId);return}
+ if(del){
+  const id=del.dataset.deleteArchived;const j=jobs.find(x=>x.id===id&&x.archived);if(!j||document.body.classList.contains('display-only'))return;
+  if(!confirm('Auftrag '+id+' ENDGÜLTIG löschen? Dies kann nicht rückgängig gemacht werden. Bitte vorher eine Sicherung erstellen.'))return;
+  const before=jobs;jobs=jobs.filter(x=>x!==j);
+  try{save()}catch(e){jobs=before;alert('Löschen fehlgeschlagen.');return}
+  render();$('archiveDetails').open=true;
+ }
+});
+const demoJobs=[
+ ['Nordlicht Medien','Flyer DIN A5','8.000','Schneiden, Verpacken','Freigegeben'],
+ ['Musterverein Süd','Broschüre A4','1.200','Heften, Schneiden, Verpacken','In Produktion'],
+ ['Testkunde Alpha','Folder Wickelfalz','5.000','Rillen, Falzen, Bündeln','In Korrektur'],
+ ['Testkunde Beta','Visitenkarten','2.500','Schneiden, Verpacken','Neu / ungeprüft'],
+ ['Beispielagentur','Poster DIN A1','75','Schneiden, Verpacken','Freigegeben'],
+ ['Musterkirche','Gemeindebrief','6.000','Falzen, Heften, Schneiden, Verpacken','Wartet auf Freigabe'],
+ ['Testdruck GmbH','Aufkleber','1.000','Laminieren, Konturschneiden','In Produktion'],
+ ['Verein West','Briefpapier','3.000','Schneiden, Verpacken','Freigegeben'],
+ ['Demo Verlag','Katalog','500','Rillen, Heften, Schneiden','Weiterverarbeitung'],
+ ['Musterdruck Nord','Flyer DIN-Lang','12.000','Schneiden, Falzen, Verpacken','Neu / ungeprüft'],
+ ['Beispielschule','Schulheft','2.000','Heften, Schneiden','In Produktion'],
+ ['Testkunde Gamma','Plakate DIN A2','150','Schneiden, Verpacken','Freigegeben'],
+ ['Probeprojekt','Mailing','10.000','Falzen, Kuvertieren, Verpacken','Wartet auf Freigabe'],
+ ['Musterstudio','Roll-Ups','12','Schneiden, Verpacken','In Korrektur'],
+ ['Demo Druckauftrag','Einladungskarten','3.500','Rillen, Falzen, Verpacken','Freigegeben'],
+ ['Musterverband','Broschüre A5','800','Rillen, Heften, Schneiden','Weiterverarbeitung'],
+ ['Testkunde Delta','Aufkleberbogen','2.000','Laminieren, Konturschneiden','Freigegeben'],
+ ['Probedruck Ost','Folder 6-Seiter','4.000','Rillen, Falzen, Bündeln','Neu / ungeprüft'],
+ ['Beispielkunde','Postkarten','9.000','Schneiden, Verpacken','Fertig'],
+ ['Testkunde Epsilon','Einleger','15.000','Schneiden, Bündeln, Verpacken','Freigegeben']
+];
+$('demoWeekBtn').onclick=()=>{
+ if(document.body.classList.contains('display-only')||jobsReadError)return;
+ if(!confirm('20 klar gekennzeichnete TEST-Aufträge für nächste Woche ergänzen? Vorhandene Aufträge bleiben erhalten.'))return;
+ const target=monday(new Date());target.setDate(target.getDate()+7);
+ const existing=new Set(jobs.map(j=>j.id));const added=[];
+ demoJobs.forEach((p,i)=>{
+  const id='TEST-'+String(i+1).padStart(3,'0');
+  if(existing.has(id))return;
+  const d=new Date(target);d.setDate(target.getDate()+(i%5));
+  const [customer,product,quantity,steps,status]=p;
+  added.push({id,customer:'TEST · '+customer,product,quantity:quantity+' Stk.',machine:'',steps:steps.split(', '),date:iso(d),status,fixed:i===5||i===12,notes:'Nur Testdaten – nicht für echte Produktion',demo:true});
+ });
+ if(!added.length){alert('Die 20 Testaufträge sind bereits vorhanden.');week=target;setView('board');return}
+ const previous=jobs;jobs=[...jobs,...added];
+ try{save()}catch(e){jobs=previous;alert('Testwoche konnte nicht gespeichert werden.');return}
+ week=target;pinnedWeek=true;setView('board');
+};
+
+function openForm(id){editing=id;const j=jobs.find(x=>x.id===id);$('modalTitle').textContent=j?'Auftrag bearbeiten':'Neuer Auftrag';$('number').value=j?.id||'';$('date').value=j?.date||today();$('customer').value=j?.customer||'';$('product').value=j?.product||'';$('quantity').value=j?.quantity||'';renderMachineOptions(j?.machine||'');$('status').value=j?.status||statuses[0];$('fixed').checked=!!j?.fixed;$('notes').value=j?.notes||'';chosenSteps=[...(j?.steps||[])];renderStepButtons();$('deleteBtn').classList.toggle('hide',!j);$('modalWrap').classList.remove('hide');setTimeout(()=>$('number').focus(),0)}
+function renderStepButtons(){$('stepButtons').innerHTML=processes.map(x=>`<button type="button" class="step ${chosenSteps.includes(x)?'on':''}" data-step="${esc(x)}" aria-pressed="${chosenSteps.includes(x)}">${chosenSteps.includes(x)?'✓ ':''}${esc(x)}</button>`).join('')}
+function closeForm(){$('modalWrap').classList.add('hide');editing=null}
+$('jobForm').onsubmit=e=>{e.preventDefault();const previous=editing?jobs.find(x=>x.id===editing):null;const obj={...previous,id:$('number').value.trim(),date:$('date').value,customer:$('customer').value.trim(),product:$('product').value.trim(),quantity:$('quantity').value.trim(),machine:$('machine').value,status:$('status').value,fixed:$('fixed').checked,steps:[...chosenSteps],notes:$('notes').value.trim()};if(!obj.id||!obj.date||!obj.customer||!obj.product)return;if(jobs.some(x=>x.id===obj.id&&x.id!==editing)){alert('Diese Auftragsnummer existiert bereits.');return}if(editing){const idx=jobs.findIndex(x=>x.id===editing);if(idx<0)return;jobs[idx]=obj}else jobs.push(obj);save();closeForm();render()};
+$('jobs').addEventListener('click',e=>{const expand=e.target.closest('[data-expand-id]');if(expand){const id=expand.dataset.expandId;if(expandedJobs.has(id))expandedJobs.delete(id);else expandedJobs.add(id);renderList();return}const b=e.target.closest('[data-edit]');if(b)openForm(b.dataset.edit)});
+$('jobs').addEventListener('change',e=>{const sel=e.target.closest('[data-status-id]');if(!sel)return;const j=jobs.find(x=>x.id===sel.dataset.statusId);if(j){j.status=sel.value;save();render()}});
+$('stepButtons').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b)return;chosenSteps=chosenSteps.includes(b.dataset.step)?chosenSteps.filter(x=>x!==b.dataset.step):[...chosenSteps,b.dataset.step];renderStepButtons()});
+$('deleteBtn').onclick=()=>{if(!editing)return;if(confirm(`Auftrag ${editing} wirklich löschen?`)){jobs=jobs.filter(x=>x.id!==editing);save();closeForm();render()}};
+$('addBtn').onclick=()=>openForm(null);$('cancelBtn').onclick=closeForm;$('modalWrap').onclick=e=>{if(e.target===$('modalWrap'))closeForm()};document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('machineModal').classList.contains('hide'))closeMachines();else if(!$('modalWrap').classList.contains('hide'))closeForm()}});
+$('search').oninput=renderList;$('statusFilter').onchange=renderList;$('sortBy').onchange=renderList;
+document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
+$('backToWeek').onclick=()=>{selectedDayOffset=null;selectedMove=null;renderWeek()};
+function shiftWeek(n){week.setDate(week.getDate()+n*7);pinnedWeek=true;renderWeek()}
+$('previewToday').onclick=()=>{previewToday=!previewToday;if(previewToday){const mondayNext=monday(new Date());if(new Date().getDay()===0)mondayNext.setDate(mondayNext.getDate()+7);week=mondayNext;pinnedWeek=true;}renderWeek()};$('boardLock').onclick=()=>{if(document.body.classList.contains('display-only'))return;boardUnlocked=!boardUnlocked;selectedMove=null;clearDrag();renderWeek()};$('boardPrev').onclick=()=>shiftWeek(-1);$('boardNext').onclick=()=>shiftWeek(1);$('boardToday').onclick=()=>{week=monday(new Date());pinnedWeek=false;renderWeek()};
+$('fullscreen').onclick=()=>{if(!document.fullscreenElement){$('boardView').requestFullscreen?.().catch(()=>alert('Vollbild wird von diesem Browser nicht unterstützt.'))}else document.exitFullscreen?.()};
+$('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify({version:2,exported:new Date().toISOString(),jobs,machines},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`printpilot-mini-sicherung-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
+
+function persistMachines(){if(machineReadError){alert('Maschinenliste ist nicht lesbar. Bitte zunächst eine Sicherung prüfen.');return false;}try{localStorage.setItem(MACHINES_STORE,JSON.stringify(machines));return true}catch(e){alert('Maschinen konnten nicht gespeichert werden.');return false}}
+function renderMachineOptions(selected){const names=[...machines];if(selected&&!names.includes(selected))names.push(selected);$('machine').innerHTML='<option value="">— Keine Angabe —</option>'+names.map(m=>`<option value="${esc(m)}">${esc(m)}${machines.includes(m)?'':' (bisheriger Auftrag)'}</option>`).join('');$('machine').value=selected||''}
+function renderMachines(){$('machineList').innerHTML=machines.length?machines.map((m,i)=>`<div class="machine-item"><span>${esc(m)}</span><div class="actions"><button type="button" class="btn" data-rename-machine="${i}">Umbenennen</button><button type="button" class="btn danger" data-remove-machine="${i}">Entfernen</button></div></div>`).join(''):'<div class="machine-empty">Noch keine Maschinen angelegt.</div>'}
+function showMachines(){$('machineModal').classList.remove('hide');renderMachines();$('newMachine').focus()}
+function closeMachines(){$('machineModal').classList.add('hide')}
+$('manageMachinesBtn').onclick=showMachines;
+$('closeMachines').onclick=closeMachines;
+$('machineModal').onclick=e=>{if(e.target===$('machineModal'))closeMachines()};
+$('machineForm').onsubmit=e=>{e.preventDefault();const name=$('newMachine').value.trim();if(!name)return;if(machines.some(m=>m.toLocaleLowerCase('de')===name.toLocaleLowerCase('de'))){alert('Maschine existiert bereits.');return;}const previous=[...machines];machines.push(name);if(!persistMachines()){machines=previous;return;}$('newMachine').value='';renderMachines();renderMachineOptions('')};
+$('machineList').onclick=e=>{const rename=e.target.closest('[data-rename-machine]'),remove=e.target.closest('[data-remove-machine]');if(rename){const i=Number(rename.dataset.renameMachine),oldName=machines[i];if(!oldName)return;const answer=prompt('Maschine umbenennen:',oldName);if(answer===null)return;const newName=answer.trim();if(!newName)return;if(machines.some((m,k)=>k!==i&&m.toLocaleLowerCase('de')===newName.toLocaleLowerCase('de'))){alert('Dieser Name existiert bereits.');return;}if(oldName===newName)return;const oldMachines=[...machines],oldJobs=jobs.map(j=>({...j}));machines[i]=newName;jobs=jobs.map(j=>j.machine===oldName?{...j,machine:newName}:j);if(!persistMachines()){machines=oldMachines;jobs=oldJobs;return;}try{save()}catch(e){machines=oldMachines;jobs=oldJobs;persistMachines();return;}renderMachines();renderMachineOptions('');render();}else if(remove){const i=Number(remove.dataset.removeMachine),name=machines[i];if(!name)return;if(!confirm('Maschine „'+name+'“ aus der Auswahl entfernen? Bestehende Aufträge behalten ihre Angabe.'))return;const previous=[...machines];machines.splice(i,1);if(!persistMachines()){machines=previous;return;}renderMachines();renderMachineOptions('');render();}}
+
+$('statusFilter').innerHTML+=[...statuses].map(s=>`<option value="${esc(s)}">${esc(s)}</option>`).join('');$('status').innerHTML=statusOptions(statuses[0]);renderMachineOptions('');
+window.addEventListener('storage',e=>{if(e.key===STORE){try{jobs=JSON.parse(e.newValue||'[]');render()}catch(_){}}});
+// Refresh when reopened after midnight; keep manual navigation until user selects 'Heute'.
+function refreshIfDateChanged(){const d=today();if(d!==lastDay){lastDay=d;if(!pinnedWeek)week=monday(new Date());render()}}
+document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshIfDateChanged()});
+window.addEventListener('focus',refreshIfDateChanged);
+setInterval(refreshIfDateChanged,60000);
+// Browser-only display URL: ?display=1 (not an access control; never publish sensitive customer data).
+if(new URLSearchParams(location.search).get('display')==='1'){document.body.classList.add('display-only');setView('board')}
+else render();
+})();
+</script>
+</body></html>

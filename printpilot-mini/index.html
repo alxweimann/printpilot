@@ -62,11 +62,11 @@
 .week-grid .compact-head{padding:7px 9px 5px;background:#eaf1f6;line-height:1.25}
 .week-grid .compact-head strong{display:block;font-size:13px;line-height:1.3;overflow-wrap:anywhere}
 .week-grid .compact-rows{display:grid}
-.week-grid .compact-row{display:grid;grid-template-columns:70px minmax(0,1fr);gap:6px;padding:4px 8px;align-items:start;line-height:1.25}
+.week-grid .compact-row{display:grid;grid-template-columns:76px minmax(0,1fr);gap:6px;padding:4px 8px;align-items:start;line-height:1.35}
 .week-grid .compact-row:nth-child(odd){background:#f1f6f9}
 .week-grid .compact-row:nth-child(even){background:#e7f0f5}
-.week-grid .compact-label{font-size:10px;color:#526a79}
-.week-grid .compact-value{font-size:11px;font-weight:600;color:#233e51;overflow-wrap:anywhere}
+.week-grid .compact-label{font-size:11px;font-weight:500;color:#526a79;line-height:1.35}
+.week-grid .compact-value{font-size:11px;font-weight:600;color:#233e51;line-height:1.35;overflow-wrap:anywhere;min-width:0}
 .week-grid .compact-foot{display:flex;justify-content:space-between;align-items:center;gap:5px;flex-wrap:wrap;padding:5px 8px;background:#eaf1f6}
 .week-grid .compact-foot .date{margin:0;padding:0;background:transparent;color:#344f61;font-size:10px;font-weight:750}
 .week-grid .compact-foot .date.fixed{background:#bd3f50;color:#fff;padding:3px 5px;border-radius:4px}
@@ -94,8 +94,8 @@
 
 
 /* v1.4: prominent due date and space for 2-3 lines of processing */
-.week-grid .processing-row{grid-template-columns:76px minmax(0,1fr);gap:6px;align-items:start;padding-top:6px;padding-bottom:7px}
-.week-grid .processing-value{line-height:1.45;white-space:normal;overflow-wrap:anywhere}
+.week-grid .processing-row{grid-template-columns:76px minmax(0,1fr);gap:6px;align-items:start;padding:4px 8px 5px}
+.week-grid .processing-value{line-height:1.35;white-space:normal;overflow-wrap:anywhere}
 .week-grid .compact-foot{align-items:center;gap:6px}
 .week-grid .compact-due{display:inline-flex;align-items:baseline;flex-wrap:wrap;gap:4px;padding:4px 7px;border-radius:5px;background:#cce3f1;color:#173a55;line-height:1.2}
 .week-grid .due-label{font-size:9px;letter-spacing:.035em;font-weight:800;opacity:.9}
@@ -147,7 +147,7 @@ body.display-only .move-handle{display:none!important}
 <main><section id="listView"><div class="toolbar"><input type="search" id="search" placeholder="Auftrag, Kunde oder Produkt suchen …" aria-label="Aufträge suchen"><select id="statusFilter"><option value="">Alle Status</option></select><select id="sortBy"><option value="date">Nach Termin</option><option value="number">Nach Auftragsnummer</option></select></div><div class="jobs" id="jobs"></div></section>
 
 <section id="boardView" class="hide"><div class="board"><div class="eyebrow">PRINTPILOT / PRODUKTION</div><div class="week-head" style="margin-top:7px"><h2 id="boardTitle">Wochenübersicht</h2><div class="weeknav"><button class="btn" id="boardPrev">←</button><button class="btn" id="boardToday" title="Zur aktuellen Woche">Heute</button><button class="btn" id="boardNext">→</button><button class="btn" id="fullscreen" title="Vollbildmodus">⛶ <span class="full-label">Vollbild</span></button></div></div><div class="week-grid" id="boardGrid"></div><div class="board-caption"><span id="boardHint">Wochenübersicht · Im Verwaltungsmodus per Touch verschieben · noch keine Synchronisierung zwischen Geräten</span></div></div></section></main>
-<div class="footer">Testversion 1.6 · Speicherung nur in diesem Browser (localStorage) · keine Synchronisierung zwischen Geräten · keine Cloud-Anmeldung</div>
+<div class="footer">Testversion 1.6.1 · Speicherung nur in diesem Browser (localStorage) · keine Synchronisierung zwischen Geräten · keine Cloud-Anmeldung</div>
 </div>
 <div class="modal-wrap hide" id="modalWrap" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><h2 id="modalTitle">Neuer Auftrag</h2><form id="jobForm"><div class="formgrid"><div class="field"><label for="number">Auftragsnummer *</label><input id="number" maxlength="40" required></div><div class="field"><label for="date">Fertigstellung *</label><input id="date" type="date" required></div><div class="field full"><label for="customer">Kunde *</label><input id="customer" maxlength="120" required></div><div class="field"><label for="product">Produkt *</label><input id="product" maxlength="160" required></div><div class="field"><label for="quantity">Auflage</label><input id="quantity" maxlength="50" placeholder="z. B. 5.000 Stück"></div><div class="field"><label for="machine">Druckmaschine</label><select id="machine"></select></div><div class="field"><label for="status">Status</label><select id="status"></select></div><div class="field full"><label class="checkrow"><input type="checkbox" id="fixed" style="width:auto"> <strong>Fixtermin – Datum rot hervorheben</strong></label></div><div class="field full"><span>Weiterverarbeitung (optional)</span><div class="steps" id="stepButtons"></div></div><div class="field full"><label for="notes">Notiz (optional)</label><textarea id="notes" maxlength="500" placeholder="Nur wenn nötig"></textarea></div></div><div class="formfoot"><button class="btn danger hide" type="button" id="deleteBtn">Auftrag löschen</button><div class="actions" style="margin-left:auto"><button class="btn" type="button" id="cancelBtn">Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div></div></form></div></div>
 <div class="modal-wrap hide" id="machineModal" role="dialog" aria-modal="true" aria-labelledby="machineTitle"><div class="modal machine-modal"><div class="machine-modal-head"><div><h2 id="machineTitle">Druckmaschinen verwalten</h2><p class="muted">Hier bestimmst du selbst, welche Maschinen zur Auswahl stehen.</p></div><button class="btn" type="button" id="closeMachines" aria-label="Schließen">✕</button></div><form id="machineForm" class="machine-add"><label for="newMachine">Neue Maschine</label><div class="machine-add-row"><input id="newMachine" maxlength="100" placeholder="Maschinenname" required><button class="btn primary" type="submit">＋ Hinzufügen</button></div></form><div id="machineList" class="machine-list"></div><p class="machine-hint">Umbenennen ändert auch die Maschinenbezeichnung in vorhandenen Aufträgen. Entfernen blendet die Maschine aus der Auswahl aus; bestehende Aufträge behalten ihre Angabe.</p></div></div>

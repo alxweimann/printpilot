@@ -43,6 +43,12 @@ export class PrintPilotApi {
     if(!Number.isSafeInteger(job?.revision)||job.revision<1)throw new Error('Zum Speichern ist die aktuelle Revision notwendig');
     return (await this.call('/jobs/'+encodeURIComponent(job.id),{method:'PUT',payload:job})).job;
   }
+  async moveJob(job,{date,relativeId=null,after=true,confirmFixedMove=false}={}){
+    if(!Number.isSafeInteger(job?.revision)||job.revision<1)throw new Error('Revision fehlt');
+    if(!date)throw new Error('Zieldatum fehlt');
+    return this.call('/jobs/'+encodeURIComponent(job.id)+'/move',
+      {method:'POST',payload:{revision:job.revision,date,relativeId,after,confirmFixedMove}});
+  }
   async archiveJob(job){return this._change(job,'archive');}
   async restoreJob(job){return this._change(job,'restore');}
   async _change(job,action){

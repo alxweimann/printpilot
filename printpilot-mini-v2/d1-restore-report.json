@@ -1,0 +1,28 @@
+{
+  "counts": {
+    "audit_log": 3,
+    "jobs": 1,
+    "machines": 0,
+    "users": 2
+  },
+  "export_bytes": 4360,
+  "foreign_key_violations": 0,
+  "integrity": "ok",
+  "kind": "printpilot-mini-v2-d1-offline-restore",
+  "repeat_restore_identical": true,
+  "result": "pass",
+  "tables_verified": [
+    "audit_log",
+    "jobs",
+    "machines",
+    "users"
+  ],
+  "workflow_result": "success",
+  "run_id": 42497013886,
+  "checked_at": "2026-11-08T15:53:32.336Z",
+  "source": "staging D1 remote export",
+  "restored_to": "temporary local SQLite only",
+  "remote_database_modified": false,
+  "snapshot_retained": false,
+  "note": "Single backup/restore drill; not a durable automated backup policy."
+}

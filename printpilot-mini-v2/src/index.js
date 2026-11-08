@@ -56,6 +56,45 @@ export default {
     const rows=await db.prepare('SELECT name FROM machines ORDER BY name').all();
     return reply({machines:(rows.results||[]).map(x=>x.name)});
    }
+   // Shared machine catalog. Only administrators may change it.
+   if(path==='/api/v2/machines'&&method==='POST'){
+    if(user.role!=='admin')return failure(403,'Nur Administratoren verwalten Maschinen');
+    const data=await body(request),name=String(data.name??'').trim();
+    if(!name||name.length>120)return failure(422,'Maschinenname ungültig');
+    const batch=await db.batch([
+      db.prepare('INSERT OR IGNORE INTO machines(name) VALUES(?)').bind(name),
+      db.prepare('INSERT INTO audit_log(event_id,actor,action,entity_type,entity_id,after_json) SELECT ?,?,?,?,?,? WHERE changes()=1').bind(crypto.randomUUID(),user.email,'machine-create','machine',name,JSON.stringify({name}))
+    ]);
+    if(batch[0].meta?.changes!==1)return failure(409,'Maschine existiert bereits');
+    return reply({name},201);
+   }
+   const machineMatch=path.match(/^\/api\/v2\/machines\/([^/]+)$/);
+   if(machineMatch&&(method==='PUT'||method==='DELETE')){
+    if(user.role!=='admin')return failure(403,'Nur Administratoren verwalten Maschinen');
+    const name=decodeURIComponent(machineMatch[1]);
+    if(!name||name.length>120)return failure(422,'Maschinenname ungültig');
+    if(!await db.prepare('SELECT name FROM machines WHERE name=?').bind(name).first())return failure(404,'Maschine nicht gefunden');
+    if(method==='PUT'){
+      const data=await body(request),newName=String(data.name??'').trim();
+      if(!newName||newName.length>120)return failure(422,'Neuer Maschinenname ungültig');
+      if(newName===name)return reply({name});
+      const linked=await db.prepare("SELECT COUNT(*) AS count FROM jobs WHERE json_extract(payload,'$.machine')=?").bind(name).first();
+      if(linked.count>0)return failure(409,'Maschine ist in Aufträgen verwendet. Diese Aufträge zuerst gezielt umstellen.');
+      const batch=await db.batch([
+       db.prepare('UPDATE OR IGNORE machines SET name=? WHERE name=?').bind(newName,name),
+       db.prepare('INSERT INTO audit_log(event_id,actor,action,entity_type,entity_id,before_json,after_json) SELECT ?,?,?,?,?,?,? WHERE changes()=1').bind(crypto.randomUUID(),user.email,'machine-rename','machine',name,JSON.stringify({name}),JSON.stringify({name:newName}))
+      ]);
+      if(batch[0].meta?.changes!==1)return failure(409,'Neuer Maschinenname existiert bereits');
+      return reply({name:newName});
+    }
+    const batch=await db.batch([
+      db.prepare('DELETE FROM machines WHERE name=?').bind(name),
+      db.prepare('INSERT INTO audit_log(event_id,actor,action,entity_type,entity_id,before_json) SELECT ?,?,?,?,?,? WHERE changes()=1').bind(crypto.randomUUID(),user.email,'machine-delete','machine',name,JSON.stringify({name}))
+    ]);
+    if(batch[0].meta?.changes!==1)return failure(409,'Maschine wurde zwischenzeitlich geändert');
+    return reply({ok:true});
+   }
+
    if(path==='/api/v2/audit'&&method==='GET'){
     if(user.role!=='admin')return failure(403,'Nur Administrator');
     const rows=await db.prepare('SELECT event_id,timestamp,actor,action,entity_type,entity_id FROM audit_log ORDER BY timestamp DESC LIMIT 100').all();

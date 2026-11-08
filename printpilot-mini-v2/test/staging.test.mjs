@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 import {runInNewContext} from 'node:vm';
 import worker from '../src/index.js';
 import {dashboardHtml} from '../src/dashboard.js';
+import {productionHtml} from '../src/production-ui.js';
 
 const sample={id:'TEST-001',customer:'Muster',product:'Flyer',date:'2026-11-09',status:'Daten fehlen',steps:[],quantity:'500'};
 function makeDb(role='admin',selectedJob=sample){
@@ -173,4 +174,41 @@ test('central job list rejects silent truncation at 5000 records',async()=>{
  const response=await worker.fetch(request('/api/v2/jobs'),{DB:db},ctx);
  assert.equal(response.status,409);
  assert.match(await response.text(),/vollständige Liste/);
+});
+
+test('original production board preserved, and localStorage writes disabled',()=>{
+ assert.match(productionHtml,/class="week-grid"/);
+ assert.match(productionHtml,/compact-note/);
+ assert.match(productionHtml,/data-select-day/);
+ assert.match(productionHtml,/data-move-id/);
+ assert.match(productionHtml,/id="machineModal"/);
+ assert.doesNotMatch(productionHtml,/localStorage\.setItem\(/);
+ assert.doesNotMatch(productionHtml,/localStorage\.getItem\(/);
+ const js=productionHtml.split('<script>')[1]?.split('</script>')[0];
+ assert.ok(js);
+ assert.doesNotThrow(()=>new Function(js));
+});
+test('original UI now uses shared job and machine APIs',()=>{
+ assert.match(productionHtml,/api\('jobs'/);
+ assert.match(productionHtml,/api\('machines'/);
+ assert.match(productionHtml,/jobs\/'.*move/);
+ assert.match(productionHtml,/setInterval\(\(\)=>\{if\(!document.hidden/);
+});
+test('authenticated full UI is available only on isolated classic path',async()=>{
+ const env={DB:makeDb()};
+ const denied=await worker.fetch(request('/classic'),env,{});
+ assert.equal(denied.status,403);
+ const allowed=await worker.fetch(request('/classic'),env,ctx);
+ assert.equal(allowed.status,200);
+ const html=await allowed.text();
+ assert.match(html,/PrintPilot Mini 2\.0/);
+ assert.match(html,/compact-note/);
+ assert.match(allowed.headers.get('cache-control'),/no-store/);
+});
+test('machine creation is restricted to admin role',async()=>{
+ const args={method:'POST',headers:{'Content-Type':'application/json','X-Requested-With':'PrintPilotMini'},body:JSON.stringify({name:'Xerox Iridesse'})};
+ const forbidden=await worker.fetch(request('/api/v2/machines',args),{DB:makeDb('production')},ctx);
+ assert.equal(forbidden.status,403);
+ const blocked=await worker.fetch(request('/api/v2/machines',{...args,headers:{'Content-Type':'application/json'}}),{DB:makeDb('admin')},ctx);
+ assert.equal(blocked.status,415);
 });

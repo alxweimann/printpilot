@@ -28,20 +28,23 @@ Die laufende PrintPilot-Mini-1.12.1-Oberfläche, ihre bestehende Cloudflare-URL 
 - `GET /api/v2/jobs`: aktive + archivierte Aufträge (maximal 5000)
 - `POST /api/v2/jobs`: Auftrag anlegen, Admin/Produktion
 - `PUT /api/v2/jobs/:id`: vollständig aktualisieren, `revision` verpflichtend
+- `POST /api/v2/jobs/:id/move`: Auftragsdatum und Position versionsgesichert ändern; bei Fixterminverschiebung nur mit Bestätigung
 - `POST /api/v2/jobs/:id/archive`: erledigten Auftrag ablegen, Admin/Produktion
 - `POST /api/v2/jobs/:id/restore`: zurückholen, Admin/Produktion
 - `DELETE /api/v2/jobs/:id`: endgültig löschen, nur Admin, `revision` verpflichtend
 - `GET /api/v2/machines`: Maschinen
 - `GET /api/v2/audit`: letzte 100 Änderungen, nur Admin
 
-Der neue Worker stellt unter `/` eine **geschützte Testoberfläche** bereit (`src/dashboard.js`). Diese liest D1-Aufträge, zeigt fünf Wochentage oder einen einzelnen vergrößerten Tag, bietet ein aufklappbares Archiv mit Wiederherstellung und aktualisiert alle 15 Sekunden. Angemeldete Benutzer mit Rolle `admin` oder `production` können neue Testaufträge anlegen, bearbeiten, fertige Aufträge archivieren und aus dem Archiv wiederherstellen. Nur `admin` darf archivierte Aufträge endgültig löschen. `display` bleibt strikt schreibgeschützt. Sie enthält keine Kundendaten, solange D1 nicht gezielt befüllt wurde. Die bekannte Version-1.12.1-Oberfläche bleibt unverändert. `src/api-client.js` stellt die später benötigten, versionsgesicherten API-Aufrufe bereit. `src/migration.js` bereitet den Altbestandsimport nur lesend vor und blockiert ihn bei fehlerhaften oder doppelten Datensätzen.
+Der neue Worker stellt unter `/` eine **geschützte Testoberfläche** bereit (`src/dashboard.js`). Diese liest D1-Aufträge, zeigt fünf Wochentage oder einen einzelnen vergrößerten Tag, bietet ein aufklappbares Archiv mit Wiederherstellung und aktualisiert alle 15 Sekunden. Verschieben ist in der Testoberfläche standardmäßig durch ein Schloss gesperrt und kann nach Entsperren über Tagesauswahl sowie Aufwärts-/Abwärts-Tasten erfolgen. Drag-and-drop bleibt eine noch offene Erweiterung. Angemeldete Benutzer mit Rolle `admin` oder `production` können neue Testaufträge anlegen, bearbeiten, fertige Aufträge archivieren und aus dem Archiv wiederherstellen. Nur `admin` darf archivierte Aufträge endgültig löschen. `display` bleibt strikt schreibgeschützt. Sie enthält keine Kundendaten, solange D1 nicht gezielt befüllt wurde. Die bekannte Version-1.12.1-Oberfläche bleibt unverändert. `src/api-client.js` stellt die später benötigten, versionsgesicherten API-Aufrufe bereit. `src/migration.js` bereitet den Altbestandsimport nur lesend vor und blockiert ihn bei fehlerhaften oder doppelten Datensätzen. Die Testoberfläche hat eine **rein lokale JSON-Prüfvorschau** („Altbestand prüfen“), die keine Daten hochlädt; die endgültige Übernahme bleibt gesperrt.
 
 ## Vor Produktivbetrieb offen
 
-End-to-End-Tests mit D1 und echten Access-Identitäten, insbesondere Konflikt- und Speicherverhalten; vollständige Übernahme des bewährten 1.12.1-Designs (insbesondere Drag-and-drop mit Schloss und alle Layoutdetails; Tagesansicht und Archiv sind bereits in einer einfacheren Staging-Version vorhanden), Konfliktdialog, kontrollierter Altbestandsimport mit Vorschau und Prüfsummen, Benutzerverwaltung, Wiederherstellungstest, Backup-Richtlinie und Prüfung des bisherigen Lösch-/Bearbeiten-Verhaltens.
+End-to-End-Tests mit D1 und echten Access-Identitäten, insbesondere Konflikt- und Speicherverhalten; vollständige Übernahme des bewährten 1.12.1-Designs (insbesondere Drag-and-drop und alle Layoutdetails; Tagesansicht und Archiv sind bereits in einer einfacheren Staging-Version vorhanden), Konfliktdialog, kontrollierter Altbestandsimport mit Vorschau und Prüfsummen, Benutzerverwaltung, Wiederherstellungstest, Backup-Richtlinie und Prüfung des bisherigen Lösch-/Bearbeiten-Verhaltens.
 
 ## Derzeitiger Integrationsstatus (08.11.2026)
 
 - **Fertig in GitHub:** Authentifizierungsprüfung, Rollensystem, D1-Schema, API für Auftragsverwaltung, einfache Staging-Bedienung, Tagesansicht, Archiv/Wiederherstellung, Fixtermin-Sperre, Status „Daten fehlen“ und „Auftragstasche fehlt“, Notizen, Browserdaten-Prüfvorschau und GitHub-Actions-Testkonfiguration.
 - **Noch nicht ausgeführt:** Cloudflare-D1-Erstellung, echte Access-Policy, Bereitstellung des separaten Workers, echte D1-Transaktionstests, produktive Multi-Device-Synchronisierung und Import von Browserdaten.
 - **Kein Live-Ersatz:** Die neue Staging-Oberfläche ist weiterhin nicht die vollständige bekannte 1.12.1-Oberfläche; die bisherige URL darf vor Abschluss der Tests nicht umgestellt werden.
+
+- **Neue Staging-Funktionen:** API-Auftragsverschiebung mit Versions- und Fixterminprüfung, standardmäßig gesperrte Bewegungsbedienung, reine lokale Prüfvorschau einer JSON-Sicherung (max. 5 MB). Keine automatische Datenübernahme oder Veröffentlichung.

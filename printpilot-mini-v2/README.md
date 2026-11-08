@@ -60,3 +60,14 @@ End-to-End-Tests mit D1 und echten Access-Identitäten, insbesondere Konflikt- u
 - Ein normaler Formular-Edit mit verändertem Termin setzt die Auftragsposition ans Ende der Ziel-Tagesliste. Bisherige Zusatzfelder bleiben erhalten. Das gilt unabhängig von der separaten `/move`-Funktion.
 - Der Abruf zentraler Aufträge prüft einen zusätzlichen Datensatz (`LIMIT 5001`). Bei mehr als 5.000 Aufträgen wird ein Fehler gemeldet statt einer scheinbar vollständigen, aber abgeschnittenen Liste. Vor realem Betrieb mit dieser Größenordnung sind Pagination und ein angepasster Datenladeprozess erforderlich.
 - Beide Fälle sind als Regressionstests in `test/staging.test.mjs` ergänzt. Die laufende Version 1.12.1 und der Cloudflare-Produktivworker wurden nicht verändert.
+
+## Vollständige 1.12.1-Oberfläche – erste D1-Anbindung
+
+- Unter `/classic` stellt der Staging-Worker die optisch unveränderte Auftrag-/Produktionstafel der bisherigen 1.12.1-Entwicklung bereit. Die bisherige verifizierte 2.0-Testansicht unter `/` bleibt erhalten.
+- Serveranbindung statt lokaler Speicherung: Auftrag anlegen/bearbeiten, Statuswechsel, Archivieren, Wiederherstellen, endgültiges Löschen durch Administratoren, Wochen-/Tagesansicht, Verschieben per Drag-and-drop oder Tipp-Bedienung und Maschinenkatalog.
+- Notizen bleiben in den kompakten Produktionskarten sichtbar. Die UI erhält nach erfolgreichen Schreibvorgängen den Serverstand; weitere Aktualisierungen erfolgen alle 15 Sekunden.
+- Schutz: nur Cloudflare-Access-Identitäten mit aktivem Benutzer in D1; `display` ist schreibgeschützt, `production` darf Maschinen nicht verwalten, `admin` darf Maschinen verwalten und archivierte Aufträge löschen. Das Board-Schloss ist weiterhin nur ein zusätzlicher Bedienschutz.
+- Maschinenumbenennung ist bewusst gesperrt, solange Aufträge mit diesem Maschinennamen verknüpft sind. Keine stillschweigende Umschreibung von Altaufträgen.
+- Browser-Altbestand wird **nicht** automatisch importiert. Der v1.12.1-Datenbestand auf seiner bisherigen URL bleibt unverändert.
+- Für eine neue Veröffentlichung den bereits bestehenden manuellen GitHub-Actions-Workflow auf `main` mit dem vorgegebenen Bestätigungstext erneut starten. Er veröffentlicht nur `printpilot-mini-v2-staging`, nicht `red-king-5309`. Nach Erfolg unter `https://printpilot-mini-v2-staging.alex-weimann.workers.dev/classic` testen.
+- **Keine Produktionsfreigabe:** Ein echter vollständiger E2E-Test der portierten `/classic`-Ansicht ist noch erforderlich. Bei Problemen bleibt die bereits getestete Staging-Seite unter `/` unverändert erreichbar.

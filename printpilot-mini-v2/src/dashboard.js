@@ -70,6 +70,13 @@ dialog textarea{min-height:75px;resize:vertical}
 .import-panel input{display:block;margin:12px 0;color:#fff;max-width:100%}
 #importReport{margin:12px 0;overflow-wrap:anywhere}
 #importReport ul{font-size:12px;max-height:180px;overflow-y:auto}
+.conflict-review{background:#fff3e5;border:1px solid #e9ad69;border-radius:10px;padding:12px;margin-top:12px}
+.conflict-review h3{margin:0 0 5px;font-size:15px}
+.conflict-review p{color:#704a29;font-size:12px}
+.conflict-columns,.conflict-row{display:grid;grid-template-columns:minmax(70px,.8fr) 1fr 1fr;gap:8px;padding:7px;border-bottom:1px solid #e5ccae;overflow-wrap:anywhere;font-size:12px}
+.conflict-columns{color:#664b2b;background:#ffe5c8}
+.conflict-row span{white-space:pre-wrap}
+.conflict-review button{margin-top:12px}
 </style></head><body><main>
 <header><div><div class="muted">PRINTPILOT / STAGING – NUR ANZEIGE</div><h1>Produktionsplan 2.0</h1><div id="identity" class="muted">Anmeldung wird geprüft …</div></div>
 <div><button id="prev" type="button" aria-label="Vorige Woche">←</button> <button id="next" type="button" aria-label="Nächste Woche">→</button> <button id="reload" type="button">Aktualisieren</button> <button id="newJob" type="button" hidden>＋ Auftrag</button> <button id="previewImport" type="button" hidden>Altbestand prüfen</button> <button id="boardLock" type="button" aria-pressed="false" hidden>🔒 Gesperrt</button></div></header>
@@ -97,7 +104,7 @@ dialog textarea{min-height:75px;resize:vertical}
 <label class="checkbox"><input name="fixed" type="checkbox"> Fixtermin</label>
 <label class="wide">Verarbeitung (Komma getrennt) <input name="steps"></label>
 <label class="wide">Notiz <textarea name="notes" maxlength="500"></textarea></label>
-</div><p id="saveError" role="alert"></p>
+</div><p id="saveError" role="alert"></p><section id="conflictReview" class="conflict-review" hidden><h3>Auftrag wurde zwischenzeitlich geändert</h3><p>Deine Eingaben bleiben erhalten. Bitte vergleiche die Werte, bevor du erneut speicherst.</p><div id="conflictRows"></div><button id="loadServerVersion" type="button">Serverversion übernehmen</button></section>
 <div class="formactions"><button id="cancelEdit" type="button">Abbrechen</button><button id="saveEdit" type="submit">Speichern</button></div>
 </form></dialog>
 <script>
@@ -108,7 +115,7 @@ dialog textarea{min-height:75px;resize:vertical}
  function fmt(d){return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});}
  let start=monday(new Date()),jobs=[],userRole='display',editingId=null,editingRevision=null,editBusy=false,selectedDay=null,boardUnlocked=false;
  async function api(path,method='GET',payload){const headers={Accept:'application/json'};if(method!=='GET'){headers['Content-Type']='application/json';headers['X-Requested-With']='PrintPilotMini';}const res=await fetch('/api/v2/'+path,{method,credentials:'same-origin',cache:'no-store',headers,body:method==='GET'?undefined:JSON.stringify(payload||{})});
-  if(!res.ok){let info={};try{info=await res.json()}catch(_){}const msg=info.error||('API-Fehler '+res.status);throw Error(res.status===409?msg+' – Zwischenzeitlich geändert. Bitte neu laden.':res.status===403?'Keine Berechtigung':msg);}return res.json();}
+  if(!res.ok){let info={};try{info=await res.json()}catch(_){}const msg=info.error||('API-Fehler '+res.status);const error=new Error(res.status===409?msg+' – Änderungen bitte vergleichen.':res.status===403?'Keine Berechtigung':msg);error.status=res.status;throw error;}return res.json();}
  function text(tag,cls,value){const el=document.createElement(tag);if(cls)el.className=cls;el.textContent=String(value??'');return el;}
  function render(){
   const until=new Date(start);until.setDate(start.getDate()+4);
@@ -194,7 +201,7 @@ dialog textarea{min-height:75px;resize:vertical}
   for(const name of ['id','date','customer','product','quantity','machine','notes'])field(name).value=job?.[name]||'';
   field('id').readOnly=Boolean(job);field('date').value=job?.date||iso(new Date());
   field('status').value=job?.status||statuses[0];field('fixed').checked=Boolean(job?.fixed);
-  field('steps').value=(job?.steps||[]).join(', ');$('saveError').textContent='';$('editDialog').showModal();
+  field('steps').value=(job?.steps||[]).join(', ');$('saveError').textContent='';$('conflictReview').hidden=true;$('conflictRows').replaceChildren();$('editDialog').showModal();
  }
  async function archiveAction(job,action){
   if(userRole==='display')return;
@@ -218,9 +225,46 @@ dialog textarea{min-height:75px;resize:vertical}
   if(old){job.revision=editingRevision;if(old.fixed&&old.date!==job.date){if(!confirm('Fixtermin von '+old.date+' auf '+job.date+' verschieben?'))return;job.confirmFixedMove=true;}}
   editBusy=true;$('saveEdit').disabled=true;$('saveError').textContent='';
   try{await api(old?'jobs/'+encodeURIComponent(old.id):'jobs',old?'PUT':'POST',job);$('editDialog').close();await refresh();}
-  catch(e){$('saveError').textContent=e.message;}
+  catch(e){$('saveError').textContent=e.message;if(e.status===409&&old)await showConflict(old.id);}
   finally{editBusy=false;$('saveEdit').disabled=false;}
  });
+ async function showConflict(id){
+  const block=$('conflictReview'),area=$('conflictRows');area.replaceChildren();
+  try{
+   const latest=(await api('jobs')).jobs.find(x=>x.id===id);
+   if(!latest){block.hidden=false;area.appendChild(text('p','','Auftrag wurde entfernt. Deine Eingaben wurden nicht verändert.'));return;}
+   const rows=[
+    ['Auftragsnummer','id'],['Kunde','customer'],['Produkt','product'],['Auflage','quantity'],
+    ['Maschine','machine'],['Termin','date'],['Status','status'],['Fixtermin','fixed'],
+    ['Verarbeitung','steps'],['Notiz','notes']
+   ];
+   const current={
+    id:field('id').value,customer:field('customer').value,product:field('product').value,
+    quantity:field('quantity').value,machine:field('machine').value,date:field('date').value,
+    status:field('status').value,fixed:field('fixed').checked,steps:field('steps').value.split(',').map(x=>x.trim()).filter(Boolean),
+    notes:field('notes').value
+   };
+   for(const [label,key] of rows){
+    const a=Array.isArray(current[key])?current[key].join(', '):String(current[key]??'');
+    const b=Array.isArray(latest[key])?latest[key].join(', '):String(latest[key]??'');
+    if(a===b)continue;
+    const row=text('div','conflict-row','');
+    row.append(text('strong','',label),text('span','',a||'—'),text('span','',b||'—'));
+    area.appendChild(row);
+   }
+   if(!area.children.length)area.appendChild(text('p','','Keine Feldunterschiede mehr sichtbar; die Revision hat sich dennoch geändert.'));
+   const heading=text('div','conflict-columns','');heading.append(text('strong','','Feld'),text('strong','','Deine Eingabe'),text('strong','','Serverstand'));area.prepend(heading);
+   $('loadServerVersion').onclick=()=>{
+    if(!confirm('Deine ungespeicherten Eingaben verwerfen und die aktuelle Serverversion laden?'))return;
+    editingRevision=latest.revision;
+    for(const key of ['id','customer','product','quantity','machine','date','notes'])field(key).value=latest[key]||'';
+    field('fixed').checked=Boolean(latest.fixed);field('status').value=latest.status;
+    field('steps').value=(latest.steps||[]).join(', ');
+    block.hidden=true;$('saveError').textContent='';
+   };
+   block.hidden=false;
+  }catch(e){block.hidden=false;area.appendChild(text('p','','Serverdaten zum Vergleich nicht verfügbar. Eingaben bleiben erhalten.'));}
+ }
  $('newJob').onclick=()=>openEditor(null);
  $('previewImport').onclick=()=>{$('importPanel').hidden=!$('importPanel').hidden;};
  $('closeImport').onclick=()=>{$('importPanel').hidden=true;};

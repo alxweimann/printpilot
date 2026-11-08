@@ -1,6 +1,6 @@
 // Read-only Access diagnostics. Never print credentials, e-mails or policy rules.
 // Deliberately does not modify Access settings or other Workers.
-const token=process.env.CF_PRINTPILOT_ACCESS_TOKEN;
+const token=String(process.env.CF_PRINTPILOT_ACCESS_TOKEN||'').trim().replace(/^Bearer\s+/i,'').replace(/^['\"]|['\"]$/g,'').trim();
 const account=process.env.CF_PRINTPILOT_ACCOUNT_ID;
 if(!token||!/^[a-f0-9]{32}$/i.test(account||'')){
   throw new Error('Missing Access token or account ID (configure GitHub Actions secrets).');

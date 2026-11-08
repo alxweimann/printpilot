@@ -108,17 +108,31 @@
 .board .week-grid .compact-due.overdue{background:#ad2634}
 @media(max-width:600px){.week-grid .compact-due{padding:5px 8px}.week-grid .due-value{font-size:15px}}
 
+
+/* v1.5: one production board, touch-optimized admin date moves */
+.board .compact-head{display:flex;justify-content:space-between;gap:6px;align-items:flex-start}
+.board .compact-head strong{min-width:0;flex:1}
+.move-handle{border:1px solid #67899e;background:#395b70;color:#fff;border-radius:5px;min-width:34px;min-height:34px;display:grid;place-items:center;touch-action:none;user-select:none;-webkit-user-select:none;cursor:grab;font-size:23px;line-height:1;padding:1px 5px;flex:none}
+.move-handle:focus-visible{outline:3px solid #a8e8fa;outline-offset:1px}
+.move-handle:active{cursor:grabbing}
+.board .day.move-target{outline:3px dashed #f8d26d;outline-offset:-4px}
+.board .compact-card.is-moving{opacity:.43}
+.board .day.move-selected{outline:2px solid #a8e8fa;outline-offset:-3px}
+.drag-preview{position:fixed;z-index:9999;pointer-events:none;background:#e7f4fa;color:#183449;border:2px solid #48b1d8;border-radius:8px;box-shadow:0 8px 24px #0007;max-width:210px;font-size:12px;font-weight:800;padding:9px 12px;line-height:1.3}
+body.display-only .move-handle{display:none!important}
+@media(max-width:600px){.move-handle{min-height:40px;min-width:40px}}
+
 </style>
 </head>
 <body>
 <div class="shell">
 <header class="top"><div class="brand"><div class="logo">P</div><div><div class="eyebrow">PRINTPILOT MINI</div><h1>Produktionsplanung</h1><div class="muted" style="font-size:12px">Schnell verwalten. Klar ansehen.</div></div></div><div class="top-actions"><button class="btn" id="manageMachinesBtn" title="Druckmaschinen verwalten">⚙ Maschinen</button><button class="btn" id="exportBtn" title="Lokale Datensicherung herunterladen">↧ Sicherung</button><button class="btn primary" id="addBtn">＋ Auftrag</button></div></header>
-<nav class="tabs" id="tabs"><button data-view="list" class="active">Aufträge</button><button data-view="week">Wochenplan</button><button data-view="board">Produktionstafel</button></nav>
+<nav class="tabs" id="tabs"><button data-view="list" class="active">Aufträge</button><button data-view="board">Produktionstafel</button></nav>
 <section class="metric-grid" id="metrics"></section>
 <main><section id="listView"><div class="toolbar"><input type="search" id="search" placeholder="Auftrag, Kunde oder Produkt suchen …" aria-label="Aufträge suchen"><select id="statusFilter"><option value="">Alle Status</option></select><select id="sortBy"><option value="date">Nach Termin</option><option value="number">Nach Auftragsnummer</option></select></div><div class="jobs" id="jobs"></div></section>
-<section id="weekView" class="hide"><div class="week-head"><h2 id="weekTitle">Diese Woche</h2><div class="weeknav"><button class="btn" id="prevWeek">←</button><button class="btn" id="currentWeek" title="Zur aktuellen Woche">Aktuelle Woche</button><button class="btn" id="nextWeek">→</button></div></div><div class="week-grid" id="weekGrid"></div><p class="footer">Wochenansicht Montag bis Freitag. Wochenendaufträge bleiben in der Auftragsliste sichtbar.</p></section>
-<section id="boardView" class="hide"><div class="board"><div class="eyebrow">PRINTPILOT / PRODUKTION</div><div class="week-head" style="margin-top:7px"><h2 id="boardTitle">Wochenübersicht</h2><div class="weeknav"><button class="btn" id="boardPrev">←</button><button class="btn" id="boardToday" title="Zur aktuellen Woche">Heute</button><button class="btn" id="boardNext">→</button><button class="btn" id="fullscreen" title="Vollbildmodus">⛶ <span class="full-label">Vollbild</span></button></div></div><div class="week-grid" id="boardGrid"></div><div class="board-caption">Anzeige-Modus · Wochenübersicht · Automatische Aktualisierung innerhalb dieses Browsers · <strong>noch keine Synchronisierung zwischen Geräten</strong></div></div></section></main>
-<div class="footer">Testversion 1.4 · Speicherung nur in diesem Browser (localStorage) · keine Synchronisierung zwischen Geräten · keine Cloud-Anmeldung</div>
+
+<section id="boardView" class="hide"><div class="board"><div class="eyebrow">PRINTPILOT / PRODUKTION</div><div class="week-head" style="margin-top:7px"><h2 id="boardTitle">Wochenübersicht</h2><div class="weeknav"><button class="btn" id="boardPrev">←</button><button class="btn" id="boardToday" title="Zur aktuellen Woche">Heute</button><button class="btn" id="boardNext">→</button><button class="btn" id="fullscreen" title="Vollbildmodus">⛶ <span class="full-label">Vollbild</span></button></div></div><div class="week-grid" id="boardGrid"></div><div class="board-caption"><span id="boardHint">Wochenübersicht · Im Verwaltungsmodus per Touch verschieben · noch keine Synchronisierung zwischen Geräten</span></div></div></section></main>
+<div class="footer">Testversion 1.5 · Speicherung nur in diesem Browser (localStorage) · keine Synchronisierung zwischen Geräten · keine Cloud-Anmeldung</div>
 </div>
 <div class="modal-wrap hide" id="modalWrap" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><h2 id="modalTitle">Neuer Auftrag</h2><form id="jobForm"><div class="formgrid"><div class="field"><label for="number">Auftragsnummer *</label><input id="number" maxlength="40" required></div><div class="field"><label for="date">Fertigstellung *</label><input id="date" type="date" required></div><div class="field full"><label for="customer">Kunde *</label><input id="customer" maxlength="120" required></div><div class="field"><label for="product">Produkt *</label><input id="product" maxlength="160" required></div><div class="field"><label for="quantity">Auflage</label><input id="quantity" maxlength="50" placeholder="z. B. 5.000 Stück"></div><div class="field"><label for="machine">Druckmaschine</label><select id="machine"></select></div><div class="field"><label for="status">Status</label><select id="status"></select></div><div class="field full"><label class="checkrow"><input type="checkbox" id="fixed" style="width:auto"> <strong>Fixtermin – Datum rot hervorheben</strong></label></div><div class="field full"><span>Weiterverarbeitung (optional)</span><div class="steps" id="stepButtons"></div></div><div class="field full"><label for="notes">Notiz (optional)</label><textarea id="notes" maxlength="500" placeholder="Nur wenn nötig"></textarea></div></div><div class="formfoot"><button class="btn danger hide" type="button" id="deleteBtn">Auftrag löschen</button><div class="actions" style="margin-left:auto"><button class="btn" type="button" id="cancelBtn">Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div></div></form></div></div>
 <div class="modal-wrap hide" id="machineModal" role="dialog" aria-modal="true" aria-labelledby="machineTitle"><div class="modal machine-modal"><div class="machine-modal-head"><div><h2 id="machineTitle">Druckmaschinen verwalten</h2><p class="muted">Hier bestimmst du selbst, welche Maschinen zur Auswahl stehen.</p></div><button class="btn" type="button" id="closeMachines" aria-label="Schließen">✕</button></div><form id="machineForm" class="machine-add"><label for="newMachine">Neue Maschine</label><div class="machine-add-row"><input id="newMachine" maxlength="100" placeholder="Maschinenname" required><button class="btn primary" type="submit">＋ Hinzufügen</button></div></form><div id="machineList" class="machine-list"></div><p class="machine-hint">Umbenennen ändert auch die Maschinenbezeichnung in vorhandenen Aufträgen. Entfernen blendet die Maschine aus der Auswahl aus; bestehende Aufträge behalten ihre Angabe.</p></div></div>
@@ -139,7 +153,7 @@ const monday=d=>{const a=new Date(d);a.setHours(12,0,0,0);a.setDate(a.getDate()-
 const iso=d=>`${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
 let jobs=[];try{const data=JSON.parse(localStorage.getItem(STORE)||'[]');if(Array.isArray(data))jobs=data.filter(x=>x&&typeof x.id==='string'&&typeof x.date==='string');}catch(e){alert('Gespeicherte Aufträge konnten nicht gelesen werden. Daten werden nicht überschrieben.');}
 let view='list',week=monday(new Date()),editing=null,chosenSteps=[];
-let pinnedWeek=false,lastDay=today();
+let pinnedWeek=false,lastDay=today(),selectedMove=null,dragState=null;
 function save(){try{localStorage.setItem(STORE,JSON.stringify(jobs))}catch(e){alert('Speichern fehlgeschlagen: Browser-Speicher nicht verfügbar. Bitte keine neuen Daten eingeben.');throw e}}
 function statusColor(s){return colors[Math.max(0,statuses.indexOf(s))]}
 function statusOptions(selected){return statuses.map(s=>`<option value="${esc(s)}" ${s===selected?'selected':''}>${esc(s)}</option>`).join('')}
@@ -151,10 +165,60 @@ function renderList(){const q=$('search').value.trim().toLocaleLowerCase('de'),f
 function weekRange(){const end=new Date(week);end.setDate(week.getDate()+4);return `${week.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})} – ${end.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})}`}
 function compactRows(j){const rows=[['Produkt',j.product||'—'],['Auflage',j.quantity||'—'],['Maschine',j.machine||'—']];const steps=Array.isArray(j.steps)?j.steps:[];const stepLines=[];for(let i=0;i<steps.length;i+=2){stepLines.push(steps.slice(i,i+2).map(esc).join(' · '))}return `<div class="compact-rows">${rows.map(([label,value])=>`<div class="compact-row"><span class="compact-label">${esc(label)}</span><span class="compact-value">${esc(value)}</span></div>`).join('')}<div class="compact-row processing-row"><span class="compact-label">Verarbeitung</span><span class="compact-value processing-value">${stepLines.length?stepLines.join('<br>'):'—'}</span></div></div>`}
 function compactDateBadge(j){const late=j.status!=='Fertig'&&j.date<today();return `<span class="compact-due ${j.fixed?'fixed':''} ${late?'overdue':''}" title="Fertigstellungstermin"><span class="due-label">TERMIN</span><span class="due-value">${displayDate(j.date)}</span>${j.fixed?'<span class="due-flag">FIX</span>':''}${late?'<span class="due-flag">ÜBERFÄLLIG</span>':''}</span>`}
-function weekMarkup(board){let str='';for(let offset=0;offset<5;offset++){const d=new Date(week);d.setDate(week.getDate()+offset);const day=iso(d),dayjobs=jobs.filter(j=>j.date===day).sort((a,b)=>Number(b.fixed)-Number(a.fixed));str+=`<div class="day day-${offset}"><div class="day-head"><span>${['Mo','Di','Mi','Do','Fr'][offset]}</span><span>${displayDate(day)}</span></div><div class="day-body">${dayjobs.map(j=>`<article class="week-card compact-card" style="--status:${statusColor(j.status)}"><div class="compact-head"><strong>${esc(j.id)} · ${esc(j.customer)}</strong></div>${compactRows(j)}<div class="compact-foot">${compactDateBadge(j)}<span class="compact-status" style="color:var(--status)">${esc(j.status)}</span></div></article>`).join('')||'<span class="no-jobs">–</span>'}</div></div>`}return str}
-function renderWeek(){const heading=`Woche ${weekRange()}`;$('weekTitle').textContent=heading;$('boardTitle').textContent=heading;$('weekGrid').innerHTML=weekMarkup(false);$('boardGrid').innerHTML=weekMarkup(true)}
+function weekMarkup(board){let str='';for(let offset=0;offset<5;offset++){const d=new Date(week);d.setDate(week.getDate()+offset);const day=iso(d),dayjobs=jobs.filter(j=>j.date===day).sort((a,b)=>Number(b.fixed)-Number(a.fixed));str+=`<div class="day day-${offset}" data-drop-date="${day}"><div class="day-head"><span>${['Mo','Di','Mi','Do','Fr'][offset]}</span><span>${displayDate(day)}</span></div><div class="day-body">${dayjobs.map(j=>`<article class="week-card compact-card" style="--status:${statusColor(j.status)}"><div class="compact-head"><strong>${esc(j.id)} · ${esc(j.customer)}</strong>${!document.body.classList.contains('display-only')? `<button type="button" class="move-handle" data-move-id="${esc(j.id)}" aria-label="Auftrag ${esc(j.id)} auf anderen Wochentag verschieben" title="Halten und auf anderen Tag ziehen oder antippen">⠿</button>`:''}</div>${compactRows(j)}<div class="compact-foot">${compactDateBadge(j)}<span class="compact-status" style="color:var(--status)">${esc(j.status)}</span></div></article>`).join('')||'<span class="no-jobs">–</span>'}</div></div>`}return str}
+function renderWeek(){const heading=`Woche ${weekRange()}`;$('boardTitle').textContent=heading;$('boardGrid').innerHTML=weekMarkup(true);selectedMove=null;updateBoardHint()}
 function render(){renderMetrics();renderList();renderWeek()}
-function setView(v){view=v;document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));['list','week','board'].forEach(x=>$(x+'View').classList.toggle('hide',v!==x));render()}
+function setView(v){view=v;document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));['list','board'].forEach(x=>$(x+'View').classList.toggle('hide',v!==x));render()}
+
+function updateBoardHint(){const h=$('boardHint');if(!h)return;h.textContent=document.body.classList.contains('display-only')
+?'Nur-Lese-Ansicht · automatisch im selben Browser aktualisiert · noch keine geräteübergreifende Synchronisierung'
+:selectedMove?'Zieltag antippen, um den ausgewählten Auftrag zu verschieben. Erneut auf den Griff tippen zum Abbrechen.':'Auftrag am Griff ⠿ halten und auf einen Tag ziehen oder Griff und Zieltag antippen · noch keine Gerätesynchronisierung'}
+function moveToDate(id,date){
+ if(document.body.classList.contains('display-only'))return;
+ const j=jobs.find(x=>x.id===id);
+ if(!j||!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)||j.date===date)return;
+ const old=j.date;
+ if(j.fixed&&!confirm('Fixtermin von '+displayDate(old)+' auf '+displayDate(date)+' verschieben?'))return;
+ j.date=date;
+ try{save()}catch(e){j.date=old;render();return}
+ render();
+}
+function highlightTarget(date){document.querySelectorAll('#boardGrid .day').forEach(x=>x.classList.toggle('move-target',x.dataset.dropDate===date))}
+function clearDrag(){if(dragState?.preview)dragState.preview.remove();dragState=null;highlightTarget(null);document.querySelectorAll('#boardGrid .is-moving').forEach(x=>x.classList.remove('is-moving'))}
+$('boardGrid').addEventListener('pointerdown',e=>{
+ const grip=e.target.closest('[data-move-id]');if(!grip||document.body.classList.contains('display-only')||e.button!==0)return;
+ const id=grip.dataset.moveId,card=grip.closest('.week-card');
+ dragState={id,startX:e.clientX,startY:e.clientY,x:e.clientX,y:e.clientY,active:false,source:card,preview:null};
+ try{grip.setPointerCapture(e.pointerId)}catch(_){}
+});
+$('boardGrid').addEventListener('pointermove',e=>{
+ if(!dragState)return;
+ const d=dragState;d.x=e.clientX;d.y=e.clientY;
+ if(!d.active&&Math.hypot(e.clientX-d.startX,e.clientY-d.startY)<7)return;
+ if(!d.active){d.active=true;d.source.classList.add('is-moving');d.preview=document.createElement('div');d.preview.className='drag-preview';const j=jobs.find(x=>x.id===d.id);d.preview.textContent=j?j.id+' · '+j.customer:'Auftrag';document.body.appendChild(d.preview)}
+ d.preview.style.left=Math.min(window.innerWidth-215,Math.max(5,e.clientX+12))+'px';d.preview.style.top=Math.max(5,e.clientY+12)+'px';
+ const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('#boardGrid [data-drop-date]');highlightTarget(target?.dataset.dropDate||null);
+ e.preventDefault();
+});
+$('boardGrid').addEventListener('pointerup',e=>{
+ if(!dragState)return;
+ const d=dragState;
+ const target=document.elementFromPoint(e.clientX,e.clientY)?.closest('#boardGrid [data-drop-date]'),date=target?.dataset.dropDate;
+ clearDrag();
+ if(d.active){selectedMove=null;if(date)moveToDate(d.id,date);else updateBoardHint()}
+ else{selectedMove=selectedMove===d.id?null:d.id;updateBoardHint()}
+});
+$('boardGrid').addEventListener('pointercancel',()=>{clearDrag();selectedMove=null;updateBoardHint()});
+$('boardGrid').addEventListener('click',e=>{
+ if(e.target.closest('[data-move-id]')||!selectedMove||document.body.classList.contains('display-only'))return;
+ const target=e.target.closest('[data-drop-date]');if(!target)return;
+ const id=selectedMove;selectedMove=null;moveToDate(id,target.dataset.dropDate);updateBoardHint();
+});
+$('boardGrid').addEventListener('keydown',e=>{
+ const grip=e.target.closest('[data-move-id]');if(!grip)return;
+ if(e.key==='Enter'||e.key===' '){e.preventDefault();selectedMove=selectedMove===grip.dataset.moveId?null:grip.dataset.moveId;updateBoardHint()}
+});
+
 function openForm(id){editing=id;const j=jobs.find(x=>x.id===id);$('modalTitle').textContent=j?'Auftrag bearbeiten':'Neuer Auftrag';$('number').value=j?.id||'';$('date').value=j?.date||today();$('customer').value=j?.customer||'';$('product').value=j?.product||'';$('quantity').value=j?.quantity||'';renderMachineOptions(j?.machine||'');$('status').value=j?.status||statuses[0];$('fixed').checked=!!j?.fixed;$('notes').value=j?.notes||'';chosenSteps=[...(j?.steps||[])];renderStepButtons();$('deleteBtn').classList.toggle('hide',!j);$('modalWrap').classList.remove('hide');setTimeout(()=>$('number').focus(),0)}
 function renderStepButtons(){$('stepButtons').innerHTML=processes.map(x=>`<button type="button" class="step ${chosenSteps.includes(x)?'on':''}" data-step="${esc(x)}" aria-pressed="${chosenSteps.includes(x)}">${chosenSteps.includes(x)?'✓ ':''}${esc(x)}</button>`).join('')}
 function closeForm(){$('modalWrap').classList.add('hide');editing=null}
@@ -167,7 +231,7 @@ $('addBtn').onclick=()=>openForm(null);$('cancelBtn').onclick=closeForm;$('modal
 $('search').oninput=renderList;$('statusFilter').onchange=renderList;$('sortBy').onchange=renderList;
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));
 function shiftWeek(n){week.setDate(week.getDate()+n*7);pinnedWeek=true;renderWeek()}
-$('prevWeek').onclick=()=>shiftWeek(-1);$('nextWeek').onclick=()=>shiftWeek(1);$('currentWeek').onclick=()=>{week=monday(new Date());pinnedWeek=false;renderWeek()};$('boardPrev').onclick=()=>shiftWeek(-1);$('boardNext').onclick=()=>shiftWeek(1);$('boardToday').onclick=()=>{week=monday(new Date());pinnedWeek=false;renderWeek()};
+$('boardPrev').onclick=()=>shiftWeek(-1);$('boardNext').onclick=()=>shiftWeek(1);$('boardToday').onclick=()=>{week=monday(new Date());pinnedWeek=false;renderWeek()};
 $('fullscreen').onclick=()=>{if(!document.fullscreenElement){$('boardView').requestFullscreen?.().catch(()=>alert('Vollbild wird von diesem Browser nicht unterstützt.'))}else document.exitFullscreen?.()};
 $('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify({version:2,exported:new Date().toISOString(),jobs,machines},null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=`printpilot-mini-sicherung-${today()}.json`;a.click();setTimeout(()=>URL.revokeObjectURL(url),1000)};
 
@@ -190,7 +254,7 @@ document.addEventListener('visibilitychange',()=>{if(!document.hidden)refreshIfD
 window.addEventListener('focus',refreshIfDateChanged);
 setInterval(refreshIfDateChanged,60000);
 // Browser-only display URL: ?display=1 (not an access control; never publish sensitive customer data).
-if(new URLSearchParams(location.search).get('display')==='1'){setView('board');document.body.classList.add('display-only')}
+if(new URLSearchParams(location.search).get('display')==='1'){document.body.classList.add('display-only');setView('board')}
 else render();
 })();
 </script>

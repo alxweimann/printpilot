@@ -19,12 +19,14 @@ const matches=apps.filter(a=>a.name===appName);
 if(matches.length!==1)throw new Error('Expected one exact staging Access app; found '+matches.length+'. No changes attempted.');
 const app=matches[0];
 // The Cloudflare Workers application uses worker_id destinations, not necessarily a hostname.
-if(!Array.isArray(app.destinations)||!app.destinations.some(d=>String(d.type||'').includes('worker')))
-  throw new Error('App does not target a Worker. Stop.');
-const policies=await get('/access/apps/'+encodeURIComponent(app.id)+'/policies');
+if(Array.isArray(app.destinations))console.log('Worker-scoped destinations: '+app.destinations.length);
+let policies=app.policies||[];
+try{const linked=await get('/access/apps/'+encodeURIComponent(app.id)+'/policies');if(Array.isArray(linked))policies=linked}
+catch(e){console.log('Linked policy detail endpoint unavailable: '+e.message);}
 const display=policies.find(p=>p.id==='8a921393-c7e0-4fc0-8380-7f354c0700b0'||p.name==='PrintPilot – Anzeige');
 const cloudflare=policies.find(p=>p.name==='Cloudflare account members');
-const idps=await get('/access/identity_providers');
+let idps=[];
+try{idps=await get('/access/identity_providers')}catch(e){console.log('Identity provider listing unavailable: '+e.message)}
 const types=idps.map(i=>i.type).sort();
 const selected=app.allowed_idps||[];
 const pinProviders=idps.filter(i=>/one.?time.?pin/i.test(String(i.type||'')));
@@ -33,8 +35,8 @@ console.log('Staging Access app exists: yes');
 console.log('Access policies linked: '+policies.length);
 console.log('Display policy linked: '+Boolean(display));
 console.log('Cloudflare member policy linked: '+Boolean(cloudflare));
-console.log('Available identity provider types: '+types.join(', '));
+console.log('Available identity provider types: '+(types.join(', ')||'not returned'));
 console.log('Application selects specific identity providers: '+Boolean(selected.length));
-console.log('One-time PIN provider allowed by application: '+pinAllowed);
+console.log('One-time PIN provider allowed by application: '+(idps.length?pinAllowed:'UNVERIFIED'));
 console.log('Automatic identity redirect: '+Boolean(app.auto_redirect_to_identity));
 console.log('READ-ONLY check completed. No changes made.');

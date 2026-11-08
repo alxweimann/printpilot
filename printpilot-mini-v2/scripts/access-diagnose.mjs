@@ -5,10 +5,14 @@ const account=process.env.CF_PRINTPILOT_ACCOUNT_ID;
 if(!token||!/^[a-f0-9]{32}$/i.test(account||'')){
   throw new Error('Missing Access token or account ID (configure GitHub Actions secrets).');
 }
-const verify=await fetch('https://api.cloudflare.com/client/v4/user/tokens/verify',{headers:{Authorization:'Bearer '+token,Accept:'application/json'}});
+const verifyUrl=token.startsWith('cfat_')
+ ? 'https://api.cloudflare.com/client/v4/accounts/'+account+'/tokens/verify'
+ : 'https://api.cloudflare.com/client/v4/user/tokens/verify';
+const verify=await fetch(verifyUrl,{headers:{Authorization:'Bearer '+token,Accept:'application/json'}});
 let verifyResult={};try{verifyResult=await verify.json()}catch(_){}
 console.log('Access-capable token secret present: '+Boolean(token));
 console.log('Access-capable token format plausible: '+(/^[A-Za-z0-9_-]{20,200}$/.test(token)));
+console.log('Token verification endpoint: '+(token.startsWith('cfat_')?'account':'user'));
 console.log('Token verification HTTP status: '+verify.status);
 console.log('Token verification success: '+Boolean(verifyResult.success));
 console.log('Token verification state: '+String(verifyResult.result?.status||'unavailable'));

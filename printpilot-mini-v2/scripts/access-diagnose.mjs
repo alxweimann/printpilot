@@ -8,13 +8,18 @@ if(!token||!/^[a-f0-9]{32}$/i.test(account||'')){
 const origin='https://api.cloudflare.com/client/v4/accounts/'+account;
 async function get(url) {
   const response=await fetch(origin+url,{headers:{Authorization:'Bearer '+token,Accept:'application/json'}});
-  if(!response.ok)throw new Error('Cloudflare API HTTP '+response.status+' for '+url.split('?')[0]);
+  if(!response.ok){
+    let detail='';
+    try {const error=await response.json();detail=(error.errors||[]).slice(0,2).map(e=>String(e.code)+': '+String(e.message).slice(0,140)).join('; ')}
+    catch(_){}
+    throw new Error('Cloudflare API HTTP '+response.status+' for '+url.split('?')[0]+(detail?' — '+detail:''));
+  }
   const data=await response.json();
   if(!data.success)throw new Error('Cloudflare API reported an error for '+url.split('?')[0]);
   return data.result;
 }
 const appName='printpilot-mini-v2-staging - Cloudflare Workers';
-const apps=await get('/access/apps?per_page=100');
+const apps=await get('/access/apps');
 const matches=apps.filter(a=>a.name===appName);
 if(matches.length!==1)throw new Error('Expected one exact staging Access app; found '+matches.length+'. No changes attempted.');
 const app=matches[0];

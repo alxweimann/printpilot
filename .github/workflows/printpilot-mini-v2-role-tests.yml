@@ -18,6 +18,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
+      # Verify administrator direct-delete change before staging deployment.
       - name: Run all backend and role regression tests
         shell: bash
         run: |

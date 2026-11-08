@@ -34,8 +34,8 @@ Die laufende PrintPilot-Mini-1.12-Oberfläche, ihre bestehende Cloudflare-URL un
 - `GET /api/v2/machines`: Maschinen
 - `GET /api/v2/audit`: letzte 100 Änderungen, nur Admin
 
-Der neue Worker stellt *absichtlich noch keine Oberfläche* bereit. Das verhindert ein unbeabsichtigtes Ausrollen und lässt die Umstellung der Browserdaten bis zu einem geprüften Import offen.
+Der neue Worker stellt unter `/` eine **geschützte, reine Testanzeige** bereit (`src/dashboard.js`). Diese liest D1-Aufträge, zeigt fünf Wochentage und aktualisiert alle 15 Sekunden. Sie erlaubt keine Änderungen und enthält keine Kundendaten, solange D1 nicht gezielt befüllt wurde. Die bekannte Version-1.12.1-Oberfläche bleibt unverändert. `src/api-client.js` stellt die später benötigten, versionsgesicherten API-Aufrufe bereit. `src/migration.js` bereitet den Altbestandsimport nur lesend vor und blockiert ihn bei fehlerhaften oder doppelten Datensätzen.
 
 ## Vor Produktivbetrieb offen
 
-End-to-End-Tests mit D1 und echten Access-Identitäten; UI-Integration, Konfliktdialog, kontrollierter Altbestandsimport mit Vorschau und Prüfsummen, Benutzerverwaltung, Wiederherstellungstest, Backup-Richtlinie und Prüfung des bisherigen Lösch-/Bearbeiten-Verhaltens.
+End-to-End-Tests mit D1 und echten Access-Identitäten; vollständige Integration der bewährten UI, Konfliktdialog, kontrollierter Altbestandsimport mit Vorschau und Prüfsummen, Benutzerverwaltung, Wiederherstellungstest, Backup-Richtlinie und Prüfung des bisherigen Lösch-/Bearbeiten-Verhaltens.

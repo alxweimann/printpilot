@@ -568,13 +568,15 @@ document.addEventListener('click',async e=>{
  if(del){
   const id=del.dataset.deleteArchived,j=jobs.find(x=>x.id===id&&x.archived);
   if(!j||remoteRole!=='admin'||document.body.classList.contains('display-only'))return;
-  if(!confirm('Auftrag '+id+' ENDGÜLTIG löschen? Bitte vorher eine Sicherung erstellen.'))return;
-  const ok=await commitRemote(()=>api('jobs/'+encodeURIComponent(id),'DELETE',{revision:j.revision}));
+  if(!confirm('Auftrag '+id+' ENDGÜLTIG löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.'))return;
+  const confirmed=prompt('Zur endgültigen Löschung die Auftragsnummer exakt eingeben: '+id);
+  if(confirmed!==id)return;
+  const ok=await commitRemote(()=>api('jobs/'+encodeURIComponent(id),'DELETE',{revision:j.revision,confirmPermanentDelete:true,confirmId:id}));
   if(ok)$('archiveDetails').open=true;
  }
 });
 
-function openForm(id){if(!remoteReady||remoteBusy||document.body.classList.contains('display-only'))return;editing=id;const j=jobs.find(x=>x.id===id);$('modalTitle').textContent=j?'Auftrag bearbeiten':'Neuer Auftrag';$('number').value=j?.id||'';$('date').value=j?.date||today();$('customer').value=j?.customer||'';$('product').value=j?.product||'';$('quantity').value=j?.quantity||'';renderMachineOptions(j?.machine||'');$('status').value=j?.status||statuses[0];$('fixed').checked=!!j?.fixed;$('notes').value=j?.notes||'';chosenSteps=[...(j?.steps||[])];renderStepButtons();$('deleteBtn').classList.add('hide');$('modalWrap').classList.remove('hide');setTimeout(()=>$('number').focus(),0)}
+function openForm(id){if(!remoteReady||remoteBusy||document.body.classList.contains('display-only'))return;editing=id;const j=jobs.find(x=>x.id===id);$('modalTitle').textContent=j?'Auftrag bearbeiten':'Neuer Auftrag';$('number').value=j?.id||'';$('date').value=j?.date||today();$('customer').value=j?.customer||'';$('product').value=j?.product||'';$('quantity').value=j?.quantity||'';renderMachineOptions(j?.machine||'');$('status').value=j?.status||statuses[0];$('fixed').checked=!!j?.fixed;$('notes').value=j?.notes||'';chosenSteps=[...(j?.steps||[])];renderStepButtons();$('deleteBtn').classList.toggle('hide',!j||remoteRole!=='admin');$('modalWrap').classList.remove('hide');setTimeout(()=>$('number').focus(),0)}
 function renderStepButtons(){$('stepButtons').innerHTML=processes.map(x=>`<button type="button" class="step ${chosenSteps.includes(x)?'on':''}" data-step="${esc(x)}" aria-pressed="${chosenSteps.includes(x)}">${chosenSteps.includes(x)?'✓ ':''}${esc(x)}</button>`).join('')}
 function closeForm(){$('modalWrap').classList.add('hide');editing=null}
 $('jobForm').onsubmit=async e=>{
@@ -602,7 +604,16 @@ $('jobs').addEventListener('change',async e=>{
 });
 
 $('stepButtons').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b)return;chosenSteps=chosenSteps.includes(b.dataset.step)?chosenSteps.filter(x=>x!==b.dataset.step):[...chosenSteps,b.dataset.step];renderStepButtons()});
-$('deleteBtn').onclick=()=>alert('Zum sicheren Löschen den Auftrag erst als Fertig ablegen. Nur Administratoren dürfen archivierte Aufträge endgültig löschen.');
+$('deleteBtn').onclick=async()=>{
+ if(remoteRole!=='admin'||remoteBusy||!remoteReady||!editing||document.body.classList.contains('display-only'))return;
+ const id=editing,j=jobs.find(x=>x.id===id&&!x.archived);
+ if(!j){alert('Auftrag existiert nicht mehr.');return}
+ if(!confirm('Auftrag '+id+' ENDGÜLTIG löschen? Dieser Vorgang kann nicht rückgängig gemacht werden.'))return;
+ const confirmed=prompt('Bitte zur Sicherheit die Auftragsnummer eingeben: '+id);
+ if(confirmed!==id){if(confirmed!==null)alert('Auftragsnummer stimmt nicht überein. Nichts gelöscht.');return}
+ const ok=await commitRemote(()=>api('jobs/'+encodeURIComponent(id),'DELETE',{revision:j.revision,confirmPermanentDelete:true,confirmId:id}));
+ if(ok)closeForm();
+};
 $('addBtn').onclick=()=>openForm(null);$('cancelBtn').onclick=closeForm;$('modalWrap').onclick=e=>{if(e.target===$('modalWrap'))closeForm()};document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('machineModal').classList.contains('hide'))closeMachines();else if(!$('modalWrap').classList.contains('hide'))closeForm()}});
 $('search').oninput=renderList;$('statusFilter').onchange=renderList;$('sortBy').onchange=renderList;
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));

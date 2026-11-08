@@ -200,9 +200,9 @@ export default {
     if(user.role!=='admin')return failure(403,'Nur Administrator darf endgültig löschen');
     const data=await body(request);
     if(!Number.isSafeInteger(data.revision)||data.revision!==beforeRow.revision)return failure(409,'Auftrag wurde zwischenzeitlich geändert');
-    if(!previous.archived)return failure(409,'Vor dem Löschen archivieren');
+    if(data.confirmPermanentDelete!==true||data.confirmId!==id)return failure(422,'Endgültiges Löschen muss mit der Auftragsnummer bestätigt werden');
     const batch=await db.batch([
-     db.prepare('DELETE FROM jobs WHERE id=? AND revision=? AND archived=1').bind(id,beforeRow.revision),
+     db.prepare('DELETE FROM jobs WHERE id=? AND revision=?').bind(id,beforeRow.revision),
      audit(db,user.email,'delete',id,previous,null)
     ]);
     if(batch[0].meta?.changes!==1)return failure(409,'Auftrag wurde zwischenzeitlich geändert');

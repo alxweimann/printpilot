@@ -596,32 +596,53 @@ const demoJobs=[
  ['Beispielkunde','Postkarten','9.000','Schneiden, Verpacken','Fertig'],
  ['Testkunde Epsilon','Einleger','15.000','Schneiden, Bündeln, Verpacken','Freigegeben']
 ];
-$('demoWeekBtn').onclick=()=>{
- if(document.body.classList.contains('display-only')||jobsReadError)return;
- if(!confirm('20 klar gekennzeichnete TEST-Aufträge für nächste Woche ergänzen? Vorhandene Aufträge bleiben erhalten.'))return;
+$('demoWeekBtn').onclick=async()=>{
+ if(!remoteReady||remoteBusy||document.body.classList.contains('display-only'))return;
+ if(!confirm('20 ausdrücklich gekennzeichnete Testaufträge in der zentralen D1-Testdatenbank anlegen?'))return;
  const target=monday(new Date());target.setDate(target.getDate()+7);
- const existing=new Set(jobs.map(j=>j.id));const added=[];
- demoJobs.forEach((p,i)=>{
-  const id='TEST-'+String(i+1).padStart(3,'0');
-  if(existing.has(id))return;
-  const d=new Date(target);d.setDate(target.getDate()+(i%5));
-  const [customer,product,quantity,steps,status]=p;
-  added.push({id,customer:'TEST · '+customer,product,quantity:quantity+' Stk.',machine:'',steps:steps.split(', '),date:iso(d),status,fixed:i===5||i===12,notes:'Nur Testdaten – nicht für echte Produktion',demo:true});
- });
- if(!added.length){alert('Die 20 Testaufträge sind bereits vorhanden.');week=target;setView('board');return}
- const previous=jobs;jobs=[...jobs,...added];
- try{save()}catch(e){jobs=previous;alert('Testwoche konnte nicht gespeichert werden.');return}
- week=target;pinnedWeek=true;setView('board');
+ let count=0;remoteBusy=true;
+ try{
+  for(let i=0;i<demoJobs.length;i++){
+   const id='TEST-'+String(i+1).padStart(3,'0');if(jobs.some(j=>j.id===id))continue;
+   const d=new Date(target);d.setDate(target.getDate()+(i%5));
+   const [customer,product,quantity,steps,status]=demoJobs[i];
+   await api('jobs','POST',{id,customer:'TEST · '+customer,product,quantity:quantity+' Stk.',machine:'',
+     steps:steps.split(', '),date:iso(d),status,fixed:i===5||i===12,notes:'Nur Testdaten – nicht für echte Produktion'});
+   count++;
+  }
+ }catch(e){alert('Testwoche teilweise angelegt ('+count+' Aufträge). Grund: '+e.message)}
+ finally{remoteBusy=false;week=target;pinnedWeek=true;await syncRemote(true);setView('board')}
 };
 
-function openForm(id){editing=id;const j=jobs.find(x=>x.id===id);$('modalTitle').textContent=j?'Auftrag bearbeiten':'Neuer Auftrag';$('number').value=j?.id||'';$('date').value=j?.date||today();$('customer').value=j?.customer||'';$('product').value=j?.product||'';$('quantity').value=j?.quantity||'';renderMachineOptions(j?.machine||'');$('status').value=j?.status||statuses[0];$('fixed').checked=!!j?.fixed;$('notes').value=j?.notes||'';chosenSteps=[...(j?.steps||[])];renderStepButtons();$('deleteBtn').classList.toggle('hide',!j);$('modalWrap').classList.remove('hide');setTimeout(()=>$('number').focus(),0)}
+function openForm(id){if(!remoteReady||remoteBusy||document.body.classList.contains('display-only'))return;editing=id;const j=jobs.find(x=>x.id===id);$('modalTitle').textContent=j?'Auftrag bearbeiten':'Neuer Auftrag';$('number').value=j?.id||'';$('date').value=j?.date||today();$('customer').value=j?.customer||'';$('product').value=j?.product||'';$('quantity').value=j?.quantity||'';renderMachineOptions(j?.machine||'');$('status').value=j?.status||statuses[0];$('fixed').checked=!!j?.fixed;$('notes').value=j?.notes||'';chosenSteps=[...(j?.steps||[])];renderStepButtons();$('deleteBtn').classList.add('hide');$('modalWrap').classList.remove('hide');setTimeout(()=>$('number').focus(),0)}
 function renderStepButtons(){$('stepButtons').innerHTML=processes.map(x=>`<button type="button" class="step ${chosenSteps.includes(x)?'on':''}" data-step="${esc(x)}" aria-pressed="${chosenSteps.includes(x)}">${chosenSteps.includes(x)?'✓ ':''}${esc(x)}</button>`).join('')}
 function closeForm(){$('modalWrap').classList.add('hide');editing=null}
-$('jobForm').onsubmit=e=>{e.preventDefault();const previous=editing?jobs.find(x=>x.id===editing):null;const obj={...previous,id:$('number').value.trim(),date:$('date').value,customer:$('customer').value.trim(),product:$('product').value.trim(),quantity:$('quantity').value.trim(),machine:$('machine').value,status:$('status').value,fixed:$('fixed').checked,steps:[...chosenSteps],notes:$('notes').value.trim()};if(!obj.id||!obj.date||!obj.customer||!obj.product)return;if(jobs.some(x=>x.id===obj.id&&x.id!==editing)){alert('Diese Auftragsnummer existiert bereits.');return}if(editing){const idx=jobs.findIndex(x=>x.id===editing);if(idx<0)return;jobs[idx]=obj}else jobs.push(obj);save();closeForm();render()};
+$('jobForm').onsubmit=async e=>{
+ e.preventDefault();if(remoteBusy||!remoteReady||document.body.classList.contains('display-only'))return;
+ const previous=editing?jobs.find(j=>j.id===editing):null;
+ const obj={id:$('number').value.trim(),date:$('date').value,customer:$('customer').value.trim(),
+  product:$('product').value.trim(),quantity:$('quantity').value.trim(),machine:$('machine').value,
+  status:$('status').value,fixed:$('fixed').checked,steps:[...chosenSteps],notes:$('notes').value.trim()};
+ if(!obj.id||!obj.date||!obj.customer||!obj.product)return;
+ if(editing&&!previous){alert('Auftrag existiert nicht mehr.');return}
+ if(previous){obj.revision=previous.revision;
+  if(previous.fixed&&previous.date!==obj.date){if(!confirm('Fixtermin wirklich auf '+displayDate(obj.date)+' verschieben?'))return;obj.confirmFixedMove=true}
+ }
+ const ok=await commitRemote(()=>api(previous?'jobs/'+encodeURIComponent(editing):'jobs',previous?'PUT':'POST',obj));
+ if(ok)closeForm();
+};
+
 $('jobs').addEventListener('click',e=>{const expand=e.target.closest('[data-expand-id]');if(expand){const id=expand.dataset.expandId;if(expandedJobs.has(id))expandedJobs.delete(id);else expandedJobs.add(id);renderList();return}const b=e.target.closest('[data-edit]');if(b)openForm(b.dataset.edit)});
-$('jobs').addEventListener('change',e=>{const sel=e.target.closest('[data-status-id]');if(!sel)return;const j=jobs.find(x=>x.id===sel.dataset.statusId);if(j){j.status=sel.value;save();render()}});
+$('jobs').addEventListener('change',async e=>{
+ const sel=e.target.closest('[data-status-id]');if(!sel||remoteBusy)return;
+ const j=jobs.find(x=>x.id===sel.dataset.statusId);if(!j)return;
+ const status=sel.value;
+ const ok=await commitRemote(()=>api('jobs/'+encodeURIComponent(j.id),'PUT',{...j,status,revision:j.revision}));
+ if(!ok)sel.value=j.status;
+});
+
 $('stepButtons').addEventListener('click',e=>{const b=e.target.closest('[data-step]');if(!b)return;chosenSteps=chosenSteps.includes(b.dataset.step)?chosenSteps.filter(x=>x!==b.dataset.step):[...chosenSteps,b.dataset.step];renderStepButtons()});
-$('deleteBtn').onclick=()=>{if(!editing)return;if(confirm(`Auftrag ${editing} wirklich löschen?`)){jobs=jobs.filter(x=>x.id!==editing);save();closeForm();render()}};
+$('deleteBtn').onclick=()=>alert('Zum sicheren Löschen den Auftrag erst als Fertig ablegen. Nur Administratoren dürfen archivierte Aufträge endgültig löschen.');
 $('addBtn').onclick=()=>openForm(null);$('cancelBtn').onclick=closeForm;$('modalWrap').onclick=e=>{if(e.target===$('modalWrap'))closeForm()};document.addEventListener('keydown',e=>{if(e.key==='Escape'){if(!$('machineModal').classList.contains('hide'))closeMachines();else if(!$('modalWrap').classList.contains('hide'))closeForm()}});
 $('search').oninput=renderList;$('statusFilter').onchange=renderList;$('sortBy').onchange=renderList;
 document.querySelectorAll('[data-view]').forEach(b=>b.onclick=()=>setView(b.dataset.view));

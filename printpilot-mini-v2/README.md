@@ -71,3 +71,9 @@ End-to-End-Tests mit D1 und echten Access-Identitäten, insbesondere Konflikt- u
 - Browser-Altbestand wird **nicht** automatisch importiert. Der v1.12.1-Datenbestand auf seiner bisherigen URL bleibt unverändert.
 - Für eine neue Veröffentlichung den bereits bestehenden manuellen GitHub-Actions-Workflow auf `main` mit dem vorgegebenen Bestätigungstext erneut starten. Er veröffentlicht nur `printpilot-mini-v2-staging`, nicht `red-king-5309`. Nach Erfolg unter `https://printpilot-mini-v2-staging.alex-weimann.workers.dev/classic` testen.
 - **Keine Produktionsfreigabe:** Ein echter vollständiger E2E-Test der portierten `/classic`-Ansicht ist noch erforderlich. Bei Problemen bleibt die bereits getestete Staging-Seite unter `/` unverändert erreichbar.
+
+## Access-Verwaltung über GitHub (ohne Browser-Agent)
+
+Die GitHub-Action `.github/workflows/printpilot-mini-v2-access.yml` liegt auf dem Hauptzweig und startet **nur manuell**. Sie prüft über `scripts/access-diagnose.mjs` ausschließlich die Access-App für `printpilot-mini-v2-staging`. Sie liest die verknüpften Richtlinien und die verfügbaren sowie für die Anwendung ausgewählten Identitätsanbieter aus. Sie führt **keine schreibenden API-Aufrufe** aus, zeigt keine E-Mail-Regelinhalte und verändert andere Anwendungen nicht.
+
+Für diesen Workflow ist ein **separater** Cloudflare-API-Token mit Berechtigung **Account → Access: Apps and Policies → Read** sowie das Repository-Secret `CF_PRINTPILOT_ACCESS_TOKEN` erforderlich. Das bisherige `CF_PRINTPILOT_TOKEN` bleibt allein für Worker/D1 zuständig. Für eine später ausdrücklich bestätigte automatische Konfigurationsänderung muss der separate Access-Token entsprechend autorisiert werden; zuvor werden die Live-Einstellungen gelesen und geprüft. Niemals Token im Chat, im Repository oder in Workflow-Logs hinterlegen.

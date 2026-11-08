@@ -48,3 +48,9 @@ End-to-End-Tests mit D1 und echten Access-Identitäten, insbesondere Konflikt- u
 - **Kein Live-Ersatz:** Die neue Staging-Oberfläche ist weiterhin nicht die vollständige bekannte 1.12.1-Oberfläche; die bisherige URL darf vor Abschluss der Tests nicht umgestellt werden.
 
 - **Neue Staging-Funktionen:** API-Auftragsverschiebung mit Versions- und Fixterminprüfung, standardmäßig gesperrte Bewegungsbedienung, reine lokale Prüfvorschau einer JSON-Sicherung (max. 5 MB). Keine automatische Datenübernahme oder Veröffentlichung.
+
+## Integritätsstand – Konflikte und vorhandene Zusatzfelder
+
+- Bei gleichzeitig geänderten Aufträgen zeigt die Staging-Bearbeitung die abweichenden Felder aus den **eigenen, ungespeicherten Eingaben** und dem **aktuellen Serverstand** nebeneinander. Der Benutzer kann die aktuelle Serverversion nur durch einen separaten, bestätigten Schritt übernehmen. Es gibt **keinen automatischen Merge und keinen stillen Retry**.
+- Bei einem normalen `PUT` bleiben bislang gespeicherte Zusatzfelder, die der aktuelle Editor nicht kennt (z. B. ältere Datenreferenzen), erhalten. Unbekannte, vom Client neu eingeschleuste Felder werden hingegen nicht ungeprüft übernommen.
+- Regressionstests für beide Anforderungen befinden sich in `test/staging.test.mjs`. Diese Tests werden durch den GitHub-Actions-Workflow ausgeführt; ein aktueller erfolgreicher Workflow-Lauf wurde hier noch nicht bestätigt.

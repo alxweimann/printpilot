@@ -105,9 +105,10 @@ export default {
     if(!Number.isFinite(position)||(prev!==null&&position<=prev)||(next!==null&&position>=next))
       return failure(409,'Sortierung benötigt eine Neuordnung. Keine Daten verändert.');
     const rev=beforeRow.revision+1;
+    const movedPayload={...safeJson(beforeRow.payload),date:data.date};
     const batch=await db.batch([
-      db.prepare('UPDATE jobs SET planned_date=?,position=?,revision=?,updated_at=CURRENT_TIMESTAMP,updated_by=? WHERE id=? AND revision=? AND archived=0').bind(data.date,position,rev,user.email,id,beforeRow.revision),
-      audit(db,user.email,'move',id,previous,{...previous,date:data.date,position,revision:rev})
+      db.prepare('UPDATE jobs SET payload=?,planned_date=?,position=?,revision=?,updated_at=CURRENT_TIMESTAMP,updated_by=? WHERE id=? AND revision=? AND archived=0').bind(JSON.stringify(movedPayload),data.date,position,rev,user.email,id,beforeRow.revision),
+      audit(db,user.email,'move',id,previous,{...movedPayload,archived:false,position,revision:rev})
     ]);
     if(batch[0].meta?.changes!==1)return failure(409,'Auftrag wurde zwischenzeitlich geändert');
     return reply({ok:true,revision:rev,date:data.date,position});

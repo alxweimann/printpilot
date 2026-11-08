@@ -48,6 +48,50 @@
 .machine-item span{font-weight:650;overflow-wrap:anywhere}.machine-item .btn{font-size:12px;padding:7px}
 .machine-empty,.machine-hint{font-size:12px;color:#718395}.machine-hint{line-height:1.5;margin:17px 0 0}
 @media(max-width:520px){.machine-item{align-items:flex-start;flex-direction:column}.machine-add-row{flex-wrap:wrap}.machine-add-row button{width:100%}.top-actions{gap:5px}.top-actions .btn{font-size:11px}.calm-card-head{align-items:center}}
+
+/* v1.3: distinct weekday palette and compact production cards */
+.week-grid>.day{--day-head:#237ccb;--day-bg:#dcecf9;--day-border:#a6cbea;background:var(--day-bg);border-color:var(--day-border)}
+.week-grid>.day:nth-child(1){--day-head:#237ccb;--day-bg:#dcecf9;--day-border:#a6cbea}
+.week-grid>.day:nth-child(2){--day-head:#238e60;--day-bg:#d9eee3;--day-border:#a3d6b9}
+.week-grid>.day:nth-child(3){--day-head:#7951b8;--day-bg:#e9def7;--day-border:#c7b2e7}
+.week-grid>.day:nth-child(4){--day-head:#b73585;--day-bg:#f5deec;--day-border:#e4accf}
+.week-grid>.day:nth-child(5){--day-head:#c76d24;--day-bg:#f9e7d5;--day-border:#edc395}
+.week-grid>.day>.day-head,.board .week-grid>.day>.day-head{background:var(--day-head);color:#fff;padding:10px 12px;font-size:15px}
+.week-grid>.day>.day-body{padding:7px;gap:7px}
+.week-grid .compact-card{padding:0!important;border:0!important;border-left:3px solid var(--status)!important;border-radius:7px;background:#f7fafd;box-shadow:0 1px 3px #172b3c14;overflow:hidden}
+.week-grid .compact-head{padding:7px 9px 5px;background:#eaf1f6;line-height:1.25}
+.week-grid .compact-head strong{display:block;font-size:13px;line-height:1.3;overflow-wrap:anywhere}
+.week-grid .compact-rows{display:grid}
+.week-grid .compact-row{display:grid;grid-template-columns:70px minmax(0,1fr);gap:6px;padding:4px 8px;align-items:start;line-height:1.25}
+.week-grid .compact-row:nth-child(odd){background:#f1f6f9}
+.week-grid .compact-row:nth-child(even){background:#e7f0f5}
+.week-grid .compact-label{font-size:10px;color:#526a79}
+.week-grid .compact-value{font-size:11px;font-weight:600;color:#233e51;overflow-wrap:anywhere}
+.week-grid .compact-foot{display:flex;justify-content:space-between;align-items:center;gap:5px;flex-wrap:wrap;padding:5px 8px;background:#eaf1f6}
+.week-grid .compact-foot .date{margin:0;padding:0;background:transparent;color:#344f61;font-size:10px;font-weight:750}
+.week-grid .compact-foot .date.fixed{background:#bd3f50;color:#fff;padding:3px 5px;border-radius:4px}
+.week-grid .compact-status{font-size:11px;font-weight:800;line-height:1.2;overflow-wrap:anywhere}
+.board .week-grid>.day{--day-bg:#193a57;--day-border:#356b94;background:var(--day-bg);border-color:var(--day-border)}
+.board .week-grid>.day:nth-child(1){--day-bg:#193a57;--day-border:#356b94}
+.board .week-grid>.day:nth-child(2){--day-bg:#193e34;--day-border:#347b5b}
+.board .week-grid>.day:nth-child(3){--day-bg:#322747;--day-border:#70569b}
+.board .week-grid>.day:nth-child(4){--day-bg:#45263c;--day-border:#91516f}
+.board .week-grid>.day:nth-child(5){--day-bg:#493521;--day-border:#986e42}
+.board .week-grid>.day>.day-body .no-jobs{color:#b9d0df}
+.board .week-grid .compact-card{background:#213448;box-shadow:0 1px 3px #06132140}
+.board .week-grid .compact-head{background:#2d475b}
+.board .week-grid .compact-head strong{color:#f7fbfd;font-size:13px}
+.board .week-grid .compact-row:nth-child(odd){background:#20374b}
+.board .week-grid .compact-row:nth-child(even){background:#294257}
+.board .week-grid .compact-label{color:#a7c0ce}
+.board .week-grid .compact-value{color:#f0f7fb;font-size:11px}
+.board .week-grid .compact-foot{background:#233a4f}
+.board .week-grid .compact-foot .date{color:#dbeaf4}
+.board .week-grid .compact-foot .date.fixed{color:#fff;background:#c44751}
+.board .week-grid .compact-status{font-size:11px}
+@media(min-width:861px){.board .week-grid>.day{min-height:300px}.board .week-grid>.day>.day-body{gap:6px;padding:6px}}
+@media(max-width:600px){.board .week-grid>.day{min-height:0}.board .week-grid>.day>.day-head{padding:9px 12px}.week-grid .compact-row{grid-template-columns:76px minmax(0,1fr)}}
+
 </style>
 </head>
 <body>
@@ -89,7 +133,8 @@ function qtyText(j){return j.quantity?`${esc(j.quantity)}`:'—'}
 function calmRows(j){const rows=[['Produkt',j.product||'—'],['Auflage',j.quantity||'—'],['Maschine',j.machine||'—'],['Verarbeitung',j.steps?.length?j.steps.join(' · '):'—']];return `<div class="calm-rows">${rows.map(([label,value])=>`<div class="calm-row"><span class="calm-label">${esc(label)}</span><span class="calm-value">${esc(value)}</span></div>`).join('')}</div>`}
 function renderList(){const q=$('search').value.trim().toLocaleLowerCase('de'),filter=$('statusFilter').value;let shown=jobs.filter(j=>(!filter||j.status===filter)&&(!q||[j.id,j.customer,j.product,j.quantity,j.machine].join(' ').toLocaleLowerCase('de').includes(q)));shown.sort((a,b)=>$('sortBy').value==='number'?a.id.localeCompare(b.id,'de',{numeric:true}):a.date.localeCompare(b.date)||a.id.localeCompare(b.id,'de',{numeric:true}));$('jobs').innerHTML=shown.length?shown.map(j=>`<article class="job" style="--status:${statusColor(j.status)}"><div class="job-head"><div class="job-title">${esc(j.id)} · ${esc(j.customer)}</div>${dateBadge(j)}</div>${calmRows(j)}<div class="job-foot"><span class="calm-status" style="color:var(--status)">${esc(j.status)}</span><div class="actions"><select aria-label="Status für Auftrag ${esc(j.id)} ändern" data-status-id="${esc(j.id)}">${statusOptions(j.status)}</select><button class="btn" data-edit="${esc(j.id)}">Bearbeiten</button></div></div></article>`).join(''):'<div class="empty"><h3>Noch keine passenden Aufträge</h3><p class="muted">Mit „＋ Auftrag“ legst du den ersten Auftrag an.</p></div>'}
 function weekRange(){const end=new Date(week);end.setDate(week.getDate()+4);return `${week.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'})} – ${end.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit',year:'numeric'})}`}
-function weekMarkup(board){let str='';for(let offset=0;offset<5;offset++){const d=new Date(week);d.setDate(week.getDate()+offset);const day=iso(d),dayjobs=jobs.filter(j=>j.date===day).sort((a,b)=>Number(b.fixed)-Number(a.fixed));str+=`<div class="day"><div class="day-head"><span>${['Mo','Di','Mi','Do','Fr'][offset]}</span><span>${displayDate(day)}</span></div><div class="day-body">${dayjobs.map(j=>`<div class="week-card" style="--status:${statusColor(j.status)}"><div class="calm-card-head"><strong>${esc(j.id)} · ${esc(j.customer)}</strong>${dateBadge(j)}</div>${calmRows(j)}<div class="calm-status" style="color:var(--status)">${esc(j.status)}</div></div>`).join('')||'<span class="muted no-jobs">–</span>'}</div></div>`}return str}
+function compactRows(j){const rows=[['Produkt',j.product||'—'],['Auflage',j.quantity||'—'],['Maschine',j.machine||'—'],['Verarbeitung',j.steps?.length?j.steps.join(' · '):'—']];return `<div class="compact-rows">${rows.map(([label,value])=>`<div class="compact-row"><span class="compact-label">${esc(label)}</span><span class="compact-value">${esc(value)}</span></div>`).join('')}</div>`}
+function weekMarkup(board){let str='';for(let offset=0;offset<5;offset++){const d=new Date(week);d.setDate(week.getDate()+offset);const day=iso(d),dayjobs=jobs.filter(j=>j.date===day).sort((a,b)=>Number(b.fixed)-Number(a.fixed));str+=`<div class="day day-${offset}"><div class="day-head"><span>${['Mo','Di','Mi','Do','Fr'][offset]}</span><span>${displayDate(day)}</span></div><div class="day-body">${dayjobs.map(j=>`<article class="week-card compact-card" style="--status:${statusColor(j.status)}"><div class="compact-head"><strong>${esc(j.id)} · ${esc(j.customer)}</strong></div>${compactRows(j)}<div class="compact-foot">${dateBadge(j)}<span class="compact-status" style="color:var(--status)">${esc(j.status)}</span></div></article>`).join('')||'<span class="no-jobs">–</span>'}</div></div>`}return str}
 function renderWeek(){const heading=`Woche ${weekRange()}`;$('weekTitle').textContent=heading;$('boardTitle').textContent=heading;$('weekGrid').innerHTML=weekMarkup(false);$('boardGrid').innerHTML=weekMarkup(true)}
 function render(){renderMetrics();renderList();renderWeek()}
 function setView(v){view=v;document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view===v));['list','week','board'].forEach(x=>$(x+'View').classList.toggle('hide',v!==x));render()}

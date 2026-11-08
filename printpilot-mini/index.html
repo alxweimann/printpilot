@@ -213,6 +213,41 @@ body.display-only .move-handle{display:none!important}
 body.display-only #archiveSection,body.display-only #demoWeekBtn,body.display-only .mini-archive{display:none!important}
 @media(max-width:650px){.archive-item{align-items:stretch;flex-direction:column}}
 
+
+/* v1.9.2: a single scrolling fullscreen board (including touch devices) */
+#boardView:fullscreen,
+#boardView:-webkit-full-screen {
+  width:100%;
+  height:100vh;
+  height:100dvh;
+  max-height:100vh;
+  max-height:100dvh;
+  overflow-x:hidden;
+  overflow-y:auto;
+  overscroll-behavior-y:contain;
+  -webkit-overflow-scrolling:touch;
+  touch-action:pan-y;
+  background:#0e2030;
+}
+#boardView:fullscreen .board,
+#boardView:-webkit-full-screen .board {
+  min-height:100%;
+  height:auto;
+  overflow:visible;
+  border-radius:0;
+}
+#boardView:fullscreen .week-grid,
+#boardView:-webkit-full-screen .week-grid {
+  overflow:visible;
+  height:auto;
+}
+#boardView:fullscreen .day,
+#boardView:-webkit-full-screen .day,
+#boardView:fullscreen .day-body,
+#boardView:-webkit-full-screen .day-body {
+  max-height:none;
+  overflow:visible;
+}
 </style>
 </head>
 <body>
@@ -224,7 +259,7 @@ body.display-only #archiveSection,body.display-only #demoWeekBtn,body.display-on
 
 <section id="boardView" class="hide"><div class="board"><div class="eyebrow">PRINTPILOT / PRODUKTION</div><div class="week-head" style="margin-top:7px"><h2 id="boardTitle">Wochenübersicht</h2><div class="weeknav"><button class="btn" id="boardPrev">←</button><button class="btn" id="boardToday" title="Zur aktuellen Woche">Heute</button><button class="btn" id="boardNext">→</button><button class="btn" id="fullscreen" title="Vollbildmodus">⛶ <span class="full-label">Vollbild</span></button></div></div><div class="week-grid" id="boardGrid"></div><div class="board-caption"><span id="boardHint">Wochenübersicht · Im Verwaltungsmodus per Touch verschieben · noch keine Synchronisierung zwischen Geräten</span></div></div></section></main>
 <section id="archiveSection" class="archive-section"><details id="archiveDetails"><summary><span>✓ Erledigte Aufträge <strong id="archiveCount">0</strong></span><span class="archive-chevron">▾</span></summary><div class="archive-list" id="archiveList"></div></details></section>
-<div class="footer">Testversion 1.9.1 · Speicherung nur in diesem Browser (localStorage) · keine Synchronisierung zwischen Geräten · keine Cloud-Anmeldung</div>
+<div class="footer">Testversion 1.9.2 · Speicherung nur in diesem Browser (localStorage) · keine Synchronisierung zwischen Geräten · keine Cloud-Anmeldung</div>
 </div>
 <div class="modal-wrap hide" id="modalWrap" role="dialog" aria-modal="true" aria-labelledby="modalTitle"><div class="modal"><h2 id="modalTitle">Neuer Auftrag</h2><form id="jobForm"><div class="formgrid"><div class="field"><label for="number">Auftragsnummer *</label><input id="number" maxlength="40" required></div><div class="field"><label for="date">Fertigstellung *</label><input id="date" type="date" required></div><div class="field full"><label for="customer">Kunde *</label><input id="customer" maxlength="120" required></div><div class="field"><label for="product">Produkt *</label><input id="product" maxlength="160" required></div><div class="field"><label for="quantity">Auflage</label><input id="quantity" maxlength="50" placeholder="z. B. 5.000 Stück"></div><div class="field"><label for="machine">Druckmaschine</label><select id="machine"></select></div><div class="field"><label for="status">Status</label><select id="status"></select></div><div class="field full"><label class="checkrow"><input type="checkbox" id="fixed" style="width:auto"> <strong>Fixtermin – Datum rot hervorheben</strong></label></div><div class="field full"><span>Weiterverarbeitung (optional)</span><div class="steps" id="stepButtons"></div></div><div class="field full"><label for="notes">Notiz (optional)</label><textarea id="notes" maxlength="500" placeholder="Nur wenn nötig"></textarea></div></div><div class="formfoot"><button class="btn danger hide" type="button" id="deleteBtn">Auftrag löschen</button><div class="actions" style="margin-left:auto"><button class="btn" type="button" id="cancelBtn">Abbrechen</button><button class="btn primary" type="submit">Speichern</button></div></div></form></div></div>
 <div class="modal-wrap hide" id="machineModal" role="dialog" aria-modal="true" aria-labelledby="machineTitle"><div class="modal machine-modal"><div class="machine-modal-head"><div><h2 id="machineTitle">Druckmaschinen verwalten</h2><p class="muted">Hier bestimmst du selbst, welche Maschinen zur Auswahl stehen.</p></div><button class="btn" type="button" id="closeMachines" aria-label="Schließen">✕</button></div><form id="machineForm" class="machine-add"><label for="newMachine">Neue Maschine</label><div class="machine-add-row"><input id="newMachine" maxlength="100" placeholder="Maschinenname" required><button class="btn primary" type="submit">＋ Hinzufügen</button></div></form><div id="machineList" class="machine-list"></div><p class="machine-hint">Umbenennen ändert auch die Maschinenbezeichnung in vorhandenen Aufträgen. Entfernen blendet die Maschine aus der Auswahl aus; bestehende Aufträge behalten ihre Angabe.</p></div></div>

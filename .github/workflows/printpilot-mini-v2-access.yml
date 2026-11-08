@@ -22,7 +22,7 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '22'
-      # Re-run after improving Cloudflare 400 error diagnostics.
+      # Re-run after normalizing stored Access token formatting.
       - name: Diagnose staging Access settings without modifying Cloudflare
         shell: bash
         run: |

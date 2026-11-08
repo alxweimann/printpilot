@@ -212,3 +212,7 @@ test('machine creation is restricted to admin role',async()=>{
  const blocked=await worker.fetch(request('/api/v2/machines',{...args,headers:{'Content-Type':'application/json'}}),{DB:makeDb('admin')},ctx);
  assert.equal(blocked.status,415);
 });
+
+test('production board contains no demo-week button or sample-job generator',()=>{
+ assert.doesNotMatch(productionHtml,/demoWeekBtn|demoJobs|Testwoche befüllen|Nur Testdaten – nicht für echte Produktion/);
+});

@@ -1,5 +1,5 @@
 import {dashboardHtml} from './dashboard.js';
-import productionHtml from './production-ui.html';
+import {productionHtml} from './production-ui.js';
 // PrintPilot Mini 2.0 — isolated staging API. Fail closed without Cloudflare Access.
 const STATUSES = new Set(['Neu / ungeprüft','Daten fehlen','Auftragstasche fehlt','In Korrektur','Wartet auf Freigabe','Freigegeben','In Produktion','Weiterverarbeitung','Fertig','Problem / Verzögerung']);
 const ROLES = new Set(['admin','production','display']);

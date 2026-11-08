@@ -42,3 +42,19 @@ test('inline staging script parses cleanly',()=>{
  assert.ok(js);
  assert.doesNotThrow(()=>new Function(js));
 });
+
+
+test('fixed deadline cannot move without explicit confirmation',async()=>{
+ const fixed={...sample,fixed:true};
+ const env={DB:{prepare(sql){return {bind(){return {first:async()=>sql.startsWith('SELECT role')?{role:'admin'}:
+   sql.startsWith('SELECT * FROM jobs')?{id:sample.id,payload:JSON.stringify(fixed),revision:2,archived:0,position:0,updated_at:'2026-11-08'}:null};}}}};
+ const moved={...fixed,date:'2026-11-10',revision:2};
+ const response=await worker.fetch(request('/api/v2/jobs/TEST-001',{method:'PUT',headers:{'Content-Type':'application/json','X-Requested-With':'PrintPilotMini'},body:JSON.stringify(moved)}),env,ctx);
+ assert.equal(response.status,409);
+ assert.match(await response.text(),/Fixtermin/);
+});
+test('staging HTML contains single-day navigation and completed archive controls',()=>{
+ assert.match(dashboardHtml,/id="backWeek"/);
+ assert.match(dashboardHtml,/id="archivedRows"/);
+ assert.match(dashboardHtml,/editingRevision/);
+});

@@ -1,0 +1,15 @@
+{
+  // Example only. Do not deploy before Cloudflare Access is enabled.
+  "name": "printpilot-mini-v2-staging",
+  "main": "src/index.js",
+  "compatibility_date": "2026-11-08",
+  "workers_dev": true,
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "printpilot-mini-v2-staging",
+      "database_id": "REPLACE_WITH_D1_DATABASE_UUID",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

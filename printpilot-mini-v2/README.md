@@ -1,14 +1,14 @@
 # PrintPilot Mini 2.0 – isoliertes Backend (Entwicklungsstand)
 
 **Nicht produktiv.** Dieser Ordner liegt nur in `feature/printpilot-mini-v2-secure-backend`.
-Die laufende PrintPilot-Mini-1.12-Oberfläche, ihre bestehende Cloudflare-URL und ihre `localStorage`-Daten bleiben unverändert.
+Die laufende PrintPilot-Mini-1.12.1-Oberfläche, ihre bestehende Cloudflare-URL und ihre `localStorage`-Daten bleiben unverändert.
 
 ## Sicherheitskonzept
 
 - Cloudflare Access **vor dem Worker** aktivieren: nur diesen *neuen* Staging-Worker schützen, nicht pauschal alle Projekte.
 - Im Worker wird jede Anfrage ohne `ctx.access` abgewiesen. Angemeldete Benutzer brauchen zusätzlich einen aktiven Eintrag in `users`.
 - Rollen: `admin` (alles), `production` (Aufträge erstellen und ändern; kein endgültiges Löschen), `display` (nur lesen).
-- Schreiboperationen benötigen `X-Requested-With: PrintPilotMini` und JSON (zusätzlicher Cross-Site-Schutz). Berechtigung und Optimistic Locking gelten **serverseitig**.
+- Schreiboperationen benötigen `X-Requested-With: PrintPilotMini` und JSON (zusätzlicher Cross-Site-Schutz). Berechtigung und Optimistic Locking gelten **serverseitig**. Fixtermine dürfen nur mit ausdrücklicher Bestätigung verschoben werden.
 - Kein öffentlicher Bootstrap-Admin und keine hartcodierten E-Mail-Adressen oder Tokens. Benutzer werden kontrolliert durch den Administrator angelegt.
 - Jede Änderung wird in `audit_log` dokumentiert, D1-Batch für Datenänderung + Audit.
 
@@ -34,8 +34,14 @@ Die laufende PrintPilot-Mini-1.12-Oberfläche, ihre bestehende Cloudflare-URL un
 - `GET /api/v2/machines`: Maschinen
 - `GET /api/v2/audit`: letzte 100 Änderungen, nur Admin
 
-Der neue Worker stellt unter `/` eine **geschützte Testoberfläche** bereit (`src/dashboard.js`). Diese liest D1-Aufträge, zeigt fünf Wochentage und aktualisiert alle 15 Sekunden. Angemeldete Benutzer mit Rolle `admin` oder `production` können neue Testaufträge anlegen, bearbeiten und fertige Aufträge archivieren; `display` bleibt strikt schreibgeschützt. Sie enthält keine Kundendaten, solange D1 nicht gezielt befüllt wurde. Die bekannte Version-1.12.1-Oberfläche bleibt unverändert. `src/api-client.js` stellt die später benötigten, versionsgesicherten API-Aufrufe bereit. `src/migration.js` bereitet den Altbestandsimport nur lesend vor und blockiert ihn bei fehlerhaften oder doppelten Datensätzen.
+Der neue Worker stellt unter `/` eine **geschützte Testoberfläche** bereit (`src/dashboard.js`). Diese liest D1-Aufträge, zeigt fünf Wochentage oder einen einzelnen vergrößerten Tag, bietet ein aufklappbares Archiv mit Wiederherstellung und aktualisiert alle 15 Sekunden. Angemeldete Benutzer mit Rolle `admin` oder `production` können neue Testaufträge anlegen, bearbeiten, fertige Aufträge archivieren und aus dem Archiv wiederherstellen. Nur `admin` darf archivierte Aufträge endgültig löschen. `display` bleibt strikt schreibgeschützt. Sie enthält keine Kundendaten, solange D1 nicht gezielt befüllt wurde. Die bekannte Version-1.12.1-Oberfläche bleibt unverändert. `src/api-client.js` stellt die später benötigten, versionsgesicherten API-Aufrufe bereit. `src/migration.js` bereitet den Altbestandsimport nur lesend vor und blockiert ihn bei fehlerhaften oder doppelten Datensätzen.
 
 ## Vor Produktivbetrieb offen
 
-End-to-End-Tests mit D1 und echten Access-Identitäten, insbesondere Konflikt- und Speicherverhalten; vollständige Integration der bewährten UI (einschließlich Schloss, Tagesansicht, Auftragsarchiv und Drag-and-drop), Konfliktdialog, kontrollierter Altbestandsimport mit Vorschau und Prüfsummen, Benutzerverwaltung, Wiederherstellungstest, Backup-Richtlinie und Prüfung des bisherigen Lösch-/Bearbeiten-Verhaltens.
+End-to-End-Tests mit D1 und echten Access-Identitäten, insbesondere Konflikt- und Speicherverhalten; vollständige Übernahme des bewährten 1.12.1-Designs (insbesondere Drag-and-drop mit Schloss und alle Layoutdetails; Tagesansicht und Archiv sind bereits in einer einfacheren Staging-Version vorhanden), Konfliktdialog, kontrollierter Altbestandsimport mit Vorschau und Prüfsummen, Benutzerverwaltung, Wiederherstellungstest, Backup-Richtlinie und Prüfung des bisherigen Lösch-/Bearbeiten-Verhaltens.
+
+## Derzeitiger Integrationsstatus (08.11.2026)
+
+- **Fertig in GitHub:** Authentifizierungsprüfung, Rollensystem, D1-Schema, API für Auftragsverwaltung, einfache Staging-Bedienung, Tagesansicht, Archiv/Wiederherstellung, Fixtermin-Sperre, Status „Daten fehlen“ und „Auftragstasche fehlt“, Notizen, Browserdaten-Prüfvorschau und GitHub-Actions-Testkonfiguration.
+- **Noch nicht ausgeführt:** Cloudflare-D1-Erstellung, echte Access-Policy, Bereitstellung des separaten Workers, echte D1-Transaktionstests, produktive Multi-Device-Synchronisierung und Import von Browserdaten.
+- **Kein Live-Ersatz:** Die neue Staging-Oberfläche ist weiterhin nicht die vollständige bekannte 1.12.1-Oberfläche; die bisherige URL darf vor Abschluss der Tests nicht umgestellt werden.

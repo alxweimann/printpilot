@@ -5,10 +5,10 @@ import worker from '../src/index.js';
 import {dashboardHtml} from '../src/dashboard.js';
 
 const sample={id:'TEST-001',customer:'Muster',product:'Flyer',date:'2026-11-09',status:'Daten fehlen',steps:[],quantity:'500'};
-function makeDb(role='admin'){
+function makeDb(role='admin',selectedJob=sample){
  return {prepare(sql){
    return {bind(...args){return {
-     first:async()=>sql.startsWith('SELECT role')?{role}:sql.startsWith('SELECT * FROM jobs')?{id:sample.id,payload:JSON.stringify(sample),revision:2,archived:0,position:0,updated_at:'2026-11-08'}:null
+     first:async()=>sql.startsWith('SELECT role')?{role}:sql.startsWith('SELECT * FROM jobs')?{id:sample.id,payload:JSON.stringify(selectedJob),revision:2,archived:0,position:0,updated_at:'2026-11-08'}:null
    };},all:async()=>({results:[]})};
  }};
 }
@@ -46,8 +46,7 @@ test('inline staging script parses cleanly',()=>{
 
 test('fixed deadline cannot move without explicit confirmation',async()=>{
  const fixed={...sample,fixed:true};
- const env={DB:{prepare(sql){return {bind(){return {first:async()=>sql.startsWith('SELECT role')?{role:'admin'}:
-   sql.startsWith('SELECT * FROM jobs')?{id:sample.id,payload:JSON.stringify(fixed),revision:2,archived:0,position:0,updated_at:'2026-11-08'}:null};}}}};
+ const env={DB:makeDb('admin',fixed)};
  const moved={...fixed,date:'2026-11-10',revision:2};
  const response=await worker.fetch(request('/api/v2/jobs/TEST-001',{method:'PUT',headers:{'Content-Type':'application/json','X-Requested-With':'PrintPilotMini'},body:JSON.stringify(moved)}),env,ctx);
  assert.equal(response.status,409);

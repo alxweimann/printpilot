@@ -23,10 +23,13 @@ const displays=allPolicies.filter(x=>x.name==='PrintPilot – Anzeige');
 if(displays.length!==1) throw new Error('Expected exactly one reusable display policy.');
 const display=displays[0];
 const existing=linked[0];
-await api('/access/apps/'+encodeURIComponent(app.id),{method:'PUT',body:JSON.stringify({policies:[
+const update={name:app.name,type:app.type,destinations:app.destinations,policies:[
   {id:existing.id,account_id:account,precedence:1},
   {id:display.id,account_id:account,precedence:2}
-]})});
+]};
+for(const key of ['domain','session_duration','allowed_idps','auto_redirect_to_identity','app_launcher_visible','enable_binding_cookie','options_preflight_bypass','cors_headers','custom_pages','logo_url'])
+  if(app[key]!==undefined) update[key]=app[key];
+await api('/access/apps/'+encodeURIComponent(app.id),{method:'PUT',body:JSON.stringify(update)});
 const verified=await api('/access/apps/'+encodeURIComponent(app.id)+'/policies');
 const ids=new Set(verified.map(x=>x.id));
 if(verified.length!==2||!ids.has(existing.id)||!ids.has(display.id)) throw new Error('Cloudflare response did not verify both linked policies.');

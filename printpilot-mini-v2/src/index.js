@@ -18,7 +18,7 @@ function normalizeJob(data){
  return {id,customer,product,date,status:data.status,steps,quantity,machine,notes,fixed:data.fixed===true};
 }
 function rowToJob(row){return {...safeJson(row.payload),revision:row.revision,archived:Boolean(row.archived),position:row.position,updatedAt:row.updated_at};}
-function audit(db,actor,action,id,before,after){return db.prepare('INSERT INTO audit_log(event_id,actor,action,entity_type,entity_id,before_json,after_json) VALUES(?,?,?,?,?,?,?)').bind(crypto.randomUUID(),actor,action,'job',id,before?JSON.stringify(before):null,after?JSON.stringify(after):null);}
+function audit(db,actor,action,id,before,after){return db.prepare('INSERT INTO audit_log(event_id,actor,action,entity_type,entity_id,before_json,after_json) SELECT ?,?,?,?,?,?,? WHERE changes()=1').bind(crypto.randomUUID(),actor,action,'job',id,before?JSON.stringify(before):null,after?JSON.stringify(after):null);}
 async function body(request){const raw=await request.text();if(raw.length>25000)throw new Error('Payload zu groß');const data=safeJson(raw);if(!data||typeof data!=='object'||Array.isArray(data))throw new Error('Ungültiges JSON');return data;}
 async function checkedIdentity(ctx,db){
  if(!ctx.access)return null; // no header trust, Access-attested context only

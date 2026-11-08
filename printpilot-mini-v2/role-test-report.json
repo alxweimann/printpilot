@@ -1,0 +1,14 @@
+{
+  "kind": "printpilot-v2-role-tests",
+  "run_id": 42491902386,
+  "passed": true,
+  "summary": [
+    "# tests 38",
+    "# pass 38",
+    "# fail 0",
+    "# cancelled 0",
+    "# skipped 0",
+    "# duration_ms 158.331031"
+  ],
+  "failures": []
+}

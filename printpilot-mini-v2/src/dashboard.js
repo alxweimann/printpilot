@@ -25,11 +25,36 @@ dialog textarea{min-height:75px;resize:vertical}
 .card-actions{display:flex;gap:5px;flex-wrap:wrap;margin-top:8px}
 .card-actions button{font-size:11px;padding:6px 8px;border-radius:6px}
 @media(max-width:540px){.formgrid{grid-template-columns:1fr}.formgrid .wide{grid-column:auto}}
+
+.view-title{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap}
+.view-title h2{margin:14px 0}
+.day-title{width:100%;font-size:15px;padding:12px;margin:0;background:#237ccb;color:#fff;border-radius:0;text-align:left}
+.day-title:hover{filter:brightness(1.13)}
+.day:nth-child(2) .day-title{background:#238e60}
+.day:nth-child(3) .day-title{background:#7951b8}
+.day:nth-child(4) .day-title{background:#b73585}
+.day:nth-child(5) .day-title{background:#c76d24}
+.week.single-day{grid-template-columns:repeat(2,minmax(0,1fr))}
+.week.single-day .day{grid-column:1/-1}
+.week.single-day .cards{grid-template-columns:repeat(2,minmax(0,1fr));padding:12px;gap:12px}
+.week.single-day .card{padding:15px}
+.week.single-day .number{font-size:20px}
+.week.single-day .customer{font-size:17px}
+.week.single-day .product,.week.single-day .notes,.week.single-day .status{font-size:15px}
+.archive{margin:24px 0 12px;border:1px solid #507186;border-radius:12px;overflow:hidden}
+.archive summary{cursor:pointer;padding:14px 17px;font-weight:750}
+.archive summary span{padding:2px 8px;border-radius:10px;background:#29475e;margin-left:5px}
+.archive-row{display:flex;gap:12px;justify-content:space-between;align-items:center;padding:10px 17px;border-top:1px solid #294a60}
+.archive-details{display:flex;flex-direction:column;gap:4px}
+.archive-details small{color:#a4bdcb}
+.danger{background:#ffdddd;color:#813030}
+@media(max-width:700px){.week.single-day .cards{grid-template-columns:1fr}.archive-row{flex-direction:column;align-items:flex-start}}
 </style></head><body><main>
 <header><div><div class="muted">PRINTPILOT / STAGING – NUR ANZEIGE</div><h1>Produktionsplan 2.0</h1><div id="identity" class="muted">Anmeldung wird geprüft …</div></div>
 <div><button id="prev" type="button" aria-label="Vorige Woche">←</button> <button id="next" type="button" aria-label="Nächste Woche">→</button> <button id="reload" type="button">Aktualisieren</button> <button id="newJob" type="button" hidden>＋ Auftrag</button></div></header>
-<div id="stats" class="summary"></div><h2 id="weekTitle"></h2><div id="error" role="alert"></div><div class="week" id="week"></div>
-<p class="muted">Geschützte D1-Testanzeige · automatische Aktualisierung alle 15 Sekunden · noch keine Bearbeitungsfunktion · keine Übernahme von Browserdaten</p>
+<div id="stats" class="summary"></div><div class="view-title"><h2 id="weekTitle"></h2><button id="backWeek" type="button" hidden>← Wochenansicht</button></div><div id="error" role="alert"></div><div class="week" id="week"></div>
+<details class="archive" id="archive"><summary>✓ Erledigte Aufträge <span id="archiveCount">0</span></summary><div id="archivedRows"></div></details>
+<p class="muted">Geschützte D1-Testumgebung · automatische Aktualisierung alle 15 Sekunden · kein Import aus bisherigen Browserdaten</p>
 </main>
 <dialog id="editDialog"><form id="editForm">
 <h2 id="editTitle">Auftrag</h2>
@@ -53,17 +78,22 @@ dialog textarea{min-height:75px;resize:vertical}
  function iso(d){return [d.getFullYear(),String(d.getMonth()+1).padStart(2,'0'),String(d.getDate()).padStart(2,'0')].join('-');}
  function monday(d){const x=new Date(d);x.setHours(12,0,0,0);x.setDate(x.getDate()-((x.getDay()+6)%7));return x;}
  function fmt(d){return d.toLocaleDateString('de-DE',{day:'2-digit',month:'2-digit'});}
- let start=monday(new Date()),jobs=[],userRole='display',editingId=null,editBusy=false;
+ let start=monday(new Date()),jobs=[],userRole='display',editingId=null,editingRevision=null,editBusy=false,selectedDay=null;
  async function api(path,method='GET',payload){const headers={Accept:'application/json'};if(method!=='GET'){headers['Content-Type']='application/json';headers['X-Requested-With']='PrintPilotMini';}const res=await fetch('/api/v2/'+path,{method,credentials:'same-origin',cache:'no-store',headers,body:method==='GET'?undefined:JSON.stringify(payload||{})});
   if(!res.ok){let info={};try{info=await res.json()}catch(_){}const msg=info.error||('API-Fehler '+res.status);throw Error(res.status===409?msg+' – Zwischenzeitlich geändert. Bitte neu laden.':res.status===403?'Keine Berechtigung':msg);}return res.json();}
  function text(tag,cls,value){const el=document.createElement(tag);if(cls)el.className=cls;el.textContent=String(value??'');return el;}
  function render(){
   const until=new Date(start);until.setDate(start.getDate()+4);
-  $('weekTitle').textContent='Woche '+fmt(start)+' – '+fmt(until);
+  $('weekTitle').textContent=selectedDay===null?'Woche '+fmt(start)+' – '+fmt(until):(['Montag','Dienstag','Mittwoch','Donnerstag','Freitag'][selectedDay]+' · '+fmt(new Date(start.getFullYear(),start.getMonth(),start.getDate()+selectedDay,12)));
+  $('backWeek').hidden=selectedDay===null;
+  $('week').classList.toggle('single-day',selectedDay!==null);
   const root=$('week');root.replaceChildren();
   for(let i=0;i<5;i++){
+   if(selectedDay!==null&&selectedDay!==i)continue;
    const dt=new Date(start);dt.setDate(start.getDate()+i);const day=document.createElement('section');day.className='day';
-   day.appendChild(text('h2','',['Mo','Di','Mi','Do','Fr'][i]+' · '+fmt(dt)));
+   const heading=text('button','day-title',['Mo','Di','Mi','Do','Fr'][i]+' · '+fmt(dt)+(selectedDay===null?'  ⤢':''));
+   heading.type='button';heading.title='Tag groß anzeigen';heading.onclick=()=>{selectedDay=i;render();};
+   day.appendChild(heading);
    const cards=text('div','cards','');const rows=jobs.filter(j=>!j.archived&&j.date===iso(dt));
    if(!rows.length)cards.appendChild(text('div','empty','Keine Aufträge'));
    for(const j of rows){
@@ -72,7 +102,26 @@ dialog textarea{min-height:75px;resize:vertical}
    }
    day.appendChild(cards);root.appendChild(day);
   }
-  const active=jobs.filter(j=>!j.archived);$('stats').replaceChildren(text('div','metric','Aktive Aufträge: '+active.length),text('div','metric','Archiviert: '+(jobs.length-active.length)));
+  const active=jobs.filter(j=>!j.archived);const archived=jobs.filter(j=>j.archived);
+  $('stats').replaceChildren(text('div','metric','Aktive Aufträge: '+active.length),text('div','metric','Archiviert: '+archived.length));
+  $('archiveCount').textContent=String(archived.length);
+  const area=$('archivedRows');area.replaceChildren();
+  if(!archived.length)area.appendChild(text('div','empty','Noch keine abgeschlossenen Aufträge im Archiv.'));
+  for(const j of archived){
+   const row=text('div','archive-row','');
+   const info=text('div','archive-details','');info.append(text('strong','',j.id+' · '+j.customer),text('small','',j.product+' · '+j.date));
+   row.appendChild(info);
+   if(userRole!=='display'){
+    const controls=text('div','card-actions','');
+    const restore=text('button','','Wiederherstellen');restore.type='button';restore.onclick=()=>archiveAction(j,'restore');
+    controls.appendChild(restore);
+    if(userRole==='admin'){
+     const del=text('button','','Endgültig löschen');del.type='button';del.className='danger';del.onclick=()=>deleteArchived(j);controls.appendChild(del);
+    }
+    row.appendChild(controls);
+   }
+   area.appendChild(row);
+  }
  }
  async function refresh(){try{const [me,listed]=await Promise.all([api('me'),api('jobs')]);if(!Array.isArray(listed.jobs))throw Error('Ungültige Auftragsliste');
   jobs=listed.jobs;userRole=me.role;$('newJob').hidden=userRole==='display';$('identity').textContent=me.email+' · '+me.role;$('error').textContent='';render();
@@ -84,15 +133,23 @@ dialog textarea{min-height:75px;resize:vertical}
  function openEditor(id){
   if(userRole==='display')return;
   const job=id?jobs.find(x=>x.id===id):null;if(id&&!job)return;
-  editingId=id||null;$('editTitle').textContent=job?'Auftrag bearbeiten':'Neuer Auftrag';
+  editingId=id||null;editingRevision=job?.revision??null;$('editTitle').textContent=job?'Auftrag bearbeiten':'Neuer Auftrag';
   for(const name of ['id','date','customer','product','quantity','machine','notes'])field(name).value=job?.[name]||'';
   field('id').readOnly=Boolean(job);field('date').value=job?.date||iso(new Date());
   field('status').value=job?.status||statuses[0];field('fixed').checked=Boolean(job?.fixed);
   field('steps').value=(job?.steps||[]).join(', ');$('saveError').textContent='';$('editDialog').showModal();
  }
- async function archiveJob(job){
-  if(userRole==='display'||!confirm('Fertigen Auftrag '+job.id+' archivieren?'))return;
-  try{await api('jobs/'+encodeURIComponent(job.id)+'/archive','POST',{revision:job.revision});await refresh();}
+ async function archiveAction(job,action){
+  if(userRole==='display')return;
+  if(!confirm(action==='archive'?'Fertigen Auftrag '+job.id+' archivieren?':'Auftrag '+job.id+' wiederherstellen?'))return;
+  try{await api('jobs/'+encodeURIComponent(job.id)+'/'+action,'POST',{revision:job.revision});await refresh();}
+  catch(e){$('error').textContent=e.message;}
+ }
+ async function archiveJob(job){return archiveAction(job,'archive');}
+ async function deleteArchived(job){
+  if(userRole!=='admin'||!job.archived)return;
+  if(!confirm('Auftrag '+job.id+' ENDGÜLTIG löschen? Diese Aktion kann nicht rückgängig gemacht werden.'))return;
+  try{await api('jobs/'+encodeURIComponent(job.id),'DELETE',{revision:job.revision});await refresh();}
   catch(e){$('error').textContent=e.message;}
  }
  form.addEventListener('submit',async event=>{
@@ -101,13 +158,15 @@ dialog textarea{min-height:75px;resize:vertical}
   const job={id:field('id').value.trim(),date:field('date').value,customer:field('customer').value.trim(),product:field('product').value.trim(),
    quantity:field('quantity').value.trim(),machine:field('machine').value,status:field('status').value,fixed:field('fixed').checked,
    steps:field('steps').value.split(',').map(x=>x.trim()).filter(Boolean),notes:field('notes').value.trim()};
-  if(old)job.revision=old.revision;
+  if(old)job.revision=editingRevision;
   editBusy=true;$('saveEdit').disabled=true;$('saveError').textContent='';
   try{await api(old?'jobs/'+encodeURIComponent(old.id):'jobs',old?'PUT':'POST',job);$('editDialog').close();await refresh();}
   catch(e){$('saveError').textContent=e.message;}
   finally{editBusy=false;$('saveEdit').disabled=false;}
  });
  $('newJob').onclick=()=>openEditor(null);
+ $('backWeek').onclick=()=>{selectedDay=null;render();};
+ $('editDialog').addEventListener('cancel',e=>{if(editBusy)e.preventDefault();});
  $('cancelEdit').onclick=()=>{if(!editBusy)$('editDialog').close()};
  $('prev').onclick=()=>{start.setDate(start.getDate()-7);render();};
  $('next').onclick=()=>{start.setDate(start.getDate()+7);render();};

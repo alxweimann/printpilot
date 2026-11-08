@@ -32,3 +32,9 @@ jobs:
           node --check src/migration.js
       - name: Unit tests
         run: npm test
+      - name: Diagnose Access-Konfiguration mit Konto-Token (nur Lesen)
+        env:
+          CF_PRINTPILOT_ACCESS_TOKEN: ${{ secrets.CF_PRINTPILOT_ACCESS_TOKEN }}
+          CF_PRINTPILOT_ACCOUNT_ID: ${{ secrets.CF_PRINTPILOT_ACCOUNT_ID }}
+        run: |
+          node scripts/access-diagnose.mjs

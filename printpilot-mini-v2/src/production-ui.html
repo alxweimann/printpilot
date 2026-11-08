@@ -396,7 +396,7 @@ async function api(path,method='GET',payload){
  return data;
 }
 async function syncRemote(force=false){
- if(remoteLoading||remoteBusy||(!force&&!$('modalWrap').classList.contains('hide'))||!$('machineModal').classList.contains('hide'))return;
+ if(remoteLoading||remoteBusy||(!force&&(!$('modalWrap').classList.contains('hide')||!$('machineModal').classList.contains('hide'))))return;
  remoteLoading=true;
  try{
   const [identity,result,machineResult]=await Promise.all([api('me'),api('jobs'),api('machines')]);
@@ -405,7 +405,7 @@ async function syncRemote(force=false){
   jobs.sort((a,b)=>a.date.localeCompare(b.date)||(a.position??0)-(b.position??0)||a.id.localeCompare(b.id,'de',{numeric:true}));
   remoteReady=true;
   if(remoteRole==='display'||new URLSearchParams(location.search).get('display')==='1'){
-    document.body.classList.add('display-only');boardUnlocked=false;view='board';
+    document.body.classList.add('display-only');boardUnlocked=false;view='board';document.querySelectorAll('[data-view]').forEach(b=>b.classList.toggle('active',b.dataset.view==='board'));$('listView').classList.add('hide');$('boardView').classList.remove('hide');
   }
   const status=$('remoteState');if(status){status.textContent='● Synchronisiert · '+identity.role;status.className='remote-ok'}
   renderMachineOptions($('machine').value||'');
@@ -547,7 +547,7 @@ $('boardGrid').addEventListener('keydown',e=>{
 function renderArchive(){
  const archived=jobs.filter(j=>j.archived);
  $('archiveCount').textContent=String(archived.length);
- $('archiveList').innerHTML=archived.length?archived.map(j=>`<div class="archive-item"><div><strong>${esc(j.id)} · ${esc(j.customer)}</strong><small>${esc(j.product)} · ${esc(j.quantity||'')} · ${displayDate(j.date)}</small></div><div class="archive-actions"><button class="btn" data-restore-id="${esc(j.id)}">Wiederherstellen</button><button class="btn danger" data-delete-archived="${esc(j.id)}">Endgültig löschen</button></div></div>`).join(''):'<div class="archive-empty">Noch keine erledigten Aufträge abgelegt.</div>';
+ $('archiveList').innerHTML=archived.length?archived.map(j=>`<div class="archive-item"><div><strong>${esc(j.id)} · ${esc(j.customer)}</strong><small>${esc(j.product)} · ${esc(j.quantity||'')} · ${displayDate(j.date)}</small></div><div class="archive-actions"><button class="btn" data-restore-id="${esc(j.id)}">Wiederherstellen</button>${remoteRole==='admin'?`<button class="btn danger" data-delete-archived="${esc(j.id)}">Endgültig löschen</button>`:''}</div></div>`).join(''):'<div class="archive-empty">Noch keine erledigten Aufträge abgelegt.</div>';
 }
 async function archiveJob(id){
  if(document.body.classList.contains('display-only'))return;

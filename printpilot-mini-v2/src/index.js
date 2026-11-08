@@ -2,7 +2,7 @@ import {dashboardHtml} from './dashboard.js';
 import {productionHtml} from './production-ui.js';
 // PrintPilot Mini 2.0 — isolated staging API. Fail closed without Cloudflare Access.
 const STATUSES = new Set(['Neu / ungeprüft','Daten fehlen','Auftragstasche fehlt','In Korrektur','Wartet auf Freigabe','Freigegeben','In Produktion','Weiterverarbeitung','Fertig','Problem / Verzögerung']);
-const ROLES = new Set(['admin','production','display']);
+const ROLES = new Set(['admin','display']);
 const WRITE_HEADERS = {'content-type':'application/json; charset=utf-8','cache-control':'no-store'};
 function reply(data,status=200){return new Response(JSON.stringify(data),{status,headers:WRITE_HEADERS});}
 function failure(status,message){return reply({error:message},status);}
@@ -41,7 +41,7 @@ export default {
   if(!user)return failure(403,'Zugriff verweigert');
   const {method}=request;
   if(method!=='GET'){
-   if(user.role==='display')return failure(403,'Nur Lesezugriff');
+   if(user.role!=='admin')return failure(403,'Nur Lesezugriff');
    if(request.headers.get('X-Requested-With')!=='PrintPilotMini'||!/^application\/json(?:\s*;|$)/i.test(request.headers.get('content-type')||''))return failure(415,'JSON-Anfrage mit Schutzheader erforderlich');
   }
   const path=url.pathname,db=env.DB;

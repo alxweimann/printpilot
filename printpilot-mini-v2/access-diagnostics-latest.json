@@ -1,9 +1,14 @@
 {
   "type": "printpilot-v2-staging-readonly-diagnostics",
-  "generated_at": "2026-11-08T14:08:00.927Z",
+  "generated_at": "2026-11-08T14:08:53.770Z",
   "conclusion": "requires-diagnosis",
   "lines": [
-    "Error: Cloudflare API HTTP 400 for /access/apps — 9106: Authentication failed (status: 400)",
+    "Access token secret present: true",
+    "Access token format plausible: true",
+    "Token verification HTTP status: 400",
+    "Token verification success: false",
+    "Token verification state: unavailable",
+    "Error: Cloudflare token verification failed; inspect GitHub secret, token validity, or access.",
     "Diagnostic exit status: 1"
   ]
 }

@@ -23,4 +23,5 @@ jobs:
         with:
           node-version: '22'
       - name: Check Access configuration without modifying it
+        # Scope is strictly read-only and limited by the existing Cloudflare token.
         run: node printpilot-mini-v2/scripts/access-diagnose.mjs

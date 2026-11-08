@@ -176,7 +176,7 @@ function updateBoardHint(){const h=$('boardHint');if(!h)return;h.textContent=doc
 function moveToDate(id,date){
  if(document.body.classList.contains('display-only'))return;
  const j=jobs.find(x=>x.id===id);
- if(!j||!/^\\d{4}-\\d{2}-\\d{2}$/.test(date)||j.date===date)return;
+ if(!j||!/^\d{4}-\d{2}-\d{2}$/.test(date)||j.date===date)return;
  const old=j.date;
  if(j.fixed&&!confirm('Fixtermin von '+displayDate(old)+' auf '+displayDate(date)+' verschieben?'))return;
  j.date=date;

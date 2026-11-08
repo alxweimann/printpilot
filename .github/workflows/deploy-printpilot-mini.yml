@@ -1,13 +1,6 @@
 name: Deploy PrintPilot Mini to Cloudflare
 on:
   workflow_dispatch:
-  push:
-    branches:
-      - feature/printpilot-mini-cloudflare
-    paths:
-      - printpilot-mini/**
-      - printpilot-mini-deploy/**
-      - .github/workflows/deploy-printpilot-mini.yml
 permissions:
   contents: read
 jobs:

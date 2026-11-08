@@ -64,10 +64,23 @@ dialog textarea{min-height:75px;resize:vertical}
 #boardLock[aria-pressed="false"]{background:#ffe4b8;color:#6a4009}
 #boardLock[aria-pressed="true"]{background:#c7f1d8;color:#205739}
 .move-target{border:1px solid #b5dae9;border-radius:6px;padding:6px;color:#19465d;background:#f4fbff;min-width:0;max-width:100%;font-size:11px}
+
+.import-panel{margin-top:24px;border:1px solid #7896aa;border-radius:12px;background:#1c394e;padding:18px}
+.import-panel h3{margin:0 0 8px}.import-panel p{font-size:13px;color:#cfdfeb}
+.import-panel input{display:block;margin:12px 0;color:#fff;max-width:100%}
+#importReport{margin:12px 0;overflow-wrap:anywhere}
+#importReport ul{font-size:12px;max-height:180px;overflow-y:auto}
 </style></head><body><main>
 <header><div><div class="muted">PRINTPILOT / STAGING – NUR ANZEIGE</div><h1>Produktionsplan 2.0</h1><div id="identity" class="muted">Anmeldung wird geprüft …</div></div>
-<div><button id="prev" type="button" aria-label="Vorige Woche">←</button> <button id="next" type="button" aria-label="Nächste Woche">→</button> <button id="reload" type="button">Aktualisieren</button> <button id="newJob" type="button" hidden>＋ Auftrag</button> <button id="boardLock" type="button" aria-pressed="false" hidden>🔒 Gesperrt</button></div></header>
+<div><button id="prev" type="button" aria-label="Vorige Woche">←</button> <button id="next" type="button" aria-label="Nächste Woche">→</button> <button id="reload" type="button">Aktualisieren</button> <button id="newJob" type="button" hidden>＋ Auftrag</button> <button id="previewImport" type="button" hidden>Altbestand prüfen</button> <button id="boardLock" type="button" aria-pressed="false" hidden>🔒 Gesperrt</button></div></header>
 <div id="stats" class="summary"></div><div class="view-title"><h2 id="weekTitle"></h2><button id="backWeek" type="button" hidden>← Wochenansicht</button></div><div id="error" role="alert"></div><div class="week" id="week"></div>
+<section id="importPanel" class="import-panel" hidden>
+  <h3>Prüfvorschau der bisherigen Aufträge</h3>
+  <p>Lokale JSON-Sicherung auswählen. Die Datei wird nur auf diesem Gerät gelesen; es findet kein Upload und keine Datenänderung statt.</p>
+  <input id="importFile" type="file" accept=".json,application/json" aria-label="JSON-Sicherung auswählen">
+  <div id="importReport" role="status"></div>
+  <button type="button" id="closeImport">Schließen</button>
+</section>
 <details class="archive" id="archive"><summary>✓ Erledigte Aufträge <span id="archiveCount">0</span></summary><div id="archivedRows"></div></details>
 <p class="muted">Geschützte D1-Testumgebung · automatische Aktualisierung alle 15 Sekunden · kein Import aus bisherigen Browserdaten</p>
 </main>
@@ -159,7 +172,7 @@ dialog textarea{min-height:75px;resize:vertical}
   }
  }
  async function refresh(){try{const [me,listed]=await Promise.all([api('me'),api('jobs')]);if(!Array.isArray(listed.jobs))throw Error('Ungültige Auftragsliste');
-  jobs=listed.jobs;userRole=me.role;$('newJob').hidden=userRole==='display';$('boardLock').hidden=userRole==='display';if(userRole==='display')boardUnlocked=false;renderLock();$('identity').textContent=me.email+' · '+me.role;$('error').textContent='';render();
+  jobs=listed.jobs;userRole=me.role;$('newJob').hidden=userRole==='display';$('previewImport').hidden=userRole!=='admin';$('boardLock').hidden=userRole==='display';if(userRole==='display')boardUnlocked=false;renderLock();$('identity').textContent=me.email+' · '+me.role;$('error').textContent='';render();
  }catch(e){$('error').textContent=e.message+' – letzte erfolgreiche Anzeige bleibt bestehen.';}}
  function renderLock(){const btn=$('boardLock');btn.textContent=boardUnlocked?'🔓 Entsperrt':'🔒 Gesperrt';btn.setAttribute('aria-pressed',String(boardUnlocked));}
  async function moveJob(j,date,relativeId=null,after=true){
@@ -209,6 +222,35 @@ dialog textarea{min-height:75px;resize:vertical}
   finally{editBusy=false;$('saveEdit').disabled=false;}
  });
  $('newJob').onclick=()=>openEditor(null);
+ $('previewImport').onclick=()=>{$('importPanel').hidden=!$('importPanel').hidden;};
+ $('closeImport').onclick=()=>{$('importPanel').hidden=true;};
+ $('importFile').addEventListener('change',async event=>{
+  const file=event.target.files?.[0];const report=$('importReport');report.replaceChildren();
+  if(!file)return;
+  if(file.size>5000000){report.textContent='Datei zu groß (maximal 5 MB).';return;}
+  try{
+   const parsed=JSON.parse(await file.text());
+   const rows=Array.isArray(parsed)?parsed:parsed?.jobs;
+   if(!Array.isArray(rows))throw Error('Keine gültige Liste mit Aufträgen.');
+   const duplicate=new Set(),issues=[],seen=new Set();
+   for(let i=0;i<rows.length;i++){
+    const j=rows[i];
+    if(!j||typeof j!=='object'||Array.isArray(j)){issues.push('Zeile '+(i+1)+': Ungültiger Datensatz');continue;}
+    const id=String(j.id||'').trim();
+    if(!id){issues.push('Zeile '+(i+1)+': Auftragsnummer fehlt');continue;}
+    if(seen.has(id)){duplicate.add(id);issues.push('Zeile '+(i+1)+': Doppelte Auftragsnummer '+id);}
+    seen.add(id);
+    if(!/^\\d{4}-\\d{2}-\\d{2}$/.test(j.date||''))issues.push('Zeile '+(i+1)+': Ungültiges Datum');
+    if(!String(j.customer||'').trim()||!String(j.product||'').trim())issues.push('Zeile '+(i+1)+': Kunde oder Produkt fehlt');
+    if(!statuses.includes(j.status))issues.push('Zeile '+(i+1)+': Unbekannter Status '+String(j.status||''));
+   }
+   report.appendChild(text('strong','',rows.length+' Datensätze geprüft – '+issues.length+' Auffälligkeiten.'));
+   if(issues.length){const list=document.createElement('ul');for(const msg of issues.slice(0,25))list.appendChild(text('li','',msg));report.appendChild(list);}
+   report.appendChild(text('p','',issues.length?'Import gesperrt bis alle Fehler geklärt sind.':'Struktur plausibel. Ein Import ist noch nicht freigeschaltet.'));
+   report.appendChild(text('p','','Es wurden keine Daten an den Server übertragen.'));
+  }catch(e){report.textContent='Prüfung fehlgeschlagen: '+e.message;}
+  finally{event.target.value='';}
+ });
  $('boardLock').onclick=()=>{if(userRole==='display')return;boardUnlocked=!boardUnlocked;renderLock();render();};
  $('backWeek').onclick=()=>{selectedDay=null;render();};
  $('editDialog').addEventListener('cancel',e=>{if(editBusy)e.preventDefault();});
